@@ -11,21 +11,27 @@ namespace Breaknes
 
     public class ListConverter : CollectionConverter
     {
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
         public override bool GetPropertiesSupported(ITypeDescriptorContext context)
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
         {
             return true;
         }
 
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
         public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes)
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
         {
-            IList list = value as IList;
+            IList? list = value as IList;
             if (list == null || list.Count == 0)
                 return base.GetProperties(context, value, attributes);
 
             var items = new PropertyDescriptorCollection(null);
             for (int i = 0; i < list.Count; i++)
             {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 object item = list[i];
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                 items.Add(new ExpandableCollectionPropertyDescriptor(list, i));
             }
             return items;
@@ -45,7 +51,16 @@ namespace Breaknes
 
             private static string GetDisplayName(IList list, int index)
             {
-                return "[" + index + "]  " + CSharpName(list[index].GetType());
+                if (list != null)
+                {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                    return "[" + index + "]  " + CSharpName(list[index].GetType());
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                }
+                else
+                {
+                    return "<null>";
+                }
             }
 
             private static string CSharpName(Type type)
@@ -71,9 +86,13 @@ namespace Breaknes
                 get { return this.collection.GetType(); }
             }
 
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
             public override object GetValue(object component)
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
             {
+#pragma warning disable CS8603 // Possible null reference return.
                 return collection[_index];
+#pragma warning restore CS8603 // Possible null reference return.
             }
 
             public override bool IsReadOnly
@@ -88,7 +107,9 @@ namespace Breaknes
 
             public override Type PropertyType
             {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 get { return collection[_index].GetType(); }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
 
             public override void ResetValue(object component)
@@ -100,7 +121,9 @@ namespace Breaknes
                 return true;
             }
 
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
             public override void SetValue(object component, object value)
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
             {
                 collection[_index] = value;
             }

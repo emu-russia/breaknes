@@ -14,13 +14,13 @@ namespace Breaknes
 {
     public partial class DataPathView : Control
     {
-        private BufferedGraphics gfx = null;
-        private BufferedGraphicsContext context;
+        private BufferedGraphics? gfx = null;
+        private BufferedGraphicsContext? context = null;
         GraphicsPath [] mapping = new GraphicsPath[(int)ControlCommand.Max];
         GraphicsPath cpu_write = new GraphicsPath();
         GraphicsPath cpu_read = new GraphicsPath();
         GraphicsPath alu_add = new GraphicsPath();
-        CpuDebugInfo_Commands cur_info = null;
+        CpuDebugInfo_Commands? cur_info = null;
         bool SavedPHI1 = false;
         Pen path_pen = new Pen(new SolidBrush(Color.OrangeRed), 5);
         Font labelFont = new Font("Segoe UI", 10.0f, FontStyle.Bold);
@@ -538,7 +538,9 @@ namespace Breaknes
 
             long beginTime = DateTime.Now.Ticks;
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             DrawScene(gfx.Graphics, Width, Height);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             gfx.Render(e.Graphics);
 
