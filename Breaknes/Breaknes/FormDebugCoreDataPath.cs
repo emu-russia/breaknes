@@ -8,13 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Be.Windows.Forms;
-
 namespace Breaknes
 {
-    public partial class FormDebugBogusWindow : Form
+    public partial class FormDebugCoreDataPath : Form
     {
-        public FormDebugBogusWindow()
+        public FormDebugCoreDataPath()
         {
             InitializeComponent();
         }

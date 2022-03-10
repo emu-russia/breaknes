@@ -8,15 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Be.Windows.Forms;
-
 namespace Breaknes
 {
-    public partial class FormDebugBogusWindow : Form
+    public partial class FormDebugAbout : Form
     {
-        public FormDebugBogusWindow()
+        public FormDebugAbout()
         {
             InitializeComponent();
+        }
+
+        private void FormDebugAbout_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
