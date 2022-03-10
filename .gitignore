@@ -1,0 +1,10 @@
+Temp
+*.pyc
+.vs
+*.vcxproj.user
+*.csproj.user
+
+Debug
+Release
+Win32
+x64
