@@ -22,6 +22,9 @@
     <Compile Update="FormDebugCoreDataPath.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormDebugOnlineHelp.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
