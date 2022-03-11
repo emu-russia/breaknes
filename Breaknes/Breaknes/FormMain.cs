@@ -44,5 +44,19 @@ namespace Breaknes
             ShowBreaksDebugger();
 #endif
         }
+
+        private void loadROMDumpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string filename = openFileDialog1.FileName;
+            }
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormSettings settings = new FormSettings();
+            settings.ShowDialog();
+        }
     }
 }

@@ -1,0 +1,16 @@
+{
+	"info":
+	{
+		"descr": "There is a description of the components of the various NES/Famicom models and clones. Very preliminary version."
+	},
+
+	"boards":
+	[
+		{
+			"name": "HVC-CPU-01",
+			"apu": "RP2A03",
+			"ppu": "RP2C02G",
+			"p1": "Fami"
+		}
+	]
+}
