@@ -19,7 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\AbstractBoard.cpp" />
+    <ClCompile Include="..\..\AbstractCartridge.cpp" />
+    <ClCompile Include="..\..\BoardFactory.cpp" />
     <ClCompile Include="..\..\Breaknes.cpp" />
+    <ClCompile Include="..\..\CartridgeFactory.cpp" />
+    <ClCompile Include="..\..\CoreApi.cpp" />
     <ClCompile Include="..\..\dllmain.cpp" />
     <ClCompile Include="..\..\Famicom.cpp" />
     <ClCompile Include="..\..\LS139.cpp" />
@@ -36,6 +41,11 @@
     <ClCompile Include="..\..\UnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\AbstractBoard.h" />
+    <ClInclude Include="..\..\AbstractCartridge.h" />
+    <ClInclude Include="..\..\BoardFactory.h" />
+    <ClInclude Include="..\..\CartridgeFactory.h" />
+    <ClInclude Include="..\..\CoreApi.h" />
     <ClInclude Include="..\..\Famicom.h" />
     <ClInclude Include="..\..\LS139.h" />
     <ClInclude Include="..\..\LS368.h" />
