@@ -9,6 +9,11 @@
 #include "../../BreaksAPU/APUSim/apu.h"
 #include "../../BreaksPPU/PPUSim/ppu.h"
 
+#include "LS139.h"
+#include "LS368.h"
+#include "LS373.h"
+#include "SRAM.h"
+
 #include "NES.h"
 #include "Famicom.h"
 
