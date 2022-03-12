@@ -65,6 +65,11 @@ namespace BaseLogic
 		return (TriState)((~(a & b)) & 1);
 	}
 
+	TriState NAND3(TriState a, TriState b, TriState c)
+	{
+		return (TriState)((~((a & b) & c)) & 1);
+	}
+
 	TriState AND(TriState a, TriState b)
 	{
 		return (TriState)(a & b);

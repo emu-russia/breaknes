@@ -1,3 +1,6 @@
+// LS139
+// Dual 2-to-4 line decoder/demultiplexer
+
 #pragma once
 
 namespace LS
