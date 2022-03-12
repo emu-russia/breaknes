@@ -17,5 +17,4 @@
 #include "NES.h"
 #include "Famicom.h"
 
-#include "DecoderDecoder.h"
 #include "UnitTest.h"
