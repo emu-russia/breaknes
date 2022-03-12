@@ -44,6 +44,8 @@ int main()
 
 	Breaknes::Famicom* fami = new Breaknes::Famicom;
 
+	/*
+
 	// Simulate reset
 
 	printf("Before Reset:\n");
@@ -68,4 +70,6 @@ int main()
 	delete fami;
 
 	printf("Done in %d microseconds!\n", ts2 - ts1);
+
+	*/
 }
