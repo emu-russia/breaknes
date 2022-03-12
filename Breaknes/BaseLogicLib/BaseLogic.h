@@ -97,6 +97,15 @@ namespace BaseLogic
 	TriState NAND(TriState a, TriState b);
 
 	/// <summary>
+	/// 3-nand
+	/// </summary>
+	/// <param name="a"></param>
+	/// <param name="b"></param>
+	/// <param name="c"></param>
+	/// <returns></returns>
+	TriState NAND3(TriState a, TriState b, TriState c);
+
+	/// <summary>
 	/// 2-and
 	/// </summary>
 	/// <param name="a"></param>
