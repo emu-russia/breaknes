@@ -6,6 +6,7 @@ namespace Breaknes
 {
 	class SRAM
 	{
+		size_t memSize = 0;
 		uint8_t* mem = nullptr;
 
 	public:
