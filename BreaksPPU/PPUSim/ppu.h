@@ -111,5 +111,4 @@ namespace PPUSim
 		/// <param name="vout">The output level of the composite signal (V).</param>
 		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus, float* vout);
 	};
-
 }

@@ -6,7 +6,6 @@ using System.Collections;
 
 namespace Breaknes
 {
-
     public class BoardDescription
     {
         public List<Board> boards = new List<Board>();

@@ -7,8 +7,8 @@ namespace Breaknes
 		M6502Core::M6502* core = nullptr;
 		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
 
-		uint16_t addr_bus;
-		uint8_t data_bus;
+		uint16_t addr_bus = 0;
+		uint8_t data_bus = 0;
 
 	public:
 		Famicom();
