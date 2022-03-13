@@ -1,40 +1,40 @@
-# Отладочные способности Breaknes
+# Breaknes Debug Capabilities
 
-Поскольку Breaknes является эмулятором на уровне вентилей, основная направленность отладки - это мониторинг различных сигналов, шин и прочего внутреннего состояния эмулируемой системы.
+Since Breaknes is a gate-level emulator, the main focus of debugging is monitoring various signals, buses and other internal states of the emulated system.
 
-Отладочные сущности делятся на следующие категории:
-- DebugInfo: получение внутреннего состояния
-- MemLayout: получение дампов памяти
+Debug entities are divided into the following categories:
+- DebugInfo: getting internal state
+- MemLayout: getting memory dumps
 
 ![debug](/UserManual/imgstore/debug.jpg)
 
 ## DebugInfo
 
-Со стороны GUI `DebugInfo` отображается как PropertyGrid. Заполнение PropertyGrid происходит динамически, на базе записей отладочной информации, возвращаемой нативным ядром Breaknes.
+From the GUI side, `DebugInfo` is displayed as PropertyGrid. The PropertyGrid is filled in dynamically, based on debugging information entries returned by the native Breaknes core.
 
-Типы отладочной информации (DebugInfoType):
-- DebugInfoType_Core: Получить внутреннее состояние M6502Core
-- DebugInfoType_CoreRegs: Получить состояние регистров 6502
-- DebugInfoType_APU: Получить внутреннее состояние компонентов APU
-- DebugInfoType_APURegs: Получить состояние регистров APU
-- DebugInfoType_PPU: Получить внутреннее состояние компонентов PPU
-- DebugInfoType_PPURegs: Получить состояние регистров PPU
-- DebugInfoType_Board: Получить внутреннее состояние компонентов материнской платы
-- DebugInfoType_Cart: Получить внутреннее состояние компонентов картриджа и маппера
+Debug Information Types (DebugInfoType):
+- DebugInfoType_Core: Get the internal state of the M6502Core
+- DebugInfoType_CoreRegs: Get the state of the 6502 registers
+- DebugInfoType_APU: Get the internal state of the APU components
+- DebugInfoType_APURegs: Get the state of APU registers
+- DebugInfoType_PPU: Get the internal state of the PPU components
+- DebugInfoType_PPURegs: Get the state of the PPU registers
+- DebugInfoType_Board: Get the internal state of the motherboard components
+- DebugInfoType_Cart: Get the internal state of the cartridge and mapper components
 
-Методы:
+Methods:
 
-- GetDebugInfoEntryCount: Получить количество отладочных записей указанного типа
-- GetDebugInfo: Получить записи указанного типа
+- GetDebugInfoEntryCount: Get the number of debug entries of the specified type
+- GetDebugInfo: Get entries of the specified type
 
-Managed приложение должно предварительно узнать количество записей и выделить массив для их получения.
+A Managed application must first know the number of records and allocate an array to retrieve them.
 
 ## MemLayout
 
-Различные куски памяти внутри эмулируемой системы описываются структурой `MemDesciptor`.
+The different pieces of memory within the emulated system are described by the `MemDesciptor` structure.
 
-Методы:
+Methods:
 
-- GetMemLayout: Получить количество дескрипторов памяти, которое зарегестрировано в ядре
-- GetMemDescriptor: Получить информацию о блоке памяти
-- DumpMem: Сдампить блок памяти целиком. Мы тут эмулируем NES, поэтому размеры дампов будут небольшими и нет смысла дампить частями.
+- GetMemLayout: Get the number of memory descriptors that are registered in the core
+- GetMemDescriptor: Get information about a memory block
+- DumpMem: Get the whole memory block. We are emulating NES here, so dump sizes will be small and it won't make sense to dump in parts.
