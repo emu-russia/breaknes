@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <list>
 #include <Windows.h>
 
 #include "../BaseLogicLib/BaseLogic.h"
@@ -26,3 +27,6 @@
 #include "UnitTest.h"
 
 #include "CoreApi.h"
+#include "Core.h"
+
+extern Breaknes::Core core;

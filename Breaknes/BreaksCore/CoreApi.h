@@ -10,6 +10,7 @@
 enum DebugInfoType
 {
 	DebugInfoType_Unknown = 0,
+	DebugInfoType_Test,
 	DebugInfoType_Core,
 	DebugInfoType_CoreRegs,
 	DebugInfoType_APU,
@@ -29,6 +30,17 @@ struct DebugInfoEntry
 	char category[32];
 	char name[32];
 	uint32_t value;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+/// <summary>
+/// Memory block descriptor
+/// </summary>
+struct MemDesciptor
+{
+	char name[32];
+	size_t size;
 };
 #pragma pack(pop)
 
@@ -87,5 +99,28 @@ extern "C"
 	/// <param name="entries"></param>
 	__declspec(dllexport)
 	void GetDebugInfo(DebugInfoType type, DebugInfoEntry* entries);
+
+	/// <summary>
+	/// Get the number of memory descriptors that are registered in the core
+	/// </summary>
+	/// <returns></returns>
+	__declspec(dllexport)
+	size_t GetMemLayout();
+
+	/// <summary>
+	/// Get information about the memory block
+	/// </summary>
+	/// <param name="descrID"></param>
+	/// <param name="descr"></param>
+	__declspec(dllexport)
+	void GetMemDescriptor(size_t descrID, MemDesciptor* descr);
+
+	/// <summary>
+	/// Dump the whole memory block. We are emulating NES here, so the dump sizes will be small and there is no point in dumping in parts.
+	/// </summary>
+	/// <param name="descrID"></param>
+	/// <param name="ptr"></param>
+	__declspec(dllexport)
+	void DumpMem(size_t descrID, uint8_t* ptr);
 
 };

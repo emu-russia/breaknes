@@ -24,9 +24,9 @@ namespace Breaknes
 
         private void FormDebug_Load(object sender, EventArgs e)
         {
-            ShowBogusWindow();
-            ShowAssembler();
-            ShowCoreDataPath();
+            //ShowBogusWindow();
+            //ShowAssembler();
+            //ShowCoreDataPath();
         }
 
         void ShowBogusWindow()
@@ -370,6 +370,18 @@ namespace Breaknes
         }
 
         #endregion "PPU Online Help"
+
+        private void testDebugInfoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormDebugInfo formInfo = new FormDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_Test);
+            formInfo.MdiParent = this;
+            formInfo.Show();
+        }
+
+        private void testMemDumpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
 
     }
 }
