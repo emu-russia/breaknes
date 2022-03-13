@@ -48,7 +48,7 @@ extern "C"
 	__declspec(dllexport)
 	size_t GetMemLayout()
 	{
-
+		return 0;
 	}
 
 	__declspec(dllexport)

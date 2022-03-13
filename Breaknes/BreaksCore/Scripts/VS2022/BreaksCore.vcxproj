@@ -22,7 +22,7 @@
     <ClCompile Include="..\..\AbstractBoard.cpp" />
     <ClCompile Include="..\..\AbstractCartridge.cpp" />
     <ClCompile Include="..\..\BoardFactory.cpp" />
-    <ClCompile Include="..\..\Breaknes.cpp" />
+    <ClCompile Include="..\..\Core.cpp" />
     <ClCompile Include="..\..\CartridgeFactory.cpp" />
     <ClCompile Include="..\..\CoreApi.cpp" />
     <ClCompile Include="..\..\dllmain.cpp" />
@@ -45,6 +45,7 @@
     <ClInclude Include="..\..\AbstractCartridge.h" />
     <ClInclude Include="..\..\BoardFactory.h" />
     <ClInclude Include="..\..\CartridgeFactory.h" />
+    <ClInclude Include="..\..\Core.h" />
     <ClInclude Include="..\..\CoreApi.h" />
     <ClInclude Include="..\..\Famicom.h" />
     <ClInclude Include="..\..\LS139.h" />
