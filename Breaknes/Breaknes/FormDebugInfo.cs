@@ -31,18 +31,35 @@ namespace Breaknes
 
             List<BreaksCore.DebugInfoEntry> entries = BreaksCore.GetDebugInfo(savedType);
 
-            foreach (BreaksCore.DebugInfoEntry entry in entries)
-            {
-                Console.WriteLine(entry.category);
-                Console.WriteLine(entry.name);
-                Console.WriteLine(entry.value.ToString());
-            }
-
             // Construct an object to show in PropertyGrid
 
-            object info = new object();
+            // TBD: Make a proper dynamic filling of PropertyGrid
+
+            CookedDebugInfo info = new CookedDebugInfo();
+
+            foreach (BreaksCore.DebugInfoEntry entry in entries)
+            {
+                CookedDebugInfoEntry prop = new CookedDebugInfoEntry();
+                prop.name = entry.name;
+                prop.value = entry.value;
+                info.entries.Add(prop);
+            }
 
             propertyGrid1.SelectedObject = info;
         }
+
+        internal class CookedDebugInfoEntry
+        {
+            public string name { get; set; }
+            public uint value { get; set; }
+        }
+
+        internal class CookedDebugInfo
+        {
+            [TypeConverter(typeof(ListConverter))]
+            [Category("TBD")]
+            public List<CookedDebugInfoEntry> entries { get; set; } = new List<CookedDebugInfoEntry>();
+        }
+
     }
 }
