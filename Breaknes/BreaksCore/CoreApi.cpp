@@ -45,4 +45,22 @@ extern "C"
 
 	}
 
+	__declspec(dllexport)
+	size_t GetMemLayout()
+	{
+
+	}
+
+	__declspec(dllexport)
+	void GetMemDescriptor(size_t descrID, MemDesciptor* descr)
+	{
+
+	}
+
+	__declspec(dllexport)
+	void DumpMem(size_t descrID, uint8_t* ptr)
+	{
+
+	}
+
 };
