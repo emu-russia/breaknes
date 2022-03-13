@@ -373,7 +373,9 @@ namespace Breaknes
 
         private void testDebugInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            FormDebugInfo formInfo = new FormDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_Test);
+            formInfo.MdiParent = this;
+            formInfo.Show();
         }
 
         private void testMemDumpToolStripMenuItem_Click(object sender, EventArgs e)

@@ -10,6 +10,7 @@
 enum DebugInfoType
 {
 	DebugInfoType_Unknown = 0,
+	DebugInfoType_Test,
 	DebugInfoType_Core,
 	DebugInfoType_CoreRegs,
 	DebugInfoType_APU,

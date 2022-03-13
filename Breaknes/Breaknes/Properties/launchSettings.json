@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Breaknes": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
