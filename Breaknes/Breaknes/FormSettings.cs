@@ -59,9 +59,12 @@ namespace Breaknes
 
             var descr = JsonConvert.DeserializeObject<BoardDescription>(json);
 
-            foreach (var board in descr.boards)
+            if (descr != null)
             {
-                list.Add(board.name);
+                foreach (var board in descr.boards)
+                {
+                    list.Add(board.name);
+                }
             }
 
             return new StandardValuesCollection(list);
