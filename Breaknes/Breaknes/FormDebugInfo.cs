@@ -58,9 +58,6 @@ namespace Breaknes
         {
             public AttributeCollection GetAttributes()
             {
-                //AttributeCollection attributeCollection = new AttributeCollection();
-
-
                 return TypeDescriptor.GetAttributes(this, true);
             }
 
@@ -114,7 +111,6 @@ namespace Breaknes
                 PropertyDescriptor[] newProps = new PropertyDescriptor[this.Count];
                 for (int i = 0; i < this.Count; i++)
                 {
-
                     CustomProperty prop = (CustomProperty)base.List[i];
                     newProps[i] = new CustomPropertyDescriptor(ref prop, attributes);
                 }
@@ -199,6 +195,21 @@ namespace Breaknes
             public string Name { get; set; }
             public string Category { get; set; }
             public object Value { get; set; } = null;
+        }
+
+        public class CategoryAttribute : Attribute
+        {
+            CustomProperty m_Property;
+
+            public CategoryAttribute (ref CustomProperty myProperty)
+            {
+                m_Property = myProperty;
+            }
+
+            public string GetName()
+            {
+                return m_Property.Category;
+            }
         }
 
 
