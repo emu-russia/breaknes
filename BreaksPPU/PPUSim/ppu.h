@@ -3,6 +3,14 @@
 namespace PPUSim
 {
 	class PPU;
+
+	/// <summary>
+	/// A software descriptor of the current video sample. Due to the different PPU revisions the output value may differ in content, so union is used.
+	/// </summary>
+	union VideoOutSignal
+	{
+		float composite;	// For NTSC/PAL variations of PPU. A sample of the composite video signal.
+	};
 }
 
 #include "bgcol.h"
@@ -32,16 +40,18 @@ namespace PPUSim
 	{
 		Unknown = 0,
 
-		RP2C02G,
+		RP2C02G,		// It is known that there are two different revisions of `G` (old and new), which differ at least in the PCLK Distribution circuit.
 		RP2C02H,
-		RP2C03,
+		RP2C03,			// With RGB PPU at all is not clear, because few people have at home arcade machines with these PPU and few want to give chips for decap and analysis.
 		RP2C03B,
 		RP2C04_0001,
 		RP2C04_0002,
 		RP2C04_0003,
 		RP2C04_0004,
 		RP2C05,
-		RP2C07_0,
+		RP2C07_0,		// It is unknown how many PAL PPU revisions there were, so far it looks like only one.
+
+		// TBD: Clone PPUs. Here you can expect a variety of zoo, but in principle they should not differ in circuitry.
 
 		Max,
 	};
@@ -71,15 +81,24 @@ namespace PPUSim
 	{
 		friend VideoOutSRBit;
 		friend VideoOut;
+		friend FSM;
 
 		/// <summary>
 		/// Internal auxiliary and intermediate connections.
+		/// See: https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/PPU/rails.md
 		/// </summary>
 		struct InternalWires
 		{
+			BaseLogic::TriState RnW;
+			BaseLogic::TriState RS[3];
+			BaseLogic::TriState n_DBE;
+			BaseLogic::TriState n_ALE;
+			BaseLogic::TriState RD;
+			BaseLogic::TriState WR;
 			BaseLogic::TriState CLK;
 			BaseLogic::TriState n_CLK;
 			BaseLogic::TriState RES;
+			BaseLogic::TriState RC;
 			BaseLogic::TriState PCLK;
 			BaseLogic::TriState n_PCLK;
 			BaseLogic::TriState n_TR;
@@ -93,7 +112,29 @@ namespace PPUSim
 
 		} wire;
 
+		/// <summary>
+		/// The most important control signals of the H/V FSM.
+		/// </summary>
+		struct FsmCommands
+		{
+			BaseLogic::TriState RESCL;
+			BaseLogic::TriState INT;
+		} fsm;
+
 		Revision rev;
+
+		void sim_PCLK();
+
+		BaseLogic::FF Reset_FF;
+
+		BaseLogic::DLatch pclk_1;
+		BaseLogic::DLatch pclk_2;
+		BaseLogic::DLatch pclk_3;
+		BaseLogic::DLatch pclk_4;
+		size_t pclk_counter = 0;
+
+		VideoOut* vid_out = nullptr;
+		FSM* hv_fsm = nullptr;
 
 	public:
 		PPU(Revision rev);
@@ -108,7 +149,11 @@ namespace PPUSim
 		/// <param name="data_bus">Bidirectional CPU-PPU data bus</param>
 		/// <param name="ad_bus">Bidirectional PPU-VRAM data/address bus</param>
 		/// <param name="addrHi_bus">This bus carries the rest of the address lines (output)</param>
-		/// <param name="vout">The output level of the composite signal (V).</param>
-		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus, float* vout);
+		/// <param name="vout">The output video signal.</param>
+		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus, VideoOutSignal& vout);
+
+		size_t GetPCLKCounter();
+
+		void ResetPCLKCounter();
 	};
 }

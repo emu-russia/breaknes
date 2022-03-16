@@ -55,7 +55,7 @@ namespace PPUSim
 		}
 	}
 
-	void VideoOut::sim(float* vout)
+	void VideoOut::sim(VideoOutSignal& vout)
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
@@ -256,9 +256,11 @@ namespace PPUSim
 			L = 5;
 		}
 
-		if (vout != nullptr)
+		// TBD: For now, as a placeholder. For the other revisions, it may be different.
+
+		if (ppu->rev == Revision::RP2C02G)
 		{
-			*vout = LToV[L];
+			vout.composite = LToV[L];
 		}
 	}
 

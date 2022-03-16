@@ -48,6 +48,6 @@ namespace PPUSim
 
 		// TBD: Once everything is working, add output support for RGB-like PPUs.
 		
-		void sim(float *vout);
+		void sim(VideoOutSignal& vout);
 	};
 }
