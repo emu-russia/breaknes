@@ -12,12 +12,14 @@ namespace PPUSim
 
 		vid_out = new VideoOut(this);
 		hv_fsm = new FSM(this);
+		vram_ctrl = new VRAM_Control(this);
 	}
 
 	PPU::~PPU()
 	{
 		delete vid_out;
 		delete hv_fsm;
+		delete vram_ctrl;
 	}
 
 	void PPU::sim(TriState inputs[], TriState outputs[], uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus, VideoOutSignal& vout)

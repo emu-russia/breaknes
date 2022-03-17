@@ -59,9 +59,9 @@ namespace PPUSim
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState BURST = ppu->wire.BURST;
-		TriState SYNC = ppu->wire.SYNC;
-		TriState PICTURE = ppu->wire.PICTURE;
+		TriState BURST = ppu->fsm.BURST;
+		TriState HSYNC = ppu->fsm.HSYNC;
+		TriState PICTURE = ppu->fsm.PICTURE;
 
 		TriState P[13], PZ[13];
 
@@ -169,8 +169,8 @@ namespace PPUSim
 		TriState tmp = TriState::Zero;
 		size_t L = 15;
 
-		dac_latch1.set(NOT(SYNC), n_PCLK);
-		dac_latch3.set(NOT(NOR3(NOR(P123, PICTURE), SYNC, BURST)), n_PCLK);
+		dac_latch1.set(NOT(HSYNC), n_PCLK);
+		dac_latch3.set(NOT(NOR3(NOR(P123, PICTURE), HSYNC, BURST)), n_PCLK);
 		dac_latch4.set(BURST, n_PCLK);
 
 		if (dac_latch1.nget() == TriState::One && L > 0)

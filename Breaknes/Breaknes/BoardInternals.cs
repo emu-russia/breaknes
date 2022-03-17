@@ -1,3 +1,6 @@
+// This is an intermediate migration module to make the custom DataPath control work.
+// To be replaced by a more general solution, using GetDebugInfo from BreaksCore.
+
 using System.Text;
 using System.Globalization;
 using System.ComponentModel;

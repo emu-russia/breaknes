@@ -39,17 +39,17 @@ namespace Breaknes
 		{
 			public fixed byte name[32];
 			int size;
-        };
+		};
 
-        public class DebugInfoEntry
-        {
+		public class DebugInfoEntry
+		{
 			public string category = "";
 			public string name = "";
 			public UInt32 value = 0;
 		}
 
 
-        [DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void CreateBoard(string boardName, string apu, string ppu, string p1);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -81,7 +81,7 @@ namespace Breaknes
 
 
 		public static List<DebugInfoEntry> GetDebugInfo(DebugInfoType type)
-        {
+		{
 			List<DebugInfoEntry> list = new List<DebugInfoEntry>();
 
 			var count = BreaksCore.GetDebugInfoEntryCount(type);
@@ -103,16 +103,16 @@ namespace Breaknes
 				unsafe
 				{
 					for (int n=0; n<32; n++)
-                    {
+					{
 						if (raw.category[n] != 0)
-                        {
+						{
 							entry.category += (char)raw.category[n];
-                        }
+						}
 						else
-                        {
+						{
 							break;
-                        }
-                    }
+						}
+					}
 
 					for (int n = 0; n < 32; n++)
 					{

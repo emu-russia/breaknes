@@ -82,6 +82,7 @@ namespace PPUSim
 		friend VideoOutSRBit;
 		friend VideoOut;
 		friend FSM;
+		friend VRAM_Control;
 
 		/// <summary>
 		/// Internal auxiliary and intermediate connections.
@@ -106,10 +107,31 @@ namespace PPUSim
 			BaseLogic::TriState n_TB;
 			BaseLogic::TriState n_CC[4];
 			BaseLogic::TriState n_LL[2];
-			BaseLogic::TriState SYNC;
-			BaseLogic::TriState PICTURE;
-			BaseLogic::TriState BURST;
+			
+			BaseLogic::TriState n_R7;
+			BaseLogic::TriState n_W7;
 
+			BaseLogic::TriState H0_Dash;
+			BaseLogic::TriState H0_Dash2;
+			BaseLogic::TriState nH1_Dash;
+			BaseLogic::TriState H1_Dash2;
+			BaseLogic::TriState nH2_Dash;
+			BaseLogic::TriState H2_Dash2;
+			BaseLogic::TriState H3_Dash2;
+			BaseLogic::TriState H4_Dash2;
+			BaseLogic::TriState H5_Dash2;
+			BaseLogic::TriState EvenOddOut;
+			BaseLogic::TriState V_IN;
+			BaseLogic::TriState HC;
+			BaseLogic::TriState VC;
+
+			BaseLogic::TriState n_PA_Top[6];
+
+			BaseLogic::TriState TSTEP;
+			BaseLogic::TriState DB_PAR;
+			BaseLogic::TriState PD_RB;
+			BaseLogic::TriState TH_MUX;
+			BaseLogic::TriState XRB;
 		} wire;
 
 		/// <summary>
@@ -117,7 +139,33 @@ namespace PPUSim
 		/// </summary>
 		struct FsmCommands
 		{
+			BaseLogic::TriState SEV;
+			BaseLogic::TriState CLIP_O;
+			BaseLogic::TriState CLIP_B;
+			BaseLogic::TriState ZHPOS;
+			BaseLogic::TriState EVAL;
+			BaseLogic::TriState EEV;
+			BaseLogic::TriState IOAM2;
+			BaseLogic::TriState PARO;
+			BaseLogic::TriState nVIS;
+			BaseLogic::TriState FNT;
+			BaseLogic::TriState FTB;
+			BaseLogic::TriState FTA;
+			BaseLogic::TriState FAT;
+			BaseLogic::TriState nFO;
+			BaseLogic::TriState BPORCH;
+			BaseLogic::TriState SCCNT;
+			BaseLogic::TriState nHB;
+			BaseLogic::TriState BURST;
+			BaseLogic::TriState HSYNC;
+
+			BaseLogic::TriState PICTURE;
 			BaseLogic::TriState RESCL;
+			BaseLogic::TriState VSYNC;
+			BaseLogic::TriState nVSET;
+			BaseLogic::TriState VB;
+			BaseLogic::TriState BLNK;
+
 			BaseLogic::TriState INT;
 		} fsm;
 
@@ -135,6 +183,7 @@ namespace PPUSim
 
 		VideoOut* vid_out = nullptr;
 		FSM* hv_fsm = nullptr;
+		VRAM_Control* vram_ctrl = nullptr;
 
 	public:
 		PPU(Revision rev);
