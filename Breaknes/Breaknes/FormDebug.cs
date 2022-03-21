@@ -306,7 +306,7 @@ namespace Breaknes
 
         private void paletteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowWiki("https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/PPU/palette.md");
+            ShowWiki("https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/PPU/cram.md");
         }
 
         private void nTSCVideoSignalToolStripMenuItem_Click(object sender, EventArgs e)
