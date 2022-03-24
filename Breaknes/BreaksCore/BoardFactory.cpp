@@ -76,7 +76,7 @@ namespace Breaknes
 	{
 	}
 
-	Board* BoardFactory::CreateInstance()
+	Board* BoardFactory::CreateInstance(Core *core)
 	{
 		Board* inst = nullptr;
 
@@ -90,7 +90,7 @@ namespace Breaknes
 		}
 		else
 		{
-			inst = new BogusBoard(apu_rev, ppu_rev);
+			inst = new BogusBoard(core, apu_rev, ppu_rev);
 		}
 
 		return inst;

@@ -16,7 +16,7 @@ namespace Breaknes
 		memset(testRegion, 0, sizeof(MemDesciptor));
 		strcpy(testRegion->name, "TestMem");
 		testRegion->size = 256;
-		AddMemRegion(testRegion, ReadTestMem, this);
+		AddMemRegion(testRegion, ReadTestMem, this, false);
 	}
 
 	Core::~Core()
@@ -132,12 +132,13 @@ namespace Breaknes
 		cartInfo.clear();
 	}
 
-	void Core::AddMemRegion(MemDesciptor* descr, uint8_t(*ReadByte)(void* opaque, size_t addr), void* opaque)
+	void Core::AddMemRegion(MemDesciptor* descr, uint8_t(*ReadByte)(void* opaque, size_t addr), void* opaque, bool cartRelated)
 	{
 		MemProvider prov;
 		prov.descr = descr;
 		prov.ReadByte = ReadByte;
 		prov.opaque = opaque;
+		prov.cartRelated = cartRelated;
 		memMap.push_back(prov);
 	}
 
@@ -192,6 +193,32 @@ namespace Breaknes
 		if (this_board)
 		{
 			this_board->DestroyCartridge();
+
+			// It is also necessary to clean DebugInfo for the previous cartridge
+
+			for (auto it = cartInfo.begin(); it != cartInfo.end(); ++it)
+			{
+				delete it->entry;
+			}
+			cartInfo.clear();
+
+			// Delete all memory regions of the previous cartridge
+
+			auto it = memMap.begin();
+			while (it != memMap.end())
+			{
+				MemProvider prov = *it;
+
+				if (prov.cartRelated)
+				{
+					delete prov.descr;
+					memMap.erase(it++);
+				}
+				else
+				{
+					it++;
+				}
+			}
 		}
 	}
 

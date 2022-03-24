@@ -16,8 +16,10 @@ namespace Breaknes
 
 		AbstractCartridge* cart = nullptr;
 
+		Core* core = nullptr;
+
 	public:
-		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
+		Board(Core *core, APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
 		virtual ~Board();
 
 		void InsertCartridge(AbstractCartridge* cart);

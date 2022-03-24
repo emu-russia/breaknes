@@ -36,6 +36,9 @@
             this.bogusWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assemblerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.coreDataPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.testDebugInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testMemDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.coreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.overviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -104,9 +107,6 @@
             this.toolStripButtonStep = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelCycle = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.testDebugInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.testMemDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -145,9 +145,9 @@
             this.bogusWindowToolStripMenuItem,
             this.assemblerToolStripMenuItem,
             this.coreDataPathToolStripMenuItem,
+            this.testMemDumpToolStripMenuItem,
             this.toolStripSeparator1,
-            this.testDebugInfoToolStripMenuItem,
-            this.testMemDumpToolStripMenuItem});
+            this.testDebugInfoToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -172,6 +172,25 @@
             this.coreDataPathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.coreDataPathToolStripMenuItem.Text = "Core DataPath";
             this.coreDataPathToolStripMenuItem.Click += new System.EventHandler(this.coreDataPathToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // testDebugInfoToolStripMenuItem
+            // 
+            this.testDebugInfoToolStripMenuItem.Name = "testDebugInfoToolStripMenuItem";
+            this.testDebugInfoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testDebugInfoToolStripMenuItem.Text = "Test DebugInfo";
+            this.testDebugInfoToolStripMenuItem.Click += new System.EventHandler(this.testDebugInfoToolStripMenuItem_Click);
+            // 
+            // testMemDumpToolStripMenuItem
+            // 
+            this.testMemDumpToolStripMenuItem.Name = "testMemDumpToolStripMenuItem";
+            this.testMemDumpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testMemDumpToolStripMenuItem.Text = "Memory Dump";
+            this.testMemDumpToolStripMenuItem.Click += new System.EventHandler(this.testMemDumpToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -712,25 +731,6 @@
             this.toolStripStatusLabelCycle.Name = "toolStripStatusLabelCycle";
             this.toolStripStatusLabelCycle.Size = new System.Drawing.Size(48, 17);
             this.toolStripStatusLabelCycle.Text = "Cycle: 0";
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
-            // 
-            // testDebugInfoToolStripMenuItem
-            // 
-            this.testDebugInfoToolStripMenuItem.Name = "testDebugInfoToolStripMenuItem";
-            this.testDebugInfoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.testDebugInfoToolStripMenuItem.Text = "Test DebugInfo";
-            this.testDebugInfoToolStripMenuItem.Click += new System.EventHandler(this.testDebugInfoToolStripMenuItem_Click);
-            // 
-            // testMemDumpToolStripMenuItem
-            // 
-            this.testMemDumpToolStripMenuItem.Name = "testMemDumpToolStripMenuItem";
-            this.testMemDumpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.testMemDumpToolStripMenuItem.Text = "Test MemDump";
-            this.testMemDumpToolStripMenuItem.Click += new System.EventHandler(this.testMemDumpToolStripMenuItem_Click);
             // 
             // FormDebug
             // 

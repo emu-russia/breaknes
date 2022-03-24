@@ -8,6 +8,6 @@ namespace Breaknes
 		CartridgeFactory(uint8_t* nesImage, size_t size);
 		~CartridgeFactory();
 
-		AbstractCartridge* GetInstance();
+		AbstractCartridge* GetInstance(Core* core);
 	};
 }

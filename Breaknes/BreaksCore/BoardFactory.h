@@ -13,6 +13,6 @@ namespace Breaknes
 		BoardFactory(std::string board, std::string apu, std::string ppu, std::string p1);
 		~BoardFactory();
 
-		Board* CreateInstance();
+		Board* CreateInstance(Core* core);
 	};
 }
