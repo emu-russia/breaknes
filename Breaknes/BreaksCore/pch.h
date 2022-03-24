@@ -20,6 +20,7 @@
 #include "CartridgeFactory.h"
 
 #include "AbstractBoard.h"
+#include "BogusBoard.h"
 #include "NES.h"
 #include "Famicom.h"
 #include "BoardFactory.h"
