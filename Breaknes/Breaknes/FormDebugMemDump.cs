@@ -14,9 +14,21 @@ namespace Breaknes
 {
     public partial class FormDebugMemDump : Form
     {
+        byte[] mem = new byte[0x10000];
+
         public FormDebugMemDump()
         {
             InitializeComponent();
+        }
+
+        private void FormDebugMemDump_Load(object sender, EventArgs e)
+        {
+            // Test
+
+            IByteProvider memProvider = new DynamicByteProvider(mem);
+            hexBox1.ByteProvider = memProvider;
+
+            hexBox1.Refresh();
         }
     }
 }

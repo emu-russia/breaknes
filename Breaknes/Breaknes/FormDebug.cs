@@ -380,7 +380,9 @@ namespace Breaknes
 
         private void testMemDumpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            FormDebugMemDump memDump = new FormDebugMemDump();
+            memDump.MdiParent = this;
+            memDump.Show();
         }
 
     }

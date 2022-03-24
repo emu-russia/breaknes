@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <cassert>
 #include <Windows.h>
 
 #include "../BaseLogicLib/BaseLogic.h"
@@ -20,6 +21,7 @@
 #include "CartridgeFactory.h"
 
 #include "AbstractBoard.h"
+#include "BogusBoard.h"
 #include "NES.h"
 #include "Famicom.h"
 #include "BoardFactory.h"

@@ -22,6 +22,7 @@
     <ClCompile Include="..\..\AbstractBoard.cpp" />
     <ClCompile Include="..\..\AbstractCartridge.cpp" />
     <ClCompile Include="..\..\BoardFactory.cpp" />
+    <ClCompile Include="..\..\BogusBoard.cpp" />
     <ClCompile Include="..\..\Core.cpp" />
     <ClCompile Include="..\..\CartridgeFactory.cpp" />
     <ClCompile Include="..\..\CoreApi.cpp" />
@@ -44,6 +45,7 @@
     <ClInclude Include="..\..\AbstractBoard.h" />
     <ClInclude Include="..\..\AbstractCartridge.h" />
     <ClInclude Include="..\..\BoardFactory.h" />
+    <ClInclude Include="..\..\BogusBoard.h" />
     <ClInclude Include="..\..\CartridgeFactory.h" />
     <ClInclude Include="..\..\Core.h" />
     <ClInclude Include="..\..\CoreApi.h" />
