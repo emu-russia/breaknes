@@ -10,7 +10,7 @@ namespace Breaknes
 	{
 	}
 
-	AbstractCartridge* CartridgeFactory::GetInstance()
+	AbstractCartridge* CartridgeFactory::GetInstance(Core* core)
 	{
 		return nullptr;
 	}

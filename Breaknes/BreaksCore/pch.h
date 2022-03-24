@@ -12,6 +12,11 @@
 #include "../../BreaksAPU/APUSim/apu.h"
 #include "../../BreaksPPU/PPUSim/ppu.h"
 
+namespace Breaknes
+{
+	class Core;
+}
+
 #include "LS139.h"
 #include "LS368.h"
 #include "LS373.h"

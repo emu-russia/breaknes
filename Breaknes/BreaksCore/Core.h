@@ -14,6 +14,7 @@ namespace Breaknes
 		MemDesciptor* descr;
 		uint8_t(*ReadByte)(void* opaque, size_t addr);
 		void* opaque;
+		bool cartRelated;
 	};
 
 	class Core
@@ -60,7 +61,8 @@ namespace Breaknes
 		/// <param name="descr">Memory descriptor (auto-delete)</param>
 		/// <param name="ReadByte">Delegate to read one byte</param>
 		/// <param name="opaque">Transparent pointer to pass to the delegate (usually `this`)</param>
-		void AddMemRegion(MemDesciptor* descr, uint8_t (*ReadByte)(void* opaque, size_t addr), void* opaque);
+		/// <param name="cartRelated">true: The memory region refers to the external cartridge.</param>
+		void AddMemRegion(MemDesciptor* descr, uint8_t (*ReadByte)(void* opaque, size_t addr), void* opaque, bool cartRelated);
 
 		/// <summary>
 		/// Clear MemLayout.

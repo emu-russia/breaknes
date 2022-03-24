@@ -7,7 +7,7 @@ extern "C"
 	void CreateBoard(char* boardName, char* apu, char* ppu, char* p1)
 	{
 		Breaknes::BoardFactory bf (boardName, apu, ppu, p1);
-		core.SwitchBoard(bf.CreateInstance());
+		core.SwitchBoard(bf.CreateInstance(&core));
 	}
 
 	__declspec(dllexport)
@@ -23,7 +23,7 @@ extern "C"
 	void InsertCartridge(uint8_t* nesImage, size_t size)
 	{
 		Breaknes::CartridgeFactory cf(nesImage, size);
-		core.AttachCartridge(cf.GetInstance());
+		core.AttachCartridge(cf.GetInstance(&core));
 	}
 
 	__declspec(dllexport)
