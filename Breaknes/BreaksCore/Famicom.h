@@ -1,5 +1,7 @@
 #pragma once
 
+// TBD: Redesign to use the abstract `Board` class.
+
 namespace Breaknes
 {
 	class Famicom

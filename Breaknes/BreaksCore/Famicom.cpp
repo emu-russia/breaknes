@@ -1,5 +1,7 @@
 // https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/MB/Famicom.md
 
+// TBD: Redesign to use the abstract `Board` class.
+
 #include "pch.h"
 
 using namespace BaseLogic;

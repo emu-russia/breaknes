@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <cassert>
 #include <Windows.h>
 
 #include "../BaseLogicLib/BaseLogic.h"

@@ -23,6 +23,8 @@ namespace Breaknes
 	{
 		DisposeDebugInfo();
 		DisposeMemMap();
+		DisposeCartridge();
+		DisposeBoard();
 	}
 
 	void Core::AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry), void* opaque)
@@ -148,14 +150,60 @@ namespace Breaknes
 		memMap.clear();
 	}
 
+	// DEBUG: To be deleted after GUI debugging
 	uint32_t Core::GetTestInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		return 123;
 	}
 
+	// DEBUG: To be deleted after GUI debugging
 	uint8_t Core::ReadTestMem(void* opaque, size_t addr)
 	{
 		return (uint8_t)addr;
 	}
 
+	void Core::SwitchBoard(Board* board)
+	{
+		// This method requires that there is no previous association with any board, otherwise there will be leaks.
+		assert(this_board == nullptr);
+
+		this_board = board;
+	}
+	
+	void Core::DisposeBoard()
+	{
+		if (this_board)
+		{
+			delete this_board;
+			this_board = nullptr;
+		}
+	}
+
+	void Core::AttachCartridge(AbstractCartridge* cart)
+	{
+		if (this_board)
+		{
+			this_board->InsertCartridge(cart);
+		}
+	}
+
+	void Core::DisposeCartridge()
+	{
+		if (this_board)
+		{
+			this_board->DestroyCartridge();
+		}
+	}
+
+	void Core::Sim()
+	{
+		if (this_board)
+		{
+			BaseLogic::TriState inputs[1];
+			BaseLogic::TriState outputs[1];
+			float analogOutputs[1];
+
+			this_board->sim(inputs, outputs, analogOutputs);
+		}
+	}
 }
