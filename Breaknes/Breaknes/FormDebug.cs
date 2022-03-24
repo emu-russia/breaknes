@@ -12,6 +12,10 @@ namespace Breaknes
 {
     public partial class FormDebug : Form
     {
+        public delegate void StepHandler();
+
+        public event StepHandler? OnStep = null;
+
         public FormDebug()
         {
             InitializeComponent();
@@ -20,6 +24,11 @@ namespace Breaknes
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        public void DebugEventHandler(DebugEvent e)
+        {
+            Console.WriteLine (e.ToString ());
         }
 
         private void FormDebug_Load(object sender, EventArgs e)
@@ -385,5 +394,9 @@ namespace Breaknes
             memDump.Show();
         }
 
+        private void toolStripButtonStep_Click(object sender, EventArgs e)
+        {
+            OnStep?.Invoke();
+        }
     }
 }

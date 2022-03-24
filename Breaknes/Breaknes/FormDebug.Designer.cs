@@ -36,9 +36,9 @@
             this.bogusWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assemblerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.coreDataPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testMemDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.testDebugInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.testMemDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.coreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.overviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -173,6 +173,13 @@
             this.coreDataPathToolStripMenuItem.Text = "Core DataPath";
             this.coreDataPathToolStripMenuItem.Click += new System.EventHandler(this.coreDataPathToolStripMenuItem_Click);
             // 
+            // testMemDumpToolStripMenuItem
+            // 
+            this.testMemDumpToolStripMenuItem.Name = "testMemDumpToolStripMenuItem";
+            this.testMemDumpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testMemDumpToolStripMenuItem.Text = "Memory Dump";
+            this.testMemDumpToolStripMenuItem.Click += new System.EventHandler(this.testMemDumpToolStripMenuItem_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -184,13 +191,6 @@
             this.testDebugInfoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.testDebugInfoToolStripMenuItem.Text = "Test DebugInfo";
             this.testDebugInfoToolStripMenuItem.Click += new System.EventHandler(this.testDebugInfoToolStripMenuItem_Click);
-            // 
-            // testMemDumpToolStripMenuItem
-            // 
-            this.testMemDumpToolStripMenuItem.Name = "testMemDumpToolStripMenuItem";
-            this.testMemDumpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.testMemDumpToolStripMenuItem.Text = "Memory Dump";
-            this.testMemDumpToolStripMenuItem.Click += new System.EventHandler(this.testMemDumpToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -715,6 +715,7 @@
             this.toolStripButtonStep.Name = "toolStripButtonStep";
             this.toolStripButtonStep.Size = new System.Drawing.Size(99, 36);
             this.toolStripButtonStep.Text = "Step (F11)";
+            this.toolStripButtonStep.Click += new System.EventHandler(this.toolStripButtonStep_Click);
             // 
             // statusStrip1
             // 

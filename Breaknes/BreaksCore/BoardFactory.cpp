@@ -16,6 +16,10 @@ namespace Breaknes
 		{
 			apu_rev = APUSim::Revision::RP2A07;
 		}
+		else
+		{
+			board_name = "Bogus";
+		}
 
 		// Perform a reflection for PPU
 
@@ -59,6 +63,10 @@ namespace Breaknes
 		{
 			ppu_rev = PPUSim::Revision::RP2C07_0;
 		}
+		else
+		{
+			board_name = "Bogus";
+		}
 
 		// Perform a reflection for cartridge slot
 
@@ -69,6 +77,10 @@ namespace Breaknes
 		else if (p1 == "NES")
 		{
 			p1_type = ConnectorType::NESStyle;
+		}
+		else
+		{
+			board_name = "Bogus";
 		}
 	}
 
