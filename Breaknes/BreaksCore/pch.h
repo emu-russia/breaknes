@@ -31,7 +31,7 @@ namespace Breaknes
 #include "Famicom.h"
 #include "BoardFactory.h"
 
-#include "UnitTest.h"
+#include "CoreUnitTest.h"
 
 #include "CoreApi.h"
 #include "Core.h"

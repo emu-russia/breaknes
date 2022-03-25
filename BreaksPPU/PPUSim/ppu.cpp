@@ -10,6 +10,8 @@ namespace PPUSim
 	{
 		rev = _rev;
 
+		h = new HVCounter(this, 9);
+		v = new HVCounter(this, 9);
 		vid_out = new VideoOut(this);
 		hv_fsm = new FSM(this);
 		vram_ctrl = new VRAM_Control(this);
@@ -17,6 +19,8 @@ namespace PPUSim
 
 	PPU::~PPU()
 	{
+		delete h;
+		delete v;
 		delete vid_out;
 		delete hv_fsm;
 		delete vram_ctrl;
