@@ -30,7 +30,7 @@
     <ClCompile Include="..\..\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\UnitTest.cpp">
+    <ClCompile Include="..\..\CoreUnitTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\LS139.cpp">
@@ -74,7 +74,7 @@
     <ClInclude Include="..\..\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UnitTest.h">
+    <ClInclude Include="..\..\CoreUnitTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\LS139.h">

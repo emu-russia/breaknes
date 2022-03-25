@@ -39,7 +39,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\SRAM.cpp" />
-    <ClCompile Include="..\..\UnitTest.cpp" />
+    <ClCompile Include="..\..\CoreUnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\AbstractBoard.h" />
@@ -56,7 +56,7 @@
     <ClInclude Include="..\..\NES.h" />
     <ClInclude Include="..\..\pch.h" />
     <ClInclude Include="..\..\SRAM.h" />
-    <ClInclude Include="..\..\UnitTest.h" />
+    <ClInclude Include="..\..\CoreUnitTest.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Readme.md" />

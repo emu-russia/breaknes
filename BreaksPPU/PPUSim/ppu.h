@@ -79,6 +79,8 @@ namespace PPUSim
 
 	class PPU
 	{
+		friend HVCounterBit;
+		friend HVCounter;
 		friend VideoOutSRBit;
 		friend VideoOut;
 		friend FSM;
@@ -181,6 +183,8 @@ namespace PPUSim
 		BaseLogic::DLatch pclk_4;
 		size_t pclk_counter = 0;
 
+		HVCounter* h = nullptr;
+		HVCounter* v = nullptr;
 		VideoOut* vid_out = nullptr;
 		FSM* hv_fsm = nullptr;
 		VRAM_Control* vram_ctrl = nullptr;
