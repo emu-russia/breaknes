@@ -8,6 +8,8 @@ namespace PPUSim
 {
 	TriState HVCounterBit::sim(TriState Carry, TriState CLR)
 	{
+		// The CLR actually makes sense as `Load`. But in the PPU all the inputs for the `Load` equivalent are connected to Vss, so we use the name CLR.
+
 		ff.set( MUX(ppu->wire.PCLK, NOR(NOT(ff.get()), ppu->wire.RES), NOR(latch.get(), CLR)) );
 		latch.set(MUX(Carry, NOT(ff.get()), ff.get()), NOT(ppu->wire.PCLK));
 		TriState CarryOut = NOR(NOT(ff.get()), NOT(Carry));
