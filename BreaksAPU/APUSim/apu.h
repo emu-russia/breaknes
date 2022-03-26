@@ -51,8 +51,46 @@ namespace APUSim
 
 	class APU
 	{
+		friend DMACounterBit;
+		friend DMA;
+
+		/// <summary>
+		/// Internal auxiliary and intermediate connections.
+		/// </summary>
+		struct InternalWires
+		{
+			BaseLogic::TriState PHI1;
+			BaseLogic::TriState PHI2;
+			BaseLogic::TriState RDY;
+			BaseLogic::TriState ACLK;
+			BaseLogic::TriState n_ACLK;
+			BaseLogic::TriState RES;
+			BaseLogic::TriState W4014;
+			BaseLogic::TriState RUNDMC;
+			BaseLogic::TriState DMCReady;
+			BaseLogic::TriState SPRE;
+			BaseLogic::TriState SPRS;
+			BaseLogic::TriState RnW;
+			BaseLogic::TriState SPR_CPU;
+			BaseLogic::TriState SPR_PPU;
+			BaseLogic::TriState RW;
+			BaseLogic::TriState n_DMC_AB;
+		} wire;
+
 		Revision rev = Revision::Unknown;
 		M6502Core::M6502* core = nullptr;
+
+		DMA* dma = nullptr;
+
+		// Internal buses.
+
+		uint8_t DB = 0;
+		bool DB_Dirty = false;
+
+		uint16_t DMC_Addr;
+		uint16_t SPR_Addr;
+		uint16_t CPU_Addr;
+		uint16_t Ax;
 
 	public:
 		APU(M6502Core::M6502 *core, Revision rev);

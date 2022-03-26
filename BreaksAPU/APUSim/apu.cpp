@@ -8,11 +8,13 @@ namespace APUSim
 	{
 		core = _core;
 		rev = _rev;
+
+		dma = new DMA(this);
 	}
 
 	APU::~APU()
 	{
-
+		delete dma;
 	}
 
 	void APU::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr, float* AUX_A, float* AUX_B)
