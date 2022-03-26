@@ -13,7 +13,7 @@ Use VS2022.
 - Breaknes GUI (managed part): 30%
 - BreaksCore (native part): 50%
 - 6502 Core: 100%
-- APU: 0/9
+- APU: 1/9
 - PPU: 4/12
 - Boards: 0/4
 - Mappers: 0
