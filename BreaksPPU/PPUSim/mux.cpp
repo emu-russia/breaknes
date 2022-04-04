@@ -20,7 +20,7 @@ namespace PPUSim
 		step1[0].set(n_ZCOL0, PCLK);
 		step1[1].set(n_ZCOL1, PCLK);
 		step1[2].set(NOT(ZCOL2), PCLK);
-		step1[3].set(NOT(ZCOL2), PCLK);
+		step1[3].set(NOT(ZCOL3), PCLK);
 
 		sim_MuxControl();
 
