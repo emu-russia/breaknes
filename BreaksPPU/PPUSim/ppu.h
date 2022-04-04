@@ -84,6 +84,7 @@ namespace PPUSim
 		friend VideoOutSRBit;
 		friend VideoOut;
 		friend FSM;
+		friend Mux;
 		friend VRAM_Control;
 
 		/// <summary>
@@ -110,6 +111,7 @@ namespace PPUSim
 			BaseLogic::TriState n_CC[4];
 			BaseLogic::TriState n_LL[2];
 			
+			BaseLogic::TriState n_R2;
 			BaseLogic::TriState n_R7;
 			BaseLogic::TriState n_W7;
 
@@ -127,7 +129,22 @@ namespace PPUSim
 			BaseLogic::TriState HC;
 			BaseLogic::TriState VC;
 
+			BaseLogic::TriState n_ZCOL0;
+			BaseLogic::TriState n_ZCOL1;
+			BaseLogic::TriState ZCOL2;
+			BaseLogic::TriState ZCOL3;
+			BaseLogic::TriState n_ZPRIO;
+			BaseLogic::TriState n_SPR0HIT;
+			BaseLogic::TriState EXT_In[4];
+			BaseLogic::TriState n_EXT_Out[4];
+
+			BaseLogic::TriState I2SEV;
+
 			BaseLogic::TriState n_PA_Top[6];
+			BaseLogic::TriState BGC[4];
+			BaseLogic::TriState THO[5];
+
+			BaseLogic::TriState PAL[5];
 
 			BaseLogic::TriState TSTEP;
 			BaseLogic::TriState DB_PAR;
@@ -187,7 +204,11 @@ namespace PPUSim
 		HVCounter* v = nullptr;
 		VideoOut* vid_out = nullptr;
 		FSM* hv_fsm = nullptr;
+		Mux* mux = nullptr;
 		VRAM_Control* vram_ctrl = nullptr;
+
+		uint8_t DB;
+		bool DB_Dirty = false;
 
 	public:
 		PPU(Revision rev);

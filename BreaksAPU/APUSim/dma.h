@@ -33,15 +33,15 @@ namespace APUSim
 
 		BaseLogic::DLatch spr_buf[8];
 
+		void sim_DMA_Address();
+		void sim_DMA_Control();
+		void sim_DMA_Buffer();
+		void sim_AddressMux();
+
 	public:
 		DMA(APU* parent);
 		~DMA();
 
 		void sim();
-
-		void sim_DMA_Address();
-		void sim_DMA_Control();
-		void sim_DMA_Buffer();
-		void sim_AddressMux();
 	};
 }
