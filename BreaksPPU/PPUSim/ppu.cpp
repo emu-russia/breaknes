@@ -14,6 +14,7 @@ namespace PPUSim
 		v = new HVCounter(this, 9);
 		vid_out = new VideoOut(this);
 		hv_fsm = new FSM(this);
+		mux = new Mux(this);
 		vram_ctrl = new VRAM_Control(this);
 	}
 
@@ -23,6 +24,7 @@ namespace PPUSim
 		delete v;
 		delete vid_out;
 		delete hv_fsm;
+		delete mux;
 		delete vram_ctrl;
 	}
 
