@@ -5,6 +5,13 @@ namespace APUSim
 	class APU;
 }
 
+// An external class that has access to all internals. Use for unit testing.
+
+namespace APUSimUnitTest
+{
+	class UnitTest;
+}
+
 #include "clkgen.h"
 #include "core.h"
 #include "dma.h"
@@ -51,6 +58,7 @@ namespace APUSim
 
 	class APU
 	{
+		friend APUSimUnitTest::UnitTest;
 		friend DMACounterBit;
 		friend DMA;
 
