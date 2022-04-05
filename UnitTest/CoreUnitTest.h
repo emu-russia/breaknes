@@ -15,7 +15,7 @@ namespace M6502CoreUnitTest
 		};
 
 		void ResetPcInputs();
-		void PC_Test(uint16_t initial_pc, uint16_t expected_pc, bool inc, const char* test_name);
+		bool PC_Test(uint16_t initial_pc, uint16_t expected_pc, bool inc, const char* test_name);
 
 		void ResetALUInputs(ALU_Operation op);
 		int TestCompute(uint8_t a, uint8_t b, uint8_t expected, ALU_Operation op, bool bcd, bool carry);
@@ -30,8 +30,12 @@ namespace M6502CoreUnitTest
 		/// <summary>
 		/// Checking Program Counter simulator functionality.
 		/// </summary>
-		void PC_UnitTest();
+		bool PC_UnitTest();
 
-		void ALU_UnitTest();
+		/// <summary>
+		/// Checking the operability of the ALU 6502 in different modes.
+		/// </summary>
+		/// <returns></returns>
+		bool ALU_UnitTest();
 	};
 }

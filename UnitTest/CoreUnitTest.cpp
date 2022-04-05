@@ -2,6 +2,7 @@
 
 using namespace BaseLogic;
 using namespace M6502Core;
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace M6502CoreUnitTest
 {
@@ -31,7 +32,7 @@ namespace M6502CoreUnitTest
 		core->wire.n_1PC = TriState::One;
 	}
 
-	void UnitTest::PC_Test(uint16_t initial_pc, uint16_t expected_pc, bool inc, const char* test_name)
+	bool UnitTest::PC_Test(uint16_t initial_pc, uint16_t expected_pc, bool inc, const char* test_name)
 	{
 		core->DB = 0;
 		core->ADL = 0;
@@ -93,8 +94,10 @@ namespace M6502CoreUnitTest
 
 		if (pc_from_bus != expected_pc)
 		{
-			printf("`%s` test failed! PC from bus (0x%04X) != Expected PC (0x%04X)\n", test_name, pc_from_bus, expected_pc);
-			return;
+			char msg[0x200];
+			sprintf(msg, "`%s` test failed! PC from bus (0x%04X) != Expected PC (0x%04X)\n", test_name, pc_from_bus, expected_pc);
+			Logger::WriteMessage(msg);
+			return false;
 		}
 
 		// Check direct values
@@ -105,25 +108,44 @@ namespace M6502CoreUnitTest
 
 		if (PC != expected_pc)
 		{
-			printf("`%s` test failed! PC (0x%04X) != Expected PC (0x%04X)\n", test_name, PC, expected_pc);
-			return;
+			char msg[0x200];
+			sprintf(msg, "`%s` test failed! PC (0x%04X) != Expected PC (0x%04X)\n", test_name, PC, expected_pc);
+			Logger::WriteMessage(msg);
+			return false;
 		}
 
-		printf("`%s` test pass!\n", test_name);
+		{
+			char msg[0x200];
+			sprintf(msg, "`%s` test pass!\n", test_name);
+			Logger::WriteMessage(msg);
+		}
+		return true;
 	}
 
-	void UnitTest::PC_UnitTest()
+	bool UnitTest::PC_UnitTest()
 	{
-		PC_Test(0x0000, 0x0000, false, "PC = 0x0000");
-		PC_Test(0xA5A5, 0xA5A5, false, "PC = 0xA5A5");
-		PC_Test(0x5A5A, 0x5A5A, false, "PC = 0x5A5A");
-		PC_Test(0xFFFE, 0xFFFE, false, "PC = 0xFFFE");
-		PC_Test(0xFFFF, 0xFFFF, false, "PC = 0xFFFF");
-		PC_Test(0x0000, 0x0001, true, "PC = 0x0000 -> Increment -> Check PC = 0x0001");
-		PC_Test(0xA5A5, 0xA5A6, true, "PC = 0xA5A5 -> Increment -> Check PC = 0xA5A6");
-		PC_Test(0x5A5A, 0x5A5B, true, "PC = 0x5A5A -> Increment -> Check PC = 0x5A5B");
-		PC_Test(0xFFFE, 0xFFFF, true, "PC = 0xFFFE -> Increment -> Check PC = 0xFFFF");
-		PC_Test(0xFFFF, 0x0000, true, "PC = 0xFFFF -> Increment -> Check PC = 0x0000");
+		if (!PC_Test(0x0000, 0x0000, false, "PC = 0x0000"))
+			return false;
+		if (!PC_Test(0xA5A5, 0xA5A5, false, "PC = 0xA5A5"))
+			return false;
+		if (!PC_Test(0x5A5A, 0x5A5A, false, "PC = 0x5A5A"))
+			return false;
+		if (!PC_Test(0xFFFE, 0xFFFE, false, "PC = 0xFFFE"))
+			return false;
+		if (!PC_Test(0xFFFF, 0xFFFF, false, "PC = 0xFFFF"))
+			return false;
+		if (!PC_Test(0x0000, 0x0001, true, "PC = 0x0000 -> Increment -> Check PC = 0x0001"))
+			return false;
+		if (!PC_Test(0xA5A5, 0xA5A6, true, "PC = 0xA5A5 -> Increment -> Check PC = 0xA5A6"))
+			return false;
+		if (!PC_Test(0x5A5A, 0x5A5B, true, "PC = 0x5A5A -> Increment -> Check PC = 0x5A5B"))
+			return false;
+		if (!PC_Test(0xFFFE, 0xFFFF, true, "PC = 0xFFFE -> Increment -> Check PC = 0xFFFF"))
+			return false;
+		if (!PC_Test(0xFFFF, 0x0000, true, "PC = 0xFFFF -> Increment -> Check PC = 0x0000"))
+			return false;
+
+		return true;
 	}
 
 	void UnitTest::ResetALUInputs(ALU_Operation op)
@@ -280,19 +302,21 @@ namespace M6502CoreUnitTest
 
 		if (!pass)
 		{
-			printf("Test 0x%02X %s 0x%02X = 0x%02X, ACR: %d, AVR: %d\n", a, op_str, b, ac,
+			char msg[0x200];
+			sprintf(msg, "Test 0x%02X %s 0x%02X = 0x%02X, ACR: %d, AVR: %d\n", a, op_str, b, ac,
 				core->alu->getACR() == TriState::One ? 1 : 0,
 				core->alu->getAVR() == TriState::One ? 1 : 0);
+			Logger::WriteMessage(msg);
 		}
 
 		return pass ? 0 : -1;
 	}
 
-	void UnitTest::ALU_UnitTest()
+	bool UnitTest::ALU_UnitTest()
 	{
 		// SUMS No carry
 
-		printf("SUMS No carry: ");
+		Logger::WriteMessage("SUMS No carry: ");
 		for (size_t a = 0; a < 0x100; a++)
 		{
 			for (size_t b = 0; b < 0x100; b++)
@@ -300,16 +324,16 @@ namespace M6502CoreUnitTest
 				int res = TestCompute((uint8_t)a, (uint8_t)b, (uint8_t)(a + b), ALU_Operation::SUMS, false, false);
 				if (res != 0)
 				{
-					printf("Failed!\n");
-					return;
+					Logger::WriteMessage("Failed!\n");
+					return false;
 				}
 			}
 		}
-		printf("OK!\n");
+		Logger::WriteMessage("OK!\n");
 
 		// SUMS Carry
 
-		printf("SUMS Carry: ");
+		Logger::WriteMessage("SUMS Carry: ");
 		for (size_t a = 0; a < 0x100; a++)
 		{
 			for (size_t b = 0; b < 0x100; b++)
@@ -317,16 +341,16 @@ namespace M6502CoreUnitTest
 				int res = TestCompute((uint8_t)a, (uint8_t)b, (uint8_t)(a + b + 1), ALU_Operation::SUMS, false, true);
 				if (res != 0)
 				{
-					printf("Failed!\n");
-					return;
+					Logger::WriteMessage("Failed!\n");
+					return false;
 				}
 			}
 		}
-		printf("OK!\n");
+		Logger::WriteMessage("OK!\n");
 
 		// BCD Add
 
-		printf("SUMS BCD No Carry: ");
+		Logger::WriteMessage("SUMS BCD No Carry: ");
 		for (size_t a = 1; a <= 0x99; a++)
 		{
 			// Skip numbers that are not in the BCD
@@ -344,16 +368,16 @@ namespace M6502CoreUnitTest
 				int res = TestCompute((uint8_t)a, (uint8_t)b, (uint8_t)bcd_res, ALU_Operation::SUMS, true, false);
 				if (res != 0)
 				{
-					printf("Failed!\n");
-					return;
+					Logger::WriteMessage("Failed!\n");
+					return false;
 				}
 			}
 		}
-		printf("OK!\n");
+		Logger::WriteMessage("OK!\n");
 
 		// BCD Add + Carry
 
-		printf("SUMS BCD Carry: ");
+		Logger::WriteMessage("SUMS BCD Carry: ");
 		for (size_t a = 1; a <= 0x99; a++)
 		{
 			// Skip numbers that are not in the BCD
@@ -371,14 +395,15 @@ namespace M6502CoreUnitTest
 				int res = TestCompute((uint8_t)a, (uint8_t)b, (uint8_t)bcd_res, ALU_Operation::SUMS, true, true);
 				if (res != 0)
 				{
-					printf("Failed!\n");
-					return;
+					Logger::WriteMessage("Failed!\n");
+					return false;
 				}
 			}
 		}
-		printf("OK!\n");
+		Logger::WriteMessage("OK!\n");
 
-		printf("ALU_UnitTest All OK!\n");
+		Logger::WriteMessage("ALU_UnitTest All OK!\n");
+		return true;
 	}
 
 

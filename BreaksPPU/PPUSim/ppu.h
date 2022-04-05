@@ -13,6 +13,13 @@ namespace PPUSim
 	};
 }
 
+// An external class that has access to all internals. Use for unit testing.
+
+namespace PPUSimUnitTest
+{
+	class UnitTest;
+}
+
 #include "bgcol.h"
 #include "cram.h"
 #include "dataread.h"
@@ -79,6 +86,7 @@ namespace PPUSim
 
 	class PPU
 	{
+		friend PPUSimUnitTest::UnitTest;
 		friend HVCounterBit;
 		friend HVCounter;
 		friend VideoOutSRBit;
