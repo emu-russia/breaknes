@@ -40,5 +40,7 @@ namespace PPUSim
 		~HVCounter();
 
 		void sim(BaseLogic::TriState Carry, BaseLogic::TriState CLR);
+
+		size_t get();
 	};
 }

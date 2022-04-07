@@ -50,4 +50,20 @@ namespace PPUSim
 			Carry = bit[n]->sim(Carry, CLR);
 		}
 	}
+
+	size_t HVCounter::get()
+	{
+		size_t val = 0;
+
+		for (size_t n = 0; n < bitCount; n++)
+		{
+			auto bitVal = bit[n]->getOut();
+			if (bitVal == TriState::One)
+			{
+				val |= (1ULL << n);
+			}
+		}
+
+		return val;
+	}
 }
