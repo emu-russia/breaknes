@@ -10,5 +10,7 @@
 #include "../BreaksPPU/PPUSim/ppu.h"
 
 #include "CoreUnitTest.h"
+#include "APUTest.h"
+#include "PPUTest.h"
 
 #include "CppUnitTest.h"
