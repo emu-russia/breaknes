@@ -149,7 +149,7 @@ namespace BaseLogic
 		}
 	}
 
-	PLA::PLA(size_t inputs, size_t outputs)
+	PLA::PLA(size_t inputs, size_t outputs, const char* filename)
 	{
 		romInputs = inputs;
 		romOutputs = outputs;
@@ -157,6 +157,7 @@ namespace BaseLogic
 		rom = new uint8_t[romSize];
 		memset(rom, 0, romSize);
 		unomptimized_out = new TriState[romOutputs];
+		fname = filename;
 	}
 
 	PLA::~PLA()
@@ -197,7 +198,7 @@ namespace BaseLogic
 			size_t maxLane = (1ULL << romInputs);
 
 			FILE* f;
-			fopen_s(&f, "pla.bin", "rb");
+			fopen_s(&f, fname, "rb");
 			if (f)
 			{
 				outs = new TriState[maxLane * romOutputs];
@@ -217,9 +218,16 @@ namespace BaseLogic
 				memcpy(lane, outputs, romOutputs * sizeof(TriState));
 			}
 
-			fopen_s(&f, "pla.bin", "wb");
-			fwrite(outs, sizeof(TriState), maxLane * romOutputs, f);
-			fclose(f);
+			fopen_s(&f, fname, "wb");
+			if (f)
+			{
+				fwrite(outs, sizeof(TriState), maxLane * romOutputs, f);
+				fclose(f);
+			}
+			else
+			{
+				throw "fopen_s failed!";
+			}
 		}
 	}
 
