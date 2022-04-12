@@ -115,15 +115,33 @@ namespace PPUSim
 			BaseLogic::TriState RC;
 			BaseLogic::TriState PCLK;
 			BaseLogic::TriState n_PCLK;
-			BaseLogic::TriState n_TR;
-			BaseLogic::TriState n_TG;
-			BaseLogic::TriState n_TB;
 			BaseLogic::TriState n_CC[4];
 			BaseLogic::TriState n_LL[2];
 			
-			BaseLogic::TriState n_R2;
 			BaseLogic::TriState n_R7;
 			BaseLogic::TriState n_W7;
+			BaseLogic::TriState n_W4;
+			BaseLogic::TriState n_W3;
+			BaseLogic::TriState n_R2;
+			BaseLogic::TriState n_W1;
+			BaseLogic::TriState n_W0;
+			BaseLogic::TriState n_R4;
+
+			BaseLogic::TriState I1_32;
+			BaseLogic::TriState OBSEL;
+			BaseLogic::TriState BGSEL;
+			BaseLogic::TriState O8_16;
+			BaseLogic::TriState n_SLAVE;
+			BaseLogic::TriState VBL;
+			BaseLogic::TriState BnW;
+			BaseLogic::TriState n_BGCLIP;
+			BaseLogic::TriState n_OBCLIP;
+			BaseLogic::TriState BGE;
+			BaseLogic::TriState BLACK;
+			BaseLogic::TriState OBE;
+			BaseLogic::TriState n_TR;
+			BaseLogic::TriState n_TG;
+			BaseLogic::TriState n_TB;
 
 			BaseLogic::TriState H0_Dash;
 			BaseLogic::TriState H0_Dash2;
@@ -242,5 +260,7 @@ namespace PPUSim
 		void ResetPCLKCounter();
 
 		const char* RevisionToStr(Revision rev);
+
+		void SetDBBit(size_t n, BaseLogic::TriState bit_val);
 	};
 }

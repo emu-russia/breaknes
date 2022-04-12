@@ -50,11 +50,31 @@ namespace PPUSim
 
 		sim_PCLK();
 
+		// TBD: Regs
+
+		// H/V Counters.
+		// First the HCounter and its PLA are simulated (required to get the V_IN signal), and then the VCounter+PLA.
+
+		h->sim(TriState::One, hv_fsm->get_HC());
+
+		TriState* HPLA;
+		hv_dec->sim_HDecoder(hv_fsm->get_VB(), hv_fsm->get_BLNK(wire.BLACK), &HPLA);
+
+		TriState V_IN = HPLA[23];
+		v->sim(V_IN, hv_fsm->get_VC());
+
+		TriState* VPLA;
+		hv_dec->sim_VDecoder(&VPLA);
+
 		// H/V Control logic
 
-		hv_fsm->sim();
+		hv_fsm->sim(HPLA, VPLA);
 
 		// The other parts
+
+		mux->sim();
+
+		vram_ctrl->sim();
 
 		vid_out->sim(vout);
 
@@ -123,5 +143,28 @@ namespace PPUSim
 				break;
 		}
 		return "Unknown";
+	}
+
+	void PPU::SetDBBit(size_t n, BaseLogic::TriState bit_val)
+	{
+		// A proven way to resolve bus conflicts.
+		// We carry 2 variables - the bus value (8 bits) and the dirty flag.
+		// If the bus is "dirty", then the operation "Ground wins" is performed (db &= val). Otherwise we set the bus value and the dirty flag.
+
+		if (bit_val != TriState::Z)
+		{
+			uint8_t out = DB & ~(1 << n);
+			out |= (bit_val == BaseLogic::One ? 1 : 0) << n;
+
+			if (DB_Dirty)
+			{
+				DB = DB & out;
+			}
+			else
+			{
+				DB = out;
+				DB_Dirty = true;
+			}
+		}
 	}
 }

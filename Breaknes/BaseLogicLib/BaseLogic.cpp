@@ -134,6 +134,11 @@ namespace BaseLogic
 		return g;
 	}
 
+	TriState FF::nget()
+	{
+		return NOT(g);
+	}
+
 	TriState MUX(TriState sel, TriState in0, TriState in1)
 	{
 		return ((sel & 1) == 0) ? in0 : in1;
