@@ -99,8 +99,7 @@ namespace M6502Core
 			ext->sim();
 		}
 
-		DecoderInput decoder_in;
-		decoder_in.packed_bits = 0;
+		DecoderInput decoder_in{};
 
 		uint8_t IR = ir->IROut;
 

@@ -42,6 +42,7 @@ namespace PPUSim
 	/// <summary>
 	/// Version of the PPU chip, including all known official and pirate variants.
 	/// TODO: The full list of official revisions is not yet very clear, since the area has not been researched on our wiki.
+	/// See also here: https://www.nesdev.org/wiki/User:Lidnariq/Known_PPU_revisions
 	/// </summary>
 	enum class Revision
 	{
@@ -89,9 +90,10 @@ namespace PPUSim
 		friend PPUSimUnitTest::UnitTest;
 		friend HVCounterBit;
 		friend HVCounter;
+		friend HVDecoder;
+		friend FSM;
 		friend VideoOutSRBit;
 		friend VideoOut;
-		friend FSM;
 		friend Mux;
 		friend VRAM_Control;
 
@@ -159,7 +161,7 @@ namespace PPUSim
 			BaseLogic::TriState PD_RB;
 			BaseLogic::TriState TH_MUX;
 			BaseLogic::TriState XRB;
-		} wire;
+		} wire{};
 
 		/// <summary>
 		/// The most important control signals of the H/V FSM.
@@ -194,7 +196,7 @@ namespace PPUSim
 			BaseLogic::TriState BLNK;
 
 			BaseLogic::TriState INT;
-		} fsm;
+		} fsm{};
 
 		Revision rev;
 
@@ -210,8 +212,9 @@ namespace PPUSim
 
 		HVCounter* h = nullptr;
 		HVCounter* v = nullptr;
-		VideoOut* vid_out = nullptr;
+		HVDecoder* hv_dec = nullptr;
 		FSM* hv_fsm = nullptr;
+		VideoOut* vid_out = nullptr;
 		Mux* mux = nullptr;
 		VRAM_Control* vram_ctrl = nullptr;
 
@@ -237,5 +240,7 @@ namespace PPUSim
 		size_t GetPCLKCounter();
 
 		void ResetPCLKCounter();
+
+		const char* RevisionToStr(Revision rev);
 	};
 }

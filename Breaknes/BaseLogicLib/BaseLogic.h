@@ -219,9 +219,10 @@ namespace BaseLogic
 		void sim_Unomptimized(size_t input_bits, TriState** outputs);
 
 		bool Optimize = true;
+		char fname[0x100] = { 0 };
 
 	public:
-		PLA(size_t inputs, size_t outputs);
+		PLA(size_t inputs, size_t outputs, char *filename);
 		~PLA();
 
 		/// <summary>

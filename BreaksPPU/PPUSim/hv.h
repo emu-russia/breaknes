@@ -42,5 +42,7 @@ namespace PPUSim
 		void sim(BaseLogic::TriState Carry, BaseLogic::TriState CLR);
 
 		size_t get();
+
+		BaseLogic::TriState getBit(size_t n);
 	};
 }

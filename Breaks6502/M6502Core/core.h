@@ -248,15 +248,15 @@ namespace M6502Core
 
 		BaseLogic::DLatch rw_latch;
 
-		uint8_t SB;
-		uint8_t DB;
-		uint8_t ADL;
-		uint8_t ADH;
+		uint8_t SB = 0;
+		uint8_t DB = 0;
+		uint8_t ADL = 0;
+		uint8_t ADH = 0;
 
-		bool SB_Dirty;
-		bool DB_Dirty;
-		bool ADL_Dirty;
-		bool ADH_Dirty;
+		bool SB_Dirty = false;
+		bool DB_Dirty = false;
+		bool ADL_Dirty = false;
+		bool ADH_Dirty = false;
 
 		Decoder* decoder = nullptr;
 		PreDecode* predecode = nullptr;
@@ -272,8 +272,8 @@ namespace M6502Core
 		ProgramCounter* pc = nullptr;
 		DataBus* data_bus = nullptr;
 
-		BaseLogic::TriState* decoder_out;
-		size_t TxBits;		// Used to optimize table indexing
+		BaseLogic::TriState* decoder_out = nullptr;
+		size_t TxBits = 0;		// Used to optimize table indexing
 
 		void sim_Top(BaseLogic::TriState inputs[], uint8_t* data_bus);
 
@@ -335,7 +335,7 @@ namespace M6502Core
 			BaseLogic::TriState PC_DB;
 			BaseLogic::TriState n_ADL_PCL;
 			BaseLogic::TriState n_IR5;
-		} wire;
+		} wire{};
 
 		/// <summary>
 		/// Commands for bottom and flags.
@@ -405,7 +405,7 @@ namespace M6502Core
 				unsigned Z_V : 1;
 			};
 			uint64_t raw;
-		} cmd;
+		} cmd{};
 
 	public:
 		M6502(bool HLE, bool BCD_Hack);
