@@ -149,7 +149,7 @@ namespace BaseLogic
 		}
 	}
 
-	PLA::PLA(size_t inputs, size_t outputs, const char* filename)
+	PLA::PLA(size_t inputs, size_t outputs, char* filename)
 	{
 		romInputs = inputs;
 		romOutputs = outputs;
@@ -157,7 +157,7 @@ namespace BaseLogic
 		rom = new uint8_t[romSize];
 		memset(rom, 0, romSize);
 		unomptimized_out = new TriState[romOutputs];
-		fname = filename;
+		strcpy_s(fname, sizeof(fname), filename);
 	}
 
 	PLA::~PLA()

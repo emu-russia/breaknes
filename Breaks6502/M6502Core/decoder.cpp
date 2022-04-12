@@ -6,7 +6,7 @@ namespace M6502Core
 {
 	Decoder::Decoder()
 	{
-		pla = new PLA(inputs_count, outputs_count, "pla.bin");
+		pla = new PLA(inputs_count, outputs_count, (char *)"Decoder6502.bin");
 
 		// The bitmask corresponds to the values from the Breaking NES Wiki:
 		// https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/6502/decoder.md

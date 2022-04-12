@@ -83,7 +83,7 @@ namespace APUSim
 			BaseLogic::TriState SPR_PPU;
 			BaseLogic::TriState RW;
 			BaseLogic::TriState n_DMC_AB;
-		} wire;
+		} wire{};
 
 		Revision rev = Revision::Unknown;
 		M6502Core::M6502* core = nullptr;

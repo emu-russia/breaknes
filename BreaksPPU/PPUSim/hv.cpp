@@ -66,4 +66,9 @@ namespace PPUSim
 
 		return val;
 	}
+
+	TriState HVCounter::getBit(size_t n)
+	{
+		return bit[n]->getOut();
+	}
 }

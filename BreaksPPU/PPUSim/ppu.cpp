@@ -12,8 +12,9 @@ namespace PPUSim
 
 		h = new HVCounter(this, 9);
 		v = new HVCounter(this, 9);
-		vid_out = new VideoOut(this);
+		hv_dec = new HVDecoder(this);
 		hv_fsm = new FSM(this);
+		vid_out = new VideoOut(this);
 		mux = new Mux(this);
 		vram_ctrl = new VRAM_Control(this);
 	}
@@ -22,8 +23,9 @@ namespace PPUSim
 	{
 		delete h;
 		delete v;
-		delete vid_out;
+		delete hv_dec;
 		delete hv_fsm;
+		delete vid_out;
 		delete mux;
 		delete vram_ctrl;
 	}
@@ -101,5 +103,25 @@ namespace PPUSim
 	void PPU::ResetPCLKCounter()
 	{
 		pclk_counter = 0;
+	}
+
+	const char* PPU::RevisionToStr(Revision rev)
+	{
+		switch (rev)
+		{
+			case Revision::RP2C02G: return "RP2C02G";
+			case Revision::RP2C02H: return "RP2C02H";
+			case Revision::RP2C03: return "RP2C03";
+			case Revision::RP2C03B: return "RP2C03B";
+			case Revision::RP2C04_0001: return "RP2C04_0001";
+			case Revision::RP2C04_0002: return "RP2C04_0002";
+			case Revision::RP2C04_0003: return "RP2C04_0003";
+			case Revision::RP2C04_0004: return "RP2C04_0004";
+			case Revision::RP2C05: return "RP2C05";
+			case Revision::RP2C07_0: return "RP2C07_0";
+			default:
+				break;
+		}
+		return "Unknown";
 	}
 }
