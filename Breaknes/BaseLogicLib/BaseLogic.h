@@ -184,6 +184,7 @@ namespace BaseLogic
 
 		void set(TriState val);
 		TriState get();
+		TriState nget();
 	};
 
 	/// <summary>

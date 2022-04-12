@@ -78,25 +78,6 @@ namespace PPUSim
 		StrikeFF.set(NOR(ppu->fsm.RESCL, NOR(StrikeFF.get(), STRIKE)));
 		TriState enable = NOT(NOT(NOR(ppu->wire.n_R2, ppu->wire.n_DBE)));
 		TriState DB6 = MUX(enable, TriState::Z, StrikeFF.get());
-
-		// A proven way to resolve bus conflicts.
-		// We carry 2 variables - the bus value (8 bits) and the dirty flag.
-		// If the bus is "dirty", then the operation "Ground wins" is performed (db &= val). Otherwise we set the bus value and the dirty flag.
-
-		if (DB6 != TriState::Z)
-		{
-			uint8_t out = ppu->DB & ~(1 << 6);
-			out |= (DB6 == BaseLogic::One ? 1 : 0) << 6;
-
-			if (ppu->DB_Dirty)
-			{
-				ppu->DB = ppu->DB & out;
-			}
-			else
-			{
-				ppu->DB = out;
-				ppu->DB_Dirty = true;
-			}
-		}
+		ppu->SetDBBit(6, DB6);
 	}
 }
