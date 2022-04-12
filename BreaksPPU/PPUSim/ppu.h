@@ -88,6 +88,7 @@ namespace PPUSim
 	class PPU
 	{
 		friend PPUSimUnitTest::UnitTest;
+		friend ControlRegs;
 		friend HVCounterBit;
 		friend HVCounter;
 		friend HVDecoder;
@@ -120,6 +121,12 @@ namespace PPUSim
 			BaseLogic::TriState n_CC[4];
 			BaseLogic::TriState n_LL[2];
 			
+			BaseLogic::TriState n_RD;
+			BaseLogic::TriState n_WR;
+			BaseLogic::TriState n_W6_1;
+			BaseLogic::TriState n_W6_2;
+			BaseLogic::TriState n_W5_1;
+			BaseLogic::TriState n_W5_2;
 			BaseLogic::TriState n_R7;
 			BaseLogic::TriState n_W7;
 			BaseLogic::TriState n_W4;
@@ -169,6 +176,9 @@ namespace PPUSim
 			BaseLogic::TriState n_EXT_Out[4];
 
 			BaseLogic::TriState I2SEV;
+
+			BaseLogic::TriState CLPB;
+			BaseLogic::TriState CLPO;
 
 			BaseLogic::TriState n_PA_Top[6];
 			BaseLogic::TriState BGC[4];
@@ -233,6 +243,7 @@ namespace PPUSim
 		BaseLogic::DLatch pclk_4;
 		size_t pclk_counter = 0;
 
+		ControlRegs* regs = nullptr;
 		HVCounter* h = nullptr;
 		HVCounter* v = nullptr;
 		HVDecoder* hv_dec = nullptr;

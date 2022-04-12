@@ -31,7 +31,7 @@ A Managed application must first know the number of records and allocate an arra
 
 ## MemLayout
 
-The different pieces of memory within the emulated system are described by the `MemDesciptor` structure.
+The different pieces of memory within the emulated system are described by the `MemDesrciptor` structure.
 
 Methods:
 
