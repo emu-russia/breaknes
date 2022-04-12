@@ -14,6 +14,7 @@ namespace PPUSim
 		v = new HVCounter(this, 9);
 		hv_dec = new HVDecoder(this);
 		hv_fsm = new FSM(this);
+		cram = new CRAM(this);
 		vid_out = new VideoOut(this);
 		mux = new Mux(this);
 		vram_ctrl = new VRAM_Control(this);
@@ -25,6 +26,7 @@ namespace PPUSim
 		delete v;
 		delete hv_dec;
 		delete hv_fsm;
+		delete cram;
 		delete vid_out;
 		delete mux;
 		delete vram_ctrl;
@@ -75,6 +77,8 @@ namespace PPUSim
 		mux->sim();
 
 		vram_ctrl->sim();
+
+		cram->sim();
 
 		vid_out->sim(vout);
 
@@ -143,6 +147,12 @@ namespace PPUSim
 				break;
 		}
 		return "Unknown";
+	}
+
+	TriState PPU::GetDBBit(size_t n)
+	{
+		TriState DBBit = (DB & (1 << n)) != 0 ? TriState::One : TriState::Zero;
+		return DB_Dirty ? DBBit : TriState::Z;
 	}
 
 	void PPU::SetDBBit(size_t n, BaseLogic::TriState bit_val)

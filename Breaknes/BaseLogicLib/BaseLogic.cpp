@@ -144,6 +144,40 @@ namespace BaseLogic
 		return ((sel & 1) == 0) ? in0 : in1;
 	}
 
+	void DMX2(TriState in[2], TriState out[4])
+	{
+		TriState nibble[4];
+		
+		nibble[0] = in[0];
+		nibble[1] = in[1];
+		nibble[2] = TriState::Zero;
+		nibble[3] = TriState::Zero;
+
+		size_t fireInput = PackNibble(nibble);
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			out[n] = n == fireInput ? TriState::One : TriState::Zero;
+		}
+	}
+
+	void DMX3(TriState in[3], TriState out[8])
+	{
+		TriState nibble[4];
+
+		nibble[0] = in[0];
+		nibble[1] = in[1];
+		nibble[2] = in[2];
+		nibble[3] = TriState::Zero;
+
+		size_t fireInput = PackNibble(nibble);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			out[n] = n == fireInput ? TriState::One : TriState::Zero;
+		}
+	}
+
 	void DMX4(TriState in[4], TriState out[16])
 	{
 		size_t fireInput = PackNibble(in);

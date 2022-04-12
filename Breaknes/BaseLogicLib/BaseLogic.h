@@ -197,6 +197,20 @@ namespace BaseLogic
 	TriState MUX(TriState sel, TriState in0, TriState in1);
 
 	/// <summary>
+	/// DMX 2-to-4
+	/// </summary>
+	/// <param name="in"></param>
+	/// <param name="out"></param>
+	void DMX2(TriState in[2], TriState out[4]);
+
+	/// <summary>
+	/// DMX 3-to-8
+	/// </summary>
+	/// <param name="in"></param>
+	/// <param name="out"></param>
+	void DMX3(TriState in[3], TriState out[8]);
+
+	/// <summary>
 	/// DMX 4-to-16
 	/// </summary>
 	/// <param name="in"></param>

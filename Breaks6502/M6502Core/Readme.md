@@ -2,7 +2,7 @@
 
 MOS 6502 processor core emulator on the gate level.
 
-Yeah, it's that simple. We take the 6502 logic circuits from Wiki and just duplicate them in c++.
+Yeah, it's that simple. We take the 6502 logic circuits from Wiki and just duplicate them in C++.
 
 To understand what's going on here, it's enough to understand how circuits work. The code simply repeats their work.
 

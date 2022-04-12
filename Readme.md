@@ -14,6 +14,6 @@ Use VS2022.
 - BreaksCore (native part): 50%
 - 6502 Core: 100%
 - APU: 1/9
-- PPU: 7/16
+- PPU: 8/16
 - Boards: 0/4
 - Mappers: 0

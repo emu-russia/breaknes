@@ -92,6 +92,8 @@ namespace PPUSim
 		friend HVCounter;
 		friend HVDecoder;
 		friend FSM;
+		friend CBBit;
+		friend CRAM;
 		friend VideoOutSRBit;
 		friend VideoOut;
 		friend Mux;
@@ -172,6 +174,9 @@ namespace PPUSim
 			BaseLogic::TriState BGC[4];
 			BaseLogic::TriState THO[5];
 
+			BaseLogic::TriState n_CB_DB;
+			BaseLogic::TriState n_BW;
+			BaseLogic::TriState n_DB_CB;
 			BaseLogic::TriState PAL[5];
 
 			BaseLogic::TriState TSTEP;
@@ -232,6 +237,7 @@ namespace PPUSim
 		HVCounter* v = nullptr;
 		HVDecoder* hv_dec = nullptr;
 		FSM* hv_fsm = nullptr;
+		CRAM* cram = nullptr;
 		VideoOut* vid_out = nullptr;
 		Mux* mux = nullptr;
 		VRAM_Control* vram_ctrl = nullptr;
@@ -260,6 +266,8 @@ namespace PPUSim
 		void ResetPCLKCounter();
 
 		const char* RevisionToStr(Revision rev);
+
+		BaseLogic::TriState GetDBBit(size_t n);
 
 		void SetDBBit(size_t n, BaseLogic::TriState bit_val);
 	};
