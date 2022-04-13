@@ -10,6 +10,7 @@ namespace PPUSim
 	{
 		rev = _rev;
 
+		regs = new ControlRegs(this);
 		h = new HVCounter(this, 9);
 		v = new HVCounter(this, 9);
 		hv_dec = new HVDecoder(this);
@@ -22,6 +23,7 @@ namespace PPUSim
 
 	PPU::~PPU()
 	{
+		delete regs;
 		delete h;
 		delete v;
 		delete hv_dec;
@@ -52,7 +54,9 @@ namespace PPUSim
 
 		sim_PCLK();
 
-		// TBD: Regs
+		// Regs
+
+		regs->sim();
 
 		// H/V Counters.
 		// First the HCounter and its PLA are simulated (required to get the V_IN signal), and then the VCounter+PLA.
@@ -73,6 +77,8 @@ namespace PPUSim
 		hv_fsm->sim(HPLA, VPLA);
 
 		// The other parts
+
+		regs->sim_CLP();
 
 		mux->sim();
 
