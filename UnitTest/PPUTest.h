@@ -19,5 +19,7 @@ namespace PPUSimUnitTest
 
 		bool HVCounterTestRES();
 		bool HVCounterTest();
+		bool RunSinglePCLK();
+		bool RunLines(size_t n);
 	};
 }
