@@ -131,8 +131,8 @@ namespace PPUSim
 	void ControlRegs::sim_FirstSecond_SCCX_Write()
 	{
 		TriState RC = ppu->wire.RC;
-		TriState n_DBE = ppu->wire.RC;
-		TriState n_R2 = ppu->wire.RC;
+		TriState n_DBE = ppu->wire.n_DBE;
+		TriState n_R2 = ppu->wire.n_R2;
 
 		TriState R2_Enable = NOR(n_R2, n_DBE);
 		TriState W56_Enable = NOR(n_W56, n_DBE);
