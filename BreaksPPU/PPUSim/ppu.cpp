@@ -58,23 +58,18 @@ namespace PPUSim
 
 		regs->sim();
 
-		// H/V Counters.
-		// First the HCounter and its PLA are simulated (required to get the V_IN signal), and then the VCounter+PLA.
-
-		h->sim(TriState::One, hv_fsm->get_HC());
+		// H/V Control logic
 
 		TriState* HPLA;
 		hv_dec->sim_HDecoder(hv_fsm->get_VB(), hv_fsm->get_BLNK(wire.BLACK), &HPLA);
-
-		TriState V_IN = HPLA[23];
-		v->sim(V_IN, hv_fsm->get_VC());
-
 		TriState* VPLA;
 		hv_dec->sim_VDecoder(&VPLA);
 
-		// H/V Control logic
-
 		hv_fsm->sim(HPLA, VPLA);
+
+		h->sim(TriState::One, wire.HC);
+		TriState V_IN = HPLA[23];
+		v->sim(V_IN, wire.VC);
 
 		// The other parts
 

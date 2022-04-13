@@ -224,21 +224,14 @@ namespace PPUSim
 
 		ctrl_latch1.set(NOR(HPLA[23], EvenOddOut), n_PCLK);
 		ctrl_latch2.set(VPLA[2], n_PCLK);
+
+		ppu->wire.HC = ctrl_latch1.nget();
+		ppu->wire.VC = NOR(NOT(ppu->wire.HC), ctrl_latch2.nget());
 	}
 
 	TriState FSM::get_RESCL()
 	{
 		return vclr_latch2.nget();
-	}
-
-	TriState FSM::get_HC()
-	{
-		return ctrl_latch1.nget();
-	}
-
-	TriState FSM::get_VC()
-	{
-		return NOR(NOT(get_HC()), ctrl_latch2.nget());
 	}
 
 	TriState FSM::get_VB()

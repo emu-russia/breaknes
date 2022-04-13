@@ -162,7 +162,6 @@ namespace PPUSim
 			BaseLogic::TriState H4_Dash2;
 			BaseLogic::TriState H5_Dash2;
 			BaseLogic::TriState EvenOddOut;
-			BaseLogic::TriState V_IN;
 			BaseLogic::TriState HC;
 			BaseLogic::TriState VC;
 
