@@ -146,7 +146,7 @@ namespace PPUSim
 		TriState RC = ppu->wire.RC;
 		TriState n_W0 = ppu->wire.n_W0;
 		TriState n_W1 = ppu->wire.n_W1;
-		TriState n_DBE = ppu->wire.RC;
+		TriState n_DBE = ppu->wire.n_DBE;
 
 		TriState W0_Enable = NOR(n_W0, n_DBE);
 		TriState W1_Enable = NOR(n_W1, n_DBE);

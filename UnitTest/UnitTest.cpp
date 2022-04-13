@@ -36,5 +36,24 @@ namespace UnitTest
 			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
 			Assert::IsTrue(ut.HVCounterTest());
 		}
+
+		TEST_METHOD(One_PCLK)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			Assert::IsTrue(ut.RunSinglePCLK());
+		}
+
+		TEST_METHOD(One_ScanLine)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			Assert::IsTrue(ut.RunLines(1));
+		}
+
+		TEST_METHOD(One_Field)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			Assert::IsTrue(ut.RunLines(262));
+		}
+
 	};
 }
