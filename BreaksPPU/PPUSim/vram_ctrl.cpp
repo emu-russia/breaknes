@@ -72,7 +72,7 @@ namespace PPUSim
 
 		blnk_latch.set(ppu->fsm.BLNK, ppu->wire.PCLK);
 
-		TriState in[7];
+		TriState in[7]{};
 		in[0] = blnk_latch.nget();
 		in[1] = ppu->wire.n_PA_Top[0];	// /PA8
 		in[2] = ppu->wire.n_PA_Top[1];

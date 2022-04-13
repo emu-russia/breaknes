@@ -25,14 +25,14 @@ namespace M6502Core
 
 			TriState res2 = NOR3(PD1, PD4, PD7);
 
-			TriState in3[4];
+			TriState in3[4]{};
 			in3[0] = NOT(PD0);
 			in3[1] = PD2;
 			in3[2] = NOT(PD3);
 			in3[3] = PD4;
 			TriState res3 = NOR4(in3);
 
-			TriState in4[5];
+			TriState in4[5]{};
 			in4[0] = PD0;
 			in4[1] = PD2;
 			in4[2] = PD3;

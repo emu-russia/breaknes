@@ -8,7 +8,7 @@ namespace M6502Core
 	{
 		core = parent;
 
-		size_t maxVal = 1 << 16;
+		size_t maxVal = 1ULL << 16;
 		for (size_t n = 0; n < maxVal; n++)
 		{
 			uint8_t ir = n & 0xff;
@@ -93,9 +93,9 @@ namespace M6502Core
 	RegsControl_TempWire RegsControl::PreCalc(uint8_t ir, bool n_T0, bool n_T1X, bool n_T2, bool n_T3, bool n_T4, bool n_T5, bool n_ready, bool n_ready_latch)
 	{
 		TriState* d;
-		DecoderInput decoder_in;
+		DecoderInput decoder_in{};
 		decoder_in.packed_bits = 0;
-		RegsControl_TempWire temp;
+		RegsControl_TempWire temp{};
 		temp.bits = 0;
 
 		TriState IR0 = ir & 0b00000001 ? TriState::One : TriState::Zero;
@@ -134,7 +134,7 @@ namespace M6502Core
 
 		// Wires
 
-		TriState memop_in[5];
+		TriState memop_in[5]{};
 		memop_in[0] = d[111];
 		memop_in[1] = d[122];
 		memop_in[2] = d[123];
@@ -147,7 +147,7 @@ namespace M6502Core
 
 		TriState TXS = d[13];
 
-		TriState n1[7];
+		TriState n1[7]{};
 		n1[0] = d[1];
 		n1[1] = d[2];
 		n1[2] = d[3];
@@ -157,7 +157,7 @@ namespace M6502Core
 		n1[6] = AND(d[0], STOR);
 		temp.n_Y_SB = NOR7(n1);
 
-		TriState n2[7];
+		TriState n2[7]{};
 		n2[0] = AND(STOR, d[12]);
 		n2[1] = AND(d[6], NOT(d[7]));
 		n2[2] = d[8];
@@ -170,7 +170,7 @@ namespace M6502Core
 		temp.n_SB_X = NOR3(d[14], d[15], d[16]);
 		temp.n_SB_Y = NOR3(d[18], d[19], d[20]);
 
-		TriState n3[6];
+		TriState n3[6]{};
 		n3[0] = d[21];
 		n3[1] = d[22];
 		n3[2] = d[23];
@@ -185,5 +185,4 @@ namespace M6502Core
 
 		return temp;
 	}
-
 }

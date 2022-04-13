@@ -30,10 +30,10 @@ namespace M6502Core
 
 		if (PHI2 == TriState::One)
 		{
-			TriState nors[8], nands[8], eors[8], sums[8], n_res[8] = { TriState::Z };
-			TriState carry[8];		// Inverted carry chain. Even bits in direct logic, odd bits in inverted logic.
+			TriState nors[8]{}, nands[8]{}, eors[8]{}, sums[8]{}, n_res[8] = { TriState::Z };
+			TriState carry[8]{};		// Inverted carry chain. Even bits in direct logic, odd bits in inverted logic.
 			TriState DC3, DC7;
-			TriState n4[4], t1, t2;
+			TriState n4[4]{}, t1, t2;
 
 			TriState cin = n_ACIN;
 
@@ -194,7 +194,7 @@ namespace M6502Core
 
 			if (!BCD_Hack)
 			{
-				TriState bcd_out[8];
+				TriState bcd_out[8]{};
 
 				TriState DAAL = daal_latch.nget();
 				TriState DAAH = NOR(NOT(ACR), daah_latch.nget());

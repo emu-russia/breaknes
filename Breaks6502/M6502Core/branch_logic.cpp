@@ -27,7 +27,7 @@ namespace M6502Core
 		TriState res_N = NOR3(n_N_OUT, NOT(n_IR6), NOT(n_IR7));
 		TriState res_Z = NOR3(n_Z_OUT, n_IR6, n_IR7);
 
-		TriState in1[4];
+		TriState in1[4]{};
 		in1[0] = res_C;
 		in1[1] = res_V;
 		in1[2] = res_N;

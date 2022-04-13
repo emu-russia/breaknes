@@ -42,7 +42,7 @@ namespace M6502Core
 
 			// ADL
 
-			TriState n1[5];
+			TriState n1[5]{};
 			n1[0] = T1;
 			n1[1] = JSR_5;
 			n1[2] = ABS_2;
@@ -51,7 +51,7 @@ namespace M6502Core
 			TriState n_PCL_ADL = NOR5(n1);
 			pcl_adl_latch.set(n_PCL_ADL, PHI2);
 
-			TriState n2[4];
+			TriState n2[4]{};
 			n2[0] = NOT(n_PCL_ADL);
 			n2[1] = RTS_5;
 			n2[2] = T0;
@@ -66,7 +66,7 @@ namespace M6502Core
 			TriState n_PCH_ADH = NOR(NOR3(n_PCL_ADL, DL_PCH, BR0), BR3);
 			pch_adh_latch.set(n_PCH_ADH, PHI2);
 
-			TriState n3[6];
+			TriState n3[6]{};
 			n3[0] = RTS_5;
 			n3[1] = ABS_2;
 			n3[2] = T0;
