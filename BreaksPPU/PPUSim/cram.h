@@ -44,10 +44,10 @@ namespace PPUSim
 		/// </summary>
 		static const size_t cram_lane_rows = 8;
 		static const size_t cram_lane_cols = 4;
-		BaseLogic::TriState cram[cram_lane_rows * cram_lane_cols * cb_num];
+		BaseLogic::TriState cram[cram_lane_rows * cram_lane_cols * cb_num]{};
 
-		BaseLogic::TriState COL[4];
-		BaseLogic::TriState ROW[8];		// ROW[0] = ROW[4]
+		BaseLogic::TriState COL[4]{};
+		BaseLogic::TriState ROW[8]{};	// ROW[0] = ROW[4]
 
 		/// <summary>
 		/// This cell is used to address closed memory.

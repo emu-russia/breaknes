@@ -39,7 +39,7 @@ namespace M6502Core
 		// PCL
 
 		TriState cin = n_1PC;
-		TriState souts[9];
+		TriState souts[9]{};
 		souts[0] = n_1PC;
 
 		for (size_t n = 0; n < 8; n++)
@@ -62,7 +62,7 @@ namespace M6502Core
 		// Similarly, circuits for odd bits (1, 3, ...) of PCH repeat circuits for even bits (0, 2, ...) of PCL.
 
 		cin = PCLC;
-		TriState pchc[5];
+		TriState pchc[5]{};
 		pchc[0] = NOT(PCLC);
 
 		for (size_t n = 0; n < 4; n++)
@@ -346,7 +346,7 @@ namespace M6502Core
 		if (HLE)
 			return PackedPCL;
 
-		TriState v[8];
+		TriState v[8]{};
 
 		// The value stored in PCL alternates between inversion, because of the inverted carry chain.
 
@@ -370,7 +370,7 @@ namespace M6502Core
 		if (HLE)
 			return PackedPCH;
 
-		TriState v[8];
+		TriState v[8]{};
 
 		// The value stored in PCH alternates between inversion, because of the inverted carry chain.
 		// The storage inversion is different from the storage inversion of the PCL register (because of the alteration of the PCL and PCH bit circuits).
@@ -395,7 +395,7 @@ namespace M6502Core
 		if (HLE)
 			return PackedPCLS;
 
-		TriState v[8];
+		TriState v[8]{};
 
 		for (size_t n = 0; n < 8; n++)
 		{
@@ -410,7 +410,7 @@ namespace M6502Core
 		if (HLE)
 			return PackedPCHS;
 
-		TriState v[8];
+		TriState v[8]{};
 
 		for (size_t n = 0; n < 8; n++)
 		{

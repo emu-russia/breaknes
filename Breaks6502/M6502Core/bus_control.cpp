@@ -32,7 +32,7 @@ namespace M6502Core
 
 			TriState n_ready = core->wire.n_ready;
 
-			TriState incsb[6];
+			TriState incsb[6]{};
 			incsb[0] = d[39];
 			incsb[1] = d[40];
 			incsb[2] = d[41];
@@ -58,7 +58,7 @@ namespace M6502Core
 			TriState pp = d[129];
 			TriState JSXY = NAND(NOT(JSR2), STXY);
 
-			TriState ind[4];
+			TriState ind[4]{};
 			ind[0] = d[89];
 			ind[1] = AND(d[90], NOT(pp));
 			ind[2] = d[91];
@@ -70,7 +70,7 @@ namespace M6502Core
 			TriState ABS_2 = AND(d[83], NOT(pp));
 			TriState imp_abs = NOR(NOR(ABS_2, T0), IMPLIED);
 
-			TriState nap[6];
+			TriState nap[6]{};
 			nap[0] = RTS_5;
 			nap[1] = ABS_2;
 			nap[2] = T0;
@@ -99,7 +99,7 @@ namespace M6502Core
 
 			// ALU connection to SB, DB buses (AC/DB, SB/AC, AC/SB)
 
-			TriState sbac[7];
+			TriState sbac[7]{};
 			sbac[0] = d[58];
 			sbac[1] = d[59];
 			sbac[2] = d[60];
@@ -110,7 +110,7 @@ namespace M6502Core
 			TriState n_SB_AC = NOR7(sbac);
 			sb_ac_latch.set(n_SB_AC, PHI2);
 
-			TriState acsb[5];
+			TriState acsb[5]{};
 			acsb[0] = AND(NOT(d[64]), d[65]);
 			acsb[1] = d[66];
 			acsb[2] = d[67];
@@ -126,14 +126,14 @@ namespace M6502Core
 			z_adh0_latch.set(n_DL_ADL, PHI2);
 			z_adh17_latch.set(NOR(d[57], NOT(n_DL_ADL)), PHI2);
 
-			TriState ztst[4];
+			TriState ztst[4]{};
 			ztst[0] = SBXY;
 			ztst[1] = NOT(n_SB_AC);
 			ztst[2] = T6;
 			ztst[3] = _AND;
 			TriState n_ZTST = NOR4(ztst);
 
-			TriState sbdb[6];
+			TriState sbdb[6]{};
 			sbdb[0] = NOT(NAND(T5, d[55]));
 			sbdb[1] = NOR(n_ZTST, _AND);
 			sbdb[2] = d[67];
@@ -150,7 +150,7 @@ namespace M6502Core
 			dl_adh_latch.set(NOR(DL_PCH, IND), PHI2);
 			dl_adl_latch.set(n_DL_ADL, PHI2);
 
-			TriState n2[6];
+			TriState n2[6]{};
 			n2[0] = INC_SB;
 			n2[1] = d[45];
 			n2[2] = BRK6E;
@@ -158,7 +158,7 @@ namespace M6502Core
 			n2[4] = d[47];
 			n2[5] = JSR2;
 
-			TriState n3[5];
+			TriState n3[5]{};
 			n3[0] = BR2;
 			n3[1] = imp_abs;
 			n3[2] = NOT(NOR6(n2));

@@ -4,7 +4,7 @@ namespace M6502Core
 {
 	class PreDecode
 	{
-		uint8_t pd_latch;
+		uint8_t pd_latch = 0;
 
 		M6502* core = nullptr;
 
@@ -15,8 +15,8 @@ namespace M6502Core
 
 		PreDecode(M6502* parent);
 
-		uint8_t PD;
-		uint8_t n_PD;
+		uint8_t PD = 0;
+		uint8_t n_PD = 0xff;
 
 		void sim(uint8_t *data_bus);
 	};

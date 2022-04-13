@@ -8,7 +8,7 @@ namespace M6502Core
 	{
 		core = parent;
 
-		size_t maxVal = 1 << 16;
+		size_t maxVal = 1ULL << 16;
 		for (size_t n = 0; n < maxVal; n++)
 		{
 			uint8_t ir = n & 0xff;
@@ -91,9 +91,9 @@ namespace M6502Core
 	FlagsControl_TempWire FlagsControl::PreCalc(uint8_t ir, bool n_T0, bool n_T1X, bool n_T2, bool n_T3, bool n_T4, bool n_T5, bool T5, bool T6)
 	{
 		TriState* d;
-		DecoderInput decoder_in;
+		DecoderInput decoder_in{};
 		decoder_in.packed_bits = 0;
-		FlagsControl_TempWire temp;
+		FlagsControl_TempWire temp{};
 		temp.bits = 0;
 
 		TriState IR0 = ir & 0b00000001 ? TriState::One : TriState::Zero;
@@ -132,7 +132,7 @@ namespace M6502Core
 
 		// Wires
 
-		TriState sbac[7];
+		TriState sbac[7]{};
 		sbac[0] = d[58];
 		sbac[1] = d[59];
 		sbac[2] = d[60];
@@ -148,7 +148,7 @@ namespace M6502Core
 		TriState n_SB_Y = NOR3(d[18], d[19], d[20]);
 		TriState SBXY = NAND(n_SB_X, n_SB_Y);
 
-		TriState ztst[4];
+		TriState ztst[4]{};
 		ztst[0] = SBXY;
 		ztst[1] = NOT(n_SB_AC);
 		ztst[2] = T6 ? TriState::One : TriState::Zero;
@@ -161,7 +161,7 @@ namespace M6502Core
 		temp.n_POUT = NOR(d[98], d[99]);
 		temp.n_PIN = NOR(d[114], d[115]);
 
-		TriState n1[6];
+		TriState n1[6]{};
 		n1[0] = AND(d[107], T6 ? TriState::One : TriState::Zero);
 		n1[1] = d[112];		// AVR/V
 		n1[2] = d[116];

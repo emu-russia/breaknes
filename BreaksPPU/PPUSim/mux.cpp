@@ -45,7 +45,7 @@ namespace PPUSim
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState n_ZPRIO = ppu->wire.n_ZPRIO;
-		TriState OBJC[4];
+		TriState OBJC[4]{};
 
 		for (size_t n = 0; n < 4; n++)
 		{
@@ -67,7 +67,7 @@ namespace PPUSim
 
 	void Mux::sim_Spr0Hit()
 	{
-		TriState n[5];
+		TriState n[5]{};
 		n[0] = ppu->wire.PCLK;
 		n[1] = NOR(ppu->wire.BGC[0], ppu->wire.BGC[1]);
 		n[2] = ppu->wire.n_SPR0HIT;

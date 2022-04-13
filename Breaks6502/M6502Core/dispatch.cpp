@@ -75,7 +75,7 @@ namespace M6502Core
 
 		TriState n_SHIFT = NOR(d[106], d[107]);
 
-		TriState memop_in[5];
+		TriState memop_in[5]{};
 		memop_in[0] = d[111];
 		memop_in[1] = d[122];
 		memop_in[2] = d[123];
@@ -166,7 +166,7 @@ namespace M6502Core
 
 		if (PHI2)
 		{
-			TriState memop_in[5];
+			TriState memop_in[5]{};
 			memop_in[0] = d[111];
 			memop_in[1] = d[122];
 			memop_in[2] = d[123];
@@ -174,7 +174,7 @@ namespace M6502Core
 			memop_in[4] = d[125];
 			n_MemOp = NOR5(memop_in);
 
-			TriState endx_1[6];
+			TriState endx_1[6]{};
 			endx_1[0] = d[100];
 			endx_1[1] = d[101];
 			endx_1[2] = d[102];
@@ -182,7 +182,7 @@ namespace M6502Core
 			endx_1[4] = d[104];
 			endx_1[5] = d[105];
 
-			TriState endx_2[4];
+			TriState endx_2[4]{};
 			endx_2[0] = NOR3(d[96], NOT(n_SHIFT), n_MemOp);
 			endx_2[1] = T6;
 			endx_2[2] = NOT(NOR6(endx_1));
@@ -197,7 +197,7 @@ namespace M6502Core
 			ENDX = core->wire.ENDX;
 		}
 
-		TriState tresx_nor[4];
+		TriState tresx_nor[4]{};
 		tresx_nor[0] = ACRL1;
 		tresx_nor[1] = tresx_latch1.get();
 		tresx_nor[2] = n_ready;
@@ -215,7 +215,7 @@ namespace M6502Core
 		{
 			TriState STOR = NOR(n_MemOp, n_STORE);
 
-			TriState wr_in[6];
+			TriState wr_in[6]{};
 			wr_in[0] = STOR;
 			wr_in[1] = PC_DB;
 			wr_in[2] = d[98];

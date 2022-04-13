@@ -8,7 +8,7 @@ namespace M6502Core
 	{
 		core = parent;
 
-		size_t maxVal = 1 << 19;
+		size_t maxVal = 1ULL << 19;
 		for (size_t n = 0; n < maxVal; n++)
 		{
 			uint8_t ir = n & 0xff;
@@ -154,7 +154,7 @@ namespace M6502Core
 		}
 		else
 		{
-			TriState acin[4];
+			TriState acin[4]{};
 			acin[0] = acin_latch1.get();
 			acin[1] = acin_latch2.get();
 			acin[2] = acin_latch3.get();
@@ -192,7 +192,7 @@ namespace M6502Core
 			dbadd_latch.set(NAND(n_NDB_ADD, n_ADL_ADD), PHI2);
 			adladd_latch.set(n_ADL_ADD, PHI2);
 
-			TriState sbadd[9];
+			TriState sbadd[9]{};
 			sbadd[0] = STKOP;
 			sbadd[1] = d[30];
 			sbadd[2] = d[31];
@@ -266,7 +266,7 @@ namespace M6502Core
 
 		if (PHI2 == TriState::One)
 		{
-			TriState sb06[5];
+			TriState sb06[5]{};
 			sb06[0] = T6;
 			sb06[1] = STKOP;
 			sb06[2] = JSR_5;
@@ -277,7 +277,7 @@ namespace M6502Core
 
 			addsb7_latch.set(NOR(n_ADD_SB06, n_ADD_SB7), PHI2);
 
-			TriState noadl[7];
+			TriState noadl[7]{};
 			noadl[0] = RTS_5;
 			noadl[1] = d[85];
 			noadl[2] = d[86];
@@ -294,9 +294,9 @@ namespace M6502Core
 		bool n_ready, bool T0, bool T5, bool BRFW, bool n_C_OUT)
 	{
 		TriState* d;
-		DecoderInput decoder_in;
+		DecoderInput decoder_in{};
 		decoder_in.packed_bits = 0;
-		CarryBCD_TempWire temp;
+		CarryBCD_TempWire temp{};
 		temp.bits = 0;
 
 		TriState IR0 = ir & 0b00000001 ? TriState::One : TriState::Zero;
@@ -338,7 +338,7 @@ namespace M6502Core
 		TriState RET = d[47];
 		TriState BR3 = d[93];
 
-		TriState adladd[7];
+		TriState adladd[7]{};
 		adladd[0] = AND(d[33], NOT(d[34]));
 		adladd[1] = d[35];	// STK2
 		adladd[2] = d[36];
@@ -348,7 +348,7 @@ namespace M6502Core
 		adladd[6] = n_ready ? TriState::One : TriState::Zero;
 		temp.n_ADL_ADD = NOR7(adladd);
 
-		TriState incsb[6];
+		TriState incsb[6]{};
 		incsb[0] = d[39];
 		incsb[1] = d[40];
 		incsb[2] = d[41];

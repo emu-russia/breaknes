@@ -104,8 +104,8 @@ namespace PPUSim
 			cc_latch2[n].set(cc_latch1[n].nget(), n_PCLK);
 		}
 
-		TriState dmxin[4];
-		TriState dmxout[16];
+		TriState dmxin[4]{};
+		TriState dmxout[16]{};
 		dmxin[0] = cc_latch2[0].nget();
 		dmxin[1] = cc_latch2[1].nget();
 		dmxin[2] = cc_latch2[2].nget();
@@ -149,7 +149,7 @@ namespace PPUSim
 
 		// Luminance Decoder
 
-		TriState n_LU[4];
+		TriState n_LU[4]{};
 		n_LU[0] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], ppu->wire.n_LL[1]));
 		n_LU[1] = NOT(NOR3(n_POUT, NOT(ppu->wire.n_LL[0]), ppu->wire.n_LL[1]));
 		n_LU[2] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], NOT(ppu->wire.n_LL[1])));
@@ -157,7 +157,7 @@ namespace PPUSim
 
 		// Emphasis
 
-		TriState n[3];
+		TriState n[3]{};
 		n[0] = NOR3(n_POUT, n_PB, ppu->wire.n_TB);
 		n[1] = NOR3(n_POUT, n_PG, ppu->wire.n_TG);
 		n[2] = NOR3(n_POUT, n_PR, ppu->wire.n_TR);

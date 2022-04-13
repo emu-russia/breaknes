@@ -23,7 +23,7 @@ namespace M6502Core
 			TriState DBZ_Z = core->cmd.DBZ_Z ? TriState::One : TriState::Zero;
 			TriState DB1 = core->DB & 0b00000010 ? TriState::One : TriState::Zero;
 			TriState n_DBZ = NOT(core->DB == 0 ? TriState::One : TriState::Zero);
-			TriState z[3];
+			TriState z[3]{};
 			z[0] = AND(NOT(DB1), DB_P);
 			z[1] = AND(n_DBZ, DBZ_Z);
 			z[2] = AND(NOR(DB_P, DBZ_Z), z_latch2.get());
@@ -41,7 +41,7 @@ namespace M6502Core
 		{
 			TriState DB_N = core->cmd.DB_N ? TriState::One : TriState::Zero;
 			TriState DB7 = core->DB & 0b10000000 ? TriState::One : TriState::Zero;
-			TriState n[2];
+			TriState n[2]{};
 			n[0] = AND(NOT(DB7), DB_N);
 			n[1] = AND(NOT(DB_N), n_latch2.get());
 
@@ -60,7 +60,7 @@ namespace M6502Core
 			TriState DB_C = core->cmd.DB_C ? TriState::One : TriState::Zero;
 			TriState ACR_C = core->cmd.ACR_C ? TriState::One : TriState::Zero;
 			TriState DB0 = core->DB & 0b00000001 ? TriState::One : TriState::Zero;
-			TriState c[4];
+			TriState c[4]{};
 			c[0] = AND(n_IR5, IR5_C);
 			c[1] = AND(NOT(ACR), ACR_C);
 			c[2] = AND(NOT(DB0), DB_C);
@@ -79,7 +79,7 @@ namespace M6502Core
 		{
 			TriState IR5_D = core->cmd.IR5_D ? TriState::One : TriState::Zero;
 			TriState DB3 = core->DB & 0b00001000 ? TriState::One : TriState::Zero;
-			TriState d[3];
+			TriState d[3]{};
 			d[0] = AND(IR5_D, n_IR5);
 			d[1] = AND(NOT(DB3), DB_P);
 			d[2] = AND(NOR(IR5_D, DB_P), d_latch2.get());
@@ -97,7 +97,7 @@ namespace M6502Core
 		{
 			TriState IR5_I = core->cmd.IR5_I ? TriState::One : TriState::Zero;
 			TriState DB2 = core->DB & 0b00000100 ? TriState::One : TriState::Zero;
-			TriState i[3];
+			TriState i[3]{};
 			i[0] = AND(n_IR5, IR5_I);
 			i[1] = AND(NOT(DB2), DB_P);
 			i[2] = AND(NOR(DB_P, IR5_I), i_latch2.get());
@@ -123,7 +123,7 @@ namespace M6502Core
 			TriState DB_V = core->cmd.DB_V ? TriState::One : TriState::Zero;
 			TriState Z_V = core->cmd.Z_V ? TriState::One : TriState::Zero;
 			TriState DB6 = core->DB & 0b01000000 ? TriState::One : TriState::Zero;
-			TriState v[4];
+			TriState v[4]{};
 			v[0] = AND(NOT(AVR), avr_latch.get());
 			v[1] = AND(NOT(DB6), DB_V);
 			v[2] = AND(NOR3(DB_V, avr_latch.get(), vset_latch.get()), v_latch2.get());
