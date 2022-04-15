@@ -125,13 +125,20 @@ namespace PPUSimUnitTest
 
 		inputs[(size_t)InputPad::n_RES] = TriState::One;
 
-		inputs[(size_t)InputPad::CLK] = TriState::Zero;
+		// Iterate over CLK until the internal PCLK counter changes value.
 
-		ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
+		auto prevPclk = ppu->GetPCLKCounter();
 
-		inputs[(size_t)InputPad::CLK] = TriState::One;
+		while (prevPclk == ppu->GetPCLKCounter())
+		{
+			inputs[(size_t)InputPad::CLK] = TriState::Zero;
 
-		ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
+			ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
+
+			inputs[(size_t)InputPad::CLK] = TriState::One;
+
+			ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
+		}
 
 		return true;
 	}
