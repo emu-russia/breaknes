@@ -55,5 +55,27 @@ namespace UnitTest
 			Assert::IsTrue(ut.RunLines(262));
 		}
 
+		/// <summary>
+		/// A test to find out why rows 2 and 6 are not used for OAM Buffer 2-4 bits.
+		/// It turned out that these rows fall on the attribute byte of the sprite in which bits 2-4 are not used.
+		/// </summary>
+		TEST_METHOD(Dump_OAMAddress_ROW)
+		{
+			for (size_t OamAddr = 0; OamAddr < (64 * 4); OamAddr++)
+			{
+				size_t row = OamAddr & 7;
+				Logger::WriteMessage(("OamAddr: " + std::to_string(OamAddr) + ", row: " + std::to_string(row)).c_str());
+				if ((OamAddr % 4) == 2)
+				{
+					Logger::WriteMessage(" ATTR ");
+				}
+				if (row == 2 || row == 6)
+				{
+					Logger::WriteMessage(" UNUSED for OB[2-4]");
+				}
+				Logger::WriteMessage("\n");
+			}
+		}
+
 	};
 }
