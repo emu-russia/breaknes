@@ -4,5 +4,14 @@
 
 namespace PPUSim
 {
+	class BGCol
+	{
+		PPU* ppu = nullptr;
 
+	public:
+		BGCol(PPU* parent);
+		~BGCol();
+
+		void sim();
+	};
 }
