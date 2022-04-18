@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <list>
+#include <cassert>
 
 #include "../Breaknes/BaseLogicLib/BaseLogic.h"
 
@@ -14,3 +16,5 @@
 #include "PPUTest.h"
 
 #include "CppUnitTest.h"
+#include "Json.h"
+#include "EventLog.h"
