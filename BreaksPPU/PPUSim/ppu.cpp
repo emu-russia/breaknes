@@ -18,6 +18,7 @@ namespace PPUSim
 		cram = new CRAM(this);
 		vid_out = new VideoOut(this);
 		mux = new Mux(this);
+		eval = new OAMEval(this);
 		vram_ctrl = new VRAM_Control(this);
 	}
 
@@ -31,6 +32,7 @@ namespace PPUSim
 		delete cram;
 		delete vid_out;
 		delete mux;
+		delete eval;
 		delete vram_ctrl;
 	}
 
@@ -80,6 +82,8 @@ namespace PPUSim
 		vram_ctrl->sim();
 
 		cram->sim();
+
+		eval->sim();
 
 		vid_out->sim(vout);
 

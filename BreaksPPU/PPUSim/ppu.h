@@ -98,6 +98,7 @@ namespace PPUSim
 		friend VideoOutSRBit;
 		friend VideoOut;
 		friend Mux;
+		friend OAMEval;
 		friend VRAM_Control;
 
 		/// <summary>
@@ -174,7 +175,15 @@ namespace PPUSim
 			BaseLogic::TriState EXT_In[4];
 			BaseLogic::TriState n_EXT_Out[4];
 
+			BaseLogic::TriState OB[8];
 			BaseLogic::TriState I2SEV;
+			BaseLogic::TriState OFETCH;
+			BaseLogic::TriState SPR_OV;
+			BaseLogic::TriState OAMCTR2;
+			BaseLogic::TriState n_OAM[8];
+			BaseLogic::TriState OAM8;
+			BaseLogic::TriState Z_FIFO;
+			BaseLogic::TriState OV[8];
 
 			BaseLogic::TriState CLPB;
 			BaseLogic::TriState CLPO;
@@ -250,6 +259,7 @@ namespace PPUSim
 		CRAM* cram = nullptr;
 		VideoOut* vid_out = nullptr;
 		Mux* mux = nullptr;
+		OAMEval* eval = nullptr;
 		VRAM_Control* vram_ctrl = nullptr;
 
 		uint8_t DB;
