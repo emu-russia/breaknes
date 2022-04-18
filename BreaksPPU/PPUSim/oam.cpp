@@ -17,7 +17,7 @@ namespace PPUSim
 
 		for (size_t n = 0; n < num_lanes; n++)
 		{
-			lane[n] = new OAMLane(ppu);
+			lane[n] = new OAMLane(ppu, n == 2 || n == 6);
 		}
 	}
 
@@ -193,9 +193,10 @@ namespace PPUSim
 		return OB_FF.get();
 	}
 
-	OAMLane::OAMLane(PPU* parent)
+	OAMLane::OAMLane(PPU* parent, bool SkipAttrBits)
 	{
 		ppu = parent;
+		skip_attr_bits = SkipAttrBits;
 
 		for (size_t n = 0; n < cells_per_lane; n++)
 		{
@@ -228,13 +229,20 @@ namespace PPUSim
 	{
 		OAMCell* cell = cells[8 * Column + bit_num];
 
-		if (inOut == TriState::Z)
+		// Skip unused bits 2-4 for rows 2/6, which correspond to the attribute byte.
+
+		bool skip_bit = skip_attr_bits && (bit_num == 2 || bit_num == 3 || bit_num == 4);
+
+		if (!skip_bit)
 		{
-			inOut = cell->get();
-		}
-		else
-		{
-			cell->set(inOut);
+			if (inOut == TriState::Z)
+			{
+				inOut = cell->get();
+			}
+			else
+			{
+				cell->set(inOut);
+			}
 		}
 	}
 
