@@ -126,6 +126,12 @@ namespace BaseLogic
 
 	void FF::set(TriState val)
 	{
+		if (val == TriState::Z)
+		{
+			// The floating input does not change the state of the FF.
+			return;
+		}
+
 		g = val;
 	}
 
