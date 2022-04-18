@@ -106,6 +106,8 @@ namespace PPUSim
 		friend VideoOut;
 		friend Mux;
 		friend OAMEval;
+		friend OAMBufferBit;
+		friend OAMCell;
 		friend OAM;
 		friend FIFO;
 		friend DataReader;
