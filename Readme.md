@@ -8,7 +8,7 @@ NES/Famicom/Dendy emulator at the gate level.
 
 Use VS2022.
 
-## Procrastination Chart
+## Procrastination Chart 
 
 - Breaknes GUI (managed part): 30%
 - BreaksCore (native part): 50%
