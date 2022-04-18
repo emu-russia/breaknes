@@ -4,5 +4,14 @@
 
 namespace PPUSim
 {
+	class FIFO
+	{
+		PPU* ppu = nullptr;
 
+	public:
+		FIFO(PPU* parent);
+		~FIFO();
+
+		void sim();
+	};
 }

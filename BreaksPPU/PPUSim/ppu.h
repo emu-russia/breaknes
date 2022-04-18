@@ -10,6 +10,13 @@ namespace PPUSim
 	union VideoOutSignal
 	{
 		float composite;	// For NTSC/PAL variations of PPU. A sample of the composite video signal.
+		struct RGBOut
+		{
+			uint8_t r;
+			uint8_t g;
+			uint8_t b;
+			uint8_t syncLevel;	// This field is reserved for the "SYNC" output of the RGB PPU (Sync Level).
+		};
 	};
 }
 
@@ -22,7 +29,6 @@ namespace PPUSimUnitTest
 
 #include "bgcol.h"
 #include "cram.h"
-#include "dataread.h"
 #include "fifo.h"
 #include "fsm.h"
 #include "hv.h"
@@ -32,6 +38,7 @@ namespace PPUSimUnitTest
 #include "pargen.h"
 #include "regs.h"
 #include "scroll_regs.h"
+#include "dataread.h"
 #include "sprite_eval.h"
 #include "video_out.h"
 #include "vram_ctrl.h"
@@ -99,6 +106,12 @@ namespace PPUSim
 		friend VideoOut;
 		friend Mux;
 		friend OAMEval;
+		friend OAM;
+		friend FIFO;
+		friend DataReader;
+		friend BGCol;
+		friend PARGen;
+		friend ScrollRegs;
 		friend VRAM_Control;
 
 		/// <summary>
@@ -239,7 +252,7 @@ namespace PPUSim
 			BaseLogic::TriState INT;
 		} fsm{};
 
-		Revision rev;
+		Revision rev = Revision::Unknown;
 
 		void sim_PCLK();
 
@@ -260,9 +273,12 @@ namespace PPUSim
 		VideoOut* vid_out = nullptr;
 		Mux* mux = nullptr;
 		OAMEval* eval = nullptr;
+		OAM* oam = nullptr;
+		FIFO* fifo = nullptr;
 		VRAM_Control* vram_ctrl = nullptr;
+		DataReader* bgen = nullptr;
 
-		uint8_t DB;
+		uint8_t DB = 0;
 		bool DB_Dirty = false;
 
 	public:
