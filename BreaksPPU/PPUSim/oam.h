@@ -55,8 +55,10 @@ namespace PPUSim
 
 		OAMCell* cells[cells_per_lane];
 
+		bool skip_attr_bits = false;
+
 	public:
-		OAMLane(PPU *parent);
+		OAMLane(PPU *parent, bool SkipAttrBits);
 		~OAMLane();
 
 		void sim(size_t Column, size_t bit_num, BaseLogic::TriState& inOut);
