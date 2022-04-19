@@ -102,6 +102,30 @@ namespace PPUSimUnitTest
 		return ppu->h->get() == numPclkCycles && ppu->v->get() == numPclkCycles;
 	}
 
+	bool UnitTest::RunSingleHalfCLK(TriState CLK, TriState n_RES)
+	{
+		TriState inputs[(size_t)InputPad::Max]{};
+		TriState outputs[(size_t)OutputPad::Max]{};
+		uint8_t ext = 0;
+		uint8_t data_bus = 0;
+		uint8_t ad_bus = 0;
+		uint8_t addrHi_bus = 0;
+		VideoOutSignal vout{};
+
+		inputs[(size_t)InputPad::RnW] = TriState::Zero;
+		inputs[(size_t)InputPad::RS0] = TriState::Zero;
+		inputs[(size_t)InputPad::RS1] = TriState::Zero;
+		inputs[(size_t)InputPad::RS2] = TriState::Zero;
+		inputs[(size_t)InputPad::n_DBE] = TriState::One;
+
+		inputs[(size_t)InputPad::n_RES] = n_RES;
+
+		inputs[(size_t)InputPad::CLK] = CLK;
+		ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
+
+		return true;
+	}
+
 	/// <summary>
 	/// Run one PCLK and check that nothing is broken.
 	/// The safest combinations of inputs are used.
@@ -146,8 +170,6 @@ namespace PPUSimUnitTest
 	/// <summary>
 	/// Run the specified number of full scans.
 	/// </summary>
-	/// <param name="n"></param>
-	/// <returns></returns>
 	bool UnitTest::RunLines(size_t n)
 	{
 		size_t pclkInLine = 341;
@@ -161,5 +183,200 @@ namespace PPUSimUnitTest
 		}
 
 		return true;
+	}
+
+	/// <summary>
+	/// Run the specified number of half-cycles (CLK) and output JSON with signals, in the manner of ChipScope utilities.
+	/// </summary>
+	bool UnitTest::RunHalfCyclesWithChipScope(size_t half_cycles, const char* filename)
+	{
+		size_t ts = 0;
+		TriState CLK = TriState::Zero;
+		Debug::EventLog log;
+
+		// Reset
+
+		for (size_t cnt = 0; cnt < 32; cnt++)
+		{
+			RunSingleHalfCLK(CLK, TriState::Zero);
+			CLK = NOT(CLK);
+		}
+
+		// Continue
+
+		for (size_t cnt = 0; cnt < half_cycles; cnt++)
+		{
+			RunSingleHalfCLK(CLK, TriState::One);
+
+			PPU_Interconnects wires{};
+			PPU_FSMStates fsm{};
+
+			ppu->GetDebugInfo_Wires(wires);
+			ppu->GetDebugInfo_FSMStates(fsm);
+
+			LogWires(&log, wires, ts);
+			LogFSMState(&log, fsm, ts);
+
+			ts++;
+			CLK = NOT(CLK);
+		}
+
+		CloseWires(&log, ts);
+		CloseFSMState(&log, ts);
+
+		FILE* f = nullptr;
+		fopen_s(&f, filename, "wt");
+		if (f != nullptr)
+		{
+			std::string text;
+			log.ToString(text);
+			fwrite(text.c_str(), 1, text.size(), f);
+			fclose(f);
+		}
+
+		return true;
+	}
+
+#define CloseWire(n, chan) {\
+		if (wires_open.n) \
+		{ \
+			log->TraceEnd(chan, ts); \
+		} \
+	}
+
+#define CloseFSM(n, chan) { \
+		if (fsm_open.n) \
+		{ \
+			log->TraceEnd(chan, ts); \
+		} \
+	}
+
+	void UnitTest::CloseWires(Debug::EventLog* log, size_t ts)
+	{
+		CloseWire(CLK, 1000);
+		CloseWire(n_CLK, 1001);
+		CloseWire(PCLK, 1002);
+		CloseWire(n_PCLK, 1003);
+	}
+
+	void UnitTest::CloseFSMState(Debug::EventLog* log, size_t ts)
+	{
+		CloseFSM(S_EV, 100);
+		CloseFSM(CLIP_O, 101);
+		CloseFSM(CLIP_B, 102);
+		CloseFSM(Z_HPOS, 103);
+		CloseFSM(EVAL, 104);
+		CloseFSM(E_EV, 105);
+		CloseFSM(I_OAM2, 106);
+		CloseFSM(PAR_O, 107);
+		CloseFSM(n_VIS, 108);
+		CloseFSM(F_NT, 109);
+		CloseFSM(F_TB, 110);
+		CloseFSM(F_TA, 111);
+		CloseFSM(F_AT, 112);
+		CloseFSM(n_FO, 113);
+		CloseFSM(BPORCH, 114);
+		CloseFSM(SC_CNT, 115);
+		//CloseFSM(n_HB, 116);
+		CloseFSM(BURST, 117);
+		CloseFSM(HSYNC, 118);
+		CloseFSM(PICTURE, 119);
+		CloseFSM(RESCL, 120);
+		CloseFSM(VSYNC, 121);
+		CloseFSM(n_VSET, 122);
+		CloseFSM(VB, 123);
+		CloseFSM(BLNK, 124);
+		CloseFSM(INT, 125);
+	}
+
+#define OpenDirectWire(n, chan) { \
+		if (wires.n == 1 && !wires_open.n) \
+		{ \
+			log->TraceBegin(chan, #n, ts); \
+			wires_open.n = 1; \
+		} \
+		else if (wires.n == 0 && wires_open.n) \
+		{ \
+			log->TraceEnd(chan, ts); \
+			wires_open.n = 0; \
+		} \
+	}
+
+#define OpenInverseWire(n, chan) { \
+		if (wires.n == 0 && !wires_open.n) \
+		{ \
+			log->TraceBegin(chan, #n, ts); \
+			wires_open.n = 1; \
+		} \
+		else if (wires.n == 1 && wires_open.n) \
+		{ \
+			log->TraceEnd(chan, ts); \
+			wires_open.n = 0; \
+		} \
+	}
+
+#define OpenDirectFSM(n, chan) { \
+		if (fsm.n == 1 && !fsm_open.n) \
+		{ \
+			log->TraceBegin(chan, #n, ts); \
+			fsm_open.n = 1; \
+		} \
+		else if (fsm.n == 0 && fsm_open.n) \
+		{ \
+			log->TraceEnd(chan, ts); \
+			fsm_open.n = 0; \
+		} \
+	}
+
+#define OpenInverseFSM(n, chan) { \
+		if (fsm.n == 0 && !fsm_open.n) \
+		{ \
+			log->TraceBegin(chan, #n, ts); \
+			fsm_open.n = 1; \
+		} \
+		else if (fsm.n == 1 && fsm_open.n) \
+		{ \
+			log->TraceEnd(chan, ts); \
+			fsm_open.n = 0; \
+		} \
+	}
+
+	void UnitTest::LogWires(Debug::EventLog* log, PPU_Interconnects& wires, size_t ts)
+	{
+		OpenDirectWire(CLK, 1000);
+		OpenDirectWire(n_CLK, 1001);
+		OpenDirectWire(PCLK, 1002);
+		OpenDirectWire(n_PCLK, 1003);
+
+	}
+
+	void UnitTest::LogFSMState(Debug::EventLog* log, PPU_FSMStates& fsm, size_t ts)
+	{
+		OpenDirectFSM(S_EV, 100);
+		OpenDirectFSM(CLIP_O, 101);
+		OpenDirectFSM(CLIP_B, 102);
+		OpenDirectFSM(Z_HPOS, 103);
+		OpenDirectFSM(EVAL, 104);
+		OpenDirectFSM(E_EV, 105);
+		OpenDirectFSM(I_OAM2, 106);
+		OpenDirectFSM(PAR_O, 107);
+		OpenInverseFSM(n_VIS, 108);
+		OpenInverseFSM(F_NT, 109);
+		OpenDirectFSM(F_TB, 110);
+		OpenDirectFSM(F_TA, 111);
+		OpenDirectFSM(F_AT, 112);
+		OpenDirectFSM(n_FO, 113);
+		OpenInverseFSM(BPORCH, 114);
+		OpenDirectFSM(SC_CNT, 115);
+		//OpenInverseFSM(n_HB, 116);
+		OpenDirectFSM(BURST, 117);
+		OpenDirectFSM(HSYNC, 118);
+		OpenDirectFSM(PICTURE, 119);
+		OpenDirectFSM(RESCL, 120);
+		OpenDirectFSM(VSYNC, 121);
+		OpenInverseFSM(n_VSET, 122);
+		OpenDirectFSM(VB, 123);
+		OpenDirectFSM(BLNK, 124);
+		OpenDirectFSM(INT, 125);
 	}
 }

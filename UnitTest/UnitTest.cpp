@@ -49,6 +49,12 @@ namespace UnitTest
 			Assert::IsTrue(ut.RunLines(1));
 		}
 
+		TEST_METHOD(RunHalfCycles_WithSignals)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			Assert::IsTrue(ut.RunHalfCyclesWithChipScope(10000, "RP2C02G_line.json"));
+		}
+
 		TEST_METHOD(One_Field)
 		{
 			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
