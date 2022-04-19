@@ -22,6 +22,7 @@
     <ClCompile Include="..\..\bgcol.cpp" />
     <ClCompile Include="..\..\cram.cpp" />
     <ClCompile Include="..\..\dataread.cpp" />
+    <ClCompile Include="..\..\debug.cpp" />
     <ClCompile Include="..\..\fifo.cpp" />
     <ClCompile Include="..\..\fsm.cpp" />
     <ClCompile Include="..\..\hv.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="..\..\bgcol.h" />
     <ClInclude Include="..\..\cram.h" />
     <ClInclude Include="..\..\dataread.h" />
+    <ClInclude Include="..\..\debug.h" />
     <ClInclude Include="..\..\fifo.h" />
     <ClInclude Include="..\..\fsm.h" />
     <ClInclude Include="..\..\hv.h" />

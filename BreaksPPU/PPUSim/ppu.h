@@ -42,6 +42,7 @@ namespace PPUSimUnitTest
 #include "sprite_eval.h"
 #include "video_out.h"
 #include "vram_ctrl.h"
+#include "debug.h"
 
 namespace PPUSim
 {
@@ -308,5 +309,9 @@ namespace PPUSim
 		BaseLogic::TriState GetDBBit(size_t n);
 
 		void SetDBBit(size_t n, BaseLogic::TriState bit_val);
+
+		void GetDebugInfo_Wires(PPU_Interconnects & wires);
+
+		void GetDebugInfo_FSMStates(PPU_FSMStates & fsm_states);
 	};
 }
