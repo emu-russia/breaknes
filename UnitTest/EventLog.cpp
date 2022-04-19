@@ -23,7 +23,7 @@ namespace Debug
 		Json::Value* pid = entry->AddInt("pid", 1);
 		assert(pid);
 
-		Json::Value* tid = entry->AddInt("pid", chan);
+		Json::Value* tid = entry->AddInt("tid", chan);
 		assert(tid);
 
 		Json::Value* ts = entry->AddUInt64("ts", stamp);
@@ -44,7 +44,7 @@ namespace Debug
 		Json::Value* pid = entry->AddInt("pid", 1);
 		assert(pid);
 
-		Json::Value* tid = entry->AddInt("pid", chan);
+		Json::Value* tid = entry->AddInt("tid", chan);
 		assert(tid);
 
 		Json::Value* ts = entry->AddUInt64("ts", stamp);
@@ -62,7 +62,7 @@ namespace Debug
 		Json::Value* pid = entry->AddInt("pid", 1);
 		assert(pid);
 
-		Json::Value* tid = entry->AddInt("pid", chan);
+		Json::Value* tid = entry->AddInt("tid", chan);
 		assert(tid);
 
 		Json::Value* ts = entry->AddUInt64("ts", stamp);
