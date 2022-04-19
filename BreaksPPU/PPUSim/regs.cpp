@@ -184,15 +184,15 @@ namespace PPUSim
 		ppu->wire.BnW = PPU_CTRL1[0].get();
 
 		bgclip_latch.set(PPU_CTRL1[1].get(), NOT(W1_Enable));
-		ppu->wire.n_BGCLIP = NOT(bgclip_latch.nget());
+		ppu->wire.n_BGCLIP = ClippingAlwaysDisabled ? TriState::One : NOT(bgclip_latch.nget());
 
 		obclip_latch.set(PPU_CTRL1[2].get(), NOT(W1_Enable));
-		ppu->wire.n_OBCLIP = NOT(obclip_latch.nget());
+		ppu->wire.n_OBCLIP = ClippingAlwaysDisabled ? TriState::One : NOT(obclip_latch.nget());
 
 		bge_latch.set(PPU_CTRL1[3].get(), NOT(W1_Enable));
 		obe_latch.set(PPU_CTRL1[4].get(), NOT(W1_Enable));
-		ppu->wire.BGE = bge_latch.get();
-		ppu->wire.OBE = obe_latch.get();
+		ppu->wire.BGE = RenderAlwaysEnabled ? TriState::One : bge_latch.get();
+		ppu->wire.OBE = RenderAlwaysEnabled ? TriState::One : obe_latch.get();
 		ppu->wire.BLACK = NOR(ppu->wire.BGE, ppu->wire.OBE);
 
 		tr_latch.set(PPU_CTRL1[5].get(), NOT(W1_Enable));
@@ -232,5 +232,15 @@ namespace PPUSim
 
 		ppu->wire.CLPB = NOR3(nvis_latch.get(), clipb_latch.get(), NOT(BGE));
 		ppu->wire.CLPO = clipo_latch.nget();
+	}
+
+	void ControlRegs::Debug_RenderAlwaysEnabled(bool enable)
+	{
+		RenderAlwaysEnabled = enable;
+	}
+
+	void ControlRegs::Debug_ClippingAlwaysDisabled(bool enable)
+	{
+		ClippingAlwaysDisabled = enable;
 	}
 }

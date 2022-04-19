@@ -194,6 +194,9 @@ namespace PPUSimUnitTest
 		TriState CLK = TriState::Zero;
 		Debug::EventLog log;
 
+		ppu->regs->Debug_RenderAlwaysEnabled(true);
+		ppu->regs->Debug_ClippingAlwaysDisabled(true);
+
 		// Reset
 
 		for (size_t cnt = 0; cnt < 32; cnt++)
@@ -356,7 +359,7 @@ namespace PPUSimUnitTest
 		OpenDirectFSM(CLIP_O, 101);
 		OpenDirectFSM(CLIP_B, 102);
 		OpenDirectFSM(Z_HPOS, 103);
-		OpenDirectFSM(EVAL, 104);
+		OpenInverseFSM(EVAL, 104);
 		OpenDirectFSM(E_EV, 105);
 		OpenDirectFSM(I_OAM2, 106);
 		OpenDirectFSM(PAR_O, 107);
