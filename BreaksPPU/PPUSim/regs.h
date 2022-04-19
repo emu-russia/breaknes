@@ -40,11 +40,17 @@ namespace PPUSim
 		BaseLogic::TriState get_Frst();
 		BaseLogic::TriState get_Scnd();
 
+		bool RenderAlwaysEnabled = false;
+		bool ClippingAlwaysDisabled = false;
+
 	public:
 		ControlRegs(PPU* parent);
 		~ControlRegs();
 
 		void sim();
 		void sim_CLP();
+
+		void Debug_RenderAlwaysEnabled(bool enable);
+		void Debug_ClippingAlwaysDisabled(bool enable);
 	};
 }
