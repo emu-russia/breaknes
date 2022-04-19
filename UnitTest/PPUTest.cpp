@@ -260,6 +260,23 @@ namespace PPUSimUnitTest
 		CloseWire(n_CLK, 1001);
 		CloseWire(PCLK, 1002);
 		CloseWire(n_PCLK, 1003);
+
+		CloseWire(H0_Dash, 2000);
+		CloseWire(H0_Dash2, 2001);
+		CloseWire(nH1_Dash, 2002);
+		CloseWire(H1_Dash2, 2003);
+		CloseWire(nH2_Dash, 2004);
+		CloseWire(H2_Dash2, 2005);
+		CloseWire(H3_Dash2, 2006);
+		CloseWire(H4_Dash2, 2007);
+		CloseWire(H5_Dash2, 2008);
+
+		CloseWire(I2SEV, 3000);
+		CloseWire(OFETCH, 3001);
+		CloseWire(SPR_OV, 3002);
+		CloseWire(OAMCTR2, 3003);
+		CloseWire(OAM8, 3004);
+		CloseWire(Z_FIFO, 3005);
 	}
 
 	void UnitTest::CloseFSMState(Debug::EventLog* log, size_t ts)
@@ -351,6 +368,22 @@ namespace PPUSimUnitTest
 		OpenDirectWire(PCLK, 1002);
 		OpenDirectWire(n_PCLK, 1003);
 
+		OpenDirectWire(H0_Dash, 2000);
+		OpenDirectWire(H0_Dash2, 2001);
+		OpenInverseWire(nH1_Dash, 2002);
+		OpenDirectWire(H1_Dash2, 2003);
+		OpenInverseWire(nH2_Dash, 2004);
+		OpenDirectWire(H2_Dash2, 2005);
+		OpenDirectWire(H3_Dash2, 2006);
+		OpenDirectWire(H4_Dash2, 2007);
+		OpenDirectWire(H5_Dash2, 2008);
+
+		OpenDirectWire(I2SEV, 3000);
+		OpenDirectWire(OFETCH, 3001);
+		OpenDirectWire(SPR_OV, 3002);
+		OpenDirectWire(OAMCTR2, 3003);
+		OpenDirectWire(OAM8, 3004);
+		OpenDirectWire(Z_FIFO, 3005);
 	}
 
 	void UnitTest::LogFSMState(Debug::EventLog* log, PPU_FSMStates& fsm, size_t ts)
