@@ -281,8 +281,10 @@ namespace PPUSim
 		VRAM_Control* vram_ctrl = nullptr;
 		DataReader* bgen = nullptr;
 
-		uint8_t DB = 0;
+		uint8_t DB = 0;				// CPU I/F Data bus
 		bool DB_Dirty = false;
+		uint8_t PD = 0;				// Internal PPU Data bus
+		bool PD_Dirty = false;
 
 	public:
 		PPU(Revision rev);
@@ -309,6 +311,10 @@ namespace PPUSim
 		BaseLogic::TriState GetDBBit(size_t n);
 
 		void SetDBBit(size_t n, BaseLogic::TriState bit_val);
+
+		BaseLogic::TriState GetPDBit(size_t n);
+
+		void SetPDBit(size_t n, BaseLogic::TriState bit_val);
 
 		void GetDebugInfo_Wires(PPU_Interconnects & wires);
 

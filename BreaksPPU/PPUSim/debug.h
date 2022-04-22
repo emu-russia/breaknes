@@ -93,6 +93,7 @@ namespace PPUSim
 		uint8_t TH_MUX;
 		uint8_t XRB;
 		uint8_t DB;
+		uint8_t PD;
 		size_t HCounter;
 		size_t VCounter;
 	};

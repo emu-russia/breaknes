@@ -126,6 +126,7 @@ namespace PPUSim
 		wires.XRB = wire.XRB == TriState::One ? 1 : 0;
 
 		wires.DB = DB;
+		wires.PD = PD;
 		wires.HCounter = h->get();
 		wires.VCounter = v->get();
 	}
