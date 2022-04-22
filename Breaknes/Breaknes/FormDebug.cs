@@ -360,7 +360,7 @@ namespace Breaknes
 
         private void pictureAddressGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowWiki("https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/PPU/pargen.md");
+            ShowWiki("https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/PPU/par.md");
         }
 
         private void backgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
