@@ -9,14 +9,59 @@ namespace PPUSim
 	FIFO::FIFO(PPU* parent)
 	{
 		ppu = parent;
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			lane[n] = new FIFOLane(ppu);
+		}
 	}
 
 	FIFO::~FIFO()
 	{
-
+		for (size_t n = 0; n < 8; n++)
+		{
+			delete lane[n];
+		}
 	}
 
 	void FIFO::sim()
+	{
+		sim_HInv();
+		sim_Lanes();
+		sim_Prio();
+	}
+
+	void FIFO::sim_HInv()
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState n_SH2 = ppu->wire.n_SH2;
+		TriState OB6 = ppu->wire.OB[6];
+		TriState Z_FIFO = ppu->wire.Z_FIFO;
+
+		HINV_FF.set(MUX(NOR(n_PCLK, n_SH2), NOT(NOT(HINV_FF.get())), OB6));
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			tout_latch[n].set(MUX(HINV_FF.get(), ppu->GetPDBit(n), ppu->GetPDBit(7 - n)), n_PCLK);
+			n_TX[n] = NAND(tout_latch[n].get(), Z_FIFO);
+		}
+	}
+
+	/// <summary>
+	/// Generate LaneOut outputs for the priority circuit.
+	/// </summary>
+	void FIFO::sim_Lanes()
+	{
+		for (size_t n = 0; n < 8; n++)
+		{
+			lane[n]->sim(LaneOut[n]);
+		}
+	}
+
+	/// <summary>
+	/// Based on the priorities, select one of the LaneOut values.
+	/// </summary>
+	void FIFO::sim_Prio()
 	{
 
 	}
@@ -47,4 +92,42 @@ namespace PPUSim
 		ppu->wire.n_SH5 = sh5_latch.nget();
 		ppu->wire.n_SH7 = sh7_latch.nget();
 	}
+
+#pragma region "FIFO Lane"
+
+	void FIFOLane::sim_LaneControl()
+	{
+
+	}
+
+	void FIFOLane::sim_CounterControl()
+	{
+
+	}
+
+	void FIFOLane::sim_PairedSR()
+	{
+
+	}
+
+	void FIFOLane::sim_Counter()
+	{
+
+	}
+
+	void FIFOLane::sim(TriState ZOut[(size_t)FIFOLaneOutput::Max])
+	{
+
+	}
+
+	void FIFO_CounterBit::sim()
+	{
+	}
+
+	void FIFO_SRBit::sim()
+	{
+	}
+
+#pragma endregion "FIFO Lane"
+
 }

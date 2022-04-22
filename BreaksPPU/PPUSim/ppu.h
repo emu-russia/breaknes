@@ -110,6 +110,7 @@ namespace PPUSim
 		friend OAMBufferBit;
 		friend OAMCell;
 		friend OAM;
+		friend FIFOLane;
 		friend FIFO;
 		friend DataReader;
 		friend BGCol;
