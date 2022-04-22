@@ -10,22 +10,25 @@ namespace PPUSim
 	{
 		ppu = parent;
 
-		bgcol = new BGCol(ppu);
-		pargen = new PARGen(ppu);
+		patgen = new PATGen(ppu);
+		par = new PAR(ppu);
 		sccx = new ScrollRegs(ppu);
+		bgcol = new BGCol(ppu);
 	}
 
 	DataReader::~DataReader()
 	{
-		delete bgcol;
-		delete pargen;
+		delete patgen;
+		delete par;
 		delete sccx;
+		delete bgcol;
 	}
 
 	void DataReader::sim()
 	{
 		sccx->sim();
-		pargen->sim();
+		patgen->sim();
+		par->sim();
 		bgcol->sim();
 	}
 }

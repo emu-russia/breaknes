@@ -1,4 +1,4 @@
-// Picture Address Generator
+// Picture Address Register
 
 #include "pch.h"
 
@@ -6,17 +6,17 @@ using namespace BaseLogic;
 
 namespace PPUSim
 {
-	PARGen::PARGen(PPU* parent)
+	PAR::PAR(PPU* parent)
 	{
 		ppu = parent;
 	}
 
-	PARGen::~PARGen()
+	PAR::~PAR()
 	{
 
 	}
 
-	void PARGen::sim()
+	void PAR::sim()
 	{
 
 	}

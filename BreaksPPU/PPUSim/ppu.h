@@ -35,7 +35,8 @@ namespace PPUSimUnitTest
 #include "hv_decoder.h"
 #include "mux.h"
 #include "oam.h"
-#include "pargen.h"
+#include "patgen.h"
+#include "par.h"
 #include "regs.h"
 #include "scroll_regs.h"
 #include "dataread.h"
@@ -113,9 +114,10 @@ namespace PPUSim
 		friend FIFOLane;
 		friend FIFO;
 		friend DataReader;
-		friend BGCol;
-		friend PARGen;
+		friend PATGen;
+		friend PAR;
 		friend ScrollRegs;
+		friend BGCol;
 		friend VRAM_Control;
 
 		/// <summary>
