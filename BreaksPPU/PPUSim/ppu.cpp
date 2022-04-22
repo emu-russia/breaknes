@@ -81,6 +81,8 @@ namespace PPUSim
 
 		// The other parts
 
+		fifo->sim_SpriteH();
+
 		regs->sim_CLP();
 
 		mux->sim();
