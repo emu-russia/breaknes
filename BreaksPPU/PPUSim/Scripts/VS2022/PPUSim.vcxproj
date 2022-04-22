@@ -29,7 +29,8 @@
     <ClCompile Include="..\..\hv_decoder.cpp" />
     <ClCompile Include="..\..\mux.cpp" />
     <ClCompile Include="..\..\oam.cpp" />
-    <ClCompile Include="..\..\pargen.cpp" />
+    <ClCompile Include="..\..\par.cpp" />
+    <ClCompile Include="..\..\patgen.cpp" />
     <ClCompile Include="..\..\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -54,7 +55,8 @@
     <ClInclude Include="..\..\hv_decoder.h" />
     <ClInclude Include="..\..\mux.h" />
     <ClInclude Include="..\..\oam.h" />
-    <ClInclude Include="..\..\pargen.h" />
+    <ClInclude Include="..\..\par.h" />
+    <ClInclude Include="..\..\patgen.h" />
     <ClInclude Include="..\..\pch.h" />
     <ClInclude Include="..\..\ppu.h" />
     <ClInclude Include="..\..\regs.h" />

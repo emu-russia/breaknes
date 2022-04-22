@@ -194,6 +194,23 @@ namespace BaseLogic
 		}
 	}
 
+	size_t Decoder2(TriState in[2])
+	{
+		// Pack2
+		size_t n = ((in[1] == TriState::One ? 1ULL : 0) << 1) |
+			(in[0] == TriState::One ? 1ULL : 0);
+		return n;
+	}
+
+	size_t Decoder3(TriState in[3])
+	{
+		// Pack3
+		size_t n = ((in[2] == TriState::One ? 1ULL : 0) << 2) |
+			((in[1] == TriState::One ? 1ULL : 0) << 1) |
+			(in[0] == TriState::One ? 1ULL : 0);
+		return n;
+	}
+
 	PLA::PLA(size_t inputs, size_t outputs, char* filename)
 	{
 		romInputs = inputs;

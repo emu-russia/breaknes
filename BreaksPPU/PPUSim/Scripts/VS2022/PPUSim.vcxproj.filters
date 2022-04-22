@@ -45,7 +45,7 @@
     <ClCompile Include="..\..\oam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\pargen.cpp">
+    <ClCompile Include="..\..\par.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ppu.cpp">
@@ -67,6 +67,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\patgen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,7 +104,7 @@
     <ClInclude Include="..\..\oam.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\pargen.h">
+    <ClInclude Include="..\..\par.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ppu.h">
@@ -123,6 +126,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\patgen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

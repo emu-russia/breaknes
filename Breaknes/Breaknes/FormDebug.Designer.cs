@@ -155,40 +155,40 @@
             // bogusWindowToolStripMenuItem
             // 
             this.bogusWindowToolStripMenuItem.Name = "bogusWindowToolStripMenuItem";
-            this.bogusWindowToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bogusWindowToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.bogusWindowToolStripMenuItem.Text = "Bogus Window";
             this.bogusWindowToolStripMenuItem.Click += new System.EventHandler(this.bogusWindowToolStripMenuItem_Click);
             // 
             // assemblerToolStripMenuItem
             // 
             this.assemblerToolStripMenuItem.Name = "assemblerToolStripMenuItem";
-            this.assemblerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.assemblerToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.assemblerToolStripMenuItem.Text = "Assembler";
             this.assemblerToolStripMenuItem.Click += new System.EventHandler(this.assemblerToolStripMenuItem_Click);
             // 
             // coreDataPathToolStripMenuItem
             // 
             this.coreDataPathToolStripMenuItem.Name = "coreDataPathToolStripMenuItem";
-            this.coreDataPathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.coreDataPathToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.coreDataPathToolStripMenuItem.Text = "Core DataPath";
             this.coreDataPathToolStripMenuItem.Click += new System.EventHandler(this.coreDataPathToolStripMenuItem_Click);
             // 
             // testMemDumpToolStripMenuItem
             // 
             this.testMemDumpToolStripMenuItem.Name = "testMemDumpToolStripMenuItem";
-            this.testMemDumpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testMemDumpToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.testMemDumpToolStripMenuItem.Text = "Memory Dump";
             this.testMemDumpToolStripMenuItem.Click += new System.EventHandler(this.testMemDumpToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(152, 6);
             // 
             // testDebugInfoToolStripMenuItem
             // 
             this.testDebugInfoToolStripMenuItem.Name = "testDebugInfoToolStripMenuItem";
-            this.testDebugInfoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testDebugInfoToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.testDebugInfoToolStripMenuItem.Text = "Test DebugInfo";
             this.testDebugInfoToolStripMenuItem.Click += new System.EventHandler(this.testDebugInfoToolStripMenuItem_Click);
             // 
@@ -233,7 +233,7 @@
             this.aLUToolStripMenuItem,
             this.programCounterToolStripMenuItem});
             this.coreToolStripMenuItem.Name = "coreToolStripMenuItem";
-            this.coreToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.coreToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.coreToolStripMenuItem.Text = "6502 Core";
             // 
             // overviewToolStripMenuItem
@@ -424,7 +424,7 @@
             this.dACToolStripMenuItem,
             this.testPatternToolStripMenuItem});
             this.aPUToolStripMenuItem.Name = "aPUToolStripMenuItem";
-            this.aPUToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.aPUToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aPUToolStripMenuItem.Text = "APU";
             // 
             // overviewToolStripMenuItem1
@@ -542,158 +542,158 @@
             this.vRAMControllerToolStripMenuItem,
             this.pPUInterconnectionsToolStripMenuItem});
             this.pPUToolStripMenuItem.Name = "pPUToolStripMenuItem";
-            this.pPUToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.pPUToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.pPUToolStripMenuItem.Text = "PPU";
             // 
             // overviewToolStripMenuItem2
             // 
             this.overviewToolStripMenuItem2.Name = "overviewToolStripMenuItem2";
-            this.overviewToolStripMenuItem2.Size = new System.Drawing.Size(211, 22);
+            this.overviewToolStripMenuItem2.Size = new System.Drawing.Size(201, 22);
             this.overviewToolStripMenuItem2.Text = "Overview";
             this.overviewToolStripMenuItem2.Click += new System.EventHandler(this.overviewToolStripMenuItem2_Click);
             // 
             // pinoutToolStripMenuItem2
             // 
             this.pinoutToolStripMenuItem2.Name = "pinoutToolStripMenuItem2";
-            this.pinoutToolStripMenuItem2.Size = new System.Drawing.Size(211, 22);
+            this.pinoutToolStripMenuItem2.Size = new System.Drawing.Size(201, 22);
             this.pinoutToolStripMenuItem2.Text = "Pinout";
             this.pinoutToolStripMenuItem2.Click += new System.EventHandler(this.pinoutToolStripMenuItem2_Click);
             // 
             // pixelClockToolStripMenuItem
             // 
             this.pixelClockToolStripMenuItem.Name = "pixelClockToolStripMenuItem";
-            this.pixelClockToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.pixelClockToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.pixelClockToolStripMenuItem.Text = "Pixel Clock";
             this.pixelClockToolStripMenuItem.Click += new System.EventHandler(this.pixelClockToolStripMenuItem_Click);
             // 
             // controlRegistersToolStripMenuItem
             // 
             this.controlRegistersToolStripMenuItem.Name = "controlRegistersToolStripMenuItem";
-            this.controlRegistersToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.controlRegistersToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.controlRegistersToolStripMenuItem.Text = "Control Registers";
             this.controlRegistersToolStripMenuItem.Click += new System.EventHandler(this.controlRegistersToolStripMenuItem_Click);
             // 
             // hVCountersToolStripMenuItem
             // 
             this.hVCountersToolStripMenuItem.Name = "hVCountersToolStripMenuItem";
-            this.hVCountersToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.hVCountersToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.hVCountersToolStripMenuItem.Text = "H/V Counters";
             this.hVCountersToolStripMenuItem.Click += new System.EventHandler(this.hVCountersToolStripMenuItem_Click);
             // 
             // hVDecoderToolStripMenuItem
             // 
             this.hVDecoderToolStripMenuItem.Name = "hVDecoderToolStripMenuItem";
-            this.hVDecoderToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.hVDecoderToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.hVDecoderToolStripMenuItem.Text = "H/V Decoder";
             this.hVDecoderToolStripMenuItem.Click += new System.EventHandler(this.hVDecoderToolStripMenuItem_Click);
             // 
             // hVFSMControlLogicToolStripMenuItem
             // 
             this.hVFSMControlLogicToolStripMenuItem.Name = "hVFSMControlLogicToolStripMenuItem";
-            this.hVFSMControlLogicToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.hVFSMControlLogicToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.hVFSMControlLogicToolStripMenuItem.Text = "H/V FSM Control Logic";
             this.hVFSMControlLogicToolStripMenuItem.Click += new System.EventHandler(this.hVFSMControlLogicToolStripMenuItem_Click);
             // 
             // paletteToolStripMenuItem
             // 
             this.paletteToolStripMenuItem.Name = "paletteToolStripMenuItem";
-            this.paletteToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.paletteToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.paletteToolStripMenuItem.Text = "Palette";
             this.paletteToolStripMenuItem.Click += new System.EventHandler(this.paletteToolStripMenuItem_Click);
             // 
             // nTSCVideoSignalToolStripMenuItem
             // 
             this.nTSCVideoSignalToolStripMenuItem.Name = "nTSCVideoSignalToolStripMenuItem";
-            this.nTSCVideoSignalToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.nTSCVideoSignalToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.nTSCVideoSignalToolStripMenuItem.Text = "NTSC Video Signal";
             this.nTSCVideoSignalToolStripMenuItem.Click += new System.EventHandler(this.nTSCVideoSignalToolStripMenuItem_Click);
             // 
             // videoSignalGeneratorToolStripMenuItem
             // 
             this.videoSignalGeneratorToolStripMenuItem.Name = "videoSignalGeneratorToolStripMenuItem";
-            this.videoSignalGeneratorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.videoSignalGeneratorToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.videoSignalGeneratorToolStripMenuItem.Text = "Video Signal Generator";
             this.videoSignalGeneratorToolStripMenuItem.Click += new System.EventHandler(this.videoSignalGeneratorToolStripMenuItem_Click);
             // 
             // spriteComparisonToolStripMenuItem
             // 
             this.spriteComparisonToolStripMenuItem.Name = "spriteComparisonToolStripMenuItem";
-            this.spriteComparisonToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.spriteComparisonToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.spriteComparisonToolStripMenuItem.Text = "Sprite Comparison";
             this.spriteComparisonToolStripMenuItem.Click += new System.EventHandler(this.spriteComparisonToolStripMenuItem_Click);
             // 
             // multiplexerToolStripMenuItem
             // 
             this.multiplexerToolStripMenuItem.Name = "multiplexerToolStripMenuItem";
-            this.multiplexerToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.multiplexerToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.multiplexerToolStripMenuItem.Text = "Multiplexer";
             this.multiplexerToolStripMenuItem.Click += new System.EventHandler(this.multiplexerToolStripMenuItem_Click);
             // 
             // spriteMemoryOAMToolStripMenuItem
             // 
             this.spriteMemoryOAMToolStripMenuItem.Name = "spriteMemoryOAMToolStripMenuItem";
-            this.spriteMemoryOAMToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.spriteMemoryOAMToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.spriteMemoryOAMToolStripMenuItem.Text = "Sprite Memory (OAM)";
             this.spriteMemoryOAMToolStripMenuItem.Click += new System.EventHandler(this.spriteMemoryOAMToolStripMenuItem_Click);
             // 
             // oAMFIFOToolStripMenuItem
             // 
             this.oAMFIFOToolStripMenuItem.Name = "oAMFIFOToolStripMenuItem";
-            this.oAMFIFOToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.oAMFIFOToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.oAMFIFOToolStripMenuItem.Text = "OAM FIFO";
             this.oAMFIFOToolStripMenuItem.Click += new System.EventHandler(this.oAMFIFOToolStripMenuItem_Click);
             // 
             // dataFetcherToolStripMenuItem
             // 
             this.dataFetcherToolStripMenuItem.Name = "dataFetcherToolStripMenuItem";
-            this.dataFetcherToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.dataFetcherToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.dataFetcherToolStripMenuItem.Text = "Data Fetcher";
             this.dataFetcherToolStripMenuItem.Click += new System.EventHandler(this.dataFetcherToolStripMenuItem_Click);
             // 
             // scrollingRegistersToolStripMenuItem
             // 
             this.scrollingRegistersToolStripMenuItem.Name = "scrollingRegistersToolStripMenuItem";
-            this.scrollingRegistersToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.scrollingRegistersToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.scrollingRegistersToolStripMenuItem.Text = "Scrolling Registers";
             this.scrollingRegistersToolStripMenuItem.Click += new System.EventHandler(this.scrollingRegistersToolStripMenuItem_Click);
             // 
             // pictureAddressGeneratorToolStripMenuItem
             // 
             this.pictureAddressGeneratorToolStripMenuItem.Name = "pictureAddressGeneratorToolStripMenuItem";
-            this.pictureAddressGeneratorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-            this.pictureAddressGeneratorToolStripMenuItem.Text = "Picture Address Generator";
+            this.pictureAddressGeneratorToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.pictureAddressGeneratorToolStripMenuItem.Text = "Picture Address Register";
             this.pictureAddressGeneratorToolStripMenuItem.Click += new System.EventHandler(this.pictureAddressGeneratorToolStripMenuItem_Click);
             // 
             // backgroundColorToolStripMenuItem
             // 
             this.backgroundColorToolStripMenuItem.Name = "backgroundColorToolStripMenuItem";
-            this.backgroundColorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.backgroundColorToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.backgroundColorToolStripMenuItem.Text = "Background Color";
             this.backgroundColorToolStripMenuItem.Click += new System.EventHandler(this.backgroundColorToolStripMenuItem_Click);
             // 
             // vRAMControllerToolStripMenuItem
             // 
             this.vRAMControllerToolStripMenuItem.Name = "vRAMControllerToolStripMenuItem";
-            this.vRAMControllerToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.vRAMControllerToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.vRAMControllerToolStripMenuItem.Text = "VRAM Controller";
             this.vRAMControllerToolStripMenuItem.Click += new System.EventHandler(this.vRAMControllerToolStripMenuItem_Click);
             // 
             // pPUInterconnectionsToolStripMenuItem
             // 
             this.pPUInterconnectionsToolStripMenuItem.Name = "pPUInterconnectionsToolStripMenuItem";
-            this.pPUInterconnectionsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.pPUInterconnectionsToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.pPUInterconnectionsToolStripMenuItem.Text = "PPU Interconnections";
             this.pPUInterconnectionsToolStripMenuItem.Click += new System.EventHandler(this.pPUInterconnectionsToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(123, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 

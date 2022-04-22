@@ -10,9 +10,10 @@ namespace PPUSim
 
 	public:
 
-		BGCol* bgcol = nullptr;
-		PARGen* pargen = nullptr;
+		PATGen* patgen = nullptr;
+		PAR* par = nullptr;
 		ScrollRegs* sccx = nullptr;
+		BGCol* bgcol = nullptr;
 
 		DataReader(PPU* parent);
 		~DataReader();

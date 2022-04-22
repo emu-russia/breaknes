@@ -35,7 +35,8 @@ namespace PPUSimUnitTest
 #include "hv_decoder.h"
 #include "mux.h"
 #include "oam.h"
-#include "pargen.h"
+#include "patgen.h"
+#include "par.h"
 #include "regs.h"
 #include "scroll_regs.h"
 #include "dataread.h"
@@ -110,11 +111,13 @@ namespace PPUSim
 		friend OAMBufferBit;
 		friend OAMCell;
 		friend OAM;
+		friend FIFOLane;
 		friend FIFO;
 		friend DataReader;
-		friend BGCol;
-		friend PARGen;
+		friend PATGen;
+		friend PAR;
 		friend ScrollRegs;
+		friend BGCol;
 		friend VRAM_Control;
 
 		/// <summary>
@@ -203,6 +206,10 @@ namespace PPUSim
 
 			BaseLogic::TriState CLPB;
 			BaseLogic::TriState CLPO;
+			BaseLogic::TriState n_SH2;
+			BaseLogic::TriState n_SH3;
+			BaseLogic::TriState n_SH5;
+			BaseLogic::TriState n_SH7;
 
 			BaseLogic::TriState n_PA_Top[6];
 			BaseLogic::TriState BGC[4];
@@ -281,8 +288,10 @@ namespace PPUSim
 		VRAM_Control* vram_ctrl = nullptr;
 		DataReader* bgen = nullptr;
 
-		uint8_t DB = 0;
+		uint8_t DB = 0;				// CPU I/F Data bus
 		bool DB_Dirty = false;
+		uint8_t PD = 0;				// Internal PPU Data bus
+		bool PD_Dirty = false;
 
 	public:
 		PPU(Revision rev);
@@ -309,6 +318,10 @@ namespace PPUSim
 		BaseLogic::TriState GetDBBit(size_t n);
 
 		void SetDBBit(size_t n, BaseLogic::TriState bit_val);
+
+		BaseLogic::TriState GetPDBit(size_t n);
+
+		void SetPDBit(size_t n, BaseLogic::TriState bit_val);
 
 		void GetDebugInfo_Wires(PPU_Interconnects & wires);
 

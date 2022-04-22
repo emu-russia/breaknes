@@ -80,6 +80,10 @@ namespace PPUSim
 		uint8_t OV;			// Packed
 		uint8_t CLPB;
 		uint8_t CLPO;
+		uint8_t n_SH2;
+		uint8_t n_SH3;
+		uint8_t n_SH5;
+		uint8_t n_SH7;
 		uint8_t n_PA_Top[6];
 		uint8_t BGC[4];
 		uint8_t THO[5];
@@ -93,6 +97,7 @@ namespace PPUSim
 		uint8_t TH_MUX;
 		uint8_t XRB;
 		uint8_t DB;
+		uint8_t PD;
 		size_t HCounter;
 		size_t VCounter;
 	};

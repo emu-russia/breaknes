@@ -1,16 +1,16 @@
-// Picture Address Generator
+// Picture Address Register
 
 #pragma once
 
 namespace PPUSim
 {
-	class PARGen
+	class PAR
 	{
 		PPU* ppu = nullptr;
 
 	public:
-		PARGen(PPU* parent);
-		~PARGen();
+		PAR(PPU* parent);
+		~PAR();
 
 		void sim();
 	};

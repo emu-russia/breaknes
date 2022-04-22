@@ -218,6 +218,20 @@ namespace BaseLogic
 	void DMX4(TriState in[4], TriState out[16]);
 
 	/// <summary>
+	/// Basic decoder 2-to-4. The input takes a value (bitwise) - the output is the number of the active output.
+	/// </summary>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	size_t Decoder2(TriState in[2]);
+
+	/// <summary>
+	/// Basic decoder 3-to-8. The input takes a value (bitwise) - the output is the number of the active output.
+	/// </summary>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	size_t Decoder3(TriState in[3]);
+
+	/// <summary>
 	/// Generalized PLA matrix emulator.
 	/// Although PLA is a combinatorial element, it is made as a class because of its complexity.
 	/// </summary>
