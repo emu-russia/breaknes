@@ -203,6 +203,10 @@ namespace PPUSim
 
 			BaseLogic::TriState CLPB;
 			BaseLogic::TriState CLPO;
+			BaseLogic::TriState n_SH2;
+			BaseLogic::TriState n_SH3;
+			BaseLogic::TriState n_SH5;
+			BaseLogic::TriState n_SH7;
 
 			BaseLogic::TriState n_PA_Top[6];
 			BaseLogic::TriState BGC[4];

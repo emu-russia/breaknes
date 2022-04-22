@@ -100,6 +100,11 @@ namespace PPUSim
 
 		wires.CLPB = wire.CLPB == TriState::One ? 1 : 0;
 		wires.CLPO = wire.CLPO == TriState::One ? 1 : 0;
+		wires.n_SH2 = wire.n_SH2 == TriState::One ? 1 : 0;
+		wires.n_SH3 = wire.n_SH3 == TriState::One ? 1 : 0;
+		wires.n_SH5 = wire.n_SH5 == TriState::One ? 1 : 0;
+		wires.n_SH7 = wire.n_SH7 == TriState::One ? 1 : 0;
+
 		for (size_t n = 0; n < 6; n++)
 		{
 			wires.n_PA_Top[n] = wire.n_PA_Top[n] == TriState::One ? 1 : 0;
