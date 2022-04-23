@@ -213,6 +213,12 @@ namespace PPUSim
 
 			BaseLogic::TriState n_PA_Top[6];
 			BaseLogic::TriState BGC[4];
+			BaseLogic::TriState FH[3];
+			BaseLogic::TriState FV[3];
+			BaseLogic::TriState NTV;
+			BaseLogic::TriState NTH;
+			BaseLogic::TriState TV[5];
+			BaseLogic::TriState TH[5];
 			BaseLogic::TriState THO[5];
 
 			BaseLogic::TriState n_CB_DB;
