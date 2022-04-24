@@ -155,6 +155,30 @@ namespace BaseLogic
 		return ((sel & 1) == 0) ? in0 : in1;
 	}
 
+	TriState MUX2(TriState sel[2], TriState in[4])
+	{
+		size_t numOut = 0;
+
+		for (size_t n = 0; n < 2; n++)
+		{
+			numOut |= (sel[n] == TriState::One ? 1ULL : 0) << n;
+		}
+
+		return in[numOut];
+	}
+
+	TriState MUX3(TriState sel[3], TriState in[8])
+	{
+		size_t numOut = 0;
+
+		for (size_t n = 0; n < 3; n++)
+		{
+			numOut |= (sel[n] == TriState::One ? 1ULL : 0) << n;
+		}
+
+		return in[numOut];
+	}
+
 	void DMX2(TriState in[2], TriState out[4])
 	{
 		TriState nibble[4];
