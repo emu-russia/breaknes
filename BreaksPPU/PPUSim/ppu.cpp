@@ -61,6 +61,8 @@ namespace PPUSim
 		wire.RC = NOT(Reset_FF.get());
 
 		sim_PCLK();
+		
+		sim_ADBus();
 
 		// Regs
 
@@ -136,6 +138,14 @@ namespace PPUSim
 			wire.PCLK = pclk;
 			wire.n_PCLK = NOT(wire.PCLK);
 		}
+	}
+
+	void PPU::sim_ADBus()
+	{
+		// TBD: Make the AD terminals process properly.
+
+		PD = 0;
+		PD_Dirty = true;
 	}
 
 	size_t PPU::GetPCLKCounter()
