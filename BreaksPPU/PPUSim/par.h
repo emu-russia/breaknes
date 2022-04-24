@@ -10,9 +10,13 @@ namespace PPUSim
 		BaseLogic::DLatch step_latch;
 
 	public:
-		void sim();
+		void sim(BaseLogic::TriState Clock, BaseLogic::TriState Load, BaseLogic::TriState Step,
+			BaseLogic::TriState val_in, BaseLogic::TriState carry_in,
+			BaseLogic::TriState & val_out, BaseLogic::TriState & n_val_out, BaseLogic::TriState & carry_out);
 
-		void sim_res();
+		void sim_res(BaseLogic::TriState Clock, BaseLogic::TriState Load, BaseLogic::TriState Step,
+			BaseLogic::TriState val_in, BaseLogic::TriState carry_in, BaseLogic::TriState Reset,
+			BaseLogic::TriState& val_out, BaseLogic::TriState& n_val_out, BaseLogic::TriState& carry_out);
 	};
 
 	class PAR_LowBit
@@ -21,7 +25,9 @@ namespace PPUSim
 		BaseLogic::DLatch out_latch;
 
 	public:
-		void sim();
+		void sim(BaseLogic::TriState PCLK, BaseLogic::TriState PARR, BaseLogic::TriState DB_PAR, BaseLogic::TriState PAL, BaseLogic::TriState F_AT,
+			BaseLogic::TriState FAT_in, BaseLogic::TriState PAL_in, BaseLogic::TriState PAD_in, BaseLogic::TriState DB_in,
+			BaseLogic::TriState& n_PAx);
 	};
 
 	class PAR_HighBit
@@ -30,7 +36,9 @@ namespace PPUSim
 		BaseLogic::DLatch out_latch;
 
 	public:
-		void sim();
+		void sim(BaseLogic::TriState PCLK, BaseLogic::TriState PARR, BaseLogic::TriState PAH, BaseLogic::TriState F_AT,
+			BaseLogic::TriState FAT_in, BaseLogic::TriState PAH_in, BaseLogic::TriState PAD_in,
+			BaseLogic::TriState & n_PAx);
 	};
 
 	class PAR
@@ -76,6 +84,10 @@ namespace PPUSim
 		BaseLogic::TriState PARR = BaseLogic::TriState::X;
 		BaseLogic::TriState PAH = BaseLogic::TriState::X;
 		BaseLogic::TriState PAL = BaseLogic::TriState::X;
+
+		BaseLogic::TriState FAT_in[14]{};
+		BaseLogic::TriState PAR_in[14]{};
+		BaseLogic::TriState PAD_in[14]{};
 
 		void sim_CountersControl();
 		void sim_CountersCarry();
