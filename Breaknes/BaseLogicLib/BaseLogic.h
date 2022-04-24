@@ -195,13 +195,29 @@ namespace BaseLogic
 	};
 
 	/// <summary>
-	/// 2-mux
+	/// 1-mux
 	/// </summary>
 	/// <param name="sel"></param>
 	/// <param name="in0"></param>
 	/// <param name="in1"></param>
 	/// <returns></returns>
 	TriState MUX(TriState sel, TriState in0, TriState in1);
+
+	/// <summary>
+	/// 2-mux
+	/// </summary>
+	/// <param name="sel"></param>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	TriState MUX2(TriState sel[2], TriState in[4]);
+
+	/// <summary>
+	/// 3-mux
+	/// </summary>
+	/// <param name="sel"></param>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	TriState MUX3(TriState sel[3], TriState in[8]);
 
 	/// <summary>
 	/// DMX 2-to-4
@@ -309,4 +325,9 @@ namespace BaseLogic
 	/// <param name="b"></param>
 	void BusConnect(TriState& a, TriState& b);
 
+	/// <summary>
+	/// Reverse the bit order.
+	/// </summary>
+	/// <param name="in"></param>
+	void BitRev(TriState in[8]);
 }

@@ -178,6 +178,10 @@ namespace PPUSim
 		return "Unknown";
 	}
 
+	// A proven way to resolve bus conflicts.
+	// We carry 2 variables - the bus value (8 bits) and the dirty flag.
+	// If the bus is "dirty", then the operation "Ground wins" is performed (db &= val). Otherwise we set the bus value and the dirty flag.
+
 	TriState PPU::GetDBBit(size_t n)
 	{
 		TriState DBBit = (DB & (1 << n)) != 0 ? TriState::One : TriState::Zero;
@@ -186,10 +190,6 @@ namespace PPUSim
 
 	void PPU::SetDBBit(size_t n, TriState bit_val)
 	{
-		// A proven way to resolve bus conflicts.
-		// We carry 2 variables - the bus value (8 bits) and the dirty flag.
-		// If the bus is "dirty", then the operation "Ground wins" is performed (db &= val). Otherwise we set the bus value and the dirty flag.
-
 		if (bit_val != TriState::Z)
 		{
 			uint8_t out = DB & ~(1 << n);
