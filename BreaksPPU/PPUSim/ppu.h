@@ -211,6 +211,7 @@ namespace PPUSim
 			BaseLogic::TriState n_SH5;
 			BaseLogic::TriState n_SH7;
 
+			BaseLogic::TriState n_PA_Bot[8];
 			BaseLogic::TriState n_PA_Top[6];
 			BaseLogic::TriState BGC[4];
 			BaseLogic::TriState FH[3];
@@ -220,7 +221,10 @@ namespace PPUSim
 			BaseLogic::TriState TV[5];
 			BaseLogic::TriState TH[5];
 			BaseLogic::TriState THO[5];
+			BaseLogic::TriState n_THO[5];
 			BaseLogic::TriState TVO[5];
+			BaseLogic::TriState n_TVO[5];
+			BaseLogic::TriState FVO[3];
 			BaseLogic::TriState n_FVO[3];
 			BaseLogic::TriState PAD[13];
 
