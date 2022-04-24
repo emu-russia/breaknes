@@ -400,4 +400,13 @@ namespace BaseLogic
 		}
 	}
 
+	void BitRev(TriState in[8])
+	{
+		for (size_t n = 0; n < 4; n++)
+		{
+			auto old = in[n];
+			in[n] = in[7 - n];
+			in[7 - n] = old;
+		}
+	}
 }
