@@ -220,6 +220,8 @@ namespace PPUSim
 			BaseLogic::TriState TV[5];
 			BaseLogic::TriState TH[5];
 			BaseLogic::TriState THO[5];
+			BaseLogic::TriState n_FVO[3];
+			BaseLogic::TriState PAD[13];
 
 			BaseLogic::TriState n_CB_DB;
 			BaseLogic::TriState n_BW;
