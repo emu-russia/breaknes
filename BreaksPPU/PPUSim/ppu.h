@@ -254,7 +254,7 @@ namespace PPUSim
 			BaseLogic::TriState IOAM2;
 			BaseLogic::TriState PARO;
 			BaseLogic::TriState nVIS;
-			BaseLogic::TriState FNT;
+			BaseLogic::TriState nFNT;
 			BaseLogic::TriState FTB;
 			BaseLogic::TriState FTA;
 			BaseLogic::TriState FAT;

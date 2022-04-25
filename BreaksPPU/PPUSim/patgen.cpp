@@ -31,7 +31,7 @@ namespace PPUSim
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState H0_DD = ppu->wire.H0_Dash2;
-		TriState nF_NT = ppu->fsm.FNT;
+		TriState nF_NT = ppu->fsm.nFNT;
 		TriState BGSEL = ppu->wire.BGSEL;
 		TriState OBSEL = ppu->wire.OBSEL;
 		TriState O8_16 = ppu->wire.O8_16;
