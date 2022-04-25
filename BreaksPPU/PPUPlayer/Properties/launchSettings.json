@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PPUPlayer": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

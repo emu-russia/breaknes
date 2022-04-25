@@ -50,6 +50,8 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
+            this.stopPPUAndUnloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -110,7 +112,8 @@
             // controlsToolStripMenuItem
             // 
             this.controlsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.runToolStripMenuItem});
+            this.runToolStripMenuItem,
+            this.stopPPUAndUnloadToolStripMenuItem});
             this.controlsToolStripMenuItem.Name = "controlsToolStripMenuItem";
             this.controlsToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
             this.controlsToolStripMenuItem.Text = "Controls";
@@ -118,7 +121,7 @@
             // runToolStripMenuItem
             // 
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.runToolStripMenuItem.Text = "Run PPU";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
@@ -156,7 +159,8 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1});
+            this.toolStripButton1,
+            this.toolStripButton2});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(675, 25);
@@ -232,6 +236,22 @@
             this.openFileDialog2.DefaultExt = "nes";
             this.openFileDialog2.Filter = "NES files|*.nes|All files|*.*";
             // 
+            // stopPPUAndUnloadToolStripMenuItem
+            // 
+            this.stopPPUAndUnloadToolStripMenuItem.Name = "stopPPUAndUnloadToolStripMenuItem";
+            this.stopPPUAndUnloadToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.stopPPUAndUnloadToolStripMenuItem.Text = "Stop PPU and Unload";
+            this.stopPPUAndUnloadToolStripMenuItem.Click += new System.EventHandler(this.stopPPUAndUnloadToolStripMenuItem_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(51, 22);
+            this.toolStripButton2.Text = "Stop";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -283,5 +303,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog2;
+        private System.Windows.Forms.ToolStripMenuItem stopPPUAndUnloadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripButton2;
     }
 }

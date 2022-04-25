@@ -8,3 +8,8 @@
 
 #include "../../Breaknes/BaseLogicLib/BaseLogic.h"
 #include "../PPUSim/ppu.h"
+#include "../../Breaknes/BreaksCore/SRAM.h"
+#include "../../Breaknes/BreaksCore/LS373.h"
+
+#include "NROM.h"
+#include "PPUPlayerBoard.h"
