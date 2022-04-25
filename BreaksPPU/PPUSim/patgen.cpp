@@ -24,7 +24,7 @@ namespace PPUSim
 		sim_PatBits();
 
 		TriState n_H1_D = ppu->wire.nH1_Dash;
-		ppu->wire.PAD[3] = n_H1_D;
+		ppu->wire.PAD[3] = NOT(n_H1_D);
 	}
 
 	void PATGen::sim_Control()
