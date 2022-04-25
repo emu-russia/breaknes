@@ -68,5 +68,10 @@ namespace PPUPlayer
 
             // ...
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            pictureBox1.BackColor = Color.Gray;
+        }
     }
 }
