@@ -22,8 +22,6 @@ namespace PPUPlayer
 	{
 		// Simulate PPU
 
-		PPUSim::VideoOutSignal vidSample;
-
 		TriState inputs[(size_t)PPUSim::InputPad::Max]{};
 		TriState outputs[(size_t)PPUSim::OutputPad::Max]{};
 
