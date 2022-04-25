@@ -290,7 +290,7 @@ namespace PPUSimUnitTest
 		CloseFSM(I_OAM2, 106);
 		CloseFSM(PAR_O, 107);
 		CloseFSM(n_VIS, 108);
-		CloseFSM(F_NT, 109);
+		CloseFSM(n_F_NT, 109);
 		CloseFSM(F_TB, 110);
 		CloseFSM(F_TA, 111);
 		CloseFSM(F_AT, 112);
@@ -397,7 +397,7 @@ namespace PPUSimUnitTest
 		OpenDirectFSM(I_OAM2, 106);
 		OpenDirectFSM(PAR_O, 107);
 		OpenInverseFSM(n_VIS, 108);
-		OpenInverseFSM(F_NT, 109);
+		OpenInverseFSM(n_F_NT, 109);
 		OpenDirectFSM(F_TB, 110);
 		OpenDirectFSM(F_TA, 111);
 		OpenDirectFSM(F_AT, 112);

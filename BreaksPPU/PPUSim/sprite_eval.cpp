@@ -224,7 +224,7 @@ namespace PPUSim
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState F_NT = ppu->fsm.FNT;
+		TriState nF_NT = ppu->fsm.nFNT;
 		TriState H0_DD = ppu->wire.H0_Dash2;
 		TriState I_OAM2 = ppu->fsm.IOAM2;
 		TriState n_VIS = ppu->fsm.nVIS;
@@ -234,7 +234,7 @@ namespace PPUSim
 		TriState OVZ = this->OVZ;
 		TriState NotUsed{};
 
-		fnt_latch.set(NOT(NOR(F_NT, NOT(H0_DD))), n_PCLK);
+		fnt_latch.set(NOT(NOR(nF_NT, NOT(H0_DD))), n_PCLK);
 		novz_latch.set(NOT(OVZ), n_PCLK);
 		eval_FF3.sim(n_PCLK, fnt_latch.get(), novz_latch.get(), ppu->wire.Z_FIFO, NotUsed);
 

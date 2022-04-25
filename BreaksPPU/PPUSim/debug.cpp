@@ -147,7 +147,7 @@ namespace PPUSim
 		fsm_states.I_OAM2 = fsm.IOAM2 == TriState::One ? 1 : 0;
 		fsm_states.PAR_O = fsm.PARO == TriState::One ? 1 : 0;
 		fsm_states.n_VIS = fsm.nVIS == TriState::One ? 1 : 0;
-		fsm_states.F_NT = fsm.FNT == TriState::One ? 1 : 0;
+		fsm_states.n_F_NT = fsm.nFNT == TriState::One ? 1 : 0;
 		fsm_states.F_TB = fsm.FTB == TriState::One ? 1 : 0;
 		fsm_states.F_TA = fsm.FTA == TriState::One ? 1 : 0;
 		fsm_states.F_AT = fsm.FAT == TriState::One ? 1 : 0;

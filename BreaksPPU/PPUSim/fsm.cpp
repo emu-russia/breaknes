@@ -105,7 +105,7 @@ namespace PPUSim
 
 		fnt_latch1.set(HPLA[11], n_PCLK);
 		fnt_latch2.set(fnt_latch1.nget(), PCLK);
-		ppu->fsm.FNT = NOT(fnt_latch2.nget());
+		ppu->fsm.nFNT = NOT(fnt_latch2.nget());
 
 		ftb_latch1.set(HPLA[12], n_PCLK);
 		fta_latch1.set(HPLA[13], n_PCLK);
