@@ -6,7 +6,7 @@ Workflow:
 
 ![PPU_Player](PPU_Player.png)
 
-## Как получить дампы регистров PPU
+## How to get PPU register dumps
 
 Use the special version of Nintendulator + PPU Recorder to dump records to the PPU registers: https://github.com/ogamespec/nintendulator/releases/tag/ppu-recorder
 
