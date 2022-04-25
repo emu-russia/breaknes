@@ -6,7 +6,11 @@ Workflow:
 
 ![PPU_Player](PPU_Player.png)
 
-Nintendulator + PPU Recorder: https://github.com/ogamespec/nintendulator/releases/tag/ppu-recorder
+## Как получить дампы регистров PPU
+
+Use the special version of Nintendulator + PPU Recorder to dump records to the PPU registers: https://github.com/ogamespec/nintendulator/releases/tag/ppu-recorder
+
+Note that you have to run the simulation in the PPU Player with the same .nes as when writing the dump in the Nintendulator. Or not :smiley:
 
 ## CPU I/F Timing
 
