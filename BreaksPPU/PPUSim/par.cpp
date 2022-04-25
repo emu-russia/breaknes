@@ -73,10 +73,10 @@ namespace PPUSim
 		temp[3] = ppu->wire.n_THO[2];
 		temp[4] = ppu->wire.n_THO[3];
 		temp[5] = ppu->wire.n_THO[4];
-		auto THZ = NOR6(temp);
+		auto THZB = NOR6(temp);
 
 		temp[0] = BLNK;
-		auto THZB = NOR6(temp);
+		auto THZ = NOR6(temp);
 
 		// FVIN
 
@@ -93,7 +93,7 @@ namespace PPUSim
 		fvz[4] = ppu->wire.n_FVO[2];
 		auto FVZ = NOR5(fvz);
 
-		TVIN = NOT(NOR3(FVZ, THZ, AND(BLNK, I1_32)));
+		TVIN = NOT(NOR3(FVZ, THZB, AND(BLNK, I1_32)));
 		THIN = NAND(BLNK, I1_32);
 
 		// TVZ/TVZB
@@ -105,19 +105,19 @@ namespace PPUSim
 		temp[4] = ppu->wire.n_TVO[2];
 		temp[5] = ppu->wire.n_TVO[3];
 		temp[6] = ppu->wire.n_TVO[4];
-		auto TVZ = NOR7(temp);
+		auto TVZB = NOR7(temp);
 
 		temp[0] = BLNK;
-		auto TVZB = NOR7(temp);
+		auto TVZ = NOR7(temp);
 
 		// NTHIN/NTVIN
 
-		NTHIN = NOT(NOR(TVZ, THZB));
-		NTVIN = NOT( NOR( AND(NTHO, NOT(NOT(BLNK))) , TVZB) );
+		NTHIN = NOT(NOR(TVZB, THZ));
+		NTVIN = NOT( NOR( AND(NTHO, NOT(NOT(BLNK))) , TVZ) );
 
 		// 0/TV
 
-		tvz_latch1.set(TVZB, PCLK);
+		tvz_latch1.set(TVZ, PCLK);
 		tvz_latch2.set(tvz_latch1.nget(), n_PCLK);
 		tvstep_latch.set(NOT(TVSTEP), n_PCLK);
 		Z_TV = NOR(tvz_latch2.get(), tvstep_latch.get());
