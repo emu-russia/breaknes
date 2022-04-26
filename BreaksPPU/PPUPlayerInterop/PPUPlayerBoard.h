@@ -19,7 +19,8 @@ namespace PPUPlayer
 		bool ADDirty = false;
 		uint8_t pa8_13 = 0;
 
-		bool pendingCpuWrite = false;
+		bool pendingCpuOperation = false;
+		bool pendingWrite = false;
 		size_t ppuRegId = 0;
 		uint8_t writeValue = 0;
 		size_t savedPclk = 0;
@@ -37,6 +38,8 @@ namespace PPUPlayer
 		void Step();
 
 		void CPUWrite(size_t ppuReg, uint8_t val);
+
+		void CPURead(size_t ppuReg);
 
 		size_t GetPCLKCounter();
 

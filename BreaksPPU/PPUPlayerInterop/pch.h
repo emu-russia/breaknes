@@ -5,6 +5,7 @@
 #include <windows.h>
 
 #include <cstdint>
+#include <cstdio>
 
 #include "../../Breaknes/BaseLogicLib/BaseLogic.h"
 #include "../PPUSim/ppu.h"

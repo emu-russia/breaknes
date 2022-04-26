@@ -52,6 +52,8 @@ namespace PPUSim
 		wire.RS[2] = inputs[(size_t)InputPad::RS2];
 		wire.n_DBE = inputs[(size_t)InputPad::n_DBE];
 
+		regs->sim_RWDecoder();
+
 		wire.RES = NOT(inputs[(size_t)InputPad::n_RES]);
 
 		wire.CLK = inputs[(size_t)InputPad::CLK];
@@ -60,9 +62,9 @@ namespace PPUSim
 		Reset_FF.set(NOR(wire.RES, NOR(Reset_FF.get(), hv_fsm->get_RESCL())));
 		wire.RC = NOT(Reset_FF.get());
 
+		sim_BusInput(ext, data_bus, ad_bus);
+
 		sim_PCLK();
-		
-		sim_ADBus();
 
 		// Regs
 
@@ -109,6 +111,8 @@ namespace PPUSim
 		outputs[(size_t)OutputPad::ALE] = NOT(wire.n_ALE);
 		outputs[(size_t)OutputPad::n_RD] = NOT(wire.RD);
 		outputs[(size_t)OutputPad::n_WR] = NOT(wire.WR);
+
+		sim_BusOutput(ext, data_bus, ad_bus, addrHi_bus);
 	}
 
 	void PPU::sim_PCLK()
@@ -140,12 +144,44 @@ namespace PPUSim
 		}
 	}
 
-	void PPU::sim_ADBus()
+	void PPU::sim_BusInput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus)
 	{
-		// TBD: Make the AD terminals process properly.
+		// TBD: EXT Terminals
 
-		PD = 0;
+		if (wire.n_DBE == TriState::Zero && wire.n_WR == TriState::Zero)
+		{
+			DB = *data_bus;
+			DB_Dirty = true;
+		}
+		else
+		{
+			DB_Dirty = false;
+		}
+
+		PD = *ad_bus;
 		PD_Dirty = true;
+	}
+
+	void PPU::sim_BusOutput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus)
+	{
+		// TBD: EXT Terminals
+
+		if (wire.n_DBE == TriState::Zero && wire.n_RD == TriState::Zero)
+		{
+			*data_bus = DB;
+		}
+
+		if (wire.WR == TriState::One)
+		{
+			*ad_bus = Pack(wire.n_PA_Bot);
+		}
+
+		uint8_t PATop = 0;
+		for (size_t n = 0; n < 6; n++)
+		{
+			PATop |= (wire.n_PA_Top[n] == TriState::One ? 1 : 0) << n;
+		}
+		*addrHi_bus = PATop;
 	}
 
 	size_t PPU::GetPCLKCounter()

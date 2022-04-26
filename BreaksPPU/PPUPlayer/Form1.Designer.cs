@@ -37,12 +37,14 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopPPUAndUnloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -50,8 +52,7 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
-            this.stopPPUAndUnloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -125,6 +126,13 @@
             this.runToolStripMenuItem.Text = "Run PPU";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
+            // stopPPUAndUnloadToolStripMenuItem
+            // 
+            this.stopPPUAndUnloadToolStripMenuItem.Name = "stopPPUAndUnloadToolStripMenuItem";
+            this.stopPPUAndUnloadToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.stopPPUAndUnloadToolStripMenuItem.Text = "Stop PPU and Unload";
+            this.stopPPUAndUnloadToolStripMenuItem.Click += new System.EventHandler(this.stopPPUAndUnloadToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -175,6 +183,15 @@
             this.toolStripButton1.Size = new System.Drawing.Size(73, 22);
             this.toolStripButton1.Text = "Run PPU";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(51, 22);
+            this.toolStripButton2.Text = "Stop";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // tabControl1
             // 
@@ -236,21 +253,10 @@
             this.openFileDialog2.DefaultExt = "nes";
             this.openFileDialog2.Filter = "NES files|*.nes|All files|*.*";
             // 
-            // stopPPUAndUnloadToolStripMenuItem
+            // backgroundWorker1
             // 
-            this.stopPPUAndUnloadToolStripMenuItem.Name = "stopPPUAndUnloadToolStripMenuItem";
-            this.stopPPUAndUnloadToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.stopPPUAndUnloadToolStripMenuItem.Text = "Stop PPU and Unload";
-            this.stopPPUAndUnloadToolStripMenuItem.Click += new System.EventHandler(this.stopPPUAndUnloadToolStripMenuItem_Click);
-            // 
-            // toolStripButton2
-            // 
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(51, 22);
-            this.toolStripButton2.Text = "Stop";
-            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+            this.backgroundWorker1.WorkerSupportsCancellation = true;
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork_1);
             // 
             // Form1
             // 
@@ -305,5 +311,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog2;
         private System.Windows.Forms.ToolStripMenuItem stopPPUAndUnloadToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }

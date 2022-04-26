@@ -17,7 +17,6 @@ namespace PPUSim
 
 	void ControlRegs::sim()
 	{
-		sim_RWDecoder();
 		sim_RegOps();
 		sim_FirstSecond_SCCX_Write();
 		sim_RegFFs();

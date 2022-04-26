@@ -32,7 +32,6 @@ namespace PPUSim
 		BaseLogic::DLatch tr_latch;
 		BaseLogic::DLatch tg_latch;
 
-		void sim_RWDecoder();
 		void sim_RegOps();
 		void sim_FirstSecond_SCCX_Write();
 		void sim_RegFFs();
@@ -47,6 +46,7 @@ namespace PPUSim
 		ControlRegs(PPU* parent);
 		~ControlRegs();
 
+		void sim_RWDecoder();
 		void sim();
 		void sim_CLP();
 

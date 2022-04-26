@@ -25,14 +25,19 @@ namespace PPUPlayer
 
 	NROM::NROM(uint8_t* nesImage, size_t nesImageSize)
 	{
+		printf("NROM::NROM()\n");
+
 		if (nesImage != nullptr && nesImageSize >= sizeof(NESHeader))
 		{
 			// Basic .nes header checks
+
+			printf("Basic .nes header checks ...");
 
 			NESHeader* head = (NESHeader*)nesImage;
 
 			if (head->PRGSize >= 0x10 || head->CHRSize >= 0x10 || head->CHRSize == 0)
 			{
+				printf(" FAILED (1)!\n");
 				return;
 			}
 
@@ -41,14 +46,18 @@ namespace PPUPlayer
 
 			if (mapperNum != 0)
 			{
+				printf(" FAILED (2)!\n");
 				return;
 			}
 
 			size_t totalSize = (trainer ? 512 : 0) + 0x4000 * head->PRGSize + 0x2000 * head->CHRSize + sizeof(NESHeader);
 			if (nesImageSize < totalSize)
 			{
+				printf(" FAILED (3)!\n");
 				return;
 			}
+
+			printf(" OK!\n");
 
 			// Load CHR ROM
 
@@ -64,6 +73,8 @@ namespace PPUPlayer
 
 	NROM::~NROM()
 	{
+		printf("NROM::~NROM()\n");
+
 		if (PRG != nullptr)
 			delete PRG;
 
