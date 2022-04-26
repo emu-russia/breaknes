@@ -8,15 +8,15 @@ Workflow:
 
 ## How to get PPU register dumps
 
-Use the special version of Nintendulator + PPU Recorder to dump CPU writes to the PPU registers: https://github.com/ogamespec/nintendulator/releases/tag/ppu-recorder
+Use the special version of Nintendulator + PPU Recorder to dump CPU accesses to the PPU registers: https://github.com/ogamespec/nintendulator/releases/tag/ppu-recorder2
 
 Note that you have to run the simulation in the PPU Player with the same .nes as when writing the dump in the Nintendulator. Or not :smiley:
 
 ## CPU I/F Timing
 
-This section describes when (and for how long) to use the CPU I/F PPU to write the register.
+This section describes when (and for how long) to use the CPU I/F PPU to read/write the register.
 
-No 6502 instruction can technically execute faster than a single PCLK.
+No 6502 load/store instruction can technically execute faster than a single PCLK.
 
 So we will make the assumption that the CPU I/F (signal `/DBE` and others) will be active for the entire PCLK cycle (`/PCLK` + `PCLK`).
 

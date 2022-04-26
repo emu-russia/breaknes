@@ -27,11 +27,16 @@ namespace PPUPlayer
 
 		inputs[(size_t)PPUSim::InputPad::CLK] = CLK;
 		inputs[(size_t)PPUSim::InputPad::n_RES] = TriState::One;
-		inputs[(size_t)PPUSim::InputPad::RnW] = pendingCpuWrite ? TriState::One : TriState::Zero;
-		inputs[(size_t)PPUSim::InputPad::RS0] = pendingCpuWrite ? ((ppuRegId & 1) ? TriState::One : TriState::Zero) : TriState::Zero;
-		inputs[(size_t)PPUSim::InputPad::RS1] = pendingCpuWrite ? ((ppuRegId & 2) ? TriState::One : TriState::Zero) : TriState::Zero;
-		inputs[(size_t)PPUSim::InputPad::RS2] = pendingCpuWrite ? ((ppuRegId & 4) ? TriState::One : TriState::Zero) : TriState::Zero;
-		inputs[(size_t)PPUSim::InputPad::n_DBE] = pendingCpuWrite ? TriState::Zero : TriState::One;
+		inputs[(size_t)PPUSim::InputPad::RnW] = pendingWrite ? TriState::Zero : TriState::One;
+		inputs[(size_t)PPUSim::InputPad::RS0] = pendingCpuOperation ? ((ppuRegId & 1) ? TriState::One : TriState::Zero) : TriState::Zero;
+		inputs[(size_t)PPUSim::InputPad::RS1] = pendingCpuOperation ? ((ppuRegId & 2) ? TriState::One : TriState::Zero) : TriState::Zero;
+		inputs[(size_t)PPUSim::InputPad::RS2] = pendingCpuOperation ? ((ppuRegId & 4) ? TriState::One : TriState::Zero) : TriState::Zero;
+		inputs[(size_t)PPUSim::InputPad::n_DBE] = pendingCpuOperation ? TriState::Zero : TriState::One;
+
+		if (pendingCpuOperation && pendingWrite)
+		{
+			data_bus = writeValue;
+		}
 
 		ppu->sim(inputs, outputs, &ext_bus, &data_bus, &ad_bus, &pa8_13, vidSample);
 
@@ -61,9 +66,9 @@ namespace PPUPlayer
 
 		CLK = NOT(CLK);
 
-		if (pendingCpuWrite && ppu->GetPCLKCounter() != savedPclk)
+		if (pendingCpuOperation && ppu->GetPCLKCounter() != savedPclk)
 		{
-			pendingCpuWrite = false;
+			pendingCpuOperation = false;
 		}
 	}
 
@@ -73,11 +78,23 @@ namespace PPUPlayer
 	/// </summary>
 	void Board::CPUWrite(size_t ppuReg, uint8_t val)
 	{
-		if (!pendingCpuWrite)
+		if (!pendingCpuOperation)
 		{
 			ppuRegId = ppuReg;
 			writeValue = val;
-			pendingCpuWrite = true;
+			pendingCpuOperation = true;
+			pendingWrite = true;
+			savedPclk = ppu->GetPCLKCounter();
+		}
+	}
+
+	void Board::CPURead(size_t ppuReg)
+	{
+		if (!pendingCpuOperation)
+		{
+			ppuRegId = ppuReg;
+			pendingCpuOperation = true;
+			pendingWrite = false;
 			savedPclk = ppu->GetPCLKCounter();
 		}
 	}

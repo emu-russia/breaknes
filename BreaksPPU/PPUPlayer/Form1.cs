@@ -9,17 +9,29 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace PPUPlayer
 {
     public partial class Form1 : Form
     {
+        [DllImport("kernel32")]
+        static extern bool AllocConsole();
+
         string? ppu_dump;
         string? nes_file;
+
+        int logPointer = 0;
+        byte[] logData = new byte[0];
+        PPULogEntry? currentEntry;
 
         public Form1()
         {
             InitializeComponent();
+
+#if DEBUG
+            AllocConsole();
+#endif
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -38,6 +50,8 @@ namespace PPUPlayer
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 ppu_dump = openFileDialog1.FileName;
+
+                Console.WriteLine("The PPU registers dump is selected: " + ppu_dump);
             }
         }
 
@@ -46,6 +60,8 @@ namespace PPUPlayer
             if (openFileDialog2.ShowDialog() == DialogResult.OK)
             {
                 nes_file = openFileDialog2.FileName;
+
+                Console.WriteLine("The .nes file has been selected: " + nes_file);
             }
         }
 
@@ -84,28 +100,116 @@ namespace PPUPlayer
                 return;
             }
 
+            logData = File.ReadAllBytes(ppu_dump);
+            logPointer = 0;
+            Console.WriteLine("Number of PPU Dump records: " + (logData.Length / 4).ToString());
+
             byte[] nes = File.ReadAllBytes(nes_file);
 
             PPUPlayerInterop.CreateBoard();
             PPUPlayerInterop.InsertCartridge(nes, nes.Length);
 
-            // ...
+            currentEntry = NextLogEntry();
 
-            PPUPlayerInterop.Step();
-
-            int pclk = PPUPlayerInterop.GetPCLKCounter();
-
-            float sample;
-            PPUPlayerInterop.SampleVideoSignal(out sample);
-
+            if (currentEntry != null)
+            {
+                backgroundWorker1.RunWorkerAsync();
+            }
+            else
+            {
+                MessageBox.Show(
+                    "The trace history of PPU register accesses does not contain any data.",
+                    "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
         }
 
         void StopPPU()
+        {
+            if (backgroundWorker1.IsBusy)
+            {
+                backgroundWorker1.CancelAsync();
+                DisposeBoard();
+            }
+            else
+            {
+                Console.WriteLine("Background Worker is not running or has already completed its activity.");
+            }
+        }
+
+        void DisposeBoard()
         {
             PPUPlayerInterop.EjectCartridge();
             PPUPlayerInterop.DestroyBoard();
             ppu_dump = null;
             nes_file = null;
+        }
+
+        PPULogEntry? NextLogEntry()
+        {
+            PPULogEntry entry = new PPULogEntry();
+
+            var bytesLeft = logData.Length - logPointer;
+            if (bytesLeft < 4)
+            {
+                return null;
+            }
+
+            UInt16 pclkDelta = logData[logPointer + 1];
+            pclkDelta <<= 8;
+            pclkDelta |= logData[logPointer + 0];
+
+            entry.pclk = PPUPlayerInterop.GetPCLKCounter() + pclkDelta;
+            entry.write = (logData[logPointer + 2] & 0x80) == 0 ? true : false;
+            entry.reg = (byte)(logData[logPointer + 2] & 0x7);
+            entry.value = logData[logPointer + 3];
+
+            logPointer += 4;
+
+            return entry;
+        }
+
+        public class PPULogEntry
+        {
+            public int pclk;
+            public bool write;
+            public byte reg;
+            public byte value;
+        }
+
+        private void backgroundWorker1_DoWork_1(object sender, DoWorkEventArgs e)
+        {
+            while (!backgroundWorker1.CancellationPending)
+            {
+                if (currentEntry == null)
+                {
+                    Console.WriteLine("PPU Dump records are out.");
+
+                    DisposeBoard();
+
+                    return;
+                }
+
+                if (PPUPlayerInterop.GetPCLKCounter() == currentEntry.pclk)
+                {
+                    if (currentEntry.write)
+                    {
+                        PPUPlayerInterop.CPUWrite(currentEntry.reg, currentEntry.value);
+                    }
+                    else
+                    {
+                        PPUPlayerInterop.CPURead(currentEntry.reg);
+                    }
+
+                    currentEntry = NextLogEntry();
+                }
+
+                PPUPlayerInterop.Step();
+
+                float sample;
+                PPUPlayerInterop.SampleVideoSignal(out sample);
+            }
+
+            Console.WriteLine("Background Worker canceled.");
         }
     }
 }
