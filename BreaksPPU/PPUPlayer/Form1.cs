@@ -24,6 +24,7 @@ namespace PPUPlayer
         int logPointer = 0;
         byte[] logData = new byte[0];
         PPULogEntry? currentEntry;
+        int recordCounter = 0;
 
         public Form1()
         {
@@ -92,6 +93,12 @@ namespace PPUPlayer
 
         void RunPPU()
         {
+            if (backgroundWorker1.IsBusy)
+            {
+                Console.WriteLine("Background Worker is already running.");
+                return;
+            }    
+
             if (ppu_dump == null || nes_file == null)
             {
                 MessageBox.Show(
@@ -102,6 +109,7 @@ namespace PPUPlayer
 
             logData = File.ReadAllBytes(ppu_dump);
             logPointer = 0;
+            recordCounter = 0;
             Console.WriteLine("Number of PPU Dump records: " + (logData.Length / 4).ToString());
 
             byte[] nes = File.ReadAllBytes(nes_file);
@@ -201,6 +209,13 @@ namespace PPUPlayer
                     }
 
                     currentEntry = NextLogEntry();
+
+                    recordCounter++;
+                    if (recordCounter > 10000)
+                    {
+                        recordCounter = 0;
+                        Console.WriteLine("Another 10000\n");
+                    }
                 }
 
                 PPUPlayerInterop.Step();
