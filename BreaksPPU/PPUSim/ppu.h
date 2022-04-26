@@ -306,7 +306,8 @@ namespace PPUSim
 		uint8_t PD = 0;				// Internal PPU Data bus
 		bool PD_Dirty = false;
 
-		void sim_ADBus();
+		void sim_BusInput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus);
+		void sim_BusOutput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus);
 
 	public:
 		PPU(Revision rev);

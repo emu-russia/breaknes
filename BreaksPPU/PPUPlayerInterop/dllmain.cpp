@@ -64,7 +64,7 @@ extern "C"
     {
         if (board != nullptr)
         {
-            printf("CPURead: %d\n", (uint8_t)ppuReg);
+            //printf("CPURead: %d\n", (uint8_t)ppuReg);
             board->CPURead(ppuReg);
         }
     }
