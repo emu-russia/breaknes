@@ -43,6 +43,8 @@ namespace PPUPlayer
 		int PrevH = -1;
 		int PrevV = -1;
 
+		List<BreaksCore.MemDesciptor> mem = new List<BreaksCore.MemDesciptor>();
+
 		public Form1()
 		{
 			InitializeComponent();
@@ -135,6 +137,7 @@ namespace PPUPlayer
 
 			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", "RP2C02G", "Fami");
 			PPUPlayerInterop.InsertCartridge(nes, nes.Length);
+			UpdateMemLayout();
 
 			currentEntry = NextLogEntry();
 
@@ -449,5 +452,25 @@ namespace PPUPlayer
         {
 
         }
+
+		/// <summary>
+		/// Get a set of memory regions from the debugger and fill the ComboBox.
+		/// </summary>
+		void UpdateMemLayout()
+        {
+			comboBox1.Items.Clear();
+
+			mem = BreaksCore.GetMemoryLayout();
+
+			foreach (var descr in mem)
+            {
+				comboBox1.Items.Add(descr.name);
+            }
+
+			if (mem.Count != 0)
+			{
+				comboBox1.SelectedIndex = 0;
+			}
+		}
     }
 }

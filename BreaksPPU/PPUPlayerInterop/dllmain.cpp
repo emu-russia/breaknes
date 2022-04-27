@@ -32,6 +32,7 @@ extern "C"
         if (board == nullptr)
         {
             printf("CreateBoard\n");
+            CreateDebugHub();
             board = new PPUPlayer::Board();
         }
     }
@@ -43,6 +44,7 @@ extern "C"
             printf("DestroyBoard\n");
             delete board;
             board = nullptr;
+            DisposeDebugHub();
         }
     }
 
