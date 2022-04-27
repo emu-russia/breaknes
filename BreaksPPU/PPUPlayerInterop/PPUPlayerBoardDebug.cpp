@@ -11,6 +11,7 @@ using namespace BaseLogic;
 #define CHR_ROM_NAME "CHR-ROM"
 #define PPU_WIRES_CATEGORY "PPU Wires"
 #define PPU_FSM_CATEGORY "PPU FSM"
+#define PPU_REGS_CATEGORY "PPU Regs"
 #define BOARD_CATEGORY "PPUPlayer Board"
 #define NROM_CATEGORY "NROM"
 
@@ -222,6 +223,23 @@ namespace PPUPlayer
 		"INT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::INT),
 	};
 
+	SignalOffsetPair ppu_regs[] = {
+		"HCounter", offsetof(PPUSim::PPU_Registers, HCounter),
+		"VCounter", offsetof(PPUSim::PPU_Registers, VCounter),
+		"CTRL0", offsetof(PPUSim::PPU_Registers, CTRL0),
+		"CTRL1", offsetof(PPUSim::PPU_Registers, CTRL1),
+		"MainOAMCounter", offsetof(PPUSim::PPU_Registers, MainOAMCounter),
+		"TempOAMCounter", offsetof(PPUSim::PPU_Registers, TempOAMCounter),
+		"OB", offsetof(PPUSim::PPU_Registers, OB),
+		"RB", offsetof(PPUSim::PPU_Registers, RB),
+		"SCC_FH", offsetof(PPUSim::PPU_Registers, SCC_FH),
+		"SCC_FV", offsetof(PPUSim::PPU_Registers, SCC_FV),
+		"SCC_NTV", offsetof(PPUSim::PPU_Registers, SCC_NTV),
+		"SCC_NTH", offsetof(PPUSim::PPU_Registers, SCC_NTH),
+		"SCC_TV", offsetof(PPUSim::PPU_Registers, SCC_TV),
+		"SCC_TH", offsetof(PPUSim::PPU_Registers, SCC_TH),
+	};
+
 	SignalOffsetPair board_signals[] = {
 		"CLK", offsetof(BoardDebugInfo, CLK),
 		"LS373 Latch", offsetof(BoardDebugInfo, LS373_Latch),
@@ -263,6 +281,17 @@ namespace PPUPlayer
 			strcpy_s(entry->category, sizeof(entry->category), PPU_FSM_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < _countof(ppu_regs); n++)
+		{
+			SignalOffsetPair* sp = &ppu_regs[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy_s(entry->category, sizeof(entry->category), PPU_REGS_CATEGORY);
+			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPURegs, entry, GetPpuRegsDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(board_signals); n++)
@@ -368,7 +397,19 @@ namespace PPUPlayer
 	{
 		Board* board = (Board*)opaque;
 
-		// TBD: Add regs dump in PPUSim.
+		for (size_t n = 0; n < _countof(ppu_regs); n++)
+		{
+			SignalOffsetPair* sp = &ppu_regs[n];
+
+			if (!strcmp(sp->name, entry->name))
+			{
+				PPUSim::PPU_Registers regs{};
+				board->ppu->GetDebugInfo_Regs(regs);
+
+				uint8_t* ptr = (uint8_t*)&regs + sp->offset;
+				return *(uint32_t*)ptr;
+			}
+		}
 
 		return 0;
 	}

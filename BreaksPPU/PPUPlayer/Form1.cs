@@ -230,6 +230,10 @@ namespace PPUPlayer
 				{
 					Console.WriteLine("PPU Dump records are out.");
 
+					UpdatePpuStats(PPUStats.CPU_IF_Ops, CPUOpsProcessed);
+					UpdatePpuStats(PPUStats.Scans, scanCounter);
+					UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
+
 					DisposeBoard();
 
 					if (PromptWhenFinished)

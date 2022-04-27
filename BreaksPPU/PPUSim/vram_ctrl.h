@@ -4,6 +4,21 @@
 
 namespace PPUSim
 {
+	class RB_Bit
+	{
+		PPU* ppu = nullptr;
+
+		BaseLogic::FF ff;
+
+	public:
+		RB_Bit(PPU* parent) { ppu = parent; }
+		~RB_Bit() {}
+
+		void sim(size_t bit_num);
+
+		BaseLogic::TriState get();
+	};
+
 	class VRAM_Control
 	{
 		PPU* ppu = nullptr;
@@ -32,15 +47,20 @@ namespace PPUSim
 		BaseLogic::TriState tmp_1 = BaseLogic::TriState::Z;
 		BaseLogic::TriState tmp_2 = BaseLogic::TriState::Z;
 
+		RB_Bit *RB[8];
+
 		void sim_RD();
 		void sim_WR();
 		void sim_Misc();
 		void sim_ALE();
+		void sim_ReadBuffer();
 
 	public:
 		VRAM_Control(PPU* parent);
 		~VRAM_Control();
 
 		void sim();
+
+		uint8_t Debug_GetRB();
 	};
 }

@@ -52,5 +52,9 @@ namespace PPUSim
 
 		void Debug_RenderAlwaysEnabled(bool enable);
 		void Debug_ClippingAlwaysDisabled(bool enable);
+
+		uint8_t Debug_GetCTRL0();
+
+		uint8_t Debug_GetCTRL1();
 	};
 }

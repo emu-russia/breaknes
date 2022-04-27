@@ -132,8 +132,6 @@ namespace PPUSim
 
 		wires.DB = DB;
 		wires.PD = PD;
-		wires.HCounter = h->get();
-		wires.VCounter = v->get();
 	}
 
 	void PPU::GetDebugInfo_FSMStates(PPU_FSMStates& fsm_states)
@@ -164,5 +162,23 @@ namespace PPUSim
 		fsm_states.VB = fsm.VB == TriState::One ? 1 : 0;
 		fsm_states.BLNK = fsm.BLNK == TriState::One ? 1 : 0;
 		fsm_states.INT = fsm.INT == TriState::One ? 1 : 0;
+	}
+
+	void PPU::GetDebugInfo_Regs(PPU_Registers& regs)
+	{
+		regs.HCounter = h->get();
+		regs.VCounter = v->get();
+		regs.CTRL0 = this->regs->Debug_GetCTRL0();		// $2000
+		regs.CTRL1 = this->regs->Debug_GetCTRL1();	// $2001
+		regs.MainOAMCounter = eval->Debug_GetMainCounter();		// $2003
+		regs.TempOAMCounter = eval->Debug_GetTempCounter();
+		regs.OB = Pack(wire.OB);		// $2004
+		regs.RB = vram_ctrl->Debug_GetRB();			// $2007
+		regs.SCC_FH = Pack3(wire.FH);		// $2005/2006
+		regs.SCC_FV = Pack3(wire.FV);
+		regs.SCC_NTV = wire.NTV;
+		regs.SCC_NTH = wire.NTH;
+		regs.SCC_TV = Pack5(wire.TV);
+		regs.SCC_TH = Pack5(wire.TH);
 	}
 }

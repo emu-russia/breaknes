@@ -114,5 +114,8 @@ namespace PPUSim
 		~OAMEval();
 
 		void sim();
+
+		uint32_t Debug_GetMainCounter();
+		uint32_t Debug_GetTempCounter();
 	};
 }

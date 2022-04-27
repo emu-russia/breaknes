@@ -299,6 +299,20 @@ namespace BaseLogic
 	uint8_t Pack(TriState in[8]);
 
 	/// <summary>
+	/// Pack a bit vector into a byte.
+	/// </summary>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	uint8_t Pack3(TriState in[3]);
+
+	/// <summary>
+	/// Pack a bit vector into a byte.
+	/// </summary>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	uint8_t Pack5(TriState in[5]);
+
+	/// <summary>
 	/// Pack a bit vector into a nipple.
 	/// </summary>
 	/// <param name="in"></param>

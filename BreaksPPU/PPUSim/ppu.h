@@ -118,6 +118,7 @@ namespace PPUSim
 		friend PAR;
 		friend ScrollRegs;
 		friend BGCol;
+		friend RB_Bit;
 		friend VRAM_Control;
 
 		/// <summary>
@@ -342,6 +343,8 @@ namespace PPUSim
 		void GetDebugInfo_Wires(PPU_Interconnects & wires);
 
 		void GetDebugInfo_FSMStates(PPU_FSMStates & fsm_states);
+
+		void GetDebugInfo_Regs(PPU_Registers& regs);
 
 		size_t GetHCounter();
 

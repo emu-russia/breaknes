@@ -242,4 +242,29 @@ namespace PPUSim
 	{
 		ClippingAlwaysDisabled = enable;
 	}
+
+	uint8_t ControlRegs::Debug_GetCTRL0()
+	{
+		uint8_t val = 0;
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val |= (PPU_CTRL0[n].get() == TriState::One ? 1ULL : 0) << n;
+		}
+
+		return val;
+	}
+
+	uint8_t ControlRegs::Debug_GetCTRL1()
+	{
+		uint8_t val = 0;
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val |= (PPU_CTRL1[n].get() == TriState::One ? 1ULL : 0) << n;
+		}
+
+		return val;
+	}
+
 }
