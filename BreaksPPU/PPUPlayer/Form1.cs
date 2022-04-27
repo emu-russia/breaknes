@@ -276,7 +276,7 @@ namespace PPUPlayer
 				int v = PPUPlayerInterop.GetVCounter();
 
 				if (h != PrevH)
-                {
+				{
 					if (h == 0 && PrevH > 0)
 					{
 						// Next Scan
@@ -288,7 +288,7 @@ namespace PPUPlayer
 				}
 
 				if (v != PrevV)
-                {
+				{
 					if (v == 0 && PrevV > 0)
 					{
 						// Next Field
@@ -299,7 +299,7 @@ namespace PPUPlayer
 
 					//UpdatePpuStats(PPUStats.VCounter, v);
 					PrevV = v;
-                }
+				}
 
 				// Show statistics that are updated once every 1 second.
 
@@ -307,28 +307,23 @@ namespace PPUPlayer
 				PPUPlayerInterop.SampleVideoSignal(out sample);
 				ProcessSample(sample);
 
-                long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                if (now > (timeStamp + 1000))
-                {
-                    timeStamp = now;
+				long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+				if (now > (timeStamp + 1000))
+				{
+					timeStamp = now;
 
-                    UpdatePpuStats(PPUStats.PCLK_Sec, PPUPlayerInterop.GetPCLKCounter() - pclkCounter);
-                    UpdatePpuStats(PPUStats.FPS, fieldCounter);
+					UpdatePpuStats(PPUStats.PCLK_Sec, PPUPlayerInterop.GetPCLKCounter() - pclkCounter);
+					UpdatePpuStats(PPUStats.FPS, fieldCounter);
 
 					UpdatePpuStats(PPUStats.Scans, scanCounter);
 					UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
 
 					pclkCounter = PPUPlayerInterop.GetPCLKCounter();
-                    fieldCounter = 0;
-                }
-            }
+					fieldCounter = 0;
+				}
+			}
 
 			Console.WriteLine("Background Worker canceled.");
-		}
-
-		void ProcessSample(float sample)
-		{
-
 		}
 
 		enum PPUStats
@@ -409,19 +404,10 @@ namespace PPUPlayer
 			UpdatePpuStats(PPUStats.FPS, 5);
 		}
 
-		private void testFieldToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void testScanToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-
-		}
-
 		private void testDebugPropertyGridToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			List<BreaksCore.DebugInfoEntry> entries = BreaksCore.GetTestDebugInfo();
+			UpdateDebugInfo(entries);
 		}
 
 		private void testHexBoxToolStripMenuItem_Click(object sender, EventArgs e)
@@ -440,18 +426,36 @@ namespace PPUPlayer
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-        private void button2_Click(object sender, EventArgs e)
-        {
+		private void button2_Click(object sender, EventArgs e)
+		{
+			List<BreaksCore.DebugInfoEntry> entries = BreaksCore.GetDebugInfo(ComboBoxToDebugInfoType());
+			UpdateDebugInfo(entries);
+		}
 
-        }
+		BreaksCore.DebugInfoType ComboBoxToDebugInfoType()
+		{
+			switch (comboBox2.SelectedIndex)
+			{
+				case 0:
+					return BreaksCore.DebugInfoType.DebugInfoType_PPU;
+				case 1:
+					return BreaksCore.DebugInfoType.DebugInfoType_PPURegs;
+				case 2:
+					return BreaksCore.DebugInfoType.DebugInfoType_Board;
+				case 3:
+					return BreaksCore.DebugInfoType.DebugInfoType_Cart;
+			}
+
+			return BreaksCore.DebugInfoType.DebugInfoType_Test;
+		}
 
 		/// <summary>
 		/// Dump Mem
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
-        {
+		private void button1_Click(object sender, EventArgs e)
+		{
 			if (mem.Count == 0)
 			{
 				hexBox1.ByteProvider = new DynamicByteProvider(new byte[0]);
@@ -472,20 +476,38 @@ namespace PPUPlayer
 		/// Get a set of memory regions from the debugger and fill the ComboBox.
 		/// </summary>
 		void UpdateMemLayout()
-        {
+		{
 			comboBox1.Items.Clear();
 
 			mem = BreaksCore.GetMemoryLayout();
 
 			foreach (var descr in mem)
-            {
+			{
 				comboBox1.Items.Add(descr.name);
-            }
+			}
 
 			if (mem.Count != 0)
 			{
 				comboBox1.SelectedIndex = 0;
 			}
 		}
-    }
+
+		void UpdateDebugInfo(List<BreaksCore.DebugInfoEntry> entries)
+		{
+			// Construct an object to show in PropertyGrid
+
+			CustomClass myProperties = new CustomClass();
+
+			foreach (BreaksCore.DebugInfoEntry entry in entries)
+			{
+				CustomProperty myProp = new CustomProperty();
+				myProp.Name = entry.name;
+				myProp.Category = entry.category;
+				myProp.Value = entry.value;
+				myProperties.Add(myProp);
+			}
+
+			propertyGrid1.SelectedObject = myProperties;
+		}
+	}
 }
