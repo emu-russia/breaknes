@@ -15,346 +15,358 @@ using Be.Windows.Forms;
 
 namespace PPUPlayer
 {
-    public partial class Form1 : Form
-    {
-        [DllImport("kernel32")]
-        static extern bool AllocConsole();
+	public partial class Form1 : Form
+	{
+		[DllImport("kernel32")]
+		static extern bool AllocConsole();
 
-        string? ppu_dump;
-        string? nes_file;
+		string? ppu_dump;
+		string? nes_file;
 
-        int logPointer = 0;
-        byte[] logData = new byte[0];
-        PPULogEntry? currentEntry;
-        int recordCounter = 0;
-        int CPUOpsProcessed = 0;
-        int TotalOps = 0;
+		int logPointer = 0;
+		byte[] logData = new byte[0];
+		PPULogEntry? currentEntry;
+		int recordCounter = 0;
+		int CPUOpsProcessed = 0;
+		int TotalOps = 0;
 
-        bool Paused = false;
+		bool Paused = false;
 
-        bool PromptWhenFinished = true;
+		bool PromptWhenFinished = true;
 
-        public Form1()
-        {
-            InitializeComponent();
-        }
+		public Form1()
+		{
+			InitializeComponent();
+		}
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
+		private void Form1_Load(object sender, EventArgs e)
+		{
 #if DEBUG
-            AllocConsole();
+			AllocConsole();
 #endif
 
-            pictureBox1.BackColor = Color.Gray;
-            toolStripButton3.Enabled = false;
-        }
+			pictureBox1.BackColor = Color.Gray;
+			toolStripButton3.Enabled = false;
+		}
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FormAbout about = new FormAbout();
-            about.ShowDialog();
-        }
+		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FormAbout about = new FormAbout();
+			about.ShowDialog();
+		}
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 
-        private void choosePPURegsDumpToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                ppu_dump = openFileDialog1.FileName;
+		private void choosePPURegsDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (openFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				ppu_dump = openFileDialog1.FileName;
 
-                Console.WriteLine("The PPU registers dump is selected: " + ppu_dump);
-            }
-        }
+				Console.WriteLine("The PPU registers dump is selected: " + ppu_dump);
+			}
+		}
 
-        private void choosenesImageToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog2.ShowDialog() == DialogResult.OK)
-            {
-                nes_file = openFileDialog2.FileName;
+		private void choosenesImageToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (openFileDialog2.ShowDialog() == DialogResult.OK)
+			{
+				nes_file = openFileDialog2.FileName;
 
-                Console.WriteLine("The .nes file has been selected: " + nes_file);
-            }
-        }
+				Console.WriteLine("The .nes file has been selected: " + nes_file);
+			}
+		}
 
-        private void runToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RunPPU();
-        }
+		private void runToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			RunPPU();
+		}
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            RunPPU();
-        }
+		private void toolStripButton1_Click(object sender, EventArgs e)
+		{
+			RunPPU();
+		}
 
-        private void stopPPUAndUnloadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            StopPPU();
-        }
+		private void stopPPUAndUnloadToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			StopPPU();
+		}
 
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            StopPPU();
-        }
+		private void toolStripButton2_Click(object sender, EventArgs e)
+		{
+			StopPPU();
+		}
 
-        void RunPPU()
-        {
-            if (backgroundWorker1.IsBusy)
-            {
-                Console.WriteLine("Background Worker is already running.");
-                return;
-            }    
+		void RunPPU()
+		{
+			if (backgroundWorker1.IsBusy)
+			{
+				Console.WriteLine("Background Worker is already running.");
+				return;
+			}    
 
-            if (ppu_dump == null || nes_file == null)
-            {
-                MessageBox.Show(
-                    "Before you start the simulation you need to select a PPU register dump and some .nes file, preferably with mapper 0.",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
+			if (ppu_dump == null || nes_file == null)
+			{
+				MessageBox.Show(
+					"Before you start the simulation you need to select a PPU register dump and some .nes file, preferably with mapper 0.",
+					"Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				return;
+			}
 
-            logData = File.ReadAllBytes(ppu_dump);
-            logPointer = 0;
-            TotalOps = logData.Length / 4;
-            Console.WriteLine("Number of PPU Dump records: " + TotalOps.ToString());
+			logData = File.ReadAllBytes(ppu_dump);
+			logPointer = 0;
+			TotalOps = logData.Length / 4;
+			Console.WriteLine("Number of PPU Dump records: " + TotalOps.ToString());
 
-            byte[] nes = File.ReadAllBytes(nes_file);
+			byte[] nes = File.ReadAllBytes(nes_file);
 
-            PPUPlayerInterop.CreateBoard();
-            PPUPlayerInterop.InsertCartridge(nes, nes.Length);
+			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", "RP2C02G", "Fami");
+			PPUPlayerInterop.InsertCartridge(nes, nes.Length);
 
-            currentEntry = NextLogEntry();
+			currentEntry = NextLogEntry();
 
-            if (currentEntry != null)
-            {
-                ResetPpuStats();
-                toolStripButton3.Enabled = true;
-                backgroundWorker1.RunWorkerAsync();
-            }
-            else
-            {
-                MessageBox.Show(
-                    "The trace history of PPU register accesses does not contain any data.",
-                    "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-        }
+			if (currentEntry != null)
+			{
+				ResetPpuStats();
+				toolStripButton3.Enabled = true;
+				backgroundWorker1.RunWorkerAsync();
+			}
+			else
+			{
+				MessageBox.Show(
+					"The trace history of PPU register accesses does not contain any data.",
+					"Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			}
+		}
 
-        void StopPPU()
-        {
-            if (backgroundWorker1.IsBusy)
-            {
-                backgroundWorker1.CancelAsync();
-                DisposeBoard();
-            }
-            else
-            {
-                Console.WriteLine("Background Worker is not running or has already completed its activity.");
-            }
-        }
+		void StopPPU()
+		{
+			if (backgroundWorker1.IsBusy)
+			{
+				backgroundWorker1.CancelAsync();
+				DisposeBoard();
+			}
+			else
+			{
+				Console.WriteLine("Background Worker is not running or has already completed its activity.");
+			}
+		}
 
-        void DisposeBoard()
-        {
-            PPUPlayerInterop.EjectCartridge();
-            PPUPlayerInterop.DestroyBoard();
-            ppu_dump = null;
-            nes_file = null;
+		void DisposeBoard()
+		{
+			PPUPlayerInterop.EjectCartridge();
+			PPUPlayerInterop.DestroyBoard();
+			ppu_dump = null;
+			nes_file = null;
 
-            Paused = false;
-            toolStripButton3.Checked = false;
-            toolStripButton3.Enabled = false;
-        }
+			Paused = false;
+			toolStripButton3.Checked = false;
+			toolStripButton3.Enabled = false;
+		}
 
-        PPULogEntry? NextLogEntry()
-        {
-            PPULogEntry entry = new PPULogEntry();
+		PPULogEntry? NextLogEntry()
+		{
+			PPULogEntry entry = new PPULogEntry();
 
-            var bytesLeft = logData.Length - logPointer;
-            if (bytesLeft < 4)
-            {
-                return null;
-            }
+			var bytesLeft = logData.Length - logPointer;
+			if (bytesLeft < 4)
+			{
+				return null;
+			}
 
-            UInt16 pclkDelta = logData[logPointer + 1];
-            pclkDelta <<= 8;
-            pclkDelta |= logData[logPointer + 0];
+			UInt16 pclkDelta = logData[logPointer + 1];
+			pclkDelta <<= 8;
+			pclkDelta |= logData[logPointer + 0];
 
-            entry.pclk = PPUPlayerInterop.GetPCLKCounter() + pclkDelta;
-            entry.write = (logData[logPointer + 2] & 0x80) == 0 ? true : false;
-            entry.reg = (byte)(logData[logPointer + 2] & 0x7);
-            entry.value = logData[logPointer + 3];
+			entry.pclk = PPUPlayerInterop.GetPCLKCounter() + pclkDelta;
+			entry.write = (logData[logPointer + 2] & 0x80) == 0 ? true : false;
+			entry.reg = (byte)(logData[logPointer + 2] & 0x7);
+			entry.value = logData[logPointer + 3];
 
-            logPointer += 4;
+			logPointer += 4;
 
-            return entry;
-        }
+			return entry;
+		}
 
-        public class PPULogEntry
-        {
-            public int pclk;
-            public bool write;
-            public byte reg;
-            public byte value;
-        }
+		public class PPULogEntry
+		{
+			public int pclk;
+			public bool write;
+			public byte reg;
+			public byte value;
+		}
 
-        private void backgroundWorker1_DoWork_1(object sender, DoWorkEventArgs e)
-        {
-            while (!backgroundWorker1.CancellationPending)
-            {
-                if (Paused)
-                {
-                    Thread.Sleep(10);
-                    continue;
-                }
+		private void backgroundWorker1_DoWork_1(object sender, DoWorkEventArgs e)
+		{
+			while (!backgroundWorker1.CancellationPending)
+			{
+				if (Paused)
+				{
+					Thread.Sleep(10);
+					continue;
+				}
 
-                if (currentEntry == null)
-                {
-                    Console.WriteLine("PPU Dump records are out.");
+				if (currentEntry == null)
+				{
+					Console.WriteLine("PPU Dump records are out.");
 
-                    DisposeBoard();
+					DisposeBoard();
 
-                    if (PromptWhenFinished)
-                    {
-                        MessageBox.Show(
-                            "The PPU Player has finished executing the current batch.",
-                            "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    }
+					if (PromptWhenFinished)
+					{
+						MessageBox.Show(
+							"The PPU Player has finished executing the current batch.",
+							"Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					}
 
-                    return;
-                }
+					return;
+				}
 
-                if (PPUPlayerInterop.GetPCLKCounter() == currentEntry.pclk)
-                {
-                    if (currentEntry.write)
-                    {
-                        PPUPlayerInterop.CPUWrite(currentEntry.reg, currentEntry.value);
-                    }
-                    else
-                    {
-                        PPUPlayerInterop.CPURead(currentEntry.reg);
-                    }
+				if (PPUPlayerInterop.GetPCLKCounter() == currentEntry.pclk)
+				{
+					if (currentEntry.write)
+					{
+						PPUPlayerInterop.CPUWrite(currentEntry.reg, currentEntry.value);
+					}
+					else
+					{
+						PPUPlayerInterop.CPURead(currentEntry.reg);
+					}
 
-                    currentEntry = NextLogEntry();
+					currentEntry = NextLogEntry();
 
-                    CPUOpsProcessed++;
-                    recordCounter++;
-                    if (recordCounter > 1000)
-                    {
-                        recordCounter = 0;
-                        UpdatePpuStats(PPUStats.CPU_IF_Ops, CPUOpsProcessed);
-                    }
-                }
+					CPUOpsProcessed++;
+					recordCounter++;
+					if (recordCounter > 1000)
+					{
+						recordCounter = 0;
+						UpdatePpuStats(PPUStats.CPU_IF_Ops, CPUOpsProcessed);
+					}
+				}
 
-                PPUPlayerInterop.Step();
+				PPUPlayerInterop.Step();
 
-                float sample;
-                PPUPlayerInterop.SampleVideoSignal(out sample);
-                ProcessSample(sample);
-            }
+				float sample;
+				PPUPlayerInterop.SampleVideoSignal(out sample);
+				ProcessSample(sample);
+			}
 
-            Console.WriteLine("Background Worker canceled.");
-        }
+			Console.WriteLine("Background Worker canceled.");
+		}
 
-        void ProcessSample(float sample)
-        {
+		void ProcessSample(float sample)
+		{
 
-        }
+		}
 
-        enum PPUStats
-        {
-            CPU_IF_Ops,
-            Scans,
-            Fields,
-            HCounter,
-            VCounter,
-        }
+		enum PPUStats
+		{
+			CPU_IF_Ops,
+			Scans,
+			Fields,
+			HCounter,
+			VCounter,
+			PCLK_Sec,
+			FPS,
+		}
 
-        void ResetPpuStats()
-        {
-            recordCounter = 0;
-            CPUOpsProcessed = 0;
+		void ResetPpuStats()
+		{
+			recordCounter = 0;
+			CPUOpsProcessed = 0;
 
-            UpdatePpuStats(PPUStats.CPU_IF_Ops, 0);
-            UpdatePpuStats(PPUStats.Scans, 0);
-            UpdatePpuStats(PPUStats.Fields, 0);
-            UpdatePpuStats(PPUStats.HCounter, 0);
-            UpdatePpuStats(PPUStats.VCounter, 0);
-        }
+			UpdatePpuStats(PPUStats.CPU_IF_Ops, 0);
+			UpdatePpuStats(PPUStats.Scans, 0);
+			UpdatePpuStats(PPUStats.Fields, 0);
+			UpdatePpuStats(PPUStats.HCounter, 0);
+			UpdatePpuStats(PPUStats.VCounter, 0);
+			UpdatePpuStats(PPUStats.PCLK_Sec, 0);
+			UpdatePpuStats(PPUStats.FPS, 0);
+		}
 
-        void UpdatePpuStats(PPUStats stats, int value)
-        {
-            switch (stats)
-            {
-                case PPUStats.CPU_IF_Ops:
-                    toolStripStatusLabel6.Text = value.ToString() + "/" + TotalOps.ToString();
-                    break;
-                case PPUStats.Scans:
-                    toolStripStatusLabel7.Text = value.ToString();
-                    break;
-                case PPUStats.Fields:
-                    toolStripStatusLabel8.Text = value.ToString();
-                    break;
-                case PPUStats.HCounter:
-                    toolStripStatusLabel9.Text = value.ToString();
-                    break;
-                case PPUStats.VCounter:
-                    toolStripStatusLabel10.Text = value.ToString();
-                    break;
-            }
-        }
+		void UpdatePpuStats(PPUStats stats, int value)
+		{
+			switch (stats)
+			{
+				case PPUStats.CPU_IF_Ops:
+					toolStripStatusLabel6.Text = value.ToString() + "/" + TotalOps.ToString();
+					break;
+				case PPUStats.Scans:
+					toolStripStatusLabel7.Text = value.ToString();
+					break;
+				case PPUStats.Fields:
+					toolStripStatusLabel8.Text = value.ToString();
+					break;
+				case PPUStats.HCounter:
+					toolStripStatusLabel9.Text = value.ToString();
+					break;
+				case PPUStats.VCounter:
+					toolStripStatusLabel10.Text = value.ToString();
+					break;
+				case PPUStats.PCLK_Sec:
+					toolStripStatusLabel12.Text = value.ToString();
+					break;
+				case PPUStats.FPS:
+					toolStripStatusLabel14.Text = value.ToString();
+					break;
+			}
+		}
 
-        private void toolStripButton3_Click(object sender, EventArgs e)
-        {
-            if (backgroundWorker1.IsBusy)
-            {
-                if (!Paused)
-                {
-                    Paused = true;
-                    toolStripButton3.Checked = true;
-                }
-                else
-                {
-                    Paused = false;
-                    toolStripButton3.Checked = false;
-                }
-            }
-        }
+		private void toolStripButton3_Click(object sender, EventArgs e)
+		{
+			if (backgroundWorker1.IsBusy)
+			{
+				if (!Paused)
+				{
+					Paused = true;
+					toolStripButton3.Checked = true;
+				}
+				else
+				{
+					Paused = false;
+					toolStripButton3.Checked = false;
+				}
+			}
+		}
 
-        private void testStatsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            UpdatePpuStats(PPUStats.CPU_IF_Ops, 1);
-            UpdatePpuStats(PPUStats.Scans, 2);
-            UpdatePpuStats(PPUStats.Fields, 3);
-            UpdatePpuStats(PPUStats.HCounter, 4);
-            UpdatePpuStats(PPUStats.VCounter, 5);
-        }
+		private void testStatsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			UpdatePpuStats(PPUStats.CPU_IF_Ops, 1);
+			UpdatePpuStats(PPUStats.Scans, 2);
+			UpdatePpuStats(PPUStats.Fields, 3);
+			UpdatePpuStats(PPUStats.HCounter, 4);
+			UpdatePpuStats(PPUStats.VCounter, 5);
+			UpdatePpuStats(PPUStats.PCLK_Sec, 6);
+			UpdatePpuStats(PPUStats.FPS, 7);
+		}
 
-        private void testFieldToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+		private void testFieldToolStripMenuItem_Click(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void testScanToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+		private void testScanToolStripMenuItem_Click(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void testDebugPropertyGridToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+		private void testDebugPropertyGridToolStripMenuItem_Click(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void testHexBoxToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            byte[] dump = new byte[0x100];
-            for (int i=0; i<0x100; i++)
-            {
-                dump[i] = (byte)i;
-            }
-            hexBox1.ByteProvider = new DynamicByteProvider(dump);
-            hexBox1.Refresh();
-        }
-    }
+		private void testHexBoxToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			byte[] dump = new byte[0x100];
+			for (int i=0; i<0x100; i++)
+			{
+				dump[i] = (byte)i;
+			}
+			hexBox1.ByteProvider = new DynamicByteProvider(dump);
+			hexBox1.Refresh();
+		}
+	}
 }

@@ -155,8 +155,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Breaknes\BreaksCore\CoreApi.h" />
     <ClInclude Include="..\..\Breaknes\BreaksCore\LS373.h" />
     <ClInclude Include="..\..\Breaknes\BreaksCore\SRAM.h" />
+    <ClInclude Include="PPUDebug.h" />
     <ClInclude Include="NROM.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PPUPlayerBoard.h" />
@@ -164,6 +166,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\Breaknes\BreaksCore\LS373.cpp" />
     <ClCompile Include="..\..\Breaknes\BreaksCore\SRAM.cpp" />
+    <ClCompile Include="PPUDebug.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="NROM.cpp" />
     <ClCompile Include="pch.cpp">

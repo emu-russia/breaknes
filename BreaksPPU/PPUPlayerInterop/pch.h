@@ -11,6 +11,10 @@
 #include "../PPUSim/ppu.h"
 #include "../../Breaknes/BreaksCore/SRAM.h"
 #include "../../Breaknes/BreaksCore/LS373.h"
+#include "../../Breaknes/BreaksCore/CoreApi.h"
 
 #include "NROM.h"
 #include "PPUPlayerBoard.h"
+#include "PPUDebug.h"
+
+extern PPUPlayer::Board* board;

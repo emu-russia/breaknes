@@ -1,4 +1,5 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
+
 #include "pch.h"
 
 PPUPlayer::Board * board;
@@ -26,7 +27,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 extern "C"
 {
-    __declspec(dllexport) void CreateBoard()
+    __declspec(dllexport) void CreateBoard(char* boardName, char* apu, char* ppu, char* p1)
     {
         if (board == nullptr)
         {
