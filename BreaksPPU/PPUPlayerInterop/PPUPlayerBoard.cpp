@@ -10,6 +10,9 @@ namespace PPUPlayer
 	{
 		ppu = new PPUSim::PPU(PPUSim::Revision::RP2C02G);
 		vram = new Breaknes::SRAM(11);
+
+		AddBoardMemDescriptors();
+		AddDebugInfoProviders();
 	}
 
 	Board::~Board()
@@ -109,6 +112,7 @@ namespace PPUPlayer
 		if (cart == nullptr)
 		{
 			cart = new NROM(nesImage, nesImageSize);
+			AddCartMemDescriptors();
 		}
 	}
 

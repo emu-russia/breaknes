@@ -21,5 +21,9 @@ namespace PPUPlayer
 		void sim(BaseLogic::TriState PA[14], BaseLogic::TriState n_PA13, BaseLogic::TriState n_RD, BaseLogic::TriState n_WR, 
 			uint8_t *PD, bool &PDDirty,
 			BaseLogic::TriState& n_VRAM_CS, BaseLogic::TriState& VRAM_A10);
+
+		size_t Dbg_GetCHRSize();
+
+		uint8_t Dbg_ReadCHRByte(size_t addr);
 	};
 }

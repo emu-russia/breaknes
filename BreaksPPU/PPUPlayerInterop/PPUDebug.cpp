@@ -31,7 +31,7 @@ namespace PPUPlayer
 
 	void DebugHub::AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry), void* opaque)
 	{
-		DebugInfoProvider prov;
+		DebugInfoProvider prov{};
 
 		prov.entry = entry;
 		prov.GetValue = GetValue;
@@ -96,7 +96,7 @@ namespace PPUPlayer
 
 	void DebugHub::AddMemRegion(MemDesciptor* descr, uint8_t(*ReadByte)(void* opaque, size_t addr), void* opaque, bool cartRelated)
 	{
-		MemProvider prov;
+		MemProvider prov{};
 		prov.descr = descr;
 		prov.ReadByte = ReadByte;
 		prov.opaque = opaque;

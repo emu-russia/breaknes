@@ -176,6 +176,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PPUPlayerBoard.cpp" />
+    <ClCompile Include="PPUPlayerBoardDebug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />

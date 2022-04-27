@@ -31,6 +31,16 @@ namespace PPUPlayer
 
 		PPUSim::VideoOutSignal vidSample;
 
+		static uint8_t DumpVRAM(void* opaque, size_t addr);
+		static uint8_t DumpCHR(void* opaque, size_t addr);
+
+		static uint32_t GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
+
+		void AddBoardMemDescriptors();
+		void AddCartMemDescriptors();
+		void AddDebugInfoProviders();
+
 	public:
 		Board();
 		~Board();

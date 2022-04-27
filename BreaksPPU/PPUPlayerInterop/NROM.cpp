@@ -122,4 +122,27 @@ namespace PPUPlayer
 			}
 		}
 	}
+
+	size_t NROM::Dbg_GetCHRSize()
+	{
+		if (!valid)
+			return 0;
+
+		return CHRSize;
+	}
+
+	uint8_t NROM::Dbg_ReadCHRByte(size_t addr)
+	{
+		if (!valid)
+			return 0;
+
+		if (addr < CHRSize)
+		{
+			return CHR[addr];
+		}
+		else
+		{
+			return 0;
+		}
+	}
 }
