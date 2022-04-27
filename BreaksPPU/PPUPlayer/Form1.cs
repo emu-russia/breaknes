@@ -330,8 +330,6 @@ namespace PPUPlayer
 			CPU_IF_Ops,
 			Scans,
 			Fields,
-			HCounter,
-			VCounter,
 			PCLK_Sec,
 			FPS,
 		}
@@ -353,8 +351,6 @@ namespace PPUPlayer
 			UpdatePpuStats(PPUStats.CPU_IF_Ops, 0);
 			UpdatePpuStats(PPUStats.Scans, 0);
 			UpdatePpuStats(PPUStats.Fields, 0);
-			UpdatePpuStats(PPUStats.HCounter, 0);
-			UpdatePpuStats(PPUStats.VCounter, 0);
 			UpdatePpuStats(PPUStats.PCLK_Sec, 0);
 			UpdatePpuStats(PPUStats.FPS, 0);
 		}
@@ -371,12 +367,6 @@ namespace PPUPlayer
 					break;
 				case PPUStats.Fields:
 					toolStripStatusLabel8.Text = value.ToString();
-					break;
-				case PPUStats.HCounter:
-					toolStripStatusLabel9.Text = value.ToString();
-					break;
-				case PPUStats.VCounter:
-					toolStripStatusLabel10.Text = value.ToString();
 					break;
 				case PPUStats.PCLK_Sec:
 					toolStripStatusLabel12.Text = value.ToString();
@@ -409,10 +399,8 @@ namespace PPUPlayer
 			UpdatePpuStats(PPUStats.CPU_IF_Ops, 1);
 			UpdatePpuStats(PPUStats.Scans, 2);
 			UpdatePpuStats(PPUStats.Fields, 3);
-			UpdatePpuStats(PPUStats.HCounter, 4);
-			UpdatePpuStats(PPUStats.VCounter, 5);
-			UpdatePpuStats(PPUStats.PCLK_Sec, 6);
-			UpdatePpuStats(PPUStats.FPS, 7);
+			UpdatePpuStats(PPUStats.PCLK_Sec, 4);
+			UpdatePpuStats(PPUStats.FPS, 5);
 		}
 
 		private void testFieldToolStripMenuItem_Click(object sender, EventArgs e)
