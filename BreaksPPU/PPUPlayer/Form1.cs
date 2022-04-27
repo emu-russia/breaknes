@@ -10,6 +10,8 @@ using System.Windows.Forms;
 
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
+using Be.Windows.Forms;
 
 namespace PPUPlayer
 {
@@ -26,13 +28,21 @@ namespace PPUPlayer
         PPULogEntry? currentEntry;
         int recordCounter = 0;
 
+        bool Paused = false;
+
         public Form1()
         {
             InitializeComponent();
+        }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
 #if DEBUG
             AllocConsole();
 #endif
+
+            pictureBox1.BackColor = Color.Gray;
+            toolStripButton3.Enabled = false;
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -76,11 +86,6 @@ namespace PPUPlayer
             RunPPU();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            pictureBox1.BackColor = Color.Gray;
-        }
-
         private void stopPPUAndUnloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StopPPU();
@@ -121,6 +126,8 @@ namespace PPUPlayer
 
             if (currentEntry != null)
             {
+                ResetPpuStats();
+                toolStripButton3.Enabled = true;
                 backgroundWorker1.RunWorkerAsync();
             }
             else
@@ -150,6 +157,10 @@ namespace PPUPlayer
             PPUPlayerInterop.DestroyBoard();
             ppu_dump = null;
             nes_file = null;
+
+            Paused = false;
+            toolStripButton3.Checked = false;
+            toolStripButton3.Enabled = false;
         }
 
         PPULogEntry? NextLogEntry()
@@ -188,6 +199,12 @@ namespace PPUPlayer
         {
             while (!backgroundWorker1.CancellationPending)
             {
+                if (Paused)
+                {
+                    Thread.Sleep(10);
+                    continue;
+                }
+
                 if (currentEntry == null)
                 {
                     Console.WriteLine("PPU Dump records are out.");
@@ -222,9 +239,107 @@ namespace PPUPlayer
 
                 float sample;
                 PPUPlayerInterop.SampleVideoSignal(out sample);
+                ProcessSample(sample);
             }
 
             Console.WriteLine("Background Worker canceled.");
+        }
+
+        void ProcessSample(float sample)
+        {
+
+        }
+
+        enum PPUStats
+        {
+            CPU_IF_Ops,
+            Scans,
+            Fields,
+            HCounter,
+            VCounter,
+        }
+
+        void ResetPpuStats()
+        {
+            UpdatePpuStats(PPUStats.CPU_IF_Ops, 0);
+            UpdatePpuStats(PPUStats.Scans, 0);
+            UpdatePpuStats(PPUStats.Fields, 0);
+            UpdatePpuStats(PPUStats.HCounter, 0);
+            UpdatePpuStats(PPUStats.VCounter, 0);
+        }
+
+        void UpdatePpuStats(PPUStats stats, int value)
+        {
+            switch (stats)
+            {
+                case PPUStats.CPU_IF_Ops:
+                    toolStripStatusLabel6.Text = value.ToString();
+                    break;
+                case PPUStats.Scans:
+                    toolStripStatusLabel7.Text = value.ToString();
+                    break;
+                case PPUStats.Fields:
+                    toolStripStatusLabel8.Text = value.ToString();
+                    break;
+                case PPUStats.HCounter:
+                    toolStripStatusLabel9.Text = value.ToString();
+                    break;
+                case PPUStats.VCounter:
+                    toolStripStatusLabel10.Text = value.ToString();
+                    break;
+            }
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy)
+            {
+                if (!Paused)
+                {
+                    Paused = true;
+                    toolStripButton3.Checked = true;
+                }
+                else
+                {
+                    Paused = false;
+                    toolStripButton3.Checked = false;
+                }
+            }
+        }
+
+        private void testStatsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdatePpuStats(PPUStats.CPU_IF_Ops, 1);
+            UpdatePpuStats(PPUStats.Scans, 2);
+            UpdatePpuStats(PPUStats.Fields, 3);
+            UpdatePpuStats(PPUStats.HCounter, 4);
+            UpdatePpuStats(PPUStats.VCounter, 5);
+        }
+
+        private void testFieldToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void testScanToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void testDebugPropertyGridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void testHexBoxToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            byte[] dump = new byte[0x100];
+            for (int i=0; i<0x100; i++)
+            {
+                dump[i] = (byte)i;
+            }
+            hexBox1.ByteProvider = new DynamicByteProvider(dump);
+            hexBox1.Refresh();
         }
     }
 }
