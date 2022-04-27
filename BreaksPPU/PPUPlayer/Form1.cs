@@ -450,8 +450,17 @@ namespace PPUPlayer
 		/// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
+			if (mem.Count == 0)
+				return;
 
-        }
+			int descrID = comboBox1.SelectedIndex;
+
+			byte[] buf = new byte[mem[descrID].size];
+
+			BreaksCore.DumpMem(descrID, buf);
+			hexBox1.ByteProvider = new DynamicByteProvider(buf);
+			hexBox1.Refresh();
+		}
 
 		/// <summary>
 		/// Get a set of memory regions from the debugger and fill the ComboBox.

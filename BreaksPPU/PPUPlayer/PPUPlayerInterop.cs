@@ -104,7 +104,7 @@ namespace PPUPlayer
 		static extern void GetMemDescriptor(int descrID, IntPtr descr);
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void DumpMem(int descrID, byte[] ptr);
+		public static extern void DumpMem(int descrID, [In, Out] [MarshalAs(UnmanagedType.LPArray)] byte[] ptr);
 
 
 		public static List<MemDesciptor> GetMemoryLayout()

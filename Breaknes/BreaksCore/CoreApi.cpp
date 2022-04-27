@@ -178,7 +178,7 @@ extern "C"
 
 		if (provFound)
 		{
-			for (size_t addr = 0; addr < prov.descr->size; addr)
+			for (size_t addr = 0; addr < prov.descr->size; addr++)
 			{
 				*ptr++ = prov.ReadByte(prov.opaque, addr);
 			}
