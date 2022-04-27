@@ -56,6 +56,7 @@ namespace PPUPlayer
 
 			pictureBox1.BackColor = Color.Gray;
 			toolStripButton3.Enabled = false;
+			comboBox2.SelectedIndex = 0;
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -428,5 +429,25 @@ namespace PPUPlayer
 			hexBox1.ByteProvider = new DynamicByteProvider(dump);
 			hexBox1.Refresh();
 		}
-	}
+
+		/// <summary>
+		/// Update DebugInfo
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+		/// <summary>
+		/// Dump Mem
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
 }
