@@ -4,22 +4,33 @@
 
 using namespace BaseLogic;
 
+#define VRAM_NAME "VRAM"
+#define CHR_ROM_NAME "CHR-ROM"
+#define PPU_WIRES_CATEGORY "PPU Wires"
+#define PPU_FSM_CATEGORY "PPU FSM"
+
 namespace PPUPlayer
 {
 	void Board::AddBoardMemDescriptors()
 	{
 		MemDesciptor* vramRegion = new MemDesciptor;
 		memset(vramRegion, 0, sizeof(MemDesciptor));
-		strcpy_s(vramRegion->name, sizeof(vramRegion->name), "VRAM");
+		strcpy_s(vramRegion->name, sizeof(vramRegion->name), VRAM_NAME);
 		vramRegion->size = vram->Dbg_GetSize();
 		dbg_hub->AddMemRegion(vramRegion, DumpVRAM, this, false);
+
+		// TBD: CRAM
+
+		// TBD: OAM
+
+		// TBD: OAM Temp
 	}
 
 	void Board::AddCartMemDescriptors()
 	{
 		MemDesciptor* chrRegion = new MemDesciptor;
 		memset(chrRegion, 0, sizeof(MemDesciptor));
-		strcpy_s(chrRegion->name, sizeof(chrRegion->name), "CHR-ROM");
+		strcpy_s(chrRegion->name, sizeof(chrRegion->name), CHR_ROM_NAME);
 		chrRegion->size = cart->Dbg_GetCHRSize();
 		dbg_hub->AddMemRegion(chrRegion, DumpCHR, this, false);
 	}
@@ -155,6 +166,31 @@ namespace PPUPlayer
 
 	SignalOffsetPair fsm_signals[] = {
 		"S/EV", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::S_EV),
+		"CLIP_O", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::CLIP_O),
+		"CLIP_B", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::CLIP_B),
+		"0/HPOS", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::Z_HPOS),
+		"EVAL", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::EVAL),
+		"E/EV", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::E_EV),
+		"I/OAM2", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::I_OAM2),
+		"PAR/O", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::PAR_O),
+		"/VIS", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_VIS),
+		"#F/NT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_F_NT),
+		"F/TB", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::F_TB),
+		"F/TA", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::F_TA),
+		"F/AT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::F_AT),
+		"/FO", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_FO),
+		"BPORCH", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BPORCH),
+		"SC/CNT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::SC_CNT),
+		"/HB", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_HB),
+		"BURST", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BURST),
+		"HSYNC", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::HSYNC),
+		"PICTURE", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::PICTURE),
+		"RESCL", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::RESCL),
+		"VSYNC", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::VSYNC),
+		"/VSET", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_VSET),
+		"VB", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::VB),
+		"BLNK", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BLNK),
+		"INT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::INT),
 	};
 
 	void Board::AddDebugInfoProviders()
@@ -165,7 +201,18 @@ namespace PPUPlayer
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), "PPU Wires");
+			strcpy_s(entry->category, sizeof(entry->category), PPU_WIRES_CATEGORY);
+			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < _countof(fsm_signals); n++)
+		{
+			SignalOffsetPair* sp = &fsm_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy_s(entry->category, sizeof(entry->category), PPU_FSM_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
 		}
@@ -187,7 +234,7 @@ namespace PPUPlayer
 	{
 		Board* board = (Board*)opaque;
 
-		if (!strcmp(entry->category, "PPU Wires"))
+		if (!strcmp(entry->category, PPU_WIRES_CATEGORY))
 		{
 			for (size_t n = 0; n < _countof(ppu_wires); n++)
 			{
@@ -205,12 +252,32 @@ namespace PPUPlayer
 			}
 		}
 
+		else if (!strcmp(entry->category, PPU_FSM_CATEGORY))
+		{
+			for (size_t n = 0; n < _countof(fsm_signals); n++)
+			{
+				SignalOffsetPair* sp = &fsm_signals[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					PPUSim::PPU_FSMStates fsm_states;
+					board->ppu->GetDebugInfo_FSMStates(fsm_states);
+
+					uint8_t* ptr = (uint8_t*)&fsm_states;
+
+					return ptr[sp->offset];
+				}
+			}
+		}
+
 		return 0;
 	}
 
 	uint32_t Board::GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		Board* board = (Board*)opaque;
+
+		// TBD: Add regs dump in PPUSim.
 
 		return 0;
 	}

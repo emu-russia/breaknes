@@ -16,11 +16,11 @@ namespace PPUPlayer
 		strcpy_s(testEntry->name, sizeof(testEntry->name), "test");
 		AddDebugInfo(DebugInfoType::DebugInfoType_Test, testEntry, GetTestInfo, this);
 
-		MemDesciptor* testRegion = new MemDesciptor;
-		memset(testRegion, 0, sizeof(MemDesciptor));
-		strcpy_s(testRegion->name, sizeof(testRegion->name), "TestMem");
-		testRegion->size = 256;
-		AddMemRegion(testRegion, ReadTestMem, this, false);
+		//MemDesciptor* testRegion = new MemDesciptor;
+		//memset(testRegion, 0, sizeof(MemDesciptor));
+		//strcpy_s(testRegion->name, sizeof(testRegion->name), "TestMem");
+		//testRegion->size = 256;
+		//AddMemRegion(testRegion, ReadTestMem, this, false);
 	}
 
 	DebugHub::~DebugHub()
