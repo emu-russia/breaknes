@@ -13,15 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Borrowed from Breaknes">
+      <UniqueIdentifier>{489586ae-e24e-46fe-808c-d01e7a8df473}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Breaknes\BreaksCore\LS373.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Breaknes\BreaksCore\SRAM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PPUPlayerBoard.h">
@@ -29,6 +26,18 @@
     </ClInclude>
     <ClInclude Include="NROM.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PPUDebug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Breaknes\BreaksCore\LS373.h">
+      <Filter>Borrowed from Breaknes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Breaknes\BreaksCore\SRAM.h">
+      <Filter>Borrowed from Breaknes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Breaknes\BreaksCore\CoreApi.h">
+      <Filter>Borrowed from Breaknes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -38,17 +47,20 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Breaknes\BreaksCore\LS373.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Breaknes\BreaksCore\SRAM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PPUPlayerBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NROM.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PPUDebug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Breaknes\BreaksCore\LS373.cpp">
+      <Filter>Borrowed from Breaknes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Breaknes\BreaksCore\SRAM.cpp">
+      <Filter>Borrowed from Breaknes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

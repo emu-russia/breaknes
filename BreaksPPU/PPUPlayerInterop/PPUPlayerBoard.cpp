@@ -128,4 +128,14 @@ namespace PPUPlayer
 			*sample = vidSample.composite;
 		}
 	}
+
+	size_t Board::GetHCounter()
+	{
+		return ppu->GetHCounter();
+	}
+
+	size_t Board::GetVCounter()
+	{
+		return ppu->GetVCounter();
+	}
 }

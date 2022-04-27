@@ -10,10 +10,15 @@
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="pp.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Be.Windows.Forms.HexBox" Version="1.6.1" />
   </ItemGroup>
 
   <ItemGroup>

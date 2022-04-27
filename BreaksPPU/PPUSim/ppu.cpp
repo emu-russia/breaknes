@@ -267,4 +267,14 @@ namespace PPUSim
 			}
 		}
 	}
+
+	size_t PPU::GetHCounter()
+	{
+		return h->get();
+	}
+
+	size_t PPU::GetVCounter()
+	{
+		return v->get();
+	}
 }

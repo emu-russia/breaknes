@@ -6,11 +6,16 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <list>
 
 #include "../../Breaknes/BaseLogicLib/BaseLogic.h"
 #include "../PPUSim/ppu.h"
 #include "../../Breaknes/BreaksCore/SRAM.h"
 #include "../../Breaknes/BreaksCore/LS373.h"
+#include "../../Breaknes/BreaksCore/CoreApi.h"
 
+#include "PPUDebug.h"
 #include "NROM.h"
 #include "PPUPlayerBoard.h"
+
+extern PPUPlayer::Board* board;
