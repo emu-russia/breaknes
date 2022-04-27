@@ -4,6 +4,13 @@
 
 namespace PPUPlayer
 {
+	struct NROM_DebugInfo
+	{
+		uint32_t last_PA;
+		uint32_t last_nRD;
+		uint32_t last_nWR;
+	};
+
 	class NROM
 	{
 		bool valid = false;
@@ -13,6 +20,8 @@ namespace PPUPlayer
 
 		uint8_t* CHR = nullptr;
 		size_t CHRSize = 0;
+
+		NROM_DebugInfo nrom_debug{};
 
 	public:
 		NROM(uint8_t* nesImage, size_t nesImageSize);
@@ -25,5 +34,7 @@ namespace PPUPlayer
 		size_t Dbg_GetCHRSize();
 
 		uint8_t Dbg_ReadCHRByte(size_t addr);
+
+		void GetDebugInfo(NROM_DebugInfo & info);
 	};
 }

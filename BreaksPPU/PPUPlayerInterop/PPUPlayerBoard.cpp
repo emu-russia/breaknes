@@ -23,6 +23,8 @@ namespace PPUPlayer
 
 	void Board::Step()
 	{
+		ADDirty = false;
+
 		// Simulate PPU
 
 		TriState inputs[(size_t)PPUSim::InputPad::Max]{};

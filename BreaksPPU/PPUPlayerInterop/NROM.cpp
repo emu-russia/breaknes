@@ -89,6 +89,9 @@ namespace PPUPlayer
 		if (!valid)
 			return;
 
+		nrom_debug.last_nRD = n_RD == TriState::One ? 1 : 0;
+		nrom_debug.last_nWR = n_WR == TriState::One ? 1 : 0;
+
 		// TBD: H/V Mirroring
 
 		// NROM contains a jumper between `/PA13` and `/VRAM_CS`
@@ -101,8 +104,10 @@ namespace PPUPlayer
 
 			for (size_t n = 0; n < 14; n++)
 			{
-				addr |= (PA[n] == TriState::One ? 1 : 0) << n;
+				addr |= (PA[n] == TriState::One ? 1ULL : 0) << n;
 			}
+
+			nrom_debug.last_PA = (uint32_t)addr;
 
 			if (addr >= CHRSize)
 			{
@@ -144,5 +149,10 @@ namespace PPUPlayer
 		{
 			return 0;
 		}
+	}
+
+	void NROM::GetDebugInfo(NROM_DebugInfo& info)
+	{
+		info = nrom_debug;
 	}
 }

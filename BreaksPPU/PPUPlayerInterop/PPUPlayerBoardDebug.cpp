@@ -8,6 +8,7 @@ using namespace BaseLogic;
 #define CHR_ROM_NAME "CHR-ROM"
 #define PPU_WIRES_CATEGORY "PPU Wires"
 #define PPU_FSM_CATEGORY "PPU FSM"
+#define NROM_CATEGORY "NROM"
 
 namespace PPUPlayer
 {
@@ -193,6 +194,12 @@ namespace PPUPlayer
 		"INT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::INT),
 	};
 
+	SignalOffsetPair nrom_signals[] = {
+		"Last PA", offsetof(NROM_DebugInfo, last_PA),
+		"Last /RD", offsetof(NROM_DebugInfo, last_nRD),
+		"Last /WR", offsetof(NROM_DebugInfo, last_nWR),
+	};
+
 	void Board::AddDebugInfoProviders()
 	{
 		for (size_t n = 0; n < _countof(ppu_wires); n++)
@@ -215,6 +222,17 @@ namespace PPUPlayer
 			strcpy_s(entry->category, sizeof(entry->category), PPU_FSM_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < _countof(nrom_signals); n++)
+		{
+			SignalOffsetPair* sp = &nrom_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy_s(entry->category, sizeof(entry->category), NROM_CATEGORY);
+			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Cart, entry, GetCartDebugInfo, this);
 		}
 	}
 
@@ -242,7 +260,7 @@ namespace PPUPlayer
 
 				if (!strcmp(sp->name, entry->name))
 				{
-					PPUSim::PPU_Interconnects wires;
+					PPUSim::PPU_Interconnects wires{};
 					board->ppu->GetDebugInfo_Wires(wires);
 
 					uint8_t* ptr = (uint8_t*)&wires;
@@ -260,7 +278,7 @@ namespace PPUPlayer
 
 				if (!strcmp(sp->name, entry->name))
 				{
-					PPUSim::PPU_FSMStates fsm_states;
+					PPUSim::PPU_FSMStates fsm_states{};
 					board->ppu->GetDebugInfo_FSMStates(fsm_states);
 
 					uint8_t* ptr = (uint8_t*)&fsm_states;
@@ -278,6 +296,30 @@ namespace PPUPlayer
 		Board* board = (Board*)opaque;
 
 		// TBD: Add regs dump in PPUSim.
+
+		return 0;
+	}
+
+	uint32_t Board::GetCartDebugInfo(void* opaque, DebugInfoEntry* entry)
+	{
+		Board* board = (Board*)opaque;
+
+		if (!board->cart)
+			return 0;
+
+		for (size_t n = 0; n < _countof(nrom_signals); n++)
+		{
+			SignalOffsetPair* sp = &nrom_signals[n];
+
+			if (!strcmp(sp->name, entry->name))
+			{
+				NROM_DebugInfo nrom_info{};
+				board->cart->GetDebugInfo(nrom_info);
+
+				uint8_t* ptr = (uint8_t*)&nrom_info + sp->offset;
+				return *(uint32_t *)ptr;
+			}
+		}
 
 		return 0;
 	}

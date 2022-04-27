@@ -36,6 +36,7 @@ namespace PPUPlayer
 
 		static uint32_t GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry);
 		static uint32_t GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetCartDebugInfo(void* opaque, DebugInfoEntry* entry);
 
 		void AddBoardMemDescriptors();
 		void AddCartMemDescriptors();
