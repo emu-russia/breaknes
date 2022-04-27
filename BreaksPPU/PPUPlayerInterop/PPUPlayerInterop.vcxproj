@@ -158,6 +158,7 @@
     <ClInclude Include="..\..\Breaknes\BreaksCore\CoreApi.h" />
     <ClInclude Include="..\..\Breaknes\BreaksCore\LS373.h" />
     <ClInclude Include="..\..\Breaknes\BreaksCore\SRAM.h" />
+    <ClInclude Include="NES_Header.h" />
     <ClInclude Include="PPUDebug.h" />
     <ClInclude Include="NROM.h" />
     <ClInclude Include="pch.h" />
@@ -176,6 +177,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PPUPlayerBoard.cpp" />
+    <ClCompile Include="PPUPlayerBoardDebug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />

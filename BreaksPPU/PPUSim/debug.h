@@ -98,8 +98,6 @@ namespace PPUSim
 		uint8_t XRB;
 		uint8_t DB;
 		uint8_t PD;
-		size_t HCounter;
-		size_t VCounter;
 	};
 
 	struct PPU_FSMStates
@@ -130,5 +128,26 @@ namespace PPUSim
 		uint8_t VB;
 		uint8_t BLNK;
 		uint8_t INT;
+	};
+
+	/// <summary>
+	/// Various registers, buffers and counters inside the PPU.
+	/// </summary>
+	struct PPU_Registers
+	{
+		uint32_t HCounter;
+		uint32_t VCounter;
+		uint32_t CTRL0;
+		uint32_t CTRL1;
+		uint32_t MainOAMCounter;
+		uint32_t TempOAMCounter;
+		uint32_t OB;
+		uint32_t RB;
+		uint32_t SCC_FH;
+		uint32_t SCC_FV;
+		uint32_t SCC_NTV;
+		uint32_t SCC_NTH;
+		uint32_t SCC_TV;
+		uint32_t SCC_TH;
 	};
 }

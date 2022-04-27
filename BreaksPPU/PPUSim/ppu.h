@@ -118,6 +118,7 @@ namespace PPUSim
 		friend PAR;
 		friend ScrollRegs;
 		friend BGCol;
+		friend RB_Bit;
 		friend VRAM_Control;
 
 		/// <summary>
@@ -343,8 +344,16 @@ namespace PPUSim
 
 		void GetDebugInfo_FSMStates(PPU_FSMStates & fsm_states);
 
+		void GetDebugInfo_Regs(PPU_Registers& regs);
+
 		size_t GetHCounter();
 
 		size_t GetVCounter();
+
+		uint8_t Dbg_OAMReadByte(size_t addr);
+
+		uint8_t Dbg_TempOAMReadByte(size_t addr);
+
+		uint8_t Dbg_CRAMReadByte(size_t addr);
 	};
 }

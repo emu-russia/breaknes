@@ -46,8 +46,8 @@ namespace PPUPlayer
 	}
 
 
-    internal class BreaksCore
-    {
+	internal class BreaksCore
+	{
 		public enum DebugInfoType : int
 		{
 			DebugInfoType_Unknown = 0,
@@ -82,16 +82,16 @@ namespace PPUPlayer
 			public string category = "";
 			public string name = "";
 			public UInt32 value = 0;
-        }
+		}
 
-        public class MemDesciptor
-        {
+		public class MemDesciptor
+		{
 			public string name = "";
 			public int size;
 		}
 
 
-        [DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetDebugInfoEntryCount(DebugInfoType type);
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -108,19 +108,19 @@ namespace PPUPlayer
 
 
 		public static List<MemDesciptor> GetMemoryLayout()
-        {
+		{
 			List<MemDesciptor> list = new();
 
 			int count = GetMemLayout();
 
 			IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<BreaksCore.MemDesciptorRaw>());
 			if (ptr == IntPtr.Zero)
-            {
+			{
 				throw new Exception("AllocHGlobal failed!");
-            }
+			}
 
 			for (int i=0; i<count; i++)
-            {
+			{
 				GetMemDescriptor(i, ptr);
 
 #pragma warning disable CS8605 // Unboxing a possibly null value.
@@ -221,7 +221,7 @@ namespace PPUPlayer
 		}
 
 		public static List<DebugInfoEntry> GetTestDebugInfo()
-        {
+		{
 			List<DebugInfoEntry> list = new();
 
 			DebugInfoEntry testEntry = new();

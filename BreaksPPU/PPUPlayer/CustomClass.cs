@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Collections;
 
+// TBD: Add support for sections (categories).
+
 namespace PPUPlayer
 {
 	// Based on:

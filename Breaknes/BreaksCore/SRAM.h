@@ -14,5 +14,9 @@ namespace Breaknes
 		~SRAM();
 
 		void sim(BaseLogic::TriState n_CS, BaseLogic::TriState n_WE, BaseLogic::TriState n_OE, uint32_t *addr, uint8_t *data, bool& dz);
+
+		size_t Dbg_GetSize();
+
+		uint8_t Dbg_ReadByte(size_t addr);
 	};
 }

@@ -217,4 +217,9 @@ namespace PPUSim
 			ppu->wire.n_CC[n] = CC_latch[n].nget();
 		}
 	}
+
+	uint8_t CRAM::Dbg_CRAMReadByte(size_t addr)
+	{
+		return 0;
+	}
 }

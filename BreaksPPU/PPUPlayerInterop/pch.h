@@ -14,6 +14,7 @@
 #include "../../Breaknes/BreaksCore/LS373.h"
 #include "../../Breaknes/BreaksCore/CoreApi.h"
 
+#include "NES_Header.h"
 #include "PPUDebug.h"
 #include "NROM.h"
 #include "PPUPlayerBoard.h"

@@ -365,6 +365,28 @@ namespace BaseLogic
 		return val;
 	}
 
+	uint8_t Pack3(TriState in[3])
+	{
+		uint8_t val = 0;
+		for (size_t i = 0; i < 3; i++)
+		{
+			val <<= 1;
+			val |= (in[3 - i] == TriState::One) ? 1 : 0;
+		}
+		return val;
+	}
+
+	uint8_t Pack5(TriState in[5])
+	{
+		uint8_t val = 0;
+		for (size_t i = 0; i < 5; i++)
+		{
+			val <<= 1;
+			val |= (in[5 - i] == TriState::One) ? 1 : 0;
+		}
+		return val;
+	}
+
 	uint8_t PackNibble(TriState in[4])
 	{
 		uint8_t val = 0;

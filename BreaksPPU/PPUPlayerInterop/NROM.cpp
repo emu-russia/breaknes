@@ -8,21 +8,6 @@ using namespace BaseLogic;
 
 namespace PPUPlayer
 {
-#pragma pack(push, 1)
-	struct NESHeader
-	{
-		uint8_t Sign[4];
-		uint8_t PRGSize;
-		uint8_t CHRSize;
-		uint8_t Flags_6;
-		uint8_t Flags_7;
-		uint8_t Flags_8;
-		uint8_t Flags_9;
-		uint8_t Flags_10;
-		uint8_t padding[5];
-	};
-#pragma pack(pop)
-
 	NROM::NROM(uint8_t* nesImage, size_t nesImageSize)
 	{
 		printf("NROM::NROM()\n");
@@ -37,7 +22,7 @@ namespace PPUPlayer
 
 			if (head->PRGSize >= 0x10 || head->CHRSize >= 0x10 || head->CHRSize == 0)
 			{
-				printf(" FAILED (1)!\n");
+				printf(" FAILED! Odd size of PRG/CHR banks or unsupported CHR-RAM!\n");
 				return;
 			}
 
@@ -46,16 +31,18 @@ namespace PPUPlayer
 
 			if (mapperNum != 0)
 			{
-				printf(" FAILED (2)!\n");
+				printf(" FAILED! The number of the mapper must be 0 (NROM).\n");
 				return;
 			}
 
 			size_t totalSize = (trainer ? 512 : 0) + 0x4000 * head->PRGSize + 0x2000 * head->CHRSize + sizeof(NESHeader);
 			if (nesImageSize < totalSize)
 			{
-				printf(" FAILED (3)!\n");
+				printf(" FAILED! Damaged .nes (file size is smaller than required).\n");
 				return;
 			}
+
+			V_Mirroring = (head->Flags_6 & 1) != 0;
 
 			printf(" OK!\n");
 
@@ -89,7 +76,12 @@ namespace PPUPlayer
 		if (!valid)
 			return;
 
-		// TBD: H/V Mirroring
+		nrom_debug.last_nRD = n_RD == TriState::One ? 1 : 0;
+		nrom_debug.last_nWR = n_WR == TriState::One ? 1 : 0;
+
+		// H/V Mirroring
+
+		VRAM_A10 = V_Mirroring ? PA[10] : PA[11];
 
 		// NROM contains a jumper between `/PA13` and `/VRAM_CS`
 
@@ -101,8 +93,10 @@ namespace PPUPlayer
 
 			for (size_t n = 0; n < 14; n++)
 			{
-				addr |= (PA[n] == TriState::One ? 1 : 0) << n;
+				addr |= (PA[n] == TriState::One ? 1ULL : 0) << n;
 			}
+
+			nrom_debug.last_PA = (uint32_t)addr;
 
 			if (addr >= CHRSize)
 			{
@@ -121,5 +115,33 @@ namespace PPUPlayer
 				*PD = *PD & val;
 			}
 		}
+	}
+
+	size_t NROM::Dbg_GetCHRSize()
+	{
+		if (!valid)
+			return 0;
+
+		return CHRSize;
+	}
+
+	uint8_t NROM::Dbg_ReadCHRByte(size_t addr)
+	{
+		if (!valid)
+			return 0;
+
+		if (addr < CHRSize)
+		{
+			return CHR[addr];
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	void NROM::GetDebugInfo(NROM_DebugInfo& info)
+	{
+		info = nrom_debug;
 	}
 }

@@ -342,4 +342,28 @@ namespace PPUSim
 	{
 		return SPR_OV_FF.get();
 	}
+
+	uint32_t OAMEval::Debug_GetMainCounter()
+	{
+		uint32_t val = 0;
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val |= (OAM_x[n] == TriState::One ? 1ULL : 0) << n;
+		}
+
+		return val;
+	}
+
+	uint32_t OAMEval::Debug_GetTempCounter()
+	{
+		uint32_t val = 0;
+
+		for (size_t n = 0; n < 5; n++)
+		{
+			val |= (OAM_Temp[n] == TriState::One ? 1ULL : 0) << n;
+		}
+
+		return val;
+	}
 }

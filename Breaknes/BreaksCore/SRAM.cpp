@@ -36,4 +36,21 @@ namespace Breaknes
 			}
 		}
 	}
+
+	size_t SRAM::Dbg_GetSize()
+	{
+		return memSize;
+	}
+
+	uint8_t SRAM::Dbg_ReadByte(size_t addr)
+	{
+		if (addr < memSize)
+		{
+			return mem[addr];
+		}
+		else
+		{
+			return 0;
+		}
+	}
 }

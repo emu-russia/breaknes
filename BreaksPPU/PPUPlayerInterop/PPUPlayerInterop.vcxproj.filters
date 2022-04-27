@@ -39,6 +39,9 @@
     <ClInclude Include="..\..\Breaknes\BreaksCore\CoreApi.h">
       <Filter>Borrowed from Breaknes</Filter>
     </ClInclude>
+    <ClInclude Include="NES_Header.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -61,6 +64,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Breaknes\BreaksCore\SRAM.cpp">
       <Filter>Borrowed from Breaknes</Filter>
+    </ClCompile>
+    <ClCompile Include="PPUPlayerBoardDebug.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

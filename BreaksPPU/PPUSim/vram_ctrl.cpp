@@ -9,10 +9,19 @@ namespace PPUSim
 	VRAM_Control::VRAM_Control(PPU* parent)
 	{
 		ppu = parent;
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			RB[n] = new RB_Bit(ppu);
+		}
 	}
 
 	VRAM_Control::~VRAM_Control()
 	{
+		for (size_t n = 0; n < 8; n++)
+		{
+			delete RB[n];
+		}
 	}
 
 	void VRAM_Control::sim()
@@ -21,6 +30,7 @@ namespace PPUSim
 		sim_Misc();		// TH/MUX, XRB
 		sim_WR();		// DB/PAR, TSTEP, WR
 		sim_ALE();		// /ALE
+		sim_ReadBuffer();
 	}
 
 	void VRAM_Control::sim_RD()
@@ -90,5 +100,41 @@ namespace PPUSim
 	void VRAM_Control::sim_ALE()
 	{
 		ppu->wire.n_ALE = NOR3(NOR3(ppu->wire.H0_Dash, ppu->fsm.BLNK, ppu->wire.n_PCLK), tmp_1, tmp_2);
+	}
+
+	void VRAM_Control::sim_ReadBuffer()
+	{
+		for (size_t n = 0; n < 8; n++)
+		{
+			RB[n]->sim(n);
+		}
+	}
+
+	void RB_Bit::sim(size_t bit_num)
+	{
+		TriState XRB = ppu->wire.XRB;
+		TriState PD_RB = ppu->wire.PD_RB;
+		TriState RC = ppu->wire.RC;
+
+		ff.set(NOR(NOT(MUX(PD_RB, ff.get(), ppu->GetPDBit(bit_num))), RC));
+		auto val = MUX(NOT(XRB), TriState::Z, ff.get());
+		ppu->SetDBBit(bit_num, val);
+	}
+
+	TriState RB_Bit::get()
+	{
+		return ff.get();
+	}
+
+	uint8_t VRAM_Control::Debug_GetRB()
+	{
+		uint8_t val = 0;
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val |= (RB[n]->get() == TriState::One ? 1ULL : 0) << n;
+		}
+
+		return val;
 	}
 }
