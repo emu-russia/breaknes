@@ -115,6 +115,7 @@ namespace PPUPlayer
 		{
 			cart = new NROM(nesImage, nesImageSize);
 			AddCartMemDescriptors();
+			AddCartDebugInfoProviders();
 		}
 	}
 

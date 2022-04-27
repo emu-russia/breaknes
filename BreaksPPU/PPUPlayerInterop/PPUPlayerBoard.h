@@ -44,6 +44,7 @@ namespace PPUPlayer
 		void AddBoardMemDescriptors();
 		void AddCartMemDescriptors();
 		void AddDebugInfoProviders();
+		void AddCartDebugInfoProviders();
 
 	public:
 		Board();

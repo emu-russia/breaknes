@@ -158,6 +158,7 @@
     <ClInclude Include="..\..\Breaknes\BreaksCore\CoreApi.h" />
     <ClInclude Include="..\..\Breaknes\BreaksCore\LS373.h" />
     <ClInclude Include="..\..\Breaknes\BreaksCore\SRAM.h" />
+    <ClInclude Include="NES_Header.h" />
     <ClInclude Include="PPUDebug.h" />
     <ClInclude Include="NROM.h" />
     <ClInclude Include="pch.h" />

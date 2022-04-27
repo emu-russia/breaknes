@@ -8,21 +8,6 @@ using namespace BaseLogic;
 
 namespace PPUPlayer
 {
-#pragma pack(push, 1)
-	struct NESHeader
-	{
-		uint8_t Sign[4];
-		uint8_t PRGSize;
-		uint8_t CHRSize;
-		uint8_t Flags_6;
-		uint8_t Flags_7;
-		uint8_t Flags_8;
-		uint8_t Flags_9;
-		uint8_t Flags_10;
-		uint8_t padding[5];
-	};
-#pragma pack(pop)
-
 	NROM::NROM(uint8_t* nesImage, size_t nesImageSize)
 	{
 		printf("NROM::NROM()\n");
@@ -37,7 +22,7 @@ namespace PPUPlayer
 
 			if (head->PRGSize >= 0x10 || head->CHRSize >= 0x10 || head->CHRSize == 0)
 			{
-				printf(" FAILED (1)!\n");
+				printf(" FAILED! Odd size of PRG/CHR banks or unsupported CHR-RAM!\n");
 				return;
 			}
 
@@ -46,14 +31,14 @@ namespace PPUPlayer
 
 			if (mapperNum != 0)
 			{
-				printf(" FAILED (2)!\n");
+				printf(" FAILED! The number of the mapper must be 0 (NROM).\n");
 				return;
 			}
 
 			size_t totalSize = (trainer ? 512 : 0) + 0x4000 * head->PRGSize + 0x2000 * head->CHRSize + sizeof(NESHeader);
 			if (nesImageSize < totalSize)
 			{
-				printf(" FAILED (3)!\n");
+				printf(" FAILED! Damaged .nes (file size is smaller than required).\n");
 				return;
 			}
 

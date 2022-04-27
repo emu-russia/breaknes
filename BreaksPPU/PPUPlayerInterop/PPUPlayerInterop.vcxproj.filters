@@ -39,6 +39,9 @@
     <ClInclude Include="..\..\Breaknes\BreaksCore\CoreApi.h">
       <Filter>Borrowed from Breaknes</Filter>
     </ClInclude>
+    <ClInclude Include="NES_Header.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

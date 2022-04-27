@@ -250,7 +250,10 @@ namespace PPUPlayer
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
 		}
+	}
 
+	void Board::AddCartDebugInfoProviders()
+	{
 		for (size_t n = 0; n < _countof(nrom_signals); n++)
 		{
 			SignalOffsetPair* sp = &nrom_signals[n];
