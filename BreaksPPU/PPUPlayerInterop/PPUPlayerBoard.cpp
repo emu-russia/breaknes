@@ -56,6 +56,14 @@ namespace PPUPlayer
 		bool LatchOutZ = false;
 		latch.sim(ALE, TriState::Zero, ad_bus, &LatchedAddress, LatchOutZ);
 
+		for (size_t n = 0; n < 8; n++)
+		{
+			PA[n] = ((LatchedAddress >> n) & 1) ? TriState::One : TriState::Zero;
+		}
+		for (size_t n = 0; n < 6; n++)
+		{
+			PA[8 + n] = ((pa8_13 >> n) & 1) ? TriState::One : TriState::Zero;
+		}
 		n_PA13 = NOT(PA[13]);
 
 		if (cart != nullptr)
@@ -70,6 +78,14 @@ namespace PPUPlayer
 			n_VRAM_CS = TriState::One;		// VRAM closed
 			VRAM_A10 = TriState::Zero;
 		}
+
+		VRAM_Addr = LatchedAddress;
+		VRAM_Addr |= ((PA[8] == TriState::One) ? 1 : 0) << 8;
+		VRAM_Addr |= ((PA[9] == TriState::One) ? 1 : 0) << 9;
+		VRAM_Addr |= ((VRAM_A10 == TriState::One) ? 1 : 0) << 10;
+
+		bool dz;
+		vram->sim(n_VRAM_CS, n_WR, n_RD, &VRAM_Addr, &ad_bus, dz);
 
 		// Tick
 
