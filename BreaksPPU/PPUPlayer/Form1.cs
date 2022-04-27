@@ -178,6 +178,8 @@ namespace PPUPlayer
 			Paused = false;
 			toolStripButton3.Checked = false;
 			toolStripButton3.Enabled = false;
+
+			UpdateMemLayout();
 		}
 
 		PPULogEntry? NextLogEntry()
@@ -451,7 +453,11 @@ namespace PPUPlayer
         private void button1_Click(object sender, EventArgs e)
         {
 			if (mem.Count == 0)
+			{
+				hexBox1.ByteProvider = new DynamicByteProvider(new byte[0]);
+				hexBox1.Refresh();
 				return;
+			}
 
 			int descrID = comboBox1.SelectedIndex;
 
