@@ -265,4 +265,14 @@ namespace PPUSim
 	{
 		return ob[bit_num]->get();
 	}
+
+	uint8_t OAM::Dbg_OAMReadByte(size_t addr)
+	{
+		return 0;
+	}
+
+	uint8_t OAM::Dbg_TempOAMReadByte(size_t addr)
+	{
+		return 0;
+	}
 }

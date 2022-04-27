@@ -5,26 +5,53 @@
 using namespace BaseLogic;
 
 #define VRAM_NAME "VRAM"
+#define CRAM_NAME "Color RAM"
+#define OAM_NAME "OAM"
+#define OAM2_NAME "Temp OAM"
 #define CHR_ROM_NAME "CHR-ROM"
 #define PPU_WIRES_CATEGORY "PPU Wires"
 #define PPU_FSM_CATEGORY "PPU FSM"
 #define NROM_CATEGORY "NROM"
 
+#define CRAM_SIZE (16+16)
+#define OAM_SIZE 0x100
+#define OAM2_SIZE 32
+
 namespace PPUPlayer
 {
 	void Board::AddBoardMemDescriptors()
 	{
+		// VRAM
+
 		MemDesciptor* vramRegion = new MemDesciptor;
 		memset(vramRegion, 0, sizeof(MemDesciptor));
 		strcpy_s(vramRegion->name, sizeof(vramRegion->name), VRAM_NAME);
 		vramRegion->size = vram->Dbg_GetSize();
 		dbg_hub->AddMemRegion(vramRegion, DumpVRAM, this, false);
 
-		// TBD: CRAM
+		// CRAM
 
-		// TBD: OAM
+		MemDesciptor* cramRegion = new MemDesciptor;
+		memset(cramRegion, 0, sizeof(MemDesciptor));
+		strcpy_s(cramRegion->name, sizeof(cramRegion->name), CRAM_NAME);
+		cramRegion->size = CRAM_SIZE;
+		dbg_hub->AddMemRegion(cramRegion, DumpCRAM, this, false);
 
-		// TBD: OAM Temp
+		// OAM
+
+		MemDesciptor* oamRegion = new MemDesciptor;
+		memset(oamRegion, 0, sizeof(MemDesciptor));
+		strcpy_s(oamRegion->name, sizeof(oamRegion->name), OAM_NAME);
+		oamRegion->size = OAM_SIZE;
+		dbg_hub->AddMemRegion(oamRegion, DumpOAM, this, false);
+
+		// Temp OAM
+
+		MemDesciptor* oam2Region = new MemDesciptor;
+		memset(oam2Region, 0, sizeof(MemDesciptor));
+		strcpy_s(oam2Region->name, sizeof(oam2Region->name), OAM2_NAME);
+		oam2Region->size = OAM2_SIZE;
+		dbg_hub->AddMemRegion(oam2Region, DumpTempOAM, this, false);
 	}
 
 	void Board::AddCartMemDescriptors()
@@ -33,7 +60,7 @@ namespace PPUPlayer
 		memset(chrRegion, 0, sizeof(MemDesciptor));
 		strcpy_s(chrRegion->name, sizeof(chrRegion->name), CHR_ROM_NAME);
 		chrRegion->size = cart->Dbg_GetCHRSize();
-		dbg_hub->AddMemRegion(chrRegion, DumpCHR, this, false);
+		dbg_hub->AddMemRegion(chrRegion, DumpCHR, this, true);
 	}
 
 	struct SignalOffsetPair
@@ -246,6 +273,24 @@ namespace PPUPlayer
 	{
 		Board* board = (Board*)opaque;
 		return board->cart->Dbg_ReadCHRByte(addr);
+	}
+
+	uint8_t Board::DumpCRAM(void* opaque, size_t addr)
+	{
+		Board* board = (Board*)opaque;
+		return board->ppu->Dbg_CRAMReadByte(addr);
+	}
+
+	uint8_t Board::DumpOAM(void* opaque, size_t addr)
+	{
+		Board* board = (Board*)opaque;
+		return board->ppu->Dbg_OAMReadByte(addr);
+	}
+
+	uint8_t Board::DumpTempOAM(void* opaque, size_t addr)
+	{
+		Board* board = (Board*)opaque;
+		return board->ppu->Dbg_TempOAMReadByte(addr);
 	}
 
 	uint32_t Board::GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry)

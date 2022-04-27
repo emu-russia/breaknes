@@ -277,4 +277,19 @@ namespace PPUSim
 	{
 		return v->get();
 	}
+
+	uint8_t PPU::Dbg_OAMReadByte(size_t addr)
+	{
+		return oam->Dbg_OAMReadByte(addr);
+	}
+
+	uint8_t PPU::Dbg_TempOAMReadByte(size_t addr)
+	{
+		return oam->Dbg_TempOAMReadByte(addr);
+	}
+
+	uint8_t PPU::Dbg_CRAMReadByte(size_t addr)
+	{
+		return cram->Dbg_CRAMReadByte(addr);
+	}
 }

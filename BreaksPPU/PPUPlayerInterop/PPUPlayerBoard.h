@@ -33,6 +33,9 @@ namespace PPUPlayer
 
 		static uint8_t DumpVRAM(void* opaque, size_t addr);
 		static uint8_t DumpCHR(void* opaque, size_t addr);
+		static uint8_t DumpCRAM(void* opaque, size_t addr);
+		static uint8_t DumpOAM(void* opaque, size_t addr);
+		static uint8_t DumpTempOAM(void* opaque, size_t addr);
 
 		static uint32_t GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry);
 		static uint32_t GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);

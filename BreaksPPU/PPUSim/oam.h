@@ -114,5 +114,9 @@ namespace PPUSim
 		void sim();
 
 		BaseLogic::TriState get_OB(size_t bit_num);
+
+		uint8_t Dbg_OAMReadByte(size_t addr);
+
+		uint8_t Dbg_TempOAMReadByte(size_t addr);
 	};
 }

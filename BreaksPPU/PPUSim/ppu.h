@@ -346,5 +346,11 @@ namespace PPUSim
 		size_t GetHCounter();
 
 		size_t GetVCounter();
+
+		uint8_t Dbg_OAMReadByte(size_t addr);
+
+		uint8_t Dbg_TempOAMReadByte(size_t addr);
+
+		uint8_t Dbg_CRAMReadByte(size_t addr);
 	};
 }
