@@ -23,6 +23,9 @@ namespace PPUPlayer
 
 		NROM_DebugInfo nrom_debug{};
 
+		// Connect to PPU A10 for vertical mirroring or PPU A11 for horizontal mirroring.
+		bool V_Mirroring = false;
+
 	public:
 		NROM(uint8_t* nesImage, size_t nesImageSize);
 		~NROM();

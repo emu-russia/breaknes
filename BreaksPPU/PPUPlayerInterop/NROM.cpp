@@ -42,6 +42,8 @@ namespace PPUPlayer
 				return;
 			}
 
+			V_Mirroring = (head->Flags_6 & 1) != 0;
+
 			printf(" OK!\n");
 
 			// Load CHR ROM
@@ -77,7 +79,9 @@ namespace PPUPlayer
 		nrom_debug.last_nRD = n_RD == TriState::One ? 1 : 0;
 		nrom_debug.last_nWR = n_WR == TriState::One ? 1 : 0;
 
-		// TBD: H/V Mirroring
+		// H/V Mirroring
+
+		VRAM_A10 = V_Mirroring ? PA[10] : PA[11];
 
 		// NROM contains a jumper between `/PA13` and `/VRAM_CS`
 

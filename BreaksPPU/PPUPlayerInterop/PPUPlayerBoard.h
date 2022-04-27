@@ -4,6 +4,20 @@
 
 namespace PPUPlayer
 {
+	struct BoardDebugInfo
+	{
+		uint32_t CLK;
+		uint32_t LS373_Latch;
+		uint32_t VRAM_Addr;
+		uint32_t n_VRAM_CS;
+		uint32_t VRAM_A10;
+		uint32_t PA;
+		uint32_t n_PA13;
+		uint32_t n_RD;
+		uint32_t n_WR;
+		uint32_t n_INT;
+	};
+
 	class Board
 	{
 		PPUSim::PPU* ppu = nullptr;
@@ -26,8 +40,15 @@ namespace PPUPlayer
 		size_t savedPclk = 0;
 
 		NROM* cart = nullptr;
+		BaseLogic::TriState n_INT = BaseLogic::TriState::X;
 		BaseLogic::TriState n_VRAM_CS = BaseLogic::TriState::X;
 		BaseLogic::TriState VRAM_A10 = BaseLogic::TriState::X;
+		BaseLogic::TriState n_RD = BaseLogic::TriState::X;
+		BaseLogic::TriState n_WR = BaseLogic::TriState::X;
+		BaseLogic::TriState PA[14]{};
+		BaseLogic::TriState n_PA13 = BaseLogic::TriState::X;
+		uint8_t LatchedAddress = 0;
+		uint32_t VRAM_Addr = 0;
 
 		PPUSim::VideoOutSignal vidSample;
 
@@ -39,12 +60,15 @@ namespace PPUPlayer
 
 		static uint32_t GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry);
 		static uint32_t GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry);
 		static uint32_t GetCartDebugInfo(void* opaque, DebugInfoEntry* entry);
 
 		void AddBoardMemDescriptors();
 		void AddCartMemDescriptors();
 		void AddDebugInfoProviders();
 		void AddCartDebugInfoProviders();
+
+		void GetDebugInfo(BoardDebugInfo& info);
 
 	public:
 		Board();

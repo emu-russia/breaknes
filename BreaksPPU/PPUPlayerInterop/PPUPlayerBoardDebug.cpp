@@ -11,6 +11,7 @@ using namespace BaseLogic;
 #define CHR_ROM_NAME "CHR-ROM"
 #define PPU_WIRES_CATEGORY "PPU Wires"
 #define PPU_FSM_CATEGORY "PPU FSM"
+#define BOARD_CATEGORY "PPUPlayer Board"
 #define NROM_CATEGORY "NROM"
 
 #define CRAM_SIZE (16+16)
@@ -221,6 +222,19 @@ namespace PPUPlayer
 		"INT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::INT),
 	};
 
+	SignalOffsetPair board_signals[] = {
+		"CLK", offsetof(BoardDebugInfo, CLK),
+		"LS373 Latch", offsetof(BoardDebugInfo, LS373_Latch),
+		"VRAM Address", offsetof(BoardDebugInfo, VRAM_Addr),
+		"#VRAM_CS", offsetof(BoardDebugInfo, n_VRAM_CS),
+		"VRAM_A10", offsetof(BoardDebugInfo, VRAM_A10),
+		"PA", offsetof(BoardDebugInfo, PA),
+		"#PA13", offsetof(BoardDebugInfo, n_PA13),
+		"#RD", offsetof(BoardDebugInfo, n_RD),
+		"#WR", offsetof(BoardDebugInfo, n_WR),
+		"#INT", offsetof(BoardDebugInfo, n_INT),
+	};
+
 	SignalOffsetPair nrom_signals[] = {
 		"Last PA", offsetof(NROM_DebugInfo, last_PA),
 		"Last /RD", offsetof(NROM_DebugInfo, last_nRD),
@@ -249,6 +263,17 @@ namespace PPUPlayer
 			strcpy_s(entry->category, sizeof(entry->category), PPU_FSM_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < _countof(board_signals); n++)
+		{
+			SignalOffsetPair* sp = &board_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy_s(entry->category, sizeof(entry->category), BOARD_CATEGORY);
+			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Board, entry, GetBoardDebugInfo, this);
 		}
 	}
 
@@ -366,6 +391,47 @@ namespace PPUPlayer
 
 				uint8_t* ptr = (uint8_t*)&nrom_info + sp->offset;
 				return *(uint32_t *)ptr;
+			}
+		}
+
+		return 0;
+	}
+
+	void Board::GetDebugInfo(BoardDebugInfo& info)
+	{
+		info.CLK = CLK;
+		info.LS373_Latch = LatchedAddress;
+		info.VRAM_Addr = VRAM_Addr;
+		info.n_VRAM_CS = n_VRAM_CS;
+		info.VRAM_A10 = VRAM_A10;
+
+		info.PA = 0;
+		for (size_t n = 0; n < _countof(PA); n++)
+		{
+			info.PA |= (PA[n] == TriState::One ? 1ULL : 0) << n;
+		}
+
+		info.n_PA13 = n_PA13;
+		info.n_RD = n_RD;
+		info.n_WR = n_WR;
+		info.n_INT = n_INT;
+	}
+
+	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
+	{
+		Board* board = (Board*)opaque;
+
+		for (size_t n = 0; n < _countof(board_signals); n++)
+		{
+			SignalOffsetPair* sp = &board_signals[n];
+
+			if (!strcmp(sp->name, entry->name))
+			{
+				BoardDebugInfo info{};
+				board->GetDebugInfo(info);
+
+				uint8_t* ptr = (uint8_t*)&info + sp->offset;
+				return *(uint32_t*)ptr;
 			}
 		}
 

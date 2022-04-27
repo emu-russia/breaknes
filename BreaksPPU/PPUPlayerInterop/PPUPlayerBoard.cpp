@@ -24,6 +24,7 @@ namespace PPUPlayer
 	void Board::Step()
 	{
 		ADDirty = false;
+		ext_bus = 0;
 
 		// Simulate PPU
 
@@ -46,25 +47,28 @@ namespace PPUPlayer
 		ppu->sim(inputs, outputs, &ext_bus, &data_bus, &ad_bus, &pa8_13, vidSample);
 
 		TriState ALE = outputs[(size_t)PPUSim::OutputPad::ALE];
-		TriState n_RD = outputs[(size_t)PPUSim::OutputPad::n_RD];
-		TriState n_WR = outputs[(size_t)PPUSim::OutputPad::n_WR];
+		n_RD = outputs[(size_t)PPUSim::OutputPad::n_RD];
+		n_WR = outputs[(size_t)PPUSim::OutputPad::n_WR];
+		n_INT = outputs[(size_t)PPUSim::OutputPad::n_INT];
 
 		// Simulate all other surrounding logic and cartridge
 
-		uint8_t LatchedAddress = 0;
 		bool LatchOutZ = false;
-
 		latch.sim(ALE, TriState::Zero, ad_bus, &LatchedAddress, LatchOutZ);
 
-		TriState PA[14]{};
-		TriState n_PA13 = NOT(PA[13]);
-
-		n_VRAM_CS = TriState::Zero;
-		VRAM_A10 = TriState::Zero;
+		n_PA13 = NOT(PA[13]);
 
 		if (cart != nullptr)
 		{
 			cart->sim(PA, n_PA13, n_RD, n_WR, &ad_bus, ADDirty, n_VRAM_CS, VRAM_A10);
+		}
+		else
+		{
+			// No cartridge in the slot means 'z' on these signals.
+			// Simulate this situation in the most painless way possible.
+
+			n_VRAM_CS = TriState::One;		// VRAM closed
+			VRAM_A10 = TriState::Zero;
 		}
 
 		// Tick
