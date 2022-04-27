@@ -37,7 +37,13 @@ namespace PPUPlayer
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SampleVideoSignal(out float sample);
-    }
+
+		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetHCounter();
+
+		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetVCounter();
+	}
 
 
     internal class BreaksCore

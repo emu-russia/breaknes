@@ -110,4 +110,28 @@ extern "C"
             board->SampleVideoSignal(sample);
         }
     }
+
+    __declspec(dllexport) size_t GetHCounter()
+    {
+        if (board != nullptr)
+        {
+            return board->GetHCounter();
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    __declspec(dllexport) size_t GetVCounter()
+    {
+        if (board != nullptr)
+        {
+            return board->GetVCounter();
+        }
+        else
+        {
+            return 0;
+        }
+    }
 }

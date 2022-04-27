@@ -48,5 +48,9 @@ namespace PPUPlayer
 		void EjectCartridge();
 
 		void SampleVideoSignal(float *sample);
+
+		size_t GetHCounter();
+
+		size_t GetVCounter();
 	};
 }

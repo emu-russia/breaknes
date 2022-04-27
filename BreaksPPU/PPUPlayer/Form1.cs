@@ -34,6 +34,15 @@ namespace PPUPlayer
 
 		bool PromptWhenFinished = true;
 
+		long timeStamp;
+		int pclkCounter;
+		int scanCounter;
+		int fieldCounter;
+		int fieldCounterPersistent;
+
+		int PrevH = -1;
+		int PrevV = -1;
+
 		public Form1()
 		{
 			InitializeComponent();
@@ -209,6 +218,8 @@ namespace PPUPlayer
 					continue;
 				}
 
+				// Check that the PPU Dump records have run out
+
 				if (currentEntry == null)
 				{
 					Console.WriteLine("PPU Dump records are out.");
@@ -224,6 +235,8 @@ namespace PPUPlayer
 
 					return;
 				}
+
+				// Check that it is time to perform a CPU operation
 
 				if (PPUPlayerInterop.GetPCLKCounter() == currentEntry.pclk)
 				{
@@ -247,12 +260,62 @@ namespace PPUPlayer
 					}
 				}
 
+				// Perform one half-cycle of the PPU
+
 				PPUPlayerInterop.Step();
+
+				// Logic related to the processing of H/V values
+
+				int h = PPUPlayerInterop.GetHCounter();
+				int v = PPUPlayerInterop.GetVCounter();
+
+				if (h != PrevH)
+                {
+					if (h == 0 && PrevH > 0)
+					{
+						// Next Scan
+						scanCounter++;
+					}
+
+					//UpdatePpuStats(PPUStats.HCounter, h);
+					PrevH = h;
+				}
+
+				if (v != PrevV)
+                {
+					if (v == 0 && PrevV > 0)
+					{
+						// Next Field
+
+						fieldCounter++;
+						fieldCounterPersistent++;
+					}
+
+					//UpdatePpuStats(PPUStats.VCounter, v);
+					PrevV = v;
+                }
+
+				// Show statistics that are updated once every 1 second.
 
 				float sample;
 				PPUPlayerInterop.SampleVideoSignal(out sample);
 				ProcessSample(sample);
-			}
+
+                long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                if (now > (timeStamp + 1000))
+                {
+                    timeStamp = now;
+
+                    UpdatePpuStats(PPUStats.PCLK_Sec, PPUPlayerInterop.GetPCLKCounter() - pclkCounter);
+                    UpdatePpuStats(PPUStats.FPS, fieldCounter);
+
+					UpdatePpuStats(PPUStats.Scans, scanCounter);
+					UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
+
+					pclkCounter = PPUPlayerInterop.GetPCLKCounter();
+                    fieldCounter = 0;
+                }
+            }
 
 			Console.WriteLine("Background Worker canceled.");
 		}
@@ -277,6 +340,15 @@ namespace PPUPlayer
 		{
 			recordCounter = 0;
 			CPUOpsProcessed = 0;
+
+			timeStamp = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+			scanCounter = 0;
+			fieldCounter = 0;
+			fieldCounterPersistent = 0;
+			pclkCounter = 0;
+
+			PrevH = -1;
+			PrevV = -1;
 
 			UpdatePpuStats(PPUStats.CPU_IF_Ops, 0);
 			UpdatePpuStats(PPUStats.Scans, 0);

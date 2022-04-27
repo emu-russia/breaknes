@@ -342,5 +342,9 @@ namespace PPUSim
 		void GetDebugInfo_Wires(PPU_Interconnects & wires);
 
 		void GetDebugInfo_FSMStates(PPU_FSMStates & fsm_states);
+
+		size_t GetHCounter();
+
+		size_t GetVCounter();
 	};
 }
