@@ -27,8 +27,12 @@ namespace PPUPlayer
         byte[] logData = new byte[0];
         PPULogEntry? currentEntry;
         int recordCounter = 0;
+        int CPUOpsProcessed = 0;
+        int TotalOps = 0;
 
         bool Paused = false;
+
+        bool PromptWhenFinished = true;
 
         public Form1()
         {
@@ -114,8 +118,8 @@ namespace PPUPlayer
 
             logData = File.ReadAllBytes(ppu_dump);
             logPointer = 0;
-            recordCounter = 0;
-            Console.WriteLine("Number of PPU Dump records: " + (logData.Length / 4).ToString());
+            TotalOps = logData.Length / 4;
+            Console.WriteLine("Number of PPU Dump records: " + TotalOps.ToString());
 
             byte[] nes = File.ReadAllBytes(nes_file);
 
@@ -211,6 +215,13 @@ namespace PPUPlayer
 
                     DisposeBoard();
 
+                    if (PromptWhenFinished)
+                    {
+                        MessageBox.Show(
+                            "The PPU Player has finished executing the current batch.",
+                            "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
+
                     return;
                 }
 
@@ -227,11 +238,12 @@ namespace PPUPlayer
 
                     currentEntry = NextLogEntry();
 
+                    CPUOpsProcessed++;
                     recordCounter++;
-                    if (recordCounter > 10000)
+                    if (recordCounter > 1000)
                     {
                         recordCounter = 0;
-                        Console.WriteLine("Another 10000\n");
+                        UpdatePpuStats(PPUStats.CPU_IF_Ops, CPUOpsProcessed);
                     }
                 }
 
@@ -261,6 +273,9 @@ namespace PPUPlayer
 
         void ResetPpuStats()
         {
+            recordCounter = 0;
+            CPUOpsProcessed = 0;
+
             UpdatePpuStats(PPUStats.CPU_IF_Ops, 0);
             UpdatePpuStats(PPUStats.Scans, 0);
             UpdatePpuStats(PPUStats.Fields, 0);
@@ -273,7 +288,7 @@ namespace PPUPlayer
             switch (stats)
             {
                 case PPUStats.CPU_IF_Ops:
-                    toolStripStatusLabel6.Text = value.ToString();
+                    toolStripStatusLabel6.Text = value.ToString() + "/" + TotalOps.ToString();
                     break;
                 case PPUStats.Scans:
                     toolStripStatusLabel7.Text = value.ToString();
