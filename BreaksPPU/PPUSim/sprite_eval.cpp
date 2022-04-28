@@ -257,7 +257,7 @@ namespace PPUSim
 
 		TriState nFF2_Out{};
 		eval_FF2.sim(PCLK, NOT(S_EV), n_I2, NotUsed, nFF2_Out);
-		eval_FF1.sim(PCLK, NOT(PAR_O), nFF2_Out, NotUsed, ppu->wire.I2SEV);
+		eval_FF1.sim(PCLK, NOT(PAR_O), nFF2_Out, ppu->wire.I2SEV, NotUsed);
 	}
 
 	void OAMCounterBit::sim (
