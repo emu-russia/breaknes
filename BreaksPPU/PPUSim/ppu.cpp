@@ -173,13 +173,18 @@ namespace PPUSim
 
 		if (wire.WR == TriState::One)
 		{
-			*ad_bus = Pack(wire.n_PA_Bot);
+			uint8_t PABot = 0;
+			for (size_t n = 0; n < 8; n++)
+			{
+				PABot |= (wire.n_PA_Bot[n] == TriState::Zero ? 1 : 0) << n;
+			}
+			*ad_bus = PABot;
 		}
 
 		uint8_t PATop = 0;
 		for (size_t n = 0; n < 6; n++)
 		{
-			PATop |= (wire.n_PA_Top[n] == TriState::One ? 1 : 0) << n;
+			PATop |= (wire.n_PA_Top[n] == TriState::Zero ? 1 : 0) << n;
 		}
 		*addrHi_bus = PATop;
 	}
