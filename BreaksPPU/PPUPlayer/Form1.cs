@@ -43,7 +43,8 @@ namespace PPUPlayer
 		int PrevH = -1;
 		int PrevV = -1;
 
-		List<BreaksCore.MemDesciptor> mem = new List<BreaksCore.MemDesciptor>();
+		List<BreaksCore.MemDesciptor> mem = new();
+		DataHumanizer humanizer = new();
 
 		public Form1()
 		{
@@ -469,11 +470,22 @@ namespace PPUPlayer
 
 			int descrID = comboBox1.SelectedIndex;
 
-			byte[] buf = new byte[mem[descrID].size];
+			if (pictureBoxForHuman.Visible)
+            {
+				string descrName = mem[descrID].name;
 
-			BreaksCore.DumpMem(descrID, buf);
-			hexBox1.ByteProvider = new DynamicByteProvider(buf);
-			hexBox1.Refresh();
+				Bitmap bitmap = humanizer.ConvertHexToImage(descrName);
+				pictureBoxForHuman.Image = bitmap;
+				pictureBoxForHuman.Invalidate();
+			}
+            else
+            {
+				byte[] buf = new byte[mem[descrID].size];
+
+				BreaksCore.DumpMem(descrID, buf);
+				hexBox1.ByteProvider = new DynamicByteProvider(buf);
+				hexBox1.Refresh();
+			}
 		}
 
 		/// <summary>
