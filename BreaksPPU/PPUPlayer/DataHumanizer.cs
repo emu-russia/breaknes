@@ -179,9 +179,65 @@ namespace PPUPlayer
             return null;
         }
 
-        Bitmap GetCHRImage(byte [] data)
+        Bitmap GetCHRImage(byte [] chr_data)
         {
-            return null;
+            int w = 8 * 16 * 2;
+            int h = 8 * 16;
+
+            // chr2bmp - CHR ROM convertor. v.1.0
+            // Created (C) org /2002/ kvzorganic@mail.ru
+            // :-P
+
+            Bitmap pic = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            // 24-bit image
+            for (int y = 0; y < 16; y++)
+            {
+                for (int r = 0; r < 8; r++)     // ROW
+                {
+                    for (int x = 0; x < 32; x++)
+                    {
+                        byte lo, hi;
+
+                        // setup pattern address
+                        int pat = 0;
+                        if (x >= 16)
+                            pat += 4096;
+                        pat = pat + 16 * 16 * y;
+                        if (x >= 16)
+                            pat = pat + 16 * (x - 16);
+                        else
+                            pat = pat + 16 * x;
+
+                        lo = chr_data[pat + r];
+                        hi = chr_data[pat + r + 8];
+                        for (int b = 0; b < 8; b++)
+                        {
+                            int c;
+                            Color p = Color.Transparent;
+                            c = (((hi >> b) & 1) << 1) | ((lo >> b) & 1);
+                            switch (c)
+                            {
+                                case 0:
+                                    p = Color.FromArgb(0, 0, 0);
+                                    break;
+                                case 1:
+                                    p = Color.FromArgb(0x3f, 0x3f, 0x3f);
+                                    break;
+                                case 2:
+                                    p = Color.FromArgb(0x7f, 0x7f, 0x7f);
+                                    break;
+                                case 3:
+                                    p = Color.FromArgb(0xff, 0xff, 0xff);
+                                    break;
+                            }
+                            pic.SetPixel(8 * x + (7 - b), 8 * y + r, p);
+                        }
+                    }
+                }
+            }
+
+            return pic;
         }
 
         Bitmap GetVRAMImage(byte [] nameTab, byte [] patternTab)
