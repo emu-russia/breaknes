@@ -115,7 +115,7 @@ namespace PPUSim
 
 		// Select row
 
-		if (ROW[0] == TriState::One)
+		if (ROW[0] == TriState::One || ROW[4] == TriState::One)
 		{
 			row = 0;
 			anyRow = true;
@@ -220,6 +220,16 @@ namespace PPUSim
 
 	uint8_t CRAM::Dbg_CRAMReadByte(size_t addr)
 	{
-		return 0;
+		uint8_t val = 0;
+
+		size_t row = (addr & 3) | ((addr & 0x10) ? 4 : 0);
+		size_t col = (addr >> 2) & 3;
+
+		for (size_t n = 0; n < 6; n++)
+		{
+			val |= (cram[row * col * n] == TriState::One ? 1 : 0) << n;
+		}
+
+		return val;
 	}
 }

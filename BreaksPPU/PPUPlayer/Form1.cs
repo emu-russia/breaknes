@@ -12,6 +12,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Be.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace PPUPlayer
 {
@@ -524,6 +525,17 @@ namespace PPUPlayer
 			}
 
 			propertyGrid1.SelectedObject = myProperties;
+		}
+
+        private void pictureBoxForHuman_Paint(object sender, PaintEventArgs e)
+        {
+			// https://stackoverflow.com/questions/54720916/disable-image-blending-on-a-picturebox
+
+			//e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+
+			//e.Graphics.PixelOffsetMode = PixelOffsetMode.Half;
+
+			//e.Graphics.DrawImage(pixelBitmap, GetScaledImageRect(pixelBitmap, DirectCast(sender, Control)));
 		}
 	}
 }

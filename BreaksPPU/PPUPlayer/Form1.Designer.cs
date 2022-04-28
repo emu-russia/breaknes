@@ -589,11 +589,14 @@
             // pictureBoxForHuman
             // 
             this.pictureBoxForHuman.BackColor = System.Drawing.Color.Gainsboro;
-            this.pictureBoxForHuman.Location = new System.Drawing.Point(19, 15);
+            this.pictureBoxForHuman.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBoxForHuman.Location = new System.Drawing.Point(3, 3);
             this.pictureBoxForHuman.Name = "pictureBoxForHuman";
-            this.pictureBoxForHuman.Size = new System.Drawing.Size(448, 277);
+            this.pictureBoxForHuman.Size = new System.Drawing.Size(549, 356);
+            this.pictureBoxForHuman.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxForHuman.TabIndex = 2;
             this.pictureBoxForHuman.TabStop = false;
+            this.pictureBoxForHuman.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBoxForHuman_Paint);
             // 
             // openFileDialog1
             // 
