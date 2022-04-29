@@ -89,12 +89,8 @@ namespace PPUSim
 
 		regs->sim_CLP();
 
-		mux->sim();
-
 		vram_ctrl->sim();
-
-		cram->sim();
-
+		
 		eval->sim();
 
 		oam->sim();
@@ -104,6 +100,10 @@ namespace PPUSim
 		bgen->sim();
 
 		vram_ctrl->sim_ReadBuffer();
+
+		mux->sim();
+
+		cram->sim();
 
 		vid_out->sim(vout);
 
