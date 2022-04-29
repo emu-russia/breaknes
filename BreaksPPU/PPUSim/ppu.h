@@ -300,7 +300,7 @@ namespace PPUSim
 		OAM* oam = nullptr;
 		FIFO* fifo = nullptr;
 		VRAM_Control* vram_ctrl = nullptr;
-		DataReader* bgen = nullptr;
+		DataReader* data_reader = nullptr;
 
 		uint8_t DB = 0;				// CPU I/F Data bus
 		bool DB_Dirty = false;
@@ -355,5 +355,7 @@ namespace PPUSim
 		uint8_t Dbg_TempOAMReadByte(size_t addr);
 
 		uint8_t Dbg_CRAMReadByte(size_t addr);
+
+		uint8_t Dbg_GetCRAMAddress();
 	};
 }

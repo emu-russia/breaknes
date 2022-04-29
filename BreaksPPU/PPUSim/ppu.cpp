@@ -21,7 +21,7 @@ namespace PPUSim
 		eval = new OAMEval(this);
 		oam = new OAM(this);
 		fifo = new FIFO(this);
-		bgen = new DataReader(this);
+		data_reader = new DataReader(this);
 		vram_ctrl = new VRAM_Control(this);
 	}
 
@@ -38,7 +38,7 @@ namespace PPUSim
 		delete eval;
 		delete oam;
 		delete fifo;
-		delete bgen;
+		delete data_reader;
 		delete vram_ctrl;
 	}
 
@@ -97,7 +97,9 @@ namespace PPUSim
 
 		fifo->sim();
 
-		bgen->sim();
+		data_reader->sim();
+
+		vram_ctrl->sim_TH_MUX();
 
 		vram_ctrl->sim_ReadBuffer();
 
@@ -298,5 +300,15 @@ namespace PPUSim
 	uint8_t PPU::Dbg_CRAMReadByte(size_t addr)
 	{
 		return cram->Dbg_CRAMReadByte(addr);
+	}
+
+	uint8_t PPU::Dbg_GetCRAMAddress()
+	{
+		uint8_t addr = 0;
+		for (size_t n = 0; n < 5; n++)
+		{
+			addr |= (wire.PAL[n] == TriState::One ? 1 : 0) << n;
+		}
+		return addr;
 	}
 }

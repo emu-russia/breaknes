@@ -51,7 +51,6 @@ namespace PPUSim
 
 		void sim_RD();
 		void sim_WR();
-		void sim_Misc();
 		void sim_ALE();
 
 	public:
@@ -59,6 +58,8 @@ namespace PPUSim
 		~VRAM_Control();
 
 		void sim();
+
+		void sim_TH_MUX();
 
 		void sim_ReadBuffer();
 

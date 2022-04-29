@@ -27,7 +27,6 @@ namespace PPUSim
 	void VRAM_Control::sim()
 	{
 		sim_RD();		// PD/RB, RD
-		sim_Misc();		// TH/MUX, XRB
 		sim_WR();		// DB/PAR, TSTEP, WR
 		sim_ALE();		// /ALE
 	}
@@ -75,7 +74,10 @@ namespace PPUSim
 		ppu->wire.WR = NOR(NOT(ppu->wire.DB_PAR), ppu->wire.TH_MUX);
 	}
 
-	void VRAM_Control::sim_Misc()
+	/// <summary>
+	/// Call after Data Reader, but BEFORE MUX/CRAM & Read Buffer. PPU Address is obtained only after PAR simulation.
+	/// </summary>
+	void VRAM_Control::sim_TH_MUX()
 	{
 		// TH/MUX
 
