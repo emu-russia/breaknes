@@ -51,6 +51,11 @@ namespace PPUPlayer
 		n_WR = outputs[(size_t)PPUSim::OutputPad::n_WR];
 		n_INT = outputs[(size_t)PPUSim::OutputPad::n_INT];
 
+		if (n_INT == TriState::Z)
+		{
+			n_INT = TriState::One;		// pullup
+		}
+
 		// Simulate all other surrounding logic and cartridge
 
 		bool LatchOutZ = false;

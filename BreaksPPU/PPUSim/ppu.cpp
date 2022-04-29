@@ -103,6 +103,8 @@ namespace PPUSim
 
 		bgen->sim();
 
+		vram_ctrl->sim_ReadBuffer();
+
 		vid_out->sim(vout);
 
 		// Output terminals
@@ -171,7 +173,7 @@ namespace PPUSim
 			*data_bus = DB;
 		}
 
-		if (wire.WR == TriState::One)
+		if (wire.RD == TriState::Zero)
 		{
 			uint8_t PABot = 0;
 			for (size_t n = 0; n < 8; n++)

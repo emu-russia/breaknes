@@ -30,7 +30,6 @@ namespace PPUSim
 		sim_Misc();		// TH/MUX, XRB
 		sim_WR();		// DB/PAR, TSTEP, WR
 		sim_ALE();		// /ALE
-		sim_ReadBuffer();
 	}
 
 	void VRAM_Control::sim_RD()
@@ -102,6 +101,9 @@ namespace PPUSim
 		ppu->wire.n_ALE = NOR3(NOR3(ppu->wire.H0_Dash, ppu->fsm.BLNK, ppu->wire.n_PCLK), tmp_1, tmp_2);
 	}
 
+	/// <summary>
+	/// The Read Buffer should simulate after the Data Reader, after the PD bus gets a value to write to the DB.
+	/// </summary>
 	void VRAM_Control::sim_ReadBuffer()
 	{
 		for (size_t n = 0; n < 8; n++)
