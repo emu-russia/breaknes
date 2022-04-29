@@ -357,5 +357,7 @@ namespace PPUSim
 		uint8_t Dbg_CRAMReadByte(size_t addr);
 
 		uint8_t Dbg_GetCRAMAddress();
+
+		uint16_t Dbg_GetPPUAddress();
 	};
 }
