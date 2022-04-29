@@ -159,7 +159,9 @@ namespace PPUSim
 		}
 		else
 		{
-			DB_Dirty = false;
+			// TBD: You have to drop the bus after a while.
+
+			//DB_Dirty = false;
 		}
 
 		PD = *ad_bus;
