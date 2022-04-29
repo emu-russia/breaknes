@@ -29,10 +29,7 @@ namespace PPUSim
 		}
 		else
 		{
-			if (cell != TriState::Z)
-			{
-				ff.set(cell);
-			}
+			ff.set(cell);
 		}
 
 		TriState CBOut = NOT(NAND(ff.get(), n_OE));
@@ -89,12 +86,12 @@ namespace PPUSim
 
 	void CRAM::sim_CRAMDecoder()
 	{
-		TriState col_in[2];
+		TriState col_in[2]{};
 		col_in[0] = ppu->wire.PAL[2];
 		col_in[1] = ppu->wire.PAL[3];
 		DMX2(col_in, COL);
 
-		TriState row_in[3];
+		TriState row_in[3]{};
 		row_in[0] = ppu->wire.PAL[0];
 		row_in[1] = ppu->wire.PAL[1];
 		row_in[2] = ppu->wire.PAL[4];

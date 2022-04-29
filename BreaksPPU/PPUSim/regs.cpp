@@ -20,6 +20,7 @@ namespace PPUSim
 		sim_RegOps();
 		sim_FirstSecond_SCCX_Write();
 		sim_RegFFs();
+		//trace();
 	}
 
 	void ControlRegs::sim_RWDecoder()
@@ -267,4 +268,63 @@ namespace PPUSim
 		return val;
 	}
 
+	/// <summary>
+	/// Check that CPU/IF gets correct values in DB and generates correct RegOps operations.
+	/// </summary>
+	void ControlRegs::trace()
+	{
+#if PPUSIM_TRACE_PRINTFS
+		if (ppu->wire.n_DBE == TriState::Zero)
+		{
+			if (ppu->wire.n_W6_1 == TriState::Zero)
+			{
+				printf("n_W6_1: %x\n", ppu->DB);
+			}
+			if (ppu->wire.n_W6_2 == TriState::Zero)
+			{
+				printf("n_W6_2: %x\n", ppu->DB);
+			}
+			if (ppu->wire.n_W5_1 == TriState::Zero)
+			{
+				printf("n_W5_1: %x\n", ppu->DB);
+			}
+			if (ppu->wire.n_W5_2 == TriState::Zero)
+			{
+				printf("n_W5_2: %x\n", ppu->DB);
+			}
+			if (ppu->wire.n_R7 == TriState::Zero)
+			{
+				printf("n_R7\n");
+			}
+			if (ppu->wire.n_W7 == TriState::Zero)
+			{
+				printf("n_W7: %x\n", ppu->DB);
+			}
+			if (ppu->wire.n_W4 == TriState::Zero)
+			{
+				printf("n_W4: %x\n", ppu->DB);
+			}
+			if (ppu->wire.n_W3 == TriState::Zero)
+			{
+				printf("n_W3: %x\n", ppu->DB);
+			}
+			if (ppu->wire.n_R2 == TriState::Zero)
+			{
+				//printf("n_R2\n");
+			}
+			if (ppu->wire.n_W1 == TriState::Zero)
+			{
+				printf("n_W1: %x\n", ppu->DB);
+			}
+			if (ppu->wire.n_W0 == TriState::Zero)
+			{
+				printf("n_W0: %x\n", ppu->DB);
+			}
+			if (ppu->wire.n_R4 == TriState::Zero)
+			{
+				printf("n_R4\n");
+			}
+		}
+#endif // PPUSIM_TRACE_PRINTFS
+	}
 }

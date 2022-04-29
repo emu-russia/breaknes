@@ -51,15 +51,17 @@ namespace PPUSim
 
 		void sim_RD();
 		void sim_WR();
-		void sim_Misc();
 		void sim_ALE();
-		void sim_ReadBuffer();
 
 	public:
 		VRAM_Control(PPU* parent);
 		~VRAM_Control();
 
 		void sim();
+
+		void sim_TH_MUX();
+
+		void sim_ReadBuffer();
 
 		uint8_t Debug_GetRB();
 	};

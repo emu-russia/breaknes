@@ -166,8 +166,8 @@ namespace PPUSim
 
 	void PPU::GetDebugInfo_Regs(PPU_Registers& regs)
 	{
-		regs.HCounter = h->get();
-		regs.VCounter = v->get();
+		regs.HCounter = (uint32_t)h->get();
+		regs.VCounter = (uint32_t)v->get();
 		regs.CTRL0 = this->regs->Debug_GetCTRL0();		// $2000
 		regs.CTRL1 = this->regs->Debug_GetCTRL1();	// $2001
 		regs.MainOAMCounter = eval->Debug_GetMainCounter();		// $2003

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#define PPUSIM_TRACE_PRINTFS 0
+
 namespace PPUSim
 {
 	class ControlRegs
@@ -41,6 +43,8 @@ namespace PPUSim
 
 		bool RenderAlwaysEnabled = false;
 		bool ClippingAlwaysDisabled = false;
+
+		void trace();
 
 	public:
 		ControlRegs(PPU* parent);

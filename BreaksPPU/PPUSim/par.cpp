@@ -205,8 +205,14 @@ namespace PPUSim
 			
 		FAT_in[10] = PAR_in[10] = NTHOut;
 		FAT_in[11] = PAR_in[11] = NTVOut;
-		FAT_in[12] = PAR_in[12] = NOR(NOT(ppu->wire.n_FVO[0]), NOT(BLNK));
+		FAT_in[12] = PAR_in[12] = NOR(ppu->wire.n_FVO[0], NOT(BLNK));
 		FAT_in[13] = PAR_in[13] = NOT(NOR(ppu->wire.FVO[1], NOT(BLNK)));
+
+		for (size_t n = 0; n < 13; n++)
+		{
+			PAD_in[n] = ppu->wire.PAD[n];
+		}
+		PAD_in[13] = TriState::Zero;
 	}
 
 	void PAR::sim_PAR()
@@ -235,7 +241,7 @@ namespace PPUSim
 		step_latch.set(MUX(carry_in, ff.nget(), ff.get()), Clock);
 		val_out = ff.get();
 		n_val_out = ff.nget();
-		carry_out = NOR(val_out, NOT(carry_in));
+		carry_out = NOR(n_val_out, NOT(carry_in));
 	}
 
 	void PAR_CounterBit::sim_res(TriState Clock, TriState Load, TriState Step,
@@ -247,7 +253,7 @@ namespace PPUSim
 		step_latch.set(MUX(carry_in, ff.nget(), ff.get()), Clock);
 		val_out = ff.get();
 		n_val_out = ff.nget();
-		carry_out = NOR(val_out, NOT(carry_in));
+		carry_out = NOR(n_val_out, NOT(carry_in));
 	}
 
 	void PAR_LowBit::sim(TriState PCLK, TriState PARR, TriState DB_PAR, TriState PAL, TriState F_AT,

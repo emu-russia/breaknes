@@ -27,10 +27,8 @@ namespace PPUSim
 	void VRAM_Control::sim()
 	{
 		sim_RD();		// PD/RB, RD
-		sim_Misc();		// TH/MUX, XRB
 		sim_WR();		// DB/PAR, TSTEP, WR
 		sim_ALE();		// /ALE
-		sim_ReadBuffer();
 	}
 
 	void VRAM_Control::sim_RD()
@@ -76,7 +74,10 @@ namespace PPUSim
 		ppu->wire.WR = NOR(NOT(ppu->wire.DB_PAR), ppu->wire.TH_MUX);
 	}
 
-	void VRAM_Control::sim_Misc()
+	/// <summary>
+	/// Call after Data Reader, but BEFORE MUX/CRAM & Read Buffer. PPU Address is obtained only after PAR simulation.
+	/// </summary>
+	void VRAM_Control::sim_TH_MUX()
 	{
 		// TH/MUX
 
@@ -102,6 +103,9 @@ namespace PPUSim
 		ppu->wire.n_ALE = NOR3(NOR3(ppu->wire.H0_Dash, ppu->fsm.BLNK, ppu->wire.n_PCLK), tmp_1, tmp_2);
 	}
 
+	/// <summary>
+	/// The Read Buffer should simulate after the Data Reader, after the PD bus gets a value to write to the DB.
+	/// </summary>
 	void VRAM_Control::sim_ReadBuffer()
 	{
 		for (size_t n = 0; n < 8; n++)
