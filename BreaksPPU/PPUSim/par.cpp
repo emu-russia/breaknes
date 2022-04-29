@@ -138,11 +138,11 @@ namespace PPUSim
 	void PAR::sim_FVCounter()
 	{
 		TriState PCLK = ppu->wire.PCLK;
-		TriState unused;
+		TriState carry = FVIN;
 
 		for (size_t n = 0; n < 3; n++)
 		{
-			FVCounter[n].sim(PCLK, TVLOAD, TVSTEP, ppu->wire.FV[n], FVIN, ppu->wire.FVO[n], ppu->wire.n_FVO[n], unused);
+			FVCounter[n].sim(PCLK, TVLOAD, TVSTEP, ppu->wire.FV[n], carry, ppu->wire.FVO[n], ppu->wire.n_FVO[n], carry);
 		}
 	}
 
@@ -158,22 +158,22 @@ namespace PPUSim
 	void PAR::sim_TVCounter()
 	{
 		TriState PCLK = ppu->wire.PCLK;
-		TriState unused;
+		TriState carry = TVIN;
 
 		for (size_t n = 0; n < 5; n++)
 		{
-			TVCounter[n].sim_res(PCLK, TVLOAD, TVSTEP, ppu->wire.TV[n], TVIN, Z_TV, ppu->wire.TVO[n], ppu->wire.n_TVO[n], unused);
+			TVCounter[n].sim_res(PCLK, TVLOAD, TVSTEP, ppu->wire.TV[n], carry, Z_TV, ppu->wire.TVO[n], ppu->wire.n_TVO[n], carry);
 		}
 	}
 
 	void PAR::sim_THCounter()
 	{
 		TriState PCLK = ppu->wire.PCLK;
-		TriState unused;
+		TriState carry = THIN;
 
 		for (size_t n = 0; n < 5; n++)
 		{
-			THCounter[n].sim(PCLK, THLOAD, THSTEP, ppu->wire.TH[n], THIN, ppu->wire.THO[n], ppu->wire.n_THO[n], unused);
+			THCounter[n].sim(PCLK, THLOAD, THSTEP, ppu->wire.TH[n], carry, ppu->wire.THO[n], ppu->wire.n_THO[n], carry);
 		}
 	}
 
