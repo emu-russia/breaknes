@@ -71,7 +71,7 @@ namespace PPUPlayer
                     descrID++;
                 }
 
-                if (descrVRAM > 0 && descrCHR > 0)
+                if (descrVRAM >= 0 && descrCHR >= 0)
                 {
                     byte[] vram_data = new byte[VRAMSize];
                     BreaksCore.DumpMem(descrVRAM, vram_data);
@@ -108,7 +108,7 @@ namespace PPUPlayer
                     descrID++;
                 }
 
-                if (descrOAM > 0 && descrCHR > 0)
+                if (descrOAM >= 0 && descrCHR >= 0)
                 {
                     byte[] oam_data = new byte[OAMSize];
                     BreaksCore.DumpMem(descrOAM, oam_data);
@@ -145,7 +145,7 @@ namespace PPUPlayer
                     descrID++;
                 }
 
-                if (descrOAM2 > 0 && descrCHR > 0)
+                if (descrOAM2 >= 0 && descrCHR >= 0)
                 {
                     byte[] oam2_data = new byte[OAM2Size];
                     BreaksCore.DumpMem(descrOAM2, oam2_data);
@@ -242,17 +242,17 @@ namespace PPUPlayer
 
         Bitmap GetVRAMImage(byte [] nameTab, byte [] patternTab)
         {
-            return null;
+            return Properties.Resources.not_implemented;
         }
 
         Bitmap GetMainOAMImage(byte[] oam, byte[] patternTab)
         {
-            return null;
+            return Properties.Resources.not_implemented;
         }
 
         Bitmap GetTempOAMImage(byte[] oam2, byte[] patternTab)
         {
-            return null;
+            return Properties.Resources.not_implemented;
         }
 
         byte [,] nes_pal = new byte [,] {
