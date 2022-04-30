@@ -20,8 +20,10 @@ namespace PPUPlayer
 	public partial class Form1 : Form
 	{
 		static int SamplesPerPCLK = 8;
-		static int SamplesPerScan = 341 * SamplesPerPCLK;
-		static int SamplesPerField = 262 * SamplesPerScan;
+		static int PixelsPerScan = 341;
+		static int ScansPerField = 262;
+		static int SamplesPerScan = PixelsPerScan * SamplesPerPCLK;
+		static int SamplesPerField = ScansPerField * SamplesPerScan;
 
 		float[] Scan = new float[SamplesPerScan];
 		float[] Field = new float[SamplesPerField];
@@ -29,12 +31,13 @@ namespace PPUPlayer
 		int ScanSampleCounter = 0;
 		int FieldSampleCounter = 0;
 
-		static float BlankLevel = 1.3000f;
-		static float IRE = 0.02f;
-		static int PixelsPerSample = 1;
-		static int ScaleY = 4;
-		static int ScaleIRE = 1;
+		// Picture output is set to unloaded video signal (Vpk/pk = 2.0)
 
+		static float BlankLevel = 1.3000f;  // IRE = 0
+		static float V_pk_pk = 2.0f;
+		static float IRE = V_pk_pk / 100.0f;
+		static int PixelsPerSample = 1;
+		static int ScaleY = 5;
 		static int PPUPicturePortion = 256 * SamplesPerPCLK;
 
 		Color scanBgColor = Color.Gray;
@@ -123,7 +126,7 @@ namespace PPUPlayer
 			for (int n=0; n<SamplesPerScan; n++)
 			{
 				float sample = Scan[n];
-				float ires = ((sample - BlankLevel) / IRE) * ScaleIRE;
+				float ires = ((sample - BlankLevel) / IRE) * ScaleY;
 
 				Point pt = new(PixelsPerSample * n, h - ((int)ires + 200));
 				gr.DrawLine(pen, prevPt, pt);
@@ -140,7 +143,37 @@ namespace PPUPlayer
 
 		void VisualizeField()
 		{
-			// TBD
+			int w = PixelsPerScan;
+			int h = ScansPerField;
+
+			Bitmap pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			Graphics gr = Graphics.FromImage(pic);
+
+			int samplePtr = 0;
+
+			for (int y = 0; y < ScansPerField; y++)
+			{
+				for (int x =0; x< PixelsPerScan; x++)
+				{
+					// Integrate sample batch
+
+					float avg = 0.0f;
+					for (int i = 0; i < SamplesPerPCLK; i++)
+					{
+						avg += Field[samplePtr++];
+					}
+					avg /= SamplesPerPCLK;
+
+					// Normalization
+
+					float ire = ((avg - BlankLevel) / IRE);
+					int gs = (int)Math.Max(0.0f, Math.Min(255.0f, ire));
+
+					gr.FillRectangle(new SolidBrush(Color.FromArgb(gs, gs, gs)), x, y, 1, 1);
+				}
+			}
+
+			pictureBoxField.Image = pic;
 		}
 
 		void ResetVisualize()
