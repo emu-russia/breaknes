@@ -144,7 +144,7 @@ namespace PPUPlayer
 		}
 
 		void ResetVisualize()
-        {
+		{
 			ScanSampleCounter = 0;
 			FieldSampleCounter = 0;
 		}
