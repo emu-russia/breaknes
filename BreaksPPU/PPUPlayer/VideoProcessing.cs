@@ -29,12 +29,13 @@ namespace PPUPlayer
 		int ScanSampleCounter = 0;
 		int FieldSampleCounter = 0;
 
-		static float BlankLevel = 1.3000f;
-		static float IRE = 0.02f;
-		static int PixelsPerSample = 1;
-		static int ScaleY = 4;
-		static int ScaleIRE = 1;
+		// Picture output is set to unloaded video signal (Vpk/pk = 2.0)
 
+		static float BlankLevel = 1.3000f;  // IRE = 0
+		static float V_pk_pk = 2.0f;
+		static float IRE = V_pk_pk / 100.0f;
+		static int PixelsPerSample = 1;
+		static int ScaleY = 5;
 		static int PPUPicturePortion = 256 * SamplesPerPCLK;
 
 		Color scanBgColor = Color.Gray;
@@ -123,7 +124,7 @@ namespace PPUPlayer
 			for (int n=0; n<SamplesPerScan; n++)
 			{
 				float sample = Scan[n];
-				float ires = ((sample - BlankLevel) / IRE) * ScaleIRE;
+				float ires = ((sample - BlankLevel) / IRE) * ScaleY;
 
 				Point pt = new(PixelsPerSample * n, h - ((int)ires + 200));
 				gr.DrawLine(pen, prevPt, pt);
