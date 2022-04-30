@@ -155,7 +155,7 @@ namespace PPUSim
 		fsm_states.n_HB = fsm.nHB == TriState::One ? 1 : 0;
 		fsm_states.BURST = fsm.BURST == TriState::One ? 1 : 0;
 		fsm_states.HSYNC = fsm.HSYNC == TriState::One ? 1 : 0;
-		fsm_states.PICTURE = fsm.PICTURE == TriState::One ? 1 : 0;
+		fsm_states.n_PICTURE = fsm.n_PICTURE == TriState::One ? 1 : 0;
 		fsm_states.RESCL = fsm.RESCL == TriState::One ? 1 : 0;
 		fsm_states.VSYNC = fsm.VSYNC == TriState::One ? 1 : 0;
 		fsm_states.n_VSET = fsm.nVSET == TriState::One ? 1 : 0;

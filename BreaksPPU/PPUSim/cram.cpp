@@ -76,11 +76,11 @@ namespace PPUSim
 		TriState n_R7 = ppu->wire.n_R7;
 		TriState n_DBE = ppu->wire.n_DBE;
 		TriState TH_MUX = ppu->wire.TH_MUX;
-		TriState PICTURE = ppu->fsm.PICTURE;
+		TriState n_PICTURE = ppu->fsm.n_PICTURE;
 
 		dbpar_latch.set(ppu->wire.DB_PAR, ppu->wire.PCLK);
 		ppu->wire.n_CB_DB = NOT(NOR3(n_R7, n_DBE, NOT(TH_MUX)));
-		ppu->wire.n_BW = NOR(AND(ppu->wire.n_CB_DB, PICTURE), ppu->wire.BnW);
+		ppu->wire.n_BW = NOR(AND(ppu->wire.n_CB_DB, n_PICTURE), ppu->wire.BnW);
 		ppu->wire.n_DB_CB = NAND(dbpar_latch.get(), TH_MUX);
 	}
 

@@ -214,7 +214,7 @@ namespace PPUPlayer
 		"/HB", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_HB),
 		"BURST", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BURST),
 		"HSYNC", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::HSYNC),
-		"PICTURE", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::PICTURE),
+		"/PICTURE", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_PICTURE),
 		"RESCL", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::RESCL),
 		"VSYNC", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::VSYNC),
 		"/VSET", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_VSET),

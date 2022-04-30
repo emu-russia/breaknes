@@ -161,7 +161,7 @@ namespace PPUSim
 		PICTURE_FF.set(NOR(AND(BPORCH, VPLA[2]), NOR(AND(BPORCH, VPLA[3]), PICTURE_FF.get())));
 		pic_latch1.set(PICTURE_FF.get(), PCLK);
 		pic_latch2.set(BPORCH, PCLK);
-		ppu->fsm.PICTURE = NOT(NOR(pic_latch1.get(), pic_latch2.get()));
+		ppu->fsm.n_PICTURE = NOT(NOR(pic_latch1.get(), pic_latch2.get()));
 
 		vset_latch1.set(VPLA[4], n_PCLK);
 		ppu->fsm.nVSET = vset_latch1.nget();

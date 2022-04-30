@@ -266,7 +266,7 @@ namespace PPUSim
 			BaseLogic::TriState BURST;
 			BaseLogic::TriState HSYNC;
 
-			BaseLogic::TriState PICTURE;
+			BaseLogic::TriState n_PICTURE;
 			BaseLogic::TriState RESCL;
 			BaseLogic::TriState VSYNC;
 			BaseLogic::TriState nVSET;

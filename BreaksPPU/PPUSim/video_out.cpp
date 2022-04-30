@@ -61,7 +61,7 @@ namespace PPUSim
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState BURST = ppu->fsm.BURST;
 		TriState HSYNC = ppu->fsm.HSYNC;
-		TriState PICTURE = ppu->fsm.PICTURE;
+		TriState n_PICTURE = ppu->fsm.n_PICTURE;
 
 		if (DebugRandomize)
 		{
@@ -149,7 +149,7 @@ namespace PPUSim
 
 		TriState n_PZ = NOR13(pz);
 
-		dac_latch2.set(NOR(P123, PICTURE), n_PCLK);
+		dac_latch2.set(NOR(P123, n_PICTURE), n_PCLK);
 		TriState n_POUT = dac_latch2.nget();
 
 		// Luminance Decoder
@@ -175,7 +175,7 @@ namespace PPUSim
 		size_t L = 15;
 
 		dac_latch1.set(NOT(HSYNC), n_PCLK);
-		dac_latch3.set(NOT(NOR3(NOR(P123, PICTURE), HSYNC, BURST)), n_PCLK);
+		dac_latch3.set(NOT(NOR3(NOR(P123, n_PICTURE), HSYNC, BURST)), n_PCLK);
 		dac_latch4.set(BURST, n_PCLK);
 
 		if (dac_latch1.nget() == TriState::One && L > 0)
