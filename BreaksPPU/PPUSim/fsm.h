@@ -15,10 +15,10 @@ namespace PPUSim
 		BaseLogic::DLatch fp_latch2;
 		BaseLogic::DLatch sev_latch1;
 		BaseLogic::DLatch sev_latch2;
-		BaseLogic::DLatch clpo_latch1;
-		BaseLogic::DLatch clpo_latch2;
-		BaseLogic::DLatch clpb_latch1;
-		BaseLogic::DLatch clpb_latch2;
+		BaseLogic::DLatch clip_latch1;
+		BaseLogic::DLatch clip_latch2;
+		BaseLogic::DLatch clpo_latch;
+		BaseLogic::DLatch clpb_latch;
 		BaseLogic::DLatch hpos_latch1;
 		BaseLogic::DLatch hpos_latch2;
 		BaseLogic::DLatch eval_latch1;
