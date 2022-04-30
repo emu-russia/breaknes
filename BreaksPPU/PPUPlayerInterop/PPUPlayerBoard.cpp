@@ -136,14 +136,24 @@ namespace PPUPlayer
 		return ppu->GetPCLKCounter();
 	}
 
-	void Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
+	int Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
 	{
 		if (cart == nullptr)
 		{
 			cart = new NROM(nesImage, nesImageSize);
+
+			if (!cart->Valid())
+			{
+				delete cart;
+				cart = nullptr;
+
+				return -1;
+			}
+
 			AddCartMemDescriptors();
 			AddCartDebugInfoProviders();
 		}
+		return 0;
 	}
 
 	void Board::EjectCartridge()

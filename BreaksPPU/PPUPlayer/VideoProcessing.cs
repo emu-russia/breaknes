@@ -142,5 +142,11 @@ namespace PPUPlayer
 		{
 			// TBD
 		}
+
+		void ResetVisualize()
+        {
+			ScanSampleCounter = 0;
+			FieldSampleCounter = 0;
+		}
 	}
 }

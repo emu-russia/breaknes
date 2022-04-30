@@ -30,6 +30,8 @@ namespace PPUPlayer
 		NROM(uint8_t* nesImage, size_t nesImageSize);
 		~NROM();
 
+		bool Valid();
+
 		void sim(BaseLogic::TriState PA[14], BaseLogic::TriState n_PA13, BaseLogic::TriState n_RD, BaseLogic::TriState n_WR, 
 			uint8_t *PD, bool &PDDirty,
 			BaseLogic::TriState& n_VRAM_CS, BaseLogic::TriState& VRAM_A10);

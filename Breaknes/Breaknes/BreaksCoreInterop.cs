@@ -38,7 +38,7 @@ namespace Breaknes
 		unsafe struct MemDesciptorRaw
 		{
 			public fixed byte name[32];
-			int size;
+			public int size;
 		}
 
         public class MemDesciptor
@@ -62,7 +62,7 @@ namespace Breaknes
 		public static extern void DestroyBoard();
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void InsertCartridge(byte [] nesImage, int size);
+		public static extern int InsertCartridge(byte [] nesImage, int size);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void EjectCartridge();
