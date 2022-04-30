@@ -62,8 +62,8 @@ namespace PPUSim
 		OAMCounterBit TempCounter[5];
 		OAMCmprBit cmpr[4];
 
-		BaseLogic::TriState OAM_x[8];
-		BaseLogic::TriState OAM_Temp[5];
+		BaseLogic::TriState OAM_x[8]{};
+		BaseLogic::TriState OAM_Temp[5]{};
 		BaseLogic::TriState OMSTEP = BaseLogic::TriState::X;
 		BaseLogic::TriState OMOUT = BaseLogic::TriState::X;
 		BaseLogic::TriState ORES = BaseLogic::TriState::X;

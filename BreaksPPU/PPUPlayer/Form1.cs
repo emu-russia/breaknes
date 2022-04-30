@@ -58,7 +58,7 @@ namespace PPUPlayer
 			AllocConsole();
 #endif
 
-			pictureBox1.BackColor = Color.Gray;
+			pictureBoxField.BackColor = Color.Gray;
 			toolStripButton3.Enabled = false;
 			comboBox2.SelectedIndex = 0;
 		}
