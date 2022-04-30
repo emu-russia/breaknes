@@ -13,6 +13,8 @@ using System.Drawing.Drawing2D;
 
 // TBD: The entire implementation is NTSC PPU oriented. As things settle down, you need to add PPU selection settings and parameterize this module.
 
+// Note the peculiarity that the signal generation in the PPU starts immediately from the visible part (PICTURE). Therefore in the scans - HSync and Burst are on the right.
+
 namespace PPUPlayer
 {
     public partial class Form1 : Form
@@ -27,13 +29,17 @@ namespace PPUPlayer
         int ScanSampleCounter = 0;
         int FieldSampleCounter = 0;
 
-        static float BlackLevel = 1.3000f;
+        static float BlankLevel = 1.3000f;
         static float IRE = 0.02f;
         static int PixelsPerSample = 1;
         static int ScaleY = 4;
+        static int ScaleIRE = 1;
+
+        static int PPUPicturePortion = 256 * SamplesPerPCLK;
 
         Color scanBgColor = Color.Gray;
         Color scanColor = Color.AliceBlue;
+        Color pictureDelimiterColor = Color.Tomato;
 
         void ProcessSample(float sample)
         {
@@ -45,7 +51,7 @@ namespace PPUPlayer
             {
                 if (pictureBoxScan.Visible)
                 {
-                    HumanizeScan();
+                    VisualizeScan();
                 }
                 ScanSampleCounter = 0;
             }
@@ -55,7 +61,7 @@ namespace PPUPlayer
             {
                 if (pictureBoxField.Visible)
                 {
-                    HumanizeField();
+                    VisualizeField();
                 }
                 FieldSampleCounter = 0;
             }
@@ -65,14 +71,23 @@ namespace PPUPlayer
         {
             float delta = 0.001f;
 
+            float level = BlankLevel;
+            int subCounter = 0;
+
             for (int i = 0; i < SamplesPerScan; i++)
             {
-                Scan[i] = BlackLevel + delta * i;
+                Scan[i] = subCounter < 4 ? BlankLevel + delta * i : BlankLevel - delta * i;
+
+                subCounter++;
+                if (subCounter >= 8)
+                {
+                    subCounter = 0;
+                }
             }
 
             var PrevScanSampleCounter = ScanSampleCounter;
             ScanSampleCounter = SamplesPerScan;
-            HumanizeScan();
+            VisualizeScan();
             ScanSampleCounter = PrevScanSampleCounter;
         }
 
@@ -80,16 +95,21 @@ namespace PPUPlayer
         {
             for (int i = 0; i < SamplesPerField; i++)
             {
-                Field[i] = BlackLevel;
+                Field[i] = BlankLevel;
             }
 
             var PrevFieldSampleCounter = FieldSampleCounter;
             FieldSampleCounter = SamplesPerField;
-            HumanizeField();
+            VisualizeField();
             FieldSampleCounter = PrevFieldSampleCounter;
         }
 
-        void HumanizeScan()
+        /// <summary>
+        /// The appearance of the signal repeats the familiar pictures from Wikipedia. Upper level IRE = 200 (with reserve), 0 = Blank Level, IRE = -50 lower level.
+        /// Therefore, the height of the picture is 250 IRE.
+        /// When converting the sample to the IRE level, it is additionally shifted to make it look nice.
+        /// </summary>
+        void VisualizeScan()
         {
             int w = SamplesPerScan * PixelsPerSample;
             int h = 250 * ScaleY;
@@ -98,22 +118,27 @@ namespace PPUPlayer
             Graphics gr = Graphics.FromImage(pic);
             gr.Clear(scanBgColor);
             Pen pen = new(scanColor);
-            Point prevPt = new(0, 0);
+            Point prevPt = new(-SamplesPerScan, 0);
 
             for (int n=0; n<SamplesPerScan; n++)
             {
                 float sample = Scan[n];
-                float ires = (sample - BlackLevel) / IRE;
+                float ires = ((sample - BlankLevel) / IRE) * ScaleIRE;
 
                 Point pt = new(PixelsPerSample * n, h - ((int)ires + 200));
                 gr.DrawLine(pen, prevPt, pt);
                 prevPt = pt;
             }
 
+            // Draw the separator for the visible part of the signal.
+            gr.DrawLine(new(pictureDelimiterColor),
+                new(PPUPicturePortion * PixelsPerSample, 0),
+                new(PPUPicturePortion * PixelsPerSample, h - 1));
+
             pictureBoxScan.Image = pic;
         }
 
-        void HumanizeField()
+        void VisualizeField()
         {
             // TBD
         }
