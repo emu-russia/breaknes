@@ -300,7 +300,7 @@ namespace PPUSimUnitTest
 		//CloseFSM(n_HB, 116);
 		CloseFSM(BURST, 117);
 		CloseFSM(HSYNC, 118);
-		CloseFSM(PICTURE, 119);
+		CloseFSM(n_PICTURE, 119);
 		CloseFSM(RESCL, 120);
 		CloseFSM(VSYNC, 121);
 		CloseFSM(n_VSET, 122);
@@ -407,7 +407,7 @@ namespace PPUSimUnitTest
 		//OpenInverseFSM(n_HB, 116);
 		OpenDirectFSM(BURST, 117);
 		OpenDirectFSM(HSYNC, 118);
-		OpenDirectFSM(PICTURE, 119);
+		OpenInverseFSM(n_PICTURE, 119);
 		OpenDirectFSM(RESCL, 120);
 		OpenDirectFSM(VSYNC, 121);
 		OpenInverseFSM(n_VSET, 122);

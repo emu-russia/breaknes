@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cstdio>
 #include <random>
+#include <algorithm>
 
 #include "../../Breaknes/BaseLogicLib/BaseLogic.h"
 

@@ -266,7 +266,7 @@ namespace PPUSim
 			BaseLogic::TriState BURST;
 			BaseLogic::TriState HSYNC;
 
-			BaseLogic::TriState PICTURE;
+			BaseLogic::TriState n_PICTURE;
 			BaseLogic::TriState RESCL;
 			BaseLogic::TriState VSYNC;
 			BaseLogic::TriState nVSET;
@@ -361,5 +361,6 @@ namespace PPUSim
 		uint16_t Dbg_GetPPUAddress();
 
 		void Dbg_RandomizePicture(bool enable);
+		void Dbg_FixedPicture(bool enable);
 	};
 }
