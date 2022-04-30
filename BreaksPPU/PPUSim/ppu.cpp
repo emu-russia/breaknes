@@ -337,4 +337,9 @@ namespace PPUSim
 	{
 		vid_out->Dbg_RandomizePicture(enable);
 	}
+
+	void PPU::Dbg_FixedPicture(bool enable)
+	{
+		vid_out->Dbg_FixedPicture(enable);
+	}
 }

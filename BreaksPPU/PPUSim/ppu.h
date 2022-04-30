@@ -361,5 +361,6 @@ namespace PPUSim
 		uint16_t Dbg_GetPPUAddress();
 
 		void Dbg_RandomizePicture(bool enable);
+		void Dbg_FixedPicture(bool enable);
 	};
 }

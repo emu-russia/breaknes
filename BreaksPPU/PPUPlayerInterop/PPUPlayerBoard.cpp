@@ -15,6 +15,7 @@ namespace PPUPlayer
 		AddDebugInfoProviders();
 
 		//ppu->Dbg_RandomizePicture(true);
+		//ppu->Dbg_FixedPicture(true);
 	}
 
 	Board::~Board()

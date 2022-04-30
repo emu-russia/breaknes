@@ -17,17 +17,16 @@ namespace PPUSim
 
 		if (ppu->rev == Revision::RP2C02G)
 		{
-			LToV[0] = 0.781f;
-			LToV[1] = 1.000f;
-			LToV[2] = 1.131f;
-			LToV[3] = 1.300f;
-			LToV[4] = 1.712f;
-			LToV[5] = 1.743f;
-			LToV[6] = 1.875f;
-			LToV[7] = 2.287f;
-			LToV[8] = 2.331f;
-			LToV[9] = 2.743f;
-			LToV[10] = 2.743f; //?
+			LToV[0] = 0.781f;		// Synch
+			LToV[1] = 1.000f;		// Colorburst L
+			LToV[2] = 1.131f;		// Color 0D
+			LToV[3] = 1.300f;		// Color 1D (black)
+			LToV[4] = 1.712f;		// Colorburst H
+			LToV[5] = 1.743f;		// Color 2D
+			LToV[6] = 1.875f;		// Color 00
+			LToV[7] = 2.287f;		// Color 10
+			LToV[8] = 2.331f;		// Color 3D
+			LToV[9] = 2.743f;		// Color 20
 		}
 		else
 		{
@@ -43,7 +42,6 @@ namespace PPUSim
 			LToV[7] = 0.0f;
 			LToV[8] = 0.0f;
 			LToV[9] = 0.0f;
-			LToV[10] = 0.0f;
 		}
 	}
 
@@ -66,6 +64,10 @@ namespace PPUSim
 		if (DebugRandomize)
 		{
 			sim_RandomizeChromaLuma();
+		}
+		else if (DebugFixed)
+		{
+			sim_FixedChromaLuma();
 		}
 
 		TriState P[13]{}, PZ[13]{};
@@ -133,7 +135,7 @@ namespace PPUSim
 		P[11] = dmxout[13];
 		P[12] = dmxout[8];
 
-		TriState pz[13];
+		TriState pz[13]{};
 
 		for (size_t n = 0; n < 13; n++)
 		{
@@ -147,14 +149,15 @@ namespace PPUSim
 			}
 		}
 
-		TriState n_PZ = NOR13(pz);
+		n_PZ = NOR13(pz);
 
-		dac_latch2.set(NOR(P123, n_PICTURE), n_PCLK);
-		TriState n_POUT = dac_latch2.nget();
+		// If /POUT = 1 - then the visible part of the signal is not output at all
+
+		pic_out_latch.set(NOR(P123, n_PICTURE), n_PCLK);
+		n_POUT = pic_out_latch.nget();
 
 		// Luminance Decoder
 
-		TriState n_LU[4]{};
 		n_LU[0] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], ppu->wire.n_LL[1]));
 		n_LU[1] = NOT(NOR3(n_POUT, NOT(ppu->wire.n_LL[0]), ppu->wire.n_LL[1]));
 		n_LU[2] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], NOT(ppu->wire.n_LL[1])));
@@ -166,106 +169,120 @@ namespace PPUSim
 		n[0] = NOR3(n_POUT, n_PB, ppu->wire.n_TB);
 		n[1] = NOR3(n_POUT, n_PG, ppu->wire.n_TG);
 		n[2] = NOR3(n_POUT, n_PR, ppu->wire.n_TR);
-		TriState TINT = NOT(NOR3(n[0], n[1], n[2]));
+		TINT = NOT(NOR3(n[0], n[1], n[2]));
 
 		// DAC
-		// The lower level wins.
 
+		sync_latch.set(NOT(HSYNC), n_PCLK);
+		black_latch.set(NOT(NOR3(NOR(P123, n_PICTURE), HSYNC, BURST)), n_PCLK);
+		cb_latch.set(BURST, n_PCLK);
+
+		sim_DAC(vout);
+	}
+
+	void VideoOut::sim_DAC(VideoOutSignal& vout)
+	{
 		TriState tmp = TriState::Zero;
-		size_t L = 15;
+		float v = 5.0f;
 
-		dac_latch1.set(NOT(HSYNC), n_PCLK);
-		dac_latch3.set(NOT(NOR3(NOR(P123, n_PICTURE), HSYNC, BURST)), n_PCLK);
-		dac_latch4.set(BURST, n_PCLK);
+		// Synch Level
 
-		if (dac_latch1.nget() == TriState::One && L > 0)
+		if (sync_latch.nget() == TriState::One)
 		{
-			L = 0;
+			v = std::min(v, LToV[0]);
 		}
 
-		if (dac_latch3.nget() == TriState::One && L > 3)
+		// Black Level
+
+		if (black_latch.nget() == TriState::One)
 		{
-			L = 3;
+			v = std::min(v, LToV[3]);
 		}
 
-		tmp = NOR(dac_latch4.nget(), n_PZ);
-		if (tmp == TriState::One && L > 4)
+		// Colorburst phase alteration
+
+		tmp = NOR(cb_latch.nget(), n_PZ);
+		if (tmp == TriState::One)
 		{
-			L = 4;
+			v = std::min(v, LToV[4]);
 		}
 
-		tmp = NOR(tmp, dac_latch4.nget());
-		if (tmp == TriState::One && L > 1)
+		tmp = NOR(tmp, cb_latch.nget());
+		if (tmp == TriState::One)
 		{
-			L = 1;
+			v = std::min(v, LToV[1]);
 		}
 
-		if (TINT == TriState::One && L > 10)
-		{
-			L = 10;
-		}
+		// TBD: We ignore Emphasis for now, it is calculated by adding additional resistance.
+
+		//if (TINT == TriState::One)
+		//{
+		//	v = std::min(v, LToV[10]);
+		//}
+
+		// Alteration of phases between Luminance levels.
 
 		// /LU3
 
 		tmp = NOR(n_LU[3], n_PZ);
-		if (tmp == TriState::One && L > 6)
+		if (tmp == TriState::One)
 		{
-			L = 6;
+			v = std::min(v, LToV[6]);
 		}
 
 		tmp = NOR(n_LU[3], tmp);
-		if (tmp == TriState::One && L > 2)
+		if (tmp == TriState::One)
 		{
-			L = 2;
+			v = std::min(v, LToV[2]);
 		}
 
 		// /LU0
 
 		tmp = NOR(n_LU[0], n_PZ);
-		if (tmp == TriState::One && L > 9)
+		if (tmp == TriState::One)
 		{
-			L = 9;
+			v = std::min(v, LToV[9]);
 		}
 
 		tmp = NOR(n_LU[0], tmp);
-		if (tmp == TriState::One && L > 8)
+		if (tmp == TriState::One)
 		{
-			L = 8;
+			v = std::min(v, LToV[8]);
 		}
 
 		// /LU2
 
 		tmp = NOR(n_LU[2], n_PZ);
-		if (tmp == TriState::One && L > 7)
+		if (tmp == TriState::One)
 		{
-			L = 7;
+			v = std::min(v, LToV[7]);
 		}
 
 		tmp = NOR(n_LU[2], tmp);
-		if (tmp == TriState::One && L > 3)
+		if (tmp == TriState::One)
 		{
-			L = 3;
+			v = std::min(v, LToV[3]);
 		}
 
 		// /LU1
 
 		tmp = NOR(n_LU[1], n_PZ);
-		if (tmp == TriState::One && L > 9)
+		if (tmp == TriState::One)
 		{
-			L = 9;
+			v = std::min(v, LToV[9]);
 		}
 
 		tmp = NOR(n_LU[1], tmp);
-		if (tmp == TriState::One && L > 5)
+		if (tmp == TriState::One)
 		{
-			L = 5;
+			v = std::min(v, LToV[5]);
 		}
 
 		// TBD: For now, as a placeholder. For the other revisions, it may be different.
 
 		if (ppu->rev == Revision::RP2C02G)
 		{
-			vout.composite = LToV[L];
+			vout.composite = v;
 		}
 	}
 
@@ -285,6 +302,9 @@ namespace PPUSim
 		return latch2.get();
 	}
 
+	/// <summary>
+	/// Always produce a random color for PICTURE debugging.
+	/// </summary>
 	void VideoOut::sim_RandomizeChromaLuma()
 	{
 		std::random_device dev;
@@ -302,8 +322,27 @@ namespace PPUSim
 		ppu->wire.n_LL[1] = (res & 32) != 0 ? TriState::One : TriState::Zero;
 	}
 
+	/// <summary>
+	/// Always output some neutral color for PICTURE debugging.
+	/// </summary>
+	void VideoOut::sim_FixedChromaLuma()
+	{
+		ppu->wire.n_CC[0] = TriState::Zero;
+		ppu->wire.n_CC[1] = TriState::One;
+		ppu->wire.n_CC[2] = TriState::One;
+		ppu->wire.n_CC[3] = TriState::Zero;
+
+		ppu->wire.n_LL[0] = TriState::Zero;
+		ppu->wire.n_LL[1] = TriState::One;
+	}
+
 	void VideoOut::Dbg_RandomizePicture(bool enable)
 	{
 		DebugRandomize = enable;
+	}
+
+	void VideoOut::Dbg_FixedPicture(bool enable)
+	{
+		DebugFixed = enable;
 	}
 }

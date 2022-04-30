@@ -27,23 +27,32 @@ namespace PPUSim
 
 	class VideoOut
 	{
-		float LToV[16];
+		PPU* ppu = nullptr;
+
+		float LToV[16]{};
 
 		BaseLogic::DLatch cc_latch1[4];
 		BaseLogic::DLatch cc_latch2[4];
 		BaseLogic::DLatch cc_burst_latch;
-		BaseLogic::DLatch dac_latch1;
-		BaseLogic::DLatch dac_latch2;
-		BaseLogic::DLatch dac_latch3;
-		BaseLogic::DLatch dac_latch4;
+		BaseLogic::DLatch sync_latch;		// Previously dac_latch1
+		BaseLogic::DLatch pic_out_latch;	// Previously dac_latch2
+		BaseLogic::DLatch black_latch;		// Previously dac_latch3
+		BaseLogic::DLatch cb_latch;		// Previously dac_latch4
 
 		VideoOutSRBit *sr[6];		// Individual bits of the shift register for the phase shifter.
 
-		PPU* ppu = nullptr;
+		BaseLogic::TriState n_PZ = BaseLogic::TriState::X;
+		BaseLogic::TriState n_POUT = BaseLogic::TriState::X;
+		BaseLogic::TriState n_LU[4]{};
+		BaseLogic::TriState TINT = BaseLogic::TriState::X;
+
+		void sim_DAC(VideoOutSignal& vout);
 
 		bool DebugRandomize = false;
+		bool DebugFixed = false;
 
 		void sim_RandomizeChromaLuma();
+		void sim_FixedChromaLuma();
 
 	public:
 
@@ -55,5 +64,6 @@ namespace PPUSim
 		void sim(VideoOutSignal& vout);
 
 		void Dbg_RandomizePicture(bool enable);
+		void Dbg_FixedPicture(bool enable);
 	};
 }
