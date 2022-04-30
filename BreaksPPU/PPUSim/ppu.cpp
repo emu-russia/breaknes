@@ -332,4 +332,9 @@ namespace PPUSim
 
 		return ((uint16_t)PATop << 8) | PABot;
 	}
+
+	void PPU::Dbg_RandomizePicture(bool enable)
+	{
+		vid_out->Dbg_RandomizePicture(enable);
+	}
 }

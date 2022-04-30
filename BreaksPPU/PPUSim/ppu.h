@@ -359,5 +359,7 @@ namespace PPUSim
 		uint8_t Dbg_GetCRAMAddress();
 
 		uint16_t Dbg_GetPPUAddress();
+
+		void Dbg_RandomizePicture(bool enable);
 	};
 }
