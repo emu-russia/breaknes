@@ -20,8 +20,10 @@ namespace PPUPlayer
 	public partial class Form1 : Form
 	{
 		static int SamplesPerPCLK = 8;
-		static int SamplesPerScan = 341 * SamplesPerPCLK;
-		static int SamplesPerField = 262 * SamplesPerScan;
+		static int PixelsPerScan = 341;
+		static int ScansPerField = 262;
+		static int SamplesPerScan = PixelsPerScan * SamplesPerPCLK;
+		static int SamplesPerField = ScansPerField * SamplesPerScan;
 
 		float[] Scan = new float[SamplesPerScan];
 		float[] Field = new float[SamplesPerField];
@@ -141,7 +143,37 @@ namespace PPUPlayer
 
 		void VisualizeField()
 		{
-			// TBD
+			int w = PixelsPerScan;
+			int h = ScansPerField;
+
+			Bitmap pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			Graphics gr = Graphics.FromImage(pic);
+
+			int samplePtr = 0;
+
+			for (int y = 0; y < ScansPerField; y++)
+			{
+				for (int x =0; x< PixelsPerScan; x++)
+				{
+					// Integrate sample batch
+
+					float avg = 0.0f;
+					for (int i = 0; i < SamplesPerPCLK; i++)
+					{
+						avg += Field[samplePtr++];
+					}
+					avg /= SamplesPerPCLK;
+
+					// Normalization
+
+					float ire = ((avg - BlankLevel) / IRE);
+					int gs = (int)Math.Max(0.0f, Math.Min(255.0f, ire));
+
+					gr.FillRectangle(new SolidBrush(Color.FromArgb(gs, gs, gs)), x, y, 1, 1);
+				}
+			}
+
+			pictureBoxField.Image = pic;
 		}
 
 		void ResetVisualize()
