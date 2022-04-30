@@ -127,7 +127,7 @@ namespace PPUSim
 
 		bp_latch1.set(HPLA[17], n_PCLK);
 		bp_latch2.set(HPLA[18], n_PCLK);
-		BPORCH_FF.set(NOR(bp_latch1.get(), NOR(bp_latch2.get(), BPORCH_FF.get())));
+		BPORCH_FF.set(NOR(bp_latch2.get(), NOR(bp_latch1.get(), BPORCH_FF.get())));
 		ppu->fsm.BPORCH = BPORCH_FF.get();
 
 		hb_latch1.set(HPLA[19], n_PCLK);
