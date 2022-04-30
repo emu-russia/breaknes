@@ -41,6 +41,10 @@ namespace PPUSim
 
 		PPU* ppu = nullptr;
 
+		bool DebugRandomize = false;
+
+		void sim_RandomizeChromaLuma();
+
 	public:
 
 		VideoOut(PPU* parent);
@@ -49,5 +53,7 @@ namespace PPUSim
 		// TBD: Once everything is working, add output support for RGB-like PPUs.
 		
 		void sim(VideoOutSignal& vout);
+
+		void Dbg_RandomizePicture(bool enable);
 	};
 }

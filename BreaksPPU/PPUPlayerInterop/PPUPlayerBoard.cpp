@@ -13,6 +13,8 @@ namespace PPUPlayer
 
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
+
+		//ppu->Dbg_RandomizePicture(true);
 	}
 
 	Board::~Board()

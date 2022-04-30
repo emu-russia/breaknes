@@ -63,7 +63,12 @@ namespace PPUSim
 		TriState HSYNC = ppu->fsm.HSYNC;
 		TriState PICTURE = ppu->fsm.PICTURE;
 
-		TriState P[13], PZ[13];
+		if (DebugRandomize)
+		{
+			sim_RandomizeChromaLuma();
+		}
+
+		TriState P[13]{}, PZ[13]{};
 
 		// Phase Shifter
 		// TBD: PAL
@@ -280,4 +285,25 @@ namespace PPUSim
 		return latch2.get();
 	}
 
+	void VideoOut::sim_RandomizeChromaLuma()
+	{
+		std::random_device dev;
+		std::mt19937 rng(dev());
+		std::uniform_int_distribution<std::mt19937::result_type> dist(0, 0x3f); // distribution in range [0, 0x3f]
+
+		auto res = dist(rng);
+
+		ppu->wire.n_CC[0] = (res & 1) != 0 ? TriState::One : TriState::Zero;
+		ppu->wire.n_CC[1] = (res & 2) != 0 ? TriState::One : TriState::Zero;
+		ppu->wire.n_CC[2] = (res & 4) != 0 ? TriState::One : TriState::Zero;
+		ppu->wire.n_CC[3] = (res & 8) != 0 ? TriState::One : TriState::Zero;
+
+		ppu->wire.n_LL[0] = (res & 16) != 0 ? TriState::One : TriState::Zero;
+		ppu->wire.n_LL[1] = (res & 32) != 0 ? TriState::One : TriState::Zero;
+	}
+
+	void VideoOut::Dbg_RandomizePicture(bool enable)
+	{
+		DebugRandomize = enable;
+	}
 }
