@@ -87,12 +87,16 @@ extern "C"
         }
     }
 
-    __declspec(dllexport) void InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
+    __declspec(dllexport) int InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
     {
         if (board != nullptr)
         {
             printf("InsertCartridge: %zi bytes\n", nesImageSize);
-            board->InsertCartridge(nesImage, nesImageSize);
+            return board->InsertCartridge(nesImage, nesImageSize);
+        }
+        else
+        {
+            return -1;
         }
     }
 

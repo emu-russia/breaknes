@@ -20,10 +20,11 @@ extern "C"
 	}
 
 	__declspec(dllexport)
-	void InsertCartridge(uint8_t* nesImage, size_t size)
+	int InsertCartridge(uint8_t* nesImage, size_t size)
 	{
 		Breaknes::CartridgeFactory cf(nesImage, size);
 		core.AttachCartridge(cf.GetInstance(&core));
+		return 0;
 	}
 
 	__declspec(dllexport)

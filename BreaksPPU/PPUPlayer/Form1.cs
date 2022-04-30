@@ -138,8 +138,17 @@ namespace PPUPlayer
 			byte[] nes = File.ReadAllBytes(nes_file);
 
 			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", "RP2C02G", "Fami");
-			PPUPlayerInterop.InsertCartridge(nes, nes.Length);
+			int res = PPUPlayerInterop.InsertCartridge(nes, nes.Length);
+			if (res != 0)
+            {
+				PPUPlayerInterop.DestroyBoard();
+				MessageBox.Show(
+					"The cartridge didn't want to plug into the slot. Check that the .nes is intact and has a Mapper supported by the PPU Player.",
+					"Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				return;
+            }
 			UpdateMemLayout();
+			ResetVisualize();
 
 			currentEntry = NextLogEntry();
 
@@ -466,6 +475,8 @@ namespace PPUPlayer
 			{
 				hexBox1.ByteProvider = new DynamicByteProvider(new byte[0]);
 				hexBox1.Refresh();
+				pictureBoxForHuman.Image = null;
+				pictureBoxForHuman.Invalidate();
 				return;
 			}
 

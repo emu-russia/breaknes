@@ -30,7 +30,7 @@ namespace PPUPlayer
 		public static extern int GetPCLKCounter();
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void InsertCartridge(byte[] nesImage, int nesImageSize);
+		public static extern int InsertCartridge(byte[] nesImage, int nesImageSize);
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void EjectCartridge();

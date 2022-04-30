@@ -82,7 +82,7 @@ namespace PPUPlayer
 
 		size_t GetPCLKCounter();
 
-		void InsertCartridge(uint8_t* nesImage, size_t nesImageSize);
+		int InsertCartridge(uint8_t* nesImage, size_t nesImageSize);
 
 		void EjectCartridge();
 

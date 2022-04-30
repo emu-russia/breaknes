@@ -69,7 +69,7 @@ extern "C"
 	/// <param name="nesImage">.nes ROM image.</param>
 	/// <param name="size">Image size (bytes)</param>
 	__declspec(dllexport)
-	void InsertCartridge(uint8_t* nesImage, size_t size);
+	int InsertCartridge(uint8_t* nesImage, size_t size);
 
 	/// <summary>
 	/// Free the cartridge connector from the ROM/mapper and all resources.

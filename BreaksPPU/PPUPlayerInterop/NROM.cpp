@@ -69,6 +69,11 @@ namespace PPUPlayer
 			delete CHR;
 	}
 
+	bool NROM::Valid()
+	{
+		return valid;
+	}
+
 	void NROM::sim(TriState PA[14], TriState n_PA13, TriState n_RD, TriState n_WR,
 		uint8_t* PD, bool& PDDirty,
 		TriState& n_VRAM_CS, TriState& VRAM_A10)
