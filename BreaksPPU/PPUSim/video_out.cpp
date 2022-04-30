@@ -183,7 +183,7 @@ namespace PPUSim
 	void VideoOut::sim_DAC(VideoOutSignal& vout)
 	{
 		TriState tmp = TriState::Zero;
-		float v = 5.0f;
+		float v = 3.0f;		// White level
 
 		// Synch Level
 
