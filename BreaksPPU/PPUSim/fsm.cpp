@@ -70,13 +70,13 @@ namespace PPUSim
 		sev_latch2.set(sev_latch1.nget(), PCLK);
 		ppu->fsm.SEV = sev_latch2.nget();
 
-		clpo_latch1.set(HPLA[3], n_PCLK);
-		clpb_latch1.set(HPLA[4], n_PCLK);
-		TriState temp1 = NOR(clpo_latch1.get(), clpb_latch1.nget());
-		clpo_latch2.set(temp1, PCLK);
-		clpb_latch2.set(temp1, PCLK);
-		ppu->fsm.CLIP_O = NOR(n_OBCLIP, clpo_latch2.get());
-		ppu->fsm.CLIP_B = NOR(n_BGCLIP, clpb_latch2.get());
+		clip_latch1.set(HPLA[3], n_PCLK);
+		clip_latch2.set(HPLA[4], n_PCLK);
+		TriState temp1 = NOR(clip_latch1.get(), clip_latch2.nget());
+		clpo_latch.set(temp1, PCLK);
+		clpb_latch.set(temp1, PCLK);
+		ppu->fsm.CLIP_O = NOR(n_OBCLIP, clpo_latch.get());
+		ppu->fsm.CLIP_B = NOR(n_BGCLIP, clpb_latch.get());
 
 		hpos_latch1.set(HPLA[5], n_PCLK);
 		hpos_latch2.set(hpos_latch1.nget(), PCLK);
@@ -236,7 +236,7 @@ namespace PPUSim
 
 	TriState FSM::get_VB()
 	{
-		return VB_FF.get();
+		return NOT(VB_FF.get());
 	}
 
 	TriState FSM::get_BLNK(TriState BLACK)

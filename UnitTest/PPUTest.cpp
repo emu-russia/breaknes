@@ -195,7 +195,7 @@ namespace PPUSimUnitTest
 		Debug::EventLog log;
 
 		ppu->regs->Debug_RenderAlwaysEnabled(true);
-		ppu->regs->Debug_ClippingAlwaysDisabled(true);
+		//ppu->regs->Debug_ClippingAlwaysDisabled(true);
 
 		// Reset
 
