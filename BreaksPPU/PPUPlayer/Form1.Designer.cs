@@ -64,8 +64,9 @@
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxField = new System.Windows.Forms.PictureBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.pictureBoxScan = new System.Windows.Forms.PictureBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -88,7 +89,9 @@
             this.toolStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxField)).BeginInit();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxScan)).BeginInit();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -388,7 +391,7 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.pictureBox1);
+            this.tabPage1.Controls.Add(this.pictureBoxField);
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -397,23 +400,35 @@
             this.tabPage1.Text = "Field";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // pictureBox1
+            // pictureBoxField
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(17, 15);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(442, 324);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.pictureBoxField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBoxField.Location = new System.Drawing.Point(3, 3);
+            this.pictureBoxField.Name = "pictureBoxField";
+            this.pictureBoxField.Size = new System.Drawing.Size(844, 430);
+            this.pictureBoxField.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxField.TabIndex = 0;
+            this.pictureBoxField.TabStop = false;
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.pictureBoxScan);
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Size = new System.Drawing.Size(850, 436);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Current Scan";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // pictureBoxScan
+            // 
+            this.pictureBoxScan.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pictureBoxScan.Location = new System.Drawing.Point(0, 0);
+            this.pictureBoxScan.Name = "pictureBoxScan";
+            this.pictureBoxScan.Size = new System.Drawing.Size(850, 310);
+            this.pictureBoxScan.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxScan.TabIndex = 0;
+            this.pictureBoxScan.TabStop = false;
             // 
             // tabPage3
             // 
@@ -539,8 +554,8 @@
             // 
             // tabControl2
             // 
-            this.tabControl2.Controls.Add(this.tabPage4);
             this.tabControl2.Controls.Add(this.tabPage5);
+            this.tabControl2.Controls.Add(this.tabPage4);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
@@ -635,7 +650,9 @@
             this.toolStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxField)).EndInit();
+            this.tabPage2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxScan)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -678,7 +695,7 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureBoxField;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog2;
         private System.Windows.Forms.ToolStripMenuItem stopPPUAndUnloadToolStripMenuItem;
@@ -714,5 +731,6 @@
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.PictureBox pictureBoxForHuman;
+        private System.Windows.Forms.PictureBox pictureBoxScan;
     }
 }
