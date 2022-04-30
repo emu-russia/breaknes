@@ -402,7 +402,7 @@ namespace PPUSimUnitTest
 		OpenDirectFSM(F_TA, 111);
 		OpenDirectFSM(F_AT, 112);
 		OpenDirectFSM(n_FO, 113);
-		OpenInverseFSM(BPORCH, 114);
+		OpenDirectFSM(BPORCH, 114);
 		OpenDirectFSM(SC_CNT, 115);
 		//OpenInverseFSM(n_HB, 116);
 		OpenDirectFSM(BURST, 117);
