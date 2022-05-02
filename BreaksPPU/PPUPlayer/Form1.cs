@@ -140,13 +140,13 @@ namespace PPUPlayer
 			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", "RP2C02G", "Fami");
 			int res = PPUPlayerInterop.InsertCartridge(nes, nes.Length);
 			if (res != 0)
-            {
+			{
 				PPUPlayerInterop.DestroyBoard();
 				MessageBox.Show(
 					"The cartridge didn't want to plug into the slot. Check that the .nes is intact and has a Mapper supported by the PPU Player.",
 					"Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
-            }
+			}
 			UpdateMemLayout();
 			ResetVisualize();
 
@@ -483,15 +483,15 @@ namespace PPUPlayer
 			int descrID = comboBox1.SelectedIndex;
 
 			if (pictureBoxForHuman.Visible)
-            {
+			{
 				string descrName = mem[descrID].name;
 
 				Bitmap bitmap = humanizer.ConvertHexToImage(descrName);
 				pictureBoxForHuman.Image = bitmap;
 				pictureBoxForHuman.Invalidate();
 			}
-            else
-            {
+			else
+			{
 				byte[] buf = new byte[mem[descrID].size];
 
 				BreaksCore.DumpMem(descrID, buf);
@@ -538,8 +538,8 @@ namespace PPUPlayer
 			propertyGrid1.SelectedObject = myProperties;
 		}
 
-        private void pictureBoxForHuman_Paint(object sender, PaintEventArgs e)
-        {
+		private void pictureBoxForHuman_Paint(object sender, PaintEventArgs e)
+		{
 			// https://stackoverflow.com/questions/54720916/disable-image-blending-on-a-picturebox
 
 			//e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
