@@ -101,7 +101,7 @@ namespace PPUSim
 		temp[0] = NOT(BLNK);
 		temp[1] = NOT(TVIN);
 		temp[2] = ppu->wire.n_TVO[0];
-		temp[3] = ppu->wire.n_TVO[1];
+		temp[3] = ppu->wire.TVO[1];			// !!!
 		temp[4] = ppu->wire.n_TVO[2];
 		temp[5] = ppu->wire.n_TVO[3];
 		temp[6] = ppu->wire.n_TVO[4];
