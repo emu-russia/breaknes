@@ -60,5 +60,7 @@ namespace PPUSim
 		uint8_t Debug_GetCTRL0();
 
 		uint8_t Debug_GetCTRL1();
+
+		BaseLogic::TriState get_nSLAVE();
 	};
 }
