@@ -92,7 +92,11 @@ namespace PPUPlayer
 
 		n_VRAM_CS = n_PA13;
 
-		if (n_RD == TriState::Zero)
+		// CHR_A13 is actually `/CS` for CHR-ROM
+
+		TriState nCHR_CS = PA[13];
+
+		if (NOR(n_RD, nCHR_CS) == TriState::One)
 		{
 			size_t addr = 0;
 
