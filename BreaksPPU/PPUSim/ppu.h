@@ -310,6 +310,8 @@ namespace PPUSim
 		void sim_BusInput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus);
 		void sim_BusOutput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus);
 
+		BaseLogic::DLatch extout_latch[4]{};
+
 	public:
 		PPU(Revision rev);
 		~PPU();

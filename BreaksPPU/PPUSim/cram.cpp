@@ -222,6 +222,11 @@ namespace PPUSim
 		size_t row = (addr & 3) | ((addr & 0x10) ? 4 : 0);
 		size_t col = (addr >> 2) & 3;
 
+		if (row == 4)
+		{
+			row = 0;
+		}
+
 		for (size_t n = 0; n < 6; n++)
 		{
 			val |= (cram[row * col * n] == TriState::One ? 1 : 0) << n;

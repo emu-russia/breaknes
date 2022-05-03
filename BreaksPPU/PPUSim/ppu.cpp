@@ -150,7 +150,13 @@ namespace PPUSim
 
 	void PPU::sim_BusInput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus)
 	{
-		// TBD: EXT Terminals
+		TriState nSLAVE = regs->get_nSLAVE();
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			TriState extIn = (((*ext) >> n) & 1) ? TriState::One : TriState::Zero;
+			wire.EXT_In[n] = NOR(NOT(extIn), nSLAVE);
+		}
 
 		if (wire.n_DBE == TriState::Zero && wire.n_WR == TriState::Zero)
 		{
@@ -170,7 +176,22 @@ namespace PPUSim
 
 	void PPU::sim_BusOutput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus)
 	{
-		// TBD: EXT Terminals
+		TriState n_PCLK = wire.n_PCLK;
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			extout_latch[n].set(wire.n_EXT_Out[n], n_PCLK);
+		}
+
+		if (wire.n_SLAVE == TriState::One)
+		{
+			*ext = 0;
+			for (size_t n = 0; n < 4; n++)
+			{
+				TriState extOut = NOR(NOT(wire.n_SLAVE), extout_latch[n].get());
+				(*ext) |= ((extOut == TriState::One) ? 1 : 0) << n;
+			}
+		}
 
 		if (wire.n_DBE == TriState::Zero && wire.n_RD == TriState::Zero)
 		{

@@ -327,4 +327,13 @@ namespace PPUSim
 		}
 #endif // PPUSIM_TRACE_PRINTFS
 	}
+
+	/// <summary>
+	/// The `/SLAVE` signal is used for EXT input terminals.
+	/// </summary>
+	/// <returns></returns>
+	TriState ControlRegs::get_nSLAVE()
+	{
+		return PPU_CTRL0[6].get();
+	}
 }
