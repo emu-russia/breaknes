@@ -163,12 +163,6 @@ namespace PPUSim
 			DB = *data_bus;
 			DB_Dirty = true;
 		}
-		else
-		{
-			// TBD: You have to drop the bus after a while.
-
-			//DB_Dirty = false;
-		}
 
 		PD = *ad_bus;
 		PD_Dirty = true;
@@ -196,6 +190,7 @@ namespace PPUSim
 		if (wire.n_DBE == TriState::Zero && wire.n_RD == TriState::Zero)
 		{
 			*data_bus = DB;
+			DB_Dirty = false;
 		}
 
 		if (wire.RD == TriState::Zero)
