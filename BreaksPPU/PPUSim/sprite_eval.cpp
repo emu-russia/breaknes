@@ -114,7 +114,7 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 4; n++)
 		{
-			cmpr[2 * n].sim(PCLK,
+			cmpr[n].sim(PCLK,
 				ppu->wire.OB[2 * n], ppu->v->getBit(2 * n),
 				ppu->wire.OB[2 * n + 1], ppu->v->getBit(2 * n + 1),
 				carry_in, ppu->wire.OV[2 * n], ppu->wire.OV[2 * n + 1], carry_in);
