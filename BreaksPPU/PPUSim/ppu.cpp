@@ -23,8 +23,6 @@ namespace PPUSim
 		fifo = new FIFO(this);
 		data_reader = new DataReader(this);
 		vram_ctrl = new VRAM_Control(this);
-
-		printf("Sprites are OFF (see fifo.cpp)!\n");
 	}
 
 	PPU::~PPU()

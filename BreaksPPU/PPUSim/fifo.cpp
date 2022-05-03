@@ -29,12 +29,6 @@ namespace PPUSim
 		sim_HInv();
 		sim_Lanes();
 		sim_Prio();
-
-		// DEBUG: Disable sprites for now (you need to debug all the associated logic).
-
-		ppu->wire.n_ZPRIO = TriState::One;
-		ppu->wire.n_ZCOL0 = TriState::Zero;
-		ppu->wire.n_ZCOL1 = TriState::One;
 	}
 
 	void FIFO::sim_HInv()
