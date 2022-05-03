@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Collections;
 
 using System.Drawing.Drawing2D;
+using System.IO;
 
 // TBD: The entire implementation is NTSC PPU oriented. As things settle down, you need to add PPU selection settings and parameterize this module.
 
@@ -27,6 +28,8 @@ namespace PPUPlayer
 
 		float[] Scan = new float[SamplesPerScan];
 		float[] Field = new float[SamplesPerField];
+		float[] LastScan = new float[SamplesPerScan];
+		float[] LastField = new float[SamplesPerField];
 
 		int ScanSampleCounter = 0;
 		int FieldSampleCounter = 0;
@@ -56,6 +59,12 @@ namespace PPUPlayer
 				{
 					VisualizeScan();
 				}
+
+				for (int i = 0; i < SamplesPerScan; i++)
+				{
+					LastScan[i] = Scan[i];
+				}
+
 				ScanSampleCounter = 0;
 			}
 
@@ -66,6 +75,12 @@ namespace PPUPlayer
 				{
 					VisualizeField();
 				}
+
+				for (int i = 0; i < SamplesPerField; i++)
+				{
+					LastField[i] = Field[i];
+				}
+
 				FieldSampleCounter = 0;
 			}
 		}
@@ -180,6 +195,92 @@ namespace PPUPlayer
 		{
 			ScanSampleCounter = 0;
 			FieldSampleCounter = 0;
+		}
+
+		private void SaveFloatArray(string filename, float [] data)
+		{
+			// https://stackoverflow.com/questions/30628833/write-float-array-into-a-binary-file-c-sharp
+
+			using (FileStream file = File.Create(filename))
+			{
+				using (BinaryWriter writer = new BinaryWriter(file))
+				{
+					foreach (float value in data)
+					{
+						writer.Write(value);
+					}
+				}
+			}
+		}
+
+		private void LoadFloatArray(string filename, float [] data)
+		{
+			using (FileStream file = File.OpenRead(filename))
+			{
+				using (BinaryReader reader = new BinaryReader(file))
+				{
+					for (int i=0; i<data.Length; i++)
+					{
+						data[i] = reader.ReadSingle();
+					}
+				}
+			}
+		}
+
+		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			DialogResult res = saveFileDialog1.ShowDialog();
+			if (res == DialogResult.OK)
+			{
+				SaveFloatArray(saveFileDialog1.FileName, LastField);
+			}
+		}
+
+		private void saveTheLastScanToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			DialogResult res = saveFileDialog1.ShowDialog();
+			if (res == DialogResult.OK)
+			{
+				SaveFloatArray(saveFileDialog1.FileName, LastScan);
+			}
+		}
+
+		private void visualizeFieldFromDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			DialogResult res = openFileDialog1.ShowDialog();
+			if (res == DialogResult.OK)
+			{
+				LoadFloatArray(openFileDialog1.FileName, LastField);
+
+				for (int i = 0; i < SamplesPerField; i++)
+				{
+					Field[i] = LastField[i];
+				}
+
+				var PrevFieldSampleCounter = FieldSampleCounter;
+				FieldSampleCounter = SamplesPerField;
+				VisualizeField();
+				FieldSampleCounter = PrevFieldSampleCounter;
+			}
+		}
+
+		private void visualizeScanFromDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			DialogResult res = openFileDialog1.ShowDialog();
+			if (res == DialogResult.OK)
+			{
+				LoadFloatArray(openFileDialog1.FileName, LastScan);
+
+				for (int i = 0; i < SamplesPerScan; i++)
+				{
+					Scan[i] = LastScan[i];
+				}
+
+				var PrevScanSampleCounter = ScanSampleCounter;
+				ScanSampleCounter = SamplesPerScan;
+				VisualizeScan();
+				ScanSampleCounter = PrevScanSampleCounter;
+			}
 		}
 	}
 }

@@ -548,5 +548,6 @@ namespace PPUPlayer
 
 			//e.Graphics.DrawImage(pixelBitmap, GetScaledImageRect(pixelBitmap, DirectCast(sender, Control)));
 		}
+
 	}
 }
