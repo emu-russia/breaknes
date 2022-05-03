@@ -158,7 +158,7 @@ namespace PPUSim
 			wire.EXT_In[n] = NOR(NOT(extIn), nSLAVE);
 		}
 
-		if (wire.n_DBE == TriState::Zero && wire.n_WR == TriState::Zero)
+		if (wire.n_WR == TriState::Zero)
 		{
 			DB = *data_bus;
 			DB_Dirty = true;
@@ -187,7 +187,7 @@ namespace PPUSim
 			}
 		}
 
-		if (wire.n_DBE == TriState::Zero && wire.n_RD == TriState::Zero)
+		if (wire.n_RD == TriState::Zero)
 		{
 			*data_bus = DB;
 			DB_Dirty = false;
