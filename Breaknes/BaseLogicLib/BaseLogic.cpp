@@ -359,8 +359,7 @@ namespace BaseLogic
 		uint8_t val = 0;
 		for (size_t i = 0; i < 8; i++)
 		{
-			val <<= 1;
-			val |= (in[7 - i] == TriState::One) ? 1 : 0;
+			val |= (in[i] == TriState::One ? 1 : 0) << i;
 		}
 		return val;
 	}
@@ -370,8 +369,7 @@ namespace BaseLogic
 		uint8_t val = 0;
 		for (size_t i = 0; i < 3; i++)
 		{
-			val <<= 1;
-			val |= (in[3 - i] == TriState::One) ? 1 : 0;
+			val |= (in[i] == TriState::One ? 1 : 0) << i;
 		}
 		return val;
 	}
@@ -381,8 +379,7 @@ namespace BaseLogic
 		uint8_t val = 0;
 		for (size_t i = 0; i < 5; i++)
 		{
-			val <<= 1;
-			val |= (in[5 - i] == TriState::One) ? 1 : 0;
+			val |= (in[i] == TriState::One ? 1 : 0) << i;
 		}
 		return val;
 	}
@@ -392,8 +389,7 @@ namespace BaseLogic
 		uint8_t val = 0;
 		for (size_t i = 0; i < 4; i++)
 		{
-			val <<= 1;
-			val |= (in[4 - i] == TriState::One) ? 1 : 0;
+			val |= (in[i] == TriState::One ? 1 : 0) << i;
 		}
 		return val;
 	}
@@ -402,8 +398,7 @@ namespace BaseLogic
 	{
 		for (size_t i = 0; i < 8; i++)
 		{
-			out[i] = (val & 1) ? TriState::One : TriState::Zero;
-			val >>= 1;
+			out[i] = ((val >> i) & 1) ? TriState::One : TriState::Zero;
 		}
 	}
 

@@ -42,9 +42,9 @@ namespace PPUSim
 		/// The organization of CRAM is very intricate. Rows = 7 (Rows 0+4 are combined). Columns = 4.
 		/// One lane is not a byte, but a `6-bit` (corresponds to the number of bits of the Color Buffer).
 		/// </summary>
-		static const size_t cram_lane_rows = 8;
+		static const size_t cram_lane_rows = 7;
 		static const size_t cram_lane_cols = 4;
-		BaseLogic::TriState cram[cram_lane_rows * cram_lane_cols * cb_num]{};
+		BaseLogic::TriState cram[cram_lane_rows * cram_lane_cols][cb_num]{};
 
 		BaseLogic::TriState COL[4]{};
 		BaseLogic::TriState ROW[8]{};	// ROW[0] = ROW[4]
@@ -54,7 +54,9 @@ namespace PPUSim
 		/// </summary>
 		BaseLogic::TriState z_cell = BaseLogic::TriState::Z;
 
-		BaseLogic::TriState * AddressCell(size_t lane);
+		BaseLogic::TriState * AddressCell(size_t bit_num);
+
+		size_t MapRow(size_t rowNum);
 
 	public:
 		CRAM(PPU* parent);

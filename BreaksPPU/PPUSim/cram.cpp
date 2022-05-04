@@ -103,7 +103,7 @@ namespace PPUSim
 		}
 	}
 
-	TriState * CRAM::AddressCell(size_t lane)
+	TriState * CRAM::AddressCell(size_t bit_num)
 	{
 		size_t row;
 		size_t col;
@@ -117,7 +117,7 @@ namespace PPUSim
 			row = 0;
 			anyRow = true;
 		}
-		else if (ROW[1] == TriState::One)
+		else if (ROW[6] == TriState::One)
 		{
 			row = 1;
 			anyRow = true;
@@ -127,24 +127,24 @@ namespace PPUSim
 			row = 2;
 			anyRow = true;
 		}
-		else if (ROW[3] == TriState::One)
+		else if (ROW[5] == TriState::One)
 		{
 			row = 3;
 			anyRow = true;
 		}
-		else if (ROW[5] == TriState::One)
+		else if (ROW[1] == TriState::One)
 		{
-			row = 5;
-			anyRow = true;
-		}
-		else if (ROW[6] == TriState::One)
-		{
-			row = 6;
+			row = 4;
 			anyRow = true;
 		}
 		else if (ROW[7] == TriState::One)
 		{
-			row = 7;
+			row = 5;
+			anyRow = true;
+		}
+		else if (ROW[3] == TriState::One)
+		{
+			row = 6;
 			anyRow = true;
 		}
 
@@ -178,7 +178,7 @@ namespace PPUSim
 
 		if (anyRow && anyCol)
 		{
-			return &cram[row * col * lane];
+			return &cram[row * cram_lane_cols + col][bit_num];
 		}
 
 		return &z_cell;
@@ -215,6 +215,28 @@ namespace PPUSim
 		}
 	}
 
+	size_t CRAM::MapRow(size_t rowNum)
+	{
+		switch (rowNum)
+		{
+			case 0:
+			case 4:
+				return 0;
+			case 6:
+				return 1;
+			case 2:
+				return 2;
+			case 5:
+				return 3;
+			case 1:
+				return 4;
+			case 7:
+				return 5;
+			case 3:
+				return 6;
+		}
+	}
+
 	uint8_t CRAM::Dbg_CRAMReadByte(size_t addr)
 	{
 		uint8_t val = 0;
@@ -222,14 +244,11 @@ namespace PPUSim
 		size_t row = (addr & 3) | ((addr & 0x10) ? 4 : 0);
 		size_t col = (addr >> 2) & 3;
 
-		if (row == 4)
-		{
-			row = 0;
-		}
+		row = MapRow(row);
 
 		for (size_t n = 0; n < 6; n++)
 		{
-			val |= (cram[row * col * n] == TriState::One ? 1 : 0) << n;
+			val |= (cram[row * cram_lane_cols + col][n] == TriState::One ? 1 : 0) << n;
 		}
 
 		return val;
