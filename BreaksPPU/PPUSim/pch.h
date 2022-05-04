@@ -8,4 +8,8 @@
 
 #include "../../Breaknes/BaseLogicLib/BaseLogic.h"
 
+#define PPUSIM_TRACE_PRINTFS 0
+
+#define PPUSIM_OBJECTS 0
+
 #include "ppu.h"

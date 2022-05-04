@@ -272,10 +272,10 @@ namespace PPUSim
 		TriState& n_val_out,
 		TriState& carry_out )
 	{
-		cnt_latch.set(MUX(carry_in, keep_ff.nget(), NOR(keep_ff.nget(), Reset)), Clock);
 		keep_ff.set(MUX(Step,
 			MUX(Load, MUX(Clock, TriState::Z, NOR(Reset, keep_ff.nget())), val_in),
-			NOR(cnt_latch.get(), BlockCount)) );
+			NOR(cnt_latch.get(), BlockCount)));
+		cnt_latch.set(MUX(carry_in, keep_ff.nget(), NOR(keep_ff.nget(), Reset)), Clock);
 		carry_out = NOR(keep_ff.nget(), NOT(carry_in));
 		val_out = NOT(keep_ff.nget());
 		n_val_out = keep_ff.nget();

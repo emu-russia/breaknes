@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <list>
+#include <cassert>
 
 #include "../../Breaknes/BaseLogicLib/BaseLogic.h"
 #include "../PPUSim/ppu.h"
