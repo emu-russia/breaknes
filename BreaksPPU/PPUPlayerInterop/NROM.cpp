@@ -100,17 +100,14 @@ namespace PPUPlayer
 		{
 			size_t addr = 0;
 
-			for (size_t n = 0; n < 14; n++)
+			for (size_t n = 0; n < 13; n++)
 			{
 				addr |= (PA[n] == TriState::One ? 1ULL : 0) << n;
 			}
 
 			nrom_debug.last_PA = (uint32_t)addr;
 
-			if (addr >= CHRSize)
-			{
-				return;
-			}
+			assert(addr < CHRSize);
 
 			uint8_t val = CHR[addr];
 

@@ -142,7 +142,7 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 3; n++)
 		{
-			FVCounter[n].sim(PCLK, TVLOAD, TVSTEP, ppu->wire.FV[n], carry, ppu->wire.FVO[n], ppu->wire.n_FVO[n], carry);
+			carry = FVCounter[n].sim(PCLK, TVLOAD, TVSTEP, ppu->wire.FV[n], carry, ppu->wire.FVO[n], ppu->wire.n_FVO[n]);
 		}
 	}
 
@@ -151,8 +151,8 @@ namespace PPUSim
 		TriState PCLK = ppu->wire.PCLK;
 		TriState unused;
 
-		NTHCounter.sim(PCLK, THLOAD, THSTEP, ppu->wire.NTH, NTHIN, NTHOut, unused, NTHO);
-		NTVCounter.sim(PCLK, TVLOAD, TVSTEP, ppu->wire.NTV, NTVIN, NTVOut, unused, NTVO);
+		NTHO = NTHCounter.sim(PCLK, THLOAD, THSTEP, ppu->wire.NTH, NTHIN, NTHOut, unused);
+		NTVO = NTVCounter.sim(PCLK, TVLOAD, TVSTEP, ppu->wire.NTV, NTVIN, NTVOut, unused);
 	}
 
 	void PAR::sim_TVCounter()
@@ -162,7 +162,7 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 5; n++)
 		{
-			TVCounter[n].sim_res(PCLK, TVLOAD, TVSTEP, ppu->wire.TV[n], carry, Z_TV, ppu->wire.TVO[n], ppu->wire.n_TVO[n], carry);
+			carry = TVCounter[n].sim_res(PCLK, TVLOAD, TVSTEP, ppu->wire.TV[n], carry, Z_TV, ppu->wire.TVO[n], ppu->wire.n_TVO[n]);
 		}
 	}
 
@@ -173,7 +173,7 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 5; n++)
 		{
-			THCounter[n].sim(PCLK, THLOAD, THSTEP, ppu->wire.TH[n], carry, ppu->wire.THO[n], ppu->wire.n_THO[n], carry);
+			carry = THCounter[n].sim(PCLK, THLOAD, THSTEP, ppu->wire.TH[n], carry, ppu->wire.THO[n], ppu->wire.n_THO[n]);
 		}
 	}
 
@@ -232,28 +232,30 @@ namespace PPUSim
 		}
 	}
 
-	void PAR_CounterBit::sim(TriState Clock, TriState Load, TriState Step,
+	TriState PAR_CounterBit::sim(TriState Clock, TriState Load, TriState Step,
 		TriState val_in, TriState carry_in,
-		TriState& val_out, TriState& n_val_out, TriState& carry_out)
+		TriState& val_out, TriState& n_val_out)
 	{
 		auto val = MUX(Step, MUX(Load, MUX(Clock, TriState::Z, ff.get()), val_in), step_latch.nget());
 		ff.set(val);
 		step_latch.set(MUX(carry_in, ff.nget(), ff.get()), Clock);
 		val_out = ff.get();
 		n_val_out = ff.nget();
-		carry_out = NOR(n_val_out, NOT(carry_in));
+		TriState carry_out = NOR(n_val_out, NOT(carry_in));
+		return carry_out;
 	}
 
-	void PAR_CounterBit::sim_res(TriState Clock, TriState Load, TriState Step,
+	TriState PAR_CounterBit::sim_res(TriState Clock, TriState Load, TriState Step,
 		TriState val_in, TriState carry_in, TriState Reset,
-		TriState& val_out, TriState& n_val_out, TriState& carry_out)
+		TriState& val_out, TriState& n_val_out)
 	{
 		auto val = MUX(Step, MUX(Load, MUX(Clock, TriState::Z, AND(ff.get(), NOT(Reset))), val_in), step_latch.nget());
 		ff.set(val);
 		step_latch.set(MUX(carry_in, ff.nget(), ff.get()), Clock);
 		val_out = ff.get();
 		n_val_out = ff.nget();
-		carry_out = NOR(n_val_out, NOT(carry_in));
+		TriState carry_out = NOR(n_val_out, NOT(carry_in));
+		return carry_out;
 	}
 
 	void PAR_LowBit::sim(TriState PCLK, TriState PARR, TriState DB_PAR, TriState PAL, TriState F_AT,

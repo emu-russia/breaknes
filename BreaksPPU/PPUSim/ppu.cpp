@@ -91,11 +91,13 @@ namespace PPUSim
 
 		vram_ctrl->sim();
 		
+#if PPUSIM_OBJECTS
 		eval->sim();
 
 		oam->sim();
 
 		fifo->sim();
+#endif // PPUSIM_OBJECTS
 
 		data_reader->sim();
 

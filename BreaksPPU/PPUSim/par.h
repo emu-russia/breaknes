@@ -10,13 +10,13 @@ namespace PPUSim
 		BaseLogic::DLatch step_latch;
 
 	public:
-		void sim(BaseLogic::TriState Clock, BaseLogic::TriState Load, BaseLogic::TriState Step,
+		BaseLogic::TriState sim(BaseLogic::TriState Clock, BaseLogic::TriState Load, BaseLogic::TriState Step,
 			BaseLogic::TriState val_in, BaseLogic::TriState carry_in,
-			BaseLogic::TriState & val_out, BaseLogic::TriState & n_val_out, BaseLogic::TriState & carry_out);
+			BaseLogic::TriState & val_out, BaseLogic::TriState & n_val_out);
 
-		void sim_res(BaseLogic::TriState Clock, BaseLogic::TriState Load, BaseLogic::TriState Step,
+		BaseLogic::TriState sim_res(BaseLogic::TriState Clock, BaseLogic::TriState Load, BaseLogic::TriState Step,
 			BaseLogic::TriState val_in, BaseLogic::TriState carry_in, BaseLogic::TriState Reset,
-			BaseLogic::TriState& val_out, BaseLogic::TriState& n_val_out, BaseLogic::TriState& carry_out);
+			BaseLogic::TriState& val_out, BaseLogic::TriState& n_val_out);
 	};
 
 	class PAR_LowBit

@@ -16,7 +16,7 @@ namespace PPUSim
 		CBBit(PPU* parent) { ppu = parent; }
 		~CBBit() {}
 
-		void sim(size_t bit_num, BaseLogic::TriState & cell, BaseLogic::TriState n_OE);
+		void sim(size_t bit_num, BaseLogic::TriState * cell, BaseLogic::TriState n_OE);
 
 		BaseLogic::TriState get_CBOut(BaseLogic::TriState n_OE);
 	};
@@ -54,7 +54,7 @@ namespace PPUSim
 		/// </summary>
 		BaseLogic::TriState z_cell = BaseLogic::TriState::Z;
 
-		BaseLogic::TriState& AddressCell(size_t lane);
+		BaseLogic::TriState * AddressCell(size_t lane);
 
 	public:
 		CRAM(PPU* parent);

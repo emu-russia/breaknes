@@ -6,7 +6,7 @@ using namespace BaseLogic;
 
 namespace PPUSim
 {
-	void CBBit::sim(size_t bit_num, TriState& cell, TriState n_OE)
+	void CBBit::sim(size_t bit_num, TriState * cell, TriState n_OE)
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
@@ -17,9 +17,9 @@ namespace PPUSim
 		{
 			TriState DBBit = ppu->GetDBBit(bit_num);
 
-			if (cell != TriState::Z && DBBit != TriState::Z)
+			if (*cell != TriState::Z && DBBit != TriState::Z)
 			{
-				cell = DBBit;
+				*cell = DBBit;
 			}
 		}
 
@@ -29,7 +29,7 @@ namespace PPUSim
 		}
 		else
 		{
-			ff.set(cell);
+			ff.set(*cell);
 		}
 
 		TriState CBOut = NOT(NAND(ff.get(), n_OE));
@@ -103,7 +103,7 @@ namespace PPUSim
 		}
 	}
 
-	TriState & CRAM::AddressCell(size_t lane)
+	TriState * CRAM::AddressCell(size_t lane)
 	{
 		size_t row;
 		size_t col;
@@ -178,10 +178,10 @@ namespace PPUSim
 
 		if (anyRow && anyCol)
 		{
-			return cram[row * col * lane];
+			return &cram[row * col * lane];
 		}
 
-		return z_cell;
+		return &z_cell;
 	}
 
 	void CRAM::sim_ColorBuffer()

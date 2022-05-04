@@ -24,15 +24,15 @@ namespace Breaknes
 
 		if (n_CS == TriState::Zero)
 		{
+			if (n_WE == TriState::Zero)
+			{
+				mem[*addr] = *data;
+			}
+
 			if (n_OE == TriState::Zero)
 			{
 				*data = mem[*addr];
 				dz = false;
-			}
-
-			if (n_WE == TriState::Zero)
-			{
-				mem[*addr] = *data;
 			}
 		}
 	}

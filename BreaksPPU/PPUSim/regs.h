@@ -2,8 +2,6 @@
 
 #pragma once
 
-#define PPUSIM_TRACE_PRINTFS 0
-
 namespace PPUSim
 {
 	class ControlRegs
