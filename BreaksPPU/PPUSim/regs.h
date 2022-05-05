@@ -32,6 +32,12 @@ namespace PPUSim
 		BaseLogic::DLatch tr_latch;
 		BaseLogic::DLatch tg_latch;
 
+		// For PAL-like PPUs
+		BaseLogic::FF BLACK_FF1;
+		BaseLogic::FF BLACK_FF2;
+		BaseLogic::DLatch black_latch1;
+		BaseLogic::DLatch black_latch2;
+
 		void sim_RegOps();
 		void sim_FirstSecond_SCCX_Write();
 		void sim_RegFFs();
@@ -43,6 +49,8 @@ namespace PPUSim
 		bool ClippingAlwaysDisabled = false;
 
 		void trace();
+
+		void sim_PalBLACK();
 
 	public:
 		ControlRegs(PPU* parent);

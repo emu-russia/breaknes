@@ -20,6 +20,12 @@ namespace PPUSim
 		sim_RegOps();
 		sim_FirstSecond_SCCX_Write();
 		sim_RegFFs();
+
+		if (ppu->rev == Revision::RP2C07_0)
+		{
+			sim_PalBLACK();
+		}
+
 		//trace();
 	}
 
@@ -335,5 +341,20 @@ namespace PPUSim
 	TriState ControlRegs::get_nSLAVE()
 	{
 		return PPU_CTRL0[6].get();
+	}
+
+	/// <summary>
+	/// Special BLACK signal processing for PAL PPU.
+	/// </summary>
+	void ControlRegs::sim_PalBLACK()
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState n_PCLK = ppu->wire.n_PCLK;
+
+		BLACK_FF1.set(MUX(PCLK, NOT(NOT(BLACK_FF1.get())), ppu->wire.BLACK));
+		BLACK_FF2.set(MUX(n_PCLK, NOT(NOT(BLACK_FF2.get())), NOT(NOT(BLACK_FF1.get()))));
+		black_latch1.set(NOT(NOT(BLACK_FF2.get())), PCLK);
+		black_latch2.set(black_latch1.nget(), n_PCLK);
+		ppu->wire.BLACK = black_latch2.nget();
 	}
 }
