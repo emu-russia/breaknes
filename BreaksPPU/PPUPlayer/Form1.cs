@@ -14,6 +14,8 @@ using System.Threading;
 using Be.Windows.Forms;
 using System.Drawing.Drawing2D;
 
+using PPUPlayerCustomClass;
+
 namespace PPUPlayer
 {
 	public partial class Form1 : Form
@@ -137,7 +139,9 @@ namespace PPUPlayer
 
 			byte[] nes = File.ReadAllBytes(nes_file);
 
-			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", "RP2C02G", "Fami");
+			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
+
+			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", settings.PPU_Revision, "Fami");
 			int res = PPUPlayerInterop.InsertCartridge(nes, nes.Length);
 			if (res != 0)
 			{
@@ -549,5 +553,10 @@ namespace PPUPlayer
 			//e.Graphics.DrawImage(pixelBitmap, GetScaledImageRect(pixelBitmap, DirectCast(sender, Control)));
 		}
 
+		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FormSettings formSettings = new();
+			formSettings.ShowDialog();
+		}
 	}
 }

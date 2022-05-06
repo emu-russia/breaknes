@@ -234,6 +234,8 @@ namespace PPUSim
 				return 5;
 			case 3:
 				return 6;
+			default:
+				return rowNum;
 		}
 	}
 

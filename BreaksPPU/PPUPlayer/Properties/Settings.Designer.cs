@@ -22,5 +22,17 @@ namespace PPUPlayer.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PPUPlayerSettings {
+            get {
+                return ((string)(this["PPUPlayerSettings"]));
+            }
+            set {
+                this["PPUPlayerSettings"] = value;
+            }
+        }
     }
 }

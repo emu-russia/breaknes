@@ -7,6 +7,12 @@
     <Compile Update="FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="TraceProcessing.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="VideoProcessing.cs">
       <SubType>Form</SubType>
     </Compile>

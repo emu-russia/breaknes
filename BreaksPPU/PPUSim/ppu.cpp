@@ -231,12 +231,12 @@ namespace PPUSim
 			case Revision::RP2C02H: return "RP2C02H";
 			case Revision::RP2C03: return "RP2C03";
 			case Revision::RP2C03B: return "RP2C03B";
-			case Revision::RP2C04_0001: return "RP2C04_0001";
-			case Revision::RP2C04_0002: return "RP2C04_0002";
-			case Revision::RP2C04_0003: return "RP2C04_0003";
-			case Revision::RP2C04_0004: return "RP2C04_0004";
+			case Revision::RP2C04_0001: return "RP2C04-0001";
+			case Revision::RP2C04_0002: return "RP2C04-0002";
+			case Revision::RP2C04_0003: return "RP2C04-0003";
+			case Revision::RP2C04_0004: return "RP2C04-0004";
 			case Revision::RP2C05: return "RP2C05";
-			case Revision::RP2C07_0: return "RP2C07_0";
+			case Revision::RP2C07_0: return "RP2C07-0";
 			default:
 				break;
 		}

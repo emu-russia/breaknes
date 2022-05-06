@@ -37,6 +37,11 @@
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveTheLastScanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.visualizeFieldFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.visualizeScanFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.testStatsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,10 +92,14 @@
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-			this.visualizeFieldFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.visualizeScanFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+			this.tabPage6 = new System.Windows.Forms.TabPage();
+			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+			this.dataGridView1 = new System.Windows.Forms.DataGridView();
+			this.label1 = new System.Windows.Forms.Label();
+			this.comboBoxTraceScan = new System.Windows.Forms.ComboBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.comboBoxTraceField = new System.Windows.Forms.ComboBox();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -116,6 +125,12 @@
 			this.tabPage5.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxForHuman)).BeginInit();
 			this.tabPage4.SuspendLayout();
+			this.tabPage6.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
+			this.splitContainer4.Panel1.SuspendLayout();
+			this.splitContainer4.Panel2.SuspendLayout();
+			this.splitContainer4.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// menuStrip1
@@ -142,6 +157,8 @@
             this.toolStripSeparator1,
             this.visualizeFieldFromDumpToolStripMenuItem,
             this.visualizeScanFromDumpToolStripMenuItem,
+            this.toolStripSeparator5,
+            this.settingsToolStripMenuItem,
             this.toolStripSeparator4,
             this.exitToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -185,6 +202,37 @@
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			this.toolStripSeparator1.Size = new System.Drawing.Size(217, 6);
+			// 
+			// visualizeFieldFromDumpToolStripMenuItem
+			// 
+			this.visualizeFieldFromDumpToolStripMenuItem.Name = "visualizeFieldFromDumpToolStripMenuItem";
+			this.visualizeFieldFromDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.visualizeFieldFromDumpToolStripMenuItem.Text = "Visualize Field from dump...";
+			this.visualizeFieldFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeFieldFromDumpToolStripMenuItem_Click);
+			// 
+			// visualizeScanFromDumpToolStripMenuItem
+			// 
+			this.visualizeScanFromDumpToolStripMenuItem.Name = "visualizeScanFromDumpToolStripMenuItem";
+			this.visualizeScanFromDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.visualizeScanFromDumpToolStripMenuItem.Text = "Visualize Scan from dump...";
+			this.visualizeScanFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeScanFromDumpToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator5
+			// 
+			this.toolStripSeparator5.Name = "toolStripSeparator5";
+			this.toolStripSeparator5.Size = new System.Drawing.Size(217, 6);
+			// 
+			// settingsToolStripMenuItem
+			// 
+			this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.settingsToolStripMenuItem.Text = "Settings...";
+			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator4
+			// 
+			this.toolStripSeparator4.Name = "toolStripSeparator4";
+			this.toolStripSeparator4.Size = new System.Drawing.Size(217, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
@@ -414,6 +462,7 @@
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage6);
 			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControl1.Location = new System.Drawing.Point(0, 63);
 			this.tabControl1.Name = "tabControl1";
@@ -660,29 +709,87 @@
 			this.backgroundWorker1.WorkerSupportsCancellation = true;
 			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork_1);
 			// 
-			// toolStripSeparator4
-			// 
-			this.toolStripSeparator4.Name = "toolStripSeparator4";
-			this.toolStripSeparator4.Size = new System.Drawing.Size(217, 6);
-			// 
-			// visualizeFieldFromDumpToolStripMenuItem
-			// 
-			this.visualizeFieldFromDumpToolStripMenuItem.Name = "visualizeFieldFromDumpToolStripMenuItem";
-			this.visualizeFieldFromDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-			this.visualizeFieldFromDumpToolStripMenuItem.Text = "Visualize Field from dump...";
-			this.visualizeFieldFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeFieldFromDumpToolStripMenuItem_Click);
-			// 
-			// visualizeScanFromDumpToolStripMenuItem
-			// 
-			this.visualizeScanFromDumpToolStripMenuItem.Name = "visualizeScanFromDumpToolStripMenuItem";
-			this.visualizeScanFromDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-			this.visualizeScanFromDumpToolStripMenuItem.Text = "Visualize Scan from dump...";
-			this.visualizeScanFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeScanFromDumpToolStripMenuItem_Click);
-			// 
 			// saveFileDialog1
 			// 
 			this.saveFileDialog1.DefaultExt = "bin";
 			this.saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
+			// 
+			// tabPage6
+			// 
+			this.tabPage6.Controls.Add(this.splitContainer4);
+			this.tabPage6.Location = new System.Drawing.Point(4, 24);
+			this.tabPage6.Name = "tabPage6";
+			this.tabPage6.Size = new System.Drawing.Size(850, 436);
+			this.tabPage6.TabIndex = 3;
+			this.tabPage6.Text = "Trace";
+			this.tabPage6.UseVisualStyleBackColor = true;
+			// 
+			// splitContainer4
+			// 
+			this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer4.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+			this.splitContainer4.Name = "splitContainer4";
+			this.splitContainer4.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// splitContainer4.Panel1
+			// 
+			this.splitContainer4.Panel1.Controls.Add(this.comboBoxTraceField);
+			this.splitContainer4.Panel1.Controls.Add(this.label2);
+			this.splitContainer4.Panel1.Controls.Add(this.comboBoxTraceScan);
+			this.splitContainer4.Panel1.Controls.Add(this.label1);
+			// 
+			// splitContainer4.Panel2
+			// 
+			this.splitContainer4.Panel2.Controls.Add(this.dataGridView1);
+			this.splitContainer4.Size = new System.Drawing.Size(850, 436);
+			this.splitContainer4.SplitterDistance = 38;
+			this.splitContainer4.TabIndex = 0;
+			// 
+			// dataGridView1
+			// 
+			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridView1.Location = new System.Drawing.Point(8, 14);
+			this.dataGridView1.Name = "dataGridView1";
+			this.dataGridView1.RowTemplate.Height = 25;
+			this.dataGridView1.Size = new System.Drawing.Size(818, 366);
+			this.dataGridView1.TabIndex = 0;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(18, 12);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(35, 15);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Scan:";
+			// 
+			// comboBoxTraceScan
+			// 
+			this.comboBoxTraceScan.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBoxTraceScan.FormattingEnabled = true;
+			this.comboBoxTraceScan.Location = new System.Drawing.Point(59, 9);
+			this.comboBoxTraceScan.Name = "comboBoxTraceScan";
+			this.comboBoxTraceScan.Size = new System.Drawing.Size(70, 23);
+			this.comboBoxTraceScan.TabIndex = 1;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(155, 12);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(35, 15);
+			this.label2.TabIndex = 2;
+			this.label2.Text = "Field:";
+			// 
+			// comboBoxTraceField
+			// 
+			this.comboBoxTraceField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBoxTraceField.FormattingEnabled = true;
+			this.comboBoxTraceField.Location = new System.Drawing.Point(196, 9);
+			this.comboBoxTraceField.Name = "comboBoxTraceField";
+			this.comboBoxTraceField.Size = new System.Drawing.Size(70, 23);
+			this.comboBoxTraceField.TabIndex = 3;
 			// 
 			// Form1
 			// 
@@ -726,6 +833,13 @@
 			this.tabPage5.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxForHuman)).EndInit();
 			this.tabPage4.ResumeLayout(false);
+			this.tabPage6.ResumeLayout(false);
+			this.splitContainer4.Panel1.ResumeLayout(false);
+			this.splitContainer4.Panel1.PerformLayout();
+			this.splitContainer4.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
+			this.splitContainer4.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -795,5 +909,14 @@
 		private System.Windows.Forms.ToolStripMenuItem visualizeScanFromDumpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+		private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+		private System.Windows.Forms.TabPage tabPage6;
+		private System.Windows.Forms.SplitContainer splitContainer4;
+		private System.Windows.Forms.ComboBox comboBoxTraceField;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.ComboBox comboBoxTraceScan;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.DataGridView dataGridView1;
 	}
 }
