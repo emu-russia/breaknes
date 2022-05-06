@@ -14,6 +14,8 @@ using System.Threading;
 using Be.Windows.Forms;
 using System.Drawing.Drawing2D;
 
+using PPUPlayerCustomClass;
+
 namespace PPUPlayer
 {
 	public partial class Form1 : Form
@@ -549,5 +551,10 @@ namespace PPUPlayer
 			//e.Graphics.DrawImage(pixelBitmap, GetScaledImageRect(pixelBitmap, DirectCast(sender, Control)));
 		}
 
+		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FormSettings formSettings = new();
+			formSettings.ShowDialog();
+		}
 	}
 }

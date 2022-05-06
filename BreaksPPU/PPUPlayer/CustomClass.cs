@@ -11,7 +11,7 @@ using System.Collections;
 
 // TBD: Add support for sections (categories).
 
-namespace PPUPlayer
+namespace PPUPlayerCustomClass
 {
 	// Based on:
 	// https://www.codeproject.com/Articles/9280/Add-Remove-Items-to-from-PropertyGrid-at-Runtime
@@ -19,7 +19,7 @@ namespace PPUPlayer
 	/// <summary>
 	/// CustomClass (Which is binding to property grid)
 	/// </summary>
-	public class CustomClass : CollectionBase, ICustomTypeDescriptor
+	internal class CustomClass : CollectionBase, ICustomTypeDescriptor
 	{
 		public AttributeCollection GetAttributes()
 		{

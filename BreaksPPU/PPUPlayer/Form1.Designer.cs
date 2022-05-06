@@ -37,6 +37,9 @@
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveTheLastScanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.visualizeFieldFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.visualizeScanFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.testStatsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,10 +90,9 @@
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-			this.visualizeFieldFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.visualizeScanFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -142,6 +144,8 @@
             this.toolStripSeparator1,
             this.visualizeFieldFromDumpToolStripMenuItem,
             this.visualizeScanFromDumpToolStripMenuItem,
+            this.toolStripSeparator5,
+            this.settingsToolStripMenuItem,
             this.toolStripSeparator4,
             this.exitToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -185,6 +189,25 @@
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			this.toolStripSeparator1.Size = new System.Drawing.Size(217, 6);
+			// 
+			// visualizeFieldFromDumpToolStripMenuItem
+			// 
+			this.visualizeFieldFromDumpToolStripMenuItem.Name = "visualizeFieldFromDumpToolStripMenuItem";
+			this.visualizeFieldFromDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.visualizeFieldFromDumpToolStripMenuItem.Text = "Visualize Field from dump...";
+			this.visualizeFieldFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeFieldFromDumpToolStripMenuItem_Click);
+			// 
+			// visualizeScanFromDumpToolStripMenuItem
+			// 
+			this.visualizeScanFromDumpToolStripMenuItem.Name = "visualizeScanFromDumpToolStripMenuItem";
+			this.visualizeScanFromDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.visualizeScanFromDumpToolStripMenuItem.Text = "Visualize Scan from dump...";
+			this.visualizeScanFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeScanFromDumpToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator4
+			// 
+			this.toolStripSeparator4.Name = "toolStripSeparator4";
+			this.toolStripSeparator4.Size = new System.Drawing.Size(217, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
@@ -660,29 +683,22 @@
 			this.backgroundWorker1.WorkerSupportsCancellation = true;
 			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork_1);
 			// 
-			// toolStripSeparator4
-			// 
-			this.toolStripSeparator4.Name = "toolStripSeparator4";
-			this.toolStripSeparator4.Size = new System.Drawing.Size(217, 6);
-			// 
-			// visualizeFieldFromDumpToolStripMenuItem
-			// 
-			this.visualizeFieldFromDumpToolStripMenuItem.Name = "visualizeFieldFromDumpToolStripMenuItem";
-			this.visualizeFieldFromDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-			this.visualizeFieldFromDumpToolStripMenuItem.Text = "Visualize Field from dump...";
-			this.visualizeFieldFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeFieldFromDumpToolStripMenuItem_Click);
-			// 
-			// visualizeScanFromDumpToolStripMenuItem
-			// 
-			this.visualizeScanFromDumpToolStripMenuItem.Name = "visualizeScanFromDumpToolStripMenuItem";
-			this.visualizeScanFromDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-			this.visualizeScanFromDumpToolStripMenuItem.Text = "Visualize Scan from dump...";
-			this.visualizeScanFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeScanFromDumpToolStripMenuItem_Click);
-			// 
 			// saveFileDialog1
 			// 
 			this.saveFileDialog1.DefaultExt = "bin";
 			this.saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
+			// 
+			// settingsToolStripMenuItem
+			// 
+			this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.settingsToolStripMenuItem.Text = "Settings...";
+			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator5
+			// 
+			this.toolStripSeparator5.Name = "toolStripSeparator5";
+			this.toolStripSeparator5.Size = new System.Drawing.Size(217, 6);
 			// 
 			// Form1
 			// 
@@ -795,5 +811,7 @@
 		private System.Windows.Forms.ToolStripMenuItem visualizeScanFromDumpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+		private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
 	}
 }
