@@ -139,7 +139,9 @@ namespace PPUPlayer
 
 			byte[] nes = File.ReadAllBytes(nes_file);
 
-			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", "RP2C02G", "Fami");
+			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
+
+			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", settings.PPU_Revision, "Fami");
 			int res = PPUPlayerInterop.InsertCartridge(nes, nes.Length);
 			if (res != 0)
 			{

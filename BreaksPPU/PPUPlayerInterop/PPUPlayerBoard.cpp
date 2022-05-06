@@ -6,9 +6,29 @@ using namespace BaseLogic;
 
 namespace PPUPlayer
 {
-	Board::Board()
+	Board::Board(char* boardName, char* apu, char* ppuRev, char* p1)
 	{
-		ppu = new PPUSim::PPU(PPUSim::Revision::RP2C02G);
+		PPUSim::Revision rev;
+
+		if (!strcmp(ppuRev, "RP2C02G"))
+		{
+			rev = PPUSim::Revision::RP2C02G;
+		}
+		else if (!strcmp(ppuRev, "RP2C04-0001"))
+		{
+			rev = PPUSim::Revision::RP2C04_0001;
+		}
+		else if (!strcmp(ppuRev, "RP2C07-0"))
+		{
+			rev = PPUSim::Revision::RP2C07_0;
+		}
+		else
+		{
+			// If someone passed on an obscure PPU revision, stay with the default reference RP2C02G, as the most studied.
+			rev = PPUSim::Revision::RP2C02G;
+		}
+
+		ppu = new PPUSim::PPU(rev);
 		vram = new Breaknes::SRAM(11);
 
 		AddBoardMemDescriptors();

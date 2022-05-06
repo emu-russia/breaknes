@@ -20,7 +20,7 @@ namespace PPUPlayer
 			InitializeComponent();
 		}
 
-		PPUPlayerSettings LoadSettings()
+		public static PPUPlayerSettings LoadSettings()
 		{
 			PPUPlayerSettings settings = new();
 
@@ -40,7 +40,7 @@ namespace PPUPlayer
 			return settings;
 		}
 
-		void SaveSettings(PPUPlayerSettings settings)
+		public static void SaveSettings(PPUPlayerSettings settings)
 		{
 			XmlSerializer ser = new XmlSerializer(typeof(PPUPlayerSettings));
 			using (StringWriter textWriter = new StringWriter())
@@ -52,7 +52,7 @@ namespace PPUPlayer
 			}
 		}
 
-		PPUPlayerSettings SetDefaultSettings()
+		static PPUPlayerSettings SetDefaultSettings()
 		{
 			PPUPlayerSettings settings = new();
 

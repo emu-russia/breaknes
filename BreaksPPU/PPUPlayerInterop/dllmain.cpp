@@ -33,7 +33,7 @@ extern "C"
         {
             printf("CreateBoard\n");
             CreateDebugHub();
-            board = new PPUPlayer::Board();
+            board = new PPUPlayer::Board(boardName, apu, ppu, p1);
         }
     }
 
