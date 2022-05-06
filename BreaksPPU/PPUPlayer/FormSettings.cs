@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Xml.Serialization;
+using System.IO;
+
 namespace PPUPlayer
 {
 	public partial class FormSettings : Form
@@ -17,32 +20,79 @@ namespace PPUPlayer
 			InitializeComponent();
 		}
 
-		private void FormSettings_Load(object sender, EventArgs e)
+		PPUPlayerSettings LoadSettings()
+		{
+			PPUPlayerSettings settings = new();
+
+			string text = Properties.Settings.Default.PPUPlayerSettings;
+			if (text == "")
+			{
+				return SetDefaultSettings();
+			}
+
+			var ser = new XmlSerializer(typeof(PPUPlayerSettings));
+
+			using (TextReader reader = new StringReader(text))
+			{
+				settings = (PPUPlayerSettings)ser.Deserialize(reader);
+			}
+
+			return settings;
+		}
+
+		void SaveSettings(PPUPlayerSettings settings)
+		{
+			XmlSerializer ser = new XmlSerializer(typeof(PPUPlayerSettings));
+			using (StringWriter textWriter = new StringWriter())
+			{
+				ser.Serialize(textWriter, settings);
+				string text = textWriter.ToString();
+				Properties.Settings.Default.PPUPlayerSettings = text;
+				Properties.Settings.Default.Save();
+			}
+		}
+
+		PPUPlayerSettings SetDefaultSettings()
 		{
 			PPUPlayerSettings settings = new();
 
 			settings.PPU_Revision = "RP2C02G";
+			settings.TraceEnable = false;
 			settings.TraceMaxFields = 2;
 
-			propertyGrid1.SelectedObject = settings;
+			SaveSettings(settings);
+
+			return settings;
+		}
+
+		private void FormSettings_Load(object sender, EventArgs e)
+		{
+			propertyGrid1.SelectedObject = LoadSettings();
 		}
 
 		private void button1_Click(object sender, EventArgs e)
 		{
+			SaveSettings((PPUPlayerSettings)propertyGrid1.SelectedObject);
 			Close();
 		}
 
+		[XmlRoot]
 		public class PPUPlayerSettings
 		{
+			[XmlElement]
 			[Category("Board Features")]
 			[Description("PPU revision. Right now only the more or less studied PPU revisions are on the list, the rest will be added as chips are sent to me for research.")]
-			[DefaultValue("RP2C02G")]
 			[TypeConverter(typeof(FormatStringConverter_PPU_Revision))]
 			public string? PPU_Revision { get; set; }
 
+			[XmlElement]
+			[Category("Debug")]
+			[Description("Enable tracing. Trace starts collecting immediately after the PPU starts. After stopping the trace is cleared. History is stored for no more than the specified number of Fields.")]
+			public bool TraceEnable { get; set; }
+
+			[XmlElement]
 			[Category("Debug")]
 			[Description("The number of full Fields for signal tracing. When the trace history is full, it is automatically cleared.")]
-			[DefaultValue(2)]
 			public int TraceMaxFields { get; set; }
 		}
 
