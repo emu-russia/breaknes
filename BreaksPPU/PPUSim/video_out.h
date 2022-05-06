@@ -39,6 +39,10 @@ namespace PPUSim
 		BaseLogic::DLatch black_latch;		// Previously dac_latch3
 		BaseLogic::DLatch cb_latch;		// Previously dac_latch4
 
+		// For PAL PPU
+		BaseLogic::DLatch npicture_latch1;
+		BaseLogic::DLatch npicture_latch2;
+
 		VideoOutSRBit *sr[6];		// Individual bits of the shift register for the phase shifter.
 
 		BaseLogic::TriState n_PZ = BaseLogic::TriState::X;
@@ -53,6 +57,8 @@ namespace PPUSim
 
 		void sim_RandomizeChromaLuma();
 		void sim_FixedChromaLuma();
+
+		BaseLogic::TriState sim_nPICTURE();
 
 	public:
 

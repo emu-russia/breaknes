@@ -59,7 +59,7 @@ namespace PPUSim
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState BURST = ppu->fsm.BURST;
 		TriState HSYNC = ppu->fsm.HSYNC;
-		TriState n_PICTURE = ppu->fsm.n_PICTURE;
+		TriState n_PICTURE = sim_nPICTURE();
 
 		if (DebugRandomize)
 		{
@@ -344,5 +344,25 @@ namespace PPUSim
 	void VideoOut::Dbg_FixedPicture(bool enable)
 	{
 		DebugFixed = enable;
+	}
+
+	/// <summary>
+	/// The PAL PPU contains an additional DLatch chain for /PICTURE signal propagation.
+	/// </summary>
+	/// <returns></returns>
+	TriState VideoOut::sim_nPICTURE()
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState n_PICTURE = ppu->fsm.n_PICTURE;
+
+		if (ppu->rev == Revision::RP2C07_0)
+		{
+			npicture_latch1.set(NOT(n_PICTURE), n_PCLK);
+			npicture_latch2.set(npicture_latch1.nget(), PCLK);
+			n_PICTURE = npicture_latch2.get();
+		}
+
+		return n_PICTURE;
 	}
 }
