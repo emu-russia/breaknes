@@ -43,6 +43,8 @@ namespace PPUPlayer
 
 			var entry = BreaksCore.GetTestDebugInfo();
 			fields[0].scans[0].entries.Add(entry);
+			fields[0].scans[0].entries.Add(entry);
+			fields[0].scans[0].entries.Add(entry);
 
 			VisualizeTrace(0, 0);
 		}
@@ -129,6 +131,47 @@ namespace PPUPlayer
 				return;
 
 			Console.WriteLine("VisualizeTrace: scan: " + scan.ToString() + ", field: " + field.ToString());
+
+			dataGridView1.Columns.Clear();
+
+			//dataGridView1.AutoSizeColumnsMode =	DataGridViewAutoSizeColumnsMode.AllCells;
+			//dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+
+			if (fields[field].scans[scan].entries.Count == 0)
+				return;
+
+			List<BreaksCore.DebugInfoEntry> entry0 = fields[field].scans[scan].entries[0];
+
+			foreach (var info in entry0)
+			{
+				DataGridViewColumn col = new DataGridViewTextBoxColumn();
+				col.Name = info.name;
+				col.DataPropertyName = "value";
+
+				dataGridView1.Columns.Add(col);
+			}
+
+			foreach (var row in fields[field].scans[scan].entries)
+			{
+				string[] rowSignals = new string[row.Count];
+				int colIdx = 0;
+
+				foreach (var signal in row)
+				{
+					string text = "";
+
+					if (signal.value == 0) text = "0";
+					else if (signal.value == 1) text = "1";
+					else if ((Int32)signal.value == -1) text = "z";
+					else if ((Int32)signal.value == -2) text = "x";
+					else text = "0x" + signal.value.ToString("x");
+
+					rowSignals[colIdx] = text;
+					colIdx++;
+				}
+
+				dataGridView1.Rows.Add(rowSignals);
+			}
 		}
 
 	}
