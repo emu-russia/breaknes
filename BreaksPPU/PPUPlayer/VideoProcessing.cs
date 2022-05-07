@@ -213,13 +213,15 @@ namespace PPUPlayer
 			}
 		}
 
-		private void LoadFloatArray(string filename, float [] data)
+		private void LoadFloatArray(string filename, float [] data, int maxSize)
 		{
+			int size = Math.Min(data.Length, maxSize);
+
 			using (FileStream file = File.OpenRead(filename))
 			{
 				using (BinaryReader reader = new BinaryReader(file))
 				{
-					for (int i=0; i<data.Length; i++)
+					for (int i=0; i<size; i++)
 					{
 						data[i] = reader.ReadSingle();
 					}
@@ -250,7 +252,12 @@ namespace PPUPlayer
 			DialogResult res = openFileDialog1.ShowDialog();
 			if (res == DialogResult.OK)
 			{
-				LoadFloatArray(openFileDialog1.FileName, LastField);
+				for (int i = 0; i < SamplesPerField; i++)
+				{
+					LastField[i] = BlankLevel;
+				}
+
+				LoadFloatArray(openFileDialog1.FileName, LastField, SamplesPerField);
 
 				for (int i = 0; i < SamplesPerField; i++)
 				{
@@ -269,7 +276,12 @@ namespace PPUPlayer
 			DialogResult res = openFileDialog1.ShowDialog();
 			if (res == DialogResult.OK)
 			{
-				LoadFloatArray(openFileDialog1.FileName, LastScan);
+				for (int i = 0; i < SamplesPerScan; i++)
+				{
+					LastScan[i] = BlankLevel;
+				}
+
+				LoadFloatArray(openFileDialog1.FileName, LastScan, SamplesPerScan);
 
 				for (int i = 0; i < SamplesPerScan; i++)
 				{
