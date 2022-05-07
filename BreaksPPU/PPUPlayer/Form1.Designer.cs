@@ -50,6 +50,7 @@
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.testDebugPropertyGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.testHexBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.testTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopPPUAndUnloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -100,7 +101,6 @@
 			this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-			this.testTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -295,6 +295,13 @@
 			this.testHexBoxToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
 			this.testHexBoxToolStripMenuItem.Text = "Test HexBox";
 			this.testHexBoxToolStripMenuItem.Click += new System.EventHandler(this.testHexBoxToolStripMenuItem_Click);
+			// 
+			// testTraceToolStripMenuItem
+			// 
+			this.testTraceToolStripMenuItem.Name = "testTraceToolStripMenuItem";
+			this.testTraceToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+			this.testTraceToolStripMenuItem.Text = "Test Trace";
+			this.testTraceToolStripMenuItem.Click += new System.EventHandler(this.testTraceToolStripMenuItem_Click);
 			// 
 			// controlsToolStripMenuItem
 			// 
@@ -736,6 +743,7 @@
 			this.comboBoxTraceField.Name = "comboBoxTraceField";
 			this.comboBoxTraceField.Size = new System.Drawing.Size(70, 23);
 			this.comboBoxTraceField.TabIndex = 3;
+			this.comboBoxTraceField.SelectedIndexChanged += new System.EventHandler(this.comboBoxTraceField_SelectedIndexChanged);
 			// 
 			// label2
 			// 
@@ -754,6 +762,7 @@
 			this.comboBoxTraceScan.Name = "comboBoxTraceScan";
 			this.comboBoxTraceScan.Size = new System.Drawing.Size(70, 23);
 			this.comboBoxTraceScan.TabIndex = 1;
+			this.comboBoxTraceScan.SelectedIndexChanged += new System.EventHandler(this.comboBoxTraceScan_SelectedIndexChanged);
 			// 
 			// label1
 			// 
@@ -792,13 +801,6 @@
 			// 
 			this.saveFileDialog1.DefaultExt = "bin";
 			this.saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
-			// 
-			// testTraceToolStripMenuItem
-			// 
-			this.testTraceToolStripMenuItem.Name = "testTraceToolStripMenuItem";
-			this.testTraceToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-			this.testTraceToolStripMenuItem.Text = "Test Trace";
-			this.testTraceToolStripMenuItem.Click += new System.EventHandler(this.testTraceToolStripMenuItem_Click);
 			// 
 			// Form1
 			// 

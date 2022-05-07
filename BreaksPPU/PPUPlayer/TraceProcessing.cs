@@ -25,6 +25,8 @@ namespace PPUPlayer
 		int CurrentTraceField = 0;
 		int CurrentTraceScan = 0;
 
+		bool TraceResetInProgress = false;
+
 		class FieldTrace
 		{
 			public List<ScanTrace> scans = new();
@@ -37,11 +39,18 @@ namespace PPUPlayer
 
 		private void testTraceToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			ResetTrace(2);
 
+			var entry = BreaksCore.GetTestDebugInfo();
+			fields[0].scans[0].entries.Add(entry);
+
+			VisualizeTrace(0, 0);
 		}
 
 		void ResetTrace(int maxFields)
 		{
+			TraceResetInProgress = true;
+
 			fields = new();
 
 			for (int i=0; i<maxFields; i++)
@@ -56,6 +65,25 @@ namespace PPUPlayer
 					fields[i].scans.Add(new());
 				}
 			}
+
+			comboBoxTraceScan.Items.Clear();
+			comboBoxTraceField.Items.Clear();
+
+			for (int i=0; i<ScansPerField; i++)
+			{
+				comboBoxTraceScan.Items.Add(i.ToString());
+			}
+
+			comboBoxTraceScan.SelectedIndex = 0;
+
+			for (int i=0; i<maxFields; i++)
+			{
+				comboBoxTraceField.Items.Add(i.ToString());
+			}
+
+			comboBoxTraceField.SelectedIndex = 0;
+
+			TraceResetInProgress = false;
 
 			Console.WriteLine("ResetTrace. MaxFields: " + maxFields.ToString());
 		}
@@ -83,6 +111,24 @@ namespace PPUPlayer
 			{
 				ResetTrace(TraceMaxFields);
 			}
+		}
+
+		private void comboBoxTraceScan_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			VisualizeTrace(comboBoxTraceField.SelectedIndex, comboBoxTraceScan.SelectedIndex);
+		}
+
+		private void comboBoxTraceField_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			VisualizeTrace(comboBoxTraceField.SelectedIndex, comboBoxTraceScan.SelectedIndex);
+		}
+
+		void VisualizeTrace(int field, int scan)
+		{
+			if (TraceResetInProgress)
+				return;
+
+			Console.WriteLine("VisualizeTrace: scan: " + scan.ToString() + ", field: " + field.ToString());
 		}
 
 	}
