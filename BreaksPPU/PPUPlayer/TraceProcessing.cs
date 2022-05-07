@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Collections;
 
+using System.IO;
+
 // The data model is straightforward.
 // There is a Field list. Each Field contains a list of Scans. Each Scan contains a list of PPU signal values obtained after each half-step of the simulation.
 
@@ -194,6 +196,76 @@ namespace PPUPlayer
 
 				dataGridView1.Rows.Add(rowSignals);
 			}
+		}
+
+		private void saveTraceInLogisimFormatToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (saveFileDialog2.ShowDialog() == DialogResult.OK)
+			{
+				SaveTrace(saveFileDialog2.FileName);
+			}
+		}
+
+		void SaveTrace (string filename)
+		{
+			string text = "";
+
+			int scan = comboBoxTraceScan.SelectedIndex;
+			int field = comboBoxTraceField.SelectedIndex;
+
+			if (!(scan >= 0 && field >= 0))
+				return;
+
+			if (fields[field].scans[scan].entries.Count == 0)
+				return;
+
+			List<string> filter = new();
+
+			if (TraceFilter != "")
+			{
+				filter = TraceFilter.Split(';').ToList();
+			}
+
+			List<BreaksCore.DebugInfoEntry> entry0 = fields[field].scans[scan].entries[0];
+
+			foreach (var info in entry0)
+			{
+				if (filter.Count != 0)
+				{
+					if (!filter.Contains(info.name))
+						continue;
+				}
+
+				text += info.name + " ";
+			}
+
+			text += "\n";
+
+			foreach (var row in fields[field].scans[scan].entries)
+			{
+				foreach (var signal in row)
+				{
+					if (filter.Count != 0)
+					{
+						if (!filter.Contains(signal.name))
+							continue;
+					}
+
+					string val_text = "";
+
+					if (signal.value == 0) val_text = "0";
+					else if (signal.value == 1) val_text = "1";
+					else if ((Int32)signal.value == -1) val_text = "z";
+					else if ((Int32)signal.value == -2) val_text = "x";
+					else val_text = "0x" + signal.value.ToString("x");
+
+					text += val_text + " ";
+				}
+
+				text += "\n";
+			}
+
+			File.WriteAllText(filename, text);
 		}
 
 	}

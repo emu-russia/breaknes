@@ -37,9 +37,10 @@
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveTheLastScanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.visualizeFieldFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.visualizeScanFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+			this.saveTraceInLogisimFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -102,6 +103,7 @@
 			this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+			this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -156,9 +158,10 @@
             this.toolStripSeparator3,
             this.saveToolStripMenuItem,
             this.saveTheLastScanToolStripMenuItem,
-            this.toolStripSeparator1,
             this.visualizeFieldFromDumpToolStripMenuItem,
             this.visualizeScanFromDumpToolStripMenuItem,
+            this.toolStripSeparator6,
+            this.saveTraceInLogisimFormatToolStripMenuItem,
             this.toolStripSeparator5,
             this.settingsToolStripMenuItem,
             this.toolStripSeparator4,
@@ -170,76 +173,83 @@
 			// choosePPURegsDumpToolStripMenuItem
 			// 
 			this.choosePPURegsDumpToolStripMenuItem.Name = "choosePPURegsDumpToolStripMenuItem";
-			this.choosePPURegsDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.choosePPURegsDumpToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.choosePPURegsDumpToolStripMenuItem.Text = "Choose PPU Regs Dump...";
 			this.choosePPURegsDumpToolStripMenuItem.Click += new System.EventHandler(this.choosePPURegsDumpToolStripMenuItem_Click);
 			// 
 			// choosenesImageToolStripMenuItem
 			// 
 			this.choosenesImageToolStripMenuItem.Name = "choosenesImageToolStripMenuItem";
-			this.choosenesImageToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.choosenesImageToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.choosenesImageToolStripMenuItem.Text = "Choose .nes Image...";
 			this.choosenesImageToolStripMenuItem.Click += new System.EventHandler(this.choosenesImageToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator3
 			// 
 			this.toolStripSeparator3.Name = "toolStripSeparator3";
-			this.toolStripSeparator3.Size = new System.Drawing.Size(217, 6);
+			this.toolStripSeparator3.Size = new System.Drawing.Size(231, 6);
 			// 
 			// saveToolStripMenuItem
 			// 
 			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-			this.saveToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.saveToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.saveToolStripMenuItem.Text = "Save the last Field...";
 			this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
 			// 
 			// saveTheLastScanToolStripMenuItem
 			// 
 			this.saveTheLastScanToolStripMenuItem.Name = "saveTheLastScanToolStripMenuItem";
-			this.saveTheLastScanToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.saveTheLastScanToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.saveTheLastScanToolStripMenuItem.Text = "Save the last Scan...";
 			this.saveTheLastScanToolStripMenuItem.Click += new System.EventHandler(this.saveTheLastScanToolStripMenuItem_Click);
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(217, 6);
 			// 
 			// visualizeFieldFromDumpToolStripMenuItem
 			// 
 			this.visualizeFieldFromDumpToolStripMenuItem.Name = "visualizeFieldFromDumpToolStripMenuItem";
-			this.visualizeFieldFromDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.visualizeFieldFromDumpToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.visualizeFieldFromDumpToolStripMenuItem.Text = "Visualize Field from dump...";
 			this.visualizeFieldFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeFieldFromDumpToolStripMenuItem_Click);
 			// 
 			// visualizeScanFromDumpToolStripMenuItem
 			// 
 			this.visualizeScanFromDumpToolStripMenuItem.Name = "visualizeScanFromDumpToolStripMenuItem";
-			this.visualizeScanFromDumpToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.visualizeScanFromDumpToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.visualizeScanFromDumpToolStripMenuItem.Text = "Visualize Scan from dump...";
 			this.visualizeScanFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeScanFromDumpToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator6
+			// 
+			this.toolStripSeparator6.Name = "toolStripSeparator6";
+			this.toolStripSeparator6.Size = new System.Drawing.Size(231, 6);
+			// 
+			// saveTraceInLogisimFormatToolStripMenuItem
+			// 
+			this.saveTraceInLogisimFormatToolStripMenuItem.Name = "saveTraceInLogisimFormatToolStripMenuItem";
+			this.saveTraceInLogisimFormatToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			this.saveTraceInLogisimFormatToolStripMenuItem.Text = "Save Trace in Logisim format...";
+			this.saveTraceInLogisimFormatToolStripMenuItem.Click += new System.EventHandler(this.saveTraceInLogisimFormatToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator5
 			// 
 			this.toolStripSeparator5.Name = "toolStripSeparator5";
-			this.toolStripSeparator5.Size = new System.Drawing.Size(217, 6);
+			this.toolStripSeparator5.Size = new System.Drawing.Size(231, 6);
 			// 
 			// settingsToolStripMenuItem
 			// 
 			this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.settingsToolStripMenuItem.Text = "Settings...";
 			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator4
 			// 
 			this.toolStripSeparator4.Name = "toolStripSeparator4";
-			this.toolStripSeparator4.Size = new System.Drawing.Size(217, 6);
+			this.toolStripSeparator4.Size = new System.Drawing.Size(231, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -815,6 +825,11 @@
 			this.saveFileDialog1.DefaultExt = "bin";
 			this.saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
 			// 
+			// saveFileDialog2
+			// 
+			this.saveFileDialog2.DefaultExt = "txt";
+			this.saveFileDialog2.Filter = "Text files|*.txt|All files|*.*";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -875,7 +890,6 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem choosePPURegsDumpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem choosenesImageToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem controlsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
@@ -943,5 +957,8 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.DataGridView dataGridView1;
 		private System.Windows.Forms.ToolStripMenuItem testTraceToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+		private System.Windows.Forms.ToolStripMenuItem saveTraceInLogisimFormatToolStripMenuItem;
+		private System.Windows.Forms.SaveFileDialog saveFileDialog2;
 	}
 }
