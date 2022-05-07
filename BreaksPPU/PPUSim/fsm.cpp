@@ -18,7 +18,7 @@ namespace PPUSim
 	void FSM::sim(TriState* HPLA, TriState* VPLA)
 	{
 		sim_DelayedH();
-		sim_HPosLogic(HPLA);
+		sim_HPosLogic(HPLA, VPLA);
 		sim_VPosLogic(VPLA);
 		sim_VBlankInt();
 		sim_EvenOdd(HPLA);
@@ -48,13 +48,12 @@ namespace PPUSim
 		ppu->wire.H5_Dash2 = h_latch2[5].nget();
 	}
 
-	void FSM::sim_HPosLogic(TriState* HPLA)
+	void FSM::sim_HPosLogic(TriState* HPLA, TriState* VPLA)
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState n_OBCLIP = ppu->wire.n_OBCLIP;
 		TriState n_BGCLIP = ppu->wire.n_BGCLIP;
-		TriState VSYNC = vsync_latch1.get();
 		TriState BLACK = ppu->wire.BLACK;
 
 		// Front Porch appendix
@@ -136,6 +135,9 @@ namespace PPUSim
 		ppu->fsm.SCCNT = NOR(HBLANK_FF.get(), BLACK);
 		ppu->fsm.nHB = HBLANK_FF.nget();
 
+		sim_VSYNCEarly(VPLA);
+		TriState VSYNC = ppu->fsm.VSYNC;
+
 		cb_latch1.set(HPLA[21], n_PCLK);
 		cb_latch2.set(HPLA[22], n_PCLK);
 		BURST_FF.set(NOR(cb_latch2.get(), NOR(cb_latch1.get(), BURST_FF.get())));
@@ -146,17 +148,26 @@ namespace PPUSim
 		ppu->fsm.BURST = NOR(sync_latch1.get(), ppu->fsm.HSYNC);
 	}
 
-	void FSM::sim_VPosLogic(TriState* VPLA)
+	/// <summary>
+	/// The VSYNC signal is a uroboros that must be propagated as soon as the /HB signal is applied.
+	/// </summary>
+	/// <param name="VPLA"></param>
+	void FSM::sim_VSYNCEarly(TriState* VPLA)
 	{
 		TriState PCLK = ppu->wire.PCLK;
-		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState nHB = ppu->fsm.nHB;
-		TriState BPORCH = ppu->fsm.BPORCH;
-		TriState BLACK = ppu->wire.BLACK;
 
 		VSYNC_FF.set(NOR(AND(nHB, VPLA[0]), NOR(AND(nHB, VPLA[1]), VSYNC_FF.get())));
 		vsync_latch1.set(NOR(nHB, VSYNC_FF.get()), PCLK);
 		ppu->fsm.VSYNC = vsync_latch1.get();
+	}
+
+	void FSM::sim_VPosLogic(TriState* VPLA)
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState BPORCH = ppu->fsm.BPORCH;
+		TriState BLACK = ppu->wire.BLACK;
 
 		PICTURE_FF.set(NOR(AND(BPORCH, VPLA[2]), NOR(AND(BPORCH, VPLA[3]), PICTURE_FF.get())));
 		pic_latch1.set(PICTURE_FF.get(), PCLK);
