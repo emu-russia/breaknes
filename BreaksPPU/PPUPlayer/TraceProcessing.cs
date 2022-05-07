@@ -228,6 +228,8 @@ namespace PPUPlayer
 
 			List<BreaksCore.DebugInfoEntry> entry0 = fields[field].scans[scan].entries[0];
 
+			bool first_col = true;
+
 			foreach (var info in entry0)
 			{
 				if (filter.Count != 0)
@@ -236,13 +238,22 @@ namespace PPUPlayer
 						continue;
 				}
 
-				text += info.name + " ";
+				if (!first_col)
+				{
+					text += "\t";
+				}
+
+				text += info.name;
+
+				first_col = false;
 			}
 
 			text += "\n";
 
 			foreach (var row in fields[field].scans[scan].entries)
 			{
+				bool first = true;
+
 				foreach (var signal in row)
 				{
 					if (filter.Count != 0)
@@ -259,7 +270,14 @@ namespace PPUPlayer
 					else if ((Int32)signal.value == -2) val_text = "x";
 					else val_text = "0x" + signal.value.ToString("x");
 
-					text += val_text + " ";
+					if (!first)
+					{
+						text += "\t";
+					}
+
+					text += val_text;
+
+					first = false;
 				}
 
 				text += "\n";
