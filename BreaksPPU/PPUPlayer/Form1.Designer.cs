@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,6 +51,7 @@
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.testDebugPropertyGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.testHexBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.testTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopPPUAndUnloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,17 +91,17 @@
 			this.pictureBoxForHuman = new System.Windows.Forms.PictureBox();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
 			this.hexBox1 = new Be.Windows.Forms.HexBox();
+			this.tabPage6 = new System.Windows.Forms.TabPage();
+			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+			this.comboBoxTraceField = new System.Windows.Forms.ComboBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.comboBoxTraceScan = new System.Windows.Forms.ComboBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-			this.dataGridView1 = new System.Windows.Forms.DataGridView();
-			this.label1 = new System.Windows.Forms.Label();
-			this.comboBoxTraceScan = new System.Windows.Forms.ComboBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.comboBoxTraceField = new System.Windows.Forms.ComboBox();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -249,7 +251,8 @@
             this.testScanToolStripMenuItem,
             this.toolStripSeparator2,
             this.testDebugPropertyGridToolStripMenuItem,
-            this.testHexBoxToolStripMenuItem});
+            this.testHexBoxToolStripMenuItem,
+            this.testTraceToolStripMenuItem});
 			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
 			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
 			this.debugToolStripMenuItem.Text = "Debug";
@@ -293,6 +296,13 @@
 			this.testHexBoxToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
 			this.testHexBoxToolStripMenuItem.Text = "Test HexBox";
 			this.testHexBoxToolStripMenuItem.Click += new System.EventHandler(this.testHexBoxToolStripMenuItem_Click);
+			// 
+			// testTraceToolStripMenuItem
+			// 
+			this.testTraceToolStripMenuItem.Name = "testTraceToolStripMenuItem";
+			this.testTraceToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+			this.testTraceToolStripMenuItem.Text = "Test Trace";
+			this.testTraceToolStripMenuItem.Click += new System.EventHandler(this.testTraceToolStripMenuItem_Click);
 			// 
 			// controlsToolStripMenuItem
 			// 
@@ -583,6 +593,7 @@
 			this.comboBox2.Name = "comboBox2";
 			this.comboBox2.Size = new System.Drawing.Size(234, 23);
 			this.comboBox2.TabIndex = 0;
+			this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
 			// 
 			// propertyGrid1
 			// 
@@ -632,6 +643,7 @@
 			this.comboBox1.Name = "comboBox1";
 			this.comboBox1.Size = new System.Drawing.Size(213, 23);
 			this.comboBox1.TabIndex = 0;
+			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
 			// 
 			// tabControl2
 			// 
@@ -694,26 +706,6 @@
 			this.hexBox1.UseFixedBytesPerLine = true;
 			this.hexBox1.VScrollBarVisible = true;
 			// 
-			// openFileDialog1
-			// 
-			this.openFileDialog1.DefaultExt = "bin";
-			this.openFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
-			// 
-			// openFileDialog2
-			// 
-			this.openFileDialog2.DefaultExt = "nes";
-			this.openFileDialog2.Filter = "NES files|*.nes|All files|*.*";
-			// 
-			// backgroundWorker1
-			// 
-			this.backgroundWorker1.WorkerSupportsCancellation = true;
-			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork_1);
-			// 
-			// saveFileDialog1
-			// 
-			this.saveFileDialog1.DefaultExt = "bin";
-			this.saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
-			// 
 			// tabPage6
 			// 
 			this.tabPage6.Controls.Add(this.splitContainer4);
@@ -746,32 +738,15 @@
 			this.splitContainer4.SplitterDistance = 38;
 			this.splitContainer4.TabIndex = 0;
 			// 
-			// dataGridView1
+			// comboBoxTraceField
 			// 
-			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridView1.Location = new System.Drawing.Point(8, 14);
-			this.dataGridView1.Name = "dataGridView1";
-			this.dataGridView1.RowTemplate.Height = 25;
-			this.dataGridView1.Size = new System.Drawing.Size(818, 366);
-			this.dataGridView1.TabIndex = 0;
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(18, 12);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(35, 15);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Scan:";
-			// 
-			// comboBoxTraceScan
-			// 
-			this.comboBoxTraceScan.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.comboBoxTraceScan.FormattingEnabled = true;
-			this.comboBoxTraceScan.Location = new System.Drawing.Point(59, 9);
-			this.comboBoxTraceScan.Name = "comboBoxTraceScan";
-			this.comboBoxTraceScan.Size = new System.Drawing.Size(70, 23);
-			this.comboBoxTraceScan.TabIndex = 1;
+			this.comboBoxTraceField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBoxTraceField.FormattingEnabled = true;
+			this.comboBoxTraceField.Location = new System.Drawing.Point(196, 9);
+			this.comboBoxTraceField.Name = "comboBoxTraceField";
+			this.comboBoxTraceField.Size = new System.Drawing.Size(70, 23);
+			this.comboBoxTraceField.TabIndex = 3;
+			this.comboBoxTraceField.SelectedIndexChanged += new System.EventHandler(this.comboBoxTraceField_SelectedIndexChanged);
 			// 
 			// label2
 			// 
@@ -782,14 +757,63 @@
 			this.label2.TabIndex = 2;
 			this.label2.Text = "Field:";
 			// 
-			// comboBoxTraceField
+			// comboBoxTraceScan
 			// 
-			this.comboBoxTraceField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.comboBoxTraceField.FormattingEnabled = true;
-			this.comboBoxTraceField.Location = new System.Drawing.Point(196, 9);
-			this.comboBoxTraceField.Name = "comboBoxTraceField";
-			this.comboBoxTraceField.Size = new System.Drawing.Size(70, 23);
-			this.comboBoxTraceField.TabIndex = 3;
+			this.comboBoxTraceScan.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBoxTraceScan.FormattingEnabled = true;
+			this.comboBoxTraceScan.Location = new System.Drawing.Point(59, 9);
+			this.comboBoxTraceScan.Name = "comboBoxTraceScan";
+			this.comboBoxTraceScan.Size = new System.Drawing.Size(70, 23);
+			this.comboBoxTraceScan.TabIndex = 1;
+			this.comboBoxTraceScan.SelectedIndexChanged += new System.EventHandler(this.comboBoxTraceScan_SelectedIndexChanged);
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(18, 12);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(35, 15);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Scan:";
+			// 
+			// dataGridView1
+			// 
+			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
+			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dataGridView1.Location = new System.Drawing.Point(0, 0);
+			this.dataGridView1.Name = "dataGridView1";
+			this.dataGridView1.ReadOnly = true;
+			this.dataGridView1.RowTemplate.Height = 25;
+			this.dataGridView1.Size = new System.Drawing.Size(850, 394);
+			this.dataGridView1.TabIndex = 0;
+			// 
+			// openFileDialog1
+			// 
+			this.openFileDialog1.DefaultExt = "bin";
+			this.openFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
+			// 
+			// openFileDialog2
+			// 
+			this.openFileDialog2.DefaultExt = "nes";
+			this.openFileDialog2.Filter = "NES files|*.nes|All files|*.*";
+			// 
+			// backgroundWorker1
+			// 
+			this.backgroundWorker1.WorkerSupportsCancellation = true;
+			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork_1);
+			// 
+			// saveFileDialog1
+			// 
+			this.saveFileDialog1.DefaultExt = "bin";
+			this.saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
 			// 
 			// Form1
 			// 
@@ -918,5 +942,6 @@
 		private System.Windows.Forms.ComboBox comboBoxTraceScan;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.DataGridView dataGridView1;
+		private System.Windows.Forms.ToolStripMenuItem testTraceToolStripMenuItem;
 	}
 }

@@ -49,6 +49,11 @@ namespace PPUPlayer
 		List<BreaksCore.MemDesciptor> mem = new();
 		DataHumanizer humanizer = new();
 
+		bool TraceEnabled = false;
+		int TraceMaxFields = 0;
+
+		string DefaultTitle;
+
 		public Form1()
 		{
 			InitializeComponent();
@@ -63,6 +68,8 @@ namespace PPUPlayer
 			pictureBoxField.BackColor = Color.Gray;
 			toolStripButton3.Enabled = false;
 			comboBox2.SelectedIndex = 0;
+
+			DefaultTitle = this.Text;
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -83,6 +90,18 @@ namespace PPUPlayer
 				ppu_dump = openFileDialog1.FileName;
 
 				Console.WriteLine("The PPU registers dump is selected: " + ppu_dump);
+
+				string text = DefaultTitle;
+				text += " - " + ppu_dump;
+				if (nes_file != null)
+				{
+					text += " + " + nes_file;
+				}
+				else
+				{
+					text += " + Need .nes ROM";
+				}
+				this.Text = text;
 			}
 		}
 
@@ -93,6 +112,19 @@ namespace PPUPlayer
 				nes_file = openFileDialog2.FileName;
 
 				Console.WriteLine("The .nes file has been selected: " + nes_file);
+
+				string text = DefaultTitle;
+				text += " - ";
+				if (ppu_dump != null)
+				{
+					text += ppu_dump;
+				}
+				else
+				{
+					text += "No RegDump";
+				}
+				text += " + " + nes_file;
+				this.Text = text;
 			}
 		}
 
@@ -154,6 +186,10 @@ namespace PPUPlayer
 			UpdateMemLayout();
 			ResetVisualize();
 
+			TraceEnabled = settings.TraceEnable;
+			TraceMaxFields = settings.TraceMaxFields;
+			ResetTrace(TraceMaxFields);
+
 			currentEntry = NextLogEntry();
 
 			if (currentEntry != null)
@@ -195,6 +231,8 @@ namespace PPUPlayer
 			toolStripButton3.Enabled = false;
 
 			UpdateMemLayout();
+
+			this.Text = DefaultTitle;
 		}
 
 		PPULogEntry? NextLogEntry()
@@ -288,6 +326,11 @@ namespace PPUPlayer
 				// Perform one half-cycle of the PPU
 
 				PPUPlayerInterop.Step();
+
+				if (TraceEnabled)
+				{
+					ProcessTrace();
+				}
 
 				// Logic related to the processing of H/V values
 
@@ -440,6 +483,12 @@ namespace PPUPlayer
 			hexBox1.Refresh();
 		}
 
+		void Button2Click()
+		{
+			List<BreaksCore.DebugInfoEntry> entries = BreaksCore.GetDebugInfo(ComboBoxToDebugInfoType());
+			UpdateDebugInfo(entries);
+		}
+
 		/// <summary>
 		/// Update DebugInfo
 		/// </summary>
@@ -447,8 +496,7 @@ namespace PPUPlayer
 		/// <param name="e"></param>
 		private void button2_Click(object sender, EventArgs e)
 		{
-			List<BreaksCore.DebugInfoEntry> entries = BreaksCore.GetDebugInfo(ComboBoxToDebugInfoType());
-			UpdateDebugInfo(entries);
+			Button2Click();
 		}
 
 		BreaksCore.DebugInfoType ComboBoxToDebugInfoType()
@@ -468,12 +516,7 @@ namespace PPUPlayer
 			return BreaksCore.DebugInfoType.DebugInfoType_Test;
 		}
 
-		/// <summary>
-		/// Dump Mem
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void button1_Click(object sender, EventArgs e)
+		void Button1Click()
 		{
 			if (mem.Count == 0)
 			{
@@ -505,10 +548,24 @@ namespace PPUPlayer
 		}
 
 		/// <summary>
+		/// Dump Mem
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void button1_Click(object sender, EventArgs e)
+		{
+			Button1Click();
+		}
+
+		bool UpdateMemLayoutInProgress = false;
+
+		/// <summary>
 		/// Get a set of memory regions from the debugger and fill the ComboBox.
 		/// </summary>
 		void UpdateMemLayout()
 		{
+			UpdateMemLayoutInProgress = true;
+
 			comboBox1.Items.Clear();
 
 			mem = BreaksCore.GetMemoryLayout();
@@ -522,6 +579,8 @@ namespace PPUPlayer
 			{
 				comboBox1.SelectedIndex = 0;
 			}
+
+			UpdateMemLayoutInProgress = false;
 		}
 
 		void UpdateDebugInfo(List<BreaksCore.DebugInfoEntry> entries)
@@ -557,6 +616,19 @@ namespace PPUPlayer
 		{
 			FormSettings formSettings = new();
 			formSettings.ShowDialog();
+		}
+
+		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			Button2Click();
+		}
+
+		private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (UpdateMemLayoutInProgress)
+				return;
+
+			Button1Click();
 		}
 	}
 }
