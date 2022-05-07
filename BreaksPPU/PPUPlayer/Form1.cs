@@ -49,6 +49,9 @@ namespace PPUPlayer
 		List<BreaksCore.MemDesciptor> mem = new();
 		DataHumanizer humanizer = new();
 
+		bool TraceEnabled = false;
+		int TraceMaxFields = 0;
+
 		public Form1()
 		{
 			InitializeComponent();
@@ -153,6 +156,10 @@ namespace PPUPlayer
 			}
 			UpdateMemLayout();
 			ResetVisualize();
+
+			TraceEnabled = settings.TraceEnable;
+			TraceMaxFields = settings.TraceMaxFields;
+			ResetTrace(TraceMaxFields);
 
 			currentEntry = NextLogEntry();
 
@@ -288,6 +295,11 @@ namespace PPUPlayer
 				// Perform one half-cycle of the PPU
 
 				PPUPlayerInterop.Step();
+
+				if (TraceEnabled)
+				{
+					ProcessTrace();
+				}
 
 				// Logic related to the processing of H/V values
 
@@ -558,5 +570,6 @@ namespace PPUPlayer
 			FormSettings formSettings = new();
 			formSettings.ShowDialog();
 		}
+
 	}
 }
