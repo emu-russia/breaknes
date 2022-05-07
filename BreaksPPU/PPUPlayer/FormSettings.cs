@@ -94,6 +94,11 @@ namespace PPUPlayer
 			[Category("Debug")]
 			[Description("The number of full Fields for signal tracing. When the trace history is full, it is automatically cleared.")]
 			public int TraceMaxFields { get; set; }
+
+			[XmlElement]
+			[Category("Debug")]
+			[Description("Specify with ; only necessary signals for tracing. If no filter is specified, all signals will be traced.")]
+			public string? TraceFilter { get; set; }
 		}
 
 
