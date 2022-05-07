@@ -51,6 +51,7 @@ namespace PPUPlayer
 
 		bool TraceEnabled = false;
 		int TraceMaxFields = 0;
+		string TraceFilter = "";
 
 		string DefaultTitle;
 
@@ -188,6 +189,14 @@ namespace PPUPlayer
 
 			TraceEnabled = settings.TraceEnable;
 			TraceMaxFields = settings.TraceMaxFields;
+			if (settings.TraceFilter != null)
+			{
+				TraceFilter = settings.TraceFilter;
+			}
+			else
+			{
+				TraceFilter = "";
+			}
 			ResetTrace(TraceMaxFields);
 
 			currentEntry = NextLogEntry();

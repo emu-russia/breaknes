@@ -53,6 +53,9 @@ namespace PPUPlayer
 		{
 			TraceResetInProgress = true;
 
+			CurrentTraceField = 0;
+			CurrentTraceScan = 0;
+
 			fields = new();
 
 			for (int i=0; i<maxFields; i++)
@@ -134,6 +137,13 @@ namespace PPUPlayer
 
 			dataGridView1.Columns.Clear();
 
+			List<string> filter = new();
+			
+			if (TraceFilter != "")
+			{
+				filter = TraceFilter.Split(';').ToList();
+			}
+
 			//dataGridView1.AutoSizeColumnsMode =	DataGridViewAutoSizeColumnsMode.AllCells;
 			//dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
 
@@ -144,6 +154,12 @@ namespace PPUPlayer
 
 			foreach (var info in entry0)
 			{
+				if (filter.Count != 0)
+				{
+					if (!filter.Contains(info.name))
+						continue;
+				}
+
 				DataGridViewColumn col = new DataGridViewTextBoxColumn();
 				col.Name = info.name;
 				col.DataPropertyName = "value";
@@ -158,6 +174,12 @@ namespace PPUPlayer
 
 				foreach (var signal in row)
 				{
+					if (filter.Count != 0)
+					{
+						if (!filter.Contains(signal.name))
+							continue;
+					}
+
 					string text = "";
 
 					if (signal.value == 0) text = "0";
