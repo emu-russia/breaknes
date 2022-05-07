@@ -358,6 +358,9 @@ namespace PPUPlayer
 					PrevH = h;
 				}
 
+				// TBD: At this point, without resetting the PPU, the stats may go a little off, as the V value goes crazy, after the PPU starts.
+				// After the first "warm-up" Scan, the V value settles down.
+
 				if (v != PrevV)
 				{
 					if (v == 0 && PrevV > 0)
@@ -639,5 +642,6 @@ namespace PPUPlayer
 
 			Button1Click();
 		}
+
 	}
 }

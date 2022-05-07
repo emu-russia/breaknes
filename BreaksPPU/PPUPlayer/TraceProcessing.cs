@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Collections;
 
+using System.IO;
+
 // The data model is straightforward.
 // There is a Field list. Each Field contains a list of Scans. Each Scan contains a list of PPU signal values obtained after each half-step of the simulation.
 
@@ -194,6 +196,94 @@ namespace PPUPlayer
 
 				dataGridView1.Rows.Add(rowSignals);
 			}
+		}
+
+		private void saveTraceInLogisimFormatToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (saveFileDialog2.ShowDialog() == DialogResult.OK)
+			{
+				SaveTrace(saveFileDialog2.FileName);
+			}
+		}
+
+		void SaveTrace (string filename)
+		{
+			string text = "";
+
+			int scan = comboBoxTraceScan.SelectedIndex;
+			int field = comboBoxTraceField.SelectedIndex;
+
+			if (!(scan >= 0 && field >= 0))
+				return;
+
+			if (fields[field].scans[scan].entries.Count == 0)
+				return;
+
+			List<string> filter = new();
+
+			if (TraceFilter != "")
+			{
+				filter = TraceFilter.Split(';').ToList();
+			}
+
+			List<BreaksCore.DebugInfoEntry> entry0 = fields[field].scans[scan].entries[0];
+
+			bool first_col = true;
+
+			foreach (var info in entry0)
+			{
+				if (filter.Count != 0)
+				{
+					if (!filter.Contains(info.name))
+						continue;
+				}
+
+				if (!first_col)
+				{
+					text += "\t";
+				}
+
+				text += info.name;
+
+				first_col = false;
+			}
+
+			text += "\n";
+
+			foreach (var row in fields[field].scans[scan].entries)
+			{
+				bool first = true;
+
+				foreach (var signal in row)
+				{
+					if (filter.Count != 0)
+					{
+						if (!filter.Contains(signal.name))
+							continue;
+					}
+
+					string val_text = "";
+
+					if (signal.value == 0) val_text = "0";
+					else if (signal.value == 1) val_text = "1";
+					else if ((Int32)signal.value == -1) val_text = "z";
+					else if ((Int32)signal.value == -2) val_text = "x";
+					else val_text = "0x" + signal.value.ToString("x");
+
+					if (!first)
+					{
+						text += "\t";
+					}
+
+					text += val_text;
+
+					first = false;
+				}
+
+				text += "\n";
+			}
+
+			File.WriteAllText(filename, text);
 		}
 
 	}
