@@ -131,9 +131,9 @@ namespace PPUSim
 
 		hb_latch1.set(HPLA[19], n_PCLK);
 		hb_latch2.set(HPLA[20], n_PCLK);
-		HBLANK_FF.set(NOR(hb_latch1.get(), NOR(hb_latch2.get(), HBLANK_FF.get())));
-		ppu->fsm.SCCNT = NOR(HBLANK_FF.get(), BLACK);
-		ppu->fsm.nHB = HBLANK_FF.nget();
+		HBLANK_FF.set(NOR(hb_latch2.get(), NOR(hb_latch1.get(), HBLANK_FF.get())));
+		ppu->fsm.SCCNT = NOR(HBLANK_FF.nget(), BLACK);
+		ppu->fsm.nHB = HBLANK_FF.get();
 
 		sim_VSYNCEarly(VPLA);
 		TriState VSYNC = ppu->fsm.VSYNC;

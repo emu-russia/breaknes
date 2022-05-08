@@ -363,4 +363,9 @@ namespace PPUSim
 	{
 		vid_out->Dbg_FixedPicture(enable);
 	}
+
+	void PPU::Dbg_RenderAlwaysEnabled(bool enable)
+	{
+		regs->Debug_RenderAlwaysEnabled(enable);
+	}
 }
