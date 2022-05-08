@@ -36,6 +36,7 @@ namespace PPUPlayer
 
 		//ppu->Dbg_RandomizePicture(true);
 		//ppu->Dbg_FixedPicture(true);
+		//ppu->Dbg_RenderAlwaysEnabled(true);
 	}
 
 	Board::~Board()

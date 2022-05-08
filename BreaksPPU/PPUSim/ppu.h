@@ -364,5 +364,7 @@ namespace PPUSim
 
 		void Dbg_RandomizePicture(bool enable);
 		void Dbg_FixedPicture(bool enable);
+
+		void Dbg_RenderAlwaysEnabled(bool enable);
 	};
 }
