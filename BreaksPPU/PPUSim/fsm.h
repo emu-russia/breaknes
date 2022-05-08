@@ -80,7 +80,8 @@ namespace PPUSim
 		BaseLogic::DLatch ctrl_latch2;
 
 		void sim_DelayedH();
-		void sim_HPosLogic(BaseLogic::TriState* HPLA);
+		void sim_HPosLogic(BaseLogic::TriState* HPLA, BaseLogic::TriState* VPLA);
+		void sim_VSYNCEarly(BaseLogic::TriState* VPLA);
 		void sim_VPosLogic(BaseLogic::TriState* VPLA);
 		void sim_VBlankInt();
 		void sim_EvenOdd(BaseLogic::TriState* HPLA);
