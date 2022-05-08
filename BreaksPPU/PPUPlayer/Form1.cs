@@ -184,6 +184,10 @@ namespace PPUPlayer
 					"Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 			}
+			if (settings.ResetPPU)
+			{
+				PPUPlayerInterop.ResetPPU();
+			}
 			UpdateMemLayout();
 			ResetVisualize();
 
@@ -360,6 +364,7 @@ namespace PPUPlayer
 
 				// TBD: At this point, without resetting the PPU, the stats may go a little off, as the V value goes crazy, after the PPU starts.
 				// After the first "warm-up" Scan, the V value settles down.
+				// If a PPU reset is done, the above effect does not occur.
 
 				if (v != PrevV)
 				{
@@ -375,11 +380,16 @@ namespace PPUPlayer
 					PrevV = v;
 				}
 
-				// Show statistics that are updated once every 1 second.
+				// Get a single sample of the video signal. If the PPU is in the process of resetting - do not count samples at that moment.
 
-				float sample;
-				PPUPlayerInterop.SampleVideoSignal(out sample);
-				ProcessSample(sample);
+				if (PPUPlayerInterop.PPUInResetState() == 0)
+				{
+					float sample;
+					PPUPlayerInterop.SampleVideoSignal(out sample);
+					ProcessSample(sample);
+				}
+
+				// Show statistics that are updated once every 1 second.
 
 				long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 				if (now > (timeStamp + 1000))

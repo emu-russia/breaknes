@@ -56,6 +56,11 @@ namespace PPUSim
 
 		wire.RES = NOT(inputs[(size_t)InputPad::n_RES]);
 
+		if (wire.RES == TriState::One)
+		{
+			ResetPCLKCounter();
+		}
+
 		wire.CLK = inputs[(size_t)InputPad::CLK];
 		wire.n_CLK = NOT(wire.CLK);
 

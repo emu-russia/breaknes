@@ -140,4 +140,24 @@ extern "C"
             return 0;
         }
     }
+
+    __declspec(dllexport) void ResetPPU()
+    {
+        if (board != nullptr)
+        {
+            board->ResetPPU();
+        }
+    }
+
+    __declspec(dllexport) size_t PPUInResetState()
+    {
+        if (board != nullptr)
+        {
+            return board->PPUInResetState() ? 1 : 0;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 }
