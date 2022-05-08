@@ -98,9 +98,18 @@ namespace PPUPlayer
 		/// <summary>
 		/// Tracing is a very slow process.
 		/// </summary>
-		void ProcessTrace()
+		void ProcessTrace(int currentScan)
 		{
 			var entry = BreaksCore.GetDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_PPU);
+
+			// Add the scan number to the very end
+
+			BreaksCore.DebugInfoEntry scan = new();
+			scan.category = "";
+			scan.name = "Scan";
+			scan.value = (uint)currentScan;
+			entry.Add(scan);
+
 			fields[CurrentTraceField].scans[CurrentTraceScan].entries.Add(entry);
 
 			if (fields[CurrentTraceField].scans[CurrentTraceScan].entries.Count >= SamplesPerScan)

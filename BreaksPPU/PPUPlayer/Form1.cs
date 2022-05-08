@@ -342,7 +342,7 @@ namespace PPUPlayer
 
 				if (TraceEnabled)
 				{
-					ProcessTrace();
+					ProcessTrace(scanCounter);
 				}
 
 				// Logic related to the processing of H/V values
