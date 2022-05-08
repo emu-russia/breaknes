@@ -86,6 +86,11 @@ namespace PPUPlayer
 			public string? PPU_Revision { get; set; }
 
 			[XmlElement]
+			[Category("Board Features")]
+			[Description("Perform a PPU reset. When simulating a reset, the /RES input signal will be set to 0 for the first 4 half cycles of CLK, to reset the PPU internally. Not all NES/Famicom motherboards support resetting. The Famicom for example never resets the PPU (/RES = 1 all the time).")]
+			public bool ResetPPU { get; set; }
+
+			[XmlElement]
 			[Category("Debug")]
 			[Description("Enable tracing. Trace starts collecting immediately after the PPU starts. After stopping the trace is cleared. History is stored for no more than the specified number of Fields.")]
 			public bool TraceEnable { get; set; }

@@ -55,7 +55,7 @@ namespace PPUPlayer
 		TriState outputs[(size_t)PPUSim::OutputPad::Max]{};
 
 		inputs[(size_t)PPUSim::InputPad::CLK] = CLK;
-		inputs[(size_t)PPUSim::InputPad::n_RES] = TriState::One;
+		inputs[(size_t)PPUSim::InputPad::n_RES] = pendingReset ? TriState::Zero : TriState::One;
 		inputs[(size_t)PPUSim::InputPad::RnW] = pendingWrite ? TriState::Zero : TriState::One;
 		inputs[(size_t)PPUSim::InputPad::RS0] = pendingCpuOperation ? ((ppuRegId & 1) ? TriState::One : TriState::Zero) : TriState::Zero;
 		inputs[(size_t)PPUSim::InputPad::RS1] = pendingCpuOperation ? ((ppuRegId & 2) ? TriState::One : TriState::Zero) : TriState::Zero;
@@ -122,6 +122,15 @@ namespace PPUPlayer
 		if (pendingCpuOperation && ppu->GetPCLKCounter() != savedPclk)
 		{
 			pendingCpuOperation = false;
+		}
+
+		if (pendingReset)
+		{
+			resetHalfClkCounter--;
+			if (resetHalfClkCounter == 0)
+			{
+				pendingReset = false;
+			}
 		}
 	}
 
@@ -202,5 +211,16 @@ namespace PPUPlayer
 	size_t Board::GetVCounter()
 	{
 		return ppu->GetVCounter();
+	}
+
+	void Board::ResetPPU()
+	{
+		pendingReset = true;
+		resetHalfClkCounter = 4;
+	}
+
+	bool Board::PPUInResetState()
+	{
+		return pendingReset;
 	}
 }

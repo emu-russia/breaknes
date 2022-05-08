@@ -39,6 +39,9 @@ namespace PPUPlayer
 		uint8_t writeValue = 0;
 		size_t savedPclk = 0;
 
+		bool pendingReset = false;
+		int resetHalfClkCounter = 0;
+
 		NROM* cart = nullptr;
 		BaseLogic::TriState n_INT = BaseLogic::TriState::X;
 		BaseLogic::TriState n_VRAM_CS = BaseLogic::TriState::X;
@@ -91,5 +94,9 @@ namespace PPUPlayer
 		size_t GetHCounter();
 
 		size_t GetVCounter();
+
+		void ResetPPU();
+
+		bool PPUInResetState();
 	};
 }
