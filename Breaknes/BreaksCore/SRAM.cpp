@@ -29,7 +29,7 @@ namespace Breaknes
 				mem[*addr] = *data;
 			}
 
-			if (n_OE == TriState::Zero)
+			else if (n_OE == TriState::Zero && n_WE == TriState::One)
 			{
 				*data = mem[*addr];
 				dz = false;
