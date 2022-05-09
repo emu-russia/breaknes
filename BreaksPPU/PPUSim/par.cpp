@@ -41,8 +41,8 @@ namespace PPUSim
 		TriState H0_DD = ppu->wire.H0_Dash2;
 
 		auto Temp93 = NOT(w62_latch.nget());
-		W62_FF1.set(NOR(NOR(AND(n_PCLK, Temp93), W62_FF1.get()), W6_2_Enable));
-		W62_FF2.set(MUX(PCLK, NOR(W62_FF1.get(), W6_2_Enable), NOT(NOT(W62_FF2.get()))));
+		W62_FF1.set(NOR(AND(n_PCLK, Temp93), NOR(W62_FF1.get(), W6_2_Enable)));
+		W62_FF2.set(MUX(PCLK, NOR(W62_FF1.nget(), W6_2_Enable), NOT(NOT(W62_FF2.get()))));
 		w62_latch.set(NOT(NOT(W62_FF2.get())), PCLK);
 		Temp93 = NOT(w62_latch.nget());
 
