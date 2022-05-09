@@ -10,8 +10,6 @@ namespace PPUSim
 		uint8_t RS[3];
 		uint8_t n_DBE;
 		uint8_t n_ALE;
-		uint8_t RD;
-		uint8_t WR;
 		uint8_t CLK;
 		uint8_t n_CLK;
 		uint8_t RES;
@@ -84,13 +82,24 @@ namespace PPUSim
 		uint8_t n_SH3;
 		uint8_t n_SH5;
 		uint8_t n_SH7;
+		uint8_t n_PA_Bot;	// Packed
 		uint8_t n_PA_Top[6];
 		uint8_t BGC[4];
+		uint8_t FH[3];
+		uint8_t FV[3];
+		uint8_t NTV;
+		uint8_t NTH;
+		uint8_t TV[5];
+		uint8_t TH[5];
 		uint8_t THO[5];
+		uint8_t TVO[5];
+		uint8_t FVO[3];
 		uint8_t n_CB_DB;
 		uint8_t n_BW;
 		uint8_t n_DB_CB;
 		uint8_t PAL[5];
+		uint8_t RD;
+		uint8_t WR;
 		uint8_t TSTEP;
 		uint8_t DB_PAR;
 		uint8_t PD_RB;

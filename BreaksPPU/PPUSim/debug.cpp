@@ -15,8 +15,6 @@ namespace PPUSim
 		}
 		wires.n_DBE = wire.n_DBE == TriState::One ? 1 : 0;
 		wires.n_ALE = wire.n_ALE == TriState::One ? 1 : 0;
-		wires.RD = wire.RD == TriState::One ? 1 : 0;
-		wires.WR = wire.WR == TriState::One ? 1 : 0;
 		wires.CLK = wire.CLK == TriState::One ? 1 : 0;
 		wires.n_CLK = wire.n_CLK == TriState::One ? 1 : 0;
 		wires.RES = wire.RES == TriState::One ? 1 : 0;
@@ -105,6 +103,7 @@ namespace PPUSim
 		wires.n_SH5 = wire.n_SH5 == TriState::One ? 1 : 0;
 		wires.n_SH7 = wire.n_SH7 == TriState::One ? 1 : 0;
 
+		wires.n_PA_Bot = Pack(wire.n_PA_Bot);
 		for (size_t n = 0; n < 6; n++)
 		{
 			wires.n_PA_Top[n] = wire.n_PA_Top[n] == TriState::One ? 1 : 0;
@@ -113,9 +112,35 @@ namespace PPUSim
 		{
 			wires.BGC[n] = wire.BGC[n] == TriState::One ? 1 : 0;
 		}
+		for (size_t n = 0; n < 3; n++)
+		{
+			wires.FH[n] = wire.FH[n] == TriState::One ? 1 : 0;
+		}
+		for (size_t n = 0; n < 3; n++)
+		{
+			wires.FV[n] = wire.FV[n] == TriState::One ? 1 : 0;
+		}
+		wires.NTV = wire.NTV == TriState::One ? 1 : 0;
+		wires.NTH = wire.NTH == TriState::One ? 1 : 0;
+		for (size_t n = 0; n < 5; n++)
+		{
+			wires.TV[n] = wire.TV[n] == TriState::One ? 1 : 0;
+		}
+		for (size_t n = 0; n < 5; n++)
+		{
+			wires.TH[n] = wire.TH[n] == TriState::One ? 1 : 0;
+		}
 		for (size_t n = 0; n < 5; n++)
 		{
 			wires.THO[n] = wire.THO[n] == TriState::One ? 1 : 0;
+		}
+		for (size_t n = 0; n < 5; n++)
+		{
+			wires.TVO[n] = wire.TVO[n] == TriState::One ? 1 : 0;
+		}
+		for (size_t n = 0; n < 3; n++)
+		{
+			wires.FVO[n] = wire.FVO[n] == TriState::One ? 1 : 0;
 		}
 		wires.n_CB_DB = wire.n_CB_DB == TriState::One ? 1 : 0;
 		wires.n_BW = wire.n_BW == TriState::One ? 1 : 0;
@@ -124,6 +149,9 @@ namespace PPUSim
 		{
 			wires.PAL[n] = wire.PAL[n] == TriState::One ? 1 : 0;
 		}
+
+		wires.RD = wire.RD == TriState::One ? 1 : 0;
+		wires.WR = wire.WR == TriState::One ? 1 : 0;
 		wires.TSTEP = wire.TSTEP == TriState::One ? 1 : 0;
 		wires.DB_PAR = wire.DB_PAR == TriState::One ? 1 : 0;
 		wires.PD_RB = wire.PD_RB == TriState::One ? 1 : 0;

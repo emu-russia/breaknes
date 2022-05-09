@@ -131,8 +131,6 @@ namespace PPUSim
 			BaseLogic::TriState RS[3];
 			BaseLogic::TriState n_DBE;
 			BaseLogic::TriState n_ALE;
-			BaseLogic::TriState RD;
-			BaseLogic::TriState WR;
 			BaseLogic::TriState CLK;
 			BaseLogic::TriState n_CLK;
 			BaseLogic::TriState RES;
@@ -234,6 +232,8 @@ namespace PPUSim
 			BaseLogic::TriState n_DB_CB;
 			BaseLogic::TriState PAL[5];
 
+			BaseLogic::TriState RD;
+			BaseLogic::TriState WR;
 			BaseLogic::TriState TSTEP;
 			BaseLogic::TriState DB_PAR;
 			BaseLogic::TriState PD_RB;
