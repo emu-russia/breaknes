@@ -113,7 +113,7 @@ namespace PPUPlayer
 		VRAM_Addr |= ((PA[9] == TriState::One) ? 1 : 0) << 9;
 		VRAM_Addr |= ((VRAM_A10 == TriState::One) ? 1 : 0) << 10;
 
-		bool dz;
+		bool dz = (n_RD == TriState::One && n_WR == TriState::One);
 		vram->sim(n_VRAM_CS, n_WR, n_RD, &VRAM_Addr, &ad_bus, dz);
 
 		// Tick
