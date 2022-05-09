@@ -45,26 +45,25 @@ namespace PPUSim
 		auto W3_Enable = NOR(n_W3, n_DBE);
 		TriState carry_in;
 		TriState carry_out;
-		TriState NotUsed;
 		TriState OMV;
 
 		carry_in = TriState::One;
-		MainCounter[0].sim(OMOUT, W3_Enable, OMSTEP, Mode4, PAR_O, ppu->GetDBBit(0), carry_in, OAM_x[0], n_out[0], carry_out);
+		carry_out = MainCounter[0].sim(OMOUT, W3_Enable, OMSTEP, Mode4, PAR_O, ppu->GetDBBit(0), carry_in, OAM_x[0], n_out[0]);
 
 		carry_in = carry_out;
-		MainCounter[1].sim(OMOUT, W3_Enable, OMSTEP, Mode4, PAR_O, ppu->GetDBBit(1), carry_in, OAM_x[1], n_out[1], NotUsed);
+		MainCounter[1].sim(OMOUT, W3_Enable, OMSTEP, Mode4, PAR_O, ppu->GetDBBit(1), carry_in, OAM_x[1], n_out[1]);
 
 		auto out01 = NOT(NOR(n_out[0], n_out[1]));
 		auto out01m = AND(out01, NOT(Mode4));
 
 		carry_in = NAND(NOT(Mode4), out01);
-		MainCounter[2].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(2), carry_in, OAM_x[2], n_out[2], NotUsed);
+		MainCounter[2].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(2), carry_in, OAM_x[2], n_out[2]);
 
 		carry_in = NOR(out01m, n_out[2]);
-		MainCounter[3].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(3), carry_in, OAM_x[3], n_out[3], NotUsed);
+		MainCounter[3].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(3), carry_in, OAM_x[3], n_out[3]);
 
 		carry_in = NOR3(out01m, n_out[2], n_out[3]);
-		MainCounter[4].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(4), carry_in, OAM_x[4], n_out[4], NotUsed);
+		MainCounter[4].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(4), carry_in, OAM_x[4], n_out[4]);
 
 		TriState temp[6]{};
 		
@@ -73,15 +72,15 @@ namespace PPUSim
 		temp[2] = n_out[3];
 		temp[3] = n_out[4];
 		carry_in = NOR4(temp);
-		MainCounter[5].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(5), carry_in, OAM_x[5], n_out[5], NotUsed);
+		MainCounter[5].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(5), carry_in, OAM_x[5], n_out[5]);
 
 		temp[4] = n_out[5];
 		carry_in = NOR5(temp);
-		MainCounter[6].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(6), carry_in, OAM_x[6], n_out[6], NotUsed);
+		MainCounter[6].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(6), carry_in, OAM_x[6], n_out[6]);
 
 		temp[5] = n_out[6];
 		carry_in = NOR6(temp);
-		MainCounter[7].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(7), carry_in, OAM_x[7], n_out[7], OMV);
+		OMV = MainCounter[7].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(7), carry_in, OAM_x[7], n_out[7]);
 
 		omv_latch.set(OMV, n_PCLK);
 	}
@@ -89,7 +88,7 @@ namespace PPUSim
 	void OAMEval::sim_TempCounter()
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState carry_in = TriState::One;
+		TriState carry = TriState::One;
 		TriState ORES = this->ORES;
 		TriState OSTEP = this->OSTEP;
 		TriState NotUsed;
@@ -97,11 +96,11 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 5; n++)
 		{
-			TempCounter[n].sim(n_PCLK, ORES, OSTEP, TriState::Zero, TriState::Zero, TriState::Zero,
-				carry_in, OAM_Temp[n], NotUsed, carry_in);
+			carry = TempCounter[n].sim(n_PCLK, ORES, OSTEP, TriState::Zero, TriState::Zero, TriState::Zero,
+				carry, OAM_Temp[n], NotUsed);
 		}
 
-		TMV = carry_in;			// carry_out from the most significant bit
+		TMV = carry;			// carry_out from the most significant bit
 		tmv_latch.set(TMV, n_PCLK);
 	}
 
@@ -114,10 +113,10 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 4; n++)
 		{
-			cmpr[n].sim(PCLK,
+			carry_in = cmpr[n].sim(PCLK,
 				ppu->wire.OB[2 * n], ppu->v->getBit(2 * n),
 				ppu->wire.OB[2 * n + 1], ppu->v->getBit(2 * n + 1),
-				carry_in, ppu->wire.OV[2 * n], ppu->wire.OV[2 * n + 1], carry_in);
+				carry_in, ppu->wire.OV[2 * n], ppu->wire.OV[2 * n + 1]);
 		}
 
 		ovz_latch.set(ppu->wire.OB[7], PCLK);
@@ -260,7 +259,7 @@ namespace PPUSim
 		eval_FF1.sim(PCLK, NOT(PAR_O), nFF2_Out, ppu->wire.I2SEV, NotUsed);
 	}
 
-	void OAMCounterBit::sim (
+	TriState OAMCounterBit::sim (
 		TriState Clock,
 		TriState Load,
 		TriState Step,
@@ -269,19 +268,19 @@ namespace PPUSim
 		TriState val_in,
 		TriState carry_in,
 		TriState& val_out,
-		TriState& n_val_out,
-		TriState& carry_out )
+		TriState& n_val_out )
 	{
 		keep_ff.set(MUX(Step,
 			MUX(Load, MUX(Clock, TriState::Z, NOR(Reset, keep_ff.nget())), val_in),
 			NOR(cnt_latch.get(), BlockCount)));
 		cnt_latch.set(MUX(carry_in, keep_ff.nget(), NOR(keep_ff.nget(), Reset)), Clock);
-		carry_out = NOR(keep_ff.nget(), NOT(carry_in));
+		TriState carry_out = NOR(keep_ff.nget(), NOT(carry_in));
 		val_out = NOT(keep_ff.nget());
 		n_val_out = keep_ff.nget();
+		return carry_out;
 	}
 
-	void OAMCmprBit::sim (
+	TriState OAMCmprBit::sim (
 		TriState PCLK,
 		TriState OB_Even,
 		TriState V_Even,
@@ -289,8 +288,7 @@ namespace PPUSim
 		TriState V_Odd,
 		TriState carry_in,
 		TriState& OV_Even,
-		TriState& OV_Odd,
-		TriState& carry_out )
+		TriState& OV_Odd )
 	{
 		even_latch.set(OB_Even, PCLK);
 		odd_latch.set(OB_Odd, PCLK);
@@ -306,7 +304,8 @@ namespace PPUSim
 
 		OV_Even = NOT(NOR(NOR(carry_in, z1), AND(carry_in, z1)));
 		OV_Odd = NOT(NOR(NOR(z2, z3), AND(z2, z3)));
-		carry_out = NOR3(NOR(e0, o1), o0, NOR3(e1, o1, carry_in));
+		TriState carry_out = NOR3(NOR(e0, o1), o0, NOR3(e1, o1, carry_in));
+		return carry_out;
 	}
 
 	void OAMPosedgeDFFE::sim(

@@ -10,7 +10,7 @@ namespace PPUSim
 		BaseLogic::FF keep_ff;
 
 	public:
-		void sim(
+		BaseLogic::TriState sim(
 			BaseLogic::TriState Clock,
 			BaseLogic::TriState Load,
 			BaseLogic::TriState Step,
@@ -19,8 +19,7 @@ namespace PPUSim
 			BaseLogic::TriState val_in,
 			BaseLogic::TriState carry_in,
 			BaseLogic::TriState & val_out,
-			BaseLogic::TriState & n_val_out,
-			BaseLogic::TriState & carry_out );
+			BaseLogic::TriState & n_val_out );
 	};
 
 	class OAMCmprBit
@@ -29,7 +28,7 @@ namespace PPUSim
 		BaseLogic::DLatch odd_latch;
 
 	public:
-		void sim(
+		BaseLogic::TriState sim(
 			BaseLogic::TriState PCLK,
 			BaseLogic::TriState OB_Even,
 			BaseLogic::TriState V_Even,
@@ -37,8 +36,7 @@ namespace PPUSim
 			BaseLogic::TriState V_Odd,
 			BaseLogic::TriState carry_in,
 			BaseLogic::TriState & OV_Even,
-			BaseLogic::TriState & OV_Odd,
-			BaseLogic::TriState & carry_out );
+			BaseLogic::TriState & OV_Odd );
 	};
 
 	class OAMPosedgeDFFE
