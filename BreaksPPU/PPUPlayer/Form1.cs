@@ -56,6 +56,8 @@ namespace PPUPlayer
 
 		string DefaultTitle;
 
+		bool RenderAlwaysEnabled = false;
+
 		public Form1()
 		{
 			InitializeComponent();
@@ -191,6 +193,8 @@ namespace PPUPlayer
 			}
 			UpdateMemLayout();
 			ResetVisualize();
+
+			PPUPlayerInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
 
 			TraceEnabled = settings.TraceEnable;
 			TraceMaxFields = settings.TraceMaxFields;

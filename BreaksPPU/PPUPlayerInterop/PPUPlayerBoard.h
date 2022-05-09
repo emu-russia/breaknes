@@ -99,5 +99,7 @@ namespace PPUPlayer
 		void ResetPPU();
 
 		bool PPUInResetState();
+
+		void RenderAlwaysEnabled(bool enable);
 	};
 }

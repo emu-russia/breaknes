@@ -36,7 +36,6 @@ namespace PPUPlayer
 
 		//ppu->Dbg_RandomizePicture(true);
 		//ppu->Dbg_FixedPicture(true);
-		//ppu->Dbg_RenderAlwaysEnabled(true);
 	}
 
 	Board::~Board()
@@ -262,5 +261,10 @@ namespace PPUPlayer
 	bool Board::PPUInResetState()
 	{
 		return pendingReset;
+	}
+
+	void Board::RenderAlwaysEnabled(bool enable)
+	{
+		ppu->Dbg_RenderAlwaysEnabled(enable);
 	}
 }

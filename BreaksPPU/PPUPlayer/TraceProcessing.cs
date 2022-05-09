@@ -101,6 +101,8 @@ namespace PPUPlayer
 		void ProcessTrace(int currentScan)
 		{
 			var entry = BreaksCore.GetDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_PPU);
+			entry.AddRange(BreaksCore.GetDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_PPURegs));
+			entry.AddRange(BreaksCore.GetDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_Board));
 
 			// Add the scan number to the very end
 
