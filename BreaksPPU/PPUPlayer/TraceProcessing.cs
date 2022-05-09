@@ -163,6 +163,8 @@ namespace PPUPlayer
 
 			List<BreaksCore.DebugInfoEntry> entry0 = fields[field].scans[scan].entries[0];
 
+			int colCount = entry0.Count;
+
 			foreach (var info in entry0)
 			{
 				if (filter.Count != 0)
@@ -178,9 +180,11 @@ namespace PPUPlayer
 				dataGridView1.Columns.Add(col);
 			}
 
+			string[] prevRowSignals = new string[colCount];
+
 			foreach (var row in fields[field].scans[scan].entries)
 			{
-				string[] rowSignals = new string[row.Count];
+				string[] rowSignals = new string[colCount];
 				int colIdx = 0;
 
 				foreach (var signal in row)
@@ -203,7 +207,13 @@ namespace PPUPlayer
 					colIdx++;
 				}
 
+				if (TraceCollapseSameRows && rowSignals.SequenceEqual(prevRowSignals) )
+				{
+					continue;
+				}
+
 				dataGridView1.Rows.Add(rowSignals);
+				rowSignals.CopyTo(prevRowSignals, 0);
 			}
 		}
 
@@ -259,9 +269,13 @@ namespace PPUPlayer
 
 			text += "\n";
 
+			string prev_row_text = "";
+
 			foreach (var row in fields[field].scans[scan].entries)
 			{
 				bool first = true;
+
+				string row_text = "";
 
 				foreach (var signal in row)
 				{
@@ -281,15 +295,21 @@ namespace PPUPlayer
 
 					if (!first)
 					{
-						text += "\t";
+						row_text += "\t";
 					}
 
-					text += val_text;
+					row_text += val_text;
 
 					first = false;
 				}
 
-				text += "\n";
+				if (TraceCollapseSameRows && row_text == prev_row_text)
+				{
+					continue;
+				}
+
+				text += row_text + "\n";
+				prev_row_text = row_text;
 			}
 
 			File.WriteAllText(filename, text);

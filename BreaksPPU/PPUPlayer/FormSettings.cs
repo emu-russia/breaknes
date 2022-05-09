@@ -57,8 +57,11 @@ namespace PPUPlayer
 			PPUPlayerSettings settings = new();
 
 			settings.PPU_Revision = "RP2C02G";
+			settings.ResetPPU = false;
 			settings.TraceEnable = false;
 			settings.TraceMaxFields = 2;
+			settings.TraceFilter = "";
+			settings.TraceCollapseSameRows = true;
 
 			SaveSettings(settings);
 
@@ -104,6 +107,11 @@ namespace PPUPlayer
 			[Category("Debug")]
 			[Description("Specify with ; only necessary signals for tracing. If no filter is specified, all signals will be traced.")]
 			public string? TraceFilter { get; set; }
+
+			[XmlElement]
+			[Category("Debug")]
+			[Description("Merge neighboring trace rows if signal values have not changed.")]
+			public bool TraceCollapseSameRows { get; set; }
 		}
 
 

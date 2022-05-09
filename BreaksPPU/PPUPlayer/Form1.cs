@@ -52,6 +52,7 @@ namespace PPUPlayer
 		bool TraceEnabled = false;
 		int TraceMaxFields = 0;
 		string TraceFilter = "";
+		bool TraceCollapseSameRows = true;
 
 		string DefaultTitle;
 
@@ -201,6 +202,7 @@ namespace PPUPlayer
 			{
 				TraceFilter = "";
 			}
+			TraceCollapseSameRows = settings.TraceCollapseSameRows;
 			ResetTrace(TraceMaxFields);
 
 			currentEntry = NextLogEntry();
