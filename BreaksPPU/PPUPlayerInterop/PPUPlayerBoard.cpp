@@ -72,7 +72,7 @@ namespace PPUPlayer
 
 		ppu->sim(inputs, outputs, &ext_bus, &data_bus, &ad_bus, &pa8_13, vidSample);
 
-		TriState ALE = outputs[(size_t)PPUSim::OutputPad::ALE];
+		ALE = outputs[(size_t)PPUSim::OutputPad::ALE];
 		n_RD = outputs[(size_t)PPUSim::OutputPad::n_RD];
 		n_WR = outputs[(size_t)PPUSim::OutputPad::n_WR];
 		n_INT = outputs[(size_t)PPUSim::OutputPad::n_INT];
