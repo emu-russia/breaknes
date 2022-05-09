@@ -281,6 +281,7 @@ namespace PPUPlayer
 		"#RD", offsetof(BoardDebugInfo, n_RD),
 		"#WR", offsetof(BoardDebugInfo, n_WR),
 		"#INT", offsetof(BoardDebugInfo, n_INT),
+		"PD", offsetof(BoardDebugInfo, PD),
 	};
 
 	SignalOffsetPair nrom_signals[] = {
@@ -486,6 +487,7 @@ namespace PPUPlayer
 		info.n_RD = n_RD;
 		info.n_WR = n_WR;
 		info.n_INT = n_INT;
+		info.PD = ad_bus;
 	}
 
 	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)

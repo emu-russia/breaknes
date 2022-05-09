@@ -45,6 +45,9 @@ namespace PPUPlayer
 		delete vram;
 	}
 
+	/// <summary>
+	/// Simulate 1 half cycle of the test board with PPUPlayer. The simulation of the signal edge is not supported, this is overkill.
+	/// </summary>
 	void Board::Step()
 	{
 		ADDirty = false;
@@ -151,6 +154,10 @@ namespace PPUPlayer
 		}
 	}
 
+	/// <summary>
+	/// Queue to read a value from the PPU register.
+	/// The PPU pins will be exposed until PCLK is changed.
+	/// </summary>
 	void Board::CPURead(size_t ppuReg)
 	{
 		if (!pendingCpuOperation)
@@ -162,11 +169,21 @@ namespace PPUPlayer
 		}
 	}
 
+	/// <summary>
+	/// Get the "pixel" counter. Keep in mind that pixels refers to an abstract entity representing the visible or invisible part of the video signal.
+	/// </summary>
+	/// <returns></returns>
 	size_t Board::GetPCLKCounter()
 	{
 		return ppu->GetPCLKCounter();
 	}
 
+	/// <summary>
+	/// "Insert" the cartridge as a .nes ROM. In this implementation we are simply trying to instantiate an NROM, but in a more advanced emulation, Cartridge Factory will take care of "inserting" the cartridge.
+	/// </summary>
+	/// <param name="nesImage">A pointer to the ROM image in memory.</param>
+	/// <param name="nesImageSize">ROM image size in bytes.</param>
+	/// <returns></returns>
 	int Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
 	{
 		if (cart == nullptr)
@@ -187,6 +204,9 @@ namespace PPUPlayer
 		return 0;
 	}
 
+	/// <summary>
+	/// Remove the cartridge. Logically this means that all terminals associated with the cartridge take the value of `z`.
+	/// </summary>
 	void Board::EjectCartridge()
 	{
 		if (cart != nullptr)
@@ -196,6 +216,10 @@ namespace PPUPlayer
 		}
 	}
 
+	/// <summary>
+	/// Get 1 sample of the video signal. TBD: Now focused on composite PPUs, as things settle down - make a more generalized implementation (considering RGB PPUs for example).
+	/// </summary>
+	/// <param name="sample"></param>
 	void Board::SampleVideoSignal(float* sample)
 	{
 		if (sample != nullptr)
@@ -204,22 +228,37 @@ namespace PPUPlayer
 		}
 	}
 
+	/// <summary>
+	/// Get the direct value from the PPU H counter.
+	/// </summary>
+	/// <returns></returns>
 	size_t Board::GetHCounter()
 	{
 		return ppu->GetHCounter();
 	}
 
+	/// <summary>
+	/// Get the direct value from the PPU V counter.
+	/// </summary>
+	/// <returns></returns>
 	size_t Board::GetVCounter()
 	{
 		return ppu->GetVCounter();
 	}
 
+	/// <summary>
+	/// Make the PPU /RES pin = 0 for a few CLK half cycles so that the PPU resets all of its internal circuits.
+	/// </summary>
 	void Board::ResetPPU()
 	{
 		pendingReset = true;
 		resetHalfClkCounter = 4;
 	}
 
+	/// <summary>
+	/// The parent application can check that the PPU is in the reset process and ignore the video signal for that time.
+	/// </summary>
+	/// <returns></returns>
 	bool Board::PPUInResetState()
 	{
 		return pendingReset;

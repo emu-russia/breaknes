@@ -16,6 +16,7 @@ namespace PPUPlayer
 		uint32_t n_RD;
 		uint32_t n_WR;
 		uint32_t n_INT;
+		uint32_t PD;
 	};
 
 	class Board
