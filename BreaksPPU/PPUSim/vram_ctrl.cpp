@@ -64,7 +64,7 @@ namespace PPUSim
 		wr_latch2.set(wr_latch1.nget(), PCLK);
 		wr_latch3.set(wr_latch2.nget(), n_PCLK);
 		wr_latch4.set(wr_latch3.nget(), PCLK);
-		tmp_1 = NOR(wr_latch4.nget(), wr_latch2.nget());
+		tmp_1 = NOR(wr_latch4.get(), wr_latch2.nget());
 
 		// DB/PAR, TSTEP, WR
 
