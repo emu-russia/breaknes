@@ -94,6 +94,7 @@ namespace PPUSim
 		uint8_t THO[5];
 		uint8_t TVO[5];
 		uint8_t FVO[3];
+		uint8_t n_FVO[3];
 		uint8_t n_CB_DB;
 		uint8_t n_BW;
 		uint8_t n_DB_CB;

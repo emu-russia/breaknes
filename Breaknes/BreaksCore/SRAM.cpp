@@ -20,16 +20,14 @@ namespace Breaknes
 
 	void SRAM::sim(TriState n_CS, TriState n_WE, TriState n_OE, uint32_t* addr, uint8_t* data, bool& dz)
 	{
-		dz = true;
-
 		if (n_CS == TriState::Zero)
 		{
-			if (n_WE == TriState::Zero)
+			if (n_WE == TriState::Zero && !dz)
 			{
 				mem[*addr] = *data;
 			}
 
-			if (n_OE == TriState::Zero)
+			else if (n_OE == TriState::Zero && n_WE == TriState::One)
 			{
 				*data = mem[*addr];
 				dz = false;
