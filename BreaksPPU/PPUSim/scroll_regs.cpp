@@ -70,10 +70,8 @@ namespace PPUSim
 
 	void SCC_FF::sim(TriState val_in, TriState n_DBE, TriState RC, TriState & val_out)
 	{
-		if (val_in != TriState::Z)
-		{
-			ff.set(NOT(MUX(n_DBE, val_in, NOR(ff.get(), RC))));
-		}
-		val_out = NOR(ff.get(), RC);
+		val_in = val_in == TriState::Z ? ff.get() : val_in;
+		ff.set(NOR(NOT(MUX(n_DBE, val_in, ff.get())), RC));
+		val_out = ff.get();
 	}
 }

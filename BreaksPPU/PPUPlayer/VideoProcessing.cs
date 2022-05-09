@@ -47,6 +47,9 @@ namespace PPUPlayer
 		Color scanColor = Color.AliceBlue;
 		Color pictureDelimiterColor = Color.Tomato;
 
+		Bitmap? scan_pic = null;
+		Bitmap? field_pic = null;
+
 		void ProcessSample(float sample)
 		{
 			Scan[ScanSampleCounter] = sample;
@@ -132,7 +135,12 @@ namespace PPUPlayer
 			int w = SamplesPerScan * PixelsPerSample;
 			int h = 250 * ScaleY;
 
-			Bitmap pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			//if (scan_pic == null)
+			{
+				scan_pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			}
+
+			Bitmap pic = scan_pic;
 			Graphics gr = Graphics.FromImage(pic);
 			gr.Clear(scanBgColor);
 			Pen pen = new(scanColor);
@@ -153,7 +161,8 @@ namespace PPUPlayer
 				new(PPUPicturePortion * PixelsPerSample, 0),
 				new(PPUPicturePortion * PixelsPerSample, h - 1));
 
-			pictureBoxScan.Image = pic;
+			pictureBoxScan.Image = scan_pic;
+			gr.Dispose();
 		}
 
 		void VisualizeField()
@@ -161,7 +170,12 @@ namespace PPUPlayer
 			int w = PixelsPerScan;
 			int h = ScansPerField;
 
-			Bitmap pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			//if (field_pic == null)
+			{
+				field_pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			}
+
+			Bitmap pic = field_pic;
 			Graphics gr = Graphics.FromImage(pic);
 
 			int samplePtr = 0;
@@ -188,13 +202,17 @@ namespace PPUPlayer
 				}
 			}
 
-			pictureBoxField.Image = pic;
+			pictureBoxField.Image = field_pic;
+			gr.Dispose();
 		}
 
 		void ResetVisualize()
 		{
 			ScanSampleCounter = 0;
 			FieldSampleCounter = 0;
+			scan_pic = null;
+			field_pic = null;
+			GC.Collect();
 		}
 
 		private void SaveFloatArray(string filename, float [] data)

@@ -37,8 +37,8 @@ namespace PPUSim
 		TriState n_PCLK = ppu->wire.n_PCLK;
 
 		R7_EN = NOR(ppu->wire.n_R7, ppu->wire.n_DBE);
-		R7_FF.set(NOR(R7_EN, NOR(R7_FF.get(), rd_latch3.nget())));
-		RD_FF.set(MUX(PCLK, NOT(NOT(RD_FF.get())), NOR(R7_EN, R7_FF.get())));
+		R7_FF.set(NOR(rd_latch3.nget(), NOR(R7_EN, R7_FF.get())));
+		RD_FF.set(MUX(PCLK, NOT(NOT(RD_FF.get())), NOR(R7_EN, R7_FF.nget())));
 		rd_latch1.set(NOT(RD_FF.get()), n_PCLK);
 		rd_latch2.set(rd_latch1.nget(), PCLK);
 		rd_latch3.set(rd_latch2.nget(), n_PCLK);
@@ -58,8 +58,8 @@ namespace PPUSim
 		TriState n_PCLK = ppu->wire.n_PCLK;
 
 		W7_EN = NOR(ppu->wire.n_W7, ppu->wire.n_DBE);
-		W7_FF.set(NOR(W7_EN, NOR(W7_FF.get(), wr_latch3.nget())));
-		WR_FF.set(MUX(PCLK, NOT(NOT(WR_FF.get())), NOR(W7_EN, W7_FF.get())));
+		W7_FF.set(NOR(wr_latch3.nget(), NOR(W7_EN, W7_FF.get())));
+		WR_FF.set(MUX(PCLK, NOT(NOT(WR_FF.get())), NOR(W7_EN, W7_FF.nget())));
 		wr_latch1.set(NOT(WR_FF.get()), n_PCLK);
 		wr_latch2.set(wr_latch1.nget(), PCLK);
 		wr_latch3.set(wr_latch2.nget(), n_PCLK);
