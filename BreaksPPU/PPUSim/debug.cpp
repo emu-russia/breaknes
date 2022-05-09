@@ -142,6 +142,10 @@ namespace PPUSim
 		{
 			wires.FVO[n] = wire.FVO[n] == TriState::One ? 1 : 0;
 		}
+		for (size_t n = 0; n < 3; n++)
+		{
+			wires.n_FVO[n] = wire.n_FVO[n] == TriState::One ? 1 : 0;
+		}
 		wires.n_CB_DB = wire.n_CB_DB == TriState::One ? 1 : 0;
 		wires.n_BW = wire.n_BW == TriState::One ? 1 : 0;
 		wires.n_DB_CB = wire.n_DB_CB == TriState::One ? 1 : 0;
