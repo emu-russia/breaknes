@@ -16,6 +16,7 @@ namespace PPUPlayer
 		uint32_t n_RD;
 		uint32_t n_WR;
 		uint32_t n_INT;
+		uint32_t PD;
 	};
 
 	class Board
@@ -98,5 +99,7 @@ namespace PPUPlayer
 		void ResetPPU();
 
 		bool PPUInResetState();
+
+		void RenderAlwaysEnabled(bool enable);
 	};
 }

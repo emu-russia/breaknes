@@ -160,4 +160,12 @@ extern "C"
             return 0;
         }
     }
+
+    __declspec(dllexport) void RenderAlwaysEnabled(bool enable)
+    {
+        if (board != nullptr)
+        {
+            board->RenderAlwaysEnabled(enable);
+        }
+    }
 }

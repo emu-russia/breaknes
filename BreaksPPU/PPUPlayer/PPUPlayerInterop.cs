@@ -49,6 +49,9 @@ namespace PPUPlayer
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int PPUInResetState();
+
+		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void RenderAlwaysEnabled(bool enable);
 	}
 
 
