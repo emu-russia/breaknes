@@ -7,6 +7,7 @@ namespace PPUPlayer
 	struct BoardDebugInfo
 	{
 		uint32_t CLK;
+		uint32_t ALE;
 		uint32_t LS373_Latch;
 		uint32_t VRAM_Addr;
 		uint32_t n_VRAM_CS;
@@ -47,6 +48,7 @@ namespace PPUPlayer
 		BaseLogic::TriState n_INT = BaseLogic::TriState::X;
 		BaseLogic::TriState n_VRAM_CS = BaseLogic::TriState::X;
 		BaseLogic::TriState VRAM_A10 = BaseLogic::TriState::X;
+		BaseLogic::TriState ALE = BaseLogic::TriState::X;
 		BaseLogic::TriState n_RD = BaseLogic::TriState::X;
 		BaseLogic::TriState n_WR = BaseLogic::TriState::X;
 		BaseLogic::TriState PA[14]{};

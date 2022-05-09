@@ -272,6 +272,7 @@ namespace PPUPlayer
 
 	SignalOffsetPair board_signals[] = {
 		"CLK", offsetof(BoardDebugInfo, CLK),
+		"ALE", offsetof(BoardDebugInfo, ALE),
 		"LS373 Latch", offsetof(BoardDebugInfo, LS373_Latch),
 		"VRAM Address", offsetof(BoardDebugInfo, VRAM_Addr),
 		"#VRAM_CS", offsetof(BoardDebugInfo, n_VRAM_CS),
@@ -281,7 +282,7 @@ namespace PPUPlayer
 		"#RD", offsetof(BoardDebugInfo, n_RD),
 		"#WR", offsetof(BoardDebugInfo, n_WR),
 		"#INT", offsetof(BoardDebugInfo, n_INT),
-		"PD", offsetof(BoardDebugInfo, PD),
+		"PDBus", offsetof(BoardDebugInfo, PD),
 	};
 
 	SignalOffsetPair nrom_signals[] = {
@@ -472,6 +473,7 @@ namespace PPUPlayer
 	void Board::GetDebugInfo(BoardDebugInfo& info)
 	{
 		info.CLK = CLK;
+		info.ALE = ALE;
 		info.LS373_Latch = LatchedAddress;
 		info.VRAM_Addr = VRAM_Addr;
 		info.n_VRAM_CS = n_VRAM_CS;
