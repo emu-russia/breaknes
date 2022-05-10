@@ -103,5 +103,7 @@ namespace PPUPlayer
 		bool PPUInResetState();
 
 		void RenderAlwaysEnabled(bool enable);
+
+		void GetSignalFeatures(PPUSim::VideoSignalFeatures* features);
 	};
 }

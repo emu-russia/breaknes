@@ -13,38 +13,38 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Numerics;
 
-// TBD: The entire implementation is NTSC PPU oriented. As things settle down, you need to add PPU selection settings and parameterize this module.
-
-// Note the peculiarity that the signal generation in the PPU starts immediately from the visible part (PICTURE). Therefore in the scans - HSync and Burst are on the right.
+// TBD: A ScanRing buffer is used to store the sample stream, which can hold up to 3 scans.
+// When samples are added, the drop from Blank level to Sync is counted. If there are 2 such drops, it means that there are enough samples in the circular buffer to output one line.
 
 namespace PPUPlayer
 {
 	public partial class Form1 : Form
 	{
+		// TBD: The VideoSignalFeatures structure from PPUSim will be used instead.
+
 		static int SamplesPerPCLK = 8;
 		static int PixelsPerScan = 341;
 		static int ScansPerField = 262;
 		static int SamplesPerScan = PixelsPerScan * SamplesPerPCLK;
 		static int SamplesPerField = ScansPerField * SamplesPerScan;
+		// Picture output is set to unloaded video signal (Vpk/pk = 2.0)
+		static float BlankLevel = 1.3000f;  // IRE = 0
+		static float V_pk_pk = 2.0f;
+
+		// TBD: A circular buffer will be used (ScanRing)
 
 		float[] Scan = new float[SamplesPerScan];
 		float[] Field = new float[SamplesPerField];
 		float[] LastScan = new float[SamplesPerScan];
 		float[] LastField = new float[SamplesPerField];
-
 		int ScanSampleCounter = 0;
 		int FieldSampleCounter = 0;
 
-		// Picture output is set to unloaded video signal (Vpk/pk = 2.0)
+		// Visualization settings
 
-		static float BlankLevel = 1.3000f;  // IRE = 0
-		static float V_pk_pk = 2.0f;
-		static float WhiteLevel = BlankLevel + V_pk_pk;
-		static float IRE = V_pk_pk / 100.0f;
-		static int PixelsPerSample = 1;
+		static int PixelsPerSample = 1;     // Discrete pixels (Bitmap)
 		static int ScaleY = 5;
 		static int PPUPicturePortion = 256 * SamplesPerPCLK;
-
 		Color scanBgColor = Color.Gray;
 		Color scanColor = Color.AliceBlue;
 		Color pictureDelimiterColor = Color.Tomato;
@@ -136,6 +136,7 @@ namespace PPUPlayer
 		{
 			int w = SamplesPerScan * PixelsPerSample;
 			int h = 250 * ScaleY;
+			float IRE = V_pk_pk / 100.0f;
 
 			//if (scan_pic == null)
 			{
@@ -171,6 +172,7 @@ namespace PPUPlayer
 		{
 			int w = PixelsPerScan;
 			int h = ScansPerField;
+			float WhiteLevel = BlankLevel + V_pk_pk;
 
 			float[] packet = new float[SamplesPerPCLK];
 
