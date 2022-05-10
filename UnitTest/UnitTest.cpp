@@ -160,5 +160,11 @@ namespace UnitTest
 			}
 		}
 
+		TEST_METHOD(TestBGC_SR8)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			Assert::IsTrue(ut.TestBGC_SR8());
+		}
+
 	};
 }

@@ -179,7 +179,7 @@ namespace PPUSim
 	{
 		TriState shift_in = sin;
 
-		for (size_t n = 0; n < 8; n++)
+		for (int n = 7; n >= 0; n--)
 		{
 			sr[n].sim(shift_in, val[n], Load, Step, Next, sout[n]);
 			shift_in = sout[n];

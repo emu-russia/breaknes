@@ -17,6 +17,8 @@ namespace PPUSim
 
 	class BGC_SR8
 	{
+		friend PPUSimUnitTest::UnitTest;
+
 		BGC_SRBit sr[8]{};
 
 	public:
