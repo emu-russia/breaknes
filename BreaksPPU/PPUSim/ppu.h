@@ -4,6 +4,8 @@ namespace PPUSim
 {
 	class PPU;
 
+#pragma pack(push, 1)
+
 	/// <summary>
 	/// A software descriptor of the current video sample. Due to the different PPU revisions the output value may differ in content, so union is used.
 	/// </summary>
@@ -18,6 +20,21 @@ namespace PPUSim
 			uint8_t syncLevel;	// This field is reserved for the "SYNC" output of the RGB PPU (Sync Level).
 		};
 	};
+
+	/// <summary>
+	/// The structure describes all the features of the signal and helps organize its rendering.
+	/// </summary>
+	struct VideoSignalFeatures
+	{
+		size_t SamplesPerPCLK;
+		size_t PixelsPerScan;		// Excluding Dot Crawl
+		size_t ScansPerField;
+		size_t Composite;			// 1: Composite, 0: RGB
+		float BlankLevel;		// IRE = 0
+		float V_pk_pk;
+	};
+
+#pragma pack(pop)
 }
 
 // An external class that has access to all internals. Use for unit testing.
@@ -366,5 +383,7 @@ namespace PPUSim
 		void Dbg_FixedPicture(bool enable);
 
 		void Dbg_RenderAlwaysEnabled(bool enable);
+
+		void GetSignalFeatures(VideoSignalFeatures& features);
 	};
 }

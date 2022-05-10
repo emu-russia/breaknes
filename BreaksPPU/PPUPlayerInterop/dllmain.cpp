@@ -168,4 +168,23 @@ extern "C"
             board->RenderAlwaysEnabled(enable);
         }
     }
+
+    __declspec(dllexport) void GetSignalFeatures(PPUSim::VideoSignalFeatures* features)
+    {
+        if (board != nullptr)
+        {
+            board->GetSignalFeatures(features);
+        }
+        else
+        {
+            // If the Board is not created return the default values for the NTSC PPU.
+
+            features->SamplesPerPCLK = 8;
+            features->PixelsPerScan = 341;
+            features->ScansPerField = 262;
+            features->Composite = true;
+            features->BlankLevel = 1.3f;
+            features->V_pk_pk = 2.0f;
+        }
+    }
 }

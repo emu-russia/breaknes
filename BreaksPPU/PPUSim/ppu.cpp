@@ -312,60 +312,18 @@ namespace PPUSim
 		return v->get();
 	}
 
-	uint8_t PPU::Dbg_OAMReadByte(size_t addr)
+	void PPU::GetSignalFeatures(VideoSignalFeatures& features)
 	{
-		return oam->Dbg_OAMReadByte(addr);
-	}
-
-	uint8_t PPU::Dbg_TempOAMReadByte(size_t addr)
-	{
-		return oam->Dbg_TempOAMReadByte(addr);
-	}
-
-	uint8_t PPU::Dbg_CRAMReadByte(size_t addr)
-	{
-		return cram->Dbg_CRAMReadByte(addr);
-	}
-
-	uint8_t PPU::Dbg_GetCRAMAddress()
-	{
-		uint8_t addr = 0;
-		for (size_t n = 0; n < 5; n++)
+		switch (rev)
 		{
-			addr |= (wire.PAL[n] == TriState::One ? 1 : 0) << n;
+			case Revision::RP2C02G:
+				features.SamplesPerPCLK = 8;
+				features.PixelsPerScan = 341;
+				features.ScansPerField = 262;
+				features.Composite = true;
+				features.BlankLevel = 1.3f;
+				features.V_pk_pk = 2.0f;
+				break;
 		}
-		return addr;
-	}
-
-	uint16_t PPU::Dbg_GetPPUAddress()
-	{
-		uint8_t PABot = 0;
-		for (size_t n = 0; n < 8; n++)
-		{
-			PABot |= (wire.n_PA_Bot[n] == TriState::Zero ? 1 : 0) << n;
-		}
-
-		uint8_t PATop = 0;
-		for (size_t n = 0; n < 6; n++)
-		{
-			PATop |= (wire.n_PA_Top[n] == TriState::Zero ? 1 : 0) << n;
-		}
-
-		return ((uint16_t)PATop << 8) | PABot;
-	}
-
-	void PPU::Dbg_RandomizePicture(bool enable)
-	{
-		vid_out->Dbg_RandomizePicture(enable);
-	}
-
-	void PPU::Dbg_FixedPicture(bool enable)
-	{
-		vid_out->Dbg_FixedPicture(enable);
-	}
-
-	void PPU::Dbg_RenderAlwaysEnabled(bool enable)
-	{
-		regs->Debug_RenderAlwaysEnabled(enable);
 	}
 }

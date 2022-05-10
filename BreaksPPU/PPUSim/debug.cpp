@@ -213,4 +213,61 @@ namespace PPUSim
 		regs.SCC_TV = Pack5(wire.TV);
 		regs.SCC_TH = Pack5(wire.TH);
 	}
+
+	uint8_t PPU::Dbg_OAMReadByte(size_t addr)
+	{
+		return oam->Dbg_OAMReadByte(addr);
+	}
+
+	uint8_t PPU::Dbg_TempOAMReadByte(size_t addr)
+	{
+		return oam->Dbg_TempOAMReadByte(addr);
+	}
+
+	uint8_t PPU::Dbg_CRAMReadByte(size_t addr)
+	{
+		return cram->Dbg_CRAMReadByte(addr);
+	}
+
+	uint8_t PPU::Dbg_GetCRAMAddress()
+	{
+		uint8_t addr = 0;
+		for (size_t n = 0; n < 5; n++)
+		{
+			addr |= (wire.PAL[n] == TriState::One ? 1 : 0) << n;
+		}
+		return addr;
+	}
+
+	uint16_t PPU::Dbg_GetPPUAddress()
+	{
+		uint8_t PABot = 0;
+		for (size_t n = 0; n < 8; n++)
+		{
+			PABot |= (wire.n_PA_Bot[n] == TriState::Zero ? 1 : 0) << n;
+		}
+
+		uint8_t PATop = 0;
+		for (size_t n = 0; n < 6; n++)
+		{
+			PATop |= (wire.n_PA_Top[n] == TriState::Zero ? 1 : 0) << n;
+		}
+
+		return ((uint16_t)PATop << 8) | PABot;
+	}
+
+	void PPU::Dbg_RandomizePicture(bool enable)
+	{
+		vid_out->Dbg_RandomizePicture(enable);
+	}
+
+	void PPU::Dbg_FixedPicture(bool enable)
+	{
+		vid_out->Dbg_FixedPicture(enable);
+	}
+
+	void PPU::Dbg_RenderAlwaysEnabled(bool enable)
+	{
+		regs->Debug_RenderAlwaysEnabled(enable);
+	}
 }

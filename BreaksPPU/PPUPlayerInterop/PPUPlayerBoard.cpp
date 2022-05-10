@@ -267,4 +267,11 @@ namespace PPUPlayer
 	{
 		ppu->Dbg_RenderAlwaysEnabled(enable);
 	}
+
+	void Board::GetSignalFeatures(PPUSim::VideoSignalFeatures* features)
+	{
+		PPUSim::VideoSignalFeatures feat{};
+		ppu->GetSignalFeatures(feat);
+		*features = feat;
+	}
 }
