@@ -1,9 +1,66 @@
 #include "pch.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+using namespace BaseLogic;
 
 namespace UnitTest
 {
+	TEST_CLASS(BaseLogicUnitTest)
+	{
+	public:
+
+		TEST_METHOD(TestBitRev)
+		{
+			TriState bits[8]{};
+			Unpack(0b10000110, bits);
+			BitRev(bits);
+			Assert::IsTrue(Pack(bits) == 0b01100001);
+		}
+
+		TEST_METHOD(TestMUX2)
+		{
+			TriState in[4]{};
+			TriState sel[2]{};
+
+			for (size_t n = 0; n < _countof(in); n++)
+			{
+				sel[0] = n & 1 ? TriState::One : TriState::Zero;
+				sel[1] = n & 2 ? TriState::One : TriState::Zero;
+
+				for (size_t i = 0; i < _countof(in); i++)
+				{
+					in[i] = TriState::Zero;
+				}
+
+				in[n] = TriState::One;
+
+				Assert::IsTrue(MUX2(sel, in) == TriState::One);
+			}
+		}
+
+		TEST_METHOD(TestMUX3)
+		{
+			TriState in[8]{};
+			TriState sel[3]{};
+
+			for (size_t n = 0; n < _countof(in); n++)
+			{
+				sel[0] = n & 1 ? TriState::One : TriState::Zero;
+				sel[1] = n & 2 ? TriState::One : TriState::Zero;
+				sel[2] = n & 4 ? TriState::One : TriState::Zero;
+
+				for (size_t i = 0; i < _countof(in); i++)
+				{
+					in[i] = TriState::Zero;
+				}
+
+				in[n] = TriState::One;
+
+				Assert::IsTrue(MUX3(sel, in) == TriState::One);
+			}
+		}
+	};
+
 	TEST_CLASS(CoreUnitTest)
 	{
 	public:
