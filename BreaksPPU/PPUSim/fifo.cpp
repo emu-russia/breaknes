@@ -286,19 +286,19 @@ namespace PPUSim
 	void FIFOLane::sim_PairedSR(TriState n_TX[8])
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState shift_in[2]{};
+		TriState shift_out[2]{};
 
-		shift_in[0] = TriState::One;
-		shift_in[1] = TriState::One;
+		shift_out[0] = TriState::One;
+		shift_out[1] = TriState::One;
 
-		for (size_t n = 0; n < 8; n++)
+		for (int n = 7; n >= 0; n--)
 		{
-			paired_sr[0][n].sim(n_PCLK, T_SR0, SR_EN, n_TX[n], shift_in[0], shift_in[0]);
-			paired_sr[1][n].sim(n_PCLK, T_SR1, SR_EN, n_TX[n], shift_in[1], shift_in[1]);
+			shift_out[0] = paired_sr[0][n].sim(n_PCLK, T_SR0, SR_EN, n_TX[n], shift_out[0]);
+			shift_out[1] = paired_sr[1][n].sim(n_PCLK, T_SR1, SR_EN, n_TX[n], shift_out[1]);
 		}
 
-		nZ_COL0 = shift_in[0];
-		nZ_COL1 = shift_in[1];
+		nZ_COL0 = shift_out[0];
+		nZ_COL1 = shift_out[1];
 	}
 
 	/// <summary>
@@ -311,7 +311,7 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			down_cnt[n].sim(UPD, LOAD, STEP, ppu->wire.OB[n], carry, carry);
+			carry = down_cnt[n].sim(UPD, LOAD, STEP, ppu->wire.OB[n], carry);
 		}
 
 		return carry;
@@ -349,23 +349,26 @@ namespace PPUSim
 	/// <summary>
 	/// The output values of the counter are not used by anyone.
 	/// </summary>
-	void FIFO_CounterBit::sim(
+	TriState FIFO_CounterBit::sim(
 		TriState Clock, TriState Load, TriState Step,
 		TriState val_in,
-		TriState carry_in, TriState& carry_out )
+		TriState carry_in)
 	{
 		keep_ff.set(MUX(Step, 
 			MUX(Load, MUX(Clock, TriState::Z, MUX(carry_in, keep_ff.get(), keep_ff.nget())), val_in),
 			step_latch.nget()));
 		step_latch.set(MUX(carry_in, keep_ff.get(), keep_ff.nget()), Clock);
-		carry_out = NOR(keep_ff.nget(), NOT(carry_in));
+		TriState carry_out = NOR(keep_ff.nget(), NOT(carry_in));
+		return carry_out;
 	}
 
-	void FIFO_SRBit::sim(TriState n_PCLK, TriState T_SR, TriState SR_EN,
-		TriState nTx, TriState shift_in, TriState& shift_out)
+	TriState FIFO_SRBit::sim(TriState n_PCLK, TriState T_SR, TriState SR_EN,
+		TriState nTx, TriState shift_in)
 	{
 		in_latch.set(MUX(SR_EN, MUX(T_SR, TriState::Z, nTx), shift_in), TriState::One);
 		out_latch.set(in_latch.nget(), n_PCLK);
+		TriState shift_out = out_latch.nget();
+		return shift_out;
 	}
 
 #pragma endregion "FIFO Lane"

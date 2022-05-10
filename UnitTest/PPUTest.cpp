@@ -428,4 +428,38 @@ namespace PPUSimUnitTest
 
 		return Pack(ppu->wire.OV);
 	}
+
+	bool UnitTest::TestBGC_SR8()
+	{
+		BGC_SR8 sr;
+
+		for (size_t n=0; n<0x100; n++)
+		{
+			uint8_t sr_val = (uint8_t)n;
+			TriState sr_val_unpacked[8]{};
+			TriState sout[8]{};
+			TriState unused[8]{};
+			TriState srin = TriState::Zero;
+
+			Unpack(sr_val, sr_val_unpacked);
+
+			sr.sim(sr_val_unpacked, srin, TriState::One, TriState::Zero, TriState::One, sout);
+
+			if (Pack(sout) != sr_val)
+				return false;
+
+			for (size_t i = 0; i < 8; i++)
+			{
+				sr.sim(unused, srin, TriState::Zero, TriState::One, TriState::Zero, sout);
+				sr_val >>= 1;
+
+				sr.sim(unused, srin, TriState::Zero, TriState::Zero, TriState::One, sout);
+
+				if (Pack(sout) != sr_val)
+					return false;
+			}
+		}
+
+		return true;
+	}
 }

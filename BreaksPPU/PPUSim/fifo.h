@@ -10,9 +10,9 @@ namespace PPUSim
 		BaseLogic::DLatch step_latch;
 
 	public:
-		void sim(BaseLogic::TriState Clock, BaseLogic::TriState Load, BaseLogic::TriState Step,
+		BaseLogic::TriState sim(BaseLogic::TriState Clock, BaseLogic::TriState Load, BaseLogic::TriState Step,
 			BaseLogic::TriState val_in,
-			BaseLogic::TriState carry_in, BaseLogic::TriState & carry_out);
+			BaseLogic::TriState carry_in);
 	};
 
 	class FIFO_SRBit
@@ -21,8 +21,8 @@ namespace PPUSim
 		BaseLogic::DLatch out_latch;
 
 	public:
-		void sim(BaseLogic::TriState n_PCLK, BaseLogic::TriState T_SR, BaseLogic::TriState SR_EN,
-			BaseLogic::TriState nTx, BaseLogic::TriState shift_in, BaseLogic::TriState & shift_out );
+		BaseLogic::TriState sim(BaseLogic::TriState n_PCLK, BaseLogic::TriState T_SR, BaseLogic::TriState SR_EN,
+			BaseLogic::TriState nTx, BaseLogic::TriState shift_in);
 	};
 
 	enum class FIFOLaneOutput
