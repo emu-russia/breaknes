@@ -97,13 +97,14 @@ namespace PPUSim
 		void sim_NTCounters();
 		void sim_TVCounter();
 		void sim_THCounter();
-		void sim_PARInputs();
-		void sim_PAR();
 
 	public:
 		PAR(PPU* parent);
 		~PAR();
 
 		void sim();
+
+		void sim_PARInputs();
+		void sim_PAROutputs();
 	};
 }

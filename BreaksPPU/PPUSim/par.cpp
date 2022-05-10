@@ -24,8 +24,6 @@ namespace PPUSim
 		sim_NTCounters();
 		sim_TVCounter();
 		sim_THCounter();
-		sim_PARInputs();
-		sim_PAR();
 	}
 
 	void PAR::sim_CountersControl()
@@ -215,7 +213,7 @@ namespace PPUSim
 		PAD_in[13] = TriState::Zero;
 	}
 
-	void PAR::sim_PAR()
+	void PAR::sim_PAROutputs()
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState DB_PAR = ppu->wire.DB_PAR;

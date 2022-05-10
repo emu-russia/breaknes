@@ -27,8 +27,10 @@ namespace PPUSim
 	void DataReader::sim()
 	{
 		sccx->sim();
-		patgen->sim();
 		par->sim();
+		patgen->sim();
+		par->sim_PARInputs();
+		par->sim_PAROutputs();
 		bgcol->sim();
 	}
 }
