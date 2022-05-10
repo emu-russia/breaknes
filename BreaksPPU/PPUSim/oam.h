@@ -84,6 +84,7 @@ namespace PPUSim
 
 	class OAM
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		static const size_t num_lanes = 8 + 1;	// 0-7: OAM, 8: TempOAM

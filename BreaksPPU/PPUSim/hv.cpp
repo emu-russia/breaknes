@@ -22,6 +22,11 @@ namespace PPUSim
 		return out;
 	}
 
+	void HVCounterBit::set(TriState val)
+	{
+		ff.set(val);
+	}
+
 	HVCounter::HVCounter(PPU* parent, size_t bits)
 	{
 		assert(bits <= bitCountMax);
@@ -65,6 +70,15 @@ namespace PPUSim
 		}
 
 		return val;
+	}
+
+	void HVCounter::set(size_t val)
+	{
+		for (size_t n = 0; n < bitCount; n++)
+		{
+			auto bitVal = (val >> n) & 1 ? TriState::One : TriState::Zero;
+			bit[n]->set(bitVal);
+		}
 	}
 
 	TriState HVCounter::getBit(size_t n)

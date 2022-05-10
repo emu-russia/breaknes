@@ -14,6 +14,7 @@ namespace PPUSim
 
 	class ScrollRegs
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		SCC_FF FineH[3]{};

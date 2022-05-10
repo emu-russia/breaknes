@@ -38,6 +38,7 @@ namespace PPUSim
 
 	class FIFOLane
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		FIFO_SRBit paired_sr[2][8]{};
@@ -84,6 +85,7 @@ namespace PPUSim
 
 	class FIFO
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		FIFOLane* lane[8];

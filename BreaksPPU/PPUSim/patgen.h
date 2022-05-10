@@ -28,6 +28,7 @@ namespace PPUSim
 
 	class PATGen
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		PatBitInv inv_bits[4]{};

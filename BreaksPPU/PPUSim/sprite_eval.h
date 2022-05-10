@@ -54,6 +54,7 @@ namespace PPUSim
 
 	class OAMEval
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		OAMCounterBit MainCounter[8];

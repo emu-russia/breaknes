@@ -6,6 +6,7 @@ namespace PPUSim
 {
 	class Mux
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		BaseLogic::DLatch step1[4];

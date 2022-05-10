@@ -31,5 +31,6 @@ namespace PPUSimUnitTest
 		bool RunSinglePCLK();
 		bool RunLines(size_t n);
 		bool RunHalfCyclesWithChipScope(size_t half_cycles, const char *filename);
+		uint8_t TestComparator(uint8_t a, uint8_t b);
 	};
 }

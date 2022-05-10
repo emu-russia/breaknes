@@ -27,6 +27,7 @@ namespace PPUSim
 
 	class BGCol
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		BaseLogic::DLatch fat_latch;
