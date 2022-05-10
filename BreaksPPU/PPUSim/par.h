@@ -43,6 +43,7 @@ namespace PPUSim
 
 	class PAR
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		BaseLogic::DLatch w62_latch;

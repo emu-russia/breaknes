@@ -21,6 +21,7 @@ namespace PPUSim
 
 	class VRAM_Control
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		BaseLogic::DLatch wr_latch1;

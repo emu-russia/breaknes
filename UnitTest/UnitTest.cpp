@@ -83,5 +83,25 @@ namespace UnitTest
 			}
 		}
 
+		TEST_METHOD(TestComparator)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+
+			for (size_t a=0; a<0x100; a++)
+			{
+				for (size_t b = 0; b < 0x100; b++)
+				{
+					uint8_t res = ut.TestComparator((uint8_t)a, (uint8_t)b);
+					uint8_t should = (uint8_t)((int8_t)(uint8_t)a - (int8_t)(uint8_t)b);
+					if (res != should)
+					{
+						Logger::WriteMessage((std::to_string(a) + " - " + std::to_string(b) + " = "
+							+ std::to_string(res) + ", should: " + std::to_string(should)).c_str());
+					}
+					Assert::IsTrue(res == should);
+				}
+			}
+		}
+
 	};
 }

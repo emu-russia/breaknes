@@ -415,4 +415,17 @@ namespace PPUSimUnitTest
 		OpenDirectFSM(BLNK, 124);
 		OpenDirectFSM(INT, 125);
 	}
+
+	uint8_t UnitTest::TestComparator(uint8_t a, uint8_t b)
+	{
+		// OV = V - OB
+
+		ppu->v->set(a);
+		Unpack(b, ppu->wire.OB);
+		ppu->wire.PCLK = TriState::One;
+
+		ppu->eval->sim_Comparator();
+
+		return Pack(ppu->wire.OV);
+	}
 }

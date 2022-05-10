@@ -6,6 +6,7 @@ namespace PPUSim
 {
 	class FSM
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		BaseLogic::DLatch h_latch1[6];

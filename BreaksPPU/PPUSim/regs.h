@@ -6,6 +6,7 @@ namespace PPUSim
 {
 	class ControlRegs
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		BaseLogic::DLatch nvis_latch;

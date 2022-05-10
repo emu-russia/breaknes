@@ -23,6 +23,7 @@ namespace PPUSim
 
 	class CRAM
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		BaseLogic::DLatch dbpar_latch;

@@ -27,6 +27,7 @@ namespace PPUSim
 
 	class VideoOut
 	{
+		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
 		float LToV[16]{};
