@@ -11,6 +11,7 @@ using System.Collections;
 
 using System.Drawing.Drawing2D;
 using System.IO;
+using System.Numerics;
 
 // TBD: The entire implementation is NTSC PPU oriented. As things settle down, you need to add PPU selection settings and parameterize this module.
 
@@ -38,6 +39,7 @@ namespace PPUPlayer
 
 		static float BlankLevel = 1.3000f;  // IRE = 0
 		static float V_pk_pk = 2.0f;
+		static float WhiteLevel = BlankLevel + V_pk_pk;
 		static float IRE = V_pk_pk / 100.0f;
 		static int PixelsPerSample = 1;
 		static int ScaleY = 5;
@@ -170,6 +172,8 @@ namespace PPUPlayer
 			int w = PixelsPerScan;
 			int h = ScansPerField;
 
+			float[] packet = new float[SamplesPerPCLK];
+
 			//if (field_pic == null)
 			{
 				field_pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -189,21 +193,98 @@ namespace PPUPlayer
 					float avg = 0.0f;
 					for (int i = 0; i < SamplesPerPCLK; i++)
 					{
-						avg += Field[samplePtr++];
+						packet[i] = Field[samplePtr] - BlankLevel;
+						avg += packet[i];
+						samplePtr++;
 					}
 					avg /= SamplesPerPCLK;
 
-					// Normalization
+					float lum = Clamp(avg / WhiteLevel, 0, 1);
 
-					float ire = ((avg - BlankLevel) / IRE);
-					int gs = (int)Math.Max(0.0f, Math.Min(255.0f, ire));
+					// Saturation/Hue
 
-					gr.FillRectangle(new SolidBrush(Color.FromArgb(gs, gs, gs)), x, y, 1, 1);
+					var c = Goertzel(packet, SamplesPerPCLK, 1.0f);
+
+					float hue = Clamp((float)c.Phase, 0, 1);
+					float sat = Clamp((float)c.Magnitude, 0, 1);
+
+					// HSL -> RGB
+
+					gr.FillRectangle(new SolidBrush(hsl2rgb(hue, sat, lum)), x, y, 1, 1);
 				}
 			}
 
 			pictureBoxField.Image = field_pic;
 			gr.Dispose();
+		}
+
+		// https://dsp.stackexchange.com/questions/23944/using-goertzel-to-find-phase-shift
+
+		Complex Goertzel (float[] data, int size, float omega)
+		{
+			float sine, cosine, coeff, q1 = 0, q2 = 0;
+
+			sine = (float)Math.Sin(omega);
+			cosine = (float)Math.Cos(omega);
+			coeff = 2.0f * cosine;
+
+			for (int t = 0; t < size; t++)
+			{
+				float q0 = coeff * q1 - q2 + data[t];
+				q2 = q1;
+				q1 = q0;
+			}
+
+			float real = (q1 - q2 * cosine);
+			float imag = (q2 * sine);
+
+			return new Complex(real, imag);
+		}
+
+		// https://gist.github.com/ciembor/1494530
+
+		float hue2rgb(float p, float q, float t)
+		{
+			if (t < 0)
+				t += 1;
+			if (t > 1)
+				t -= 1;
+			if (t < 1.0f / 6)
+				return p + (q - p) * 6 * t;
+			if (t < 1.0f / 2)
+				return q;
+			if (t < 2.0f / 3)
+				return p + (q - p) * (2.0f / 3 - t) * 6;
+
+			return p;
+		}
+
+		Color hsl2rgb(float h, float s, float l)
+		{
+			Color result;
+
+			if (s == 0)
+			{
+				// achromatic
+				int z = (int)Clamp(l * 255, 0, 255);
+				result = Color.FromArgb (z, z, z);
+			}
+			else
+			{
+				float q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+				float p = 2 * l - q;
+				float r = Clamp(hue2rgb(p, q, h + 1.0f / 3) * 255, 0, 255);
+				float g = Clamp(hue2rgb(p, q, h) * 255, 0, 255);
+				float b = Clamp(hue2rgb(p, q, h - 1.0f / 3) * 255, 0, 255);
+				result = Color.FromArgb((int)r, (int)g, (int)b);
+			}
+
+			return result;
+		}
+
+		float Clamp(float val, float min, float max)
+		{
+			return Math.Min(max, Math.Max(val, min));
 		}
 
 		void ResetVisualize()
