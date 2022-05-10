@@ -15,5 +15,5 @@ Use VS2022.
 - 6502 Core: 100%
 - APU: 1/9
 - PPU: 99%
-- Boards: 0/4
-- Mappers: 0
+- Boards: 1/5
+- Mappers: 0.5 (Only NROM partially)
