@@ -27,6 +27,7 @@ namespace PPUSim
 	void FIFO::sim()
 	{
 		sim_HInv();
+		BitRev(n_TX);
 		sim_Lanes();
 		sim_Prio();
 	}
@@ -40,9 +41,11 @@ namespace PPUSim
 
 		HINV_FF.set(MUX(NOR(n_PCLK, n_SH2), NOT(NOT(HINV_FF.get())), OB6));
 
+		auto HINV = HINV_FF.get();
+
 		for (size_t n = 0; n < 8; n++)
 		{
-			tout_latch[n].set(MUX(HINV_FF.get(), ppu->GetPDBit(n), ppu->GetPDBit(7 - n)), n_PCLK);
+			tout_latch[n].set(MUX(HINV, ppu->GetPDBit(n), ppu->GetPDBit(7 - n)), n_PCLK);
 			n_TX[n] = NAND(tout_latch[n].get(), Z_FIFO);
 		}
 	}
