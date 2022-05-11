@@ -115,11 +115,12 @@ namespace PPUPlayer
 		VRAM_Addr |= ((PA[9] == TriState::One) ? 1 : 0) << 9;
 		VRAM_Addr |= ((VRAM_A10 == TriState::One) ? 1 : 0) << 10;
 
-		//if ((uint8_t)VRAM_Addr == ad_bus && (uint8_t)VRAM_Addr != 0 && n_WR == TriState::Zero)
-		//{
-		//	printf("Possible VRAM Corruption. /WR: %d, /RD: %d, VRAM Addr: 0x%x\n", 
-		//		n_WR, n_RD, VRAM_Addr);
-		//}
+#ifdef _DEBUG
+		if (n_WR == TriState::Zero && n_VRAM_CS == TriState::Zero)
+		{
+			printf("VRAM Write: 0x%x <= 0x%x; H: %zd, V: %zd\n", VRAM_Addr, ad_bus, GetHCounter(), GetVCounter());
+		}
+#endif	// _DEBUG
 
 		bool dz = (n_RD == TriState::One && n_WR == TriState::One);
 		vram->sim(n_VRAM_CS, n_WR, n_RD, &VRAM_Addr, &ad_bus, dz);

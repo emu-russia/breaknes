@@ -61,7 +61,8 @@ extern "C"
     {
         if (board != nullptr)
         {
-            printf("CPUWrite: %d 0x%02X\n", (uint8_t)ppuReg, val);
+            printf("CPUWrite: %d 0x%02X; H/V = %zd/%zd, PCLK = %zd\n", 
+                (uint8_t)ppuReg, val, board->GetHCounter(), board->GetVCounter(), board->GetPCLKCounter() );
             board->CPUWrite(ppuReg, val);
         }
     }
