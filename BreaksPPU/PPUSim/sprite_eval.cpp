@@ -111,12 +111,22 @@ namespace PPUSim
 		TriState carry_in = TriState::Zero;
 		TriState M4_OVZ = get_M4_OVZ();		// The value has not been updated yet
 
-		for (size_t n = 0; n < 4; n++)
+		if (ppu->HLEMode)
 		{
-			carry_in = cmpr[n].sim(PCLK,
-				ppu->wire.OB[2 * n], ppu->v->getBit(2 * n),
-				ppu->wire.OB[2 * n + 1], ppu->v->getBit(2 * n + 1),
-				carry_in, ppu->wire.OV[2 * n], ppu->wire.OV[2 * n + 1]);
+			uint8_t V = (uint8_t)ppu->v->get();
+			uint8_t OB = Pack(ppu->wire.OB);
+			uint8_t OV = (int8_t)V - (int8_t)OB;
+			Unpack(OV, ppu->wire.OV);
+		}
+		else
+		{
+			for (size_t n = 0; n < 4; n++)
+			{
+				carry_in = cmpr[n].sim(PCLK,
+					ppu->wire.OB[2 * n], ppu->v->getBit(2 * n),
+					ppu->wire.OB[2 * n + 1], ppu->v->getBit(2 * n + 1),
+					carry_in, ppu->wire.OV[2 * n], ppu->wire.OV[2 * n + 1]);
+			}
 		}
 
 		ovz_latch.set(ppu->wire.OB[7], PCLK);

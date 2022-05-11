@@ -55,7 +55,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(149, 42);
 			this.label1.TabIndex = 1;
-			this.label1.Text = "PPU Player, v. 1.3\r\n© 2022, emu-russia";
+			this.label1.Text = "PPU Player, v. 1.4\r\n© 2022, emu-russia";
 			// 
 			// button1
 			// 

@@ -327,8 +327,10 @@ namespace PPUSim
 
 		BaseLogic::DLatch extout_latch[4]{};
 
+		bool HLEMode = false;
+
 	public:
-		PPU(Revision rev);
+		PPU(Revision rev, bool HLEMode = false);
 		~PPU();
 
 		/// <summary>

@@ -6,9 +6,10 @@ using namespace BaseLogic;
 
 namespace PPUSim
 {
-	PPU::PPU(Revision _rev)
+	PPU::PPU(Revision _rev, bool _HLEMode)
 	{
 		rev = _rev;
+		HLEMode = _HLEMode;
 
 		regs = new ControlRegs(this);
 		h = new HVCounter(this, 9);
@@ -96,13 +97,11 @@ namespace PPUSim
 
 		vram_ctrl->sim();
 		
-#if PPUSIM_OBJECTS
 		eval->sim();
 
 		oam->sim();
 
 		fifo->sim();
-#endif // PPUSIM_OBJECTS
 
 		data_reader->sim();
 
