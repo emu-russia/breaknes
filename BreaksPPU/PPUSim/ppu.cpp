@@ -64,8 +64,8 @@ namespace PPUSim
 		wire.CLK = inputs[(size_t)InputPad::CLK];
 		wire.n_CLK = NOT(wire.CLK);
 
-		Reset_FF.set(NOR(wire.RES, NOR(Reset_FF.get(), hv_fsm->get_RESCL())));
-		wire.RC = NOT(Reset_FF.get());
+		Reset_FF.set(NOR(hv_fsm->get_RESCL(), NOR(wire.RES, Reset_FF.get())));
+		wire.RC = NOT(Reset_FF.nget());
 
 		sim_BusInput(ext, data_bus, ad_bus);
 
@@ -168,11 +168,9 @@ namespace PPUSim
 		if (wire.n_WR == TriState::Zero)
 		{
 			DB = *data_bus;
-			DB_Dirty = true;
 		}
 
 		PD = *ad_bus;
-		PD_Dirty = true;
 	}
 
 	void PPU::sim_BusOutput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus)
@@ -197,7 +195,6 @@ namespace PPUSim
 		if (wire.n_RD == TriState::Zero)
 		{
 			*data_bus = DB;
-			DB_Dirty = false;
 		}
 
 		if (wire.RD == TriState::Zero)
@@ -255,7 +252,7 @@ namespace PPUSim
 	TriState PPU::GetDBBit(size_t n)
 	{
 		TriState DBBit = (DB & (1 << n)) != 0 ? TriState::One : TriState::Zero;
-		return DB_Dirty ? DBBit : TriState::Z;
+		return DBBit;
 	}
 
 	void PPU::SetDBBit(size_t n, TriState bit_val)
@@ -264,23 +261,14 @@ namespace PPUSim
 		{
 			uint8_t out = DB & ~(1 << n);
 			out |= (bit_val == BaseLogic::One ? 1 : 0) << n;
-
-			if (DB_Dirty)
-			{
-				DB = DB & out;
-			}
-			else
-			{
-				DB = out;
-				DB_Dirty = true;
-			}
+			DB = out;
 		}
 	}
 
 	TriState PPU::GetPDBit(size_t n)
 	{
 		TriState PDBit = (PD & (1 << n)) != 0 ? TriState::One : TriState::Zero;
-		return PD_Dirty ? PDBit : TriState::Z;
+		return PDBit;
 	}
 
 	void PPU::SetPDBit(size_t n, TriState bit_val)
@@ -289,16 +277,7 @@ namespace PPUSim
 		{
 			uint8_t out = PD & ~(1 << n);
 			out |= (bit_val == BaseLogic::One ? 1 : 0) << n;
-
-			if (PD_Dirty)
-			{
-				PD = PD & out;
-			}
-			else
-			{
-				PD = out;
-				PD_Dirty = true;
-			}
+			PD = out;
 		}
 	}
 

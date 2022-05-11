@@ -264,16 +264,20 @@ namespace PPUPlayer
 				return null;
 			}
 
-			UInt16 pclkDelta = logData[logPointer + 1];
+			UInt32 pclkDelta = logData[logPointer + 3];
+			pclkDelta <<= 8;
+			pclkDelta |= logData[logPointer + 2];
+			pclkDelta <<= 8;
+			pclkDelta |= logData[logPointer + 1];
 			pclkDelta <<= 8;
 			pclkDelta |= logData[logPointer + 0];
 
-			entry.pclk = PPUPlayerInterop.GetPCLKCounter() + pclkDelta;
-			entry.write = (logData[logPointer + 2] & 0x80) == 0 ? true : false;
-			entry.reg = (byte)(logData[logPointer + 2] & 0x7);
-			entry.value = logData[logPointer + 3];
+			entry.pclk = PPUPlayerInterop.GetPCLKCounter() + (int)pclkDelta;
+			entry.write = (logData[logPointer + 4] & 0x80) == 0 ? true : false;
+			entry.reg = (byte)(logData[logPointer + 4] & 0x7);
+			entry.value = logData[logPointer + 5];
 
-			logPointer += 4;
+			logPointer += 8;
 
 			return entry;
 		}

@@ -115,6 +115,13 @@ namespace PPUPlayer
 		VRAM_Addr |= ((PA[9] == TriState::One) ? 1 : 0) << 9;
 		VRAM_Addr |= ((VRAM_A10 == TriState::One) ? 1 : 0) << 10;
 
+#ifdef _DEBUG
+		if (n_WR == TriState::Zero && n_VRAM_CS == TriState::Zero)
+		{
+			printf("VRAM Write: 0x%x <= 0x%x; H: %zd, V: %zd\n", VRAM_Addr, ad_bus, GetHCounter(), GetVCounter());
+		}
+#endif	// _DEBUG
+
 		bool dz = (n_RD == TriState::One && n_WR == TriState::One);
 		vram->sim(n_VRAM_CS, n_WR, n_RD, &VRAM_Addr, &ad_bus, dz);
 
@@ -263,11 +270,21 @@ namespace PPUPlayer
 		return pendingReset;
 	}
 
+	/// <summary>
+	/// Forcibly enable rendering ($2001[3] = $2001[4] always equals 1). 
+	/// Used for debugging PPU signals, when the CPU I/F register dump is limited, or when you want to get faster simulation results. 
+	/// Keep in mind that with permanently enabled rendering the PPU becomes unstable and this hack should be applied when you know what you're doing.
+	/// </summary>
+	/// <param name="enable"></param>
 	void Board::RenderAlwaysEnabled(bool enable)
 	{
 		ppu->Dbg_RenderAlwaysEnabled(enable);
 	}
 
+	/// <summary>
+	/// Get video signal settings that help with its rendering on the consumer side.
+	/// </summary>
+	/// <param name="features"></param>
 	void Board::GetSignalFeatures(PPUSim::VideoSignalFeatures* features)
 	{
 		PPUSim::VideoSignalFeatures feat{};

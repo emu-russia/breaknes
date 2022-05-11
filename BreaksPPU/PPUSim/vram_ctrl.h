@@ -43,8 +43,6 @@ namespace PPUSim
 		BaseLogic::DLatch h0_latch;
 		BaseLogic::DLatch blnk_latch;
 
-		BaseLogic::TriState R7_EN = BaseLogic::TriState::Z;
-		BaseLogic::TriState W7_EN = BaseLogic::TriState::Z;
 		BaseLogic::TriState tmp_1 = BaseLogic::TriState::Z;
 		BaseLogic::TriState tmp_2 = BaseLogic::TriState::Z;
 
