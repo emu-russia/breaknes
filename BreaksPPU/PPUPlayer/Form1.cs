@@ -170,7 +170,7 @@ namespace PPUPlayer
 
 			logData = File.ReadAllBytes(ppu_dump);
 			logPointer = 0;
-			TotalOps = logData.Length / 4;
+			TotalOps = logData.Length / 8;
 			Console.WriteLine("Number of PPU Dump records: " + TotalOps.ToString());
 
 			byte[] nes = File.ReadAllBytes(nes_file);
@@ -259,7 +259,7 @@ namespace PPUPlayer
 			PPULogEntry entry = new PPULogEntry();
 
 			var bytesLeft = logData.Length - logPointer;
-			if (bytesLeft < 4)
+			if (bytesLeft < 8)
 			{
 				return null;
 			}
