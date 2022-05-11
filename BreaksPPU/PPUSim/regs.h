@@ -39,7 +39,8 @@ namespace PPUSim
 		BaseLogic::DLatch black_latch1;
 		BaseLogic::DLatch black_latch2;
 
-		void sim_RegOps();
+		void sim_RegularRegOps();
+		void sim_W56RegOps();
 		void sim_FirstSecond_SCCX_Write();
 		void sim_RegFFs();
 
@@ -48,8 +49,6 @@ namespace PPUSim
 
 		bool RenderAlwaysEnabled = false;
 		bool ClippingAlwaysDisabled = false;
-
-		void trace();
 
 		void sim_PalBLACK();
 

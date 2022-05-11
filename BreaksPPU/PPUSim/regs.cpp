@@ -17,16 +17,16 @@ namespace PPUSim
 
 	void ControlRegs::sim()
 	{
-		sim_RegOps();
+		sim_RegularRegOps();
+		sim_W56RegOps();
 		sim_FirstSecond_SCCX_Write();
+
 		sim_RegFFs();
 
 		if (ppu->rev == Revision::RP2C07_0)
 		{
 			sim_PalBLACK();
 		}
-
-		//trace();
 	}
 
 	void ControlRegs::sim_RWDecoder()
@@ -38,50 +38,13 @@ namespace PPUSim
 		ppu->wire.n_WR = NOT(NOR(RnW, n_DBE));
 	}
 
-	void ControlRegs::sim_RegOps()
+	void ControlRegs::sim_RegularRegOps()
 	{
 		TriState RS0 = ppu->wire.RS[0];
 		TriState RS1 = ppu->wire.RS[1];
 		TriState RS2 = ppu->wire.RS[2];
 		TriState RnW = ppu->wire.RnW;
-		TriState in[5]{};
 		TriState in2[4]{};
-
-		// SCCX
-
-		in[0] = RS0;
-		in[1] = NOT(RS1);
-		in[2] = NOT(RS2);
-		in[3] = get_Scnd();
-		in[4] = RnW;
-		ppu->wire.n_W6_1 = NOT(NOR5(in));
-
-		in[0] = RS0;
-		in[1] = NOT(RS1);
-		in[2] = NOT(RS2);
-		in[3] = get_Frst();
-		in[4] = RnW;
-		ppu->wire.n_W6_2 = NOT(NOR5(in));
-
-		in[0] = NOT(RS0);
-		in[1] = RS1;
-		in[2] = NOT(RS2);
-		in[3] = get_Scnd();
-		in[4] = RnW;
-		ppu->wire.n_W5_1 = NOT(NOR5(in));
-
-		in[0] = NOT(RS0);
-		in[1] = RS1;
-		in[2] = NOT(RS2);
-		in[3] = get_Frst();
-		in[4] = RnW;
-		ppu->wire.n_W5_2 = NOT(NOR5(in));
-
-		in2[0] = NOT(ppu->wire.n_W5_1);
-		in2[1] = NOT(ppu->wire.n_W5_2);
-		in2[2] = NOT(ppu->wire.n_W6_1);
-		in2[3] = NOT(ppu->wire.n_W6_2);
-		n_W56 = NOR4(in2);
 
 		// Others
 
@@ -132,6 +95,52 @@ namespace PPUSim
 		in2[2] = NOT(RS2);
 		in2[3] = NOT(RnW);
 		ppu->wire.n_R4 = NOT(NOR4(in2));
+	}
+
+	void ControlRegs::sim_W56RegOps()
+	{
+		TriState RS0 = ppu->wire.RS[0];
+		TriState RS1 = ppu->wire.RS[1];
+		TriState RS2 = ppu->wire.RS[2];
+		TriState RnW = ppu->wire.RnW;
+		TriState in[5]{};
+		TriState in2[4]{};
+
+		// SCCX
+
+		in[0] = RS0;
+		in[1] = NOT(RS1);
+		in[2] = NOT(RS2);
+		in[3] = get_Scnd();
+		in[4] = RnW;
+		ppu->wire.n_W6_1 = NOT(NOR5(in));
+
+		in[0] = RS0;
+		in[1] = NOT(RS1);
+		in[2] = NOT(RS2);
+		in[3] = get_Frst();
+		in[4] = RnW;
+		ppu->wire.n_W6_2 = NOT(NOR5(in));
+
+		in[0] = NOT(RS0);
+		in[1] = RS1;
+		in[2] = NOT(RS2);
+		in[3] = get_Scnd();
+		in[4] = RnW;
+		ppu->wire.n_W5_1 = NOT(NOR5(in));
+
+		in[0] = NOT(RS0);
+		in[1] = RS1;
+		in[2] = NOT(RS2);
+		in[3] = get_Frst();
+		in[4] = RnW;
+		ppu->wire.n_W5_2 = NOT(NOR5(in));
+
+		in2[0] = NOT(ppu->wire.n_W5_1);
+		in2[1] = NOT(ppu->wire.n_W5_2);
+		in2[2] = NOT(ppu->wire.n_W6_1);
+		in2[3] = NOT(ppu->wire.n_W6_2);
+		n_W56 = NOR4(in2);
 	}
 
 	void ControlRegs::sim_FirstSecond_SCCX_Write()
@@ -212,7 +221,7 @@ namespace PPUSim
 
 	TriState ControlRegs::get_Frst()
 	{
-		return NOT(SCCX_FF1.get());
+		return SCCX_FF1.nget();
 	}
 
 	TriState ControlRegs::get_Scnd()
@@ -272,66 +281,6 @@ namespace PPUSim
 		}
 
 		return val;
-	}
-
-	/// <summary>
-	/// Check that CPU/IF gets correct values in DB and generates correct RegOps operations.
-	/// </summary>
-	void ControlRegs::trace()
-	{
-#if PPUSIM_TRACE_PRINTFS
-		if (ppu->wire.n_DBE == TriState::Zero)
-		{
-			if (ppu->wire.n_W6_1 == TriState::Zero)
-			{
-				printf("n_W6_1: %x\n", ppu->DB);
-			}
-			if (ppu->wire.n_W6_2 == TriState::Zero)
-			{
-				printf("n_W6_2: %x\n", ppu->DB);
-			}
-			if (ppu->wire.n_W5_1 == TriState::Zero)
-			{
-				printf("n_W5_1: %x\n", ppu->DB);
-			}
-			if (ppu->wire.n_W5_2 == TriState::Zero)
-			{
-				printf("n_W5_2: %x\n", ppu->DB);
-			}
-			if (ppu->wire.n_R7 == TriState::Zero)
-			{
-				printf("n_R7\n");
-			}
-			if (ppu->wire.n_W7 == TriState::Zero)
-			{
-				printf("n_W7: %x\n", ppu->DB);
-			}
-			if (ppu->wire.n_W4 == TriState::Zero)
-			{
-				printf("n_W4: %x\n", ppu->DB);
-			}
-			if (ppu->wire.n_W3 == TriState::Zero)
-			{
-				printf("n_W3: %x\n", ppu->DB);
-			}
-			if (ppu->wire.n_R2 == TriState::Zero)
-			{
-				//printf("n_R2\n");
-			}
-			if (ppu->wire.n_W1 == TriState::Zero)
-			{
-				printf("n_W1: %x\n", ppu->DB);
-			}
-			if (ppu->wire.n_W0 == TriState::Zero)
-			{
-				printf("n_W0: %x\n", ppu->DB);
-			}
-			if (ppu->wire.n_R4 == TriState::Zero)
-			{
-				printf("n_R4\n");
-			}
-		}
-#endif // PPUSIM_TRACE_PRINTFS
 	}
 
 	/// <summary>
