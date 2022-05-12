@@ -180,9 +180,9 @@ namespace PPUSim
 		ORES = NOR(n_PCLK, eval_latch.get());
 		nomfg_latch.set(NOT(OMFG), n_PCLK);
 		ioam2_latch.set(I_OAM2, n_PCLK);
-		auto temp = NOR(NOR(NOR(nomfg_latch.get(), ioam2_latch.get()), H0_D), AND(n_H2_D, PAR_O));
+		auto DontStep = NOR(NOR(NOR(nomfg_latch.get(), ioam2_latch.get()), H0_D), AND(n_H2_D, PAR_O));
 		temp_latch1.set(NAND(OAM2_CNT_FF.get(), EVAL), n_PCLK);
-		OSTEP = NOR3(temp_latch1.get(), n_PCLK, temp);
+		OSTEP = NOR3(temp_latch1.get(), n_PCLK, DontStep);
 		OAM2_CNT_FF.set(NOR(NOR(ORES, OAM2_CNT_FF.get()), AND(tmv_latch.get(), OSTEP)));
 		ppu->wire.OAMCTR2 = OAM2_CNT_FF.nget();
 	}
