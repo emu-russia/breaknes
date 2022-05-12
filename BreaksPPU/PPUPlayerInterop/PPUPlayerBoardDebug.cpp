@@ -11,6 +11,7 @@ using namespace BaseLogic;
 #define CHR_ROM_NAME "CHR-ROM"
 #define PPU_WIRES_CATEGORY "PPU Wires"
 #define PPU_FSM_CATEGORY "PPU FSM"
+#define PPU_EVAL_CATEGORY "PPU Eval"
 #define PPU_REGS_CATEGORY "PPU Regs"
 #define BOARD_CATEGORY "PPUPlayer Board"
 #define NROM_CATEGORY "NROM"
@@ -253,6 +254,17 @@ namespace PPUPlayer
 		"INT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::INT),
 	};
 
+	SignalOffsetPair eval_signals[] = {
+		"OMFG", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMFG),
+		"OMSTEP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMSTEP),
+		"OMOUT", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMOUT),
+		"OMV", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMV),
+		"OSTEP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OSTEP),
+		"ORES", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::ORES),
+		"TMV", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::TMV),
+		"OAP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OAP),
+	};
+
 	SignalOffsetPair ppu_regs[] = {
 		"HCounter", offsetof(PPUSim::PPU_Registers, HCounter),
 		"VCounter", offsetof(PPUSim::PPU_Registers, VCounter),
@@ -311,6 +323,17 @@ namespace PPUPlayer
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), PPU_FSM_CATEGORY);
+			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < _countof(eval_signals); n++)
+		{
+			SignalOffsetPair* sp = &eval_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy_s(entry->category, sizeof(entry->category), PPU_EVAL_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
 		}
@@ -422,6 +445,24 @@ namespace PPUPlayer
 			}
 		}
 
+		else if (!strcmp(entry->category, PPU_EVAL_CATEGORY))
+		{
+			for (size_t n = 0; n < _countof(eval_signals); n++)
+			{
+				SignalOffsetPair* sp = &eval_signals[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					PPUSim::OAMEvalWires wires{};
+					board->ppu->GetDebugInfo_OAMEval(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+
+					return ptr[sp->offset];
+				}
+			}
+		}
+
 		return 0;
 	}
 
@@ -511,5 +552,37 @@ namespace PPUPlayer
 		}
 
 		return 0;
+	}
+
+	/// <summary>
+	/// https://github.com/emu-russia/breaknes/issues/119
+	/// 
+	/// Output when TempOAM is filled with some values to make sure that it is correctly filled with values from the main OAM.
+	/// </summary>
+	void Board::DebugPrintFilledTempOAM()
+	{
+		bool notFF = false;
+		uint8_t temp_oam[32]{};
+		for (size_t n = 0; n < 32; n++)
+		{
+			temp_oam[n] = DumpTempOAM(this, n);
+			if (!(temp_oam[n] == 0xff || temp_oam[n] == 0x00))
+			{
+				notFF = true;
+			}
+		}
+		if (notFF)
+		{
+			printf("TempOAM not 0xFF at H:%zd, V:%zd\n", GetHCounter(), GetVCounter());
+			size_t n = 0;
+			for (size_t row = 0; row < 2; row++)
+			{
+				for (size_t col = 0; col < 16; col++)
+				{
+					printf("%02X ", temp_oam[n++]);
+				}
+				printf("\n");
+			}
+		}
 	}
 }

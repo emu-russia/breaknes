@@ -87,11 +87,29 @@ namespace PPUSim
 		TriState OAMCTR2 = ppu->wire.OAMCTR2;
 		TriState H0_DD = ppu->wire.H0_Dash2;
 		TriState n_VIS = ppu->fsm.nVIS;
+
+		OB_OAM = NOR(n_PCLK, BLNK);
+
+		TriState temp[6]{};
+		temp[0] = BLNK;
+		temp[1] = SPR_OV;
+		temp[2] = PCLK;
+		temp[3] = NOT(H0_DD);
+		temp[4] = OAMCTR2;
+		temp[5] = n_VIS;
+		n_WE = NOR(ppu->wire.OFETCH, NOR6(temp));
+	}
+
+	/// <summary>
+	/// The OFETCH signal must be applied before the Sprite Eval simulation.
+	/// </summary>
+	void OAM::sim_OFETCH()
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState n_W4 = ppu->wire.n_W4;
 		TriState n_DBE = ppu->wire.n_DBE;
 		auto W4_Enable = NOR(n_W4, n_DBE);
-
-		OB_OAM = NOR(n_PCLK, BLNK);
 
 		latch[0].set(OFETCH_FF.nget(), n_PCLK);
 		latch[1].set(latch[0].nget(), PCLK);
@@ -105,15 +123,6 @@ namespace PPUSim
 		// OFETCH FF can be simulated after all because it is updated during PCLK = 1 and the input latch on its output is during PCLK = 0.
 
 		OFETCH_FF.set(MUX(PCLK, NOT(NOT(OFETCH_FF.get())), NOR(W4_Enable, W4_FF.get())));
-
-		TriState temp[6]{};
-		temp[0] = BLNK;
-		temp[1] = SPR_OV;
-		temp[2] = PCLK;
-		temp[3] = NOT(H0_DD);
-		temp[4] = OAMCTR2;
-		temp[5] = n_VIS;
-		n_WE = NOR(ppu->wire.OFETCH, NOR6(temp));
 	}
 
 	void OAM::sim_OB(OAMLane* lane)
@@ -148,7 +157,7 @@ namespace PPUSim
 	{
 		// TBD: You can tweak individual statistical behavior (PRNG, in range, depending on ambient "temperature", etc.)
 
-		pclksToDecay = 10000;	// now just a constant
+		pclksToDecay = 1000000;	// now just a constant
 	}
 
 	void OAMCell::SetTopo(OAMCellTopology place, size_t bank_num)
@@ -191,6 +200,11 @@ namespace PPUSim
 	TriState OAMBufferBit::get()
 	{
 		return OB_FF.get();
+	}
+
+	void OAMBufferBit::set(TriState val)
+	{
+		return OB_FF.set(val);
 	}
 
 	OAMLane::OAMLane(PPU* parent, bool SkipAttrBits)
@@ -258,6 +272,8 @@ namespace PPUSim
 	{
 		// TBD.
 
+		// Might come in handy when we add topology support. But until the cell degradation timings are calculated, it makes no sense.
+
 		return n;
 	}
 
@@ -266,13 +282,46 @@ namespace PPUSim
 		return ob[bit_num]->get();
 	}
 
+	void OAM::set_OB(size_t bit_num, TriState val)
+	{
+		ob[bit_num]->set(val);
+	}
+
 	uint8_t OAM::Dbg_OAMReadByte(size_t addr)
 	{
-		return 0;
+		size_t row = addr & 7;
+		OAMLane* l = lane[row];
+		size_t col = addr >> 3;
+		TriState val[8]{};
+
+		for (size_t bit_num = 0; bit_num < 8; bit_num++)
+		{
+			val[bit_num] = TriState::Z;
+			l->sim(col, bit_num, val[bit_num]);
+
+			// Set the unused bits of the attribute byte to 0.
+
+			if (val[bit_num] == TriState::Z)
+			{
+				val[bit_num] = TriState::Zero;
+			}
+		}
+
+		return Pack(val);
 	}
 
 	uint8_t OAM::Dbg_TempOAMReadByte(size_t addr)
 	{
-		return 0;
+		OAMLane* l = lane[8];
+		size_t col = addr >> 3;
+		TriState val[8]{};
+
+		for (size_t bit_num = 0; bit_num < 8; bit_num++)
+		{
+			val[bit_num] = TriState::Z;
+			l->sim(col, bit_num, val[bit_num]);
+		}
+
+		return Pack(val);
 	}
 }

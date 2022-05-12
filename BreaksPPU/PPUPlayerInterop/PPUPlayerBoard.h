@@ -76,6 +76,8 @@ namespace PPUPlayer
 
 		void GetDebugInfo(BoardDebugInfo& info);
 
+		void DebugPrintFilledTempOAM();
+
 	public:
 		Board(char* boardName, char* apu, char* ppu, char* p1);
 		~Board();

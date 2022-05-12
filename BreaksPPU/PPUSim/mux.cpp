@@ -10,7 +10,6 @@ namespace PPUSim
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState n_ZPRIO = ppu->wire.n_ZPRIO;
 		TriState n_ZCOL0 = ppu->wire.n_ZCOL0;
 		TriState n_ZCOL1 = ppu->wire.n_ZCOL1;
 		TriState ZCOL2 = ppu->wire.ZCOL2;

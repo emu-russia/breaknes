@@ -80,6 +80,7 @@ namespace PPUSim
 		void sim(OAMLane *lane, size_t column, size_t bit_num, BaseLogic::TriState OB_OAM, BaseLogic::TriState n_WE);
 
 		BaseLogic::TriState get();
+		void set(BaseLogic::TriState val);
 	};
 
 	class OAM
@@ -114,7 +115,10 @@ namespace PPUSim
 
 		void sim();
 
+		void sim_OFETCH();
+
 		BaseLogic::TriState get_OB(size_t bit_num);
+		void set_OB(size_t bit_num, BaseLogic::TriState val);
 
 		uint8_t Dbg_OAMReadByte(size_t addr);
 

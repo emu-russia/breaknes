@@ -44,6 +44,7 @@ namespace PPUSimUnitTest
 	class UnitTest;
 }
 
+#include "debug.h"
 #include "bgcol.h"
 #include "cram.h"
 #include "fifo.h"
@@ -60,7 +61,6 @@ namespace PPUSimUnitTest
 #include "sprite_eval.h"
 #include "video_out.h"
 #include "vram_ctrl.h"
-#include "debug.h"
 
 namespace PPUSim
 {
@@ -362,6 +362,8 @@ namespace PPUSim
 		void GetDebugInfo_Wires(PPU_Interconnects & wires);
 
 		void GetDebugInfo_FSMStates(PPU_FSMStates & fsm_states);
+
+		void GetDebugInfo_OAMEval(OAMEvalWires & wires);
 
 		void GetDebugInfo_Regs(PPU_Registers& regs);
 

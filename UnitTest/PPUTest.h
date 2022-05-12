@@ -33,5 +33,6 @@ namespace PPUSimUnitTest
 		bool RunHalfCyclesWithChipScope(size_t half_cycles, const char *filename);
 		uint8_t TestComparator(uint8_t a, uint8_t b);
 		bool TestBGC_SR8();
+		bool TestOAMCounter();
 	};
 }
