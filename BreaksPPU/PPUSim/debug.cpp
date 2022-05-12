@@ -270,4 +270,9 @@ namespace PPUSim
 	{
 		regs->Debug_RenderAlwaysEnabled(enable);
 	}
+
+	void PPU::GetDebugInfo_OAMEval(OAMEvalWires& wires)
+	{
+		eval->GetDebugInfo(wires);
+	}
 }

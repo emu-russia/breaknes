@@ -113,5 +113,7 @@ namespace PPUSim
 
 		uint32_t Debug_GetMainCounter();
 		uint32_t Debug_GetTempCounter();
+
+		void GetDebugInfo(OAMEvalWires& wires);
 	};
 }

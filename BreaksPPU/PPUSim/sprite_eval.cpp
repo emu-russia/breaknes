@@ -378,4 +378,16 @@ namespace PPUSim
 
 		return val;
 	}
+
+	void OAMEval::GetDebugInfo(OAMEvalWires& wires)
+	{
+		wires.OMFG = OMFG;
+		wires.OMSTEP = OMSTEP;
+		wires.OMOUT = OMOUT;
+		wires.OMV = omv_latch.get();
+		wires.OSTEP = OSTEP;
+		wires.ORES = ORES;
+		wires.TMV = tmv_latch.get();
+		wires.OAP = NOT(ppu->wire.OAM8);
+	}
 }

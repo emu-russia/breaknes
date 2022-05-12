@@ -141,6 +141,21 @@ namespace PPUSim
 	};
 
 	/// <summary>
+	/// These signals sit deep in the depths of the OAM Eval logic.
+	/// </summary>
+	struct OAMEvalWires
+	{
+		uint8_t OMFG;		// 1: Use Mode4 for MainCounter
+		uint8_t OMSTEP;		// 1: +1/+4 MainCounter
+		uint8_t OMOUT;		// 1: Keep MainCounter
+		uint8_t OMV;		// MainCounter overflow
+		uint8_t OSTEP;		// 1: +1 TempCounter
+		uint8_t ORES;		// 1: Reset TempCounter
+		uint8_t TMV;		// TempCounter overflow
+		uint8_t OAP;		// 1: OAMAddress is MainCounter, 0: OAMAddress is TempCounter + bits0-2 of MainCounter
+	};
+
+	/// <summary>
 	/// Various registers, buffers and counters inside the PPU.
 	/// </summary>
 	struct PPU_Registers
