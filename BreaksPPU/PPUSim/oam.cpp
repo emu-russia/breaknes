@@ -157,7 +157,7 @@ namespace PPUSim
 	{
 		// TBD: You can tweak individual statistical behavior (PRNG, in range, depending on ambient "temperature", etc.)
 
-		pclksToDecay = 10000;	// now just a constant
+		pclksToDecay = 1000000;	// now just a constant
 	}
 
 	void OAMCell::SetTopo(OAMCellTopology place, size_t bank_num)
@@ -267,6 +267,8 @@ namespace PPUSim
 	{
 		// TBD.
 
+		// Might come in handy when we add topology support. But until the cell degradation timings are calculated, it makes no sense.
+
 		return n;
 	}
 
@@ -277,11 +279,39 @@ namespace PPUSim
 
 	uint8_t OAM::Dbg_OAMReadByte(size_t addr)
 	{
-		return 0;
+		size_t row = addr & 7;
+		OAMLane* l = lane[row];
+		size_t col = addr >> 3;
+		TriState val[8]{};
+
+		for (size_t bit_num = 0; bit_num < 8; bit_num++)
+		{
+			val[bit_num] = TriState::Z;
+			l->sim(col, bit_num, val[bit_num]);
+
+			// Set the unused bits of the attribute byte to 0.
+
+			if (val[bit_num] == TriState::Z)
+			{
+				val[bit_num] = TriState::Zero;
+			}
+		}
+
+		return Pack(val);
 	}
 
 	uint8_t OAM::Dbg_TempOAMReadByte(size_t addr)
 	{
-		return 0;
+		OAMLane* l = lane[8];
+		size_t col = addr >> 3;
+		TriState val[8]{};
+
+		for (size_t bit_num = 0; bit_num < 8; bit_num++)
+		{
+			val[bit_num] = TriState::Z;
+			l->sim(col, bit_num, val[bit_num]);
+		}
+
+		return Pack(val);
 	}
 }
