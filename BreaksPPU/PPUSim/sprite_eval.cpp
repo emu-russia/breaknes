@@ -110,11 +110,18 @@ namespace PPUSim
 		TriState O8_16 = ppu->wire.O8_16;
 		TriState carry_in = TriState::Zero;
 		TriState M4_OVZ = get_M4_OVZ();		// The value has not been updated yet
+		TriState OB_Bits[8]{};
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			OB_latch[n].set(ppu->oam->get_OB(n), PCLK);
+			OB_Bits[n] = OB_latch[n].get();
+		}
 
 		if (ppu->HLEMode)
 		{
 			uint8_t V = (uint8_t)ppu->v->get();
-			uint8_t OB = Pack(ppu->wire.OB);
+			uint8_t OB = Pack(OB_Bits);
 			uint8_t OV = (int8_t)V - (int8_t)OB;
 			Unpack(OV, ppu->wire.OV);
 		}
@@ -122,14 +129,14 @@ namespace PPUSim
 		{
 			for (size_t n = 0; n < 4; n++)
 			{
-				carry_in = cmpr[n].sim(PCLK,
-					ppu->wire.OB[2 * n], ppu->v->getBit(2 * n),
-					ppu->wire.OB[2 * n + 1], ppu->v->getBit(2 * n + 1),
+				carry_in = cmpr[n].sim(
+					OB_Bits[2 * n], ppu->v->getBit(2 * n),
+					OB_Bits[2 * n + 1], ppu->v->getBit(2 * n + 1),
 					carry_in, ppu->wire.OV[2 * n], ppu->wire.OV[2 * n + 1]);
 			}
 		}
 
-		ovz_latch.set(ppu->wire.OB[7], PCLK);
+		ovz_latch.set(OB_Bits[7], PCLK);
 
 		TriState temp[7]{};
 		temp[0] = ppu->wire.OV[4];
@@ -291,7 +298,6 @@ namespace PPUSim
 	}
 
 	TriState OAMCmprBit::sim (
-		TriState PCLK,
 		TriState OB_Even,
 		TriState V_Even,
 		TriState OB_Odd,
@@ -300,13 +306,10 @@ namespace PPUSim
 		TriState& OV_Even,
 		TriState& OV_Odd )
 	{
-		even_latch.set(OB_Even, PCLK);
-		odd_latch.set(OB_Odd, PCLK);
-
-		auto e0 = NAND(even_latch.nget(), V_Even);
-		auto e1 = NOR(even_latch.nget(), V_Even);
-		auto o0 = NOT(NAND(odd_latch.nget(), V_Odd));
-		auto o1 = NOR(odd_latch.nget(), V_Odd);
+		auto e0 = NAND(NOT(OB_Even), V_Even);
+		auto e1 = NOR(NOT(OB_Even), V_Even);
+		auto o0 = NOT(NAND(NOT(OB_Odd), V_Odd));
+		auto o1 = NOR(NOT(OB_Odd), V_Odd);
 
 		auto z1 = NOR(NOT(e0), e1);
 		auto z2 = NOR(NOT(e0), NOR(carry_in, e1));

@@ -24,12 +24,8 @@ namespace PPUSim
 
 	class OAMCmprBit
 	{
-		BaseLogic::DLatch even_latch;
-		BaseLogic::DLatch odd_latch;
-
 	public:
 		BaseLogic::TriState sim(
-			BaseLogic::TriState PCLK,
 			BaseLogic::TriState OB_Even,
 			BaseLogic::TriState V_Even,
 			BaseLogic::TriState OB_Odd,
@@ -92,6 +88,7 @@ namespace PPUSim
 		BaseLogic::DLatch novz_latch;
 		BaseLogic::DLatch i2_latch[6];
 
+		BaseLogic::DLatch OB_latch[8];
 		BaseLogic::DLatch ovz_latch;
 
 		void sim_MainCounter();

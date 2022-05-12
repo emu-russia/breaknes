@@ -421,7 +421,12 @@ namespace PPUSimUnitTest
 		// OV = V - OB
 
 		ppu->v->set(a);
-		Unpack(b, ppu->wire.OB);
+		TriState OB[8]{};
+		Unpack(b, OB);
+		for (size_t bit_num = 0; bit_num < 8; bit_num++)
+		{
+			ppu->oam->set_OB(bit_num, OB[bit_num]);
+		}
 		ppu->wire.PCLK = TriState::One;
 
 		ppu->eval->sim_Comparator();

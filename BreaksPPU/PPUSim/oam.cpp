@@ -202,6 +202,11 @@ namespace PPUSim
 		return OB_FF.get();
 	}
 
+	void OAMBufferBit::set(TriState val)
+	{
+		return OB_FF.set(val);
+	}
+
 	OAMLane::OAMLane(PPU* parent, bool SkipAttrBits)
 	{
 		ppu = parent;
@@ -275,6 +280,11 @@ namespace PPUSim
 	TriState OAM::get_OB(size_t bit_num)
 	{
 		return ob[bit_num]->get();
+	}
+
+	void OAM::set_OB(size_t bit_num, TriState val)
+	{
+		ob[bit_num]->set(val);
 	}
 
 	uint8_t OAM::Dbg_OAMReadByte(size_t addr)
