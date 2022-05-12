@@ -467,4 +467,94 @@ namespace PPUSimUnitTest
 
 		return true;
 	}
+
+	bool UnitTest::TestOAMCounter()
+	{
+		ppu->wire.n_PCLK = TriState::One;
+
+		ppu->eval->OMFG = TriState::Zero;
+		ppu->fsm.BLNK = TriState::Zero;
+		ppu->wire.n_W4 = TriState::One;
+		ppu->wire.n_DBE = TriState::One;
+
+		// Reset
+
+		ppu->fsm.PARO = TriState::One;
+		ppu->eval->OMOUT = TriState::One;
+		ppu->eval->sim_MainCounter();
+
+		if (ppu->eval->Debug_GetMainCounter() != 0)
+			return false;
+
+		// Count in Mode1
+
+		ppu->eval->OMFG = TriState::Zero;
+		ppu->fsm.BLNK = TriState::One;
+		ppu->fsm.PARO = TriState::Zero;
+
+		for (size_t n = 0; n < 0x100; n++)
+		{
+			if (ppu->eval->Debug_GetMainCounter() != n)
+				return false;
+
+			ppu->eval->OMOUT = TriState::One;
+			ppu->eval->OMSTEP = TriState::Zero;
+			ppu->eval->sim_MainCounter();
+
+			if (n == 255)
+			{
+				auto OMV = ppu->eval->omv_latch.get();
+				if (OMV != TriState::One)
+					return false;
+			}
+
+			ppu->eval->OMOUT = TriState::Zero;
+			ppu->eval->OMSTEP = TriState::One;
+			ppu->eval->sim_MainCounter();
+		}
+
+		if (ppu->eval->Debug_GetMainCounter() != 0)
+			return false;
+
+		// Reset
+
+		ppu->fsm.PARO = TriState::One;
+		ppu->eval->OMOUT = TriState::One;
+		ppu->eval->sim_MainCounter();
+
+		if (ppu->eval->Debug_GetMainCounter() != 0)
+			return false;
+
+		// Count in Mode4
+
+		ppu->eval->OMFG = TriState::One;
+		ppu->fsm.BLNK = TriState::Zero;
+		ppu->fsm.PARO = TriState::Zero;
+
+		for (size_t n = 0; n < 0x100; n+=4)
+		{
+			if (ppu->eval->Debug_GetMainCounter() != n)
+				return false;
+
+			ppu->eval->OMOUT = TriState::One;
+			ppu->eval->OMSTEP = TriState::Zero;
+			ppu->eval->sim_MainCounter();
+
+			if (n == (0x100 - 4))
+			{
+				auto OMV = ppu->eval->omv_latch.get();
+				if (OMV != TriState::One)
+					return false;
+			}
+
+			ppu->eval->OMOUT = TriState::Zero;
+			ppu->eval->OMSTEP = TriState::One;
+			ppu->eval->sim_MainCounter();
+		}
+
+		if (ppu->eval->Debug_GetMainCounter() != 0)
+			return false;
+
+		return true;
+	}
 }

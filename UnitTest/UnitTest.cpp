@@ -166,5 +166,11 @@ namespace UnitTest
 			Assert::IsTrue(ut.TestBGC_SR8());
 		}
 
+		TEST_METHOD(TestOAMCounter)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			Assert::IsTrue(ut.TestOAMCounter());
+		}
+
 	};
 }
