@@ -97,6 +97,8 @@ namespace PPUSim
 
 		vram_ctrl->sim();
 		
+		oam->sim_OFETCH();
+
 		eval->sim();
 
 		oam->sim();

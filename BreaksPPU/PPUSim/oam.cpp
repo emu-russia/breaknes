@@ -87,11 +87,29 @@ namespace PPUSim
 		TriState OAMCTR2 = ppu->wire.OAMCTR2;
 		TriState H0_DD = ppu->wire.H0_Dash2;
 		TriState n_VIS = ppu->fsm.nVIS;
+
+		OB_OAM = NOR(n_PCLK, BLNK);
+
+		TriState temp[6]{};
+		temp[0] = BLNK;
+		temp[1] = SPR_OV;
+		temp[2] = PCLK;
+		temp[3] = NOT(H0_DD);
+		temp[4] = OAMCTR2;
+		temp[5] = n_VIS;
+		n_WE = NOR(ppu->wire.OFETCH, NOR6(temp));
+	}
+
+	/// <summary>
+	/// The OFETCH signal must be applied before the Sprite Eval simulation.
+	/// </summary>
+	void OAM::sim_OFETCH()
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState n_W4 = ppu->wire.n_W4;
 		TriState n_DBE = ppu->wire.n_DBE;
 		auto W4_Enable = NOR(n_W4, n_DBE);
-
-		OB_OAM = NOR(n_PCLK, BLNK);
 
 		latch[0].set(OFETCH_FF.nget(), n_PCLK);
 		latch[1].set(latch[0].nget(), PCLK);
@@ -105,15 +123,6 @@ namespace PPUSim
 		// OFETCH FF can be simulated after all because it is updated during PCLK = 1 and the input latch on its output is during PCLK = 0.
 
 		OFETCH_FF.set(MUX(PCLK, NOT(NOT(OFETCH_FF.get())), NOR(W4_Enable, W4_FF.get())));
-
-		TriState temp[6]{};
-		temp[0] = BLNK;
-		temp[1] = SPR_OV;
-		temp[2] = PCLK;
-		temp[3] = NOT(H0_DD);
-		temp[4] = OAMCTR2;
-		temp[5] = n_VIS;
-		n_WE = NOR(ppu->wire.OFETCH, NOR6(temp));
 	}
 
 	void OAM::sim_OB(OAMLane* lane)
