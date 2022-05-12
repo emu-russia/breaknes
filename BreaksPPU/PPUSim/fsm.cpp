@@ -179,8 +179,8 @@ namespace PPUSim
 
 		vb_latch1.set(VPLA[5], n_PCLK);
 		vb_latch2.set(VPLA[6], n_PCLK);
-		VB_FF.set(NOR(vb_latch2.get(), NOR(vb_latch1.get(), VB_FF.get())));
-		ppu->fsm.VB = NOT(VB_FF.get());
+		VB_FF.set(NOR(vb_latch1.get(), NOR(vb_latch2.get(), VB_FF.get())));
+		ppu->fsm.VB = NOT(VB_FF.nget());
 
 		blnk_latch1.set(VPLA[7], n_PCLK);
 		BLNK_FF.set(NOR(blnk_latch1.get(), NOR(vb_latch2.get(), BLNK_FF.get())));
@@ -247,7 +247,7 @@ namespace PPUSim
 
 	TriState FSM::get_VB()
 	{
-		return NOT(VB_FF.get());
+		return NOT(VB_FF.nget());
 	}
 
 	TriState FSM::get_BLNK(TriState BLACK)

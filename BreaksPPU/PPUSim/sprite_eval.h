@@ -66,6 +66,8 @@ namespace PPUSim
 		BaseLogic::TriState OVZ = BaseLogic::TriState::X;
 		BaseLogic::TriState OMFG = BaseLogic::TriState::X;
 		BaseLogic::TriState ASAP = BaseLogic::TriState::X;
+		BaseLogic::TriState OMV = BaseLogic::TriState::X;
+		BaseLogic::TriState TMV = BaseLogic::TriState::X;
 
 		BaseLogic::DLatch init_latch;
 		BaseLogic::DLatch ofetch_latch;

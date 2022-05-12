@@ -45,7 +45,6 @@ namespace PPUSim
 		auto W3_Enable = NOR(n_W3, n_DBE);
 		TriState carry_in;
 		TriState carry_out;
-		TriState OMV;
 
 		carry_in = TriState::One;
 		carry_out = MainCounter[0].sim(OMOUT, W3_Enable, OMSTEP, Mode4, PAR_O, ppu->GetDBBit(0), carry_in, OAM_x[0], n_out[0]);
@@ -92,7 +91,6 @@ namespace PPUSim
 		TriState ORES = this->ORES;
 		TriState OSTEP = this->OSTEP;
 		TriState NotUsed;
-		TriState TMV;
 
 		for (size_t n = 0; n < 5; n++)
 		{
@@ -384,10 +382,10 @@ namespace PPUSim
 		wires.OMFG = OMFG;
 		wires.OMSTEP = OMSTEP;
 		wires.OMOUT = OMOUT;
-		wires.OMV = omv_latch.get();
+		wires.OMV = OMV;
 		wires.OSTEP = OSTEP;
 		wires.ORES = ORES;
-		wires.TMV = tmv_latch.get();
+		wires.TMV = TMV;
 		wires.OAP = NOT(ppu->wire.OAM8);
 	}
 }
