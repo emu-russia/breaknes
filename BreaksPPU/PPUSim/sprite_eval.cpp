@@ -17,17 +17,37 @@ namespace PPUSim
 
 	void OAMEval::sim()
 	{
-		sim_Comparator();
-		sim_ComparisonFSM();
-
 		sim_MainCounterControl();
 		sim_MainCounter();
 
-		sim_TempCounterControl();
-		sim_TempCounter();
-
 		sim_SpriteOVF();
+
+		sim_Comparator();
+		sim_ComparisonFSM();
+
+		sim_TempCounterControlBeforeCounter();
+		sim_TempCounter();
+		sim_TempCounterControlAfterCounter();
+
 		sim_OAMAddress();
+	}
+
+	void OAMEval::sim_MainCounterControl()
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState I_OAM2 = ppu->fsm.IOAM2;
+		TriState n_VIS = ppu->fsm.nVIS;
+		TriState H0_DD = ppu->wire.H0_Dash2;
+		TriState OFETCH = ppu->wire.OFETCH;
+		TriState n_W3 = ppu->wire.n_W3;
+		TriState n_DBE = ppu->wire.n_DBE;
+
+		auto W3_Enable = NOR(n_W3, n_DBE);
+
+		init_latch.set(NAND(NOR(I_OAM2, n_VIS), H0_DD), n_PCLK);
+		ofetch_latch.set(OFETCH, n_PCLK);
+		OMSTEP = NAND(OR(init_latch.get(), n_PCLK), NOT(NOR(ofetch_latch.nget(), n_PCLK)));
+		OMOUT = NOR(OMSTEP, W3_Enable);
 	}
 
 	void OAMEval::sim_MainCounter()
@@ -84,22 +104,29 @@ namespace PPUSim
 		omv_latch.set(OMV, n_PCLK);
 	}
 
-	void OAMEval::sim_TempCounter()
+	void OAMEval::sim_SpriteOVF()
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState carry = TriState::One;
-		TriState ORES = this->ORES;
-		TriState OSTEP = this->OSTEP;
-		TriState NotUsed;
+		TriState OMFG = this->OMFG;
+		TriState H0_D = ppu->wire.H0_Dash;
+		TriState RESCL = ppu->fsm.RESCL;
+		TriState I_OAM2 = ppu->fsm.IOAM2;
+		TriState n_R2 = ppu->wire.n_R2;
+		TriState n_DBE = ppu->wire.n_DBE;
 
-		for (size_t n = 0; n < 5; n++)
-		{
-			carry = TempCounter[n].sim(n_PCLK, ORES, OSTEP, TriState::Zero, TriState::Zero, TriState::Zero,
-				carry, OAM_Temp[n], NotUsed);
-		}
+		TriState temp[4]{};
+		temp[0] = omfg_latch.get();
+		temp[1] = setov_latch.get();
+		temp[2] = H0_D;
+		temp[3] = n_PCLK;
+		auto setov = NOR4(temp);
 
-		TMV = carry;			// carry_out from the most significant bit
-		tmv_latch.set(TMV, n_PCLK);
+		auto ASAP = AND(OMSTEP, omv_latch.get());
+		SPR_OV_REG_FF.set(NOR(NOR(setov, SPR_OV_REG_FF.get()), RESCL));
+		SPR_OV_FF.set(NOR(NOR3(ASAP, setov, SPR_OV_FF.get()), I_OAM2));
+		ppu->wire.SPR_OV = SPR_OV_FF.get();
+		auto R2_Enable = NOT(NOT(NOR(n_R2, n_DBE)));
+		ppu->SetDBBit(5, MUX(R2_Enable, TriState::Z, SPR_OV_REG_FF.get()));
 	}
 
 	void OAMEval::sim_Comparator()
@@ -147,101 +174,15 @@ namespace PPUSim
 		OVZ = NOR7(temp);
 	}
 
-	void OAMEval::sim_MainCounterControl()
-	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState I_OAM2 = ppu->fsm.IOAM2;
-		TriState n_VIS = ppu->fsm.nVIS;
-		TriState H0_DD = ppu->wire.H0_Dash2;
-		TriState OFETCH = ppu->wire.OFETCH;
-		TriState n_W3 = ppu->wire.n_W3;
-		TriState n_DBE = ppu->wire.n_DBE;
-
-		auto W3_Enable = NOR(n_W3, n_DBE);
-
-		init_latch.set(NAND(NOR(I_OAM2, n_VIS), H0_DD), n_PCLK);
-		ofetch_latch.set(OFETCH, n_PCLK);
-		OMSTEP = NAND(OR(init_latch.get(), n_PCLK), NOT(NOR(ofetch_latch.nget(), n_PCLK)));
-		ASAP = AND(OMSTEP, omv_latch.get());
-		OMOUT = NOR(OMSTEP, W3_Enable);
-	}
-
-	void OAMEval::sim_TempCounterControl()
-	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState EVAL = ppu->fsm.EVAL;
-		TriState OMFG = this->OMFG;
-		TriState I_OAM2 = ppu->fsm.IOAM2;
-		TriState H0_D = ppu->wire.H0_Dash;
-		TriState n_H2_D = ppu->wire.nH2_Dash;
-		TriState PAR_O = ppu->fsm.PARO;
-
-		eval_latch.set(EVAL, n_PCLK);
-		ORES = NOR(n_PCLK, eval_latch.get());
-		nomfg_latch.set(NOT(OMFG), n_PCLK);
-		ioam2_latch.set(I_OAM2, n_PCLK);
-		auto DontStep = NOR(NOR(NOR(nomfg_latch.get(), ioam2_latch.get()), H0_D), AND(n_H2_D, PAR_O));
-		temp_latch1.set(NAND(OAM2_CNT_FF.get(), EVAL), n_PCLK);
-		OSTEP = NOR3(temp_latch1.get(), n_PCLK, DontStep);
-		OAM2_CNT_FF.set(NOR(NOR(ORES, OAM2_CNT_FF.get()), AND(tmv_latch.get(), OSTEP)));
-		ppu->wire.OAMCTR2 = OAM2_CNT_FF.nget();
-	}
-
-	void OAMEval::sim_SpriteOVF()
-	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState OMFG = this->OMFG;
-		TriState H0_D = ppu->wire.H0_Dash;
-		TriState RESCL = ppu->fsm.RESCL;
-		TriState I_OAM2 = ppu->fsm.IOAM2;
-		TriState n_R2 = ppu->wire.n_R2;
-		TriState n_DBE = ppu->wire.n_DBE;
-
-		omfg_latch.set(OMFG, n_PCLK);
-		setov_latch.set(OAM2_CNT_FF.get(), n_PCLK);
-
-		TriState temp[4]{};
-		temp[0] = omfg_latch.get();
-		temp[1] = setov_latch.get();
-		temp[2] = H0_D;
-		temp[3] = n_PCLK;
-		auto setov = NOR4(temp);
-
-		SPR_OV_REG_FF.set(NOR(NOR(setov, SPR_OV_REG_FF.get()), RESCL));
-		SPR_OV_FF.set(NOR(NOR3(ASAP, setov, SPR_OV_FF.get()), I_OAM2));
-		ppu->wire.SPR_OV = SPR_OV_FF.get();
-		auto R2_Enable = NOT(NOT(NOR(n_R2, n_DBE)));
-		ppu->SetDBBit(5, MUX(R2_Enable, TriState::Z, SPR_OV_REG_FF.get()));
-	}
-
-	void OAMEval::sim_OAMAddress()
-	{
-		TriState n_VIS = ppu->fsm.nVIS;
-		TriState H0_DD = ppu->wire.H0_Dash2;
-		TriState BLNK = ppu->fsm.BLNK;
-
-		auto OAP = NAND(OR(n_VIS, H0_DD), NOT(BLNK));
-		ppu->wire.OAM8 = NOT(OAP);
-
-		for (size_t n = 0; n < 3; n++)
-		{
-			ppu->wire.n_OAM[n] = NOT(OAM_x[n]);
-		}
-
-		for (size_t n = 0; n < 5; n++)
-		{
-			ppu->wire.n_OAM[n + 3] = NOT(MUX(ppu->wire.OAM8, OAM_x[n + 3], OAM_Temp[n]));
-		}
-	}
-
 	void OAMEval::sim_ComparisonFSM()
 	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState PCLK = ppu->wire.PCLK;
 		TriState nF_NT = ppu->fsm.nFNT;
 		TriState H0_DD = ppu->wire.H0_Dash2;
 		TriState I_OAM2 = ppu->fsm.IOAM2;
 		TriState n_VIS = ppu->fsm.nVIS;
-		TriState SPR_OV = get_SPR_OV();		// The value has not been updated yet
+		TriState SPR_OV = get_SPR_OV();
 		TriState S_EV = ppu->fsm.SEV;
 		TriState PAR_O = ppu->fsm.PARO;
 		TriState OVZ = this->OVZ;
@@ -268,10 +209,77 @@ namespace PPUSim
 		i2_latch[5].set(i2_latch[4].nget(), PCLK);
 
 		OMFG = NOR(get_M4_OVZ(), n_I2);
+		omfg_latch.set(OMFG, n_PCLK);
 
 		TriState nFF2_Out{};
 		eval_FF2.sim(PCLK, NOT(S_EV), n_I2, NotUsed, nFF2_Out);
 		eval_FF1.sim(PCLK, NOT(PAR_O), nFF2_Out, ppu->wire.I2SEV, NotUsed);
+	}
+
+	void OAMEval::sim_TempCounterControlBeforeCounter()
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState EVAL = ppu->fsm.EVAL;
+		TriState OMFG = this->OMFG;
+		TriState I_OAM2 = ppu->fsm.IOAM2;
+		TriState H0_D = ppu->wire.H0_Dash;
+		TriState n_H2_D = ppu->wire.nH2_Dash;
+		TriState PAR_O = ppu->fsm.PARO;
+
+		eval_latch.set(EVAL, n_PCLK);
+		ORES = NOR(n_PCLK, eval_latch.get());
+		nomfg_latch.set(NOT(OMFG), n_PCLK);
+		ioam2_latch.set(I_OAM2, n_PCLK);
+		auto DontStep = NOR(NOR(NOR(nomfg_latch.get(), ioam2_latch.get()), H0_D), AND(n_H2_D, PAR_O));
+		temp_latch1.set(NAND(OAMCTR2_FF.nget(), EVAL), n_PCLK);
+		OSTEP = NOR3(temp_latch1.get(), n_PCLK, DontStep);
+	}
+
+	void OAMEval::sim_TempCounter()
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState carry = TriState::One;
+		TriState ORES = this->ORES;
+		TriState OSTEP = this->OSTEP;
+		TriState NotUsed;
+
+		for (size_t n = 0; n < 5; n++)
+		{
+			carry = TempCounter[n].sim(n_PCLK, ORES, OSTEP, TriState::Zero, TriState::Zero, TriState::Zero,
+				carry, OAM_Temp[n], NotUsed);
+		}
+
+		TMV = carry;			// carry_out from the most significant bit
+	}
+
+	void OAMEval::sim_TempCounterControlAfterCounter()
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+
+		tmv_latch.set(TMV, n_PCLK);
+		OAMCTR2_FF.set(NOR(ORES, NOR(AND(tmv_latch.get(), OSTEP), OAMCTR2_FF.get())));
+		setov_latch.set(OAMCTR2_FF.nget(), n_PCLK);
+		ppu->wire.OAMCTR2 = OAMCTR2_FF.get();
+	}
+
+	void OAMEval::sim_OAMAddress()
+	{
+		TriState n_VIS = ppu->fsm.nVIS;
+		TriState H0_DD = ppu->wire.H0_Dash2;
+		TriState BLNK = ppu->fsm.BLNK;
+
+		auto OAP = NAND(OR(n_VIS, H0_DD), NOT(BLNK));
+		ppu->wire.OAM8 = NOT(OAP);
+
+		for (size_t n = 0; n < 3; n++)
+		{
+			ppu->wire.n_OAM[n] = NOT(OAM_x[n]);
+		}
+
+		for (size_t n = 0; n < 5; n++)
+		{
+			ppu->wire.n_OAM[n + 3] = NOT(MUX(ppu->wire.OAM8, OAM_x[n + 3], OAM_Temp[n]));
+		}
 	}
 
 	TriState OAMCounterBit::sim (
