@@ -107,12 +107,12 @@ namespace PPUSim
 	void OAMEval::sim_SpriteOVF()
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState OMFG = this->OMFG;
 		TriState H0_D = ppu->wire.H0_Dash;
 		TriState RESCL = ppu->fsm.RESCL;
 		TriState I_OAM2 = ppu->fsm.IOAM2;
 		TriState n_R2 = ppu->wire.n_R2;
 		TriState n_DBE = ppu->wire.n_DBE;
+		auto R2_Enable = NOR(n_R2, n_DBE);
 
 		TriState temp[4]{};
 		temp[0] = omfg_latch.get();
@@ -125,7 +125,6 @@ namespace PPUSim
 		SPR_OV_REG_FF.set(NOR(NOR(setov, SPR_OV_REG_FF.get()), RESCL));
 		SPR_OV_FF.set(NOR(NOR3(ASAP, setov, SPR_OV_FF.get()), I_OAM2));
 		ppu->wire.SPR_OV = SPR_OV_FF.get();
-		auto R2_Enable = NOT(NOT(NOR(n_R2, n_DBE)));
 		ppu->SetDBBit(5, MUX(R2_Enable, TriState::Z, SPR_OV_REG_FF.get()));
 	}
 
