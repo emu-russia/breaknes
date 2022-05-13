@@ -217,7 +217,7 @@ namespace PPUSim
 			BaseLogic::TriState OAMCTR2;
 			BaseLogic::TriState n_OAM[8];
 			BaseLogic::TriState OAM8;
-			BaseLogic::TriState Z_FIFO;
+			BaseLogic::TriState PD_FIFO;
 			BaseLogic::TriState OV[8];
 
 			BaseLogic::TriState CLPB;

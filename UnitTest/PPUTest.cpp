@@ -276,7 +276,7 @@ namespace PPUSimUnitTest
 		CloseWire(SPR_OV, 3002);
 		CloseWire(OAMCTR2, 3003);
 		CloseWire(OAM8, 3004);
-		CloseWire(Z_FIFO, 3005);
+		CloseWire(PD_FIFO, 3005);
 	}
 
 	void UnitTest::CloseFSMState(Debug::EventLog* log, size_t ts)
@@ -383,7 +383,7 @@ namespace PPUSimUnitTest
 		OpenDirectWire(SPR_OV, 3002);
 		OpenDirectWire(OAMCTR2, 3003);
 		OpenDirectWire(OAM8, 3004);
-		OpenDirectWire(Z_FIFO, 3005);
+		OpenDirectWire(PD_FIFO, 3005);
 	}
 
 	void UnitTest::LogFSMState(Debug::EventLog* log, PPU_FSMStates& fsm, size_t ts)

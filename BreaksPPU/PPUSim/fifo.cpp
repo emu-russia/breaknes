@@ -37,7 +37,7 @@ namespace PPUSim
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState n_SH2 = ppu->wire.n_SH2;
 		TriState OB6 = ppu->wire.OB[6];
-		TriState Z_FIFO = ppu->wire.Z_FIFO;
+		TriState PD_FIFO = ppu->wire.PD_FIFO;
 
 		HINV_FF.set(MUX(NOR(n_PCLK, n_SH2), NOT(NOT(HINV_FF.get())), OB6));
 
@@ -46,7 +46,7 @@ namespace PPUSim
 		for (size_t n = 0; n < 8; n++)
 		{
 			tout_latch[n].set(MUX(HINV, ppu->GetPDBit(n), ppu->GetPDBit(7 - n)), n_PCLK);
-			n_TX[n] = NAND(tout_latch[n].get(), Z_FIFO);
+			n_TX[n] = NAND(tout_latch[n].get(), PD_FIFO);
 		}
 	}
 
