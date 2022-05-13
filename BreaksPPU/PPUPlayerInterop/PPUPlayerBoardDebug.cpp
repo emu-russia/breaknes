@@ -283,7 +283,7 @@ namespace PPUPlayer
 	};
 
 	SignalOffsetPair board_signals[] = {
-		"CLK", offsetof(BoardDebugInfo, CLK),
+		"BoardCLK", offsetof(BoardDebugInfo, CLK),
 		"ALE", offsetof(BoardDebugInfo, ALE),
 		"LS373 Latch", offsetof(BoardDebugInfo, LS373_Latch),
 		"VRAM Address", offsetof(BoardDebugInfo, VRAM_Addr),
