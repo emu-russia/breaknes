@@ -67,6 +67,9 @@ namespace PPUSim
 		BaseLogic::TriState OMFG = BaseLogic::TriState::X;
 		BaseLogic::TriState OMV = BaseLogic::TriState::X;
 		BaseLogic::TriState TMV = BaseLogic::TriState::X;
+		BaseLogic::TriState DDD = BaseLogic::TriState::X;
+		BaseLogic::TriState n_I2 = BaseLogic::TriState::X;
+		BaseLogic::TriState OB_Bits[8]{};
 
 		BaseLogic::DLatch init_latch;
 		BaseLogic::DLatch ofetch_latch;

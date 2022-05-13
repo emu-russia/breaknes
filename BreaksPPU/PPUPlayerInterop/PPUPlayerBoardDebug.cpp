@@ -263,6 +263,11 @@ namespace PPUPlayer
 		"ORES", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::ORES),
 		"TMV", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::TMV),
 		"OAP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OAP),
+		"DDD", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::DDD),
+		"/I2", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::n_I2),
+		"M4_OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::M4_OVZ),
+		"OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OVZ),
+		"OBCmpr", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OBCmpr),
 	};
 
 	SignalOffsetPair ppu_regs[] = {

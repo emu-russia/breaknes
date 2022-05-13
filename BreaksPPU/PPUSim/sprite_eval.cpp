@@ -17,13 +17,13 @@ namespace PPUSim
 
 	void OAMEval::sim()
 	{
-		sim_MainCounterControl();
-		sim_MainCounter();
-
 		sim_SpriteOVF();
 
 		sim_Comparator();
 		sim_ComparisonFSM();
+
+		sim_MainCounterControl();
+		sim_MainCounter();
 
 		sim_TempCounterControlBeforeCounter();
 		sim_TempCounter();
@@ -134,7 +134,6 @@ namespace PPUSim
 		TriState O8_16 = ppu->wire.O8_16;
 		TriState carry_in = TriState::Zero;
 		TriState M4_OVZ = get_M4_OVZ();		// The value has not been updated yet
-		TriState OB_Bits[8]{};
 
 		for (size_t n = 0; n < 8; n++)
 		{
@@ -160,7 +159,7 @@ namespace PPUSim
 			}
 		}
 
-		ovz_latch.set(OB_Bits[7], PCLK);
+		ovz_latch.set(ppu->oam->get_OB(7), PCLK);
 
 		TriState temp[7]{};
 		temp[0] = ppu->wire.OV[4];
@@ -197,8 +196,8 @@ namespace PPUSim
 		temp[1] = n_VIS;
 		temp[2] = SPR_OV;
 		temp[3] = NOT(OVZ);
-		auto n_I2 = NOR4(temp);
-		auto DDD = NOR(PCLK, NOT(H0_DD));
+		n_I2 = NOR4(temp);
+		DDD = NOR(PCLK, NOT(H0_DD));
 
 		i2_latch[0].set(n_I2, DDD);
 		i2_latch[1].set(i2_latch[0].nget(), PCLK);
@@ -394,5 +393,10 @@ namespace PPUSim
 		wires.ORES = ORES;
 		wires.TMV = TMV;
 		wires.OAP = NOT(ppu->wire.OAM8);
+		wires.DDD = DDD;
+		wires.n_I2 = n_I2;
+		wires.M4_OVZ = get_M4_OVZ();
+		wires.OVZ = OVZ;
+		wires.OBCmpr = Pack(OB_Bits);
 	}
 }

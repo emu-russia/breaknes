@@ -153,6 +153,11 @@ namespace PPUSim
 		uint8_t ORES;		// 1: Reset TempCounter
 		uint8_t TMV;		// TempCounter overflow
 		uint8_t OAP;		// 1: OAMAddress is MainCounter, 0: OAMAddress is TempCounter + bits0-2 of MainCounter
+		uint8_t DDD;
+		uint8_t n_I2;
+		uint8_t M4_OVZ;
+		uint8_t OVZ;
+		uint8_t OBCmpr;
 	};
 
 	/// <summary>
