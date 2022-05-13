@@ -93,7 +93,7 @@ namespace PPUSim
 		wires.OAMCTR2 = wire.OAMCTR2 == TriState::One ? 1 : 0;
 		wires.n_OAM = Pack(wire.n_OAM);		// Packed
 		wires.OAM8 = wire.OAM8 == TriState::One ? 1 : 0;
-		wires.Z_FIFO = wire.Z_FIFO == TriState::One ? 1 : 0;
+		wires.PD_FIFO = wire.PD_FIFO == TriState::One ? 1 : 0;
 		wires.OV = Pack(wire.OV);			// Packed
 
 		wires.CLPB = wire.CLPB == TriState::One ? 1 : 0;
