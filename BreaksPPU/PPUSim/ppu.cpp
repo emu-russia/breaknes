@@ -103,9 +103,9 @@ namespace PPUSim
 
 		oam->sim();
 
-		fifo->sim();
-
 		data_reader->sim();
+
+		fifo->sim();
 
 		vram_ctrl->sim_TH_MUX();
 

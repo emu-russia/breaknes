@@ -112,7 +112,7 @@ namespace PPUSim
 		TriState n_PCLK2 = NOT(ppu->wire.PCLK);
 		fnt_latch.set(NOT(NOR(nF_NT, NOT(H0_DD))), n_PCLK2);
 		novz_latch.set(NOT(OVZ), n_PCLK2);
-		eval_FF3.sim(n_PCLK2, fnt_latch.get(), novz_latch.get(), ppu->wire.PD_FIFO, NotUsed);
+		eval_FF3.sim(n_PCLK2, fnt_latch.get(), novz_latch.nget(), ppu->wire.PD_FIFO, NotUsed);
 
 		// Set the command to copy the sprite if it is found.
 
