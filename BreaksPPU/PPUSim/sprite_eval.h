@@ -67,11 +67,10 @@ namespace PPUSim
 		BaseLogic::TriState OMFG = BaseLogic::TriState::X;
 		BaseLogic::TriState OMV = BaseLogic::TriState::X;
 		BaseLogic::TriState TMV = BaseLogic::TriState::X;
-		BaseLogic::TriState DDD = BaseLogic::TriState::X;
-		BaseLogic::TriState n_I2 = BaseLogic::TriState::X;
+		BaseLogic::TriState COPY_STEP = BaseLogic::TriState::X;
+		BaseLogic::TriState DO_COPY = BaseLogic::TriState::X;
+		BaseLogic::TriState COPY_OVF = BaseLogic::TriState::X;
 		BaseLogic::TriState OB_Bits[8]{};
-		// M4_OVZ value at the input to the comparator simulation circuit.
-		BaseLogic::TriState M4_OVZ_Cmpr = BaseLogic::TriState::X;
 
 		BaseLogic::DLatch init_latch;
 		BaseLogic::DLatch ofetch_latch;
@@ -97,10 +96,9 @@ namespace PPUSim
 		BaseLogic::DLatch OB_latch[8];
 		BaseLogic::DLatch ovz_latch;
 
-		size_t Copy_Capacitor = 0;
-
 		// The blocks are simulated in the signal propagation order as the developers intended or we think they intended.
 
+		void sim_StepJohnson();
 		void sim_Comparator();
 		void sim_ComparisonFSM();
 		void sim_MainCounterControl();
@@ -113,7 +111,6 @@ namespace PPUSim
 
 		// These auxiliary methods are needed to retrieve old values of signals that have not yet been simulated (`uroboros` signals).
 
-		BaseLogic::TriState get_M4_OVZ();
 		BaseLogic::TriState get_SPR_OV();
 
 	public:

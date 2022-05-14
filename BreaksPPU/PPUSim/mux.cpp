@@ -70,7 +70,7 @@ namespace PPUSim
 		n[0] = ppu->wire.PCLK;
 		n[1] = NOR(ppu->wire.BGC[0], ppu->wire.BGC[1]);
 		n[2] = ppu->wire.n_SPR0HIT;
-		n[3] = ppu->wire.I2SEV;
+		n[3] = ppu->wire.n_SPR0_EV;
 		n[4] = ppu->fsm.nVIS;
 		TriState STRIKE = NOR5(n);
 

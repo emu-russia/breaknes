@@ -271,7 +271,7 @@ namespace PPUSimUnitTest
 		CloseWire(H4_Dash2, 2007);
 		CloseWire(H5_Dash2, 2008);
 
-		CloseWire(I2SEV, 3000);
+		CloseWire(n_SPR0_EV, 3000);
 		CloseWire(OFETCH, 3001);
 		CloseWire(SPR_OV, 3002);
 		CloseWire(OAMCTR2, 3003);
@@ -378,7 +378,7 @@ namespace PPUSimUnitTest
 		OpenDirectWire(H4_Dash2, 2007);
 		OpenDirectWire(H5_Dash2, 2008);
 
-		OpenDirectWire(I2SEV, 3000);
+		OpenDirectWire(n_SPR0_EV, 3000);
 		OpenDirectWire(OFETCH, 3001);
 		OpenDirectWire(SPR_OV, 3002);
 		OpenDirectWire(OAMCTR2, 3003);

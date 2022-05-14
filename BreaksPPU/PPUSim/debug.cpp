@@ -87,7 +87,7 @@ namespace PPUSim
 		}
 
 		wires.OB = Pack (wire.OB);			// Packed
-		wires.I2SEV = wire.I2SEV == TriState::One ? 1 : 0;
+		wires.n_SPR0_EV = wire.n_SPR0_EV == TriState::One ? 1 : 0;
 		wires.OFETCH = wire.OFETCH == TriState::One ? 1 : 0;
 		wires.SPR_OV = wire.SPR_OV == TriState::One ? 1 : 0;
 		wires.OAMCTR2 = wire.OAMCTR2 == TriState::One ? 1 : 0;

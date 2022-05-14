@@ -147,7 +147,7 @@ namespace PPUPlayer
 		"/EXT_OUT2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_EXT_Out[2]),
 		"/EXT_OUT3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_EXT_Out[3]),
 		"OB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OB),
-		"I2SEV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::I2SEV),
+		"/SPR0_EV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SPR0_EV),
 		"OFETCH", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OFETCH),
 		"SPR_OV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::SPR_OV),
 		"OAMCTR2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OAMCTR2),
@@ -263,12 +263,11 @@ namespace PPUPlayer
 		"ORES", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::ORES),
 		"TMV", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::TMV),
 		"OAP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OAP),
-		"DDD", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::DDD),
-		"/I2", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::n_I2),
-		"M4_OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::M4_OVZ),
+		"COPY_STEP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::COPY_STEP),
+		"DO_COPY", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::DO_COPY),
+		"COPY_OVF", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::COPY_OVF),
 		"OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OVZ),
 		"OBCmpr", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OBCmpr),
-		"M4_OVZ_Cmpr", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::M4_OVZ_Cmpr),
 	};
 
 	SignalOffsetPair ppu_regs[] = {
