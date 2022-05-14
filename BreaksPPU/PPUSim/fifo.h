@@ -51,22 +51,22 @@ namespace PPUSim
 		BaseLogic::DLatch ob5_latch[2];
 		BaseLogic::DLatch hsel_latch;
 
-		BaseLogic::TriState nZ_COL0;
-		BaseLogic::TriState nZ_COL1;
-		BaseLogic::TriState Z_COL2;
-		BaseLogic::TriState Z_COL3;
-		BaseLogic::TriState nZ_PRIO;
-		BaseLogic::TriState SR_EN;
-		BaseLogic::TriState LOAD;
-		BaseLogic::TriState T_SR0;
-		BaseLogic::TriState T_SR1;
+		BaseLogic::TriState nZ_COL0 = BaseLogic::TriState::X;
+		BaseLogic::TriState nZ_COL1 = BaseLogic::TriState::X;
+		BaseLogic::TriState Z_COL2 = BaseLogic::TriState::X;
+		BaseLogic::TriState Z_COL3 = BaseLogic::TriState::X;
+		BaseLogic::TriState nZ_PRIO = BaseLogic::TriState::X;
+		BaseLogic::TriState SR_EN = BaseLogic::TriState::X;
+		BaseLogic::TriState LOAD = BaseLogic::TriState::X;
+		BaseLogic::TriState T_SR0 = BaseLogic::TriState::X;
+		BaseLogic::TriState T_SR1 = BaseLogic::TriState::X;
 
 		BaseLogic::FF ZH_FF;
 		BaseLogic::DLatch en_latch;
 
-		BaseLogic::TriState UPD;
-		BaseLogic::TriState STEP;
-		BaseLogic::TriState n_EN;
+		BaseLogic::TriState UPD = BaseLogic::TriState::X;
+		BaseLogic::TriState STEP = BaseLogic::TriState::X;
+		BaseLogic::TriState n_EN = BaseLogic::TriState::X;
 
 		void sim_Enable();
 		void sim_LaneControl(BaseLogic::TriState HSel);

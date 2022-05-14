@@ -53,9 +53,9 @@ namespace PPUSim
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
-		OAMCounterBit MainCounter[8];
-		OAMCounterBit TempCounter[5];
-		OAMCmprBit cmpr[4];
+		OAMCounterBit MainCounter[8]{};
+		OAMCounterBit TempCounter[5]{};
+		OAMCmprBit cmpr[4]{};
 
 		BaseLogic::TriState OAM_x[8]{};
 		BaseLogic::TriState OAM_Temp[5]{};
