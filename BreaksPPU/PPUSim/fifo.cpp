@@ -172,9 +172,9 @@ namespace PPUSim
 			{
 				ppu->wire.n_ZCOL0 = get_nZCOL0(run);
 				ppu->wire.n_ZCOL1 = get_nZCOL1(run);
-				ppu->wire.ZCOL2 = LaneOut[run][(size_t)FIFOLaneOutput::Z_COL2];
-				ppu->wire.ZCOL3 = LaneOut[run][(size_t)FIFOLaneOutput::Z_COL3];
-				ppu->wire.n_ZPRIO = LaneOut[run][(size_t)FIFOLaneOutput::nZ_PRIO];
+				ppu->wire.ZCOL2 = LaneOut[run].Z_COL2;
+				ppu->wire.ZCOL3 = LaneOut[run].Z_COL3;
+				ppu->wire.n_ZPRIO = LaneOut[run].nZ_PRIO;
 
 				break;
 			}
@@ -199,17 +199,17 @@ namespace PPUSim
 
 	TriState FIFO::get_nZCOL0(size_t lane)
 	{
-		return LaneOut[lane][(size_t)FIFOLaneOutput::nZ_COL0];
+		return LaneOut[lane].nZ_COL0;
 	}
 
 	TriState FIFO::get_nZCOL1(size_t lane)
 	{
-		return LaneOut[lane][(size_t)FIFOLaneOutput::nZ_COL1];
+		return LaneOut[lane].nZ_COL1;
 	}
 
 	TriState FIFO::get_nxEN(size_t lane)
 	{
-		return LaneOut[lane][(size_t)FIFOLaneOutput::n_xEN];
+		return LaneOut[lane].n_xEN;
 	}
 
 	void FIFO::sim_SpriteH()
@@ -285,7 +285,6 @@ namespace PPUSim
 
 	void FIFOLane::sim_CounterControl()
 	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState PCLK = ppu->wire.PCLK;
 
 		STEP = NOR(PCLK, ZH_FF.get());
@@ -349,7 +348,7 @@ namespace PPUSim
 		ZH_FF.set(NOR(NOR3(n_PCLK, n_ZH, Carry), NOR(ZH_FF.get(), AND(PCLK, Carry))));
 	}
 
-	void FIFOLane::sim(TriState HSel, TriState n_TX[8], TriState ZOut[(size_t)FIFOLaneOutput::Max])
+	void FIFOLane::sim(TriState HSel, TriState n_TX[8], FIFOLaneOutput& ZOut)
 	{
 		sim_Enable();
 		sim_LaneControl(HSel);
@@ -358,12 +357,12 @@ namespace PPUSim
 		auto CarryOut = sim_Counter();
 		sim_CounterCarry(CarryOut);
 
-		ZOut[(size_t)FIFOLaneOutput::nZ_COL0] = nZ_COL0;
-		ZOut[(size_t)FIFOLaneOutput::nZ_COL1] = nZ_COL1;
-		ZOut[(size_t)FIFOLaneOutput::Z_COL2] = Z_COL2;
-		ZOut[(size_t)FIFOLaneOutput::Z_COL3] = Z_COL3;
-		ZOut[(size_t)FIFOLaneOutput::nZ_PRIO] = nZ_PRIO;
-		ZOut[(size_t)FIFOLaneOutput::n_xEN] = n_EN;
+		ZOut.nZ_COL0 = nZ_COL0;
+		ZOut.nZ_COL1 = nZ_COL1;
+		ZOut.Z_COL2 = Z_COL2;
+		ZOut.Z_COL3 = Z_COL3;
+		ZOut.nZ_PRIO = nZ_PRIO;
+		ZOut.n_xEN = n_EN;
 	}
 
 	size_t FIFOLane::get_Counter()

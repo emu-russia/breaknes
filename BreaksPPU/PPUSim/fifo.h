@@ -27,15 +27,14 @@ namespace PPUSim
 			BaseLogic::TriState nTx, BaseLogic::TriState shift_in);
 	};
 
-	enum class FIFOLaneOutput
+	struct FIFOLaneOutput
 	{
-		nZ_COL0 = 0,
-		nZ_COL1,
-		Z_COL2,
-		Z_COL3,
-		nZ_PRIO,
-		n_xEN,
-		Max,
+		BaseLogic::TriState nZ_COL0;
+		BaseLogic::TriState nZ_COL1;
+		BaseLogic::TriState Z_COL2;
+		BaseLogic::TriState Z_COL3;
+		BaseLogic::TriState nZ_PRIO;
+		BaseLogic::TriState n_xEN;
 	};
 
 	class FIFOLane
@@ -81,7 +80,7 @@ namespace PPUSim
 		FIFOLane(PPU* parent) { ppu = parent; }
 		~FIFOLane() {}
 
-		void sim(BaseLogic::TriState HSel, BaseLogic::TriState n_TX[8], BaseLogic::TriState ZOut[(size_t)FIFOLaneOutput::Max]);
+		void sim(BaseLogic::TriState HSel, BaseLogic::TriState n_TX[8], FIFOLaneOutput& ZOut);
 	};
 
 	class FIFO
@@ -109,7 +108,7 @@ namespace PPUSim
 		BaseLogic::DLatch col3_latch;
 		BaseLogic::DLatch prio_latch;
 
-		BaseLogic::TriState LaneOut[8][(size_t)FIFOLaneOutput::Max]{};
+		FIFOLaneOutput LaneOut[8]{};
 
 		void sim_HInv();
 		void sim_Lanes();
