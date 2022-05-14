@@ -95,6 +95,7 @@ namespace PPUSim
 		wires.OAM8 = wire.OAM8 == TriState::One ? 1 : 0;
 		wires.PD_FIFO = wire.PD_FIFO == TriState::One ? 1 : 0;
 		wires.OV = Pack(wire.OV);			// Packed
+		wires.n_WE = wire.n_WE;
 
 		wires.CLPB = wire.CLPB == TriState::One ? 1 : 0;
 		wires.CLPO = wire.CLPO == TriState::One ? 1 : 0;
@@ -222,6 +223,16 @@ namespace PPUSim
 	uint8_t PPU::Dbg_TempOAMReadByte(size_t addr)
 	{
 		return oam->Dbg_TempOAMReadByte(addr);
+	}
+
+	void PPU::Dbg_OAMWriteByte(size_t addr, uint8_t val)
+	{
+		oam->Dbg_OAMWriteByte(addr, val);
+	}
+
+	void PPU::Dbg_TempOAMWriteByte(size_t addr, uint8_t val)
+	{
+		oam->Dbg_TempOAMWriteByte(addr, val);
 	}
 
 	uint8_t PPU::Dbg_CRAMReadByte(size_t addr)

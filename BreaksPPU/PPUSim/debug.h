@@ -76,6 +76,7 @@ namespace PPUSim
 		uint8_t OAM8;
 		uint8_t PD_FIFO;
 		uint8_t OV;			// Packed
+		uint8_t n_WE;
 		uint8_t CLPB;
 		uint8_t CLPO;
 		uint8_t n_SH2;

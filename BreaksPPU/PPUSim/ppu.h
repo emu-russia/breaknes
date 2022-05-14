@@ -219,6 +219,7 @@ namespace PPUSim
 			BaseLogic::TriState OAM8;
 			BaseLogic::TriState PD_FIFO;
 			BaseLogic::TriState OV[8];
+			BaseLogic::TriState n_WE;		// 0: OAM Write
 
 			BaseLogic::TriState CLPB;
 			BaseLogic::TriState CLPO;
@@ -368,12 +369,12 @@ namespace PPUSim
 		void GetDebugInfo_Regs(PPU_Registers& regs);
 
 		size_t GetHCounter();
-
 		size_t GetVCounter();
 
 		uint8_t Dbg_OAMReadByte(size_t addr);
-
 		uint8_t Dbg_TempOAMReadByte(size_t addr);
+		void Dbg_OAMWriteByte(size_t addr, uint8_t val);
+		void Dbg_TempOAMWriteByte(size_t addr, uint8_t val);
 
 		uint8_t Dbg_CRAMReadByte(size_t addr);
 

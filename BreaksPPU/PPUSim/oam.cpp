@@ -50,17 +50,19 @@ namespace PPUSim
 	{
 		size_t row = 0;
 
-		for (size_t n = 0; n < 3; n++)
-		{
-			if (ppu->wire.n_OAM[n] == TriState::Zero)
-			{
-				row |= (1ULL << n);
-			}
-		}
-
 		if (ppu->wire.OAM8 == TriState::One)
 		{
 			row = 8;
+		}
+		else
+		{
+			for (size_t n = 0; n < 3; n++)
+			{
+				if (ppu->wire.n_OAM[n] == TriState::Zero)
+				{
+					row |= (1ULL << n);
+				}
+			}
 		}
 
 		COL = 0;
@@ -97,7 +99,7 @@ namespace PPUSim
 		temp[3] = NOT(H0_DD);
 		temp[4] = OAMCTR2;
 		temp[5] = n_VIS;
-		n_WE = NOR(ppu->wire.OFETCH, NOR6(temp));
+		ppu->wire.n_WE = NOR(ppu->wire.OFETCH, NOR6(temp));
 	}
 
 	/// <summary>
@@ -127,6 +129,8 @@ namespace PPUSim
 
 	void OAM::sim_OB(OAMLane* lane)
 	{
+		TriState n_WE = ppu->wire.n_WE;
+
 		for (size_t n = 0; n < 8; n++)
 		{
 			ob[n]->sim(lane, COL, n, OB_OAM, n_WE);
@@ -313,7 +317,7 @@ namespace PPUSim
 	uint8_t OAM::Dbg_TempOAMReadByte(size_t addr)
 	{
 		OAMLane* l = lane[8];
-		size_t col = addr >> 3;
+		size_t col = addr;
 		TriState val[8]{};
 
 		for (size_t bit_num = 0; bit_num < 8; bit_num++)
@@ -323,5 +327,34 @@ namespace PPUSim
 		}
 
 		return Pack(val);
+	}
+
+	void OAM::Dbg_OAMWriteByte(size_t addr, uint8_t value)
+	{
+		size_t row = addr & 7;
+		OAMLane* l = lane[row];
+		size_t col = addr >> 3;
+		TriState val[8]{};
+
+		Unpack(value, val);
+
+		for (size_t bit_num = 0; bit_num < 8; bit_num++)
+		{
+			l->sim(col, bit_num, val[bit_num]);
+		}
+	}
+
+	void OAM::Dbg_TempOAMWriteByte(size_t addr, uint8_t value)
+	{
+		OAMLane* l = lane[8];
+		size_t col = addr;
+		TriState val[8]{};
+
+		Unpack(value, val);
+
+		for (size_t bit_num = 0; bit_num < 8; bit_num++)
+		{
+			l->sim(col, bit_num, val[bit_num]);
+		}
 	}
 }

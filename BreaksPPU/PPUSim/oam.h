@@ -98,7 +98,6 @@ namespace PPUSim
 		BaseLogic::DLatch latch[4];
 
 		BaseLogic::TriState OB_OAM = BaseLogic::TriState::X;
-		BaseLogic::TriState n_WE = BaseLogic::TriState::X;
 
 		// The physical location of the column on the chip.
 		size_t COL = 0;
@@ -121,7 +120,8 @@ namespace PPUSim
 		void set_OB(size_t bit_num, BaseLogic::TriState val);
 
 		uint8_t Dbg_OAMReadByte(size_t addr);
-
 		uint8_t Dbg_TempOAMReadByte(size_t addr);
+		void Dbg_OAMWriteByte(size_t addr, uint8_t val);
+		void Dbg_TempOAMWriteByte(size_t addr, uint8_t val);
 	};
 }
