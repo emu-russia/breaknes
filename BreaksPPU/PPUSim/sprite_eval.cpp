@@ -17,17 +17,17 @@ namespace PPUSim
 
 	void OAMEval::sim()
 	{
-		sim_MainCounterControl();
-		sim_MainCounter();
-
-		sim_SpriteOVF();
-
 		sim_Comparator();
 		sim_ComparisonFSM();
+
+		sim_MainCounterControl();
+		sim_MainCounter();
 
 		sim_TempCounterControlBeforeCounter();
 		sim_TempCounter();
 		sim_TempCounterControlAfterCounter();
+
+		sim_SpriteOVF();
 
 		sim_OAMAddress();
 	}
@@ -104,38 +104,12 @@ namespace PPUSim
 		omv_latch.set(OMV, n_PCLK);
 	}
 
-	void OAMEval::sim_SpriteOVF()
-	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState OMFG = this->OMFG;
-		TriState H0_D = ppu->wire.H0_Dash;
-		TriState RESCL = ppu->fsm.RESCL;
-		TriState I_OAM2 = ppu->fsm.IOAM2;
-		TriState n_R2 = ppu->wire.n_R2;
-		TriState n_DBE = ppu->wire.n_DBE;
-
-		TriState temp[4]{};
-		temp[0] = omfg_latch.get();
-		temp[1] = setov_latch.get();
-		temp[2] = H0_D;
-		temp[3] = n_PCLK;
-		auto setov = NOR4(temp);
-
-		auto ASAP = AND(OMSTEP, omv_latch.get());
-		SPR_OV_REG_FF.set(NOR(NOR(setov, SPR_OV_REG_FF.get()), RESCL));
-		SPR_OV_FF.set(NOR(NOR3(ASAP, setov, SPR_OV_FF.get()), I_OAM2));
-		ppu->wire.SPR_OV = SPR_OV_FF.get();
-		auto R2_Enable = NOT(NOT(NOR(n_R2, n_DBE)));
-		ppu->SetDBBit(5, MUX(R2_Enable, TriState::Z, SPR_OV_REG_FF.get()));
-	}
-
 	void OAMEval::sim_Comparator()
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState O8_16 = ppu->wire.O8_16;
 		TriState carry_in = TriState::Zero;
-		TriState M4_OVZ = get_M4_OVZ();		// The value has not been updated yet
-		TriState OB_Bits[8]{};
+		M4_OVZ_Cmpr = get_M4_OVZ();		// The value has not been updated yet
 
 		for (size_t n = 0; n < 8; n++)
 		{
@@ -161,7 +135,7 @@ namespace PPUSim
 			}
 		}
 
-		ovz_latch.set(OB_Bits[7], PCLK);
+		ovz_latch.set(ppu->oam->get_OB(7), PCLK);
 
 		TriState temp[7]{};
 		temp[0] = ppu->wire.OV[4];
@@ -170,7 +144,7 @@ namespace PPUSim
 		temp[3] = ppu->wire.OV[7];
 		temp[4] = AND(ppu->wire.OV[3], NOT(O8_16));
 		temp[5] = NOR(ovz_latch.nget(), ppu->v->getBit(7));
-		temp[6] = M4_OVZ;
+		temp[6] = M4_OVZ_Cmpr;
 		OVZ = NOR7(temp);
 	}
 
@@ -188,28 +162,53 @@ namespace PPUSim
 		TriState OVZ = this->OVZ;
 		TriState NotUsed{};
 
+		// PD/FIFO
+
 		TriState n_PCLK2 = NOT(ppu->wire.PCLK);
 		fnt_latch.set(NOT(NOR(nF_NT, NOT(H0_DD))), n_PCLK2);
 		novz_latch.set(NOT(OVZ), n_PCLK2);
 		eval_FF3.sim(n_PCLK2, fnt_latch.get(), novz_latch.get(), ppu->wire.PD_FIFO, NotUsed);
+
+		// Set the command to copy the sprite if it is found.
 
 		TriState temp[4]{};
 		temp[0] = I_OAM2;
 		temp[1] = n_VIS;
 		temp[2] = SPR_OV;
 		temp[3] = NOT(OVZ);
-		auto n_I2 = NOR4(temp);
-		auto DDD = NOR(PCLK, NOT(H0_DD));
 
-		i2_latch[0].set(n_I2, DDD);
-		i2_latch[1].set(i2_latch[0].nget(), PCLK);
-		i2_latch[2].set(i2_latch[1].nget(), DDD);
-		i2_latch[3].set(i2_latch[2].nget(), PCLK);
-		i2_latch[4].set(i2_latch[3].nget(), DDD);
+		auto Copy = NOR4(temp);
+		//n_I2 = Copy;
+
+		// For now, we use this hack with the capacitor, to extend the signal /I2 (aka Copy).
+
+		if (Copy == TriState::One && n_I2 == TriState::Zero && Copy_Capacitor != 0)
+		{
+			Copy_Capacitor--;
+			n_I2 = TriState::Zero;
+		}
+		else
+		{
+			n_I2 = Copy;
+			Copy_Capacitor = 7;
+		}
+
+		// The shift register must be simulated backwards.
+
+		DDD = NOR(PCLK, NOT(H0_DD));
+
 		i2_latch[5].set(i2_latch[4].nget(), PCLK);
+		i2_latch[4].set(i2_latch[3].nget(), DDD);
+		i2_latch[3].set(i2_latch[2].nget(), PCLK);
+		i2_latch[2].set(i2_latch[1].nget(), DDD);
+		i2_latch[1].set(i2_latch[0].nget(), PCLK);
+		i2_latch[0].set(n_I2, DDD);
+
+		// Set Mode4
 
 		OMFG = NOR(get_M4_OVZ(), n_I2);
-		omfg_latch.set(OMFG, n_PCLK);
+
+		// Handle finding sprite 0 on the current line for the STRIKE circuit (Spr0 Hit).
 
 		TriState nFF2_Out{};
 		eval_FF2.sim(PCLK, NOT(S_EV), n_I2, NotUsed, nFF2_Out);
@@ -231,7 +230,6 @@ namespace PPUSim
 		nomfg_latch.set(NOT(OMFG), n_PCLK);
 		ioam2_latch.set(I_OAM2, n_PCLK);
 		auto DontStep = NOR(NOR(NOR(nomfg_latch.get(), ioam2_latch.get()), H0_D), AND(n_H2_D, PAR_O));
-		temp_latch1.set(NAND(OAMCTR2_FF.nget(), EVAL), n_PCLK);
 		OSTEP = NOR3(temp_latch1.get(), n_PCLK, DontStep);
 	}
 
@@ -255,11 +253,43 @@ namespace PPUSim
 	void OAMEval::sim_TempCounterControlAfterCounter()
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState EVAL = ppu->fsm.EVAL;
 
 		tmv_latch.set(TMV, n_PCLK);
 		OAMCTR2_FF.set(NOR(ORES, NOR(AND(tmv_latch.get(), OSTEP), OAMCTR2_FF.get())));
-		setov_latch.set(OAMCTR2_FF.nget(), n_PCLK);
+		temp_latch1.set(NAND(OAMCTR2_FF.nget(), EVAL), n_PCLK);
 		ppu->wire.OAMCTR2 = OAMCTR2_FF.get();
+	}
+
+	/// <summary>
+	/// Sprite Overflow logic should be simulated after the counters work. 
+	/// It captures the fact of their overflow (and terminates the current sprite process)
+	/// </summary>
+	void OAMEval::sim_SpriteOVF()
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState H0_D = ppu->wire.H0_Dash;
+		TriState RESCL = ppu->fsm.RESCL;
+		TriState I_OAM2 = ppu->fsm.IOAM2;
+		TriState n_R2 = ppu->wire.n_R2;
+		TriState n_DBE = ppu->wire.n_DBE;
+		auto R2_Enable = NOR(n_R2, n_DBE);
+
+		omfg_latch.set(OMFG, n_PCLK);
+		setov_latch.set(OAMCTR2_FF.nget(), n_PCLK);
+
+		TriState temp[4]{};
+		temp[0] = omfg_latch.get();
+		temp[1] = setov_latch.get();
+		temp[2] = H0_D;
+		temp[3] = n_PCLK;
+		auto TempOVF = NOR4(temp);
+
+		auto MainOVF = AND(OMSTEP, omv_latch.get());
+		SPR_OV_REG_FF.set(NOR(NOR(TempOVF, SPR_OV_REG_FF.get()), RESCL));
+		SPR_OV_FF.set(NOR(NOR3(MainOVF, TempOVF, SPR_OV_FF.get()), I_OAM2));
+		ppu->wire.SPR_OV = SPR_OV_FF.get();
+		ppu->SetDBBit(5, MUX(R2_Enable, TriState::Z, SPR_OV_REG_FF.get()));
 	}
 
 	void OAMEval::sim_OAMAddress()
@@ -395,5 +425,11 @@ namespace PPUSim
 		wires.ORES = ORES;
 		wires.TMV = TMV;
 		wires.OAP = NOT(ppu->wire.OAM8);
+		wires.DDD = DDD;
+		wires.n_I2 = n_I2;
+		wires.M4_OVZ = get_M4_OVZ();
+		wires.OVZ = OVZ;
+		wires.OBCmpr = Pack(OB_Bits);
+		wires.M4_OVZ_Cmpr = M4_OVZ_Cmpr;
 	}
 }

@@ -263,6 +263,12 @@ namespace PPUPlayer
 		"ORES", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::ORES),
 		"TMV", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::TMV),
 		"OAP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OAP),
+		"DDD", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::DDD),
+		"/I2", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::n_I2),
+		"M4_OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::M4_OVZ),
+		"OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OVZ),
+		"OBCmpr", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OBCmpr),
+		"M4_OVZ_Cmpr", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::M4_OVZ_Cmpr),
 	};
 
 	SignalOffsetPair ppu_regs[] = {
@@ -283,7 +289,7 @@ namespace PPUPlayer
 	};
 
 	SignalOffsetPair board_signals[] = {
-		"CLK", offsetof(BoardDebugInfo, CLK),
+		"BoardCLK", offsetof(BoardDebugInfo, CLK),
 		"ALE", offsetof(BoardDebugInfo, ALE),
 		"LS373 Latch", offsetof(BoardDebugInfo, LS373_Latch),
 		"VRAM Address", offsetof(BoardDebugInfo, VRAM_Addr),
