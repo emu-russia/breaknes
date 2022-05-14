@@ -15,11 +15,14 @@ namespace PPUSimUnitTest
 
 		PPUSim::PPU_Interconnects wires_open{};
 		PPUSim::PPU_FSMStates fsm_open{};
+		PPUSim::OAMEvalWires eval_open{};
 
 		void LogWires(Debug::EventLog* log, PPUSim::PPU_Interconnects& wires, size_t ts);
 		void LogFSMState(Debug::EventLog *log, PPUSim::PPU_FSMStates &fsm, size_t ts);
+		void LogOAMEval(Debug::EventLog* log, PPUSim::OAMEvalWires& eval_wires, size_t ts);
 		void CloseWires(Debug::EventLog* log, size_t ts);
 		void CloseFSMState(Debug::EventLog* log, size_t ts);
+		void CloseOAMEval(Debug::EventLog* log, size_t ts);
 
 	public:
 		UnitTest(PPUSim::Revision rev);

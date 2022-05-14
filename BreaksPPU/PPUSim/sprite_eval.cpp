@@ -17,6 +17,7 @@ namespace PPUSim
 
 	void OAMEval::sim()
 	{
+		sim_StepJohnson();
 		sim_Comparator();
 		sim_ComparisonFSM();
 
@@ -30,6 +31,111 @@ namespace PPUSim
 		sim_SpriteOVF();
 
 		sim_OAMAddress();
+	}
+
+	void OAMEval::sim_StepJohnson()
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState H0_DD = ppu->wire.H0_Dash2;
+
+		COPY_STEP = NOR(PCLK, NOT(H0_DD));
+
+		// The shift register must be simulated backwards.
+
+		i2_latch[5].set(i2_latch[4].nget(), PCLK);
+		i2_latch[4].set(i2_latch[3].nget(), COPY_STEP);
+		i2_latch[3].set(i2_latch[2].nget(), PCLK);
+		i2_latch[2].set(i2_latch[1].nget(), COPY_STEP);
+		i2_latch[1].set(i2_latch[0].nget(), PCLK);
+
+		COPY_OVF = NOT(NOR3(i2_latch[5].nget(), i2_latch[3].nget(), i2_latch[1].nget()));
+	}
+
+	void OAMEval::sim_Comparator()
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState O8_16 = ppu->wire.O8_16;
+		TriState carry_in = TriState::Zero;
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			OB_latch[n].set(ppu->oam->get_OB(n), PCLK);
+			OB_Bits[n] = OB_latch[n].get();
+		}
+
+		if (ppu->HLEMode)
+		{
+			uint8_t V = (uint8_t)ppu->v->get();
+			uint8_t OB = Pack(OB_Bits);
+			uint8_t OV = (int8_t)V - (int8_t)OB;
+			Unpack(OV, ppu->wire.OV);
+		}
+		else
+		{
+			for (size_t n = 0; n < 4; n++)
+			{
+				carry_in = cmpr[n].sim(
+					OB_Bits[2 * n], ppu->v->getBit(2 * n),
+					OB_Bits[2 * n + 1], ppu->v->getBit(2 * n + 1),
+					carry_in, ppu->wire.OV[2 * n], ppu->wire.OV[2 * n + 1]);
+			}
+		}
+
+		ovz_latch.set(ppu->oam->get_OB(7), PCLK);
+
+		TriState temp[7]{};
+		temp[0] = ppu->wire.OV[4];
+		temp[1] = ppu->wire.OV[5];
+		temp[2] = ppu->wire.OV[6];
+		temp[3] = ppu->wire.OV[7];
+		temp[4] = AND(ppu->wire.OV[3], NOT(O8_16));
+		temp[5] = NOR(ovz_latch.nget(), ppu->v->getBit(7));
+		temp[6] = COPY_OVF;
+		OVZ = NOR7(temp);
+	}
+
+	void OAMEval::sim_ComparisonFSM()
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState PCLK = ppu->wire.PCLK;
+		TriState nF_NT = ppu->fsm.nFNT;
+		TriState H0_DD = ppu->wire.H0_Dash2;
+		TriState I_OAM2 = ppu->fsm.IOAM2;
+		TriState n_VIS = ppu->fsm.nVIS;
+		TriState SPR_OV = get_SPR_OV();
+		TriState S_EV = ppu->fsm.SEV;
+		TriState PAR_O = ppu->fsm.PARO;
+		TriState NotUsed{};
+
+		// PD/FIFO
+
+		TriState n_PCLK2 = NOT(ppu->wire.PCLK);
+		fnt_latch.set(NOT(NOR(nF_NT, NOT(H0_DD))), n_PCLK2);
+		novz_latch.set(NOT(OVZ), n_PCLK2);
+		eval_FF3.sim(n_PCLK2, fnt_latch.get(), novz_latch.get(), ppu->wire.PD_FIFO, NotUsed);
+
+		// Set the command to copy the sprite if it is found.
+
+		TriState temp[4]{};
+		temp[0] = I_OAM2;
+		temp[1] = n_VIS;
+		temp[2] = SPR_OV;
+		temp[3] = NOT(OVZ);
+		DO_COPY = NOR4(temp);
+
+		// Reload Johnson counter
+
+		i2_latch[0].set(DO_COPY, COPY_STEP);
+
+		// Set Mode4
+
+		OMFG = NOR(COPY_OVF, DO_COPY);
+
+		// Handle finding sprite 0 on the current line for the STRIKE circuit (Spr0 Hit).
+
+		TriState nFF2_Out{};
+		eval_FF2.sim(PCLK, NOT(S_EV), DO_COPY, NotUsed, nFF2_Out);
+		eval_FF1.sim(PCLK, NOT(PAR_O), nFF2_Out, ppu->wire.n_SPR0_EV, NotUsed);
 	}
 
 	void OAMEval::sim_MainCounterControl()
@@ -85,7 +191,7 @@ namespace PPUSim
 		MainCounter[4].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(4), carry_in, OAM_x[4], n_out[4]);
 
 		TriState temp[6]{};
-		
+
 		temp[0] = out01m;
 		temp[1] = n_out[2];
 		temp[2] = n_out[3];
@@ -102,117 +208,6 @@ namespace PPUSim
 		OMV = MainCounter[7].sim(OMOUT, W3_Enable, OMSTEP, TriState::Zero, PAR_O, ppu->GetDBBit(7), carry_in, OAM_x[7], n_out[7]);
 
 		omv_latch.set(OMV, n_PCLK);
-	}
-
-	void OAMEval::sim_Comparator()
-	{
-		TriState PCLK = ppu->wire.PCLK;
-		TriState O8_16 = ppu->wire.O8_16;
-		TriState carry_in = TriState::Zero;
-		M4_OVZ_Cmpr = get_M4_OVZ();		// The value has not been updated yet
-
-		for (size_t n = 0; n < 8; n++)
-		{
-			OB_latch[n].set(ppu->oam->get_OB(n), PCLK);
-			OB_Bits[n] = OB_latch[n].get();
-		}
-
-		if (ppu->HLEMode)
-		{
-			uint8_t V = (uint8_t)ppu->v->get();
-			uint8_t OB = Pack(OB_Bits);
-			uint8_t OV = (int8_t)V - (int8_t)OB;
-			Unpack(OV, ppu->wire.OV);
-		}
-		else
-		{
-			for (size_t n = 0; n < 4; n++)
-			{
-				carry_in = cmpr[n].sim(
-					OB_Bits[2 * n], ppu->v->getBit(2 * n),
-					OB_Bits[2 * n + 1], ppu->v->getBit(2 * n + 1),
-					carry_in, ppu->wire.OV[2 * n], ppu->wire.OV[2 * n + 1]);
-			}
-		}
-
-		ovz_latch.set(ppu->oam->get_OB(7), PCLK);
-
-		TriState temp[7]{};
-		temp[0] = ppu->wire.OV[4];
-		temp[1] = ppu->wire.OV[5];
-		temp[2] = ppu->wire.OV[6];
-		temp[3] = ppu->wire.OV[7];
-		temp[4] = AND(ppu->wire.OV[3], NOT(O8_16));
-		temp[5] = NOR(ovz_latch.nget(), ppu->v->getBit(7));
-		temp[6] = M4_OVZ_Cmpr;
-		OVZ = NOR7(temp);
-	}
-
-	void OAMEval::sim_ComparisonFSM()
-	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState PCLK = ppu->wire.PCLK;
-		TriState nF_NT = ppu->fsm.nFNT;
-		TriState H0_DD = ppu->wire.H0_Dash2;
-		TriState I_OAM2 = ppu->fsm.IOAM2;
-		TriState n_VIS = ppu->fsm.nVIS;
-		TriState SPR_OV = get_SPR_OV();
-		TriState S_EV = ppu->fsm.SEV;
-		TriState PAR_O = ppu->fsm.PARO;
-		TriState OVZ = this->OVZ;
-		TriState NotUsed{};
-
-		// PD/FIFO
-
-		TriState n_PCLK2 = NOT(ppu->wire.PCLK);
-		fnt_latch.set(NOT(NOR(nF_NT, NOT(H0_DD))), n_PCLK2);
-		novz_latch.set(NOT(OVZ), n_PCLK2);
-		eval_FF3.sim(n_PCLK2, fnt_latch.get(), novz_latch.get(), ppu->wire.PD_FIFO, NotUsed);
-
-		// Set the command to copy the sprite if it is found.
-
-		TriState temp[4]{};
-		temp[0] = I_OAM2;
-		temp[1] = n_VIS;
-		temp[2] = SPR_OV;
-		temp[3] = NOT(OVZ);
-
-		auto Copy = NOR4(temp);
-		//n_I2 = Copy;
-
-		// For now, we use this hack with the capacitor, to extend the signal /I2 (aka Copy).
-
-		if (Copy == TriState::One && n_I2 == TriState::Zero && Copy_Capacitor != 0)
-		{
-			Copy_Capacitor--;
-			n_I2 = TriState::Zero;
-		}
-		else
-		{
-			n_I2 = Copy;
-			Copy_Capacitor = 7;
-		}
-
-		// The shift register must be simulated backwards.
-
-		DDD = NOR(PCLK, NOT(H0_DD));
-
-		i2_latch[5].set(i2_latch[4].nget(), PCLK);
-		i2_latch[4].set(i2_latch[3].nget(), DDD);
-		i2_latch[3].set(i2_latch[2].nget(), PCLK);
-		i2_latch[2].set(i2_latch[1].nget(), DDD);
-		i2_latch[1].set(i2_latch[0].nget(), PCLK);
-		i2_latch[0].set(n_I2, DDD);
-
-		// Set Mode4
-
-		OMFG = NOR(get_M4_OVZ(), n_I2);
-
-		// Handle finding sprite 0 on the current line for the STRIKE circuit (Spr0 Hit).
-
-		TriState nFF2_Out{};
-		eval_FF2.sim(PCLK, NOT(S_EV), n_I2, NotUsed, nFF2_Out);
-		eval_FF1.sim(PCLK, NOT(PAR_O), nFF2_Out, ppu->wire.I2SEV, NotUsed);
 	}
 
 	void OAMEval::sim_TempCounterControlBeforeCounter()
@@ -381,11 +376,6 @@ namespace PPUSim
 		n_Q = NOT(Q);
 	}
 
-	TriState OAMEval::get_M4_OVZ()
-	{
-		return NOT(NOR3(i2_latch[5].nget(), i2_latch[3].nget(), i2_latch[1].nget()));
-	}
-
 	TriState OAMEval::get_SPR_OV()
 	{
 		return SPR_OV_FF.get();
@@ -425,11 +415,10 @@ namespace PPUSim
 		wires.ORES = ORES;
 		wires.TMV = TMV;
 		wires.OAP = NOT(ppu->wire.OAM8);
-		wires.DDD = DDD;
-		wires.n_I2 = n_I2;
-		wires.M4_OVZ = get_M4_OVZ();
+		wires.COPY_STEP = COPY_STEP;
+		wires.DO_COPY = DO_COPY;
+		wires.COPY_OVF = COPY_OVF;
 		wires.OVZ = OVZ;
 		wires.OBCmpr = Pack(OB_Bits);
-		wires.M4_OVZ_Cmpr = M4_OVZ_Cmpr;
 	}
 }

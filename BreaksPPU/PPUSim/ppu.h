@@ -211,7 +211,7 @@ namespace PPUSim
 			BaseLogic::TriState n_EXT_Out[4];
 
 			BaseLogic::TriState OB[8];
-			BaseLogic::TriState I2SEV;
+			BaseLogic::TriState n_SPR0_EV;
 			BaseLogic::TriState OFETCH;
 			BaseLogic::TriState SPR_OV;
 			BaseLogic::TriState OAMCTR2;

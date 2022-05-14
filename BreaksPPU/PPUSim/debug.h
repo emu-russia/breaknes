@@ -68,7 +68,7 @@ namespace PPUSim
 		uint8_t EXT_In[4];
 		uint8_t n_EXT_Out[4];
 		uint8_t OB;			// Packed
-		uint8_t I2SEV;
+		uint8_t n_SPR0_EV;
 		uint8_t OFETCH;
 		uint8_t SPR_OV;
 		uint8_t OAMCTR2;
@@ -153,12 +153,11 @@ namespace PPUSim
 		uint8_t ORES;		// 1: Reset TempCounter
 		uint8_t TMV;		// TempCounter overflow
 		uint8_t OAP;		// 1: OAMAddress is MainCounter, 0: OAMAddress is TempCounter + bits0-2 of MainCounter
-		uint8_t DDD;		// 1: Propagate copy SR3
-		uint8_t n_I2;		// 1: Do copy sprite
-		uint8_t M4_OVZ;		// 1: Block OVZ comparator
+		uint8_t COPY_STEP;	// 1: Propagate copy Jhonson Counter
+		uint8_t DO_COPY;	// 1: Do copy sprite
+		uint8_t COPY_OVF;	// 1: Block OVZ comparator
 		uint8_t OVZ;		// 1: Sprite found
 		uint8_t OBCmpr;		// 1: OB inputs for comparator
-		uint8_t M4_OVZ_Cmpr;	// M4_OVZ value at the input to the comparator simulation circuit
 	};
 
 	/// <summary>
