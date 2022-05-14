@@ -305,16 +305,25 @@ namespace PPUSim
 	}
 
 	/// <summary>
-	/// The optimized carry chain is not used.
+	/// The optimized carry chain IS used.
 	/// </summary>
 	/// <returns></returns>
 	TriState FIFOLane::sim_Counter()
 	{
 		TriState carry = TriState::One;
+		TriState val_out[5]{};
+		TriState unused{};
 
-		for (size_t n = 0; n < 8; n++)
+		for (size_t n = 0; n < 5; n++)
 		{
-			carry = down_cnt[n].sim(UPD, LOAD, STEP, ppu->wire.OB[n], carry);
+			carry = down_cnt[n].sim(UPD, LOAD, STEP, ppu->wire.OB[n], carry, val_out[n]);
+		}
+
+		carry = NOR5(val_out);
+
+		for (size_t n = 5; n < 8; n++)
+		{
+			carry = down_cnt[n].sim(UPD, LOAD, STEP, ppu->wire.OB[n], carry, unused);
 		}
 
 		return carry;
@@ -349,20 +358,36 @@ namespace PPUSim
 		ZOut[(size_t)FIFOLaneOutput::n_xEN] = n_EN;
 	}
 
-	/// <summary>
-	/// The output values of the counter are not used by anyone.
-	/// </summary>
+	size_t FIFOLane::get_Counter()
+	{
+		size_t val = 0;
+
+		for (size_t n = 0; n < _countof(down_cnt); n++)
+		{
+			val |= ((down_cnt[n].get() == TriState::One) ? 1ULL : 0) << n;
+		}
+
+		return val;
+	}
+
 	TriState FIFO_CounterBit::sim(
 		TriState Clock, TriState Load, TriState Step,
 		TriState val_in,
-		TriState carry_in)
+		TriState carry_in,
+		TriState& val_out)
 	{
 		keep_ff.set(MUX(Step, 
-			MUX(Load, MUX(Clock, TriState::Z, MUX(carry_in, keep_ff.nget(), keep_ff.get())), val_in),
+			MUX(Load, MUX(Clock, TriState::Z, keep_ff.get()), val_in),
 			step_latch.nget()));
-		step_latch.set(MUX(carry_in, keep_ff.get(), keep_ff.nget()), Clock);
+		step_latch.set(MUX(carry_in, keep_ff.nget(), keep_ff.get()), Clock);
 		TriState carry_out = NOR(keep_ff.get(), NOT(carry_in));
+		val_out = keep_ff.get();
 		return carry_out;
+	}
+
+	TriState FIFO_CounterBit::get()
+	{
+		return keep_ff.get();
 	}
 
 	TriState FIFO_SRBit::sim(TriState n_PCLK, TriState T_SR, TriState SR_EN,

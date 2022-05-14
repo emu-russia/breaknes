@@ -12,7 +12,9 @@ namespace PPUSim
 	public:
 		BaseLogic::TriState sim(BaseLogic::TriState Clock, BaseLogic::TriState Load, BaseLogic::TriState Step,
 			BaseLogic::TriState val_in,
-			BaseLogic::TriState carry_in);
+			BaseLogic::TriState carry_in,
+			BaseLogic::TriState& val_out);
+		BaseLogic::TriState get();
 	};
 
 	class FIFO_SRBit
@@ -75,6 +77,8 @@ namespace PPUSim
 		void sim_PairedSR(BaseLogic::TriState n_TX[8]);
 		BaseLogic::TriState sim_Counter();
 		void sim_CounterCarry(BaseLogic::TriState Carry);
+
+		size_t get_Counter();
 
 	public:
 		FIFOLane(PPU* parent) { ppu = parent; }
