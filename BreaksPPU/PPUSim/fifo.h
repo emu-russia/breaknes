@@ -27,15 +27,14 @@ namespace PPUSim
 			BaseLogic::TriState nTx, BaseLogic::TriState shift_in);
 	};
 
-	enum class FIFOLaneOutput
+	struct FIFOLaneOutput
 	{
-		nZ_COL0 = 0,
-		nZ_COL1,
-		Z_COL2,
-		Z_COL3,
-		nZ_PRIO,
-		n_xEN,
-		Max,
+		BaseLogic::TriState nZ_COL0;
+		BaseLogic::TriState nZ_COL1;
+		BaseLogic::TriState Z_COL2;
+		BaseLogic::TriState Z_COL3;
+		BaseLogic::TriState nZ_PRIO;
+		BaseLogic::TriState n_xEN;
 	};
 
 	class FIFOLane
@@ -51,25 +50,22 @@ namespace PPUSim
 		BaseLogic::DLatch ob5_latch[2];
 		BaseLogic::DLatch hsel_latch;
 
-		BaseLogic::TriState nZ_COL0;
-		BaseLogic::TriState nZ_COL1;
-		BaseLogic::TriState Z_COL2;
-		BaseLogic::TriState Z_COL3;
-		BaseLogic::TriState nZ_PRIO;
-		BaseLogic::TriState SR_EN;
-		BaseLogic::TriState LOAD;
-		BaseLogic::TriState T_SR0;
-		BaseLogic::TriState T_SR1;
+		BaseLogic::TriState nZ_COL0 = BaseLogic::TriState::X;
+		BaseLogic::TriState nZ_COL1 = BaseLogic::TriState::X;
+		BaseLogic::TriState Z_COL2 = BaseLogic::TriState::X;
+		BaseLogic::TriState Z_COL3 = BaseLogic::TriState::X;
+		BaseLogic::TriState nZ_PRIO = BaseLogic::TriState::X;
+		BaseLogic::TriState SR_EN = BaseLogic::TriState::X;
+		BaseLogic::TriState LOAD = BaseLogic::TriState::X;
+		BaseLogic::TriState T_SR0 = BaseLogic::TriState::X;
+		BaseLogic::TriState T_SR1 = BaseLogic::TriState::X;
 
-		BaseLogic::DLatch zh_latch1;
-		BaseLogic::DLatch zh_latch2;
-		BaseLogic::DLatch zh_latch3;
 		BaseLogic::FF ZH_FF;
 		BaseLogic::DLatch en_latch;
 
-		BaseLogic::TriState UPD;
-		BaseLogic::TriState STEP;
-		BaseLogic::TriState n_EN;
+		BaseLogic::TriState UPD = BaseLogic::TriState::X;
+		BaseLogic::TriState STEP = BaseLogic::TriState::X;
+		BaseLogic::TriState n_EN = BaseLogic::TriState::X;
 
 		void sim_Enable();
 		void sim_LaneControl(BaseLogic::TriState HSel);
@@ -84,7 +80,7 @@ namespace PPUSim
 		FIFOLane(PPU* parent) { ppu = parent; }
 		~FIFOLane() {}
 
-		void sim(BaseLogic::TriState HSel, BaseLogic::TriState n_TX[8], BaseLogic::TriState ZOut[(size_t)FIFOLaneOutput::Max]);
+		void sim(BaseLogic::TriState HSel, BaseLogic::TriState n_TX[8], FIFOLaneOutput& ZOut);
 	};
 
 	class FIFO
@@ -93,6 +89,10 @@ namespace PPUSim
 		PPU* ppu = nullptr;
 
 		FIFOLane* lane[8];
+
+		BaseLogic::DLatch zh_latch1;
+		BaseLogic::DLatch zh_latch2;
+		BaseLogic::DLatch zh_latch3;
 
 		BaseLogic::FF HINV_FF;
 		BaseLogic::DLatch tout_latch[8];
@@ -108,7 +108,7 @@ namespace PPUSim
 		BaseLogic::DLatch col3_latch;
 		BaseLogic::DLatch prio_latch;
 
-		BaseLogic::TriState LaneOut[8][(size_t)FIFOLaneOutput::Max]{};
+		FIFOLaneOutput LaneOut[8]{};
 
 		void sim_HInv();
 		void sim_Lanes();

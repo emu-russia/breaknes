@@ -227,6 +227,7 @@ namespace PPUSim
 			BaseLogic::TriState n_SH3;
 			BaseLogic::TriState n_SH5;
 			BaseLogic::TriState n_SH7;
+			BaseLogic::TriState n_ZH;
 
 			BaseLogic::TriState n_PA_Bot[8];
 			BaseLogic::TriState n_PA_Top[6];
@@ -322,6 +323,8 @@ namespace PPUSim
 
 		uint8_t DB = 0;				// CPU I/F Data bus
 		uint8_t PD = 0;				// Internal PPU Data bus
+		uint8_t PrioZ = 0;			// FIFO priority encode outputs Z0-Z7
+		uint8_t n_TX = 0;			// FIFO /Tx input
 
 		void sim_BusInput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus);
 		void sim_BusOutput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus);
