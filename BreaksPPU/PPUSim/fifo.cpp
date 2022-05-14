@@ -358,10 +358,10 @@ namespace PPUSim
 		TriState carry_in)
 	{
 		keep_ff.set(MUX(Step, 
-			MUX(Load, MUX(Clock, TriState::Z, MUX(carry_in, keep_ff.get(), keep_ff.nget())), val_in),
+			MUX(Load, MUX(Clock, TriState::Z, MUX(carry_in, keep_ff.nget(), keep_ff.get())), val_in),
 			step_latch.nget()));
 		step_latch.set(MUX(carry_in, keep_ff.get(), keep_ff.nget()), Clock);
-		TriState carry_out = NOR(keep_ff.nget(), NOT(carry_in));
+		TriState carry_out = NOR(keep_ff.get(), NOT(carry_in));
 		return carry_out;
 	}
 
