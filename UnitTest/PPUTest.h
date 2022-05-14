@@ -38,5 +38,6 @@ namespace PPUSimUnitTest
 		bool TestBGC_SR8();
 		bool TestOAMCounter();
 		bool TestFIFODownCounter(size_t v);
+		bool TestFIFOPairedSR(uint8_t val);
 	};
 }

@@ -712,4 +712,73 @@ namespace PPUSimUnitTest
 
 		return true;
 	}
+
+	/// <summary>
+	/// Check paired FIFO shift registers.
+	/// </summary>
+	bool UnitTest::TestFIFOPairedSR(uint8_t val)
+	{
+		FIFOLane lane(ppu);
+
+		// Load a value on one register and an inverse value on the other register.
+
+		TriState tx[8]{};
+		TriState ntx[8]{};
+		TriState unused[8]{};
+
+		Unpack(val, tx);
+		Unpack(~val, ntx);
+
+		ppu->wire.n_PCLK = TriState::Zero;
+		lane.T_SR0 = TriState::One;
+		lane.T_SR1 = TriState::Zero;
+		lane.SR_EN = TriState::Zero;
+		lane.sim_PairedSR(tx);
+
+		lane.T_SR0 = TriState::Zero;
+		lane.T_SR1 = TriState::One;
+		lane.sim_PairedSR(ntx);
+
+		// Perform 8 shift iterations and check the output.
+
+		lane.T_SR0 = TriState::Zero;
+		lane.T_SR1 = TriState::Zero;
+
+		for (size_t i = 0; i < 8; i++)
+		{
+			ppu->wire.n_PCLK = TriState::One;
+			lane.SR_EN = TriState::Zero;
+			lane.sim_PairedSR(unused);
+
+			ppu->wire.n_PCLK = TriState::Zero;
+			lane.SR_EN = TriState::One;
+			lane.sim_PairedSR(unused);
+
+			if ((lane.nZ_COL0 == TriState::One ? 1 : 0) != (val & 1))
+				return false;
+
+			if ((lane.nZ_COL1 == TriState::One ? 1 : 0) != (~val & 1))
+				return false;
+
+			val >>= 1;
+		}
+
+		// Perform another shift and make sure that the registers push out 1.
+
+		ppu->wire.n_PCLK = TriState::One;
+		lane.SR_EN = TriState::Zero;
+		lane.sim_PairedSR(unused);
+
+		ppu->wire.n_PCLK = TriState::Zero;
+		lane.SR_EN = TriState::One;
+		lane.sim_PairedSR(unused);
+
+		if (lane.nZ_COL0 != TriState::One)
+			return false;
+
+		if (lane.nZ_COL1 != TriState::One)
+			return false;
+
+		return true;
+	}
 }
