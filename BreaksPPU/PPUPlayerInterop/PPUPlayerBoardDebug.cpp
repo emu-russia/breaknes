@@ -224,6 +224,7 @@ namespace PPUPlayer
 		"XRB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::XRB),
 		"DB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::DB),
 		"PD", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PD),
+		"PrioZ", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PrioZ),
 	};
 
 	SignalOffsetPair fsm_signals[] = {

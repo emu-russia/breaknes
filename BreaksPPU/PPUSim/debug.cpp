@@ -165,6 +165,7 @@ namespace PPUSim
 
 		wires.DB = DB;
 		wires.PD = PD;
+		wires.PrioZ = PrioZ;
 	}
 
 	void PPU::GetDebugInfo_FSMStates(PPU_FSMStates& fsm_states)

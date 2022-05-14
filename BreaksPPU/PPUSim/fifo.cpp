@@ -159,6 +159,8 @@ namespace PPUSim
 		in[9] = Z[6];
 		Z[7] = NOR10(in);
 
+		ppu->PrioZ = Pack(Z);
+
 		// The multiplexer locomotive is simulated by the ordinary for-loop.
 
 		size_t run = 0;

@@ -109,6 +109,7 @@ namespace PPUSim
 		uint8_t XRB;
 		uint8_t DB;
 		uint8_t PD;
+		uint8_t PrioZ;
 	};
 
 	struct PPU_FSMStates
