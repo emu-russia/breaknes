@@ -61,9 +61,6 @@ namespace PPUSim
 		BaseLogic::TriState T_SR0;
 		BaseLogic::TriState T_SR1;
 
-		BaseLogic::DLatch zh_latch1;
-		BaseLogic::DLatch zh_latch2;
-		BaseLogic::DLatch zh_latch3;
 		BaseLogic::FF ZH_FF;
 		BaseLogic::DLatch en_latch;
 
@@ -93,6 +90,10 @@ namespace PPUSim
 		PPU* ppu = nullptr;
 
 		FIFOLane* lane[8];
+
+		BaseLogic::DLatch zh_latch1;
+		BaseLogic::DLatch zh_latch2;
+		BaseLogic::DLatch zh_latch3;
 
 		BaseLogic::FF HINV_FF;
 		BaseLogic::DLatch tout_latch[8];

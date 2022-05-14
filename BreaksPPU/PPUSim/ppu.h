@@ -227,6 +227,7 @@ namespace PPUSim
 			BaseLogic::TriState n_SH3;
 			BaseLogic::TriState n_SH5;
 			BaseLogic::TriState n_SH7;
+			BaseLogic::TriState n_ZH;
 
 			BaseLogic::TriState n_PA_Bot[8];
 			BaseLogic::TriState n_PA_Top[6];

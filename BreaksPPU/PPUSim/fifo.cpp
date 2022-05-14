@@ -26,6 +26,15 @@ namespace PPUSim
 
 	void FIFO::sim()
 	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState PCLK = ppu->wire.PCLK;
+		TriState Z_HPOS = ppu->fsm.ZHPOS;
+
+		zh_latch1.set(Z_HPOS, n_PCLK);
+		zh_latch2.set(zh_latch1.nget(), PCLK);
+		zh_latch3.set(zh_latch2.nget(), n_PCLK);
+		ppu->wire.n_ZH = zh_latch3.nget();
+
 		sim_HInv();
 		BitRev(n_TX);
 		sim_Lanes();
@@ -275,11 +284,6 @@ namespace PPUSim
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState PCLK = ppu->wire.PCLK;
-		TriState Z_HPOS = ppu->fsm.ZHPOS;
-
-		zh_latch1.set(Z_HPOS, n_PCLK);
-		zh_latch2.set(zh_latch1.nget(), PCLK);
-		zh_latch3.set(zh_latch2.nget(), n_PCLK);
 
 		STEP = NOR(PCLK, ZH_FF.get());
 		UPD = NOR(LOAD, STEP);
@@ -337,8 +341,9 @@ namespace PPUSim
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState PCLK = ppu->wire.PCLK;
+		TriState n_ZH = ppu->wire.n_ZH;
 
-		ZH_FF.set(NOR(NOR3(n_PCLK, zh_latch3.nget(), Carry), NOR(ZH_FF.get(), AND(PCLK, Carry))));
+		ZH_FF.set(NOR(NOR3(n_PCLK, n_ZH, Carry), NOR(ZH_FF.get(), AND(PCLK, Carry))));
 	}
 
 	void FIFOLane::sim(TriState HSel, TriState n_TX[8], TriState ZOut[(size_t)FIFOLaneOutput::Max])
