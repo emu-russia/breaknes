@@ -213,12 +213,15 @@ namespace PPUSimUnitTest
 
 			PPU_Interconnects wires{};
 			PPU_FSMStates fsm{};
+			OAMEvalWires eval_wires{};
 
 			ppu->GetDebugInfo_Wires(wires);
 			ppu->GetDebugInfo_FSMStates(fsm);
+			ppu->GetDebugInfo_OAMEval(eval_wires);
 
 			LogWires(&log, wires, ts);
 			LogFSMState(&log, fsm, ts);
+			LogOAMEval(&log, eval_wires, ts);
 
 			ts++;
 			CLK = NOT(CLK);
@@ -226,6 +229,7 @@ namespace PPUSimUnitTest
 
 		CloseWires(&log, ts);
 		CloseFSMState(&log, ts);
+		CloseOAMEval(&log, ts);
 
 		FILE* f = nullptr;
 		fopen_s(&f, filename, "wt");
@@ -249,6 +253,13 @@ namespace PPUSimUnitTest
 
 #define CloseFSM(n, chan) { \
 		if (fsm_open.n) \
+		{ \
+			log->TraceEnd(chan, ts); \
+		} \
+	}
+
+#define CloseEval(n, chan) { \
+		if (eval_open.n) \
 		{ \
 			log->TraceEnd(chan, ts); \
 		} \
@@ -309,6 +320,22 @@ namespace PPUSimUnitTest
 		CloseFSM(INT, 125);
 	}
 
+	void UnitTest::CloseOAMEval(Debug::EventLog* log, size_t ts)
+	{
+		CloseEval(OMFG, 300);
+		CloseEval(OMSTEP, 301);
+		CloseEval(OMOUT, 302);
+		CloseEval(OMV, 303);
+		CloseEval(OSTEP, 304);
+		CloseEval(ORES, 305);
+		CloseEval(TMV, 306);
+		CloseEval(OAP, 307);
+		CloseEval(COPY_STEP, 308);
+		CloseEval(DO_COPY, 309);
+		CloseEval(COPY_OVF, 310);
+		CloseEval(OVZ, 311);
+	}
+
 #define OpenDirectWire(n, chan) { \
 		if (wires.n == 1 && !wires_open.n) \
 		{ \
@@ -358,6 +385,32 @@ namespace PPUSimUnitTest
 		{ \
 			log->TraceEnd(chan, ts); \
 			fsm_open.n = 0; \
+		} \
+	}
+
+#define OpenDirectEval(n, chan) { \
+		if (eval_wires.n == 1 && !eval_open.n) \
+		{ \
+			log->TraceBegin(chan, #n, ts); \
+			eval_open.n = 1; \
+		} \
+		else if (eval_wires.n == 0 && eval_open.n) \
+		{ \
+			log->TraceEnd(chan, ts); \
+			eval_open.n = 0; \
+		} \
+	}
+
+#define OpenInverseEval(n, chan) { \
+		if (eval_wires.n == 0 && !eval_open.n) \
+		{ \
+			log->TraceBegin(chan, #n, ts); \
+			eval_open.n = 1; \
+		} \
+		else if (eval_wires.n == 1 && eval_open.n) \
+		{ \
+			log->TraceEnd(chan, ts); \
+			eval_open.n = 0; \
 		} \
 	}
 
@@ -414,6 +467,22 @@ namespace PPUSimUnitTest
 		OpenDirectFSM(VB, 123);
 		OpenDirectFSM(BLNK, 124);
 		OpenDirectFSM(INT, 125);
+	}
+
+	void UnitTest::LogOAMEval(Debug::EventLog* log, OAMEvalWires& eval_wires, size_t ts)
+	{
+		OpenDirectEval(OMFG, 300);
+		OpenDirectEval(OMSTEP, 301);
+		OpenDirectEval(OMOUT, 302);
+		OpenDirectEval(OMV, 303);
+		OpenDirectEval(OSTEP, 304);
+		OpenDirectEval(ORES, 305);
+		OpenDirectEval(TMV, 306);
+		OpenDirectEval(OAP, 307);
+		OpenDirectEval(COPY_STEP, 308);
+		OpenDirectEval(DO_COPY, 309);
+		OpenDirectEval(COPY_OVF, 310);
+		OpenDirectEval(OVZ, 311);
 	}
 
 	uint8_t UnitTest::TestComparator(uint8_t a, uint8_t b)
