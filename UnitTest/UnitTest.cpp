@@ -172,5 +172,15 @@ namespace UnitTest
 			Assert::IsTrue(ut.TestOAMCounter());
 		}
 
+		TEST_METHOD(TestFIFODownCounter)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			for (size_t n = 0; n <= 0xff; n++)
+			{
+				Logger::WriteMessage(("Value: " + std::to_string(n) + "\n").c_str());
+				Assert::IsTrue(ut.TestFIFODownCounter(n));
+			}
+		}
+
 	};
 }

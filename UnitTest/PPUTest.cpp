@@ -537,6 +537,10 @@ namespace PPUSimUnitTest
 		return true;
 	}
 
+	/// <summary>
+	/// Check the operation of the main OAM counter in different modes (Mode +1/+4).
+	/// </summary>
+	/// <returns></returns>
 	bool UnitTest::TestOAMCounter()
 	{
 		ppu->wire.n_PCLK = TriState::One;
@@ -622,6 +626,88 @@ namespace PPUSimUnitTest
 		}
 
 		if (ppu->eval->Debug_GetMainCounter() != 0)
+			return false;
+
+		return true;
+	}
+
+	/// <summary>
+	/// Check that the counter correctly counts down to 0 and correctly outputs the overflow signal.
+	/// </summary>
+	/// <param name="v"></param>
+	/// <returns></returns>
+	bool UnitTest::TestFIFODownCounter(size_t v)
+	{
+		FIFOLane lane(ppu);
+		TriState carry_out;
+
+		// Load value
+
+		Unpack((uint8_t)v, ppu->wire.OB);
+		
+		lane.UPD = TriState::Zero;
+		lane.LOAD = TriState::One;
+		lane.STEP = TriState::Zero;
+		carry_out = lane.sim_Counter();
+
+		if (v == 0)
+		{
+			if (carry_out != TriState::One)
+				return false;
+
+			return true;
+		}
+		else
+		{
+			if (carry_out != TriState::Zero)
+				return false;
+		}
+
+		lane.UPD = TriState::One;
+		lane.LOAD = TriState::Zero;
+		lane.STEP = TriState::Zero;
+		carry_out = lane.sim_Counter();
+
+		if (lane.get_Counter() != v)
+			return false;
+
+		// In the loop count down to 1 and check that there is an overflow signal when needed.
+
+		while (v != 1)
+		{
+			lane.UPD = TriState::Zero;
+			lane.LOAD = TriState::Zero;
+			lane.STEP = TriState::One;
+			carry_out = lane.sim_Counter();
+
+			if (carry_out != TriState::Zero)
+				return false;
+
+			lane.UPD = TriState::One;
+			lane.LOAD = TriState::Zero;
+			lane.STEP = TriState::Zero;
+			carry_out = lane.sim_Counter();
+
+			v--;
+
+			if (carry_out != TriState::Zero)
+				return false;
+
+			if (lane.get_Counter() != v)
+				return false;
+		}
+
+		// The last tick to zero performs an overflow.
+
+		lane.UPD = TriState::Zero;
+		lane.LOAD = TriState::Zero;
+		lane.STEP = TriState::One;
+		carry_out = lane.sim_Counter();
+
+		if (carry_out != TriState::One)
+			return false;
+
+		if (lane.get_Counter() != 0)
 			return false;
 
 		return true;
