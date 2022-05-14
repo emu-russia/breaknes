@@ -155,6 +155,7 @@ namespace PPUPlayer
 		"OAM8", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OAM8),
 		"PD/FIFO", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PD_FIFO),
 		"OV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OV),
+		"/WE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_WE),
 		"CLPB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLPB),
 		"CLPO", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLPO),
 		"/SH2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH2),
@@ -589,5 +590,16 @@ namespace PPUPlayer
 				printf("\n");
 			}
 		}
+	}
+
+	/// <summary>
+	/// Place a test value in Sprite #0 to test the OAMEval simulation.
+	/// </summary>
+	void Board::DebugOAMFillTestPattern()
+	{
+		ppu->Dbg_OAMWriteByte(0, 0);
+		ppu->Dbg_OAMWriteByte(1, 0xaa);
+		ppu->Dbg_OAMWriteByte(2, 1);
+		ppu->Dbg_OAMWriteByte(3, 0x55);
 	}
 }

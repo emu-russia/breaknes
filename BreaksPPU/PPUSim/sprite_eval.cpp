@@ -225,6 +225,7 @@ namespace PPUSim
 		nomfg_latch.set(NOT(OMFG), n_PCLK);
 		ioam2_latch.set(I_OAM2, n_PCLK);
 		auto DontStep = NOR(NOR(NOR(nomfg_latch.get(), ioam2_latch.get()), H0_D), AND(n_H2_D, PAR_O));
+		temp_latch1.set(NAND(OAMCTR2_FF.nget(), EVAL), n_PCLK);
 		OSTEP = NOR3(temp_latch1.get(), n_PCLK, DontStep);
 	}
 
@@ -248,11 +249,9 @@ namespace PPUSim
 	void OAMEval::sim_TempCounterControlAfterCounter()
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState EVAL = ppu->fsm.EVAL;
 
 		tmv_latch.set(TMV, n_PCLK);
 		OAMCTR2_FF.set(NOR(ORES, NOR(AND(tmv_latch.get(), OSTEP), OAMCTR2_FF.get())));
-		temp_latch1.set(NAND(OAMCTR2_FF.nget(), EVAL), n_PCLK);
 		ppu->wire.OAMCTR2 = OAMCTR2_FF.get();
 	}
 
