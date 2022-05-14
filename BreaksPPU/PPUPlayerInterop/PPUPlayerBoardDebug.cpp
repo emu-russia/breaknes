@@ -268,6 +268,7 @@ namespace PPUPlayer
 		"M4_OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::M4_OVZ),
 		"OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OVZ),
 		"OBCmpr", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OBCmpr),
+		"M4_OVZ_Cmpr", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::M4_OVZ_Cmpr),
 	};
 
 	SignalOffsetPair ppu_regs[] = {
