@@ -191,10 +191,12 @@ namespace PPUSim
 			ppu->wire.ZCOL3 = col3_latch.get();
 			ppu->wire.n_ZPRIO = prio_latch.get();
 		}
-
-		col2_latch.set(ppu->wire.ZCOL2, TriState::One);
-		col3_latch.set(ppu->wire.ZCOL3, TriState::One);
-		prio_latch.set(ppu->wire.n_ZPRIO, TriState::One);
+		else
+		{
+			col2_latch.set(ppu->wire.ZCOL2, TriState::One);
+			col3_latch.set(ppu->wire.ZCOL3, TriState::One);
+			prio_latch.set(ppu->wire.n_ZPRIO, TriState::One);
+		}
 	}
 
 	TriState FIFO::get_nZCOL0(size_t lane)
