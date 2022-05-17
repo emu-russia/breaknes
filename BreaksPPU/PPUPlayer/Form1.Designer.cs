@@ -41,6 +41,7 @@
 			this.visualizeScanFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
 			this.saveTraceInLogisimFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveTraceInVCDFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -104,6 +105,7 @@
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
+			this.saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -162,6 +164,7 @@
             this.visualizeScanFromDumpToolStripMenuItem,
             this.toolStripSeparator6,
             this.saveTraceInLogisimFormatToolStripMenuItem,
+            this.saveTraceInVCDFormatToolStripMenuItem,
             this.toolStripSeparator5,
             this.settingsToolStripMenuItem,
             this.toolStripSeparator4,
@@ -228,6 +231,13 @@
 			this.saveTraceInLogisimFormatToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.saveTraceInLogisimFormatToolStripMenuItem.Text = "Save Trace in Logisim format...";
 			this.saveTraceInLogisimFormatToolStripMenuItem.Click += new System.EventHandler(this.saveTraceInLogisimFormatToolStripMenuItem_Click);
+			// 
+			// saveTraceInVCDFormatToolStripMenuItem
+			// 
+			this.saveTraceInVCDFormatToolStripMenuItem.Name = "saveTraceInVCDFormatToolStripMenuItem";
+			this.saveTraceInVCDFormatToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			this.saveTraceInVCDFormatToolStripMenuItem.Text = "Save Trace in VCD format...";
+			this.saveTraceInVCDFormatToolStripMenuItem.Click += new System.EventHandler(this.saveTraceInVCDFormatToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator5
 			// 
@@ -830,6 +840,11 @@
 			this.saveFileDialog2.DefaultExt = "txt";
 			this.saveFileDialog2.Filter = "Text files|*.txt|All files|*.*";
 			// 
+			// saveFileDialogVCD
+			// 
+			this.saveFileDialogVCD.DefaultExt = "vcd";
+			this.saveFileDialogVCD.Filter = "VCD files|*.vcd|All files|*.vcd";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -960,5 +975,7 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
 		private System.Windows.Forms.ToolStripMenuItem saveTraceInLogisimFormatToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog2;
+		private System.Windows.Forms.ToolStripMenuItem saveTraceInVCDFormatToolStripMenuItem;
+		private System.Windows.Forms.SaveFileDialog saveFileDialogVCD;
 	}
 }

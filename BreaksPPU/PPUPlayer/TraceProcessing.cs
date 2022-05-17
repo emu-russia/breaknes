@@ -29,6 +29,7 @@ namespace PPUPlayer
 
 		bool TraceResetInProgress = false;
 		internal int TraceTimeResolutionNanos = 23;
+		internal int VCDMax = 90;
 
 		class FieldTrace
 		{
@@ -323,5 +324,164 @@ namespace PPUPlayer
 			TraceTimeResolutionNanos = ns;
 		}
 
+		void SaveTraceVCD(string filename)
+		{
+			// Header
+
+			string text = "";
+
+			int scan = comboBoxTraceScan.SelectedIndex;
+			int field = comboBoxTraceField.SelectedIndex;
+
+			if (!(scan >= 0 && field >= 0))
+				return;
+
+			if (fields[field].scans[scan].entries.Count == 0)
+				return;
+
+			text += "$date\n";
+			text += "   1 Jan 2000\n";
+			text += "$end\n";
+
+			text += "$version\n";
+			text += "   PPUPlayer\n";
+			text += "$end\n";
+
+			text += "$comment\n";
+			text += "   Comment\n";
+			text += "$end\n";
+
+			text += "$timescale 1ns $end\n";
+
+			List<string> filter = new();
+
+			if (TraceFilter != "")
+			{
+				filter = TraceFilter.Split(';').ToList();
+			}
+
+			List<BreaksCore.DebugInfoEntry> entry0 = fields[field].scans[scan].entries[0];
+
+			text += "$scope module logic $end\n";
+			char id = '!';
+			int signal_count = 0;
+
+			foreach (var info in entry0)
+			{
+				if (filter.Count != 0)
+				{
+					if (!filter.Contains(info.name))
+						continue;
+				}
+
+				text += "$var wire " + info.bits.ToString() + " " + id + " " + info.name + " $end\n";
+				id++;
+
+				signal_count++;
+				if (signal_count > VCDMax)
+				{
+					MessageBox.Show(
+						"Too many signals to trace to VCD format. Maximum: " + VCDMax.ToString(),
+						"Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;
+				}
+			}
+
+			text += "$upscope $end\n";
+			text += "$enddefinitions $end\n";
+
+			// Dumpvars
+
+			text += "$dumpvars\n";
+			id = '!';
+
+			foreach (var info in entry0)
+			{
+				if (filter.Count != 0)
+				{
+					if (!filter.Contains(info.name))
+						continue;
+				}
+
+				string val_text = "";
+
+				if (info.bits == 1)
+				{
+					val_text = "0";
+				}
+				else
+				{
+					val_text += "b";
+					for (int bit_num=info.bits-1; bit_num>=0; bit_num--)
+					{
+						uint bitval = (info.value >> bit_num) & 1;
+						val_text += bitval.ToString();
+					}
+					val_text += " ";
+				}
+
+				text += val_text + id + "\n";
+				id++;
+			}
+
+			text += "$end\n";
+
+			// Wave
+
+			int ts = 0;
+
+			foreach (var row in fields[field].scans[scan].entries)
+			{
+				string row_text = "";
+				row_text += "#" + ts.ToString() + "\n";
+
+				id = '!';
+
+				foreach (var signal in row)
+				{
+					if (filter.Count != 0)
+					{
+						if (!filter.Contains(signal.name))
+							continue;
+					}
+
+					string val_text = "";
+
+					if (signal.bits == 1)
+					{
+						if (signal.value == 0) val_text = "0";
+						else if (signal.value == 1) val_text = "1";
+						else if ((Int32)signal.value == -1) val_text = "z";
+						else if ((Int32)signal.value == -2) val_text = "x";
+					}
+					else
+					{
+						val_text += "b";
+						for (int bit_num = signal.bits - 1; bit_num >= 0; bit_num--)
+						{
+							uint bitval = (signal.value >> bit_num) & 1;
+							val_text += bitval.ToString();
+						}
+						val_text += " ";
+					}
+
+					row_text += val_text + id + "\n";
+					id++;
+				}
+
+				text += row_text;
+				ts += TraceTimeResolutionNanos;
+			}
+
+			File.WriteAllText(filename, text);
+		}
+
+		private void saveTraceInVCDFormatToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (saveFileDialogVCD.ShowDialog() == DialogResult.OK)
+			{
+				SaveTraceVCD(saveFileDialogVCD.FileName);
+			}
+		}
 	}
 }
