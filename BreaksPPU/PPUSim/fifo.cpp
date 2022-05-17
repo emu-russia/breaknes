@@ -230,10 +230,10 @@ namespace PPUSim
 
 		DMX3(in, dec_out);
 
-		sh2_latch.set(MUX(PAR_O, dec_out[2], TriState::Zero), n_PCLK);
-		sh3_latch.set(MUX(PAR_O, dec_out[3], TriState::Zero), n_PCLK);
-		sh5_latch.set(MUX(PAR_O, dec_out[5], TriState::Zero), n_PCLK);
-		sh7_latch.set(MUX(PAR_O, dec_out[7], TriState::Zero), n_PCLK);
+		sh2_latch.set(MUX(PAR_O, TriState::Zero, dec_out[2]), n_PCLK);
+		sh3_latch.set(MUX(PAR_O, TriState::Zero, dec_out[3]), n_PCLK);
+		sh5_latch.set(MUX(PAR_O, TriState::Zero, dec_out[5]), n_PCLK);
+		sh7_latch.set(MUX(PAR_O, TriState::Zero, dec_out[7]), n_PCLK);
 
 		ppu->wire.n_SH2 = sh2_latch.nget();
 		ppu->wire.n_SH3 = sh3_latch.nget();
