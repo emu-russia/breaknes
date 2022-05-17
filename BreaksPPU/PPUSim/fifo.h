@@ -56,6 +56,7 @@ namespace PPUSim
 		BaseLogic::TriState Z_COL3 = BaseLogic::TriState::X;
 		BaseLogic::TriState nZ_PRIO = BaseLogic::TriState::X;
 		BaseLogic::TriState SR_EN = BaseLogic::TriState::X;
+		BaseLogic::TriState LDAT = BaseLogic::TriState::X;
 		BaseLogic::TriState LOAD = BaseLogic::TriState::X;
 		BaseLogic::TriState T_SR0 = BaseLogic::TriState::X;
 		BaseLogic::TriState T_SR1 = BaseLogic::TriState::X;

@@ -253,7 +253,7 @@ namespace PPUSim
 
 		hsel_latch.set(HSel, n_PCLK);
 
-		auto LDAT = NOR3(n_PCLK, hsel_latch.nget(), n_SH2);
+		LDAT = NOR3(n_PCLK, hsel_latch.nget(), n_SH2);
 		LOAD = NOR3(n_PCLK, hsel_latch.nget(), n_SH3);
 		T_SR0 = NOR3(n_PCLK, hsel_latch.nget(), n_SH5);
 		T_SR1 = NOR3(n_PCLK, hsel_latch.nget(), n_SH7);
