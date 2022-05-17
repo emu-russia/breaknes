@@ -306,6 +306,7 @@ namespace PPUSim
 		BaseLogic::DLatch pclk_3;
 		BaseLogic::DLatch pclk_4;
 		size_t pclk_counter = 0;
+		BaseLogic::TriState Prev_PCLK = BaseLogic::TriState::X;
 
 		ControlRegs* regs = nullptr;
 		HVCounter* h = nullptr;

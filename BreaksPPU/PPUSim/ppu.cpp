@@ -76,44 +76,49 @@ namespace PPUSim
 
 		regs->sim();
 
-		// H/V Control logic
+		if (Prev_PCLK != wire.PCLK)
+		{
+			// H/V Control logic
 
-		TriState* HPLA;
-		hv_dec->sim_HDecoder(hv_fsm->get_VB(), hv_fsm->get_BLNK(wire.BLACK), &HPLA);
-		TriState* VPLA;
-		hv_dec->sim_VDecoder(&VPLA);
+			TriState* HPLA;
+			hv_dec->sim_HDecoder(hv_fsm->get_VB(), hv_fsm->get_BLNK(wire.BLACK), &HPLA);
+			TriState* VPLA;
+			hv_dec->sim_VDecoder(&VPLA);
 
-		hv_fsm->sim(HPLA, VPLA);
+			hv_fsm->sim(HPLA, VPLA);
 
-		h->sim(TriState::One, wire.HC);
-		TriState V_IN = HPLA[23];
-		v->sim(V_IN, wire.VC);
+			h->sim(TriState::One, wire.HC);
+			TriState V_IN = HPLA[23];
+			v->sim(V_IN, wire.VC);
 
-		// The other parts
+			// The other parts
 
-		fifo->sim_SpriteH();
+			fifo->sim_SpriteH();
 
-		regs->sim_CLP();
+			regs->sim_CLP();
 
-		vram_ctrl->sim();
-		
-		oam->sim_OFETCH();
+			vram_ctrl->sim();
 
-		eval->sim();
+			oam->sim_OFETCH();
 
-		oam->sim();
+			eval->sim();
 
-		data_reader->sim();
+			oam->sim();
 
-		fifo->sim();
+			data_reader->sim();
 
-		vram_ctrl->sim_TH_MUX();
+			fifo->sim();
 
-		vram_ctrl->sim_ReadBuffer();
+			vram_ctrl->sim_TH_MUX();
 
-		mux->sim();
+			vram_ctrl->sim_ReadBuffer();
 
-		cram->sim();
+			mux->sim();
+
+			cram->sim();
+
+			Prev_PCLK = wire.PCLK;
+		}
 
 		vid_out->sim(vout);
 
@@ -224,6 +229,7 @@ namespace PPUSim
 	void PPU::ResetPCLKCounter()
 	{
 		pclk_counter = 0;
+		Prev_PCLK = TriState::X;
 	}
 
 	const char* PPU::RevisionToStr(Revision rev)
