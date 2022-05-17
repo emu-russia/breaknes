@@ -64,10 +64,10 @@ namespace PPUPlayer
 		static uint8_t DumpOAM(void* opaque, size_t addr);
 		static uint8_t DumpTempOAM(void* opaque, size_t addr);
 
-		static uint32_t GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry);
-		static uint32_t GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
-		static uint32_t GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry);
-		static uint32_t GetCartDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
+		static uint32_t GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
+		static uint32_t GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
+		static uint32_t GetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
 
 		void AddBoardMemDescriptors();
 		void AddCartMemDescriptors();
