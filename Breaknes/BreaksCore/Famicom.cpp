@@ -20,8 +20,8 @@ namespace Breaknes
 
 	void Famicom::sim()
 	{
-		TriState core_inputs[(size_t)M6502Core::InputPad::Max];
-		TriState core_outputs[(size_t)M6502Core::OutputPad::Max];
+		TriState core_inputs[(size_t)M6502Core::InputPad::Max]{};
+		TriState core_outputs[(size_t)M6502Core::OutputPad::Max]{};
 
 		// DEBUG: Clear the data bus for debugging the logic
 

@@ -31,6 +31,7 @@ namespace Breaknes
 		{
 			public fixed byte category[32];
 			public fixed byte name[32];
+			public byte bits;
 			public UInt32 value;
 		}
 
@@ -51,6 +52,7 @@ namespace Breaknes
 		{
 			public string category = "";
 			public string name = "";
+			public byte bits = 0;
 			public UInt32 value = 0;
 		}
 
@@ -180,6 +182,7 @@ namespace Breaknes
 						}
 					}
 
+					entry.bits = raw.bits;
 					entry.value = raw.value;
 				}
 

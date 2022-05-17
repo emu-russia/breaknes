@@ -27,7 +27,7 @@ namespace Breaknes
 		DisposeBoard();
 	}
 
-	void Core::AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry), void* opaque)
+	void Core::AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry, uint8_t& bits), void* opaque)
 	{
 		DebugInfoProvider prov;
 
@@ -152,8 +152,9 @@ namespace Breaknes
 	}
 
 	// DEBUG: To be deleted after GUI debugging
-	uint32_t Core::GetTestInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t Core::GetTestInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
 	{
+		bits = 8;
 		return 123;
 	}
 

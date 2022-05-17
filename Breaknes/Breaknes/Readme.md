@@ -6,8 +6,6 @@ NES/Famicom/Dendy emulator at the gate level.
 
 Use VS2022.
 
-Unfortunately, there are a huge number of usability bugs:
-- Don't touch menu items or handler links will break
-- Form designer just crashes sometimes for no reason
-- Custom controls appear in Toolbox, but then disappear
-- Form properties are not displayed when you click on its title through the editor
+To make the generation of the native and managed parts in the same Build folder, you need to use this:
+
+https://docs.microsoft.com/en-us/answers/questions/202445/output-path-ignored-with-net-5-c-classes-lib.html
