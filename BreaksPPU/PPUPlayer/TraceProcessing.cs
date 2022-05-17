@@ -28,6 +28,7 @@ namespace PPUPlayer
 		int CurrentTraceScan = 0;
 
 		bool TraceResetInProgress = false;
+		internal int TraceTimeResolutionNanos = 23;
 
 		class FieldTrace
 		{
@@ -315,6 +316,11 @@ namespace PPUPlayer
 			}
 
 			File.WriteAllText(filename, text);
+		}
+
+		void SetTraceTimeResolutionNanos(int ns)
+		{
+			TraceTimeResolutionNanos = ns;
 		}
 
 	}

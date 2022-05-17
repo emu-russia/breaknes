@@ -63,6 +63,7 @@ namespace PPUPlayer
 			settings.TraceFilter = "";
 			settings.TraceCollapseSameRows = true;
 			settings.RenderAlwaysEnabled = false;
+			settings.TraceTimeScale = 23;	// ns
 
 			SaveSettings(settings);
 
@@ -118,6 +119,11 @@ namespace PPUPlayer
 			[Category("Debug")]
 			[Description("Forcibly enable rendering ($2001[3] = $2001[4] always equals 1). Used for debugging PPU signals, when the CPU I/F register dump is limited, or when you want to get faster simulation results. Keep in mind that with permanently enabled rendering the PPU becomes unstable and this hack should be applied when you know what you're doing.")]
 			public bool RenderAlwaysEnabled { get; set; }
+
+			[XmlElement]
+			[Category("Debug")]
+			[Description("Trace sampling resolution in nanoseconds. A typical interval is 1 half-cycle NTSC PPU lasting 23 nanoseconds.")]
+			public int TraceTimeScale { get; set; }
 		}
 
 

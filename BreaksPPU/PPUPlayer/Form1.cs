@@ -207,6 +207,7 @@ namespace PPUPlayer
 				TraceFilter = "";
 			}
 			TraceCollapseSameRows = settings.TraceCollapseSameRows;
+			SetTraceTimeResolutionNanos(settings.TraceTimeScale);
 			ResetTrace(TraceMaxFields);
 
 			currentEntry = NextLogEntry();
