@@ -51,8 +51,8 @@
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.button1);
-			this.splitContainer1.Size = new System.Drawing.Size(572, 309);
-			this.splitContainer1.SplitterDistance = 256;
+			this.splitContainer1.Size = new System.Drawing.Size(762, 415);
+			this.splitContainer1.SplitterDistance = 343;
 			this.splitContainer1.TabIndex = 0;
 			// 
 			// propertyGrid1
@@ -60,13 +60,13 @@
 			this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.propertyGrid1.Location = new System.Drawing.Point(0, 0);
 			this.propertyGrid1.Name = "propertyGrid1";
-			this.propertyGrid1.Size = new System.Drawing.Size(572, 256);
+			this.propertyGrid1.Size = new System.Drawing.Size(762, 343);
 			this.propertyGrid1.TabIndex = 0;
 			// 
 			// button1
 			// 
 			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.button1.Location = new System.Drawing.Point(475, 9);
+			this.button1.Location = new System.Drawing.Point(665, 28);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(85, 28);
 			this.button1.TabIndex = 0;
@@ -78,7 +78,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(572, 309);
+			this.ClientSize = new System.Drawing.Size(762, 415);
 			this.Controls.Add(this.splitContainer1);
 			this.Name = "FormSettings";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

@@ -67,6 +67,10 @@ namespace PPUPlayer
 			AllocConsole();
 #endif
 
+#if !DEBUG
+			debugToolStripMenuItem.Visible = false;
+#endif
+
 			pictureBoxField.BackColor = Color.Gray;
 			toolStripButton3.Enabled = false;
 			comboBox2.SelectedIndex = 0;
