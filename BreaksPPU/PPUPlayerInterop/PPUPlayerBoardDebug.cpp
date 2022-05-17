@@ -70,245 +70,246 @@ namespace PPUPlayer
 	{
 		const char* name;
 		const size_t offset;
+		const uint8_t bits;
 	};
 
 	SignalOffsetPair ppu_wires[] = {
-		"R/W", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RnW),
-		"RS[0]", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RS[0]),
-		"RS[1]", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RS[1]),
-		"RS[2]", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RS[2]),
-		"/DBE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_DBE),
-		"/ALE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_ALE),
-		"CLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLK),
-		"/CLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CLK),
-		"RES", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RES),
-		"RC", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RC),
-		"PCLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PCLK),
-		"/PCLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PCLK),
-		"#CC0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CC[0]),
-		"#CC1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CC[1]),
-		"#CC2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CC[2]),
-		"#CC3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CC[3]),
-		"#LL0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_LL[0]),
-		"#LL1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_LL[1]),
-		"/RD", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_RD),
-		"/WR", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_WR),
-		"/W6_1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W6_1),
-		"/W6_2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W6_2),
-		"/W5_1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W5_1),
-		"/W5_2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W5_2),
-		"/R7", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_R7),
-		"/W7", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W7),
-		"/W4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W4),
-		"/W3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W3),
-		"/R2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_R2),
-		"/W1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W1),
-		"/W0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W0),
-		"/R4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_R4),
-		"I1/32", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::I1_32),
-		"OBSEL", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OBSEL),
-		"BGSEL", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGSEL),
-		"O8/16", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::O8_16),
-		"/SLAVE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SLAVE),
-		"VBL", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::VBL),
-		"B/W", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BnW),
-		"/BGCLIP", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_BGCLIP),
-		"/OBCLIP", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_OBCLIP),
-		"BGE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGE),
-		"BLACK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BLACK),
-		"OBE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OBE),
-		"/TR", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_TR),
-		"/TG", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_TG),
-		"/TB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_TB),
-		"H0'", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H0_Dash),
-		"H0''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H0_Dash2),
-		"/H1'", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::nH1_Dash),
-		"H1''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H1_Dash2),
-		"/H2'", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::nH2_Dash),
-		"H2''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H2_Dash2),
-		"H3''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H3_Dash2),
-		"H4''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H4_Dash2),
-		"H5''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H5_Dash2),
-		"EvenOddOut", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::EvenOddOut),
-		"HC", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::HC),
-		"VC", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::VC),
-		"/ZCOL0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_ZCOL0),
-		"/ZCOL1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_ZCOL1),
-		"ZCOL2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::ZCOL2),
-		"ZCOL3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::ZCOL3),
-		"/ZPRIO", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_ZPRIO),
-		"/SPR0HIT", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SPR0HIT),
-		"EXT_IN0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::EXT_In[0]),
-		"EXT_IN1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::EXT_In[1]),
-		"EXT_IN2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::EXT_In[2]),
-		"EXT_IN3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::EXT_In[3]),
-		"/EXT_OUT0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_EXT_Out[0]),
-		"/EXT_OUT1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_EXT_Out[1]),
-		"/EXT_OUT2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_EXT_Out[2]),
-		"/EXT_OUT3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_EXT_Out[3]),
-		"OB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OB),
-		"/SPR0_EV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SPR0_EV),
-		"OFETCH", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OFETCH),
-		"SPR_OV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::SPR_OV),
-		"OAMCTR2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OAMCTR2),
-		"/OAM0-7", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_OAM),
-		"OAM8", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OAM8),
-		"PD/FIFO", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PD_FIFO),
-		"OV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OV),
-		"/WE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_WE),
-		"CLPB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLPB),
-		"CLPO", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLPO),
-		"/SH2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH2),
-		"/SH3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH3),
-		"/SH5", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH5),
-		"/SH7", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH7),
-		"/PA0-7", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Bot),
-		"/PA8", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[0]),
-		"/PA9", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[1]),
-		"/PA10", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[2]),
-		"/PA11", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[3]),
-		"/PA12", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[4]),
-		"/PA13", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[5]),
-		"BGC0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGC[0]),
-		"BGC1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGC[1]),
-		"BGC2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGC[2]),
-		"BGC3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGC[3]),
-		"FH0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FH[0]),
-		"FH1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FH[1]),
-		"FH2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FH[2]),
-		"FV0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FV[0]),
-		"FV1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FV[1]),
-		"FV2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FV[2]),
-		"NTV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::NTV),
-		"NTH", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::NTH),
-		"TV0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TV[0]),
-		"TV1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TV[1]),
-		"TV2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TV[2]),
-		"TV3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TV[3]),
-		"TV4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TV[4]),
-		"TH0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH[0]),
-		"TH1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH[1]),
-		"TH2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH[2]),
-		"TH3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH[3]),
-		"TH4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH[4]),
-		"THO0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::THO[0]),
-		"THO1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::THO[1]),
-		"THO2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::THO[2]),
-		"THO3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::THO[3]),
-		"THO4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::THO[4]),
-		"TVO0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TVO[0]),
-		"TVO1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TVO[1]),
-		"TVO2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TVO[2]),
-		"TVO3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TVO[3]),
-		"TVO4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TVO[4]),
-		"FVO0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FVO[0]),
-		"FVO1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FVO[1]),
-		"FVO2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FVO[2]),
-		"/FVO0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_FVO[0]),
-		"/FVO1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_FVO[1]),
-		"/FVO2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_FVO[2]),
-		"#CB/DB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CB_DB),
-		"/BW", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_BW),
-		"#DB/CB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_DB_CB),
-		"PAL0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PAL[0]),
-		"PAL1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PAL[1]),
-		"PAL2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PAL[2]),
-		"PAL3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PAL[3]),
-		"PAL4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PAL[4]),
-		"RD", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RD),
-		"WR", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::WR),
-		"TSTEP", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TSTEP),
-		"DB/PAR", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::DB_PAR),
-		"PD/RB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PD_RB),
-		"TH/MUX", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH_MUX),
-		"XRB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::XRB),
-		"DB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::DB),
-		"PD", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PD),
-		"PrioZ", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PrioZ),
-		"/TX", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_TX),
+		"R/W", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RnW), 1,
+		"RS[0]", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RS[0]), 1,
+		"RS[1]", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RS[1]), 1,
+		"RS[2]", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RS[2]), 1,
+		"/DBE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_DBE), 1,
+		"/ALE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_ALE), 1,
+		"CLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLK), 1,
+		"/CLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CLK), 1,
+		"RES", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RES), 1,
+		"RC", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RC), 1,
+		"PCLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PCLK), 1,
+		"/PCLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PCLK), 1,
+		"#CC0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CC[0]), 1,
+		"#CC1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CC[1]), 1,
+		"#CC2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CC[2]), 1,
+		"#CC3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CC[3]), 1,
+		"#LL0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_LL[0]), 1,
+		"#LL1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_LL[1]), 1,
+		"/RD", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_RD), 1,
+		"/WR", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_WR), 1,
+		"/W6_1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W6_1), 1,
+		"/W6_2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W6_2), 1,
+		"/W5_1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W5_1), 1,
+		"/W5_2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W5_2), 1,
+		"/R7", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_R7), 1,
+		"/W7", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W7), 1,
+		"/W4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W4), 1,
+		"/W3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W3), 1,
+		"/R2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_R2), 1,
+		"/W1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W1), 1,
+		"/W0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_W0), 1,
+		"/R4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_R4), 1,
+		"I1/32", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::I1_32), 1,
+		"OBSEL", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OBSEL), 1,
+		"BGSEL", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGSEL), 1,
+		"O8/16", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::O8_16), 1,
+		"/SLAVE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SLAVE), 1,
+		"VBL", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::VBL), 1,
+		"B/W", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BnW), 1,
+		"/BGCLIP", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_BGCLIP), 1,
+		"/OBCLIP", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_OBCLIP), 1,
+		"BGE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGE), 1,
+		"BLACK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BLACK), 1,
+		"OBE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OBE), 1,
+		"/TR", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_TR), 1,
+		"/TG", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_TG), 1,
+		"/TB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_TB), 1,
+		"H0'", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H0_Dash), 1,
+		"H0''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H0_Dash2), 1,
+		"/H1'", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::nH1_Dash), 1,
+		"H1''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H1_Dash2), 1,
+		"/H2'", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::nH2_Dash), 1,
+		"H2''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H2_Dash2), 1,
+		"H3''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H3_Dash2), 1,
+		"H4''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H4_Dash2), 1,
+		"H5''", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::H5_Dash2), 1,
+		"EvenOddOut", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::EvenOddOut), 1,
+		"HC", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::HC), 1,
+		"VC", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::VC), 1,
+		"/ZCOL0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_ZCOL0), 1,
+		"/ZCOL1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_ZCOL1), 1,
+		"ZCOL2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::ZCOL2), 1,
+		"ZCOL3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::ZCOL3), 1,
+		"/ZPRIO", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_ZPRIO), 1,
+		"/SPR0HIT", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SPR0HIT), 1,
+		"EXT_IN0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::EXT_In[0]), 1,
+		"EXT_IN1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::EXT_In[1]), 1,
+		"EXT_IN2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::EXT_In[2]), 1,
+		"EXT_IN3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::EXT_In[3]), 1,
+		"/EXT_OUT0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_EXT_Out[0]), 1,
+		"/EXT_OUT1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_EXT_Out[1]), 1,
+		"/EXT_OUT2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_EXT_Out[2]), 1,
+		"/EXT_OUT3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_EXT_Out[3]), 1,
+		"OB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OB), 8,
+		"/SPR0_EV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SPR0_EV), 1,
+		"OFETCH", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OFETCH), 1,
+		"SPR_OV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::SPR_OV), 1,
+		"OAMCTR2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OAMCTR2), 1,
+		"/OAM0-7", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_OAM), 8,
+		"OAM8", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OAM8), 1,
+		"PD/FIFO", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PD_FIFO), 1,
+		"OV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OV), 8,
+		"/WE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_WE), 1,
+		"CLPB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLPB), 1,
+		"CLPO", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLPO), 1,
+		"/SH2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH2), 1,
+		"/SH3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH3), 1,
+		"/SH5", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH5), 1,
+		"/SH7", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH7), 1,
+		"/PA0-7", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Bot), 8,
+		"/PA8", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[0]), 1,
+		"/PA9", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[1]), 1,
+		"/PA10", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[2]), 1,
+		"/PA11", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[3]), 1,
+		"/PA12", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[4]), 1,
+		"/PA13", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PA_Top[5]), 1,
+		"BGC0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGC[0]), 1,
+		"BGC1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGC[1]), 1,
+		"BGC2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGC[2]), 1,
+		"BGC3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::BGC[3]), 1,
+		"FH0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FH[0]), 1,
+		"FH1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FH[1]), 1,
+		"FH2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FH[2]), 1,
+		"FV0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FV[0]), 1,
+		"FV1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FV[1]), 1,
+		"FV2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FV[2]), 1,
+		"NTV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::NTV), 1,
+		"NTH", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::NTH), 1,
+		"TV0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TV[0]), 1,
+		"TV1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TV[1]), 1,
+		"TV2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TV[2]), 1,
+		"TV3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TV[3]), 1,
+		"TV4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TV[4]), 1,
+		"TH0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH[0]), 1,
+		"TH1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH[1]), 1,
+		"TH2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH[2]), 1,
+		"TH3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH[3]), 1,
+		"TH4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH[4]), 1,
+		"THO0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::THO[0]), 1,
+		"THO1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::THO[1]), 1,
+		"THO2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::THO[2]), 1,
+		"THO3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::THO[3]), 1,
+		"THO4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::THO[4]), 1,
+		"TVO0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TVO[0]), 1,
+		"TVO1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TVO[1]), 1,
+		"TVO2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TVO[2]), 1,
+		"TVO3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TVO[3]), 1,
+		"TVO4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TVO[4]), 1,
+		"FVO0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FVO[0]), 1,
+		"FVO1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FVO[1]), 1,
+		"FVO2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::FVO[2]), 1,
+		"/FVO0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_FVO[0]), 1,
+		"/FVO1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_FVO[1]), 1,
+		"/FVO2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_FVO[2]), 1,
+		"#CB/DB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CB_DB), 1,
+		"/BW", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_BW), 1,
+		"#DB/CB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_DB_CB), 1,
+		"PAL0", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PAL[0]), 1,
+		"PAL1", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PAL[1]), 1,
+		"PAL2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PAL[2]), 1,
+		"PAL3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PAL[3]), 1,
+		"PAL4", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PAL[4]), 1,
+		"RD", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::RD), 1,
+		"WR", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::WR), 1,
+		"TSTEP", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TSTEP), 1,
+		"DB/PAR", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::DB_PAR), 1,
+		"PD/RB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PD_RB), 1,
+		"TH/MUX", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::TH_MUX), 1,
+		"XRB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::XRB), 1,
+		"DB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::DB), 8,
+		"PD", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PD), 8,
+		"PrioZ", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PrioZ), 8,
+		"/TX", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_TX), 8,
 	};
 
 	SignalOffsetPair fsm_signals[] = {
-		"S/EV", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::S_EV),
-		"CLIP_O", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::CLIP_O),
-		"CLIP_B", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::CLIP_B),
-		"0/HPOS", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::Z_HPOS),
-		"EVAL", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::EVAL),
-		"E/EV", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::E_EV),
-		"I/OAM2", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::I_OAM2),
-		"PAR/O", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::PAR_O),
-		"/VIS", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_VIS),
-		"#F/NT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_F_NT),
-		"F/TB", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::F_TB),
-		"F/TA", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::F_TA),
-		"F/AT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::F_AT),
-		"/FO", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_FO),
-		"BPORCH", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BPORCH),
-		"SC/CNT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::SC_CNT),
-		"/HB", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_HB),
-		"BURST", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BURST),
-		"HSYNC", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::HSYNC),
-		"/PICTURE", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_PICTURE),
-		"RESCL", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::RESCL),
-		"VSYNC", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::VSYNC),
-		"/VSET", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_VSET),
-		"VB", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::VB),
-		"BLNK", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BLNK),
-		"INT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::INT),
+		"S/EV", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::S_EV), 1,
+		"CLIP_O", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::CLIP_O), 1,
+		"CLIP_B", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::CLIP_B), 1,
+		"0/HPOS", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::Z_HPOS), 1,
+		"EVAL", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::EVAL), 1,
+		"E/EV", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::E_EV), 1,
+		"I/OAM2", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::I_OAM2), 1,
+		"PAR/O", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::PAR_O), 1,
+		"/VIS", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_VIS), 1,
+		"F/NT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::F_NT), 1,
+		"F/TB", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::F_TB), 1,
+		"F/TA", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::F_TA), 1,
+		"F/AT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::F_AT), 1,
+		"/FO", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_FO), 1,
+		"BPORCH", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BPORCH), 1,
+		"SC/CNT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::SC_CNT), 1,
+		"/HB", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_HB), 1,
+		"BURST", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BURST), 1,
+		"HSYNC", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::HSYNC), 1,
+		"/PICTURE", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_PICTURE), 1,
+		"RESCL", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::RESCL), 1,
+		"VSYNC", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::VSYNC), 1,
+		"/VSET", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_VSET), 1,
+		"VB", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::VB), 1,
+		"BLNK", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BLNK), 1,
+		"INT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::INT), 1,
 	};
 
 	SignalOffsetPair eval_signals[] = {
-		"OMFG", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMFG),
-		"OMSTEP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMSTEP),
-		"OMOUT", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMOUT),
-		"OMV", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMV),
-		"OSTEP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OSTEP),
-		"ORES", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::ORES),
-		"TMV", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::TMV),
-		"OAP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OAP),
-		"COPY_STEP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::COPY_STEP),
-		"DO_COPY", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::DO_COPY),
-		"COPY_OVF", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::COPY_OVF),
-		"OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OVZ),
-		"OBCmpr", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OBCmpr),
+		"OMFG", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMFG), 1,
+		"OMSTEP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMSTEP), 1,
+		"OMOUT", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMOUT), 1,
+		"OMV", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMV), 1,
+		"OSTEP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OSTEP), 1,
+		"ORES", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::ORES), 1,
+		"TMV", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::TMV), 1,
+		"OAP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OAP), 1,
+		"COPY_STEP", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::COPY_STEP), 1,
+		"DO_COPY", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::DO_COPY), 1,
+		"COPY_OVF", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::COPY_OVF), 1,
+		"OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OVZ), 1,
+		"OBCmpr", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OBCmpr), 8,
 	};
 
 	SignalOffsetPair ppu_regs[] = {
-		"HCounter", offsetof(PPUSim::PPU_Registers, HCounter),
-		"VCounter", offsetof(PPUSim::PPU_Registers, VCounter),
-		"CTRL0", offsetof(PPUSim::PPU_Registers, CTRL0),
-		"CTRL1", offsetof(PPUSim::PPU_Registers, CTRL1),
-		"MainOAMCounter", offsetof(PPUSim::PPU_Registers, MainOAMCounter),
-		"TempOAMCounter", offsetof(PPUSim::PPU_Registers, TempOAMCounter),
-		"OB", offsetof(PPUSim::PPU_Registers, OB),
-		"RB", offsetof(PPUSim::PPU_Registers, RB),
-		"SCC_FH", offsetof(PPUSim::PPU_Registers, SCC_FH),
-		"SCC_FV", offsetof(PPUSim::PPU_Registers, SCC_FV),
-		"SCC_NTV", offsetof(PPUSim::PPU_Registers, SCC_NTV),
-		"SCC_NTH", offsetof(PPUSim::PPU_Registers, SCC_NTH),
-		"SCC_TV", offsetof(PPUSim::PPU_Registers, SCC_TV),
-		"SCC_TH", offsetof(PPUSim::PPU_Registers, SCC_TH),
+		"HCounter", offsetof(PPUSim::PPU_Registers, HCounter), 16,
+		"VCounter", offsetof(PPUSim::PPU_Registers, VCounter), 16,
+		"CTRL0", offsetof(PPUSim::PPU_Registers, CTRL0), 8,
+		"CTRL1", offsetof(PPUSim::PPU_Registers, CTRL1), 8,
+		"MainOAMCounter", offsetof(PPUSim::PPU_Registers, MainOAMCounter), 8,
+		"TempOAMCounter", offsetof(PPUSim::PPU_Registers, TempOAMCounter), 8,
+		"OB", offsetof(PPUSim::PPU_Registers, OB), 8,
+		"RB", offsetof(PPUSim::PPU_Registers, RB), 8,
+		"SCC_FH", offsetof(PPUSim::PPU_Registers, SCC_FH), 8,
+		"SCC_FV", offsetof(PPUSim::PPU_Registers, SCC_FV), 8,
+		"SCC_NTV", offsetof(PPUSim::PPU_Registers, SCC_NTV), 8,
+		"SCC_NTH", offsetof(PPUSim::PPU_Registers, SCC_NTH), 8,
+		"SCC_TV", offsetof(PPUSim::PPU_Registers, SCC_TV), 8,
+		"SCC_TH", offsetof(PPUSim::PPU_Registers, SCC_TH), 8,
 	};
 
 	SignalOffsetPair board_signals[] = {
-		"BoardCLK", offsetof(BoardDebugInfo, CLK),
-		"ALE", offsetof(BoardDebugInfo, ALE),
-		"LS373 Latch", offsetof(BoardDebugInfo, LS373_Latch),
-		"VRAM Address", offsetof(BoardDebugInfo, VRAM_Addr),
-		"#VRAM_CS", offsetof(BoardDebugInfo, n_VRAM_CS),
-		"VRAM_A10", offsetof(BoardDebugInfo, VRAM_A10),
-		"PA", offsetof(BoardDebugInfo, PA),
-		"#PA13", offsetof(BoardDebugInfo, n_PA13),
-		"#RD", offsetof(BoardDebugInfo, n_RD),
-		"#WR", offsetof(BoardDebugInfo, n_WR),
-		"#INT", offsetof(BoardDebugInfo, n_INT),
-		"PDBus", offsetof(BoardDebugInfo, PD),
+		"BoardCLK", offsetof(BoardDebugInfo, CLK), 1,
+		"ALE", offsetof(BoardDebugInfo, ALE), 1,
+		"LS373 Latch", offsetof(BoardDebugInfo, LS373_Latch), 8,
+		"VRAM Address", offsetof(BoardDebugInfo, VRAM_Addr), 16,
+		"#VRAM_CS", offsetof(BoardDebugInfo, n_VRAM_CS), 1,
+		"VRAM_A10", offsetof(BoardDebugInfo, VRAM_A10), 1,
+		"PA", offsetof(BoardDebugInfo, PA), 16,
+		"#PA13", offsetof(BoardDebugInfo, n_PA13), 1,
+		"#RD", offsetof(BoardDebugInfo, n_RD), 1,
+		"#WR", offsetof(BoardDebugInfo, n_WR), 1,
+		"#INT", offsetof(BoardDebugInfo, n_INT), 1,
+		"PDBus", offsetof(BoardDebugInfo, PD), 8,
 	};
 
 	SignalOffsetPair nrom_signals[] = {
-		"Last PA", offsetof(NROM_DebugInfo, last_PA),
-		"Last /RD", offsetof(NROM_DebugInfo, last_nRD),
-		"Last /WR", offsetof(NROM_DebugInfo, last_nWR),
+		"Last PA", offsetof(NROM_DebugInfo, last_PA), 16,
+		"Last /RD", offsetof(NROM_DebugInfo, last_nRD), 1,
+		"Last /WR", offsetof(NROM_DebugInfo, last_nWR), 1,
 	};
 
 	void Board::AddDebugInfoProviders()
@@ -413,7 +414,7 @@ namespace PPUPlayer
 		return board->ppu->Dbg_TempOAMReadByte(addr);
 	}
 
-	uint32_t Board::GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t Board::GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
 	{
 		Board* board = (Board*)opaque;
 
@@ -430,6 +431,7 @@ namespace PPUPlayer
 
 					uint8_t* ptr = (uint8_t*)&wires;
 
+					bits = sp->bits;
 					return ptr[sp->offset];
 				}
 			}
@@ -448,6 +450,7 @@ namespace PPUPlayer
 
 					uint8_t* ptr = (uint8_t*)&fsm_states;
 
+					bits = sp->bits;
 					return ptr[sp->offset];
 				}
 			}
@@ -466,6 +469,7 @@ namespace PPUPlayer
 
 					uint8_t* ptr = (uint8_t*)&wires;
 
+					bits = sp->bits;
 					return ptr[sp->offset];
 				}
 			}
@@ -474,7 +478,7 @@ namespace PPUPlayer
 		return 0;
 	}
 
-	uint32_t Board::GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t Board::GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
 	{
 		Board* board = (Board*)opaque;
 
@@ -487,6 +491,7 @@ namespace PPUPlayer
 				PPUSim::PPU_Registers regs{};
 				board->ppu->GetDebugInfo_Regs(regs);
 
+				bits = sp->bits;
 				uint8_t* ptr = (uint8_t*)&regs + sp->offset;
 				return *(uint32_t*)ptr;
 			}
@@ -495,7 +500,7 @@ namespace PPUPlayer
 		return 0;
 	}
 
-	uint32_t Board::GetCartDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t Board::GetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
 	{
 		Board* board = (Board*)opaque;
 
@@ -511,6 +516,7 @@ namespace PPUPlayer
 				NROM_DebugInfo nrom_info{};
 				board->cart->GetDebugInfo(nrom_info);
 
+				bits = sp->bits;
 				uint8_t* ptr = (uint8_t*)&nrom_info + sp->offset;
 				return *(uint32_t *)ptr;
 			}
@@ -541,7 +547,7 @@ namespace PPUPlayer
 		info.PD = ad_bus;
 	}
 
-	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
 	{
 		Board* board = (Board*)opaque;
 
@@ -554,6 +560,7 @@ namespace PPUPlayer
 				BoardDebugInfo info{};
 				board->GetDebugInfo(info);
 
+				bits = sp->bits;
 				uint8_t* ptr = (uint8_t*)&info + sp->offset;
 				return *(uint32_t*)ptr;
 			}

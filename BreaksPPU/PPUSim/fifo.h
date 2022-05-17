@@ -56,6 +56,7 @@ namespace PPUSim
 		BaseLogic::TriState Z_COL3 = BaseLogic::TriState::X;
 		BaseLogic::TriState nZ_PRIO = BaseLogic::TriState::X;
 		BaseLogic::TriState SR_EN = BaseLogic::TriState::X;
+		BaseLogic::TriState LDAT = BaseLogic::TriState::X;
 		BaseLogic::TriState LOAD = BaseLogic::TriState::X;
 		BaseLogic::TriState T_SR0 = BaseLogic::TriState::X;
 		BaseLogic::TriState T_SR1 = BaseLogic::TriState::X;
@@ -67,12 +68,12 @@ namespace PPUSim
 		BaseLogic::TriState STEP = BaseLogic::TriState::X;
 		BaseLogic::TriState n_EN = BaseLogic::TriState::X;
 
-		void sim_Enable();
 		void sim_LaneControl(BaseLogic::TriState HSel);
 		void sim_CounterControl();
-		void sim_PairedSR(BaseLogic::TriState n_TX[8]);
 		BaseLogic::TriState sim_Counter();
 		void sim_CounterCarry(BaseLogic::TriState Carry);
+		void sim_PairedSREnable();
+		void sim_PairedSR(BaseLogic::TriState n_TX[8]);
 
 		size_t get_Counter();
 

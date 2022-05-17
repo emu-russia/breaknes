@@ -128,6 +128,7 @@ namespace PPUPlayer
 		{
 			public fixed byte category[32];
 			public fixed byte name[32];
+			public byte bits;
 			public UInt32 value;
 		}
 
@@ -142,6 +143,7 @@ namespace PPUPlayer
 		{
 			public string category = "";
 			public string name = "";
+			public byte bits = 0;
 			public UInt32 value = 0;
 		}
 
@@ -268,6 +270,7 @@ namespace PPUPlayer
 						}
 					}
 
+					entry.bits = raw.bits;
 					entry.value = raw.value;
 				}
 
@@ -289,6 +292,7 @@ namespace PPUPlayer
 
 			testEntry.category = "Test Category";
 			testEntry.name = "Test Entry";
+			testEntry.bits = 8;
 			testEntry.value = 123;
 
 			list.Add(testEntry);

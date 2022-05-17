@@ -305,12 +305,12 @@ namespace Breaknes
 
         private void hVDecoderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowWiki("https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/PPU/hv_dec.md");
+            ShowWiki("https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/PPU/hv_decoder.md");
         }
 
         private void hVFSMControlLogicToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowWiki("https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/PPU/hv_fsm.md");
+            ShowWiki("https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/PPU/fsm.md");
         }
 
         private void paletteToolStripMenuItem_Click(object sender, EventArgs e)

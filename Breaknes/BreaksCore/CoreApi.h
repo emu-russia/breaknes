@@ -29,6 +29,7 @@ struct DebugInfoEntry
 {
 	char category[32];
 	char name[32];
+	uint8_t bits;
 	uint32_t value;
 };
 #pragma pack(pop)

@@ -56,8 +56,6 @@ namespace PPUPlayer
 
 		string DefaultTitle;
 
-		bool RenderAlwaysEnabled = false;
-
 		public Form1()
 		{
 			InitializeComponent();
@@ -177,7 +175,9 @@ namespace PPUPlayer
 
 			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
 
-			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", settings.PPU_Revision, "Fami");
+			string ppu_rev = settings.PPU_Revision == null ? "RP2C02G" : settings.PPU_Revision;
+
+			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", ppu_rev, "Fami");
 			int res = PPUPlayerInterop.InsertCartridge(nes, nes.Length);
 			if (res != 0)
 			{
@@ -207,6 +207,7 @@ namespace PPUPlayer
 				TraceFilter = "";
 			}
 			TraceCollapseSameRows = settings.TraceCollapseSameRows;
+			SetTraceTimeResolutionNanos(settings.TraceTimeScale);
 			ResetTrace(TraceMaxFields);
 
 			currentEntry = NextLogEntry();

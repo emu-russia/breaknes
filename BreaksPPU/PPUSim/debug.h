@@ -124,7 +124,7 @@ namespace PPUSim
 		uint8_t I_OAM2;
 		uint8_t PAR_O;
 		uint8_t n_VIS;
-		uint8_t n_F_NT;
+		uint8_t F_NT;
 		uint8_t F_TB;
 		uint8_t F_TA;
 		uint8_t F_AT;

@@ -230,10 +230,10 @@ namespace PPUSim
 
 		DMX3(in, dec_out);
 
-		sh2_latch.set(MUX(PAR_O, dec_out[2], TriState::Zero), n_PCLK);
-		sh3_latch.set(MUX(PAR_O, dec_out[3], TriState::Zero), n_PCLK);
-		sh5_latch.set(MUX(PAR_O, dec_out[5], TriState::Zero), n_PCLK);
-		sh7_latch.set(MUX(PAR_O, dec_out[7], TriState::Zero), n_PCLK);
+		sh2_latch.set(MUX(PAR_O, TriState::Zero, dec_out[2]), n_PCLK);
+		sh3_latch.set(MUX(PAR_O, TriState::Zero, dec_out[3]), n_PCLK);
+		sh5_latch.set(MUX(PAR_O, TriState::Zero, dec_out[5]), n_PCLK);
+		sh7_latch.set(MUX(PAR_O, TriState::Zero, dec_out[7]), n_PCLK);
 
 		ppu->wire.n_SH2 = sh2_latch.nget();
 		ppu->wire.n_SH3 = sh3_latch.nget();
@@ -242,18 +242,6 @@ namespace PPUSim
 	}
 
 #pragma region "FIFO Lane"
-
-	/// <summary>
-	/// You need to get the value of the signal `/x_EN` beforehand
-	/// </summary>
-	void FIFOLane::sim_Enable()
-	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState n_VIS = ppu->fsm.nVIS;
-
-		en_latch.set(NOR(ZH_FF.nget(), n_VIS), n_PCLK);
-		n_EN = en_latch.nget();
-	}
 
 	void FIFOLane::sim_LaneControl(TriState HSel)
 	{
@@ -265,12 +253,10 @@ namespace PPUSim
 
 		hsel_latch.set(HSel, n_PCLK);
 
-		auto LDAT = NOR3(n_PCLK, hsel_latch.nget(), n_SH2);
+		LDAT = NOR3(n_PCLK, hsel_latch.nget(), n_SH2);
 		LOAD = NOR3(n_PCLK, hsel_latch.nget(), n_SH3);
 		T_SR0 = NOR3(n_PCLK, hsel_latch.nget(), n_SH5);
 		T_SR1 = NOR3(n_PCLK, hsel_latch.nget(), n_SH7);
-
-		SR_EN = NOR(n_PCLK, n_EN);
 
 		ob0_latch[0].set(ppu->wire.OB[0], LDAT);
 		ob1_latch[0].set(ppu->wire.OB[1], LDAT);
@@ -292,24 +278,6 @@ namespace PPUSim
 		STEP = NOR(PCLK, ZH_FF.get());
 		UPD = NOR(LOAD, STEP);
 		// LOAD is obtained in the Lane Control circuit.
-	}
-
-	void FIFOLane::sim_PairedSR(TriState n_TX[8])
-	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState shift_out[2]{};
-
-		shift_out[0] = TriState::One;
-		shift_out[1] = TriState::One;
-
-		for (int n = 7; n >= 0; n--)
-		{
-			shift_out[0] = paired_sr[0][n].sim(n_PCLK, T_SR0, SR_EN, n_TX[n], shift_out[0]);
-			shift_out[1] = paired_sr[1][n].sim(n_PCLK, T_SR1, SR_EN, n_TX[n], shift_out[1]);
-		}
-
-		nZ_COL0 = shift_out[0];
-		nZ_COL1 = shift_out[1];
 	}
 
 	/// <summary>
@@ -350,14 +318,44 @@ namespace PPUSim
 		ZH_FF.set(NOR(NOR3(n_PCLK, n_ZH, Carry), NOR(ZH_FF.get(), AND(PCLK, Carry))));
 	}
 
+	void FIFOLane::sim_PairedSREnable()
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState n_VIS = ppu->fsm.nVIS;
+
+		en_latch.set(NOR(ZH_FF.nget(), n_VIS), n_PCLK);
+		n_EN = en_latch.nget();
+		SR_EN = NOR(n_PCLK, n_EN);
+	}
+
+	void FIFOLane::sim_PairedSR(TriState n_TX[8])
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState shift_out[2]{};
+
+		shift_out[0] = TriState::One;
+		shift_out[1] = TriState::One;
+
+		for (int n = 7; n >= 0; n--)
+		{
+			shift_out[0] = paired_sr[0][n].sim(n_PCLK, T_SR0, SR_EN, n_TX[n], shift_out[0]);
+			shift_out[1] = paired_sr[1][n].sim(n_PCLK, T_SR1, SR_EN, n_TX[n], shift_out[1]);
+		}
+
+		nZ_COL0 = shift_out[0];
+		nZ_COL1 = shift_out[1];
+	}
+
 	void FIFOLane::sim(TriState HSel, TriState n_TX[8], FIFOLaneOutput& ZOut)
 	{
-		sim_Enable();
 		sim_LaneControl(HSel);
 		sim_CounterControl();
-		sim_PairedSR(n_TX);
+
 		auto CarryOut = sim_Counter();
 		sim_CounterCarry(CarryOut);
+
+		sim_PairedSREnable();
+		sim_PairedSR(n_TX);
 
 		ZOut.nZ_COL0 = nZ_COL0;
 		ZOut.nZ_COL1 = nZ_COL1;

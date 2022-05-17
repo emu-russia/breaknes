@@ -6,7 +6,7 @@ namespace PPUPlayer
 	struct DebugInfoProvider
 	{
 		DebugInfoEntry* entry;
-		uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry);
+		uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
 		void* opaque;
 	};
 
@@ -21,7 +21,7 @@ namespace PPUPlayer
 	class DebugHub
 	{
 		static uint8_t ReadTestMem(void* opaque, size_t addr);
-		static uint32_t GetTestInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetTestInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
 
 	public:
 
@@ -43,7 +43,7 @@ namespace PPUPlayer
 		/// <param name="entry">One entry of debugging information. Corresponds to a single signal/register/whatever. (auto-delete)</param>
 		/// <param name="GetValue">Delegate to get the value</param>
 		/// <param name="opaque">Transparent pointer to pass to the delegate (usually `this`)</param>
-		void AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry), void* opaque);
+		void AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry, uint8_t& bits), void* opaque);
 
 		/// <summary>
 		/// Delete all debugging information handlers

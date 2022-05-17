@@ -29,7 +29,7 @@ namespace PPUPlayer
 		DisposeMemMap();
 	}
 
-	void DebugHub::AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry), void* opaque)
+	void DebugHub::AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry, uint8_t& bits), void* opaque)
 	{
 		DebugInfoProvider prov{};
 
@@ -114,8 +114,9 @@ namespace PPUPlayer
 	}
 
 	// DEBUG: To be deleted after GUI debugging
-	uint32_t DebugHub::GetTestInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t DebugHub::GetTestInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
 	{
+		bits = 8;
 		return 123;
 	}
 
@@ -199,7 +200,7 @@ extern "C"
 		{
 			memcpy(ptr->category, it->entry->category, sizeof(ptr->category));
 			memcpy(ptr->name, it->entry->name, sizeof(ptr->name));
-			ptr->value = it->GetValue(it->opaque, it->entry);
+			ptr->value = it->GetValue(it->opaque, it->entry, ptr->bits);
 			ptr++;
 		}
 	}
