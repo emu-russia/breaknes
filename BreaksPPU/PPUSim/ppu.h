@@ -144,19 +144,17 @@ namespace PPUSim
 		/// </summary>
 		struct InternalWires
 		{
-			BaseLogic::TriState RnW;
-			BaseLogic::TriState RS[3];
-			BaseLogic::TriState n_DBE;
-			BaseLogic::TriState n_ALE;
 			BaseLogic::TriState CLK;
 			BaseLogic::TriState n_CLK;
 			BaseLogic::TriState RES;
 			BaseLogic::TriState RC;
 			BaseLogic::TriState PCLK;
 			BaseLogic::TriState n_PCLK;
-			BaseLogic::TriState n_CC[4];
-			BaseLogic::TriState n_LL[2];
-			
+
+			BaseLogic::TriState RnW;
+			BaseLogic::TriState RS[3];
+			BaseLogic::TriState n_DBE;
+			BaseLogic::TriState n_ALE;
 			BaseLogic::TriState n_RD;
 			BaseLogic::TriState n_WR;
 			BaseLogic::TriState n_W6_1;
@@ -250,6 +248,8 @@ namespace PPUSim
 			BaseLogic::TriState n_BW;
 			BaseLogic::TriState n_DB_CB;
 			BaseLogic::TriState PAL[5];
+			BaseLogic::TriState n_CC[4];
+			BaseLogic::TriState n_LL[2];
 
 			BaseLogic::TriState RD;
 			BaseLogic::TriState WR;
