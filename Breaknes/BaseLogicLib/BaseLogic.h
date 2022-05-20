@@ -344,4 +344,18 @@ namespace BaseLogic
 	/// </summary>
 	/// <param name="in"></param>
 	void BitRev(TriState in[8]);
+
+	/// <summary>
+	/// Convert TriState to byte.
+	/// </summary>
+	/// <param name="val"></param>
+	/// <returns></returns>
+	uint8_t ToByte(TriState val);
+
+	/// <summary>
+	/// Convert the byte to the TriState type. This and the previous call can be used in TriState serialization.
+	/// </summary>
+	/// <param name="val"></param>
+	/// <returns></returns>
+	TriState FromByte(uint8_t val);
 }

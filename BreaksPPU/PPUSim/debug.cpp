@@ -171,32 +171,32 @@ namespace PPUSim
 
 	void PPU::GetDebugInfo_FSMStates(PPU_FSMStates& fsm_states)
 	{
-		fsm_states.S_EV = fsm.SEV == TriState::One ? 1 : 0;
-		fsm_states.CLIP_O = fsm.CLIP_O == TriState::One ? 1 : 0;
-		fsm_states.CLIP_B = fsm.CLIP_B == TriState::One ? 1 : 0;
-		fsm_states.Z_HPOS = fsm.ZHPOS == TriState::One ? 1 : 0;
-		fsm_states.EVAL = fsm.EVAL == TriState::One ? 1 : 0;
-		fsm_states.E_EV = fsm.EEV == TriState::One ? 1 : 0;
-		fsm_states.I_OAM2 = fsm.IOAM2 == TriState::One ? 1 : 0;
-		fsm_states.PAR_O = fsm.PARO == TriState::One ? 1 : 0;
-		fsm_states.n_VIS = fsm.nVIS == TriState::One ? 1 : 0;
-		fsm_states.F_NT = fsm.nFNT == TriState::Zero ? 1 : 0;	// Direct polarity returns for unification
-		fsm_states.F_TB = fsm.FTB == TriState::One ? 1 : 0;
-		fsm_states.F_TA = fsm.FTA == TriState::One ? 1 : 0;
-		fsm_states.F_AT = fsm.FAT == TriState::One ? 1 : 0;
-		fsm_states.n_FO = fsm.nFO == TriState::One ? 1 : 0;
-		fsm_states.BPORCH = fsm.BPORCH == TriState::One ? 1 : 0;
-		fsm_states.SC_CNT = fsm.SCCNT == TriState::One ? 1 : 0;
-		fsm_states.n_HB = fsm.nHB == TriState::One ? 1 : 0;
-		fsm_states.BURST = fsm.BURST == TriState::One ? 1 : 0;
-		fsm_states.HSYNC = fsm.HSYNC == TriState::One ? 1 : 0;
-		fsm_states.n_PICTURE = fsm.n_PICTURE == TriState::One ? 1 : 0;
-		fsm_states.RESCL = fsm.RESCL == TriState::One ? 1 : 0;
-		fsm_states.VSYNC = fsm.VSYNC == TriState::One ? 1 : 0;
-		fsm_states.n_VSET = fsm.nVSET == TriState::One ? 1 : 0;
-		fsm_states.VB = fsm.VB == TriState::One ? 1 : 0;
-		fsm_states.BLNK = fsm.BLNK == TriState::One ? 1 : 0;
-		fsm_states.INT = fsm.INT == TriState::One ? 1 : 0;
+		fsm_states.S_EV = ToByte(fsm.SEV);
+		fsm_states.CLIP_O = ToByte(fsm.CLIP_O);
+		fsm_states.CLIP_B = ToByte(fsm.CLIP_B);
+		fsm_states.Z_HPOS = ToByte(fsm.ZHPOS);
+		fsm_states.EVAL = ToByte(fsm.EVAL);
+		fsm_states.E_EV = ToByte(fsm.EEV);
+		fsm_states.I_OAM2 = ToByte(fsm.IOAM2);
+		fsm_states.PAR_O = ToByte(fsm.PARO);
+		fsm_states.n_VIS = ToByte(fsm.nVIS);
+		fsm_states.F_NT = ToByte(NOT(fsm.nFNT));	// Direct polarity returns for unification
+		fsm_states.F_TB = ToByte(fsm.FTB);
+		fsm_states.F_TA = ToByte(fsm.FTA);
+		fsm_states.F_AT = ToByte(fsm.FAT);
+		fsm_states.n_FO = ToByte(fsm.nFO);
+		fsm_states.BPORCH = ToByte(fsm.BPORCH);
+		fsm_states.SC_CNT = ToByte(fsm.SCCNT);
+		fsm_states.n_HB = ToByte(fsm.nHB);
+		fsm_states.BURST = ToByte(fsm.BURST);
+		fsm_states.HSYNC = ToByte(fsm.HSYNC);
+		fsm_states.n_PICTURE = ToByte(fsm.n_PICTURE);
+		fsm_states.RESCL = ToByte(fsm.RESCL);
+		fsm_states.VSYNC = ToByte(fsm.VSYNC);
+		fsm_states.n_VSET = ToByte(fsm.nVSET);
+		fsm_states.VB = ToByte(fsm.VB);
+		fsm_states.BLNK = ToByte(fsm.BLNK);
+		fsm_states.INT = ToByte(fsm.INT);
 	}
 
 	void PPU::GetDebugInfo_Regs(PPU_Registers& regs)

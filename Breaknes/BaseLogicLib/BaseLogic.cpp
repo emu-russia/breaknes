@@ -450,4 +450,14 @@ namespace BaseLogic
 			in[7 - n] = old;
 		}
 	}
+
+	uint8_t ToByte(TriState val)
+	{
+		return (uint8_t)val;
+	}
+
+	TriState FromByte(uint8_t val)
+	{
+		return (TriState)val;
+	}
 }
