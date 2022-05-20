@@ -188,4 +188,16 @@ extern "C"
 			features->V_pk_pk = 2.0f;
 		}
 	}
+
+	__declspec(dllexport) void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	{
+		if (board != nullptr)
+		{
+			board->ConvertRAWToRGB(raw, r, g, b);
+		}
+		else
+		{
+			*r = *g = *b = 0;
+		}
+	}
 }
