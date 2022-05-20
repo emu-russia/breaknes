@@ -298,4 +298,14 @@ namespace PPUSim
 	{
 		vid_out->GetSignalFeatures(features);
 	}
+
+	void PPU::SetRAWOutput(bool enable)
+	{
+		vid_out->SetRAWOutput(enable);
+	}
+
+	void PPU::ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
+	{
+		vid_out->ConvertRAWToRGB(rawIn, rgbOut);
+	}
 }
