@@ -15,35 +15,26 @@ namespace PPUSim
 			sr[n] = new VideoOutSRBit(ppu);
 		}
 
-		if (ppu->rev == Revision::RP2C02G)
+		switch (ppu->rev)
 		{
-			LToV[0] = 0.781f;		// Synch
-			LToV[1] = 1.000f;		// Colorburst L
-			LToV[2] = 1.131f;		// Color 0D
-			LToV[3] = 1.300f;		// Color 1D (black)
-			LToV[4] = 1.712f;		// Colorburst H
-			LToV[5] = 1.743f;		// Color 2D
-			LToV[6] = 1.875f;		// Color 00
-			LToV[7] = 2.287f;		// Color 10
-			LToV[8] = 2.331f;		// Color 3D
-			LToV[9] = 2.743f;		// Color 20 / 30
-			LToV[10] = 0.756f;		// Emphasis attenuation factor
-		}
-		else
-		{
-			// TBD: PAL, others (RGB, clones)
+			case Revision::RP2C02G:
+			case Revision::RP2C02H:
+			case Revision::RP2C07_0:
+				LToV[0] = 0.781f;		// Synch
+				LToV[1] = 1.000f;		// Colorburst L
+				LToV[2] = 1.131f;		// Color 0D
+				LToV[3] = 1.300f;		// Color 1D (black)
+				LToV[4] = 1.712f;		// Colorburst H
+				LToV[5] = 1.743f;		// Color 2D
+				LToV[6] = 1.875f;		// Color 00
+				LToV[7] = 2.287f;		// Color 10
+				LToV[8] = 2.331f;		// Color 3D
+				LToV[9] = 2.743f;		// Color 20 / 30
+				LToV[10] = 0.756f;		// Emphasis attenuation factor
+				composite = true;
+				break;
 
-			LToV[0] = 0.0f;
-			LToV[1] = 0.0f;
-			LToV[2] = 0.0f;
-			LToV[3] = 0.0f;
-			LToV[4] = 0.0f;
-			LToV[5] = 0.0f;
-			LToV[6] = 0.0f;
-			LToV[7] = 0.0f;
-			LToV[8] = 0.0f;
-			LToV[9] = 0.0f;
-			LToV[10] = 0.0f;
+			// TBD: others (RGB, clones)
 		}
 	}
 
@@ -57,12 +48,6 @@ namespace PPUSim
 
 	void VideoOut::sim(VideoOutSignal& vout)
 	{
-		TriState PCLK = ppu->wire.PCLK;
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState BURST = ppu->fsm.BURST;
-		TriState HSYNC = ppu->fsm.HSYNC;
-		TriState n_PICTURE = sim_nPICTURE();
-
 		if (DebugRandomize)
 		{
 			sim_RandomizeChromaLuma();
@@ -72,9 +57,53 @@ namespace PPUSim
 			sim_FixedChromaLuma();
 		}
 
-		TriState P[13]{}, PZ[13]{};
+		sim_nPICTURE();
+		sim_InputLatches();
+		
+		if (raw)
+		{
+			// Raw color can be produced immediately after simulating the input latches.
 
-		// Phase Shifter
+			sim_RAWOutput(vout);
+			return;
+		}
+
+		sim_PhaseShifter();
+		sim_ChromaDecoder();
+		sim_OutputLatches();
+		sim_LumaDecoder();
+		sim_Emphasis();
+
+		if (composite)
+		{
+			sim_CompositeDAC(vout);
+		}
+		else
+		{
+			sim_RGB_DAC(vout);
+		}
+	}
+
+	/// <summary>
+	/// Memorize the signal values on all the auxiliary latches.
+	/// </summary>
+	void VideoOut::sim_InputLatches()
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState BURST = ppu->fsm.BURST;
+
+		cc_burst_latch.set(BURST, n_PCLK);
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			cc_latch1[n].set(ppu->wire.n_CC[n], PCLK);
+			cc_latch2[n].set(cc_latch1[n].nget(), n_PCLK);
+		}
+	}
+
+	void VideoOut::sim_PhaseShifter()
+	{
 		// TBD: PAL
 
 		PZ[6] = NOT(sr[2]->getn_ShiftOut());
@@ -99,19 +128,14 @@ namespace PPUSim
 		PZ[9] = sr[4]->getn_Out();
 		PZ[11] = sr[5]->getn_Out();
 
-		TriState n_PR = PZ[0];
-		TriState n_PG = PZ[9];
-		TriState n_PB = PZ[5];
+		n_PR = PZ[0];
+		n_PG = PZ[9];
+		n_PB = PZ[5];
+	}
 
-		// Chrominance Decoder
-
-		cc_burst_latch.set(BURST, n_PCLK);
-
-		for (size_t n = 0; n < 4; n++)
-		{
-			cc_latch1[n].set(ppu->wire.n_CC[n], PCLK);
-			cc_latch2[n].set(cc_latch1[n].nget(), n_PCLK);
-		}
+	void VideoOut::sim_ChromaDecoder()
+	{
+		// TBD: PAL
 
 		TriState dmxin[4]{};
 		TriState dmxout[16]{};
@@ -121,7 +145,7 @@ namespace PPUSim
 		dmxin[3] = NOR(cc_latch2[3].get(), cc_burst_latch.get());
 		DMX4(dmxin, dmxout);
 
-		TriState P123 = NOR3(dmxin[1], dmxin[2], dmxin[3]);
+		P123 = NOR3(dmxin[1], dmxin[2], dmxin[3]);
 
 		P[0] = dmxout[3];
 		P[1] = dmxout[10];
@@ -152,37 +176,48 @@ namespace PPUSim
 		}
 
 		n_PZ = NOR13(pz);
+	}
+
+	/// <summary>
+	/// Call after Chroma Decoder.
+	/// </summary>
+	void VideoOut::sim_OutputLatches()
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState BURST = ppu->fsm.BURST;
+		TriState HSYNC = ppu->fsm.HSYNC;
+		TriState n_PICTURE = VidOut_n_PICTURE;
 
 		// If /POUT = 1 - then the visible part of the signal is not output at all
 
 		pic_out_latch.set(NOR(P123, n_PICTURE), n_PCLK);
 		n_POUT = pic_out_latch.nget();
 
-		// Luminance Decoder
+		// For DAC
 
+		sync_latch.set(NOT(HSYNC), n_PCLK);
+		black_latch.set(NOT(NOR3(NOR(P123, n_PICTURE), HSYNC, BURST)), n_PCLK);
+		cb_latch.set(BURST, n_PCLK);
+	}
+
+	void VideoOut::sim_LumaDecoder()
+	{
 		n_LU[3] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], ppu->wire.n_LL[1]));
 		n_LU[2] = NOT(NOR3(n_POUT, NOT(ppu->wire.n_LL[0]), ppu->wire.n_LL[1]));
 		n_LU[1] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], NOT(ppu->wire.n_LL[1])));
 		n_LU[0] = NOT(NOR3(n_POUT, NOT(ppu->wire.n_LL[0]), NOT(ppu->wire.n_LL[1])));
+	}
 
-		// Emphasis
-
+	void VideoOut::sim_Emphasis()
+	{
 		TriState n[3]{};
 		n[0] = NOR3(n_POUT, n_PB, ppu->wire.n_TB);
 		n[1] = NOR3(n_POUT, n_PG, ppu->wire.n_TG);
 		n[2] = NOR3(n_POUT, n_PR, ppu->wire.n_TR);
 		TINT = NOT(NOR3(n[0], n[1], n[2]));
-
-		// DAC
-
-		sync_latch.set(NOT(HSYNC), n_PCLK);
-		black_latch.set(NOT(NOR3(NOR(P123, n_PICTURE), HSYNC, BURST)), n_PCLK);
-		cb_latch.set(BURST, n_PCLK);
-
-		sim_DAC(vout);
 	}
 
-	void VideoOut::sim_DAC(VideoOutSignal& vout)
+	void VideoOut::sim_CompositeDAC(VideoOutSignal& vout)
 	{
 		TriState tmp = TriState::Zero;
 		float v = 3.0f;		// White level
@@ -201,77 +236,16 @@ namespace PPUSim
 			v = std::min(v, LToV[3]);
 		}
 
-		// Colorburst phase alteration
+		// Colorburst phase level
 
-		tmp = NOR(cb_latch.nget(), n_PZ);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[4]);
-		}
+		v = PhaseLevel(v, cb_latch.nget(), 1, 4);
 
-		tmp = NOR(tmp, cb_latch.nget());
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[1]);
-		}
+		// Luminance phase levels
 
-		// Alteration of phases between Luminance levels.
-
-		// /LU0
-
-		tmp = NOR(n_LU[0], n_PZ);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[6]);
-		}
-
-		tmp = NOR(n_LU[0], tmp);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[2]);
-		}
-
-		// /LU3
-
-		tmp = NOR(n_LU[3], n_PZ);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[9]);
-		}
-
-		tmp = NOR(n_LU[3], tmp);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[8]);
-		}
-
-		// /LU1
-
-		tmp = NOR(n_LU[1], n_PZ);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[7]);
-		}
-
-		tmp = NOR(n_LU[1], tmp);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[3]);
-		}
-
-		// /LU2
-
-		tmp = NOR(n_LU[2], n_PZ);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[9]);
-		}
-
-		tmp = NOR(n_LU[2], tmp);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[5]);
-		}
+		v = PhaseLevel(v, n_LU[0], 2, 6);
+		v = PhaseLevel(v, n_LU[1], 3, 7);
+		v = PhaseLevel(v, n_LU[2], 5, 9);
+		v = PhaseLevel(v, n_LU[3], 8, 9);
 
 		// Emphasis is calculated by scaling voltage with additional resistance.
 
@@ -280,11 +254,52 @@ namespace PPUSim
 			v *= LToV[10];
 		}
 
-		// TBD: For now, as a placeholder. For the other revisions, it may be different.
+		vout.composite = v;
+	}
 
-		if (ppu->rev == Revision::RP2C02G)
+	void VideoOut::sim_RGB_DAC(VideoOutSignal& vout)
+	{
+		// TBD.
+
+		vout.RGB.r = 0;
+		vout.RGB.g = 0;
+		vout.RGB.b = 0;
+		vout.RGB.syncLevel = 0;
+	}
+
+	float VideoOut::PhaseLevel(float v, TriState sel, size_t level_from, size_t level_to)
+	{
+		auto tmp = NOR(sel, n_PZ);
+		if (tmp == TriState::One)
 		{
-			vout.composite = v;
+			v = std::min(v, LToV[level_to]);
+		}
+
+		tmp = NOR(sel, tmp);
+		if (tmp == TriState::One)
+		{
+			v = std::min(v, LToV[level_from]);
+		}
+		return v;
+	}
+
+	void VideoOut::sim_RAWOutput(VideoOutSignal& vout)
+	{
+		if (VidOut_n_PICTURE == TriState::Zero)
+		{
+			vout.RAW.CC0 = ToByte(cc_latch2[0].get());
+			vout.RAW.CC1 = ToByte(cc_latch2[1].get());
+			vout.RAW.CC2 = ToByte(cc_latch2[2].get());
+			vout.RAW.CC3 = ToByte(cc_latch2[3].get());
+			vout.RAW.LL0 = ToByte(NOT(ppu->wire.n_LL[0]));
+			vout.RAW.LL1 = ToByte(NOT(ppu->wire.n_LL[1]));
+			vout.RAW.TR = ToByte(NOT(ppu->wire.n_TR));
+			vout.RAW.TG = ToByte(NOT(ppu->wire.n_TG));
+			vout.RAW.TB = ToByte(NOT(ppu->wire.n_TB));
+		}
+		else
+		{
+			vout.RAW.raw = 0;
 		}
 	}
 
@@ -352,7 +367,7 @@ namespace PPUSim
 	/// The PAL PPU contains an additional DLatch chain for /PICTURE signal propagation.
 	/// </summary>
 	/// <returns></returns>
-	TriState VideoOut::sim_nPICTURE()
+	void VideoOut::sim_nPICTURE()
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
@@ -365,6 +380,32 @@ namespace PPUSim
 			n_PICTURE = npicture_latch2.get();
 		}
 
-		return n_PICTURE;
+		VidOut_n_PICTURE = n_PICTURE;
+	}
+
+	void VideoOut::GetSignalFeatures(VideoSignalFeatures& features)
+	{
+		switch (ppu->rev)
+		{
+			case Revision::RP2C02G:
+			case Revision::RP2C02H:
+				features.SamplesPerPCLK = 8;
+				features.PixelsPerScan = 341;
+				features.ScansPerField = 262;
+				features.Composite = true;
+				features.BlankLevel = 1.3f;
+				features.V_pk_pk = 2.0f;
+				break;
+		}
+	}
+
+	void VideoOut::SetRAWOutput(bool enable)
+	{
+		raw = enable;
+	}
+
+	void VideoOut::ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
+	{
+
 	}
 }

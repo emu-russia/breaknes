@@ -49,8 +49,24 @@ namespace PPUSim
 		BaseLogic::TriState n_POUT = BaseLogic::TriState::X;
 		BaseLogic::TriState n_LU[4]{};
 		BaseLogic::TriState TINT = BaseLogic::TriState::X;
+		BaseLogic::TriState n_PR = BaseLogic::TriState::X;
+		BaseLogic::TriState n_PG = BaseLogic::TriState::X;
+		BaseLogic::TriState n_PB = BaseLogic::TriState::X;
+		BaseLogic::TriState P[13]{};
+		BaseLogic::TriState PZ[13]{};
+		BaseLogic::TriState P123 = BaseLogic::TriState::X;
+		BaseLogic::TriState VidOut_n_PICTURE = BaseLogic::TriState::X;	// Local /PICTURE signal
 
-		void sim_DAC(VideoOutSignal& vout);
+		void sim_InputLatches();
+		void sim_PhaseShifter();
+		void sim_ChromaDecoder();
+		void sim_OutputLatches();
+		void sim_LumaDecoder();
+		void sim_Emphasis();
+		void sim_CompositeDAC(VideoOutSignal& vout);
+		void sim_RGB_DAC(VideoOutSignal& vout);
+		void sim_nPICTURE();
+		void sim_RAWOutput(VideoOutSignal& vout);
 
 		bool DebugRandomize = false;
 		bool DebugFixed = false;
@@ -58,7 +74,10 @@ namespace PPUSim
 		void sim_RandomizeChromaLuma();
 		void sim_FixedChromaLuma();
 
-		BaseLogic::TriState sim_nPICTURE();
+		float PhaseLevel(float v, BaseLogic::TriState sel, size_t level_from, size_t level_to);
+
+		bool composite = false;
+		bool raw = false;
 
 	public:
 
@@ -71,5 +90,11 @@ namespace PPUSim
 
 		void Dbg_RandomizePicture(bool enable);
 		void Dbg_FixedPicture(bool enable);
+
+		void GetSignalFeatures(VideoSignalFeatures& features);
+
+		void SetRAWOutput(bool enable);
+
+		void ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
 	};
 }

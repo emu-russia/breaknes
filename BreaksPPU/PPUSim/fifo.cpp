@@ -36,7 +36,6 @@ namespace PPUSim
 		ppu->wire.n_ZH = zh_latch3.nget();
 
 		sim_HInv();
-		ppu->n_TX = Pack(n_TX);
 		BitRev(n_TX);
 		sim_Lanes();
 		sim_Prio();
@@ -159,8 +158,6 @@ namespace PPUSim
 		in[8] = Z[5];
 		in[9] = Z[6];
 		Z[7] = NOR10(in);
-
-		ppu->PrioZ = Pack(Z);
 
 		// The multiplexer locomotive is simulated by the ordinary for-loop.
 

@@ -131,13 +131,11 @@ namespace PPUSim
 		uint8_t n_FO;
 		uint8_t BPORCH;
 		uint8_t SC_CNT;
-		uint8_t n_HB;
 		uint8_t BURST;
 		uint8_t HSYNC;
 		uint8_t n_PICTURE;
 		uint8_t RESCL;
 		uint8_t VSYNC;
-		uint8_t n_VSET;
 		uint8_t VB;
 		uint8_t BLNK;
 		uint8_t INT;

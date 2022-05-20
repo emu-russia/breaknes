@@ -11,14 +11,42 @@ namespace PPUSim
 	/// </summary>
 	union VideoOutSignal
 	{
+		/// <summary>
+		/// Sample for "composite" PPUs
+		/// </summary>
 		float composite;	// For NTSC/PAL variations of PPU. A sample of the composite video signal.
+		
+		/// <summary>
+		/// Sample for RGB PPU
+		/// </summary>
 		struct RGBOut
 		{
 			uint8_t r;
 			uint8_t g;
 			uint8_t b;
 			uint8_t syncLevel;	// This field is reserved for the "SYNC" output of the RGB PPU (Sync Level).
-		};
+		} RGB;
+
+		/// <summary>
+		/// Raw PPU color, which is obtained from the PPU circuits BEFORE the video signal generator.
+		/// The user can switch the PPUSim video output to use "raw" color, instead of the original (Composite/RGB).
+		/// </summary>
+		union RAWOut
+		{
+			struct
+			{
+				unsigned CC0 : 1;	// Chroma (CB[0-3])
+				unsigned CC1 : 1;
+				unsigned CC2 : 1;
+				unsigned CC3 : 1;
+				unsigned LL0 : 1;	// Luma (CB[4-5])
+				unsigned LL1 : 1;
+				unsigned TR : 1;	// "Tint Red", $2001[5]
+				unsigned TG : 1;	// "Tint Green", $2001[6]
+				unsigned TB : 1;	// "Tint Blue", $2001[7]
+			};
+			uint16_t raw;
+		} RAW;
 	};
 
 	/// <summary>
@@ -284,14 +312,12 @@ namespace PPUSim
 			BaseLogic::TriState nHB;
 			BaseLogic::TriState BURST;
 			BaseLogic::TriState HSYNC;
-
 			BaseLogic::TriState n_PICTURE;
 			BaseLogic::TriState RESCL;
 			BaseLogic::TriState VSYNC;
 			BaseLogic::TriState nVSET;
 			BaseLogic::TriState VB;
 			BaseLogic::TriState BLNK;
-
 			BaseLogic::TriState INT;
 		} fsm{};
 
@@ -322,10 +348,10 @@ namespace PPUSim
 		VRAM_Control* vram_ctrl = nullptr;
 		DataReader* data_reader = nullptr;
 
+		// The internal PPU buses do not use the Bus Conflicts resolver because of the large Capacitance.
+
 		uint8_t DB = 0;				// CPU I/F Data bus
 		uint8_t PD = 0;				// Internal PPU Data bus
-		uint8_t PrioZ = 0;			// FIFO priority encode outputs Z0-Z7
-		uint8_t n_TX = 0;			// FIFO /Tx input
 
 		void sim_BusInput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus);
 		void sim_BusOutput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus);
@@ -375,22 +401,34 @@ namespace PPUSim
 		size_t GetHCounter();
 		size_t GetVCounter();
 
+		/// <summary>
+		/// Get the video signal properties of the current PPU revision.
+		/// </summary>
+		/// <param name="features"></param>
+		void GetSignalFeatures(VideoSignalFeatures& features);
+
+		/// <summary>
+		/// Switch the video output to RAW Color mode.
+		/// </summary>
+		/// <param name="enable"></param>
+		void SetRAWOutput(bool enable);
+
+		/// <summary>
+		/// Convert RAW Color to RGB. A video generator simulation circuit will be activated, which will return a sample corresponding to the current PPU revision.
+		/// </summary>
+		/// <param name="rawIn"></param>
+		/// <param name="rgbOut"></param>
+		void ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
+
 		uint8_t Dbg_OAMReadByte(size_t addr);
 		uint8_t Dbg_TempOAMReadByte(size_t addr);
 		void Dbg_OAMWriteByte(size_t addr, uint8_t val);
 		void Dbg_TempOAMWriteByte(size_t addr, uint8_t val);
-
 		uint8_t Dbg_CRAMReadByte(size_t addr);
-
 		uint8_t Dbg_GetCRAMAddress();
-
 		uint16_t Dbg_GetPPUAddress();
-
 		void Dbg_RandomizePicture(bool enable);
 		void Dbg_FixedPicture(bool enable);
-
 		void Dbg_RenderAlwaysEnabled(bool enable);
-
-		void GetSignalFeatures(VideoSignalFeatures& features);
 	};
 }
