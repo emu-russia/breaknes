@@ -252,10 +252,6 @@ namespace PPUSim
 		return "Unknown";
 	}
 
-	// A proven way to resolve bus conflicts.
-	// We carry 2 variables - the bus value (8 bits) and the dirty flag.
-	// If the bus is "dirty", then the operation "Ground wins" is performed (db &= val). Otherwise we set the bus value and the dirty flag.
-
 	TriState PPU::GetDBBit(size_t n)
 	{
 		TriState DBBit = (DB & (1 << n)) != 0 ? TriState::One : TriState::Zero;
@@ -300,16 +296,6 @@ namespace PPUSim
 
 	void PPU::GetSignalFeatures(VideoSignalFeatures& features)
 	{
-		switch (rev)
-		{
-			case Revision::RP2C02G:
-				features.SamplesPerPCLK = 8;
-				features.PixelsPerScan = 341;
-				features.ScansPerField = 262;
-				features.Composite = true;
-				features.BlankLevel = 1.3f;
-				features.V_pk_pk = 2.0f;
-				break;
-		}
+		vid_out->GetSignalFeatures(features);
 	}
 }

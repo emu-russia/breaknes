@@ -166,8 +166,6 @@ namespace PPUSim
 
 		wires.DB = DB;
 		wires.PD = PD;
-		wires.PrioZ = PrioZ;
-		wires.n_TX = n_TX;
 	}
 
 	void PPU::GetDebugInfo_FSMStates(PPU_FSMStates& fsm_states)
@@ -188,13 +186,11 @@ namespace PPUSim
 		fsm_states.n_FO = ToByte(fsm.nFO);
 		fsm_states.BPORCH = ToByte(fsm.BPORCH);
 		fsm_states.SC_CNT = ToByte(fsm.SCCNT);
-		fsm_states.n_HB = ToByte(fsm.nHB);
 		fsm_states.BURST = ToByte(fsm.BURST);
 		fsm_states.HSYNC = ToByte(fsm.HSYNC);
 		fsm_states.n_PICTURE = ToByte(fsm.n_PICTURE);
 		fsm_states.RESCL = ToByte(fsm.RESCL);
 		fsm_states.VSYNC = ToByte(fsm.VSYNC);
-		fsm_states.n_VSET = ToByte(fsm.nVSET);
 		fsm_states.VB = ToByte(fsm.VB);
 		fsm_states.BLNK = ToByte(fsm.BLNK);
 		fsm_states.INT = ToByte(fsm.INT);

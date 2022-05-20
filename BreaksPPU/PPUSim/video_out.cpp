@@ -389,4 +389,19 @@ namespace PPUSim
 
 		return n_PICTURE;
 	}
+
+	void VideoOut::GetSignalFeatures(VideoSignalFeatures& features)
+	{
+		switch (ppu->rev)
+		{
+			case Revision::RP2C02G:
+				features.SamplesPerPCLK = 8;
+				features.PixelsPerScan = 341;
+				features.ScansPerField = 262;
+				features.Composite = true;
+				features.BlankLevel = 1.3f;
+				features.V_pk_pk = 2.0f;
+				break;
+		}
+	}
 }

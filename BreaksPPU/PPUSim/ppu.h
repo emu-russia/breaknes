@@ -284,14 +284,12 @@ namespace PPUSim
 			BaseLogic::TriState nHB;
 			BaseLogic::TriState BURST;
 			BaseLogic::TriState HSYNC;
-
 			BaseLogic::TriState n_PICTURE;
 			BaseLogic::TriState RESCL;
 			BaseLogic::TriState VSYNC;
 			BaseLogic::TriState nVSET;
 			BaseLogic::TriState VB;
 			BaseLogic::TriState BLNK;
-
 			BaseLogic::TriState INT;
 		} fsm{};
 
@@ -322,10 +320,10 @@ namespace PPUSim
 		VRAM_Control* vram_ctrl = nullptr;
 		DataReader* data_reader = nullptr;
 
+		// The internal PPU buses do not use the Bus Conflicts resolver because of the large Capacitance.
+
 		uint8_t DB = 0;				// CPU I/F Data bus
 		uint8_t PD = 0;				// Internal PPU Data bus
-		uint8_t PrioZ = 0;			// FIFO priority encode outputs Z0-Z7
-		uint8_t n_TX = 0;			// FIFO /Tx input
 
 		void sim_BusInput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus);
 		void sim_BusOutput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus);
@@ -375,22 +373,17 @@ namespace PPUSim
 		size_t GetHCounter();
 		size_t GetVCounter();
 
+		void GetSignalFeatures(VideoSignalFeatures& features);
+
 		uint8_t Dbg_OAMReadByte(size_t addr);
 		uint8_t Dbg_TempOAMReadByte(size_t addr);
 		void Dbg_OAMWriteByte(size_t addr, uint8_t val);
 		void Dbg_TempOAMWriteByte(size_t addr, uint8_t val);
-
 		uint8_t Dbg_CRAMReadByte(size_t addr);
-
 		uint8_t Dbg_GetCRAMAddress();
-
 		uint16_t Dbg_GetPPUAddress();
-
 		void Dbg_RandomizePicture(bool enable);
 		void Dbg_FixedPicture(bool enable);
-
 		void Dbg_RenderAlwaysEnabled(bool enable);
-
-		void GetSignalFeatures(VideoSignalFeatures& features);
 	};
 }
