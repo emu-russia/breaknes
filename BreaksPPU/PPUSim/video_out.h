@@ -1,5 +1,7 @@
 // Video Signal Generator
 
+// TBD: Once everything is working, add output support for RGB-like PPUs.
+
 #pragma once
 
 namespace PPUSim
@@ -83,8 +85,6 @@ namespace PPUSim
 
 		VideoOut(PPU* parent);
 		~VideoOut();
-
-		// TBD: Once everything is working, add output support for RGB-like PPUs.
 		
 		void sim(VideoOutSignal& vout);
 
