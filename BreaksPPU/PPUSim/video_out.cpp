@@ -26,7 +26,8 @@ namespace PPUSim
 			LToV[6] = 1.875f;		// Color 00
 			LToV[7] = 2.287f;		// Color 10
 			LToV[8] = 2.331f;		// Color 3D
-			LToV[9] = 2.743f;		// Color 20
+			LToV[9] = 2.743f;		// Color 20 / 30
+			LToV[10] = 0.756f;		// Emphasis attenuation factor
 		}
 		else
 		{
@@ -42,6 +43,7 @@ namespace PPUSim
 			LToV[7] = 0.0f;
 			LToV[8] = 0.0f;
 			LToV[9] = 0.0f;
+			LToV[10] = 0.0f;
 		}
 	}
 
@@ -158,10 +160,10 @@ namespace PPUSim
 
 		// Luminance Decoder
 
-		n_LU[0] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], ppu->wire.n_LL[1]));
-		n_LU[1] = NOT(NOR3(n_POUT, NOT(ppu->wire.n_LL[0]), ppu->wire.n_LL[1]));
-		n_LU[2] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], NOT(ppu->wire.n_LL[1])));
-		n_LU[3] = NOT(NOR3(n_POUT, NOT(ppu->wire.n_LL[0]), NOT(ppu->wire.n_LL[1])));
+		n_LU[3] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], ppu->wire.n_LL[1]));
+		n_LU[2] = NOT(NOR3(n_POUT, NOT(ppu->wire.n_LL[0]), ppu->wire.n_LL[1]));
+		n_LU[1] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], NOT(ppu->wire.n_LL[1])));
+		n_LU[0] = NOT(NOR3(n_POUT, NOT(ppu->wire.n_LL[0]), NOT(ppu->wire.n_LL[1])));
 
 		// Emphasis
 
@@ -213,55 +215,34 @@ namespace PPUSim
 			v = std::min(v, LToV[1]);
 		}
 
-		// TBD: We ignore Emphasis for now, it is calculated by adding additional resistance.
-
-		//if (TINT == TriState::One)
-		//{
-		//	v = std::min(v, LToV[10]);
-		//}
-
 		// Alteration of phases between Luminance levels.
-
-		// /LU3
-
-		tmp = NOR(n_LU[3], n_PZ);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[6]);
-		}
-
-		tmp = NOR(n_LU[3], tmp);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[2]);
-		}
 
 		// /LU0
 
 		tmp = NOR(n_LU[0], n_PZ);
 		if (tmp == TriState::One)
 		{
-			v = std::min(v, LToV[9]);
+			v = std::min(v, LToV[6]);
 		}
 
 		tmp = NOR(n_LU[0], tmp);
 		if (tmp == TriState::One)
 		{
+			v = std::min(v, LToV[2]);
+		}
+
+		// /LU3
+
+		tmp = NOR(n_LU[3], n_PZ);
+		if (tmp == TriState::One)
+		{
+			v = std::min(v, LToV[9]);
+		}
+
+		tmp = NOR(n_LU[3], tmp);
+		if (tmp == TriState::One)
+		{
 			v = std::min(v, LToV[8]);
-		}
-
-		// /LU2
-
-		tmp = NOR(n_LU[2], n_PZ);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[7]);
-		}
-
-		tmp = NOR(n_LU[2], tmp);
-		if (tmp == TriState::One)
-		{
-			v = std::min(v, LToV[3]);
 		}
 
 		// /LU1
@@ -269,13 +250,34 @@ namespace PPUSim
 		tmp = NOR(n_LU[1], n_PZ);
 		if (tmp == TriState::One)
 		{
-			v = std::min(v, LToV[9]);
+			v = std::min(v, LToV[7]);
 		}
 
 		tmp = NOR(n_LU[1], tmp);
 		if (tmp == TriState::One)
 		{
+			v = std::min(v, LToV[3]);
+		}
+
+		// /LU2
+
+		tmp = NOR(n_LU[2], n_PZ);
+		if (tmp == TriState::One)
+		{
+			v = std::min(v, LToV[9]);
+		}
+
+		tmp = NOR(n_LU[2], tmp);
+		if (tmp == TriState::One)
+		{
 			v = std::min(v, LToV[5]);
+		}
+
+		// Emphasis is calculated by scaling voltage with additional resistance.
+
+		if (TINT == TriState::One)
+		{
+			v *= LToV[10];
 		}
 
 		// TBD: For now, as a placeholder. For the other revisions, it may be different.
