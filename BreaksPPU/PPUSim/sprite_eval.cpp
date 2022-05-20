@@ -418,6 +418,5 @@ namespace PPUSim
 		wires.DO_COPY = DO_COPY;
 		wires.COPY_OVF = COPY_OVF;
 		wires.OVZ = OVZ;
-		wires.OBCmpr = Pack(OB_Bits);
 	}
 }

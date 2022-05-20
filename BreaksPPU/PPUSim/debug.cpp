@@ -8,6 +8,13 @@ namespace PPUSim
 {
 	void PPU::GetDebugInfo_Wires(PPU_Interconnects& wires)
 	{
+		wires.CLK = wire.CLK == TriState::One ? 1 : 0;
+		wires.n_CLK = wire.n_CLK == TriState::One ? 1 : 0;
+		wires.RES = wire.RES == TriState::One ? 1 : 0;
+		wires.RC = wire.RC == TriState::One ? 1 : 0;
+		wires.PCLK = wire.PCLK == TriState::One ? 1 : 0;
+		wires.n_PCLK = wire.n_PCLK == TriState::One ? 1 : 0;
+
 		wires.RnW = wire.RnW == TriState::One ? 1 : 0;
 		for (size_t n = 0; n < 3; n++)
 		{
@@ -15,21 +22,6 @@ namespace PPUSim
 		}
 		wires.n_DBE = wire.n_DBE == TriState::One ? 1 : 0;
 		wires.n_ALE = wire.n_ALE == TriState::One ? 1 : 0;
-		wires.CLK = wire.CLK == TriState::One ? 1 : 0;
-		wires.n_CLK = wire.n_CLK == TriState::One ? 1 : 0;
-		wires.RES = wire.RES == TriState::One ? 1 : 0;
-		wires.RC = wire.RC == TriState::One ? 1 : 0;
-		wires.PCLK = wire.PCLK == TriState::One ? 1 : 0;
-		wires.n_PCLK = wire.n_PCLK == TriState::One ? 1 : 0;
-		for (size_t n = 0; n < 4; n++)
-		{
-			wires.n_CC[n] = wire.n_CC[n] == TriState::One ? 1 : 0;
-		}
-		for (size_t n = 0; n < 2; n++)
-		{
-			wires.n_LL[n] = wire.n_LL[n] == TriState::One ? 1 : 0;
-		}
-
 		wires.n_RD = wire.n_RD == TriState::One ? 1 : 0;
 		wires.n_WR = wire.n_WR == TriState::One ? 1 : 0;
 		wires.n_W6_1 = wire.n_W6_1 == TriState::One ? 1 : 0;
@@ -154,6 +146,14 @@ namespace PPUSim
 		{
 			wires.PAL[n] = wire.PAL[n] == TriState::One ? 1 : 0;
 		}
+		for (size_t n = 0; n < 4; n++)
+		{
+			wires.n_CC[n] = wire.n_CC[n] == TriState::One ? 1 : 0;
+		}
+		for (size_t n = 0; n < 2; n++)
+		{
+			wires.n_LL[n] = wire.n_LL[n] == TriState::One ? 1 : 0;
+		}
 
 		wires.RD = wire.RD == TriState::One ? 1 : 0;
 		wires.WR = wire.WR == TriState::One ? 1 : 0;
@@ -207,8 +207,15 @@ namespace PPUSim
 		regs.CTRL1 = this->regs->Debug_GetCTRL1();	// $2001
 		regs.MainOAMCounter = eval->Debug_GetMainCounter();		// $2003
 		regs.TempOAMCounter = eval->Debug_GetTempCounter();
-		regs.OB = Pack(wire.OB);		// $2004
-		regs.RB = vram_ctrl->Debug_GetRB();			// $2007
+
+		TriState ob[8]{};
+		for (size_t n = 0; n < 8; n++)
+		{
+			ob[n] = oam->get_OB(n);
+		}
+		regs.OAMBuffer = Pack(ob);		// $2004
+
+		regs.ReadBuffer = vram_ctrl->Debug_GetRB();			// $2007
 		regs.SCC_FH = Pack3(wire.FH);		// $2005/2006
 		regs.SCC_FV = Pack3(wire.FV);
 		regs.SCC_NTV = wire.NTV;

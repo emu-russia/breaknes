@@ -6,18 +6,16 @@ namespace PPUSim
 {
 	struct PPU_Interconnects
 	{
-		uint8_t RnW;
-		uint8_t RS[3];
-		uint8_t n_DBE;
-		uint8_t n_ALE;
 		uint8_t CLK;
 		uint8_t n_CLK;
 		uint8_t RES;
 		uint8_t RC;
 		uint8_t PCLK;
 		uint8_t n_PCLK;
-		uint8_t n_CC[4];
-		uint8_t n_LL[2];
+		uint8_t RnW;
+		uint8_t RS[3];
+		uint8_t n_DBE;
+		uint8_t n_ALE;
 		uint8_t n_RD;
 		uint8_t n_WR;
 		uint8_t n_W6_1;
@@ -100,6 +98,8 @@ namespace PPUSim
 		uint8_t n_BW;
 		uint8_t n_DB_CB;
 		uint8_t PAL[5];
+		uint8_t n_CC[4];
+		uint8_t n_LL[2];
 		uint8_t RD;
 		uint8_t WR;
 		uint8_t TSTEP;
@@ -109,8 +109,8 @@ namespace PPUSim
 		uint8_t XRB;
 		uint8_t DB;
 		uint8_t PD;
-		uint8_t PrioZ;
-		uint8_t n_TX;
+		uint8_t PrioZ;	// Packed
+		uint8_t n_TX;	// Packed
 	};
 
 	struct PPU_FSMStates
@@ -160,7 +160,6 @@ namespace PPUSim
 		uint8_t DO_COPY;	// 1: Do copy sprite
 		uint8_t COPY_OVF;	// 1: Block OVZ comparator
 		uint8_t OVZ;		// 1: Sprite found
-		uint8_t OBCmpr;		// 1: OB inputs for comparator
 	};
 
 	/// <summary>
@@ -174,8 +173,8 @@ namespace PPUSim
 		uint32_t CTRL1;
 		uint32_t MainOAMCounter;
 		uint32_t TempOAMCounter;
-		uint32_t OB;
-		uint32_t RB;
+		uint32_t OAMBuffer;
+		uint32_t ReadBuffer;
 		uint32_t SCC_FH;
 		uint32_t SCC_FV;
 		uint32_t SCC_NTV;

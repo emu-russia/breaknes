@@ -6,7 +6,6 @@ namespace PPUSim
 {
 	/// <summary>
 	/// Implementation of a single bit of the shift register.
-	/// TODO: Switch to generalized implementation.
 	/// </summary>
 	class VideoOutSRBit
 	{
@@ -35,10 +34,10 @@ namespace PPUSim
 		BaseLogic::DLatch cc_latch1[4];
 		BaseLogic::DLatch cc_latch2[4];
 		BaseLogic::DLatch cc_burst_latch;
-		BaseLogic::DLatch sync_latch;		// Previously dac_latch1
-		BaseLogic::DLatch pic_out_latch;	// Previously dac_latch2
-		BaseLogic::DLatch black_latch;		// Previously dac_latch3
-		BaseLogic::DLatch cb_latch;		// Previously dac_latch4
+		BaseLogic::DLatch sync_latch;
+		BaseLogic::DLatch pic_out_latch;
+		BaseLogic::DLatch black_latch;
+		BaseLogic::DLatch cb_latch;
 
 		// For PAL PPU
 		BaseLogic::DLatch npicture_latch1;
