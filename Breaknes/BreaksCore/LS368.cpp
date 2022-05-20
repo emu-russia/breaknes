@@ -1,6 +1,8 @@
 // 40H368
 // Hex bus buffer inverted 3-State output
 
+// https://github.com/emu-russia/breaks/blob/master/Docs/Famicom/40H368.pdf
+
 #include "pch.h"
 
 using namespace BaseLogic;

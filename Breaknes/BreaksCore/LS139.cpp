@@ -1,6 +1,8 @@
 // LS139
 // Dual 2-to-4 line decoder/demultiplexer
 
+// https://github.com/emu-russia/breaks/blob/master/Docs/Famicom/LR74HC139.pdf
+
 #include "pch.h"
 
 using namespace BaseLogic;

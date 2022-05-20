@@ -1,5 +1,7 @@
 // Generic SRAM
 
+// https://github.com/emu-russia/breaks/blob/master/Docs/Famicom/HM6116_SRAM.pdf
+
 #include "pch.h"
 
 using namespace BaseLogic;

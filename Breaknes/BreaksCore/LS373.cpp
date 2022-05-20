@@ -1,6 +1,8 @@
 // LS373
 // Octal D-type transparent latch; 3-state
 
+// https://github.com/emu-russia/breaks/blob/master/Docs/Famicom/LR74HC373.pdf
+
 #include "pch.h"
 
 using namespace BaseLogic;

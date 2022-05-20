@@ -291,4 +291,20 @@ namespace PPUPlayer
 		ppu->GetSignalFeatures(feat);
 		*features = feat;
 	}
+
+	/// <summary>
+	/// Convert the raw color to RGB. Can be used for palette generation or PPU video output in RAW mode.
+	/// The method is not fast, so it is better to convert all possible RAW colors in advance, in map.
+	/// </summary>
+	void Board::ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	{
+		PPUSim::VideoOutSignal rawIn{}, rgbOut{};
+
+		rawIn.RAW.raw = raw;
+		ppu->ConvertRAWToRGB(rawIn, rgbOut);
+
+		*r = rgbOut.RGB.r;
+		*g = rgbOut.RGB.g;
+		*b = rgbOut.RGB.b;
+	}
 }
