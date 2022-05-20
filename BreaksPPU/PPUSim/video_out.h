@@ -49,7 +49,17 @@ namespace PPUSim
 		BaseLogic::TriState n_POUT = BaseLogic::TriState::X;
 		BaseLogic::TriState n_LU[4]{};
 		BaseLogic::TriState TINT = BaseLogic::TriState::X;
+		BaseLogic::TriState n_PR = BaseLogic::TriState::X;
+		BaseLogic::TriState n_PG = BaseLogic::TriState::X;
+		BaseLogic::TriState n_PB = BaseLogic::TriState::X;
+		BaseLogic::TriState P[13]{};
+		BaseLogic::TriState PZ[13]{};
+		BaseLogic::TriState P123 = BaseLogic::TriState::X;
 
+		void sim_PhaseShifter();
+		void sim_ChromaDecoder();
+		void sim_LumaDecoder();
+		void sim_Emphasis();
 		void sim_DAC(VideoOutSignal& vout);
 
 		bool DebugRandomize = false;
