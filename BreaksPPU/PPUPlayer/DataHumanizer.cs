@@ -23,6 +23,8 @@ namespace PPUPlayer
 		const string OAM2_NAME = "Temp OAM";
 		const string CHR_ROM_NAME = "CHR-ROM";
 
+		bool color_output = true;
+
 		public Bitmap ConvertHexToImage(string descrName)
 		{
 			List<BreaksCore.MemDesciptor> mem = BreaksCore.GetMemoryLayout();
@@ -276,7 +278,6 @@ namespace PPUPlayer
 			int h = 30 * tile_size;
 
 			byte[,] nes_pal = GenPalette();
-			bool color_output = true;
 
 			int tile_num = 0;
 
@@ -423,6 +424,11 @@ namespace PPUPlayer
 			}
 
 			return pic;
+		}
+
+		public void SetColorDebugOutput(bool enable)
+		{
+			color_output = enable;
 		}
 	}
 }

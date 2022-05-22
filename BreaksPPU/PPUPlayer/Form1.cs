@@ -200,6 +200,8 @@ namespace PPUPlayer
 
 			PPUPlayerInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
 
+			humanizer.SetColorDebugOutput(settings.ColorDebug);
+
 			TraceEnabled = settings.TraceEnable;
 			TraceMaxFields = settings.TraceMaxFields;
 			if (settings.TraceFilter != null)
@@ -652,7 +654,18 @@ namespace PPUPlayer
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			FormSettings formSettings = new();
+			formSettings.FormClosed += FormSettings_FormClosed;
 			formSettings.ShowDialog();
+		}
+
+		/// <summary>
+		/// Apply settings that can be changed during the simulation.
+		/// </summary>
+		private void FormSettings_FormClosed(object? sender, FormClosedEventArgs e)
+		{
+			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
+
+			humanizer.SetColorDebugOutput(settings.ColorDebug);
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
