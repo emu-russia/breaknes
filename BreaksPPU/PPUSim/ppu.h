@@ -102,16 +102,32 @@ namespace PPUSim
 	{
 		Unknown = 0,
 
+		// NTSC PPUs.
+
 		RP2C02G,		// It is known that there are two different revisions of `G` (old and new), which differ at least in the PCLK Distribution circuit.
 		RP2C02H,
-		RP2C03,			// With RGB PPU at all is not clear, because few people have at home arcade machines with these PPU and few want to give chips for decap and analysis.
+
+		// RGB PPUs.
+		// http://johnsarcade.com/nintendo_vs_ppu_info.php
+
 		RP2C03B,
+		RP2C03C,
+		RC2C03B,
+		RC2C03C,
 		RP2C04_0001,
 		RP2C04_0002,
 		RP2C04_0003,
 		RP2C04_0004,
-		RP2C05,
-		RP2C07_0,		// It is unknown how many PAL PPU revisions there were, so far it looks like only one.
+		RC2C05_01,
+		RC2C05_02,
+		RC2C05_03,
+		RC2C05_04,
+		RC2C05_99,
+
+		// PAL PPUs.
+		// It is unknown how many PAL PPU revisions there were, so far it looks like only one.
+
+		RP2C07_0,
 
 		// TBD: Clone PPUs. Here you can expect a variety of zoo, but in principle they should not differ in circuitry.
 

@@ -31,35 +31,59 @@ namespace Breaknes
 		{
 			ppu_rev = PPUSim::Revision::RP2C02H;
 		}
-		else if (ppu == "RP2C03")
-		{
-			ppu_rev = PPUSim::Revision::RP2C03;
-		}
 		else if (ppu == "RP2C03B")
 		{
 			ppu_rev = PPUSim::Revision::RP2C03B;
 		}
-		else if (ppu == "RP2C04_0001")
+		else if (ppu == "RP2C03C")
+		{
+			ppu_rev = PPUSim::Revision::RP2C03C;
+		}
+		else if (ppu == "RC2C03B")
+		{
+			ppu_rev = PPUSim::Revision::RC2C03B;
+		}
+		else if (ppu == "RC2C03C")
+		{
+			ppu_rev = PPUSim::Revision::RC2C03C;
+		}
+		else if (ppu == "RP2C04-0001")
 		{
 			ppu_rev = PPUSim::Revision::RP2C04_0001;
 		}
-		else if (ppu == "RP2C04_0002")
+		else if (ppu == "RP2C04-0002")
 		{
 			ppu_rev = PPUSim::Revision::RP2C04_0002;
 		}
-		else if (ppu == "RP2C04_0003")
+		else if (ppu == "RP2C04-0003")
 		{
 			ppu_rev = PPUSim::Revision::RP2C04_0003;
 		}
-		else if (ppu == "RP2C04_0004")
+		else if (ppu == "RP2C04-0004")
 		{
 			ppu_rev = PPUSim::Revision::RP2C04_0004;
 		}
-		else if (ppu == "RP2C05")
+		else if (ppu == "RC2C05-01")
 		{
-			ppu_rev = PPUSim::Revision::RP2C05;
+			ppu_rev = PPUSim::Revision::RC2C05_01;
 		}
-		else if (ppu == "RP2C07_0")
+		else if (ppu == "RC2C05-02")
+		{
+			ppu_rev = PPUSim::Revision::RC2C05_02;
+		}
+		else if (ppu == "RC2C05-03")
+		{
+			ppu_rev = PPUSim::Revision::RC2C05_03;
+		}
+		else if (ppu == "RC2C05-04")
+		{
+			ppu_rev = PPUSim::Revision::RC2C05_04;
+		}
+		else if (ppu == "RC2C05-99")
+		{
+			ppu_rev = PPUSim::Revision::RC2C05_99;
+		}
+		else if (ppu == "RP2C07-0")
 		{
 			ppu_rev = PPUSim::Revision::RP2C07_0;
 		}
