@@ -238,14 +238,23 @@ namespace PPUSim
 		{
 			case Revision::RP2C02G: return "RP2C02G";
 			case Revision::RP2C02H: return "RP2C02H";
-			case Revision::RP2C03: return "RP2C03";
+
 			case Revision::RP2C03B: return "RP2C03B";
+			case Revision::RP2C03C: return "RP2C03C";
+			case Revision::RC2C03B: return "RC2C03B";
+			case Revision::RC2C03C: return "RC2C03C";
 			case Revision::RP2C04_0001: return "RP2C04-0001";
 			case Revision::RP2C04_0002: return "RP2C04-0002";
 			case Revision::RP2C04_0003: return "RP2C04-0003";
 			case Revision::RP2C04_0004: return "RP2C04-0004";
-			case Revision::RP2C05: return "RP2C05";
+			case Revision::RC2C05_01: return "RC2C05-01";
+			case Revision::RC2C05_02: return "RC2C05-02";
+			case Revision::RC2C05_03: return "RC2C05-03";
+			case Revision::RC2C05_04: return "RC2C05-04";
+			case Revision::RC2C05_99: return "RC2C05-99";
+			
 			case Revision::RP2C07_0: return "RP2C07-0";
+
 			default:
 				break;
 		}

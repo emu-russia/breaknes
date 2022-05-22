@@ -3,7 +3,7 @@
 
 #pragma once
 
-namespace LS
+namespace BaseBoard
 {
 	class LS373
 	{

@@ -6,5 +6,5 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "../../Breaknes/BaseLogicLib/BaseLogic.h"
+#include "../../Common/BaseLogicLib/BaseLogic.h"
 #include "../M6502Core/core.h"

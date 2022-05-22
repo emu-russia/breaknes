@@ -6,7 +6,7 @@
 
 using namespace BaseLogic;
 
-namespace Breaknes
+namespace BaseBoard
 {
 	SRAM::SRAM(size_t bits)
 	{

@@ -6,7 +6,7 @@
 #include <cassert>
 #include <Windows.h>
 
-#include "../BaseLogicLib/BaseLogic.h"
+#include "../../Common/BaseLogicLib/BaseLogic.h"
 
 #include "../../Breaks6502/M6502Core/core.h"
 #include "../../BreaksAPU/APUSim/apu.h"
@@ -17,10 +17,10 @@ namespace Breaknes
 	class Core;
 }
 
-#include "LS139.h"
-#include "LS368.h"
-#include "LS373.h"
-#include "SRAM.h"
+#include "../../Common/BaseBoardLib/LS139.h"
+#include "../../Common/BaseBoardLib/LS368.h"
+#include "../../Common/BaseBoardLib/LS373.h"
+#include "../../Common/BaseBoardLib/SRAM.h"
 
 #include "AbstractCartridge.h"
 #include "CartridgeFactory.h"

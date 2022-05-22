@@ -160,20 +160,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Breaknes\BreaksCore\CoreApi.h" />
-    <ClInclude Include="..\..\Breaknes\BreaksCore\LS373.h" />
-    <ClInclude Include="..\..\Breaknes\BreaksCore\SRAM.h" />
-    <ClInclude Include="NES_Header.h" />
     <ClInclude Include="PPUDebug.h" />
-    <ClInclude Include="NROM.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PPUPlayerBoard.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Breaknes\BreaksCore\LS373.cpp" />
-    <ClCompile Include="..\..\Breaknes\BreaksCore\SRAM.cpp" />
     <ClCompile Include="PPUDebug.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="NROM.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -187,8 +180,14 @@
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Breaknes\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
+    <ProjectReference Include="..\..\Common\BaseBoardLib\Scripts\VS2022\BaseBoardLib.vcxproj">
+      <Project>{36f535ad-b87b-4f4d-a5f9-0f2377fba7ea}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mappers\Scripts\VS2022\Mappers.vcxproj">
+      <Project>{1ce1efd6-4dbf-4d93-ad3a-94c808ea70ab}</Project>
     </ProjectReference>
     <ProjectReference Include="..\PPUSim\Scripts\VS2022\PPUSim.vcxproj">
       <Project>{ebd9b3eb-3c04-43ed-b454-e9442b21f5a0}</Project>

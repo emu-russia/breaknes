@@ -3,7 +3,7 @@
 
 #pragma once
 
-namespace LS
+namespace BaseBoard
 {
 	enum class LS139_Input
 	{

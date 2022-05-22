@@ -175,7 +175,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Breaknes\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
+    <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\M6502Core\Scripts\VS2022\M6502Core.vcxproj">

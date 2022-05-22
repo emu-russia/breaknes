@@ -2,7 +2,7 @@
 
 #pragma once
 
-namespace Breaknes
+namespace BaseBoard
 {
 	class SRAM
 	{

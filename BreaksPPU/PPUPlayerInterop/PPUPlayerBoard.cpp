@@ -29,7 +29,7 @@ namespace PPUPlayer
 		}
 
 		ppu = new PPUSim::PPU(rev);
-		vram = new Breaknes::SRAM(11);
+		vram = new BaseBoard::SRAM(11);
 
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
