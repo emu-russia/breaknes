@@ -7,7 +7,7 @@
 
 using namespace BaseLogic;
 
-namespace LS
+namespace BaseBoard
 {
 	void LS139::sim(TriState inputs[], TriState n_Y1[4], TriState n_Y2[4])
 	{

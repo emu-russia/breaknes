@@ -24,8 +24,8 @@ namespace PPUPlayer
 	{
 		PPUSim::PPU* ppu = nullptr;
 
-		LS::LS373 latch;
-		Breaknes::SRAM *vram = nullptr;
+		BaseBoard::LS373 latch;
+		BaseBoard::SRAM *vram = nullptr;
 
 		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
 

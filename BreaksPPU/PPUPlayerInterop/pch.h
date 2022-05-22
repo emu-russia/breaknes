@@ -9,15 +9,16 @@
 #include <list>
 #include <cassert>
 
-#include "../../Breaknes/BaseLogicLib/BaseLogic.h"
+#include "../../Common/BaseLogicLib/BaseLogic.h"
 #include "../PPUSim/ppu.h"
-#include "../../Breaknes/BreaksCore/SRAM.h"
-#include "../../Breaknes/BreaksCore/LS373.h"
+#include "../../Common/BaseBoardLib/SRAM.h"
+#include "../../Common/BaseBoardLib/LS373.h"
 #include "../../Breaknes/BreaksCore/CoreApi.h"
 
-#include "NES_Header.h"
+#include "../../Mappers/NES_Header.h"
+#include "../../Mappers/NROM.h"
+
 #include "PPUDebug.h"
-#include "NROM.h"
 #include "PPUPlayerBoard.h"
 
 extern PPUPlayer::Board* board;
