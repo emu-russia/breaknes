@@ -103,16 +103,6 @@ namespace PPUPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap not_implemented {
-            get {
-                object obj = ResourceManager.GetObject("not_implemented", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap ppu_player_logo {
             get {
                 object obj = ResourceManager.GetObject("ppu_player_logo", resourceCulture);

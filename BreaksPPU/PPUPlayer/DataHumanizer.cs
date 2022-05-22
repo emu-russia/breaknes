@@ -23,6 +23,8 @@ namespace PPUPlayer
 		const string OAM2_NAME = "Temp OAM";
 		const string CHR_ROM_NAME = "CHR-ROM";
 
+		bool color_output = true;
+
 		public Bitmap ConvertHexToImage(string descrName)
 		{
 			List<BreaksCore.MemDesciptor> mem = BreaksCore.GetMemoryLayout();
@@ -93,7 +95,7 @@ namespace PPUPlayer
 				}
 			}
 
-			// OAM (OAM + Pattern Table)
+			// OAM (OAM + Pattern Table + CRAM)
 
 			if (descrName == OAM_NAME)
 			{
@@ -101,6 +103,8 @@ namespace PPUPlayer
 				int OAMSize = 0;
 				int descrCHR = -1;
 				int CHRSize = 0;
+				int descrCRAM = -1;
+				int CRAMSize = 0;
 				int descrID = 0;
 
 				foreach (var descr in mem)
@@ -115,10 +119,15 @@ namespace PPUPlayer
 						descrCHR = descrID;
 						CHRSize = descr.size;
 					}
+					if (descr.name == CRAM_NAME)
+					{
+						descrCRAM = descrID;
+						CRAMSize = descr.size;
+					}
 					descrID++;
 				}
 
-				if (descrOAM >= 0 && descrCHR >= 0)
+				if (descrOAM >= 0 && descrCHR >= 0 && descrCRAM >= 0)
 				{
 					byte[] oam_data = new byte[OAMSize];
 					BreaksCore.DumpMem(descrOAM, oam_data);
@@ -126,11 +135,14 @@ namespace PPUPlayer
 					byte[] chr_data = new byte[CHRSize];
 					BreaksCore.DumpMem(descrCHR, chr_data);
 
-					return GetMainOAMImage(oam_data, chr_data);
+					byte[] cram_data = new byte[CRAMSize];
+					BreaksCore.DumpMem(descrCRAM, cram_data);
+
+					return GetMainOAMImage(oam_data, chr_data, cram_data);
 				}
 			}
 
-			// Temp OAM (Temp OAM + Pattern Table)
+			// Temp OAM (Temp OAM + Pattern Table + CRAM)
 
 			if (descrName == OAM2_NAME)
 			{
@@ -138,6 +150,8 @@ namespace PPUPlayer
 				int OAM2Size = 0;
 				int descrCHR = -1;
 				int CHRSize = 0;
+				int descrCRAM = -1;
+				int CRAMSize = 0;
 				int descrID = 0;
 
 				foreach (var descr in mem)
@@ -152,10 +166,15 @@ namespace PPUPlayer
 						descrCHR = descrID;
 						CHRSize = descr.size;
 					}
+					if (descr.name == CRAM_NAME)
+					{
+						descrCRAM = descrID;
+						CRAMSize = descr.size;
+					}
 					descrID++;
 				}
 
-				if (descrOAM2 >= 0 && descrCHR >= 0)
+				if (descrOAM2 >= 0 && descrCHR >= 0 && descrCRAM >= 0)
 				{
 					byte[] oam2_data = new byte[OAM2Size];
 					BreaksCore.DumpMem(descrOAM2, oam2_data);
@@ -163,7 +182,10 @@ namespace PPUPlayer
 					byte[] chr_data = new byte[CHRSize];
 					BreaksCore.DumpMem(descrCHR, chr_data);
 
-					return GetTempOAMImage(oam2_data, chr_data);
+					byte[] cram_data = new byte[CRAMSize];
+					BreaksCore.DumpMem(descrCRAM, cram_data);
+
+					return GetTempOAMImage(oam2_data, chr_data, cram_data);
 				}
 			}
 
@@ -276,7 +298,6 @@ namespace PPUPlayer
 			int h = 30 * tile_size;
 
 			byte[,] nes_pal = GenPalette();
-			bool color_output = true;
 
 			int tile_num = 0;
 
@@ -331,14 +352,112 @@ namespace PPUPlayer
 			return pic;
 		}
 
-		Bitmap GetMainOAMImage(byte[] oam, byte[] patternTab)
+		void RenderObject(byte[] patternTab, Bitmap pic, int delta_x, int delta_y, byte tile_id, int bank, byte attr, bool visible, byte[] cram)
 		{
-			return Properties.Resources.not_implemented;
+			int tile_size = 8;
+
+			bool flip_v = (attr & 0x80) != 0;
+			bool flip_h = (attr & 0x40) != 0;
+			int pal = attr & 3;
+
+			byte[,] nes_pal = GenPalette();
+
+			for (int row = 0; row < tile_size; row++)
+			{
+				for (int col = 0; col < tile_size; col++)
+				{
+					pic.SetPixel(delta_x + col, delta_y + row, Color.Firebrick);
+				}
+			}
+
+			for (int row = 0; row < tile_size; row++)
+			{
+				int par = 16 * tile_id + bank * 0x1000;
+				byte ta = patternTab[par + row];
+				byte tb = patternTab[par + row + 8];
+
+				for (int col = 0; col < tile_size; col++)
+				{
+					int c = ((((tb >> col) & 1) << 1) | ((ta >> col) & 1)) & 3;
+					c |= ((pal & 3) << 2);
+					c &= 0xf;
+					Color p;
+					if (color_output)
+					{
+						int n = cram[0x10 + c];
+						p = Color.FromArgb(visible ? 0xff : 0x80, nes_pal[n, 0], nes_pal[n, 1], nes_pal[n, 2]);
+					}
+					else
+					{
+						p = Color.FromArgb(visible ? 0xff : 0x80, Color2ToIntensity(c & 3), Color2ToIntensity(c & 3), Color2ToIntensity(c & 3));
+					}
+					pic.SetPixel(delta_x + (flip_h ? col : (7 - col)), delta_y + (flip_v ? (7 - row) : row), p);
+				}
+			}
 		}
 
-		Bitmap GetTempOAMImage(byte[] oam2, byte[] patternTab)
+		Bitmap GetMainOAMImage(byte[] oam, byte[] patternTab, byte[] cram)
 		{
-			return Properties.Resources.not_implemented;
+			int tile_size = 8;
+			int w = 8 * tile_size;
+			int h = 8 * tile_size;
+
+			Bitmap pic = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+			int obj_num = 0;
+
+			for (int y=0; y<h; y+=tile_size)
+			{
+				for (int x=0; x<w; x+=tile_size)
+				{
+					byte obj_y = oam[4 * obj_num + 0];
+					byte tile_idx = oam[4 * obj_num + 1];
+					byte attr = oam[4 * obj_num + 2];
+					byte obj_x = oam[4 * obj_num + 3];
+
+					byte tile_id = (byte)(tile_idx & ~1);
+					int bank = tile_idx & 1;
+					bool visible = !(obj_y >= 0xef || obj_x >= 0xf9);
+
+					RenderObject(patternTab, pic, x, y, tile_id, bank, attr, visible, cram);
+
+					obj_num++;
+				}
+			}
+
+			return pic;
+		}
+
+		Bitmap GetTempOAMImage(byte[] oam2, byte[] patternTab, byte[] cram)
+		{
+			int tile_size = 8;
+			int w = 8 * tile_size;
+			int h = 1 * tile_size;
+
+			Bitmap pic = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+			int obj_num = 0;
+
+			for (int y = 0; y < h; y += tile_size)
+			{
+				for (int x = 0; x < w; x += tile_size)
+				{
+					byte obj_y = oam2[4 * obj_num + 0];
+					byte tile_idx = oam2[4 * obj_num + 1];
+					byte attr = oam2[4 * obj_num + 2];
+					byte obj_x = oam2[4 * obj_num + 3];
+
+					byte tile_id = (byte)(tile_idx & ~1);
+					int bank = tile_idx & 1;
+					bool visible = !(obj_y >= 0xef || obj_x >= 0xf9);
+
+					RenderObject(patternTab, pic, x, y, tile_id, bank, attr, visible, cram);
+
+					obj_num++;
+				}
+			}
+
+			return pic;
 		}
 
 		/// <summary>
@@ -423,6 +542,11 @@ namespace PPUPlayer
 			}
 
 			return pic;
+		}
+
+		public void SetColorDebugOutput(bool enable)
+		{
+			color_output = enable;
 		}
 	}
 }

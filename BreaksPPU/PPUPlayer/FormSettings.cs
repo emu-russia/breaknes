@@ -63,7 +63,8 @@ namespace PPUPlayer
 			settings.TraceFilter = "";
 			settings.TraceCollapseSameRows = true;
 			settings.RenderAlwaysEnabled = false;
-			settings.TraceTimeScale = 23;	// ns
+			settings.TraceTimeScale = 23;   // ns
+			settings.ColorDebug = true;
 
 			SaveSettings(settings);
 
@@ -122,8 +123,13 @@ namespace PPUPlayer
 
 			[XmlElement]
 			[Category("Debug")]
-			[Description("Trace sampling resolution in nanoseconds. A typical interval is 1 half-cycle NTSC PPU lasting 23 nanoseconds.")]
+			[Description("Trace sampling resolution in nanoseconds. A typical interval is 1 half-cycle NTSC PPU lasting 23 nanoseconds. Used in the VCD dump.")]
 			public int TraceTimeScale { get; set; }
+
+			[XmlElement]
+			[Category("Debug")]
+			[Description("Show color in the VRAM/Objects viewer. The CRAM currently in use will be loaded.")]
+			public bool ColorDebug { get; set; }
 		}
 
 
