@@ -46,7 +46,7 @@ namespace PPUPlayer
 				}
 			}
 
-			// VRAM (Name Table + Pattern Table)
+			// VRAM (Name Table + Pattern Table + CRAM)
 
 			if (descrName == VRAM_NAME)
 			{
@@ -54,6 +54,8 @@ namespace PPUPlayer
 				int VRAMSize = 0;
 				int descrCHR = -1;
 				int CHRSize = 0;
+				int descrCRAM = -1;
+				int CRAMSize = 0;
 				int descrID = 0;
 
 				foreach (var descr in mem)
@@ -68,10 +70,15 @@ namespace PPUPlayer
 						descrCHR = descrID;
 						CHRSize = descr.size;
 					}
+					if (descr.name == CRAM_NAME)
+					{
+						descrCRAM = descrID;
+						CRAMSize = descr.size;
+					}
 					descrID++;
 				}
 
-				if (descrVRAM >= 0 && descrCHR >= 0)
+				if (descrVRAM >= 0 && descrCHR >= 0 && descrCRAM >= 0)
 				{
 					byte[] vram_data = new byte[VRAMSize];
 					BreaksCore.DumpMem(descrVRAM, vram_data);
@@ -79,7 +86,10 @@ namespace PPUPlayer
 					byte[] chr_data = new byte[CHRSize];
 					BreaksCore.DumpMem(descrCHR, chr_data);
 
-					return GetVRAMImage(vram_data, chr_data);
+					byte[] cram_data = new byte[CRAMSize];
+					BreaksCore.DumpMem(descrCRAM, cram_data);
+
+					return GetVRAMImage(vram_data, chr_data, cram_data);
 				}
 			}
 
@@ -213,24 +223,8 @@ namespace PPUPlayer
 						hi = chr_data[pat + r + 8];
 						for (int b = 0; b < 8; b++)
 						{
-							int c;
-							Color p = Color.Transparent;
-							c = (((hi >> b) & 1) << 1) | ((lo >> b) & 1);
-							switch (c)
-							{
-								case 0:
-									p = Color.FromArgb(0, 0, 0);
-									break;
-								case 1:
-									p = Color.FromArgb(0x3f, 0x3f, 0x3f);
-									break;
-								case 2:
-									p = Color.FromArgb(0x7f, 0x7f, 0x7f);
-									break;
-								case 3:
-									p = Color.FromArgb(0xff, 0xff, 0xff);
-									break;
-							}
+							int c = ((((hi >> b) & 1) << 1) | ((lo >> b) & 1)) & 3;
+							Color p = Color.FromArgb(Color2ToIntensity(c), Color2ToIntensity(c), Color2ToIntensity(c));
 							pic.SetPixel(8 * x + (7 - b), 8 * y + r, p);
 						}
 					}
@@ -240,9 +234,101 @@ namespace PPUPlayer
 			return pic;
 		}
 
-		Bitmap GetVRAMImage(byte [] nameTab, byte [] patternTab)
+		byte Color2ToIntensity(int c)
 		{
-			return Properties.Resources.not_implemented;
+			if (c == 0)
+			{
+				return 0;
+			}
+			else if (c == 3)
+			{
+				return 0xff;
+			}
+
+			return (byte)((c * 0x40) - 1);
+		}
+
+		byte Color4ToIntensity(int c)
+		{
+			if (c == 0)
+			{
+				return 0;
+			}
+			else if (c == 15)
+			{
+				return 0xff;
+			}
+
+			return (byte)((c * 0x10) - 1);
+		}
+
+		int TwizzleATByte(int offs, byte[] nameTab, int tile_h, int tile_v)
+		{
+			byte at = nameTab[offs + 0x3c0 + 8 * (tile_v / 4) + (tile_h / 4)];
+			if ((tile_v & 3) > 1) at >>= 4;
+			return ((tile_h & 3) > 1) ? at >> 2 : at & 3;
+		}
+
+		void RenderNameTab(int offs, byte[] nameTab, byte[] patternTab, Bitmap pic, int delta_x, int delta_y, byte[] cram)
+		{
+			int tile_size = 8;
+			int w = 32 * tile_size;
+			int h = 30 * tile_size;
+
+			byte[,] nes_pal = GenPalette();
+			bool color_output = true;
+
+			int tile_num = 0;
+
+			for (int y = 0; y < h; y += tile_size)
+			{
+				for (int x = 0; x < w; x += tile_size)
+				{
+					byte tile_id = nameTab[offs + tile_num];
+
+					for (int row=0; row<tile_size; row++)
+					{
+						int par = 16 * tile_id + 0x1000;
+						byte ta = patternTab[par + row];
+						byte tb = patternTab[par + row + 8];
+
+						for (int col=0; col<tile_size; col++)
+						{
+							int c = ((((tb >> col) & 1) << 1) | ((ta >> col) & 1)) & 3;
+							var at = TwizzleATByte(offs, nameTab, x / tile_size, y / tile_size);
+							c |= ((at & 3) << 2);
+							c &= 0xf;
+							Color p;
+							if (color_output)
+							{
+								int n = cram[c];
+								p = Color.FromArgb(nes_pal[n, 0], nes_pal[n, 1], nes_pal[n, 2]);
+							}
+							else
+							{
+								p = Color.FromArgb(Color4ToIntensity(c), Color4ToIntensity(c), Color4ToIntensity(c));
+							}
+							pic.SetPixel(delta_x + x + (7 - col), delta_y + y + row, p);
+						}
+					}
+
+					tile_num++;
+				}
+			}
+		}
+
+		Bitmap GetVRAMImage(byte [] nameTab, byte [] patternTab, byte[] cram)
+		{
+			int tile_size = 8;
+			int w = 32 * tile_size;
+			int h = 30 * tile_size;
+
+			Bitmap pic = new Bitmap(w * 2, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+			RenderNameTab(0, nameTab, patternTab, pic, 0, 0, cram);
+			RenderNameTab(0x400, nameTab, patternTab, pic, w, 0, cram);
+
+			return pic;
 		}
 
 		Bitmap GetMainOAMImage(byte[] oam, byte[] patternTab)
