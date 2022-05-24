@@ -151,7 +151,7 @@ namespace PPUPlayer
 		"PD/FIFO", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PD_FIFO), 1,
 		"OV", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::OV), 8,
 		"/WE", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_WE), 1,
-		"CLPB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLPB), 1,
+		"/CLPB", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CLPB), 1,
 		"CLPO", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLPO), 1,
 		"/SH2", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH2), 1,
 		"/SH3", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_SH3), 1,

@@ -263,7 +263,7 @@ namespace PPUSim
 			BaseLogic::TriState OV[8];
 			BaseLogic::TriState n_WE;		// 0: OAM Write
 
-			BaseLogic::TriState CLPB;
+			BaseLogic::TriState n_CLPB;
 			BaseLogic::TriState CLPO;
 			BaseLogic::TriState n_SH2;
 			BaseLogic::TriState n_SH3;
