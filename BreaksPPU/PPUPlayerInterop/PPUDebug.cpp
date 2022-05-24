@@ -20,7 +20,7 @@ namespace PPUPlayer
 		//memset(testRegion, 0, sizeof(MemDesciptor));
 		//strcpy_s(testRegion->name, sizeof(testRegion->name), "TestMem");
 		//testRegion->size = 256;
-		//AddMemRegion(testRegion, ReadTestMem, this, false);
+		//AddMemRegion(testRegion, ReadTestMem, WriteTestMem, this, false);
 	}
 
 	DebugHub::~DebugHub()
@@ -94,11 +94,12 @@ namespace PPUPlayer
 		cartInfo.clear();
 	}
 
-	void DebugHub::AddMemRegion(MemDesciptor* descr, uint8_t(*ReadByte)(void* opaque, size_t addr), void* opaque, bool cartRelated)
+	void DebugHub::AddMemRegion(MemDesciptor* descr, uint8_t(*ReadByte)(void* opaque, size_t addr), void(*WriteByte)(void* opaque, size_t addr, uint8_t data), void* opaque, bool cartRelated)
 	{
 		MemProvider prov{};
 		prov.descr = descr;
 		prov.ReadByte = ReadByte;
+		prov.WriteByte = WriteByte;
 		prov.opaque = opaque;
 		prov.cartRelated = cartRelated;
 		memMap.push_back(prov);
@@ -124,6 +125,10 @@ namespace PPUPlayer
 	uint8_t DebugHub::ReadTestMem(void* opaque, size_t addr)
 	{
 		return (uint8_t)addr;
+	}
+
+	uint8_t DebugHub::WriteTestMem(void* opaque, size_t addr, uint8_t data)
+	{
 	}
 }
 
@@ -311,6 +316,43 @@ extern "C"
 			for (size_t addr = 0; addr < prov.descr->size; addr++)
 			{
 				*ptr++ = prov.ReadByte(prov.opaque, addr);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Write the entire data into the specified memory region.
+	/// </summary>
+	/// <param name="descrID"></param>
+	/// <param name="ptr"></param>
+	__declspec(dllexport)
+	void WriteMem(size_t descrID, uint8_t* ptr)
+	{
+		if (!dbg_hub)
+			return;
+
+		PPUPlayer::MemProvider prov;
+		bool provFound = false;
+
+		size_t counter = 0;
+
+		for (auto it = dbg_hub->memMap.begin(); it != dbg_hub->memMap.end(); ++it)
+		{
+			if (counter == descrID)
+			{
+				prov = *it;
+				provFound = true;
+				break;
+			}
+
+			counter++;
+		}
+
+		if (provFound)
+		{
+			for (size_t addr = 0; addr < prov.descr->size; addr++)
+			{
+				prov.WriteByte(prov.opaque, addr, *ptr++);
 			}
 		}
 	}

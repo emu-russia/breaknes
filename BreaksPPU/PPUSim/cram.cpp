@@ -255,4 +255,18 @@ namespace PPUSim
 
 		return val;
 	}
+
+	void CRAM::Dbg_CRAMWriteByte(size_t addr, uint8_t val)
+	{
+		size_t row = (addr & 3) | ((addr & 0x10) ? 4 : 0);
+		size_t col = (addr >> 2) & 3;
+
+		row = MapRow(row);
+
+		for (size_t n = 0; n < 6; n++)
+		{
+			TriState bit_val = ((val >> n) & 1) ? TriState::One : TriState::Zero;
+			cram[row * cram_lane_cols + col][n] = bit_val;
+		}
+	}
 }

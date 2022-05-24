@@ -66,5 +66,7 @@ namespace PPUSim
 		void sim();
 
 		uint8_t Dbg_CRAMReadByte(size_t addr);
+
+		void Dbg_CRAMWriteByte(size_t addr, uint8_t val);
 	};
 }

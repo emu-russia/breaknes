@@ -53,4 +53,12 @@ namespace BaseBoard
 			return 0;
 		}
 	}
+
+	void SRAM::Dbg_WriteByte(size_t addr, uint8_t data)
+	{
+		if (addr < memSize)
+		{
+			mem[addr] = data;
+		}
+	}
 }

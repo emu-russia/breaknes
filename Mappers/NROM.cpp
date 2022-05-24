@@ -146,6 +146,20 @@ namespace PPUPlayer
 		}
 	}
 
+	/// <summary>
+	/// Generally speaking, the NROM contains CHR-ROM, but who cares.
+	/// </summary>
+	void NROM::Dbg_WriteCHRByte(size_t addr, uint8_t data)
+	{
+		if (!valid)
+			return;
+
+		if (addr < CHRSize)
+		{
+			CHR[addr] = data;
+		}
+	}
+
 	void NROM::GetDebugInfo(NROM_DebugInfo& info)
 	{
 		info = nrom_debug;
