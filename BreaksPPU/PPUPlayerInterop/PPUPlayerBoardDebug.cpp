@@ -30,7 +30,7 @@ namespace PPUPlayer
 		memset(vramRegion, 0, sizeof(MemDesciptor));
 		strcpy_s(vramRegion->name, sizeof(vramRegion->name), VRAM_NAME);
 		vramRegion->size = vram->Dbg_GetSize();
-		dbg_hub->AddMemRegion(vramRegion, DumpVRAM, this, false);
+		dbg_hub->AddMemRegion(vramRegion, DumpVRAM, WriteVRAM, this, false);
 
 		// CRAM
 
@@ -38,7 +38,7 @@ namespace PPUPlayer
 		memset(cramRegion, 0, sizeof(MemDesciptor));
 		strcpy_s(cramRegion->name, sizeof(cramRegion->name), CRAM_NAME);
 		cramRegion->size = CRAM_SIZE;
-		dbg_hub->AddMemRegion(cramRegion, DumpCRAM, this, false);
+		dbg_hub->AddMemRegion(cramRegion, DumpCRAM, WriteCRAM, this, false);
 
 		// OAM
 
@@ -46,7 +46,7 @@ namespace PPUPlayer
 		memset(oamRegion, 0, sizeof(MemDesciptor));
 		strcpy_s(oamRegion->name, sizeof(oamRegion->name), OAM_NAME);
 		oamRegion->size = OAM_SIZE;
-		dbg_hub->AddMemRegion(oamRegion, DumpOAM, this, false);
+		dbg_hub->AddMemRegion(oamRegion, DumpOAM, WriteOAM, this, false);
 
 		// Temp OAM
 
@@ -54,7 +54,7 @@ namespace PPUPlayer
 		memset(oam2Region, 0, sizeof(MemDesciptor));
 		strcpy_s(oam2Region->name, sizeof(oam2Region->name), OAM2_NAME);
 		oam2Region->size = OAM2_SIZE;
-		dbg_hub->AddMemRegion(oam2Region, DumpTempOAM, this, false);
+		dbg_hub->AddMemRegion(oam2Region, DumpTempOAM, WriteTempOAM, this, false);
 	}
 
 	void Board::AddCartMemDescriptors()
@@ -63,7 +63,7 @@ namespace PPUPlayer
 		memset(chrRegion, 0, sizeof(MemDesciptor));
 		strcpy_s(chrRegion->name, sizeof(chrRegion->name), CHR_ROM_NAME);
 		chrRegion->size = cart->Dbg_GetCHRSize();
-		dbg_hub->AddMemRegion(chrRegion, DumpCHR, this, true);
+		dbg_hub->AddMemRegion(chrRegion, DumpCHR, WriteCHR, this, true);
 	}
 
 	struct SignalOffsetPair
@@ -409,6 +409,36 @@ namespace PPUPlayer
 	{
 		Board* board = (Board*)opaque;
 		return board->ppu->Dbg_TempOAMReadByte(addr);
+	}
+
+	void Board::WriteVRAM(void* opaque, size_t addr, uint8_t data)
+	{
+		Board* board = (Board*)opaque;
+		board->vram->Dbg_WriteByte(addr, data);
+	}
+
+	void Board::WriteCHR(void* opaque, size_t addr, uint8_t data)
+	{
+		Board* board = (Board*)opaque;
+		board->cart->Dbg_WriteCHRByte(addr, data);
+	}
+
+	void Board::WriteCRAM(void* opaque, size_t addr, uint8_t data)
+	{
+		Board* board = (Board*)opaque;
+		board->ppu->Dbg_CRAMWriteByte(addr, data);
+	}
+
+	void Board::WriteOAM(void* opaque, size_t addr, uint8_t data)
+	{
+		Board* board = (Board*)opaque;
+		board->ppu->Dbg_OAMWriteByte(addr, data);
+	}
+
+	void Board::WriteTempOAM(void* opaque, size_t addr, uint8_t data)
+	{
+		Board* board = (Board*)opaque;
+		board->ppu->Dbg_TempOAMWriteByte(addr, data);
 	}
 
 	uint32_t Board::GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)

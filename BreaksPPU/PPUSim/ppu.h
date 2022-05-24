@@ -441,6 +441,7 @@ namespace PPUSim
 		void Dbg_OAMWriteByte(size_t addr, uint8_t val);
 		void Dbg_TempOAMWriteByte(size_t addr, uint8_t val);
 		uint8_t Dbg_CRAMReadByte(size_t addr);
+		void Dbg_CRAMWriteByte(size_t addr, uint8_t val);
 		uint8_t Dbg_GetCRAMAddress();
 		uint16_t Dbg_GetPPUAddress();
 		void Dbg_RandomizePicture(bool enable);

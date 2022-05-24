@@ -40,6 +40,8 @@ namespace PPUPlayer
 
 		uint8_t Dbg_ReadCHRByte(size_t addr);
 
+		void Dbg_WriteCHRByte(size_t addr, uint8_t data);
+
 		void GetDebugInfo(NROM_DebugInfo & info);
 	};
 }

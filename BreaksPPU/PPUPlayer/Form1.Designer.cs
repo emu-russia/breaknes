@@ -46,6 +46,18 @@
 			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.dumpsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadVRAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadCHRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadOAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadCRAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+			this.saveVRAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveCHRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveOAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveCRAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+			this.loadNintendulatorPPUDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.testStatsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.testFieldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,6 +70,9 @@
 			this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopPPUAndUnloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.sendFeedbackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -143,6 +158,7 @@
 			// 
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.dumpsToolStripMenuItem,
             this.debugToolStripMenuItem,
             this.controlsToolStripMenuItem,
             this.helpToolStripMenuItem});
@@ -263,6 +279,97 @@
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
+			// dumpsToolStripMenuItem
+			// 
+			this.dumpsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadVRAMToolStripMenuItem,
+            this.loadCHRToolStripMenuItem,
+            this.loadOAMToolStripMenuItem,
+            this.loadCRAMToolStripMenuItem,
+            this.toolStripSeparator7,
+            this.saveVRAMToolStripMenuItem,
+            this.saveCHRToolStripMenuItem,
+            this.saveOAMToolStripMenuItem,
+            this.saveCRAMToolStripMenuItem,
+            this.toolStripSeparator8,
+            this.loadNintendulatorPPUDumpToolStripMenuItem});
+			this.dumpsToolStripMenuItem.Name = "dumpsToolStripMenuItem";
+			this.dumpsToolStripMenuItem.Size = new System.Drawing.Size(82, 20);
+			this.dumpsToolStripMenuItem.Text = "PPU Dumps";
+			// 
+			// loadVRAMToolStripMenuItem
+			// 
+			this.loadVRAMToolStripMenuItem.Name = "loadVRAMToolStripMenuItem";
+			this.loadVRAMToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.loadVRAMToolStripMenuItem.Text = "Load VRAM...";
+			this.loadVRAMToolStripMenuItem.Click += new System.EventHandler(this.loadVRAMToolStripMenuItem_Click);
+			// 
+			// loadCHRToolStripMenuItem
+			// 
+			this.loadCHRToolStripMenuItem.Name = "loadCHRToolStripMenuItem";
+			this.loadCHRToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.loadCHRToolStripMenuItem.Text = "Load CHR...";
+			this.loadCHRToolStripMenuItem.Click += new System.EventHandler(this.loadCHRToolStripMenuItem_Click);
+			// 
+			// loadOAMToolStripMenuItem
+			// 
+			this.loadOAMToolStripMenuItem.Name = "loadOAMToolStripMenuItem";
+			this.loadOAMToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.loadOAMToolStripMenuItem.Text = "Load OAM...";
+			this.loadOAMToolStripMenuItem.Click += new System.EventHandler(this.loadOAMToolStripMenuItem_Click);
+			// 
+			// loadCRAMToolStripMenuItem
+			// 
+			this.loadCRAMToolStripMenuItem.Name = "loadCRAMToolStripMenuItem";
+			this.loadCRAMToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.loadCRAMToolStripMenuItem.Text = "Load CRAM...";
+			this.loadCRAMToolStripMenuItem.Click += new System.EventHandler(this.loadCRAMToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator7
+			// 
+			this.toolStripSeparator7.Name = "toolStripSeparator7";
+			this.toolStripSeparator7.Size = new System.Drawing.Size(244, 6);
+			// 
+			// saveVRAMToolStripMenuItem
+			// 
+			this.saveVRAMToolStripMenuItem.Name = "saveVRAMToolStripMenuItem";
+			this.saveVRAMToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.saveVRAMToolStripMenuItem.Text = "Save VRAM...";
+			this.saveVRAMToolStripMenuItem.Click += new System.EventHandler(this.saveVRAMToolStripMenuItem_Click);
+			// 
+			// saveCHRToolStripMenuItem
+			// 
+			this.saveCHRToolStripMenuItem.Name = "saveCHRToolStripMenuItem";
+			this.saveCHRToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.saveCHRToolStripMenuItem.Text = "Save CHR...";
+			this.saveCHRToolStripMenuItem.Click += new System.EventHandler(this.saveCHRToolStripMenuItem_Click);
+			// 
+			// saveOAMToolStripMenuItem
+			// 
+			this.saveOAMToolStripMenuItem.Name = "saveOAMToolStripMenuItem";
+			this.saveOAMToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.saveOAMToolStripMenuItem.Text = "Save OAM...";
+			this.saveOAMToolStripMenuItem.Click += new System.EventHandler(this.saveOAMToolStripMenuItem_Click);
+			// 
+			// saveCRAMToolStripMenuItem
+			// 
+			this.saveCRAMToolStripMenuItem.Name = "saveCRAMToolStripMenuItem";
+			this.saveCRAMToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.saveCRAMToolStripMenuItem.Text = "Save CRAM...";
+			this.saveCRAMToolStripMenuItem.Click += new System.EventHandler(this.saveCRAMToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator8
+			// 
+			this.toolStripSeparator8.Name = "toolStripSeparator8";
+			this.toolStripSeparator8.Size = new System.Drawing.Size(244, 6);
+			// 
+			// loadNintendulatorPPUDumpToolStripMenuItem
+			// 
+			this.loadNintendulatorPPUDumpToolStripMenuItem.Name = "loadNintendulatorPPUDumpToolStripMenuItem";
+			this.loadNintendulatorPPUDumpToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.loadNintendulatorPPUDumpToolStripMenuItem.Text = "Load Nintendulator PPU Dump...";
+			this.loadNintendulatorPPUDumpToolStripMenuItem.Click += new System.EventHandler(this.loadNintendulatorPPUDumpToolStripMenuItem_Click);
+			// 
 			// debugToolStripMenuItem
 			// 
 			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -350,15 +457,37 @@
 			// helpToolStripMenuItem
 			// 
 			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sendFeedbackToolStripMenuItem,
+            this.checkForUpdatesToolStripMenuItem,
+            this.toolStripSeparator1,
             this.aboutToolStripMenuItem});
 			this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
 			this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			this.helpToolStripMenuItem.Text = "Help";
 			// 
+			// sendFeedbackToolStripMenuItem
+			// 
+			this.sendFeedbackToolStripMenuItem.Name = "sendFeedbackToolStripMenuItem";
+			this.sendFeedbackToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+			this.sendFeedbackToolStripMenuItem.Text = "Send feedback";
+			this.sendFeedbackToolStripMenuItem.Click += new System.EventHandler(this.sendFeedbackToolStripMenuItem_Click);
+			// 
+			// checkForUpdatesToolStripMenuItem
+			// 
+			this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+			this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+			this.checkForUpdatesToolStripMenuItem.Text = "Check for updates";
+			this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(167, 6);
+			// 
 			// aboutToolStripMenuItem
 			// 
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
 			this.aboutToolStripMenuItem.Text = "About";
 			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
 			// 
@@ -977,5 +1106,20 @@
 		private System.Windows.Forms.SaveFileDialog saveFileDialog2;
 		private System.Windows.Forms.ToolStripMenuItem saveTraceInVCDFormatToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialogVCD;
+		private System.Windows.Forms.ToolStripMenuItem sendFeedbackToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+		private System.Windows.Forms.ToolStripMenuItem dumpsToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem loadVRAMToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem loadCHRToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem loadOAMToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem loadCRAMToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+		private System.Windows.Forms.ToolStripMenuItem saveVRAMToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem saveCHRToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem saveOAMToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem saveCRAMToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
+		private System.Windows.Forms.ToolStripMenuItem loadNintendulatorPPUDumpToolStripMenuItem;
 	}
 }

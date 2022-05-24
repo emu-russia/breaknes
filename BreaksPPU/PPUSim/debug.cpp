@@ -246,6 +246,11 @@ namespace PPUSim
 		return cram->Dbg_CRAMReadByte(addr);
 	}
 
+	void PPU::Dbg_CRAMWriteByte(size_t addr, uint8_t val)
+	{
+		cram->Dbg_CRAMWriteByte(addr, val);
+	}
+
 	uint8_t PPU::Dbg_GetCRAMAddress()
 	{
 		uint8_t addr = 0;
