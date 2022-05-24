@@ -89,7 +89,7 @@ namespace PPUSim
 		wires.OV = Pack(wire.OV);			// Packed
 		wires.n_WE = ToByte(wire.n_WE);
 
-		wires.CLPB = ToByte(wire.CLPB);
+		wires.n_CLPB = ToByte(wire.n_CLPB);
 		wires.CLPO = ToByte(wire.CLPO);
 		wires.n_SH2 = ToByte(wire.n_SH2);
 		wires.n_SH3 = ToByte(wire.n_SH3);

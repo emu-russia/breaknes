@@ -245,7 +245,7 @@ namespace PPUSim
 		clipb_latch.set(CLIP_B, n_PCLK);
 		clipo_latch.set(NOR3(nvis_latch.get(), CLIP_O, NOT(OBE)), n_PCLK);
 
-		ppu->wire.CLPB = NOR3(nvis_latch.get(), clipb_latch.get(), NOT(BGE));
+		ppu->wire.n_CLPB = NOR3(nvis_latch.get(), clipb_latch.get(), NOT(BGE));
 		ppu->wire.CLPO = clipo_latch.nget();
 	}
 

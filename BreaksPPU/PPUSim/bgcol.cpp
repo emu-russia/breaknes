@@ -141,9 +141,9 @@ namespace PPUSim
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState CLPB = ppu->wire.CLPB;
+		TriState n_CLPB = ppu->wire.n_CLPB;
 
-		clpb_latch.set(CLPB, PCLK);
+		clpb_latch.set(n_CLPB, PCLK);
 		auto clip = clpb_latch.nget();
 
 		bgc0_latch[0].set(NOT(n_BGC0_Out), n_PCLK);
