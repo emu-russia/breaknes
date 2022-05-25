@@ -44,6 +44,7 @@ namespace PPUSim
 				unsigned TR : 1;	// "Tint Red", $2001[5]
 				unsigned TG : 1;	// "Tint Green", $2001[6]
 				unsigned TB : 1;	// "Tint Blue", $2001[7]
+				unsigned Sync : 1;	// 1: Sync level
 			};
 			uint16_t raw;
 		} RAW;
@@ -327,7 +328,7 @@ namespace PPUSim
 			BaseLogic::TriState SCCNT;
 			BaseLogic::TriState nHB;
 			BaseLogic::TriState BURST;
-			BaseLogic::TriState HSYNC;
+			BaseLogic::TriState SYNC;
 			BaseLogic::TriState n_PICTURE;
 			BaseLogic::TriState RESCL;
 			BaseLogic::TriState VSYNC;

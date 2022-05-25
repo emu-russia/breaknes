@@ -4,6 +4,7 @@
 
 using namespace BaseLogic;
 using namespace PPUSim;
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace PPUSimUnitTest
 {
@@ -309,11 +310,9 @@ namespace PPUSimUnitTest
 		CloseFSM(BPORCH, 114);
 		CloseFSM(SC_CNT, 115);
 		CloseFSM(BURST, 117);
-		CloseFSM(HSYNC, 118);
+		CloseFSM(SYNC, 118);
 		CloseFSM(n_PICTURE, 119);
 		CloseFSM(RESCL, 120);
-		CloseFSM(VSYNC, 121);
-		CloseFSM(VB, 123);
 		CloseFSM(BLNK, 124);
 		CloseFSM(INT, 125);
 	}
@@ -456,11 +455,9 @@ namespace PPUSimUnitTest
 		OpenDirectFSM(BPORCH, 114);
 		OpenDirectFSM(SC_CNT, 115);
 		OpenDirectFSM(BURST, 117);
-		OpenDirectFSM(HSYNC, 118);
+		OpenDirectFSM(SYNC, 118);
 		OpenInverseFSM(n_PICTURE, 119);
 		OpenDirectFSM(RESCL, 120);
-		OpenDirectFSM(VSYNC, 121);
-		OpenDirectFSM(VB, 123);
 		OpenDirectFSM(BLNK, 124);
 		OpenDirectFSM(INT, 125);
 	}
@@ -776,5 +773,130 @@ namespace PPUSimUnitTest
 			return false;
 
 		return true;
+	}
+
+	/// <summary>
+	/// Test the Chroma Decoder output numbers for the NTSC PPU VideoOut and their correspondence to CC0-3 / Burst.
+	/// </summary>
+	bool UnitTest::TestNtscPpuChromaDecoderOutputs()
+	{
+		VideoOut vout(ppu);
+
+		size_t cc_map[_countof(vout.P)] = { 4, 6, 11, 3, 9, 1, 7, 12, 5, 10, 2, 8, 0 };
+
+		vout.cc_burst_latch.set(TriState::Zero, TriState::One);
+
+		// Colors 13-15 have no phase
+		
+		for (size_t cc = 0; cc < 13; cc++)
+		{
+			vout.cc_latch2[0].set((cc & 1) ? TriState::One : TriState::Zero, TriState::One);
+			vout.cc_latch2[1].set((cc & 2) ? TriState::One : TriState::Zero, TriState::One);
+			vout.cc_latch2[2].set((cc & 4) ? TriState::One : TriState::Zero, TriState::One);
+			vout.cc_latch2[3].set((cc & 8) ? TriState::One : TriState::Zero, TriState::One);
+
+			vout.sim_ChromaDecoder();
+
+			for (size_t n = 0; n < _countof(vout.P); n++)
+			{
+				if (n == cc_map[cc])
+				{
+					if (vout.P[n] != TriState::One)
+						return false;
+				}
+				else
+				{
+					if (vout.P[n] != TriState::Zero)
+						return false;
+				}
+			}
+		}
+
+		// Color Burst
+
+		vout.cc_latch2[0].set(TriState::Zero, TriState::One);
+		vout.cc_latch2[1].set(TriState::Zero, TriState::One);
+		vout.cc_latch2[2].set(TriState::Zero, TriState::One);
+		vout.cc_burst_latch.set(TriState::One, TriState::One);
+
+		vout.sim_ChromaDecoder();
+
+		for (size_t n = 0; n < _countof(vout.P); n++)
+		{
+			if (n == 5)
+			{
+				if (vout.P[n] != TriState::One)
+					return false;
+			}
+			else
+			{
+				if (vout.P[n] != TriState::Zero)
+					return false;
+			}
+		}
+
+		return true;
+	}
+
+	/// <summary>
+	/// Output NTSC PPU phase shifter state during a single PCLK. 
+	/// </summary>
+	void UnitTest::DumpNtscPpuPhaseShifter()
+	{
+		VideoOut vout(ppu);
+
+		// Reset
+
+		ppu->wire.RES = TriState::One;
+		ppu->wire.CLK = TriState::Zero;
+		ppu->wire.n_CLK = TriState::One;
+
+		vout.sim_PhaseShifter();
+
+		Logger::WriteMessage("Phase shifter after Reset:\n");
+		DumpPhaseShifter(vout);
+
+		Logger::WriteMessage("\nRun Phase Shifter:\n");
+
+		// Run single PCLK
+
+		ppu->wire.RES = TriState::Zero;
+
+		size_t HalfCyclesPerPCLK = 8;
+		TriState CLK = TriState::Zero;
+
+		for (size_t n = 0; n < HalfCyclesPerPCLK; n++)
+		{
+			ppu->wire.CLK = CLK;
+			ppu->wire.n_CLK = NOT(CLK);
+
+			vout.sim_PhaseShifter();
+			DumpPhaseShifter(vout);
+
+			CLK = NOT(CLK);
+		}
+	}
+
+	void UnitTest::DumpPhaseShifter(VideoOut& vout)
+	{
+		size_t cnt_val = 0;
+
+		for (size_t n = 0; n < 6; n++)
+		{
+			cnt_val |= (vout.sr[n]->getn_Out() == TriState::One ? 1ULL : 0) << n;
+		}
+
+		Logger::WriteMessage(("Jhonson counter: " + std::to_string(cnt_val) + "\n").c_str());
+		Logger::WriteMessage("Active PZ Outputs: ");
+
+		for (size_t n = 0; n < _countof(vout.PZ); n++)
+		{
+			if (vout.PZ[n] == TriState::One)
+			{
+				Logger::WriteMessage((std::to_string(n) + ", ").c_str());
+			}
+		}
+
+		Logger::WriteMessage("\n");
 	}
 }

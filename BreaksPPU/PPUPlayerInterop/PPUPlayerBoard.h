@@ -20,6 +20,13 @@ namespace PPUPlayer
 		uint32_t PD;
 	};
 
+	struct RGB_Triplet
+	{
+		uint8_t r;
+		uint8_t g;
+		uint8_t b;
+	};
+
 	class Board
 	{
 		PPUSim::PPU* ppu = nullptr;
@@ -84,6 +91,9 @@ namespace PPUPlayer
 
 		void DebugPrintFilledTempOAM();
 		void DebugOAMFillTestPattern();
+
+		RGB_Triplet* pal = nullptr;
+		bool pal_cached = false;
 
 	public:
 		Board(char* boardName, char* apu, char* ppu, char* p1);

@@ -81,6 +81,10 @@ namespace PPUSim
 		bool composite = false;
 		bool raw = false;
 
+		void hsl2rgb(float h, float s, float l, uint8_t& r, uint8_t& g, uint8_t& b);
+		float hue2rgb(float p, float q, float t);
+		float Clamp(float val, float min, float max);
+
 	public:
 
 		VideoOut(PPU* parent);

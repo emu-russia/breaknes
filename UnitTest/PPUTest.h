@@ -23,6 +23,7 @@ namespace PPUSimUnitTest
 		void CloseWires(Debug::EventLog* log, size_t ts);
 		void CloseFSMState(Debug::EventLog* log, size_t ts);
 		void CloseOAMEval(Debug::EventLog* log, size_t ts);
+		void DumpPhaseShifter(PPUSim::VideoOut& vout);
 
 	public:
 		UnitTest(PPUSim::Revision rev);
@@ -39,5 +40,7 @@ namespace PPUSimUnitTest
 		bool TestOAMCounter();
 		bool TestFIFODownCounter(size_t v);
 		bool TestFIFOPairedSR(uint8_t val);
+		bool TestNtscPpuChromaDecoderOutputs();
+		void DumpNtscPpuPhaseShifter();
 	};
 }

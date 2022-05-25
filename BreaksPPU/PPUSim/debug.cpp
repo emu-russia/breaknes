@@ -187,7 +187,7 @@ namespace PPUSim
 		fsm_states.BPORCH = ToByte(fsm.BPORCH);
 		fsm_states.SC_CNT = ToByte(fsm.SCCNT);
 		fsm_states.BURST = ToByte(fsm.BURST);
-		fsm_states.HSYNC = ToByte(fsm.HSYNC);
+		fsm_states.SYNC = ToByte(fsm.SYNC);
 		fsm_states.n_PICTURE = ToByte(fsm.n_PICTURE);
 		fsm_states.RESCL = ToByte(fsm.RESCL);
 		fsm_states.VSYNC = ToByte(fsm.VSYNC);

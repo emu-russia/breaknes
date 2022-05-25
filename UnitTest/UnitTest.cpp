@@ -192,5 +192,16 @@ namespace UnitTest
 			}
 		}
 
+		TEST_METHOD(TestNtscPpuChromaDecoderOutputs)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			Assert::IsTrue(ut.TestNtscPpuChromaDecoderOutputs());
+		}
+
+		TEST_METHOD(DumpNtscPpuPhaseShifter)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			ut.DumpNtscPpuPhaseShifter();
+		}
 	};
 }

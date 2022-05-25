@@ -144,8 +144,8 @@ namespace PPUSim
 
 		sync_latch1.set(BURST_FF.get(), PCLK);
 		sync_latch2.set(NOT(n_FPORCH), PCLK);
-		ppu->fsm.HSYNC = NOR(sync_latch2.get(), VSYNC);
-		ppu->fsm.BURST = NOR(sync_latch1.get(), ppu->fsm.HSYNC);
+		ppu->fsm.SYNC = NOR(sync_latch2.get(), VSYNC);
+		ppu->fsm.BURST = NOR(sync_latch1.get(), ppu->fsm.SYNC);
 	}
 
 	/// <summary>

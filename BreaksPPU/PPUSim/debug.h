@@ -132,7 +132,7 @@ namespace PPUSim
 		uint8_t BPORCH;
 		uint8_t SC_CNT;
 		uint8_t BURST;
-		uint8_t HSYNC;
+		uint8_t SYNC;
 		uint8_t n_PICTURE;
 		uint8_t RESCL;
 		uint8_t VSYNC;

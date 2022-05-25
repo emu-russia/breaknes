@@ -92,6 +92,7 @@ namespace PPUSim
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState BURST = ppu->fsm.BURST;
+		TriState SYNC = ppu->fsm.SYNC;
 
 		cc_burst_latch.set(BURST, n_PCLK);
 
@@ -100,6 +101,9 @@ namespace PPUSim
 			cc_latch1[n].set(ppu->wire.n_CC[n], PCLK);
 			cc_latch2[n].set(cc_latch1[n].nget(), n_PCLK);
 		}
+
+		sync_latch.set(NOT(SYNC), n_PCLK);
+		cb_latch.set(BURST, n_PCLK);
 	}
 
 	void VideoOut::sim_PhaseShifter()
@@ -185,7 +189,7 @@ namespace PPUSim
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState BURST = ppu->fsm.BURST;
-		TriState HSYNC = ppu->fsm.HSYNC;
+		TriState SYNC = ppu->fsm.SYNC;
 		TriState n_PICTURE = VidOut_n_PICTURE;
 
 		// If /POUT = 1 - then the visible part of the signal is not output at all
@@ -195,9 +199,7 @@ namespace PPUSim
 
 		// For DAC
 
-		sync_latch.set(NOT(HSYNC), n_PCLK);
-		black_latch.set(NOT(NOR3(NOR(P123, n_PICTURE), HSYNC, BURST)), n_PCLK);
-		cb_latch.set(BURST, n_PCLK);
+		black_latch.set(NOT(NOR3(NOR(P123, n_PICTURE), SYNC, BURST)), n_PCLK);
 	}
 
 	void VideoOut::sim_LumaDecoder()
@@ -296,6 +298,7 @@ namespace PPUSim
 			vout.RAW.TR = ToByte(NOT(ppu->wire.n_TR));
 			vout.RAW.TG = ToByte(NOT(ppu->wire.n_TG));
 			vout.RAW.TB = ToByte(NOT(ppu->wire.n_TB));
+			vout.RAW.Sync = ToByte(sync_latch.nget());
 		}
 		else
 		{
@@ -407,5 +410,46 @@ namespace PPUSim
 	void VideoOut::ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
 	{
 
+	}
+
+	void VideoOut::hsl2rgb(float h, float s, float l, uint8_t& r, uint8_t& g, uint8_t& b)
+	{
+		// https://gist.github.com/ciembor/1494530
+
+		if (s == 0)
+		{
+			// achromatic
+			int z = (int)Clamp(l * 255, 0, 255);
+			r = g = b = z;
+		}
+		else
+		{
+			float q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+			float p = 2 * l - q;
+			r = (uint8_t)Clamp(hue2rgb(p, q, h + 1.0f / 3) * 255, 0, 255);
+			g = (uint8_t)Clamp(hue2rgb(p, q, h) * 255, 0, 255);
+			b = (uint8_t)Clamp(hue2rgb(p, q, h - 1.0f / 3) * 255, 0, 255);
+		}
+	}
+
+	float VideoOut::hue2rgb(float p, float q, float t)
+	{
+		if (t < 0)
+			t += 1;
+		if (t > 1)
+			t -= 1;
+		if (t < 1.0f / 6)
+			return p + (q - p) * 6 * t;
+		if (t < 1.0f / 2)
+			return q;
+		if (t < 2.0f / 3)
+			return p + (q - p) * (2.0f / 3 - t) * 6;
+
+		return p;
+	}
+
+	float VideoOut::Clamp(float val, float min, float max)
+	{
+		return std::min(max, std::max(val, min));
 	}
 }
