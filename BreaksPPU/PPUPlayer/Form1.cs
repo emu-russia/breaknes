@@ -728,5 +728,10 @@ namespace PPUPlayer
 			OpenUrl("https://github.com/emu-russia/breaknes/releases");
 		}
 
+		private void pPUColorSpaceToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FormColorSpace formColorSpace = new();
+			formColorSpace.Show();
+		}
 	}
 }

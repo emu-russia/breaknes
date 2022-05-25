@@ -121,6 +121,8 @@
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
 			this.saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
+			this.miscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.pPUColorSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -161,6 +163,7 @@
             this.dumpsToolStripMenuItem,
             this.debugToolStripMenuItem,
             this.controlsToolStripMenuItem,
+            this.miscToolStripMenuItem,
             this.helpToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
@@ -974,6 +977,21 @@
 			this.saveFileDialogVCD.DefaultExt = "vcd";
 			this.saveFileDialogVCD.Filter = "VCD files|*.vcd|All files|*.vcd";
 			// 
+			// miscToolStripMenuItem
+			// 
+			this.miscToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pPUColorSpaceToolStripMenuItem});
+			this.miscToolStripMenuItem.Name = "miscToolStripMenuItem";
+			this.miscToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+			this.miscToolStripMenuItem.Text = "Misc";
+			// 
+			// pPUColorSpaceToolStripMenuItem
+			// 
+			this.pPUColorSpaceToolStripMenuItem.Name = "pPUColorSpaceToolStripMenuItem";
+			this.pPUColorSpaceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.pPUColorSpaceToolStripMenuItem.Text = "PPU Color Space";
+			this.pPUColorSpaceToolStripMenuItem.Click += new System.EventHandler(this.pPUColorSpaceToolStripMenuItem_Click);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1121,5 +1139,7 @@
 		private System.Windows.Forms.ToolStripMenuItem saveCRAMToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
 		private System.Windows.Forms.ToolStripMenuItem loadNintendulatorPPUDumpToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem miscToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem pPUColorSpaceToolStripMenuItem;
 	}
 }
