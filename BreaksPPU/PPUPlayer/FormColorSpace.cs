@@ -33,7 +33,7 @@ namespace PPUPlayer
 		Bitmap RenderColorSpace()
 		{
 			int emphasisBands = 8;
-			int colorsPerLine = 8;
+			int colorsPerLine = 16;
 			int colorLines = 4;
 			int colorWidth = 128;
 			int colorHeight = 32;
