@@ -411,4 +411,45 @@ namespace PPUSim
 	{
 
 	}
+
+	void VideoOut::hsl2rgb(float h, float s, float l, uint8_t& r, uint8_t& g, uint8_t& b)
+	{
+		// https://gist.github.com/ciembor/1494530
+
+		if (s == 0)
+		{
+			// achromatic
+			int z = (int)Clamp(l * 255, 0, 255);
+			r = g = b = z;
+		}
+		else
+		{
+			float q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+			float p = 2 * l - q;
+			r = (uint8_t)Clamp(hue2rgb(p, q, h + 1.0f / 3) * 255, 0, 255);
+			g = (uint8_t)Clamp(hue2rgb(p, q, h) * 255, 0, 255);
+			b = (uint8_t)Clamp(hue2rgb(p, q, h - 1.0f / 3) * 255, 0, 255);
+		}
+	}
+
+	float VideoOut::hue2rgb(float p, float q, float t)
+	{
+		if (t < 0)
+			t += 1;
+		if (t > 1)
+			t -= 1;
+		if (t < 1.0f / 6)
+			return p + (q - p) * 6 * t;
+		if (t < 1.0f / 2)
+			return q;
+		if (t < 2.0f / 3)
+			return p + (q - p) * (2.0f / 3 - t) * 6;
+
+		return p;
+	}
+
+	float VideoOut::Clamp(float val, float min, float max)
+	{
+		return std::min(max, std::max(val, min));
+	}
 }
