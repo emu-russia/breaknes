@@ -309,11 +309,9 @@ namespace PPUSimUnitTest
 		CloseFSM(BPORCH, 114);
 		CloseFSM(SC_CNT, 115);
 		CloseFSM(BURST, 117);
-		CloseFSM(HSYNC, 118);
+		CloseFSM(SYNC, 118);
 		CloseFSM(n_PICTURE, 119);
 		CloseFSM(RESCL, 120);
-		CloseFSM(VSYNC, 121);
-		CloseFSM(VB, 123);
 		CloseFSM(BLNK, 124);
 		CloseFSM(INT, 125);
 	}
@@ -456,11 +454,9 @@ namespace PPUSimUnitTest
 		OpenDirectFSM(BPORCH, 114);
 		OpenDirectFSM(SC_CNT, 115);
 		OpenDirectFSM(BURST, 117);
-		OpenDirectFSM(HSYNC, 118);
+		OpenDirectFSM(SYNC, 118);
 		OpenInverseFSM(n_PICTURE, 119);
 		OpenDirectFSM(RESCL, 120);
-		OpenDirectFSM(VSYNC, 121);
-		OpenDirectFSM(VB, 123);
 		OpenDirectFSM(BLNK, 124);
 		OpenDirectFSM(INT, 125);
 	}

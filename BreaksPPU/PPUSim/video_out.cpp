@@ -92,6 +92,7 @@ namespace PPUSim
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState BURST = ppu->fsm.BURST;
+		TriState SYNC = ppu->fsm.SYNC;
 
 		cc_burst_latch.set(BURST, n_PCLK);
 
@@ -100,6 +101,9 @@ namespace PPUSim
 			cc_latch1[n].set(ppu->wire.n_CC[n], PCLK);
 			cc_latch2[n].set(cc_latch1[n].nget(), n_PCLK);
 		}
+
+		sync_latch.set(NOT(SYNC), n_PCLK);
+		cb_latch.set(BURST, n_PCLK);
 	}
 
 	void VideoOut::sim_PhaseShifter()
@@ -185,7 +189,7 @@ namespace PPUSim
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState BURST = ppu->fsm.BURST;
-		TriState HSYNC = ppu->fsm.HSYNC;
+		TriState SYNC = ppu->fsm.SYNC;
 		TriState n_PICTURE = VidOut_n_PICTURE;
 
 		// If /POUT = 1 - then the visible part of the signal is not output at all
@@ -195,9 +199,7 @@ namespace PPUSim
 
 		// For DAC
 
-		sync_latch.set(NOT(HSYNC), n_PCLK);
-		black_latch.set(NOT(NOR3(NOR(P123, n_PICTURE), HSYNC, BURST)), n_PCLK);
-		cb_latch.set(BURST, n_PCLK);
+		black_latch.set(NOT(NOR3(NOR(P123, n_PICTURE), SYNC, BURST)), n_PCLK);
 	}
 
 	void VideoOut::sim_LumaDecoder()
@@ -296,6 +298,7 @@ namespace PPUSim
 			vout.RAW.TR = ToByte(NOT(ppu->wire.n_TR));
 			vout.RAW.TG = ToByte(NOT(ppu->wire.n_TG));
 			vout.RAW.TB = ToByte(NOT(ppu->wire.n_TB));
+			vout.RAW.Sync = ToByte(sync_latch.nget());
 		}
 		else
 		{
