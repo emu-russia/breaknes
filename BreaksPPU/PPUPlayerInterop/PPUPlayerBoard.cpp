@@ -31,6 +31,8 @@ namespace PPUPlayer
 		ppu = new PPUSim::PPU(rev);
 		vram = new BaseBoard::SRAM(11);
 
+		pal = new RGB_Triplet[8 * 64];
+
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
 
@@ -42,6 +44,7 @@ namespace PPUPlayer
 	{
 		delete ppu;
 		delete vram;
+		delete pal;
 	}
 
 	/// <summary>
@@ -294,17 +297,29 @@ namespace PPUPlayer
 
 	/// <summary>
 	/// Convert the raw color to RGB. Can be used for palette generation or PPU video output in RAW mode.
-	/// The method is not fast, so it is better to convert all possible RAW colors in advance, in map.
 	/// </summary>
 	void Board::ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
 	{
-		PPUSim::VideoOutSignal rawIn{}, rgbOut{};
+		if (!pal_cached)
+		{
+			PPUSim::VideoOutSignal rawIn{}, rgbOut{};
 
-		rawIn.RAW.raw = raw;
-		ppu->ConvertRAWToRGB(rawIn, rgbOut);
+			for (size_t n = 0; n < (8 * 64); n++)
+			{
+				rawIn.RAW.raw = n;
+				ppu->ConvertRAWToRGB(rawIn, rgbOut);
+				pal[n].r = rgbOut.RGB.r;
+				pal[n].g = rgbOut.RGB.g;
+				pal[n].b = rgbOut.RGB.b;
+			}
 
-		*r = rgbOut.RGB.r;
-		*g = rgbOut.RGB.g;
-		*b = rgbOut.RGB.b;
+			pal_cached = true;
+		}
+
+		size_t n = raw & 0b111'11'1111;
+
+		*r = pal[n].r;
+		*g = pal[n].g;
+		*b = pal[n].b;
 	}
 }
