@@ -840,7 +840,7 @@ namespace PPUSimUnitTest
 	}
 
 	/// <summary>
-	/// Output NTSC PPU phase shifter state during a single PCLK. 
+	/// Output the state of Phase Shifter outputs for a number of PCLK cycles.
 	/// </summary>
 	void UnitTest::DumpNtscPpuPhaseShifter()
 	{
@@ -853,15 +853,19 @@ namespace PPUSimUnitTest
 		ppu->wire.n_CLK = TriState::One;
 
 		vout.sim_PhaseShifter();
+		Logger::WriteMessage("After Reset:\n");
+		DumpPhaseShifter(vout);
 
 		// Run single PCLK
 
 		ppu->wire.RES = TriState::Zero;
 
-		size_t HalfCyclesPerPCLK = 8;
+		size_t HalfCycles = 128;
 		TriState CLK = TriState::Zero;
 
-		for (size_t n = 0; n < HalfCyclesPerPCLK; n++)
+		Logger::WriteMessage("Few cycles later:\n");
+
+		for (size_t n = 0; n < HalfCycles; n++)
 		{
 			ppu->wire.CLK = CLK;
 			ppu->wire.n_CLK = NOT(CLK);
@@ -875,6 +879,32 @@ namespace PPUSimUnitTest
 
 	void UnitTest::DumpPhaseShifter(VideoOut& vout)
 	{
+		std::string text = "";
 
+		size_t out_bits[] = { 0, 2, 5, 7, 9, 11 };
+		size_t sout_bits[] = { 1, 3, 6, 8, 10, 12 };
+		std::string out_bit_str = "";
+		std::string sout_bit_str = "";
+
+		size_t out_val = 0;
+		for (size_t n = 0; n < _countof(out_bits); n++)
+		{
+			out_val |= (vout.PZ[out_bits[n]] == TriState::Zero ? 1ULL : 0) << n;
+			out_bit_str += vout.PZ[out_bits[n]] == TriState::One ? "1" : "0";
+		}
+
+		size_t sout_val = 0;
+		for (size_t n = 0; n < _countof(sout_bits); n++)
+		{
+			sout_val |= (vout.PZ[sout_bits[n]] == TriState::One ? 1ULL : 0) << n;
+			sout_bit_str += vout.PZ[sout_bits[n]] == TriState::One ? "1" : "0";
+		}
+
+		//text += "out: " + std::to_string(out_val) + " (" + out_bit_str + "), sout: " 
+		//	+ std::to_string(sout_val) + " (" + sout_bit_str + ")\n";
+
+		text += "out: " + out_bit_str + ", sout: " + sout_bit_str + "\n";
+
+		Logger::WriteMessage(text.c_str());
 	}
 }

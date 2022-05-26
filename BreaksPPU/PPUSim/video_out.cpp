@@ -25,7 +25,7 @@ namespace PPUSim
 				LToV[7] = 2.287f;		// Color 10
 				LToV[8] = 2.331f;		// Color 3D
 				LToV[9] = 2.743f;		// Color 20 / 30
-				LToV[10] = 0.756f;		// Emphasis attenuation factor
+				LToV[10] = 0.746f;		// Emphasis attenuation factor
 				composite = true;
 				break;
 
@@ -109,8 +109,9 @@ namespace PPUSim
 
 		// SR Bit5
 
-		sr[5].sim(NOT(sr[3].getn_ShiftOut()), n_CLK, CLK, RES, sr0_sout, unused, PZ[0]);
-		PZ[1] = NOR(sr0_sout, NOR(sr[4].getn_ShiftOut(), NOT(sr[3].getn_ShiftOut())));
+		auto sr3_sout = NOT(sr[3].getn_ShiftOut());
+		sr[5].sim(sr3_sout, n_CLK, CLK, RES, sr0_sout, unused, PZ[0]);
+		PZ[1] = NOR(sr0_sout, NOR(sr[4].getn_ShiftOut(), sr3_sout));
 
 		// SR Bit4
 
@@ -419,42 +420,6 @@ namespace PPUSim
 	void VideoOut::ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
 	{
 
-	}
-
-	void VideoOut::hsl2rgb(float h, float s, float l, uint8_t& r, uint8_t& g, uint8_t& b)
-	{
-		// https://gist.github.com/ciembor/1494530
-
-		if (s == 0)
-		{
-			// achromatic
-			int z = (int)Clamp(l * 255, 0, 255);
-			r = g = b = z;
-		}
-		else
-		{
-			float q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-			float p = 2 * l - q;
-			r = (uint8_t)Clamp(hue2rgb(p, q, h + 1.0f / 3) * 255, 0, 255);
-			g = (uint8_t)Clamp(hue2rgb(p, q, h) * 255, 0, 255);
-			b = (uint8_t)Clamp(hue2rgb(p, q, h - 1.0f / 3) * 255, 0, 255);
-		}
-	}
-
-	float VideoOut::hue2rgb(float p, float q, float t)
-	{
-		if (t < 0)
-			t += 1;
-		if (t > 1)
-			t -= 1;
-		if (t < 1.0f / 6)
-			return p + (q - p) * 6 * t;
-		if (t < 1.0f / 2)
-			return q;
-		if (t < 2.0f / 3)
-			return p + (q - p) * (2.0f / 3 - t) * 6;
-
-		return p;
 	}
 
 	float VideoOut::Clamp(float val, float min, float max)
