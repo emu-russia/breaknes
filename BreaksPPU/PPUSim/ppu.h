@@ -166,7 +166,6 @@ namespace PPUSim
 		friend FSM;
 		friend CBBit;
 		friend CRAM;
-		friend VideoOutSRBit;
 		friend VideoOut;
 		friend Mux;
 		friend OAMEval;

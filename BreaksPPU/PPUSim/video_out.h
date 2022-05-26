@@ -11,18 +11,15 @@ namespace PPUSim
 	/// </summary>
 	class VideoOutSRBit
 	{
-		PPU* ppu = nullptr;
-
-		BaseLogic::DLatch latch1;
-		BaseLogic::DLatch latch2;
+		BaseLogic::DLatch in_latch;
+		BaseLogic::DLatch out_latch;
 
 	public:
+		void sim(BaseLogic::TriState n_shift_in, BaseLogic::TriState n_CLK, BaseLogic::TriState CLK, BaseLogic::TriState RES,
+			BaseLogic::TriState& shift_out, BaseLogic::TriState& n_shift_out, BaseLogic::TriState& val);
 
-		VideoOutSRBit(PPU* parent) { ppu = parent; }
-
-		void sim(BaseLogic::TriState shift_in);
-
-		BaseLogic::TriState getn_Out();
+		BaseLogic::TriState get_Out(BaseLogic::TriState RES);
+		BaseLogic::TriState get_ShiftOut();
 		BaseLogic::TriState getn_ShiftOut();
 	};
 
@@ -45,7 +42,7 @@ namespace PPUSim
 		BaseLogic::DLatch npicture_latch1;
 		BaseLogic::DLatch npicture_latch2;
 
-		VideoOutSRBit *sr[6];		// Individual bits of the shift register for the phase shifter.
+		VideoOutSRBit sr[6]{};		// Individual bits of the shift register for the phase shifter.
 
 		BaseLogic::TriState n_PZ = BaseLogic::TriState::X;
 		BaseLogic::TriState n_POUT = BaseLogic::TriState::X;
@@ -81,8 +78,6 @@ namespace PPUSim
 		bool composite = false;
 		bool raw = false;
 
-		void hsl2rgb(float h, float s, float l, uint8_t& r, uint8_t& g, uint8_t& b);
-		float hue2rgb(float p, float q, float t);
 		float Clamp(float val, float min, float max);
 
 	public:

@@ -10,11 +10,6 @@ namespace PPUSim
 	{
 		ppu = parent;
 
-		for (size_t n = 0; n < 6; n++)
-		{
-			sr[n] = new VideoOutSRBit(ppu);
-		}
-
 		switch (ppu->rev)
 		{
 			case Revision::RP2C02G:
@@ -30,7 +25,7 @@ namespace PPUSim
 				LToV[7] = 2.287f;		// Color 10
 				LToV[8] = 2.331f;		// Color 3D
 				LToV[9] = 2.743f;		// Color 20 / 30
-				LToV[10] = 0.756f;		// Emphasis attenuation factor
+				LToV[10] = 0.746f;		// Emphasis attenuation factor
 				composite = true;
 				break;
 
@@ -40,10 +35,6 @@ namespace PPUSim
 
 	VideoOut::~VideoOut()
 	{
-		for (size_t n = 0; n < 6; n++)
-		{
-			delete sr[n];
-		}
 	}
 
 	void VideoOut::sim(VideoOutSignal& vout)
@@ -108,29 +99,39 @@ namespace PPUSim
 
 	void VideoOut::sim_PhaseShifter()
 	{
+		TriState n_CLK = ppu->wire.n_CLK;
+		TriState CLK = ppu->wire.CLK;
+		TriState RES = ppu->wire.RES;
+		TriState unused{};
+		TriState sr0_sout{};
+
 		// TBD: PAL
 
-		PZ[6] = NOT(sr[2]->getn_ShiftOut());
-		sr[0]->sim(NOT(PZ[6]));
-		PZ[3] = NOT(sr[1]->getn_ShiftOut());
-		PZ[1] = NOR(sr[0]->getn_ShiftOut(), NOR(NOT(PZ[6]), PZ[3]));
-		sr[1]->sim(PZ[1]);
-		PZ[3] = NOT(sr[1]->getn_ShiftOut());
-		sr[2]->sim(PZ[3]);
-		PZ[6] = NOT(sr[2]->getn_ShiftOut());
-		sr[3]->sim(PZ[6]);
-		PZ[8] = NOT(sr[3]->getn_ShiftOut());
-		sr[4]->sim(PZ[8]);
-		PZ[10] = NOT(sr[4]->getn_ShiftOut());
-		sr[5]->sim(PZ[10]);
-		PZ[12] = NOT(sr[5]->getn_ShiftOut());
+		// SR Bit5
 
-		PZ[0] = sr[0]->getn_Out();
-		PZ[2] = sr[1]->getn_Out();
-		PZ[5] = sr[2]->getn_Out();
-		PZ[7] = sr[3]->getn_Out();
-		PZ[9] = sr[4]->getn_Out();
-		PZ[11] = sr[5]->getn_Out();
+		auto sr3_sout = NOT(sr[3].getn_ShiftOut());
+		sr[5].sim(sr3_sout, n_CLK, CLK, RES, sr0_sout, unused, PZ[0]);
+		PZ[1] = NOR(sr0_sout, NOR(sr[4].getn_ShiftOut(), sr3_sout));
+
+		// SR Bit4
+
+		sr[4].sim(PZ[1], n_CLK, CLK, RES, unused, PZ[3], PZ[2]);
+
+		// SR Bit3
+
+		sr[3].sim(PZ[3], n_CLK, CLK, RES, unused, PZ[6], PZ[5]);
+
+		// SR Bit2
+
+		sr[2].sim(PZ[6], n_CLK, CLK, RES, unused, PZ[8], PZ[7]);
+
+		// SR Bit1
+
+		sr[1].sim(PZ[8], n_CLK, CLK, RES, unused, PZ[10], PZ[9]);
+
+		// SR Bit0
+
+		sr[0].sim(PZ[10], n_CLK, CLK, RES, unused, PZ[12], PZ[11]);
 
 		n_PR = PZ[0];
 		n_PG = PZ[9];
@@ -165,9 +166,9 @@ namespace PPUSim
 		P[11] = dmxout[13];
 		P[12] = dmxout[8];
 
-		TriState pz[13]{};
+		TriState pz[_countof(P)]{};
 
-		for (size_t n = 0; n < 13; n++)
+		for (size_t n = 0; n < _countof(P); n++)
 		{
 			if (n != 4)
 			{
@@ -306,20 +307,29 @@ namespace PPUSim
 		}
 	}
 
-	void VideoOutSRBit::sim(TriState shift_in)
+	void VideoOutSRBit::sim(TriState n_shift_in, TriState n_CLK, TriState CLK, TriState RES,
+		TriState& shift_out, TriState& n_shift_out, TriState& val)
 	{
-		latch1.set(shift_in, ppu->wire.CLK);
-		latch2.set(getn_Out(), ppu->wire.n_CLK);
+		in_latch.set(n_shift_in, CLK);
+		val = get_Out(RES);
+		out_latch.set(val, n_CLK);
+		shift_out = out_latch.get();
+		n_shift_out = out_latch.nget();
 	}
 
-	TriState VideoOutSRBit::getn_Out()
+	TriState VideoOutSRBit::get_Out(TriState RES)
 	{
-		return NOR(latch1.get(), ppu->wire.RES);
+		return NOR(in_latch.get(), RES);
+	}
+	
+	TriState VideoOutSRBit::get_ShiftOut()
+	{
+		return out_latch.get();
 	}
 
 	TriState VideoOutSRBit::getn_ShiftOut()
 	{
-		return latch2.get();
+		return out_latch.nget();
 	}
 
 	/// <summary>
@@ -410,42 +420,6 @@ namespace PPUSim
 	void VideoOut::ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
 	{
 
-	}
-
-	void VideoOut::hsl2rgb(float h, float s, float l, uint8_t& r, uint8_t& g, uint8_t& b)
-	{
-		// https://gist.github.com/ciembor/1494530
-
-		if (s == 0)
-		{
-			// achromatic
-			int z = (int)Clamp(l * 255, 0, 255);
-			r = g = b = z;
-		}
-		else
-		{
-			float q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-			float p = 2 * l - q;
-			r = (uint8_t)Clamp(hue2rgb(p, q, h + 1.0f / 3) * 255, 0, 255);
-			g = (uint8_t)Clamp(hue2rgb(p, q, h) * 255, 0, 255);
-			b = (uint8_t)Clamp(hue2rgb(p, q, h - 1.0f / 3) * 255, 0, 255);
-		}
-	}
-
-	float VideoOut::hue2rgb(float p, float q, float t)
-	{
-		if (t < 0)
-			t += 1;
-		if (t > 1)
-			t -= 1;
-		if (t < 1.0f / 6)
-			return p + (q - p) * 6 * t;
-		if (t < 1.0f / 2)
-			return q;
-		if (t < 2.0f / 3)
-			return p + (q - p) * (2.0f / 3 - t) * 6;
-
-		return p;
 	}
 
 	float VideoOut::Clamp(float val, float min, float max)

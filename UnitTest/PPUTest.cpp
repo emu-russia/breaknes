@@ -783,6 +783,7 @@ namespace PPUSimUnitTest
 		VideoOut vout(ppu);
 
 		size_t cc_map[_countof(vout.P)] = { 4, 6, 11, 3, 9, 1, 7, 12, 5, 10, 2, 8, 0 };
+		size_t cb_output = 5;
 
 		vout.cc_burst_latch.set(TriState::Zero, TriState::One);
 
@@ -823,7 +824,7 @@ namespace PPUSimUnitTest
 
 		for (size_t n = 0; n < _countof(vout.P); n++)
 		{
-			if (n == 5)
+			if (n == cb_output)
 			{
 				if (vout.P[n] != TriState::One)
 					return false;
@@ -839,7 +840,7 @@ namespace PPUSimUnitTest
 	}
 
 	/// <summary>
-	/// Output NTSC PPU phase shifter state during a single PCLK. 
+	/// Output the state of Phase Shifter outputs for a number of PCLK cycles.
 	/// </summary>
 	void UnitTest::DumpNtscPpuPhaseShifter()
 	{
@@ -847,25 +848,24 @@ namespace PPUSimUnitTest
 
 		// Reset
 
-		ppu->wire.RES = TriState::One;
-		ppu->wire.CLK = TriState::Zero;
-		ppu->wire.n_CLK = TriState::One;
+		//ppu->wire.RES = TriState::One;
+		//ppu->wire.CLK = TriState::Zero;
+		//ppu->wire.n_CLK = TriState::One;
 
-		vout.sim_PhaseShifter();
-
-		Logger::WriteMessage("Phase shifter after Reset:\n");
-		DumpPhaseShifter(vout);
-
-		Logger::WriteMessage("\nRun Phase Shifter:\n");
+		//vout.sim_PhaseShifter();
+		//Logger::WriteMessage("After Reset:\n");
+		//DumpPhaseShifter(vout);
 
 		// Run single PCLK
 
 		ppu->wire.RES = TriState::Zero;
 
-		size_t HalfCyclesPerPCLK = 8;
+		size_t HalfCycles = 128;
 		TriState CLK = TriState::Zero;
 
-		for (size_t n = 0; n < HalfCyclesPerPCLK; n++)
+		Logger::WriteMessage("Few cycles later:\n");
+
+		for (size_t n = 0; n < HalfCycles; n++)
 		{
 			ppu->wire.CLK = CLK;
 			ppu->wire.n_CLK = NOT(CLK);
@@ -879,24 +879,20 @@ namespace PPUSimUnitTest
 
 	void UnitTest::DumpPhaseShifter(VideoOut& vout)
 	{
-		size_t cnt_val = 0;
+		std::string text = "";
 
-		for (size_t n = 0; n < 6; n++)
+		size_t cc_map[_countof(vout.P)] = { 4, 6, 11, 3, 9, 1, 7, 12, 5, 10, 2, 8, 0 };
+		char *int_to_hex[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F" };
+
+		// Sorted by color from 1 to 12 (inclusive)
+
+		for (size_t n = 1; n < 13; n++)
 		{
-			cnt_val |= (vout.sr[n]->getn_Out() == TriState::One ? 1ULL : 0) << n;
+			text += vout.PZ[cc_map[n]] == TriState::One ? int_to_hex[n] : ".";
 		}
 
-		Logger::WriteMessage(("Jhonson counter: " + std::to_string(cnt_val) + "\n").c_str());
-		Logger::WriteMessage("Active PZ Outputs: ");
+		text += "\n";
 
-		for (size_t n = 0; n < _countof(vout.PZ); n++)
-		{
-			if (vout.PZ[n] == TriState::One)
-			{
-				Logger::WriteMessage((std::to_string(n) + ", ").c_str());
-			}
-		}
-
-		Logger::WriteMessage("\n");
+		Logger::WriteMessage(text.c_str());
 	}
 }
