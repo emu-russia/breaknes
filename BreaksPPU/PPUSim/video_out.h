@@ -54,9 +54,9 @@ namespace PPUSim
 		BaseLogic::TriState n_PR = BaseLogic::TriState::X;
 		BaseLogic::TriState n_PG = BaseLogic::TriState::X;
 		BaseLogic::TriState n_PB = BaseLogic::TriState::X;
-		BaseLogic::TriState P[13]{};
-		BaseLogic::TriState PZ[13]{};
-		BaseLogic::TriState P123 = BaseLogic::TriState::X;
+		BaseLogic::TriState P[13]{};		// Color decoder outputs. The numbering is topological, from left to right starting from 0.
+		BaseLogic::TriState PZ[13]{};		// Phase shifter bits corresponding to the Color decoder outputs. The numbering for the Color 0 output is skipped in order to keep the order.
+		BaseLogic::TriState PBLACK = BaseLogic::TriState::X;	// Makes colors 14-15 forced "Black".
 		BaseLogic::TriState VidOut_n_PICTURE = BaseLogic::TriState::X;	// Local /PICTURE signal
 
 		void sim_InputLatches();

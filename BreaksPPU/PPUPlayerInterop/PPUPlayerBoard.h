@@ -89,9 +89,6 @@ namespace PPUPlayer
 
 		void GetDebugInfo(BoardDebugInfo& info);
 
-		void DebugPrintFilledTempOAM();
-		void DebugOAMFillTestPattern();
-
 		RGB_Triplet* pal = nullptr;
 		bool pal_cached = false;
 

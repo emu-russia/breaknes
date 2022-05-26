@@ -20,7 +20,7 @@ using System.IO;
 
 namespace PPUPlayer
 {
-	public partial class Form1 : Form
+	public partial class FormMain : Form
 	{
 		List<FieldTrace> fields = new();
 

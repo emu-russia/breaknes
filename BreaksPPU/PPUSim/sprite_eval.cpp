@@ -213,19 +213,19 @@ namespace PPUSim
 	void OAMEval::sim_TempCounterControlBeforeCounter()
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState EVAL = ppu->fsm.EVAL;
+		TriState n_EVAL = ppu->fsm.n_EVAL;
 		TriState OMFG = this->OMFG;
 		TriState I_OAM2 = ppu->fsm.IOAM2;
 		TriState H0_D = ppu->wire.H0_Dash;
 		TriState n_H2_D = ppu->wire.nH2_Dash;
 		TriState PAR_O = ppu->fsm.PARO;
 
-		eval_latch.set(EVAL, n_PCLK);
+		eval_latch.set(n_EVAL, n_PCLK);
 		ORES = NOR(n_PCLK, eval_latch.get());
 		nomfg_latch.set(NOT(OMFG), n_PCLK);
 		ioam2_latch.set(I_OAM2, n_PCLK);
 		auto DontStep = NOR(NOR(NOR(nomfg_latch.get(), ioam2_latch.get()), H0_D), AND(n_H2_D, PAR_O));
-		temp_latch1.set(NAND(OAMCTR2_FF.nget(), EVAL), n_PCLK);
+		temp_latch1.set(NAND(OAMCTR2_FF.nget(), n_EVAL), n_PCLK);
 		OSTEP = NOR3(temp_latch1.get(), n_PCLK, DontStep);
 	}
 

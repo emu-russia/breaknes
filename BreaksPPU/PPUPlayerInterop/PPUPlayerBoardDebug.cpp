@@ -234,7 +234,7 @@ namespace PPUPlayer
 		"CLIP_O", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::CLIP_O), 1,
 		"CLIP_B", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::CLIP_B), 1,
 		"0/HPOS", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::Z_HPOS), 1,
-		"EVAL", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::EVAL), 1,
+		"/EVAL", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::n_EVAL), 1,
 		"E/EV", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::E_EV), 1,
 		"I/OAM2", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::I_OAM2), 1,
 		"PAR/O", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::PAR_O), 1,
@@ -594,48 +594,5 @@ namespace PPUPlayer
 		}
 
 		return 0;
-	}
-
-	/// <summary>
-	/// https://github.com/emu-russia/breaknes/issues/119
-	/// 
-	/// Output when TempOAM is filled with some values to make sure that it is correctly filled with values from the main OAM.
-	/// </summary>
-	void Board::DebugPrintFilledTempOAM()
-	{
-		bool notFF = false;
-		uint8_t temp_oam[32]{};
-		for (size_t n = 0; n < 32; n++)
-		{
-			temp_oam[n] = DumpTempOAM(this, n);
-			if (!(temp_oam[n] == 0xff || temp_oam[n] == 0x00))
-			{
-				notFF = true;
-			}
-		}
-		if (notFF)
-		{
-			printf("TempOAM not 0xFF at H:%zd, V:%zd\n", GetHCounter(), GetVCounter());
-			size_t n = 0;
-			for (size_t row = 0; row < 2; row++)
-			{
-				for (size_t col = 0; col < 16; col++)
-				{
-					printf("%02X ", temp_oam[n++]);
-				}
-				printf("\n");
-			}
-		}
-	}
-
-	/// <summary>
-	/// Place a test value in Sprite #0 to test the OAMEval simulation.
-	/// </summary>
-	void Board::DebugOAMFillTestPattern()
-	{
-		ppu->Dbg_OAMWriteByte(0, 0);
-		ppu->Dbg_OAMWriteByte(1, 0xaa);
-		ppu->Dbg_OAMWriteByte(2, 1);
-		ppu->Dbg_OAMWriteByte(3, 0x55);
 	}
 }

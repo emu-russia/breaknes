@@ -8,19 +8,6 @@ namespace PPUPlayer
 {
 	DebugHub::DebugHub()
 	{
-		// DEBUG: Add one test DebugInfo and one test memory region to test the debugger GUI.
-
-		DebugInfoEntry* testEntry = new DebugInfoEntry;
-		memset(testEntry, 0, sizeof(DebugInfoEntry));
-		strcpy_s(testEntry->category, sizeof(testEntry->category), "Test");
-		strcpy_s(testEntry->name, sizeof(testEntry->name), "test");
-		AddDebugInfo(DebugInfoType::DebugInfoType_Test, testEntry, GetTestInfo, this);
-
-		//MemDesciptor* testRegion = new MemDesciptor;
-		//memset(testRegion, 0, sizeof(MemDesciptor));
-		//strcpy_s(testRegion->name, sizeof(testRegion->name), "TestMem");
-		//testRegion->size = 256;
-		//AddMemRegion(testRegion, ReadTestMem, WriteTestMem, this, false);
 	}
 
 	DebugHub::~DebugHub()
@@ -39,10 +26,6 @@ namespace PPUPlayer
 
 		switch (type)
 		{
-			case DebugInfoType::DebugInfoType_Test:
-				testInfo.push_back(prov);
-				break;
-
 			case DebugInfoType::DebugInfoType_PPU:
 				ppuInfo.push_back(prov);
 				break;
@@ -63,12 +46,6 @@ namespace PPUPlayer
 
 	void DebugHub::DisposeDebugInfo()
 	{
-		for (auto it = testInfo.begin(); it != testInfo.end(); ++it)
-		{
-			delete it->entry;
-		}
-		testInfo.clear();
-
 		for (auto it = ppuInfo.begin(); it != ppuInfo.end(); ++it)
 		{
 			delete it->entry;
@@ -113,23 +90,6 @@ namespace PPUPlayer
 		}
 		memMap.clear();
 	}
-
-	// DEBUG: To be deleted after GUI debugging
-	uint32_t DebugHub::GetTestInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
-	{
-		bits = 8;
-		return 123;
-	}
-
-	// DEBUG: To be deleted after GUI debugging
-	uint8_t DebugHub::ReadTestMem(void* opaque, size_t addr)
-	{
-		return (uint8_t)addr;
-	}
-
-	uint8_t DebugHub::WriteTestMem(void* opaque, size_t addr, uint8_t data)
-	{
-	}
 }
 
 void CreateDebugHub()
@@ -167,7 +127,7 @@ extern "C"
 		switch (type)
 		{
 			case DebugInfoType::DebugInfoType_Test:
-				return dbg_hub->testInfo.size();
+				return 0;
 
 			case DebugInfoType::DebugInfoType_Core:
 				return 0;
@@ -223,10 +183,6 @@ extern "C"
 
 		switch (type)
 		{
-			case DebugInfoType::DebugInfoType_Test:
-				CopyOutDebugInfo(dbg_hub->testInfo, entries);
-				break;
-
 			case DebugInfoType::DebugInfoType_PPU:
 				CopyOutDebugInfo(dbg_hub->ppuInfo, entries);
 				break;

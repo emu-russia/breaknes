@@ -21,13 +21,8 @@ namespace PPUPlayer
 
 	class DebugHub
 	{
-		static uint8_t ReadTestMem(void* opaque, size_t addr);
-		static uint8_t WriteTestMem(void* opaque, size_t addr, uint8_t data);
-		static uint32_t GetTestInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
-
 	public:
 
-		std::list<DebugInfoProvider> testInfo;
 		std::list<DebugInfoProvider> ppuInfo;
 		std::list<DebugInfoProvider> ppuRegsInfo;
 		std::list<DebugInfoProvider> boardInfo;

@@ -18,7 +18,7 @@ using PPUPlayerCustomClass;
 
 namespace PPUPlayer
 {
-	public partial class Form1 : Form
+	public partial class FormMain : Form
 	{
 		[DllImport("kernel32")]
 		static extern bool AllocConsole();
@@ -58,7 +58,7 @@ namespace PPUPlayer
 
 		bool SimulationStarted = false;
 
-		public Form1()
+		public FormMain()
 		{
 			InitializeComponent();
 		}

@@ -174,7 +174,7 @@ namespace PPUSim
 		fsm_states.CLIP_O = ToByte(fsm.CLIP_O);
 		fsm_states.CLIP_B = ToByte(fsm.CLIP_B);
 		fsm_states.Z_HPOS = ToByte(fsm.ZHPOS);
-		fsm_states.EVAL = ToByte(fsm.EVAL);
+		fsm_states.n_EVAL = ToByte(fsm.n_EVAL);
 		fsm_states.E_EV = ToByte(fsm.EEV);
 		fsm_states.I_OAM2 = ToByte(fsm.IOAM2);
 		fsm_states.PAR_O = ToByte(fsm.PARO);
