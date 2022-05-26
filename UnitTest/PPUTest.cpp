@@ -297,7 +297,7 @@ namespace PPUSimUnitTest
 		CloseFSM(CLIP_O, 101);
 		CloseFSM(CLIP_B, 102);
 		CloseFSM(Z_HPOS, 103);
-		CloseFSM(EVAL, 104);
+		CloseFSM(n_EVAL, 104);
 		CloseFSM(E_EV, 105);
 		CloseFSM(I_OAM2, 106);
 		CloseFSM(PAR_O, 107);
@@ -442,7 +442,7 @@ namespace PPUSimUnitTest
 		OpenDirectFSM(CLIP_O, 101);
 		OpenDirectFSM(CLIP_B, 102);
 		OpenDirectFSM(Z_HPOS, 103);
-		OpenInverseFSM(EVAL, 104);
+		OpenInverseFSM(n_EVAL, 104);
 		OpenDirectFSM(E_EV, 105);
 		OpenDirectFSM(I_OAM2, 106);
 		OpenDirectFSM(PAR_O, 107);

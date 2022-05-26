@@ -149,7 +149,7 @@ namespace PPUSim
 		dmxin[3] = NOR(cc_latch2[3].get(), cc_burst_latch.get());
 		DMX4(dmxin, dmxout);
 
-		P123 = NOR3(dmxin[1], dmxin[2], dmxin[3]);
+		PBLACK = NOR3(dmxin[1], dmxin[2], dmxin[3]);
 
 		P[0] = dmxout[3];
 		P[1] = dmxout[10];
@@ -194,12 +194,12 @@ namespace PPUSim
 
 		// If /POUT = 1 - then the visible part of the signal is not output at all
 
-		pic_out_latch.set(NOR(P123, n_PICTURE), n_PCLK);
+		pic_out_latch.set(NOR(PBLACK, n_PICTURE), n_PCLK);
 		n_POUT = pic_out_latch.nget();
 
 		// For DAC
 
-		black_latch.set(NOT(NOR3(NOR(P123, n_PICTURE), SYNC, BURST)), n_PCLK);
+		black_latch.set(NOT(NOR3(NOR(PBLACK, n_PICTURE), SYNC, BURST)), n_PCLK);
 	}
 
 	void VideoOut::sim_LumaDecoder()

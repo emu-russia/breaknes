@@ -314,7 +314,7 @@ namespace PPUSim
 			BaseLogic::TriState CLIP_O;
 			BaseLogic::TriState CLIP_B;
 			BaseLogic::TriState ZHPOS;
-			BaseLogic::TriState EVAL;
+			BaseLogic::TriState n_EVAL;
 			BaseLogic::TriState EEV;
 			BaseLogic::TriState IOAM2;
 			BaseLogic::TriState PARO;

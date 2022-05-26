@@ -85,7 +85,7 @@ namespace PPUSim
 		eev_latch1.set(HPLA[7], n_PCLK);
 		TriState temp2 = NOR3(hpos_latch1.get(), eval_latch1.get(), eev_latch1.get());
 		eval_latch2.set(temp2, PCLK);
-		ppu->fsm.EVAL = NOT(eval_latch2.nget());
+		ppu->fsm.n_EVAL = NOT(eval_latch2.nget());
 
 		eev_latch2.set(eev_latch1.nget(), PCLK);
 		ppu->fsm.EEV = eev_latch2.nget();

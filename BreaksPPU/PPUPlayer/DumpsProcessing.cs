@@ -17,7 +17,7 @@ using System.IO;
 
 namespace PPUPlayer
 {
-	public partial class Form1 : Form
+	public partial class FormMain : Form
 	{
 		internal const string VRAM_NAME = "VRAM";
 		internal const string CHR_ROM_NAME = "CHR-ROM";

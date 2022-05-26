@@ -4,7 +4,7 @@
     <Compile Update="DumpsProcessing.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Form1.cs">
+    <Compile Update="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="FormAbout.cs">

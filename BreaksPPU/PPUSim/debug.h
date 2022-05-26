@@ -119,7 +119,7 @@ namespace PPUSim
 		uint8_t CLIP_O;
 		uint8_t CLIP_B;
 		uint8_t Z_HPOS;
-		uint8_t EVAL;
+		uint8_t n_EVAL;
 		uint8_t E_EV;
 		uint8_t I_OAM2;
 		uint8_t PAR_O;

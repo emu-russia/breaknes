@@ -18,7 +18,7 @@ using System.Numerics;
 
 namespace PPUPlayer
 {
-	public partial class Form1 : Form
+	public partial class FormMain : Form
 	{
 		// TBD: The VideoSignalFeatures structure from PPUSim will be used instead.
 
