@@ -69,6 +69,8 @@
 			this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopPPUAndUnloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.miscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.pPUColorSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.sendFeedbackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,8 +123,6 @@
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
 			this.saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
-			this.miscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.pPUColorSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -457,6 +457,21 @@
 			this.stopPPUAndUnloadToolStripMenuItem.Text = "Stop PPU and Unload";
 			this.stopPPUAndUnloadToolStripMenuItem.Click += new System.EventHandler(this.stopPPUAndUnloadToolStripMenuItem_Click);
 			// 
+			// miscToolStripMenuItem
+			// 
+			this.miscToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pPUColorSpaceToolStripMenuItem});
+			this.miscToolStripMenuItem.Name = "miscToolStripMenuItem";
+			this.miscToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+			this.miscToolStripMenuItem.Text = "Misc";
+			// 
+			// pPUColorSpaceToolStripMenuItem
+			// 
+			this.pPUColorSpaceToolStripMenuItem.Name = "pPUColorSpaceToolStripMenuItem";
+			this.pPUColorSpaceToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+			this.pPUColorSpaceToolStripMenuItem.Text = "PPU Color Space";
+			this.pPUColorSpaceToolStripMenuItem.Click += new System.EventHandler(this.pPUColorSpaceToolStripMenuItem_Click);
+			// 
 			// helpToolStripMenuItem
 			// 
 			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -739,8 +754,7 @@
             "PPU",
             "PPURegs",
             "Board",
-            "Cartridge",
-            "Test"});
+            "Cartridge"});
 			this.comboBox2.Location = new System.Drawing.Point(8, 9);
 			this.comboBox2.Name = "comboBox2";
 			this.comboBox2.Size = new System.Drawing.Size(234, 23);
@@ -976,21 +990,6 @@
 			// 
 			this.saveFileDialogVCD.DefaultExt = "vcd";
 			this.saveFileDialogVCD.Filter = "VCD files|*.vcd|All files|*.vcd";
-			// 
-			// miscToolStripMenuItem
-			// 
-			this.miscToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.pPUColorSpaceToolStripMenuItem});
-			this.miscToolStripMenuItem.Name = "miscToolStripMenuItem";
-			this.miscToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-			this.miscToolStripMenuItem.Text = "Misc";
-			// 
-			// pPUColorSpaceToolStripMenuItem
-			// 
-			this.pPUColorSpaceToolStripMenuItem.Name = "pPUColorSpaceToolStripMenuItem";
-			this.pPUColorSpaceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.pPUColorSpaceToolStripMenuItem.Text = "PPU Color Space";
-			this.pPUColorSpaceToolStripMenuItem.Click += new System.EventHandler(this.pPUColorSpaceToolStripMenuItem_Click);
 			// 
 			// Form1
 			// 
