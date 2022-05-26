@@ -848,13 +848,13 @@ namespace PPUSimUnitTest
 
 		// Reset
 
-		ppu->wire.RES = TriState::One;
-		ppu->wire.CLK = TriState::Zero;
-		ppu->wire.n_CLK = TriState::One;
+		//ppu->wire.RES = TriState::One;
+		//ppu->wire.CLK = TriState::Zero;
+		//ppu->wire.n_CLK = TriState::One;
 
-		vout.sim_PhaseShifter();
-		Logger::WriteMessage("After Reset:\n");
-		DumpPhaseShifter(vout);
+		//vout.sim_PhaseShifter();
+		//Logger::WriteMessage("After Reset:\n");
+		//DumpPhaseShifter(vout);
 
 		// Run single PCLK
 
@@ -881,29 +881,17 @@ namespace PPUSimUnitTest
 	{
 		std::string text = "";
 
-		size_t out_bits[] = { 0, 2, 5, 7, 9, 11 };
-		size_t sout_bits[] = { 1, 3, 6, 8, 10, 12 };
-		std::string out_bit_str = "";
-		std::string sout_bit_str = "";
+		size_t cc_map[_countof(vout.P)] = { 4, 6, 11, 3, 9, 1, 7, 12, 5, 10, 2, 8, 0 };
+		char *int_to_hex[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F" };
 
-		size_t out_val = 0;
-		for (size_t n = 0; n < _countof(out_bits); n++)
+		// Sorted by color from 1 to 12 (inclusive)
+
+		for (size_t n = 1; n < 13; n++)
 		{
-			out_val |= (vout.PZ[out_bits[n]] == TriState::Zero ? 1ULL : 0) << n;
-			out_bit_str += vout.PZ[out_bits[n]] == TriState::One ? "1" : "0";
+			text += vout.PZ[cc_map[n]] == TriState::One ? int_to_hex[n] : ".";
 		}
 
-		size_t sout_val = 0;
-		for (size_t n = 0; n < _countof(sout_bits); n++)
-		{
-			sout_val |= (vout.PZ[sout_bits[n]] == TriState::One ? 1ULL : 0) << n;
-			sout_bit_str += vout.PZ[sout_bits[n]] == TriState::One ? "1" : "0";
-		}
-
-		//text += "out: " + std::to_string(out_val) + " (" + out_bit_str + "), sout: " 
-		//	+ std::to_string(sout_val) + " (" + sout_bit_str + ")\n";
-
-		text += "out: " + out_bit_str + ", sout: " + sout_bit_str + "\n";
+		text += "\n";
 
 		Logger::WriteMessage(text.c_str());
 	}
