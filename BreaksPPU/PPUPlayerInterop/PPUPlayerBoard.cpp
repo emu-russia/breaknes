@@ -287,6 +287,7 @@ namespace PPUPlayer
 
 	/// <summary>
 	/// Convert the raw color to RGB. Can be used for palette generation or PPU video output in RAW mode.
+	/// The SYNC level (RAW.Sync) check must be done from the outside.
 	/// </summary>
 	void Board::ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
 	{
@@ -294,9 +295,11 @@ namespace PPUPlayer
 		{
 			PPUSim::VideoOutSignal rawIn{}, rgbOut{};
 
+			// 8 Emphasis bands, each with 64 colors.
+
 			for (size_t n = 0; n < (8 * 64); n++)
 			{
-				rawIn.RAW.raw = n;
+				rawIn.RAW.raw = (uint16_t)n;
 				ppu->ConvertRAWToRGB(rawIn, rgbOut);
 				pal[n].r = rgbOut.RGB.r;
 				pal[n].g = rgbOut.RGB.g;

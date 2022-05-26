@@ -854,11 +854,6 @@ namespace PPUSimUnitTest
 
 		vout.sim_PhaseShifter();
 
-		Logger::WriteMessage("Phase shifter after Reset:\n");
-		DumpPhaseShifter(vout);
-
-		Logger::WriteMessage("\nRun Phase Shifter:\n");
-
 		// Run single PCLK
 
 		ppu->wire.RES = TriState::Zero;
@@ -880,24 +875,6 @@ namespace PPUSimUnitTest
 
 	void UnitTest::DumpPhaseShifter(VideoOut& vout)
 	{
-		size_t cnt_val = 0;
 
-		for (size_t n = 0; n < 6; n++)
-		{
-			cnt_val |= (vout.sr[n]->getn_Out() == TriState::One ? 1ULL : 0) << n;
-		}
-
-		Logger::WriteMessage(("Jhonson counter: " + std::to_string(cnt_val) + "\n").c_str());
-		Logger::WriteMessage("Active PZ Outputs: ");
-
-		for (size_t n = 0; n < _countof(vout.PZ); n++)
-		{
-			if (vout.PZ[n] == TriState::One)
-			{
-				Logger::WriteMessage((std::to_string(n) + ", ").c_str());
-			}
-		}
-
-		Logger::WriteMessage("\n");
 	}
 }
