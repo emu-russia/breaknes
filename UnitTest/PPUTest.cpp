@@ -783,6 +783,7 @@ namespace PPUSimUnitTest
 		VideoOut vout(ppu);
 
 		size_t cc_map[_countof(vout.P)] = { 4, 6, 11, 3, 9, 1, 7, 12, 5, 10, 2, 8, 0 };
+		size_t cb_output = 5;
 
 		vout.cc_burst_latch.set(TriState::Zero, TriState::One);
 
@@ -823,7 +824,7 @@ namespace PPUSimUnitTest
 
 		for (size_t n = 0; n < _countof(vout.P); n++)
 		{
-			if (n == 5)
+			if (n == cb_output)
 			{
 				if (vout.P[n] != TriState::One)
 					return false;
