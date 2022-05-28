@@ -469,13 +469,14 @@ namespace PPUSim
 		out.n_PZ = TriState::Zero;
 		out.sim_CompositeDAC(top);
 
-		// Based on: https://github.com/DragWx/PalGen/blob/master/palgen.js
-
 		top.composite -= features.BlankLevel;
 		bot.composite -= features.BlankLevel;
 		float normalize_factor = 1.f / features.V_pk_pk;
-		float Y = ((top.composite + bot.composite) / 2) * normalize_factor;
+		float luma = ((top.composite + bot.composite) / 2) * normalize_factor;
 		float sat = (top.composite - bot.composite) * normalize_factor;
+
+		// hue/sat -> I/Q
+		// Based on: https://github.com/DragWx/PalGen/blob/master/palgen.js
 
 		float satAdj = 0.7f;
 		float con = 1.2f;
@@ -485,6 +486,7 @@ namespace PPUSim
 		float irange = 0.599f;
 		float qrange = 0.525f;
 
+		float Y = luma;
 		float I = sin(((hue / 12.f) * 6.2832f) + 2.5656f + hueAdj) * irange;
 		float Q = cos(((hue / 12.f) * 6.2832f) + 2.5656f + hueAdj) * qrange;
 		I *= sat;
