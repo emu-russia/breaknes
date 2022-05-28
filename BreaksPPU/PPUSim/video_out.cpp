@@ -424,8 +424,8 @@ namespace PPUSim
 
 		out.sync_latch.set(TriState::One, TriState::One);
 		out.black_latch.set(TriState::One, TriState::One);
-		out.cb_latch.set(TriState::One, TriState::One);
-		out.n_POUT = TriState::One;
+		out.cb_latch.set(TriState::Zero, TriState::One);
+		out.n_POUT = TriState::Zero;
 
 		// Warm up the phase shifter. It is needed to get the Emphasis complement.
 
@@ -441,7 +441,8 @@ namespace PPUSim
 
 		// Get the color phase number and determine the phase shift / hue
 
-		int hue = 7 - rawIn.RAW.raw & 0xf;
+		// TBD: DEBUG
+		int hue = (rawIn.RAW.raw & 0xf) - 8;
 
 		// If necessary, make an Emphasis.
 
@@ -470,8 +471,11 @@ namespace PPUSim
 
 		// Based on: https://github.com/DragWx/PalGen/blob/master/palgen.js
 
-		float Y = ((top.composite + bot.composite) / 2) / (features.BlankLevel + features.V_pk_pk);
-		float sat = (top.composite - bot.composite) / (features.BlankLevel + features.V_pk_pk);
+		top.composite -= features.BlankLevel;
+		bot.composite -= features.BlankLevel;
+		float normalize_factor = 1.f / features.V_pk_pk;
+		float Y = ((top.composite + bot.composite) / 2) * normalize_factor;
+		float sat = (top.composite - bot.composite) * normalize_factor;
 
 		float satAdj = 0.7f;
 		float con = 1.2f;
