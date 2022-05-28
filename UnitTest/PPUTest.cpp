@@ -854,7 +854,7 @@ namespace PPUSimUnitTest
 			ppu->wire.CLK = TriState::Zero;
 			ppu->wire.n_CLK = TriState::One;
 
-			vout.sim_PhaseShifter();
+			vout.sim_PhaseShifter(ppu->wire.n_CLK, ppu->wire.CLK, ppu->wire.RES);
 			Logger::WriteMessage("After Reset:\n");
 			DumpPhaseShifter(vout);
 		}
@@ -873,7 +873,7 @@ namespace PPUSimUnitTest
 			ppu->wire.CLK = CLK;
 			ppu->wire.n_CLK = NOT(CLK);
 
-			vout.sim_PhaseShifter();
+			vout.sim_PhaseShifter(ppu->wire.n_CLK, ppu->wire.CLK, ppu->wire.RES);
 			DumpPhaseShifter(vout);
 
 			CLK = NOT(CLK);
@@ -910,7 +910,7 @@ namespace PPUSimUnitTest
 
 			for (size_t chroma_luma = 0; chroma_luma < 64; chroma_luma++)
 			{
-				uint16_t raw = chroma_luma | (emphasis_bits << 6);
+				uint16_t raw = (uint16_t)(chroma_luma | (emphasis_bits << 6));
 
 				PPUSim::VideoOutSignal rawIn{}, rgbOut{};
 
