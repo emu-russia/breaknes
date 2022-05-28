@@ -404,7 +404,7 @@ namespace PPUSim
 				features.ScansPerField = 262;
 				features.Composite = true;
 				features.BlankLevel = 1.3f;
-				features.V_pk_pk = 2.0f;
+				features.V_pk_pk = 1.6f;
 				break;
 		}
 	}
@@ -422,10 +422,12 @@ namespace PPUSim
 
 		GetSignalFeatures(features);
 
+		int cc = rawIn.RAW.raw & 0xf;
+
 		out.sync_latch.set(TriState::One, TriState::One);
-		out.black_latch.set(TriState::One, TriState::One);
+		out.black_latch.set(cc >= 14 ? TriState::Zero : TriState::One, TriState::One);
 		out.cb_latch.set(TriState::Zero, TriState::One);
-		out.n_POUT = TriState::Zero;
+		out.n_POUT = cc >= 14 ? TriState::One : TriState::Zero;
 
 		// Warm up the phase shifter. It is needed to get the Emphasis complement.
 
@@ -439,10 +441,11 @@ namespace PPUSim
 
 		// Get Color Burst Phase number
 
+		int cb_phase = 8;
+
 		// Get the color phase number and determine the phase shift / hue
 
-		// TBD: DEBUG
-		int hue = (rawIn.RAW.raw & 0xf) - 8;
+		int hue = cc - cb_phase;
 
 		// If necessary, make an Emphasis.
 
@@ -463,11 +466,26 @@ namespace PPUSim
 
 		VideoOutSignal bot{}, top{};
 
-		out.n_PZ = TriState::One;
-		out.sim_CompositeDAC(bot);
+		if (cc == 0)
+		{
+			out.n_PZ = TriState::Zero;
+			out.sim_CompositeDAC(bot);
+			out.sim_CompositeDAC(top);
+		}
+		else if (cc == 13)
+		{
+			out.n_PZ = TriState::One;
+			out.sim_CompositeDAC(bot);
+			out.sim_CompositeDAC(top);
+		}
+		else
+		{
+			out.n_PZ = TriState::One;
+			out.sim_CompositeDAC(bot);
 
-		out.n_PZ = TriState::Zero;
-		out.sim_CompositeDAC(top);
+			out.n_PZ = TriState::Zero;
+			out.sim_CompositeDAC(top);
+		}
 
 		top.composite -= features.BlankLevel;
 		bot.composite -= features.BlankLevel;
@@ -478,9 +496,9 @@ namespace PPUSim
 		// hue/sat -> I/Q
 		// Based on: https://github.com/DragWx/PalGen/blob/master/palgen.js
 
-		float satAdj = 0.7f;
-		float con = 1.2f;
-		sat *= satAdj * con;
+		//float satAdj = 0.7f;
+		//float con = 1.2f;
+		//sat *= satAdj * con;
 
 		float hueAdj = -0.25f;
 		float irange = 0.599f;
