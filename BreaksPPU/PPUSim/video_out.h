@@ -57,11 +57,11 @@ namespace PPUSim
 		BaseLogic::TriState VidOut_n_PICTURE = BaseLogic::TriState::X;	// Local /PICTURE signal
 
 		void sim_InputLatches();
-		void sim_PhaseShifter();
+		void sim_PhaseShifter(BaseLogic::TriState n_CLK, BaseLogic::TriState CLK, BaseLogic::TriState RES);
 		void sim_ChromaDecoder();
 		void sim_OutputLatches();
-		void sim_LumaDecoder();
-		void sim_Emphasis();
+		void sim_LumaDecoder(BaseLogic::TriState n_LL[4]);
+		void sim_Emphasis(BaseLogic::TriState n_TR, BaseLogic::TriState n_TG, BaseLogic::TriState n_TB);
 		void sim_CompositeDAC(VideoOutSignal& vout);
 		void sim_RGB_DAC(VideoOutSignal& vout);
 		void sim_nPICTURE();

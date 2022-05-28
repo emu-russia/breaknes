@@ -59,11 +59,11 @@ namespace PPUSim
 			return;
 		}
 
-		sim_PhaseShifter();
+		sim_PhaseShifter(ppu->wire.n_CLK, ppu->wire.CLK, ppu->wire.RES);
 		sim_ChromaDecoder();
 		sim_OutputLatches();
-		sim_LumaDecoder();
-		sim_Emphasis();
+		sim_LumaDecoder(ppu->wire.n_LL);
+		sim_Emphasis(ppu->wire.n_TR, ppu->wire.n_TG, ppu->wire.n_TB);
 
 		if (composite)
 		{
@@ -97,11 +97,8 @@ namespace PPUSim
 		cb_latch.set(BURST, n_PCLK);
 	}
 
-	void VideoOut::sim_PhaseShifter()
+	void VideoOut::sim_PhaseShifter(TriState n_CLK, TriState CLK, TriState RES)
 	{
-		TriState n_CLK = ppu->wire.n_CLK;
-		TriState CLK = ppu->wire.CLK;
-		TriState RES = ppu->wire.RES;
 		TriState unused{};
 		TriState sr0_sout{};
 
@@ -203,20 +200,20 @@ namespace PPUSim
 		black_latch.set(NOT(NOR3(NOR(PBLACK, n_PICTURE), SYNC, BURST)), n_PCLK);
 	}
 
-	void VideoOut::sim_LumaDecoder()
+	void VideoOut::sim_LumaDecoder(TriState n_LL[4])
 	{
-		n_LU[3] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], ppu->wire.n_LL[1]));
-		n_LU[2] = NOT(NOR3(n_POUT, NOT(ppu->wire.n_LL[0]), ppu->wire.n_LL[1]));
-		n_LU[1] = NOT(NOR3(n_POUT, ppu->wire.n_LL[0], NOT(ppu->wire.n_LL[1])));
-		n_LU[0] = NOT(NOR3(n_POUT, NOT(ppu->wire.n_LL[0]), NOT(ppu->wire.n_LL[1])));
+		n_LU[3] = NOT(NOR3(n_POUT, n_LL[0], n_LL[1]));
+		n_LU[2] = NOT(NOR3(n_POUT, NOT(n_LL[0]), n_LL[1]));
+		n_LU[1] = NOT(NOR3(n_POUT, n_LL[0], NOT(n_LL[1])));
+		n_LU[0] = NOT(NOR3(n_POUT, NOT(n_LL[0]), NOT(n_LL[1])));
 	}
 
-	void VideoOut::sim_Emphasis()
+	void VideoOut::sim_Emphasis(TriState n_TR, TriState n_TG, TriState n_TB)
 	{
 		TriState n[3]{};
-		n[0] = NOR3(n_POUT, n_PB, ppu->wire.n_TB);
-		n[1] = NOR3(n_POUT, n_PG, ppu->wire.n_TG);
-		n[2] = NOR3(n_POUT, n_PR, ppu->wire.n_TR);
+		n[0] = NOR3(n_POUT, n_PB, n_TB);
+		n[1] = NOR3(n_POUT, n_PG, n_TG);
+		n[2] = NOR3(n_POUT, n_PR, n_TR);
 		TINT = NOT(NOR3(n[0], n[1], n[2]));
 	}
 
@@ -419,7 +416,87 @@ namespace PPUSim
 
 	void VideoOut::ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
 	{
+		VideoOut out(ppu);
 
+		VideoSignalFeatures features{};
+
+		GetSignalFeatures(features);
+
+		out.sync_latch.set(TriState::One, TriState::One);
+		out.black_latch.set(TriState::One, TriState::One);
+		out.cb_latch.set(TriState::Zero, TriState::One);
+		out.n_POUT = TriState::Zero;
+
+		// Warm up the phase shifter. It is needed to get the Emphasis complement.
+
+		TriState CLK = TriState::Zero;
+
+		for (size_t n = 0; n < _countof(out.PZ); n++)
+		{
+			out.sim_PhaseShifter(NOT(CLK), CLK, TriState::Zero);
+			CLK = NOT(CLK);
+		}
+
+		// Get Color Burst Phase number
+
+		// Get the color phase number and determine the phase shift / hue
+
+		// TBD: DEBUG
+		int hue = (rawIn.RAW.raw & 0xf) - 8;
+
+		// If necessary, make an Emphasis.
+
+		out.sim_Emphasis(
+			NOT(FromByte(rawIn.RAW.TR)),
+			NOT(FromByte(rawIn.RAW.TG)),
+			NOT(FromByte(rawIn.RAW.TB)));
+
+		// TBD: DEBUG
+		out.TINT = TriState::Zero;
+
+		// Get the luminance / saturation
+
+		TriState n_LL[2]{};
+		n_LL[0] = NOT(FromByte(rawIn.RAW.LL0));
+		n_LL[1] = NOT(FromByte(rawIn.RAW.LL1));
+		out.sim_LumaDecoder(n_LL);
+
+		VideoOutSignal bot{}, top{};
+
+		out.n_PZ = TriState::One;
+		out.sim_CompositeDAC(bot);
+
+		out.n_PZ = TriState::Zero;
+		out.sim_CompositeDAC(top);
+
+		// Based on: https://github.com/DragWx/PalGen/blob/master/palgen.js
+
+		top.composite -= features.BlankLevel;
+		bot.composite -= features.BlankLevel;
+		float normalize_factor = 1.f / features.V_pk_pk;
+		float Y = ((top.composite + bot.composite) / 2) * normalize_factor;
+		float sat = (top.composite - bot.composite) * normalize_factor;
+
+		float satAdj = 0.7f;
+		float con = 1.2f;
+		sat *= satAdj * con;
+
+		float hueAdj = -0.25f;
+		float irange = 0.599f;
+		float qrange = 0.525f;
+
+		float I = sin(((hue / 12.f) * 6.2832f) + 2.5656f + hueAdj) * irange;
+		float Q = cos(((hue / 12.f) * 6.2832f) + 2.5656f + hueAdj) * qrange;
+		I *= sat;
+		Q *= sat;
+
+		float R = Y + (0.9469f * I) + (0.6236f * Q);
+		float G = Y - (0.2748f * I) - (0.6357f * Q);
+		float B = Y - (1.1085f * I) + (1.709f * Q);
+
+		rgbOut.RGB.r = (uint8_t)(Clamp(R, 0.f, 1.f) * 255);
+		rgbOut.RGB.g = (uint8_t)(Clamp(G, 0.f, 1.f) * 255);
+		rgbOut.RGB.b = (uint8_t)(Clamp(B, 0.f, 1.f) * 255);
 	}
 
 	float VideoOut::Clamp(float val, float min, float max)

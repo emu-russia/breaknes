@@ -201,7 +201,13 @@ namespace UnitTest
 		TEST_METHOD(DumpNtscPpuPhaseShifter)
 		{
 			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
-			ut.DumpNtscPpuPhaseShifter();
+			ut.DumpNtscPpuPhaseShifter(false);
+		}
+
+		TEST_METHOD(DumpNtscPpuColorSpace)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			ut.DumpNtscPpuColorSpace(false);
 		}
 	};
 }

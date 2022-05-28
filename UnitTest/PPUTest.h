@@ -41,6 +41,7 @@ namespace PPUSimUnitTest
 		bool TestFIFODownCounter(size_t v);
 		bool TestFIFOPairedSR(uint8_t val);
 		bool TestNtscPpuChromaDecoderOutputs();
-		void DumpNtscPpuPhaseShifter();
+		void DumpNtscPpuPhaseShifter(bool reset);
+		void DumpNtscPpuColorSpace(bool emphasis);
 	};
 }
