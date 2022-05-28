@@ -842,19 +842,22 @@ namespace PPUSimUnitTest
 	/// <summary>
 	/// Output the state of Phase Shifter outputs for a number of PCLK cycles.
 	/// </summary>
-	void UnitTest::DumpNtscPpuPhaseShifter()
+	void UnitTest::DumpNtscPpuPhaseShifter(bool reset)
 	{
 		VideoOut vout(ppu);
 
 		// Reset
 
-		//ppu->wire.RES = TriState::One;
-		//ppu->wire.CLK = TriState::Zero;
-		//ppu->wire.n_CLK = TriState::One;
+		if (reset)
+		{
+			ppu->wire.RES = TriState::One;
+			ppu->wire.CLK = TriState::Zero;
+			ppu->wire.n_CLK = TriState::One;
 
-		//vout.sim_PhaseShifter();
-		//Logger::WriteMessage("After Reset:\n");
-		//DumpPhaseShifter(vout);
+			vout.sim_PhaseShifter();
+			Logger::WriteMessage("After Reset:\n");
+			DumpPhaseShifter(vout);
+		}
 
 		// Run single PCLK
 
@@ -894,5 +897,31 @@ namespace PPUSimUnitTest
 		text += "\n";
 
 		Logger::WriteMessage(text.c_str());
+	}
+
+	/// <summary>
+	/// Output all the colors that the NTSC PPU is capable of, in RGB format.
+	/// </summary>
+	void UnitTest::DumpNtscPpuColorSpace(bool emphasis)
+	{
+		for (size_t emphasis_bits = 0; emphasis_bits < (emphasis ? 8 : 1); emphasis_bits++)
+		{
+			Logger::WriteMessage(("Emphasis band: " + std::to_string(emphasis_bits) + "\n").c_str());
+
+			for (size_t chroma_luma = 0; chroma_luma < 64; chroma_luma++)
+			{
+				uint16_t raw = chroma_luma | (emphasis_bits << 6);
+
+				PPUSim::VideoOutSignal rawIn{}, rgbOut{};
+
+				rawIn.RAW.raw = raw;
+				ppu->ConvertRAWToRGB(rawIn, rgbOut);
+
+				Logger::WriteMessage(("Color: " + std::to_string(chroma_luma) + ", RGB: " +
+					std::to_string(rgbOut.RGB.r) + " " +
+					std::to_string(rgbOut.RGB.g) + " " +
+					std::to_string(rgbOut.RGB.b) + "\n").c_str());
+			}
+		}
 	}
 }
