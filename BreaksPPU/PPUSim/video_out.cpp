@@ -429,16 +429,6 @@ namespace PPUSim
 		out.cb_latch.set(TriState::Zero, TriState::One);
 		out.n_POUT = cc >= 14 ? TriState::One : TriState::Zero;
 
-		// Warm up the phase shifter. It is needed to get the Emphasis complement.
-
-		TriState CLK = TriState::Zero;
-
-		for (size_t n = 0; n < _countof(out.PZ); n++)
-		{
-			out.sim_PhaseShifter(NOT(CLK), CLK, TriState::Zero);
-			CLK = NOT(CLK);
-		}
-
 		// Get Color Burst Phase number
 
 		int cb_phase = 8;
@@ -449,13 +439,14 @@ namespace PPUSim
 
 		// If necessary, make an Emphasis.
 
+		out.n_PR = cc != 6 ? TriState::Zero : TriState::One;
+		out.n_PG = cc != 10 ? TriState::Zero : TriState::One;
+		out.n_PB = cc != 2 ? TriState::Zero : TriState::One;
+
 		out.sim_Emphasis(
 			NOT(FromByte(rawIn.RAW.TR)),
 			NOT(FromByte(rawIn.RAW.TG)),
 			NOT(FromByte(rawIn.RAW.TB)));
-
-		// TBD: DEBUG
-		out.TINT = TriState::Zero;
 
 		// Get the luminance / saturation
 
@@ -496,6 +487,8 @@ namespace PPUSim
 		// hue/sat -> I/Q
 		// Based on: https://github.com/DragWx/PalGen/blob/master/palgen.js
 
+		// TBD: Think about magical values. Tweak the colorimetry.
+
 		//float satAdj = 0.7f;
 		//float con = 1.2f;
 		//sat *= satAdj * con;
@@ -504,6 +497,9 @@ namespace PPUSim
 		float irange = 0.599f;
 		float qrange = 0.525f;
 
+		// Colorburst amplitude = -0.208 ~ 0.286 = 0.494
+		// Colorburst bias = 0.039
+		// Hue 8 is used as colorburst. Colorburst is 2.5656 radians.
 		float Y = luma;
 		float I = sin(((hue / 12.f) * 6.2832f) + 2.5656f + hueAdj) * irange;
 		float Q = cos(((hue / 12.f) * 6.2832f) + 2.5656f + hueAdj) * qrange;
