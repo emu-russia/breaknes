@@ -188,94 +188,93 @@ namespace PPUSim
 		/// </summary>
 		struct InternalWires
 		{
-			BaseLogic::TriState CLK;
-			BaseLogic::TriState n_CLK;
-			BaseLogic::TriState RES;
-			BaseLogic::TriState RC;
-			BaseLogic::TriState PCLK;
-			BaseLogic::TriState n_PCLK;
+			BaseLogic::TriState n_CLK;			// First half of the PPU cycle
+			BaseLogic::TriState CLK;			// Second half of the PPU cycle
+			BaseLogic::TriState RES;			// 1: Global reset
+			BaseLogic::TriState RC;				// "Registers Clear"
+			BaseLogic::TriState n_PCLK;			// The PPU is in the PCLK=0 state
+			BaseLogic::TriState PCLK;			// The PPU is in the PCLK=1 state
 
-			BaseLogic::TriState RnW;
-			BaseLogic::TriState RS[3];
-			BaseLogic::TriState n_DBE;
-			BaseLogic::TriState n_ALE;
+			BaseLogic::TriState RnW;			// CPU interface operating mode (read/write)
+			BaseLogic::TriState RS[3];			// Selecting a register for the CPU interface
+			BaseLogic::TriState n_DBE;			// 0: "Data Bus Enable", enable CPU interface
 			BaseLogic::TriState n_RD;
 			BaseLogic::TriState n_WR;
-			BaseLogic::TriState n_W6_1;
-			BaseLogic::TriState n_W6_2;
-			BaseLogic::TriState n_W5_1;
-			BaseLogic::TriState n_W5_2;
-			BaseLogic::TriState n_R7;
-			BaseLogic::TriState n_W7;
-			BaseLogic::TriState n_W4;
-			BaseLogic::TriState n_W3;
-			BaseLogic::TriState n_R2;
-			BaseLogic::TriState n_W1;
-			BaseLogic::TriState n_W0;
-			BaseLogic::TriState n_R4;
+			BaseLogic::TriState n_W6_1;			// 0: First write to $2006
+			BaseLogic::TriState n_W6_2;			// 0: Second write to $2006
+			BaseLogic::TriState n_W5_1;			// 0: First write to $2005
+			BaseLogic::TriState n_W5_2;			// 0: Second write to $2005
+			BaseLogic::TriState n_R7;			// 0: Read $2007
+			BaseLogic::TriState n_W7;			// 0: Write $2007
+			BaseLogic::TriState n_W4;			// 0: Write $2004
+			BaseLogic::TriState n_W3;			// 0: Write $2003
+			BaseLogic::TriState n_R2;			// 0: Read $2002
+			BaseLogic::TriState n_W1;			// 0: Write $2001
+			BaseLogic::TriState n_W0;			// 0: Write $2000
+			BaseLogic::TriState n_R4;			// 0: Read $2004
 
-			BaseLogic::TriState I1_32;
-			BaseLogic::TriState OBSEL;
-			BaseLogic::TriState BGSEL;
-			BaseLogic::TriState O8_16;
+			BaseLogic::TriState I1_32;			// Increment PPU address 1/32.
+			BaseLogic::TriState OBSEL;			// Selecting Pattern Table for sprites
+			BaseLogic::TriState BGSEL;			// Selecting Pattern Table for background
+			BaseLogic::TriState O8_16;			// Object lines 8/16 (sprite size).
 			BaseLogic::TriState n_SLAVE;
-			BaseLogic::TriState VBL;
-			BaseLogic::TriState BnW;
-			BaseLogic::TriState n_BGCLIP;
-			BaseLogic::TriState n_OBCLIP;
+			BaseLogic::TriState VBL;			// Used in the VBlank interrupt handling circuitry
+			BaseLogic::TriState BnW;			// Disable Color Burst, to generate a monochrome picture
+			BaseLogic::TriState n_BGCLIP;		// To generate the CLIP_B control signal
+			BaseLogic::TriState n_OBCLIP;		// To generate the CLIP_O control signal
 			BaseLogic::TriState BGE;
-			BaseLogic::TriState BLACK;
+			BaseLogic::TriState BLACK;			// Active when PPU rendering is disabled (see $2001[3] è $2001[4]).
 			BaseLogic::TriState OBE;
-			BaseLogic::TriState n_TR;
-			BaseLogic::TriState n_TG;
-			BaseLogic::TriState n_TB;
+			BaseLogic::TriState n_TR;			// "Tint Red". Modifying value for Emphasis
+			BaseLogic::TriState n_TG;			// "Tint Green". Modifying value for Emphasis
+			BaseLogic::TriState n_TB;			// "Tint Blue". Modifying value for Emphasis
 
-			BaseLogic::TriState H0_Dash;
-			BaseLogic::TriState H0_Dash2;
-			BaseLogic::TriState nH1_Dash;
-			BaseLogic::TriState H1_Dash2;
-			BaseLogic::TriState nH2_Dash;
-			BaseLogic::TriState H2_Dash2;
-			BaseLogic::TriState H3_Dash2;
-			BaseLogic::TriState H4_Dash2;
-			BaseLogic::TriState H5_Dash2;
-			BaseLogic::TriState EvenOddOut;
-			BaseLogic::TriState HC;
-			BaseLogic::TriState VC;
+			BaseLogic::TriState H0_Dash;		// H0 signal delayed by one DLatch
+			BaseLogic::TriState H0_Dash2;		// H0 signal delayed by two DLatch
+			BaseLogic::TriState nH1_Dash;		// H1 signal delayed by one DLatch (in inverse logic)
+			BaseLogic::TriState H1_Dash2;		// H1 signal delayed by two DLatch
+			BaseLogic::TriState nH2_Dash;		// H2 signal delayed by one DLatch (in inverse logic)
+			BaseLogic::TriState H2_Dash2;		// H2 signal delayed by two DLatch
+			BaseLogic::TriState H3_Dash2;		// H3 signal delayed by two DLatch
+			BaseLogic::TriState H4_Dash2;		// H4 signal delayed by two DLatch
+			BaseLogic::TriState H5_Dash2;		// H5 signal delayed by two DLatch
+			BaseLogic::TriState EvenOddOut;		// Intermediate signal for the HCounter control circuit.
+			BaseLogic::TriState HC;				// "HCounter Clear"
+			BaseLogic::TriState VC;				// "VCounter Clear"
 
-			BaseLogic::TriState n_ZCOL0;
+			BaseLogic::TriState n_ZCOL0;		// Sprite color. The lower 2 bits are in inverse logic, the higher 2 bits are in direct logic.
 			BaseLogic::TriState n_ZCOL1;
 			BaseLogic::TriState ZCOL2;
 			BaseLogic::TriState ZCOL3;
-			BaseLogic::TriState n_ZPRIO;
-			BaseLogic::TriState n_SPR0HIT;
-			BaseLogic::TriState EXT_In[4];
-			BaseLogic::TriState n_EXT_Out[4];
+			BaseLogic::TriState n_ZPRIO;		// 0: Priority of sprite over background
+			BaseLogic::TriState n_SPR0HIT;		// To detect a Sprite 0 Hit event
+			BaseLogic::TriState EXT_In[4];		// Input color from EXT terminals
+			BaseLogic::TriState n_EXT_Out[4];	// The output color for EXT terminals (inverse logic)
 
 			BaseLogic::TriState OB[8];
-			BaseLogic::TriState n_SPR0_EV;
+			BaseLogic::TriState n_SPR0_EV;		// 0: Sprite "0" is found on the current line. To define a Sprite 0 Hit event
 			BaseLogic::TriState OFETCH;
-			BaseLogic::TriState SPR_OV;
+			BaseLogic::TriState SPR_OV;			// Sprites on the current line are more than 8 or the main OAM counter is full, copying is stopped
 			BaseLogic::TriState OAMCTR2;
-			BaseLogic::TriState n_OAM[8];
-			BaseLogic::TriState OAM8;
-			BaseLogic::TriState PD_FIFO;
-			BaseLogic::TriState OV[8];
-			BaseLogic::TriState n_WE;		// 0: OAM Write
+			BaseLogic::TriState n_OAM[8];		// OAM Address
+			BaseLogic::TriState OAM8;			// Selects an additional (temp) OAM for addressing
+			BaseLogic::TriState PD_FIFO;		// To zero the output of the H. Inv circuit
+			BaseLogic::TriState OV[8];			// Bit 0-7 of the V sprite value
+			BaseLogic::TriState n_WE;			// 0: OAM Write
 
-			BaseLogic::TriState n_CLPB;
-			BaseLogic::TriState CLPO;
-			BaseLogic::TriState n_SH2;
-			BaseLogic::TriState n_SH3;
-			BaseLogic::TriState n_SH5;
-			BaseLogic::TriState n_SH7;
+			BaseLogic::TriState n_CLPB;			// 0: To enable background clipping
+			BaseLogic::TriState CLPO;			// To enable sprite clipping
+			BaseLogic::TriState n_SH2;			// Sprite H value bits. /SH2 also goes into V. Inversion.
+			BaseLogic::TriState n_SH3;			// Sprite H value bits
+			BaseLogic::TriState n_SH5;			// Sprite H value bits
+			BaseLogic::TriState n_SH7;			// Sprite H value bits
 			BaseLogic::TriState n_ZH;
 
 			BaseLogic::TriState n_PA_Bot[8];
 			BaseLogic::TriState n_PA_Top[6];
-			BaseLogic::TriState BGC[4];
-			BaseLogic::TriState FH[3];
-			BaseLogic::TriState FV[3];
+			BaseLogic::TriState BGC[4];			// Background color
+			BaseLogic::TriState FH[3];			// Fine H value
+			BaseLogic::TriState FV[3];			// Fine V value
 			BaseLogic::TriState NTV;
 			BaseLogic::TriState NTH;
 			BaseLogic::TriState TV[5];
@@ -286,22 +285,23 @@ namespace PPUSim
 			BaseLogic::TriState n_TVO[5];
 			BaseLogic::TriState FVO[3];
 			BaseLogic::TriState n_FVO[3];
-			BaseLogic::TriState PAD[13];
+			BaseLogic::TriState PAD[13];		// Pattern address (patgen)
 
-			BaseLogic::TriState n_CB_DB;
-			BaseLogic::TriState n_BW;
-			BaseLogic::TriState n_DB_CB;
-			BaseLogic::TriState PAL[5];
-			BaseLogic::TriState n_CC[4];
-			BaseLogic::TriState n_LL[2];
+			BaseLogic::TriState n_CB_DB;		// 0: CB -> DB
+			BaseLogic::TriState n_BW;			// The outputs of the 4 bit CB responsible for the chrominance are controlled by the /BW control signal.
+			BaseLogic::TriState n_DB_CB;		// 0: DB -> CB
+			BaseLogic::TriState PAL[5];			// Palette RAM Address
+			BaseLogic::TriState n_CC[4];		// 4 bits of the chrominance of the current "pixel" (inverted value)
+			BaseLogic::TriState n_LL[2];		// 2 bits of the luminance of the current "pixel" (inverted value)
 
-			BaseLogic::TriState RD;
-			BaseLogic::TriState WR;
-			BaseLogic::TriState TSTEP;
-			BaseLogic::TriState DB_PAR;
-			BaseLogic::TriState PD_RB;
-			BaseLogic::TriState TH_MUX;
-			BaseLogic::TriState XRB;
+			BaseLogic::TriState RD;				// Output value for /RD pin
+			BaseLogic::TriState WR;				// Output value for /WR pin
+			BaseLogic::TriState n_ALE;			// Output value for ALE pin
+			BaseLogic::TriState TSTEP;			// For PAR Counters control logic
+			BaseLogic::TriState DB_PAR;			// DB -> PAR
+			BaseLogic::TriState PD_RB;			// PD -> Read Buffer
+			BaseLogic::TriState TH_MUX;			// Send the TH Counter value to the MUX input, which will cause the value to go into the palette as Direct Color.
+			BaseLogic::TriState XRB;			// 0: Enable RB Output
 		} wire{};
 
 		/// <summary>
@@ -309,32 +309,32 @@ namespace PPUSim
 		/// </summary>
 		struct FsmCommands
 		{
-			BaseLogic::TriState SEV;
-			BaseLogic::TriState CLIP_O;
-			BaseLogic::TriState CLIP_B;
-			BaseLogic::TriState ZHPOS;
-			BaseLogic::TriState n_EVAL;
-			BaseLogic::TriState EEV;
-			BaseLogic::TriState IOAM2;
-			BaseLogic::TriState PARO;
-			BaseLogic::TriState nVIS;
-			BaseLogic::TriState nFNT;
-			BaseLogic::TriState FTB;
-			BaseLogic::TriState FTA;
-			BaseLogic::TriState FAT;
-			BaseLogic::TriState nFO;
-			BaseLogic::TriState BPORCH;
-			BaseLogic::TriState SCCNT;
-			BaseLogic::TriState nHB;
-			BaseLogic::TriState BURST;
-			BaseLogic::TriState SYNC;
-			BaseLogic::TriState n_PICTURE;
-			BaseLogic::TriState RESCL;
-			BaseLogic::TriState VSYNC;
-			BaseLogic::TriState nVSET;
-			BaseLogic::TriState VB;
-			BaseLogic::TriState BLNK;
-			BaseLogic::TriState INT;
+			BaseLogic::TriState SEV;			// "Start Sprite Evaluation"
+			BaseLogic::TriState CLIP_O;			// "Clip Objects". 1: Do not show the left 8 screen points for sprites. Used to get the CLPO signal that goes into the OAM FIFO.
+			BaseLogic::TriState CLIP_B;			// "Clip Background". 1: Do not show the left 8 points of the screen for the background. Used to get the /CLPB signal that goes into the Data Reader.
+			BaseLogic::TriState ZHPOS;			// "Clear HPos". Clear the H counters in the sprite FIFO and start the FIFO
+			BaseLogic::TriState n_EVAL;			// 0: "Sprite Evaluation in Progress"
+			BaseLogic::TriState EEV;			// "End Sprite Evaluation"
+			BaseLogic::TriState IOAM2;			// "Init OAM2". Initialize an additional (temp) OAM
+			BaseLogic::TriState PARO;			// "PAR for Object". Selecting a tile for an object (sprite)
+			BaseLogic::TriState nVIS;			// "Not Visible". The invisible part of the signal (used in sprite logic)
+			BaseLogic::TriState nFNT;			// 0: "Fetch Name Table"
+			BaseLogic::TriState FTB;			// "Fetch Tile B"
+			BaseLogic::TriState FTA;			// "Fetch Tile A"
+			BaseLogic::TriState FAT;			// "Fetch Attribute Table"
+			BaseLogic::TriState nFO;			// 0: "Fetch Output Enable"
+			BaseLogic::TriState BPORCH;			// "Back Porch"
+			BaseLogic::TriState SCCNT;			// "Scroll Counters Control". Update the scrolling registers.
+			BaseLogic::TriState nHB;			// "HBlank"
+			BaseLogic::TriState BURST;			// Color Burst
+			BaseLogic::TriState SYNC;			// Sync pulse
+			BaseLogic::TriState n_PICTURE;		// 0: Visible part of the scan-lines
+			BaseLogic::TriState RESCL;			// "Reset FF Clear" / "VBlank Clear". VBlank period end event.
+			BaseLogic::TriState VSYNC;			// Vertical sync pulse
+			BaseLogic::TriState nVSET;			// "VBlank Set". VBlank period start event.
+			BaseLogic::TriState VB;				// Active when the invisible part of the video signal is output (used only in H Decoder)
+			BaseLogic::TriState BLNK;			// Active when PPU rendering is disabled (by BLACK signal) or during VBlank
+			BaseLogic::TriState INT;			// "Interrupt". PPU Interrupt
 		} fsm{};
 
 		Revision rev = Revision::Unknown;

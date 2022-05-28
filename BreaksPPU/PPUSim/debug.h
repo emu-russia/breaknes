@@ -15,7 +15,6 @@ namespace PPUSim
 		uint8_t RnW;
 		uint8_t RS[3];
 		uint8_t n_DBE;
-		uint8_t n_ALE;
 		uint8_t n_RD;
 		uint8_t n_WR;
 		uint8_t n_W6_1;
@@ -102,6 +101,7 @@ namespace PPUSim
 		uint8_t n_LL[2];
 		uint8_t RD;
 		uint8_t WR;
+		uint8_t n_ALE;
 		uint8_t TSTEP;
 		uint8_t DB_PAR;
 		uint8_t PD_RB;

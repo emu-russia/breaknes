@@ -21,7 +21,6 @@ namespace PPUSim
 			wires.RS[n] = ToByte(wire.RS[n]);
 		}
 		wires.n_DBE = ToByte(wire.n_DBE);
-		wires.n_ALE = ToByte(wire.n_ALE);
 		wires.n_RD = ToByte(wire.n_RD);
 		wires.n_WR = ToByte(wire.n_WR);
 		wires.n_W6_1 = ToByte(wire.n_W6_1);
@@ -158,6 +157,7 @@ namespace PPUSim
 
 		wires.RD = ToByte(wire.RD);
 		wires.WR = ToByte(wire.WR);
+		wires.n_ALE = ToByte(wire.n_ALE);
 		wires.TSTEP = ToByte(wire.TSTEP);
 		wires.DB_PAR = ToByte(wire.DB_PAR);
 		wires.PD_RB = ToByte(wire.PD_RB);
