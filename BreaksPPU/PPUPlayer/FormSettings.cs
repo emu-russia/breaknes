@@ -65,6 +65,7 @@ namespace PPUPlayer
 			settings.RenderAlwaysEnabled = false;
 			settings.TraceTimeScale = 23;   // ns
 			settings.ColorDebug = true;
+			settings.PpuRAWMode = false;
 
 			SaveSettings(settings);
 
@@ -130,6 +131,11 @@ namespace PPUPlayer
 			[Category("Debug")]
 			[Description("Show color in the VRAM/Objects viewer. The CRAM currently in use will be loaded.")]
 			public bool ColorDebug { get; set; }
+
+			[XmlElement]
+			[Category("Board Features")]
+			[Description("Use RAW color output. RAW color refers to the Chroma/Luma combination that comes to the video generator and the Emphasis bit combination.")]
+			public bool PpuRAWMode { get; set; }
 		}
 
 

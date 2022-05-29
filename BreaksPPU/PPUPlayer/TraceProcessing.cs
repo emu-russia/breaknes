@@ -41,18 +41,6 @@ namespace PPUPlayer
 			public List<List<BreaksCore.DebugInfoEntry>> entries = new();
 		}
 
-		private void testTraceToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ResetTrace(2);
-
-			var entry = BreaksCore.GetTestDebugInfo();
-			fields[0].scans[0].entries.Add(entry);
-			fields[0].scans[0].entries.Add(entry);
-			fields[0].scans[0].entries.Add(entry);
-
-			VisualizeTrace(0, 0);
-		}
-
 		void ResetTrace(int maxFields)
 		{
 			TraceResetInProgress = true;

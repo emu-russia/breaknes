@@ -110,7 +110,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void SampleVideoSignal(float* sample)
+	__declspec(dllexport) void SampleVideoSignal(PPUSim::VideoOutSignal* sample)
 	{
 		if (board != nullptr)
 		{
@@ -198,6 +198,14 @@ extern "C"
 		else
 		{
 			*r = *g = *b = 0;
+		}
+	}
+
+	__declspec(dllexport) void SetRAWColorMode(bool enable)
+	{
+		if (board != nullptr)
+		{
+			board->SetRAWColorMode(enable);
 		}
 	}
 }

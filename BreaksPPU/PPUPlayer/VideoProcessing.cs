@@ -52,10 +52,12 @@ namespace PPUPlayer
 		Bitmap? scan_pic = null;
 		Bitmap? field_pic = null;
 
-		void ProcessSample(float sample)
+		bool RawMode = false;
+
+		void ProcessSample(PPUPlayerInterop.VideoOutSample sample)
 		{
-			Scan[ScanSampleCounter] = sample;
-			Field[FieldSampleCounter] = sample;
+			Scan[ScanSampleCounter] = sample.composite;
+			Field[FieldSampleCounter] = sample.composite;
 
 			ScanSampleCounter++;
 			if (ScanSampleCounter >= SamplesPerScan)
@@ -88,43 +90,6 @@ namespace PPUPlayer
 
 				FieldSampleCounter = 0;
 			}
-		}
-
-		private void testScanToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			float delta = 0.001f;
-
-			float level = BlankLevel;
-			int subCounter = 0;
-
-			for (int i = 0; i < SamplesPerScan; i++)
-			{
-				Scan[i] = subCounter < 4 ? BlankLevel + delta * i : BlankLevel - delta * i;
-
-				subCounter++;
-				if (subCounter >= 8)
-				{
-					subCounter = 0;
-				}
-			}
-
-			var PrevScanSampleCounter = ScanSampleCounter;
-			ScanSampleCounter = SamplesPerScan;
-			VisualizeScan();
-			ScanSampleCounter = PrevScanSampleCounter;
-		}
-
-		private void testFieldToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			for (int i = 0; i < SamplesPerField; i++)
-			{
-				Field[i] = BlankLevel;
-			}
-
-			var PrevFieldSampleCounter = FieldSampleCounter;
-			FieldSampleCounter = SamplesPerField;
-			VisualizeField();
-			FieldSampleCounter = PrevFieldSampleCounter;
 		}
 
 		/// <summary>
@@ -289,111 +254,16 @@ namespace PPUPlayer
 			return Math.Min(max, Math.Max(val, min));
 		}
 
-		void ResetVisualize()
+		void ResetVisualize(bool RAWMode)
 		{
+			RawMode = RAWMode;
+			PPUPlayerInterop.SetRAWColorMode(RAWMode);
+
 			ScanSampleCounter = 0;
 			FieldSampleCounter = 0;
 			scan_pic = null;
 			field_pic = null;
 			GC.Collect();
-		}
-
-		private void SaveFloatArray(string filename, float [] data)
-		{
-			// https://stackoverflow.com/questions/30628833/write-float-array-into-a-binary-file-c-sharp
-
-			using (FileStream file = File.Create(filename))
-			{
-				using (BinaryWriter writer = new BinaryWriter(file))
-				{
-					foreach (float value in data)
-					{
-						writer.Write(value);
-					}
-				}
-			}
-		}
-
-		private void LoadFloatArray(string filename, float [] data, int maxSize)
-		{
-			int size = Math.Min(data.Length, maxSize);
-
-			using (FileStream file = File.OpenRead(filename))
-			{
-				using (BinaryReader reader = new BinaryReader(file))
-				{
-					for (int i=0; i<size; i++)
-					{
-						data[i] = reader.ReadSingle();
-					}
-				}
-			}
-		}
-
-		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			DialogResult res = saveFileDialog1.ShowDialog();
-			if (res == DialogResult.OK)
-			{
-				SaveFloatArray(saveFileDialog1.FileName, LastField);
-			}
-		}
-
-		private void saveTheLastScanToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			DialogResult res = saveFileDialog1.ShowDialog();
-			if (res == DialogResult.OK)
-			{
-				SaveFloatArray(saveFileDialog1.FileName, LastScan);
-			}
-		}
-
-		private void visualizeFieldFromDumpToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			DialogResult res = openFileDialog1.ShowDialog();
-			if (res == DialogResult.OK)
-			{
-				for (int i = 0; i < SamplesPerField; i++)
-				{
-					LastField[i] = BlankLevel;
-				}
-
-				LoadFloatArray(openFileDialog1.FileName, LastField, SamplesPerField);
-
-				for (int i = 0; i < SamplesPerField; i++)
-				{
-					Field[i] = LastField[i];
-				}
-
-				var PrevFieldSampleCounter = FieldSampleCounter;
-				FieldSampleCounter = SamplesPerField;
-				VisualizeField();
-				FieldSampleCounter = PrevFieldSampleCounter;
-			}
-		}
-
-		private void visualizeScanFromDumpToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			DialogResult res = openFileDialog1.ShowDialog();
-			if (res == DialogResult.OK)
-			{
-				for (int i = 0; i < SamplesPerScan; i++)
-				{
-					LastScan[i] = BlankLevel;
-				}
-
-				LoadFloatArray(openFileDialog1.FileName, LastScan, SamplesPerScan);
-
-				for (int i = 0; i < SamplesPerScan; i++)
-				{
-					Scan[i] = LastScan[i];
-				}
-
-				var PrevScanSampleCounter = ScanSampleCounter;
-				ScanSampleCounter = SamplesPerScan;
-				VisualizeScan();
-				ScanSampleCounter = PrevScanSampleCounter;
-			}
 		}
 	}
 }

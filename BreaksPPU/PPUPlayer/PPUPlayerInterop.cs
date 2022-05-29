@@ -11,6 +11,23 @@ namespace PPUPlayer
 	internal class PPUPlayerInterop
 	{
 
+		[StructLayout(LayoutKind.Explicit)]
+		public struct VideoOutSample
+		{
+			[FieldOffset(0)]
+			public float composite;
+			[FieldOffset(0)]
+			public byte r;
+			[FieldOffset(1)]
+			public byte g;
+			[FieldOffset(2)]
+			public byte b;
+			[FieldOffset(3)]
+			public byte syncLevel;
+			[FieldOffset(0)]
+			public UInt16 raw;		// sBGRLLCCCC (Sync || Tint Blue || Tint Green || Tint Red || Luma[2] || Chroma[4])
+		}
+
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void CreateBoard(string boardName, string apu, string ppu, string p1);
 
@@ -36,7 +53,7 @@ namespace PPUPlayer
 		public static extern void EjectCartridge();
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SampleVideoSignal(out float sample);
+		public static extern void SampleVideoSignal(out VideoOutSample sample);
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int GetHCounter();
@@ -107,6 +124,9 @@ namespace PPUPlayer
 
 			return features;
 		}
+
+		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetRAWColorMode(bool enable);
 	}
 
 

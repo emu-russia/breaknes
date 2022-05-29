@@ -69,10 +69,6 @@ namespace PPUPlayer
 			AllocConsole();
 #endif
 
-#if !DEBUG
-			debugToolStripMenuItem.Visible = false;
-#endif
-
 			pictureBoxField.BackColor = Color.Gray;
 			toolStripButton3.Enabled = false;
 			comboBox2.SelectedIndex = 0;
@@ -198,7 +194,7 @@ namespace PPUPlayer
 				PPUPlayerInterop.ResetPPU();
 			}
 			UpdateMemLayout();
-			ResetVisualize();
+			ResetVisualize(settings.PpuRAWMode);
 
 			PPUPlayerInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
 
@@ -407,7 +403,7 @@ namespace PPUPlayer
 
 				if (PPUPlayerInterop.PPUInResetState() == 0)
 				{
-					float sample;
+					PPUPlayerInterop.VideoOutSample sample;
 					PPUPlayerInterop.SampleVideoSignal(out sample);
 					ProcessSample(sample);
 				}
@@ -500,32 +496,6 @@ namespace PPUPlayer
 					toolStripButton3.Checked = false;
 				}
 			}
-		}
-
-		private void testStatsToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			UpdatePpuStats(PPUStats.CPU_IF_Ops, 1);
-			UpdatePpuStats(PPUStats.Scans, 2);
-			UpdatePpuStats(PPUStats.Fields, 3);
-			UpdatePpuStats(PPUStats.PCLK_Sec, 4);
-			UpdatePpuStats(PPUStats.FPS, 5);
-		}
-
-		private void testDebugPropertyGridToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			List<BreaksCore.DebugInfoEntry> entries = BreaksCore.GetTestDebugInfo();
-			UpdateDebugInfo(entries);
-		}
-
-		private void testHexBoxToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			byte[] dump = new byte[0x100];
-			for (int i=0; i<0x100; i++)
-			{
-				dump[i] = (byte)i;
-			}
-			hexBox1.ByteProvider = new DynamicByteProvider(dump);
-			hexBox1.Refresh();
 		}
 
 		void Button2Click()

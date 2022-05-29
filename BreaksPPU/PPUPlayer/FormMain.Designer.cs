@@ -34,11 +34,6 @@
 			this.choosePPURegsDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.choosenesImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.saveTheLastScanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.visualizeFieldFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.visualizeScanFromDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
 			this.saveTraceInLogisimFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveTraceInVCDFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
@@ -57,14 +52,6 @@
 			this.saveCRAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
 			this.loadNintendulatorPPUDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.testStatsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.testFieldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.testScanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-			this.testDebugPropertyGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.testHexBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.testTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopPPUAndUnloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -160,7 +147,6 @@
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.dumpsToolStripMenuItem,
-            this.debugToolStripMenuItem,
             this.controlsToolStripMenuItem,
             this.miscToolStripMenuItem,
             this.helpToolStripMenuItem});
@@ -176,11 +162,6 @@
             this.choosePPURegsDumpToolStripMenuItem,
             this.choosenesImageToolStripMenuItem,
             this.toolStripSeparator3,
-            this.saveToolStripMenuItem,
-            this.saveTheLastScanToolStripMenuItem,
-            this.visualizeFieldFromDumpToolStripMenuItem,
-            this.visualizeScanFromDumpToolStripMenuItem,
-            this.toolStripSeparator6,
             this.saveTraceInLogisimFormatToolStripMenuItem,
             this.saveTraceInVCDFormatToolStripMenuItem,
             this.toolStripSeparator5,
@@ -209,39 +190,6 @@
 			// 
 			this.toolStripSeparator3.Name = "toolStripSeparator3";
 			this.toolStripSeparator3.Size = new System.Drawing.Size(231, 6);
-			// 
-			// saveToolStripMenuItem
-			// 
-			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-			this.saveToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-			this.saveToolStripMenuItem.Text = "Save the last Field...";
-			this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
-			// 
-			// saveTheLastScanToolStripMenuItem
-			// 
-			this.saveTheLastScanToolStripMenuItem.Name = "saveTheLastScanToolStripMenuItem";
-			this.saveTheLastScanToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-			this.saveTheLastScanToolStripMenuItem.Text = "Save the last Scan...";
-			this.saveTheLastScanToolStripMenuItem.Click += new System.EventHandler(this.saveTheLastScanToolStripMenuItem_Click);
-			// 
-			// visualizeFieldFromDumpToolStripMenuItem
-			// 
-			this.visualizeFieldFromDumpToolStripMenuItem.Name = "visualizeFieldFromDumpToolStripMenuItem";
-			this.visualizeFieldFromDumpToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-			this.visualizeFieldFromDumpToolStripMenuItem.Text = "Visualize Field from dump...";
-			this.visualizeFieldFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeFieldFromDumpToolStripMenuItem_Click);
-			// 
-			// visualizeScanFromDumpToolStripMenuItem
-			// 
-			this.visualizeScanFromDumpToolStripMenuItem.Name = "visualizeScanFromDumpToolStripMenuItem";
-			this.visualizeScanFromDumpToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-			this.visualizeScanFromDumpToolStripMenuItem.Text = "Visualize Scan from dump...";
-			this.visualizeScanFromDumpToolStripMenuItem.Click += new System.EventHandler(this.visualizeScanFromDumpToolStripMenuItem_Click);
-			// 
-			// toolStripSeparator6
-			// 
-			this.toolStripSeparator6.Name = "toolStripSeparator6";
-			this.toolStripSeparator6.Size = new System.Drawing.Size(231, 6);
 			// 
 			// saveTraceInLogisimFormatToolStripMenuItem
 			// 
@@ -371,67 +319,6 @@
 			this.loadNintendulatorPPUDumpToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
 			this.loadNintendulatorPPUDumpToolStripMenuItem.Text = "Load Nintendulator PPU Dump...";
 			this.loadNintendulatorPPUDumpToolStripMenuItem.Click += new System.EventHandler(this.loadNintendulatorPPUDumpToolStripMenuItem_Click);
-			// 
-			// debugToolStripMenuItem
-			// 
-			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.testStatsToolStripMenuItem,
-            this.testFieldToolStripMenuItem,
-            this.testScanToolStripMenuItem,
-            this.toolStripSeparator2,
-            this.testDebugPropertyGridToolStripMenuItem,
-            this.testHexBoxToolStripMenuItem,
-            this.testTraceToolStripMenuItem});
-			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
-			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
-			this.debugToolStripMenuItem.Text = "Debug";
-			// 
-			// testStatsToolStripMenuItem
-			// 
-			this.testStatsToolStripMenuItem.Name = "testStatsToolStripMenuItem";
-			this.testStatsToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-			this.testStatsToolStripMenuItem.Text = "Test Stats";
-			this.testStatsToolStripMenuItem.Click += new System.EventHandler(this.testStatsToolStripMenuItem_Click);
-			// 
-			// testFieldToolStripMenuItem
-			// 
-			this.testFieldToolStripMenuItem.Name = "testFieldToolStripMenuItem";
-			this.testFieldToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-			this.testFieldToolStripMenuItem.Text = "Test Field";
-			this.testFieldToolStripMenuItem.Click += new System.EventHandler(this.testFieldToolStripMenuItem_Click);
-			// 
-			// testScanToolStripMenuItem
-			// 
-			this.testScanToolStripMenuItem.Name = "testScanToolStripMenuItem";
-			this.testScanToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-			this.testScanToolStripMenuItem.Text = "Test Scan";
-			this.testScanToolStripMenuItem.Click += new System.EventHandler(this.testScanToolStripMenuItem_Click);
-			// 
-			// toolStripSeparator2
-			// 
-			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(199, 6);
-			// 
-			// testDebugPropertyGridToolStripMenuItem
-			// 
-			this.testDebugPropertyGridToolStripMenuItem.Name = "testDebugPropertyGridToolStripMenuItem";
-			this.testDebugPropertyGridToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-			this.testDebugPropertyGridToolStripMenuItem.Text = "Test Debug PropertyGrid";
-			this.testDebugPropertyGridToolStripMenuItem.Click += new System.EventHandler(this.testDebugPropertyGridToolStripMenuItem_Click);
-			// 
-			// testHexBoxToolStripMenuItem
-			// 
-			this.testHexBoxToolStripMenuItem.Name = "testHexBoxToolStripMenuItem";
-			this.testHexBoxToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-			this.testHexBoxToolStripMenuItem.Text = "Test HexBox";
-			this.testHexBoxToolStripMenuItem.Click += new System.EventHandler(this.testHexBoxToolStripMenuItem_Click);
-			// 
-			// testTraceToolStripMenuItem
-			// 
-			this.testTraceToolStripMenuItem.Name = "testTraceToolStripMenuItem";
-			this.testTraceToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-			this.testTraceToolStripMenuItem.Text = "Test Trace";
-			this.testTraceToolStripMenuItem.Click += new System.EventHandler(this.testTraceToolStripMenuItem_Click);
 			// 
 			// controlsToolStripMenuItem
 			// 
@@ -990,7 +877,7 @@
 			this.saveFileDialogVCD.DefaultExt = "vcd";
 			this.saveFileDialogVCD.Filter = "VCD files|*.vcd|All files|*.vcd";
 			// 
-			// Form1
+			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1000,7 +887,7 @@
 			this.Controls.Add(this.statusStrip1);
 			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
-			this.Name = "Form1";
+			this.Name = "FormMain";
 			this.Text = "PPU Player";
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.menuStrip1.ResumeLayout(false);
@@ -1074,13 +961,6 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.ComboBox comboBox1;
         private Be.Windows.Forms.HexBox hexBox1;
-        private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testStatsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testFieldToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testScanToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem testDebugPropertyGridToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testHexBoxToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel6;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel7;
@@ -1100,10 +980,6 @@
         private System.Windows.Forms.PictureBox pictureBoxForHuman;
         private System.Windows.Forms.PictureBox pictureBoxScan;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-		private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem saveTheLastScanToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem visualizeFieldFromDumpToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem visualizeScanFromDumpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
@@ -1115,8 +991,6 @@
 		private System.Windows.Forms.ComboBox comboBoxTraceScan;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.DataGridView dataGridView1;
-		private System.Windows.Forms.ToolStripMenuItem testTraceToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
 		private System.Windows.Forms.ToolStripMenuItem saveTraceInLogisimFormatToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog2;
 		private System.Windows.Forms.ToolStripMenuItem saveTraceInVCDFormatToolStripMenuItem;

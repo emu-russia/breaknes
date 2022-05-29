@@ -108,7 +108,7 @@ namespace PPUPlayer
 
 		void EjectCartridge();
 
-		void SampleVideoSignal(float *sample);
+		void SampleVideoSignal(PPUSim::VideoOutSignal* sample);
 
 		size_t GetHCounter();
 
@@ -123,5 +123,7 @@ namespace PPUPlayer
 		void GetSignalFeatures(PPUSim::VideoSignalFeatures* features);
 
 		void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b);
+
+		void SetRAWColorMode(bool enable);
 	};
 }
