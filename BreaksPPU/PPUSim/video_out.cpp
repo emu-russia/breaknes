@@ -404,7 +404,7 @@ namespace PPUSim
 				features.ScansPerField = 262;
 				features.Composite = true;
 				features.BlankLevel = 1.3f;
-				features.V_pk_pk = 2.0f;
+				features.V_pk_pk = 1.6f;
 				break;
 		}
 	}
@@ -422,37 +422,31 @@ namespace PPUSim
 
 		GetSignalFeatures(features);
 
+		int cc = rawIn.RAW.raw & 0xf;
+
 		out.sync_latch.set(TriState::One, TriState::One);
-		out.black_latch.set(TriState::One, TriState::One);
+		out.black_latch.set(cc >= 14 ? TriState::Zero : TriState::One, TriState::One);
 		out.cb_latch.set(TriState::Zero, TriState::One);
-		out.n_POUT = TriState::Zero;
-
-		// Warm up the phase shifter. It is needed to get the Emphasis complement.
-
-		TriState CLK = TriState::Zero;
-
-		for (size_t n = 0; n < _countof(out.PZ); n++)
-		{
-			out.sim_PhaseShifter(NOT(CLK), CLK, TriState::Zero);
-			CLK = NOT(CLK);
-		}
+		out.n_POUT = cc >= 14 ? TriState::One : TriState::Zero;
 
 		// Get Color Burst Phase number
 
+		int cb_phase = 8;
+
 		// Get the color phase number and determine the phase shift / hue
 
-		// TBD: DEBUG
-		int hue = (rawIn.RAW.raw & 0xf) - 8;
+		int hue = cc - cb_phase;
 
 		// If necessary, make an Emphasis.
+
+		out.n_PR = cc != 6 ? TriState::Zero : TriState::One;
+		out.n_PG = cc != 10 ? TriState::Zero : TriState::One;
+		out.n_PB = cc != 2 ? TriState::Zero : TriState::One;
 
 		out.sim_Emphasis(
 			NOT(FromByte(rawIn.RAW.TR)),
 			NOT(FromByte(rawIn.RAW.TG)),
 			NOT(FromByte(rawIn.RAW.TB)));
-
-		// TBD: DEBUG
-		out.TINT = TriState::Zero;
 
 		// Get the luminance / saturation
 
@@ -463,28 +457,50 @@ namespace PPUSim
 
 		VideoOutSignal bot{}, top{};
 
-		out.n_PZ = TriState::One;
-		out.sim_CompositeDAC(bot);
+		if (cc == 0)
+		{
+			out.n_PZ = TriState::Zero;
+			out.sim_CompositeDAC(bot);
+			out.sim_CompositeDAC(top);
+		}
+		else if (cc == 13)
+		{
+			out.n_PZ = TriState::One;
+			out.sim_CompositeDAC(bot);
+			out.sim_CompositeDAC(top);
+		}
+		else
+		{
+			out.n_PZ = TriState::One;
+			out.sim_CompositeDAC(bot);
 
-		out.n_PZ = TriState::Zero;
-		out.sim_CompositeDAC(top);
-
-		// Based on: https://github.com/DragWx/PalGen/blob/master/palgen.js
+			out.n_PZ = TriState::Zero;
+			out.sim_CompositeDAC(top);
+		}
 
 		top.composite -= features.BlankLevel;
 		bot.composite -= features.BlankLevel;
 		float normalize_factor = 1.f / features.V_pk_pk;
-		float Y = ((top.composite + bot.composite) / 2) * normalize_factor;
+		float luma = ((top.composite + bot.composite) / 2) * normalize_factor;
 		float sat = (top.composite - bot.composite) * normalize_factor;
 
-		float satAdj = 0.7f;
-		float con = 1.2f;
-		sat *= satAdj * con;
+		// hue/sat -> I/Q
+		// Based on: https://github.com/DragWx/PalGen/blob/master/palgen.js
+
+		// TBD: Think about magical values. Tweak the colorimetry.
+
+		//float satAdj = 0.7f;
+		//float con = 1.2f;
+		//sat *= satAdj * con;
 
 		float hueAdj = -0.25f;
 		float irange = 0.599f;
 		float qrange = 0.525f;
 
+		// Colorburst amplitude = -0.208 ~ 0.286 = 0.494
+		// Colorburst bias = 0.039
+		// Hue 8 is used as colorburst. Colorburst is 2.5656 radians.
+		float Y = luma;
 		float I = sin(((hue / 12.f) * 6.2832f) + 2.5656f + hueAdj) * irange;
 		float Q = cos(((hue / 12.f) * 6.2832f) + 2.5656f + hueAdj) * qrange;
 		I *= sat;
