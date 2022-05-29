@@ -108,7 +108,7 @@ namespace PPUPlayer
 
 		void EjectCartridge();
 
-		void SampleVideoSignal(float *sample);
+		void SampleVideoSignal(PPUSim::VideoOutSignal* sample);
 
 		size_t GetHCounter();
 

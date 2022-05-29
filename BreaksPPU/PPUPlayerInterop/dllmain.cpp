@@ -110,7 +110,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void SampleVideoSignal(float* sample)
+	__declspec(dllexport) void SampleVideoSignal(PPUSim::VideoOutSignal* sample)
 	{
 		if (board != nullptr)
 		{

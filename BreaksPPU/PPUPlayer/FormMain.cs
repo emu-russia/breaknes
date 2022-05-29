@@ -407,7 +407,7 @@ namespace PPUPlayer
 
 				if (PPUPlayerInterop.PPUInResetState() == 0)
 				{
-					float sample;
+					PPUPlayerInterop.VideoOutSample sample;
 					PPUPlayerInterop.SampleVideoSignal(out sample);
 					ProcessSample(sample);
 				}

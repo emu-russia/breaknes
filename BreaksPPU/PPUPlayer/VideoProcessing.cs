@@ -54,10 +54,10 @@ namespace PPUPlayer
 
 		bool RawMode = false;
 
-		void ProcessSample(float sample)
+		void ProcessSample(PPUPlayerInterop.VideoOutSample sample)
 		{
-			Scan[ScanSampleCounter] = sample;
-			Field[FieldSampleCounter] = sample;
+			Scan[ScanSampleCounter] = sample.composite;
+			Field[FieldSampleCounter] = sample.composite;
 
 			ScanSampleCounter++;
 			if (ScanSampleCounter >= SamplesPerScan)

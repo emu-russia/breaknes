@@ -216,14 +216,14 @@ namespace PPUPlayer
 	}
 
 	/// <summary>
-	/// Get 1 sample of the video signal. TBD: Now focused on composite PPUs, as things settle down - make a more generalized implementation (considering RGB PPUs for example).
+	/// Get 1 sample of the video signal.
 	/// </summary>
 	/// <param name="sample"></param>
-	void Board::SampleVideoSignal(float* sample)
+	void Board::SampleVideoSignal(PPUSim::VideoOutSignal* sample)
 	{
 		if (sample != nullptr)
 		{
-			*sample = vidSample.composite;
+			*sample = vidSample;
 		}
 	}
 
