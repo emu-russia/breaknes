@@ -435,13 +435,28 @@ namespace PPUSim
 
 		// Get the color phase number and determine the phase shift / hue
 
-		int hue = cc - cb_phase;
+		float hue = cc - cb_phase;
 
 		// If necessary, make an Emphasis.
 
 		out.n_PR = cc != 6 ? TriState::Zero : TriState::One;
 		out.n_PG = cc != 10 ? TriState::Zero : TriState::One;
 		out.n_PB = cc != 2 ? TriState::Zero : TriState::One;
+
+		if (out.n_PR == TriState::Zero && rawIn.RAW.TR)
+		{
+			hue = (hue + 6) / 2;
+		}
+
+		if (out.n_PG == TriState::Zero && rawIn.RAW.TG)
+		{
+			hue = (hue + 10) / 2;
+		}
+
+		if (out.n_PB == TriState::Zero && rawIn.RAW.TB)
+		{
+			hue = (hue + 2) / 2;
+		}
 
 		out.sim_Emphasis(
 			NOT(FromByte(rawIn.RAW.TR)),
@@ -457,13 +472,13 @@ namespace PPUSim
 
 		VideoOutSignal bot{}, top{};
 
-		if (cc == 0)
+		if (cc == 0 && out.TINT == TriState::Zero)
 		{
 			out.n_PZ = TriState::Zero;
 			out.sim_CompositeDAC(bot);
 			out.sim_CompositeDAC(top);
 		}
-		else if (cc == 13)
+		else if (cc == 13 && out.TINT == TriState::Zero)
 		{
 			out.n_PZ = TriState::One;
 			out.sim_CompositeDAC(bot);
