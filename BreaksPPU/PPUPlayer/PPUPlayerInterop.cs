@@ -107,6 +107,9 @@ namespace PPUPlayer
 
 			return features;
 		}
+
+		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetRAWColorMode(bool enable);
 	}
 
 

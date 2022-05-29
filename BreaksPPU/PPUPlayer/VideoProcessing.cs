@@ -52,6 +52,8 @@ namespace PPUPlayer
 		Bitmap? scan_pic = null;
 		Bitmap? field_pic = null;
 
+		bool RawMode = false;
+
 		void ProcessSample(float sample)
 		{
 			Scan[ScanSampleCounter] = sample;
@@ -289,8 +291,11 @@ namespace PPUPlayer
 			return Math.Min(max, Math.Max(val, min));
 		}
 
-		void ResetVisualize()
+		void ResetVisualize(bool RAWMode)
 		{
+			RawMode = RAWMode;
+			PPUPlayerInterop.SetRAWColorMode(RAWMode);
+
 			ScanSampleCounter = 0;
 			FieldSampleCounter = 0;
 			scan_pic = null;

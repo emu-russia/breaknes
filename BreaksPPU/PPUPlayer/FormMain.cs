@@ -198,7 +198,7 @@ namespace PPUPlayer
 				PPUPlayerInterop.ResetPPU();
 			}
 			UpdateMemLayout();
-			ResetVisualize();
+			ResetVisualize(settings.PpuRAWMode);
 
 			PPUPlayerInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
 

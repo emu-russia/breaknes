@@ -315,4 +315,14 @@ namespace PPUPlayer
 		*g = pal[n].g;
 		*b = pal[n].b;
 	}
+
+	/// <summary>
+	/// Use RAW color output. 
+	/// RAW color refers to the Chroma/Luma combination that comes to the video generator and the Emphasis bit combination.
+	/// </summary>
+	/// <param name="enable"></param>
+	void Board::SetRAWColorMode(bool enable)
+	{
+		ppu->SetRAWOutput(enable);
+	}
 }

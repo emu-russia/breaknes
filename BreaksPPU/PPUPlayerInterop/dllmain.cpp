@@ -200,4 +200,12 @@ extern "C"
 			*r = *g = *b = 0;
 		}
 	}
+
+	__declspec(dllexport) void SetRAWColorMode(bool enable)
+	{
+		if (board != nullptr)
+		{
+			board->SetRAWColorMode(enable);
+		}
+	}
 }
