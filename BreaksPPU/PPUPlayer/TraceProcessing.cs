@@ -57,7 +57,7 @@ namespace PPUPlayer
 
 			for (int i = 0; i < maxFields; i++)
 			{
-				for (int n = 0; n < ScansPerField; n++)
+				for (int n = 0; n < ppu_features.ScansPerField; n++)
 				{
 					fields[i].scans.Add(new());
 				}
@@ -66,7 +66,7 @@ namespace PPUPlayer
 			comboBoxTraceScan.Items.Clear();
 			comboBoxTraceField.Items.Clear();
 
-			for (int i=0; i<ScansPerField; i++)
+			for (int i=0; i< ppu_features.ScansPerField; i++)
 			{
 				comboBoxTraceScan.Items.Add(i.ToString());
 			}
@@ -109,7 +109,7 @@ namespace PPUPlayer
 				CurrentTraceScan++;
 			}
 
-			if (CurrentTraceScan >= ScansPerField)
+			if (CurrentTraceScan >= ppu_features.ScansPerField)
 			{
 				CurrentTraceScan = 0;
 				CurrentTraceField++;

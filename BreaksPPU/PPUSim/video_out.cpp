@@ -403,7 +403,7 @@ namespace PPUSim
 				features.PixelsPerScan = 341;
 				features.ScansPerField = 262;
 				features.Composite = true;
-				features.BlankLevel = 1.3f;
+				features.BurstLevel = 1.3f;
 				features.V_pk_pk = 1.6f;
 				break;
 		}
@@ -493,8 +493,8 @@ namespace PPUSim
 			out.sim_CompositeDAC(top);
 		}
 
-		top.composite -= features.BlankLevel;
-		bot.composite -= features.BlankLevel;
+		top.composite -= features.BurstLevel;
+		bot.composite -= features.BurstLevel;
 		float normalize_factor = 1.f / features.V_pk_pk;
 		float luma = ((top.composite + bot.composite) / 2) * normalize_factor;
 		float sat = (top.composite - bot.composite) * normalize_factor;

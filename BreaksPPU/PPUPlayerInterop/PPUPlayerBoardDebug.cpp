@@ -29,7 +29,7 @@ namespace PPUPlayer
 		MemDesciptor* vramRegion = new MemDesciptor;
 		memset(vramRegion, 0, sizeof(MemDesciptor));
 		strcpy_s(vramRegion->name, sizeof(vramRegion->name), VRAM_NAME);
-		vramRegion->size = vram->Dbg_GetSize();
+		vramRegion->size = (int32_t)vram->Dbg_GetSize();
 		dbg_hub->AddMemRegion(vramRegion, DumpVRAM, WriteVRAM, this, false);
 
 		// CRAM
@@ -62,7 +62,7 @@ namespace PPUPlayer
 		MemDesciptor* chrRegion = new MemDesciptor;
 		memset(chrRegion, 0, sizeof(MemDesciptor));
 		strcpy_s(chrRegion->name, sizeof(chrRegion->name), CHR_ROM_NAME);
-		chrRegion->size = cart->Dbg_GetCHRSize();
+		chrRegion->size = (int32_t)cart->Dbg_GetCHRSize();
 		dbg_hub->AddMemRegion(chrRegion, DumpCHR, WriteCHR, this, true);
 	}
 

@@ -55,11 +55,11 @@ namespace PPUSim
 	/// </summary>
 	struct VideoSignalFeatures
 	{
-		size_t SamplesPerPCLK;
-		size_t PixelsPerScan;		// Excluding Dot Crawl
-		size_t ScansPerField;
-		size_t Composite;			// 1: Composite, 0: RGB
-		float BlankLevel;		// IRE = 0
+		int32_t SamplesPerPCLK;
+		int32_t PixelsPerScan;		// Excluding Dot Crawl
+		int32_t ScansPerField;
+		int32_t Composite;			// 1: Composite, 0: RGB
+		float BurstLevel;		// IRE = 0
 		float V_pk_pk;
 	};
 
