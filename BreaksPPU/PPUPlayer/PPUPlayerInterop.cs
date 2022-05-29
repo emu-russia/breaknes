@@ -70,60 +70,30 @@ namespace PPUPlayer
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void RenderAlwaysEnabled(bool enable);
 
-		[StructLayout(LayoutKind.Sequential, Pack = 1)]
-		unsafe struct VideoSignalFeaturesRaw
-		{
-			public int SamplesPerPCLK;
-			public int PixelsPerScan;       // Excluding Dot Crawl
-			public int ScansPerField;
-			public int Composite;           // 1: Composite, 0: RGB
-			public float BlankLevel;       // IRE = 0
-			public float V_pk_pk;
-		}
-
+		[StructLayout(LayoutKind.Explicit)]
 		public struct VideoSignalFeatures
 		{
+			[FieldOffset(0)]
 			public int SamplesPerPCLK;
+			[FieldOffset(4)]
 			public int PixelsPerScan;       // Excluding Dot Crawl
+			[FieldOffset(8)]
 			public int ScansPerField;
+			[FieldOffset(12)]
 			public int Composite;           // 1: Composite, 0: RGB
-			public float BlankLevel;       // IRE = 0
-			public float V_pk_pk;
+			[FieldOffset(16)]
+			public float BurstLevel;		// IRE = 0
+			[FieldOffset(20)]
+			public float WhiteLevel;        // IRE = 100
+			[FieldOffset(24)]
+			public float SyncLevel;
 		}
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void GetSignalFeatures(IntPtr features);
+		public static extern void GetSignalFeatures(out VideoSignalFeatures features);
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void ConvertRAWToRGB(UInt16 raw, out byte r, out byte g, out byte b);
-
-		public static VideoSignalFeatures GetSignalFeatures()
-		{
-			VideoSignalFeatures features = new();
-
-			IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<VideoSignalFeaturesRaw>());
-			if (ptr == IntPtr.Zero)
-			{
-				throw new Exception("AllocHGlobal failed!");
-			}
-
-			GetSignalFeatures(ptr);
-
-#pragma warning disable CS8605 // Unboxing a possibly null value.
-			VideoSignalFeaturesRaw raw = (VideoSignalFeaturesRaw)Marshal.PtrToStructure(ptr, typeof(VideoSignalFeaturesRaw));
-#pragma warning restore CS8605 // Unboxing a possibly null value.
-
-			features.SamplesPerPCLK = raw.SamplesPerPCLK;
-			features.PixelsPerScan = raw.PixelsPerScan;
-			features.ScansPerField = raw.ScansPerField;
-			features.Composite = raw.Composite;
-			features.BlankLevel = raw.BlankLevel;
-			features.V_pk_pk = raw.V_pk_pk;
-
-			Marshal.FreeHGlobal(ptr);
-
-			return features;
-		}
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetRAWColorMode(bool enable);

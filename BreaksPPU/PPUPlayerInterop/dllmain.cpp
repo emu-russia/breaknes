@@ -184,8 +184,9 @@ extern "C"
 			features->PixelsPerScan = 341;
 			features->ScansPerField = 262;
 			features->Composite = true;
-			features->BlankLevel = 1.3f;
-			features->V_pk_pk = 2.0f;
+			features->BurstLevel = 1.3f;
+			features->WhiteLevel = 1.6f;
+			features->SyncLevel = 0.781f;
 		}
 	}
 

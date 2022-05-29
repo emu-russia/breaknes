@@ -41,7 +41,7 @@ struct DebugInfoEntry
 struct MemDesciptor
 {
 	char name[32];
-	size_t size;
+	int32_t size;
 };
 #pragma pack(pop)
 
