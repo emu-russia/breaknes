@@ -156,10 +156,10 @@ namespace PPUSim
 		bgc3_latch[0].set(NOT(n_BGC3_Out), n_PCLK);
 		bgc3_latch[1].set(bgc3_latch[0].nget(), PCLK);
 
-		ppu->wire.BGC[0] = NOR(bgc0_latch[1].nget(), clip);
-		ppu->wire.BGC[1] = NOR(bgc1_latch[1].nget(), clip);
-		ppu->wire.BGC[2] = NOR(bgc2_latch[1].nget(), clip);
-		ppu->wire.BGC[3] = NOR(bgc3_latch[1].nget(), clip);
+		ppu->wire.BGC[0] = NOR(bgc0_latch[1].get(), clip);
+		ppu->wire.BGC[1] = NOR(bgc1_latch[1].get(), clip);
+		ppu->wire.BGC[2] = NOR(bgc2_latch[1].get(), clip);
+		ppu->wire.BGC[3] = NOR(bgc3_latch[1].get(), clip);
 	}
 
 	void BGC_SRBit::sim(TriState shift_in, TriState val_in,
