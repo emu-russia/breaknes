@@ -194,6 +194,16 @@ namespace PPUPlayer
 				PPUPlayerInterop.ResetPPU();
 			}
 			UpdateMemLayout();
+
+			/// DEBUG
+			/// 
+
+			// Until a proper composite signal renderer is ready, the whole picture is output in RAW colors.
+
+			settings.PpuRAWMode = true;
+
+			/// DEBUG
+
 			ResetVisualize(settings.PpuRAWMode);
 
 			PPUPlayerInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);

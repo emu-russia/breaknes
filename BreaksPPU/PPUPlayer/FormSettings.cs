@@ -156,5 +156,13 @@ namespace PPUPlayer
 				return new StandardValuesCollection(list);
 			}
 		}
+
+		private void FormSettings_KeyDown(object sender, KeyEventArgs e)
+		{
+			if ( e.KeyCode == Keys.Escape)
+			{
+				Close();
+			}
+		}
 	}
 }
