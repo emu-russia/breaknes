@@ -82,9 +82,11 @@ namespace PPUPlayer
 			[FieldOffset(12)]
 			public int Composite;           // 1: Composite, 0: RGB
 			[FieldOffset(16)]
-			public float BurstLevel;       // IRE = 0
+			public float BurstLevel;		// IRE = 0
 			[FieldOffset(20)]
-			public float V_pk_pk;
+			public float WhiteLevel;        // IRE = 100
+			[FieldOffset(24)]
+			public float SyncLevel;
 		}
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]

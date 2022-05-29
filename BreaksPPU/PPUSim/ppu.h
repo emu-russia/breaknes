@@ -60,7 +60,8 @@ namespace PPUSim
 		int32_t ScansPerField;
 		int32_t Composite;			// 1: Composite, 0: RGB
 		float BurstLevel;		// IRE = 0
-		float V_pk_pk;
+		float WhiteLevel;		// IRE = 100
+		float SyncLevel;
 	};
 
 #pragma pack(pop)

@@ -13,8 +13,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Numerics;
 
-// A ScanRing buffer is used to store the sample stream, which can hold up to 3 scans.
-// Samples are stored in ScanRing in raw form. After processing, the Scan enters the Field in a ready for output form (RGB).
+// Samples are stored in ScanBuffer in raw form. After processing, the Scan enters the Field in a ready for output form (RGB).
 
 namespace PPUPlayer
 {
@@ -24,13 +23,12 @@ namespace PPUPlayer
 		int SamplesPerScan;
 		bool RawMode = false;
 
-		// A circular buffer is used (ScanRing)
-
-		PPUPlayerInterop.VideoOutSample[] ScanRing;
-		int SamplesPerRing;
-		int ScansPerRing = 3;
-		int ReadPtr = 0;
+		PPUPlayerInterop.VideoOutSample[] ScanBuffer;
 		int WritePtr = 0;
+		bool SyncFound = false;
+
+		Color[] field = new Color[256 * 240];
+		int CurrentScan = 0;
 
 		// Visualization settings
 
@@ -49,12 +47,14 @@ namespace PPUPlayer
 			PPUPlayerInterop.GetSignalFeatures(out ppu_features);
 
 			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
-
-			SamplesPerRing = SamplesPerScan * ScansPerRing;
-			ScanRing = new PPUPlayerInterop.VideoOutSample[SamplesPerRing];
+			ScanBuffer = new PPUPlayerInterop.VideoOutSample[SamplesPerScan];
+			WritePtr = 0;
 
 			RawMode = RAWMode;
 			PPUPlayerInterop.SetRAWColorMode(RAWMode);
+
+			SyncFound = false;
+			CurrentScan = 0;
 
 			scan_pic = null;
 			field_pic = null;
@@ -63,8 +63,38 @@ namespace PPUPlayer
 
 		void ProcessSample(PPUPlayerInterop.VideoOutSample sample)
 		{
-			ScanRing[WritePtr] = sample;
-			WritePtr = (WritePtr + 1) % SamplesPerRing;
+			ScanBuffer[WritePtr++] = sample;
+
+			if (WritePtr >= SamplesPerScan)
+			{
+				int ReadPtr = 0;
+				PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[ppu_features.SamplesPerPCLK];
+
+				for (int i=0; i<256; i++)
+				{
+					for (int n=0; n<ppu_features.SamplesPerPCLK; n++)
+					{
+						batch[n] = ScanBuffer[ReadPtr++];
+					}
+
+					if (CurrentScan < 240)
+					{
+						byte r, g, b;
+						PPUPlayerInterop.ConvertRAWToRGB(batch[0].raw, out r, out g, out b);
+
+						field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
+					}
+				}
+
+				CurrentScan++;
+				if (CurrentScan >= ppu_features.ScansPerField)
+				{
+					VisualizeField();
+					CurrentScan = 0;
+				}
+
+				WritePtr = 0;
+			}
 		}
 
 		/// <summary>
@@ -76,7 +106,7 @@ namespace PPUPlayer
 		{
 			int w = SamplesPerScan * PixelsPerSample;
 			int h = 250 * ScaleY;
-			float IRE = ppu_features.V_pk_pk / 100.0f;
+			float IRE = (ppu_features.WhiteLevel - ppu_features.BurstLevel) / 100.0f;
 
 			//if (scan_pic == null)
 			{
@@ -110,11 +140,8 @@ namespace PPUPlayer
 
 		void VisualizeField()
 		{
-			int w = ppu_features.PixelsPerScan;
-			int h = ppu_features.ScansPerField;
-			float WhiteLevel = ppu_features.BurstLevel + ppu_features.V_pk_pk;
-
-			float[] packet = new float[ppu_features.SamplesPerPCLK];
+			int w = 256;
+			int h = 240;
 
 			//if (field_pic == null)
 			{
@@ -123,6 +150,15 @@ namespace PPUPlayer
 
 			Bitmap pic = field_pic;
 			Graphics gr = Graphics.FromImage(pic);
+
+			for (int y=0; y<h; y++)
+			{
+				for (int x=0; x<w; x++)
+				{
+					Color p = field[w * y + x];
+					gr.FillRectangle(new SolidBrush(p), x, y, 1, 1);
+				}
+			}
 
 			pictureBoxField.Image = field_pic;
 			gr.Dispose();

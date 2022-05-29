@@ -404,7 +404,8 @@ namespace PPUSim
 				features.ScansPerField = 262;
 				features.Composite = true;
 				features.BurstLevel = 1.3f;
-				features.V_pk_pk = 1.6f;
+				features.WhiteLevel = 1.6f;
+				features.SyncLevel = 0.781f;
 				break;
 		}
 	}
@@ -495,7 +496,7 @@ namespace PPUSim
 
 		top.composite -= features.BurstLevel;
 		bot.composite -= features.BurstLevel;
-		float normalize_factor = 1.f / features.V_pk_pk;
+		float normalize_factor = 1.f / features.WhiteLevel;
 		float luma = ((top.composite + bot.composite) / 2) * normalize_factor;
 		float sat = (top.composite - bot.composite) * normalize_factor;
 

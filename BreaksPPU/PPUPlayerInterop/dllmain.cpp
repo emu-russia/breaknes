@@ -185,7 +185,8 @@ extern "C"
 			features->ScansPerField = 262;
 			features->Composite = true;
 			features->BurstLevel = 1.3f;
-			features->V_pk_pk = 2.0f;
+			features->WhiteLevel = 1.6f;
+			features->SyncLevel = 0.781f;
 		}
 	}
 
