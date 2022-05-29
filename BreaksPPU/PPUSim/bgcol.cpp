@@ -105,7 +105,6 @@ namespace PPUSim
 
 		TriState sr_out[8]{};
 		BGC2_SR1.sim(unused, shift_out, TriState::Zero, STEP2, NEXT, sr_out);
-		BitRev(sr_out);
 
 		n_BGC2_Out = MUX3(ppu->wire.FH, sr_out);
 	}
@@ -132,7 +131,6 @@ namespace PPUSim
 
 		TriState sr_out[8]{};
 		BGC3_SR1.sim(unused, shift_out, TriState::Zero, STEP2, NEXT, sr_out);
-		BitRev(sr_out);
 
 		n_BGC3_Out = MUX3(ppu->wire.FH, sr_out);
 	}
