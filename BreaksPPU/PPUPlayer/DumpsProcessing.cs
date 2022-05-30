@@ -159,12 +159,48 @@ namespace PPUPlayer
 			}
 		}
 
+		void LoadPPUDump(byte [] ppu_dump, int offset, int size, string memDescr)
+		{
+			List<BreaksCore.MemDesciptor> mem = BreaksCore.GetMemoryLayout();
+
+			int descrID = 0;
+
+			foreach (var descr in mem)
+			{
+				if (descr.name == memDescr)
+				{
+					byte[] data = new byte[size];
+					
+					for (int i=0; i<size; i++)
+					{
+						data[i] = ppu_dump[offset + i];
+					}
+
+					if (data.Length < descr.size)
+					{
+						throw new Exception("The dump size does not match the size of the PPU memory region. You can specify a larger file, only the desired part will be loaded. But smaller files cannot be used.");
+					}
+					BreaksCore.WriteMem(descrID, data);
+				}
+
+				descrID++;
+			}
+		}
+
 		private void loadNintendulatorPPUDumpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (!SimulationStarted)
 				return;
 
-			// TBD.
+			if (openFileDialogPPUDump.ShowDialog() == DialogResult.OK)
+			{
+				byte[] ppu_dump = File.ReadAllBytes(openFileDialogPPUDump.FileName);
+
+				LoadPPUDump(ppu_dump, 0, 0x2000, CHR_ROM_NAME);
+				LoadPPUDump(ppu_dump, 0x2000, 0x1000, VRAM_NAME);
+				LoadPPUDump(ppu_dump, 0x3000, 0x100, OAM_NAME);
+				LoadPPUDump(ppu_dump, 0x3100, 0x20, CRAM_NAME);
+			}
 		}
 	}
 }
