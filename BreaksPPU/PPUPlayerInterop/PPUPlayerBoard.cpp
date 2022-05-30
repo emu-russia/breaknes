@@ -325,4 +325,12 @@ namespace PPUPlayer
 	{
 		ppu->SetRAWOutput(enable);
 	}
+
+	/// <summary>
+	/// Set one of the ways to decay OAM cells.
+	/// </summary>
+	void Board::SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior)
+	{
+		ppu->SetOamDecayBehavior(behavior);
+	}
 }

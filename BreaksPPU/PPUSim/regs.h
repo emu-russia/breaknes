@@ -64,8 +64,9 @@ namespace PPUSim
 		void Debug_ClippingAlwaysDisabled(bool enable);
 
 		uint8_t Debug_GetCTRL0();
-
 		uint8_t Debug_GetCTRL1();
+		void Debug_SetCTRL0(uint8_t val);
+		void Debug_SetCTRL1(uint8_t val);
 
 		BaseLogic::TriState get_nSLAVE();
 	};

@@ -66,6 +66,8 @@ namespace PPUPlayer
 			settings.TraceTimeScale = 23;   // ns
 			settings.ColorDebug = true;
 			settings.PpuRAWMode = false;
+			settings.FreeModeVMirroring = true;
+			settings.OAMDecay = PPUPlayerInterop.OAMDecayBehavior.Keep;
 
 			SaveSettings(settings);
 
@@ -119,7 +121,7 @@ namespace PPUPlayer
 
 			[XmlElement]
 			[Category("Debug")]
-			[Description("Forcibly enable rendering ($2001[3] = $2001[4] always equals 1). Used for debugging PPU signals, when the CPU I/F register dump is limited, or when you want to get faster simulation results. Keep in mind that with permanently enabled rendering the PPU becomes unstable and this hack should be applied when you know what you're doing.")]
+			[Description("Forcibly enable rendering ($2001[3] = $2001[4] always returns as 1). Used for debugging PPU signals, when the CPU I/F register dump is limited, or when you want to get faster simulation results. Keep in mind that with permanently enabled rendering the PPU becomes unstable and this hack should be applied when you know what you're doing.")]
 			public bool RenderAlwaysEnabled { get; set; }
 
 			[XmlElement]
@@ -136,6 +138,16 @@ namespace PPUPlayer
 			[Category("Board Features")]
 			[Description("Use RAW color output. RAW color refers to the Chroma/Luma combination that comes to the video generator and the Emphasis bit combination.")]
 			public bool PpuRAWMode { get; set; }
+
+			[XmlElement]
+			[Category("Misc")]
+			[Description("Mirroring mode for Dummy NROM, which is used for Free Mode.")]
+			public bool FreeModeVMirroring { get; set; }
+
+			[XmlElement]
+			[Category("Board Features")]
+			[Description("Set one of the ways to decay OAM cells.")]
+			public PPUPlayerInterop.OAMDecayBehavior OAMDecay { get; set; }
 		}
 
 

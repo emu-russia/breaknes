@@ -103,7 +103,7 @@ namespace PPUPlayer
 				}
 				else
 				{
-					text += " + Need .nes ROM";
+					text += " + Dummy NROM";
 				}
 				this.Text = text;
 			}
@@ -158,24 +158,48 @@ namespace PPUPlayer
 			{
 				Console.WriteLine("Background Worker is already running.");
 				return;
-			}    
-
-			if (ppu_dump == null || nes_file == null)
-			{
-				MessageBox.Show(
-					"Before you start the simulation you need to select a PPU register dump and some .nes file, preferably with mapper 0.",
-					"Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				return;
 			}
 
-			logData = File.ReadAllBytes(ppu_dump);
-			logPointer = 0;
-			TotalOps = logData.Length / 8;
-			Console.WriteLine("Number of PPU Dump records: " + TotalOps.ToString());
+			// If the user did not select anything, but just clicked the `Play` button - notify him that he is in free flight.
 
-			byte[] nes = File.ReadAllBytes(nes_file);
+			if (ppu_dump == null && nes_file == null)
+			{
+				string text = DefaultTitle;
+				text += " - Free Flight";
+				this.Text = text;
+			}
 
 			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
+
+			// If the user has specified RegDump - use it. Otherwise, create a dummy RegDump with an `infinite` wait to read register $2002.
+
+			if (ppu_dump != null)
+			{
+				logData = File.ReadAllBytes(ppu_dump);
+				logPointer = 0;
+				TotalOps = logData.Length / 8;
+				Console.WriteLine("Number of PPU Dump records: " + TotalOps.ToString());
+			}
+			else
+			{
+				logData = new byte[] { 0xff, 0xff, 0xff, 0xff, 0x82, 0x00, 0x00, 0x00 };
+				logPointer = 0;
+				TotalOps = 1;
+				Console.WriteLine("Created one dummy read of register $2002 through an `infinite` number of PCLKs.");
+			}
+
+			// If the user specified a .nes file - use it. Otherwise, use Dummy NROM.
+
+			byte[] nes;
+			if (nes_file != null)
+			{
+				nes = File.ReadAllBytes(nes_file);
+			}
+			else
+			{
+				DummyNrom nrom = new DummyNrom(settings.FreeModeVMirroring);
+				nes = nrom.GetNesImage();
+			}
 
 			string ppu_rev = settings.PPU_Revision == null ? "RP2C02G" : settings.PPU_Revision;
 
@@ -193,6 +217,7 @@ namespace PPUPlayer
 			{
 				PPUPlayerInterop.ResetPPU();
 			}
+			PPUPlayerInterop.SetOamDecayBehavior(settings.OAMDecay);
 			UpdateMemLayout();
 
 			/// DEBUG
@@ -206,9 +231,20 @@ namespace PPUPlayer
 
 			ResetVisualize(settings.PpuRAWMode);
 
-			PPUPlayerInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
+			if (ppu_dump == null)
+			{
+				// In free mode there is no one to enable PPU rendering, so we do it forcibly.
+
+				PPUPlayerInterop.RenderAlwaysEnabled(true);
+			}
+			else
+			{
+				PPUPlayerInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
+			}
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
+
+			// Prepare tracing
 
 			TraceEnabled = settings.TraceEnable;
 			TraceMaxFields = settings.TraceMaxFields;
@@ -223,6 +259,8 @@ namespace PPUPlayer
 			TraceCollapseSameRows = settings.TraceCollapseSameRows;
 			SetTraceTimeResolutionNanos(settings.TraceTimeScale);
 			ResetTrace(TraceMaxFields);
+
+			// Set the next CPU operation and start the simulation.
 
 			currentEntry = NextLogEntry();
 
@@ -652,6 +690,7 @@ namespace PPUPlayer
 			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
+			PPUPlayerInterop.SetOamDecayBehavior(settings.OAMDecay);
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -712,6 +751,23 @@ namespace PPUPlayer
 		{
 			FormColorSpace formColorSpace = new();
 			formColorSpace.Show();
+		}
+
+		/// <summary>
+		/// Used to change the value of PPU registers $2000/$2001 on the fly. Use for Free Mode.
+		/// </summary>
+		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+		{
+			if (e.ChangedItem.Label == "CTRL0" )
+			{
+				UInt32 value = (UInt32)e.ChangedItem.Value;
+				PPUPlayerInterop.SetCTRL0((byte)value);
+			}
+			else if (e.ChangedItem.Label == "CTRL1")
+			{
+				UInt32 value = (UInt32)e.ChangedItem.Value;
+				PPUPlayerInterop.SetCTRL1((byte)value);
+			}
 		}
 	}
 }

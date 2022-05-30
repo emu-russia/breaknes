@@ -297,4 +297,14 @@ namespace PPUSim
 	{
 		eval->GetDebugInfo(wires);
 	}
+
+	void PPU::Dbg_SetCTRL0(uint8_t val)
+	{
+		regs->Debug_SetCTRL0(val);
+	}
+
+	void PPU::Dbg_SetCTRL1(uint8_t val)
+	{
+		regs->Debug_SetCTRL1(val);
+	}
 }

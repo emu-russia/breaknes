@@ -125,5 +125,11 @@ namespace PPUPlayer
 		void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b);
 
 		void SetRAWColorMode(bool enable);
+
+		void SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior);
+
+		void SetCTRL0(uint8_t val);
+
+		void SetCTRL1(uint8_t val);
 	};
 }

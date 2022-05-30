@@ -108,6 +108,8 @@ namespace PPUSim
 
 		size_t ColMap(size_t n);
 
+		OAMDecayBehavior decay_behav = OAMDecayBehavior::Keep;
+
 	public:
 		OAM(PPU* parent);
 		~OAM();
@@ -123,5 +125,8 @@ namespace PPUSim
 		uint8_t Dbg_TempOAMReadByte(size_t addr);
 		void Dbg_OAMWriteByte(size_t addr, uint8_t val);
 		void Dbg_TempOAMWriteByte(size_t addr, uint8_t val);
+
+		void SetOamDecayBehavior(OAMDecayBehavior behavior);
+		OAMDecayBehavior GetOamDecayBehavior();
 	};
 }

@@ -595,4 +595,14 @@ namespace PPUPlayer
 
 		return 0;
 	}
+
+	void Board::SetCTRL0(uint8_t val)
+	{
+		ppu->Dbg_SetCTRL0(val);
+	}
+
+	void Board::SetCTRL1(uint8_t val)
+	{
+		ppu->Dbg_SetCTRL1(val);
+	}
 }
