@@ -66,6 +66,7 @@ namespace PPUPlayer
 			settings.TraceTimeScale = 23;   // ns
 			settings.ColorDebug = true;
 			settings.PpuRAWMode = false;
+			settings.FreeModeVMirroring = true;
 
 			SaveSettings(settings);
 
@@ -136,6 +137,11 @@ namespace PPUPlayer
 			[Category("Board Features")]
 			[Description("Use RAW color output. RAW color refers to the Chroma/Luma combination that comes to the video generator and the Emphasis bit combination.")]
 			public bool PpuRAWMode { get; set; }
+
+			[XmlElement]
+			[Category("Misc")]
+			[Description("Mirroring mode for Dummy NROM, which is used for Free Mode.")]
+			public bool FreeModeVMirroring { get; set; }
 		}
 
 
