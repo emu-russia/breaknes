@@ -127,5 +127,9 @@ namespace PPUPlayer
 		void SetRAWColorMode(bool enable);
 
 		void SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior);
+
+		void SetCTRL0(uint8_t val);
+
+		void SetCTRL1(uint8_t val);
 	};
 }

@@ -283,6 +283,24 @@ namespace PPUSim
 		return val;
 	}
 
+	void ControlRegs::Debug_SetCTRL0(uint8_t val)
+	{
+		for (size_t n = 0; n < 8; n++)
+		{
+			TriState bit_val = FromByte((val >> n) & 1);
+			PPU_CTRL0[n].set(bit_val);
+		}
+	}
+
+	void ControlRegs::Debug_SetCTRL1(uint8_t val)
+	{
+		for (size_t n = 0; n < 8; n++)
+		{
+			TriState bit_val = FromByte((val >> n) & 1);
+			PPU_CTRL1[n].set(bit_val);
+		}
+	}
+
 	/// <summary>
 	/// The `/SLAVE` signal is used for EXT input terminals.
 	/// </summary>
