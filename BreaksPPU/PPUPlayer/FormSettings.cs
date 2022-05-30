@@ -67,6 +67,7 @@ namespace PPUPlayer
 			settings.ColorDebug = true;
 			settings.PpuRAWMode = false;
 			settings.FreeModeVMirroring = true;
+			settings.OAMDecay = PPUPlayerInterop.OAMDecayBehavior.Keep;
 
 			SaveSettings(settings);
 
@@ -142,6 +143,11 @@ namespace PPUPlayer
 			[Category("Misc")]
 			[Description("Mirroring mode for Dummy NROM, which is used for Free Mode.")]
 			public bool FreeModeVMirroring { get; set; }
+
+			[XmlElement]
+			[Category("Board")]
+			[Description("Set one of the ways to decay OAM cells.")]
+			public PPUPlayerInterop.OAMDecayBehavior OAMDecay { get; set; }
 		}
 
 

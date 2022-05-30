@@ -142,6 +142,28 @@ namespace PPUSim
 		size_t pclkNow = ppu->GetPCLKCounter();
 		if (pclkNow >= (savedPclk + pclksToDecay))
 		{
+			switch (ppu->oam->GetOamDecayBehavior())
+			{
+				case OAMDecayBehavior::Keep:
+					return decay_ff.get();
+
+				case OAMDecayBehavior::ToZero:
+					return TriState::Zero;
+
+				case OAMDecayBehavior::ToOne:
+					return TriState::One;
+
+				case OAMDecayBehavior::Evaporate:
+					return TriState::Z;
+
+				case OAMDecayBehavior::Randomize:
+					// Year 2022. C++ still doesn't contain a standard way to get TimeStamp.
+					return FromByte (__rdtsc() & 1);
+
+				default:
+					break;
+			}
+
 			return TriState::Z;
 		}
 		else
@@ -356,5 +378,15 @@ namespace PPUSim
 		{
 			l->sim(col, bit_num, val[bit_num]);
 		}
+	}
+
+	void OAM::SetOamDecayBehavior(OAMDecayBehavior behavior)
+	{
+		decay_behav = behavior;
+	}
+
+	OAMDecayBehavior OAM::GetOamDecayBehavior()
+	{
+		return decay_behav;
 	}
 }

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace PPUPlayer
 {
-	internal class PPUPlayerInterop
+	public class PPUPlayerInterop
 	{
 
 		[StructLayout(LayoutKind.Explicit)]
@@ -97,6 +97,21 @@ namespace PPUPlayer
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetRAWColorMode(bool enable);
+
+		/// <summary>
+		/// How to handle the OAM Corruption effect.
+		/// </summary>
+		public enum OAMDecayBehavior
+		{
+			Keep = 0,
+			Evaporate,
+			ToZero,
+			ToOne,
+			Randomize,
+		};
+
+		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetOamDecayBehavior(OAMDecayBehavior behavior);
 	}
 
 

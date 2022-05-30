@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <random>
 #include <algorithm>
+#include <intrin.h>
 
 #pragma warning(disable: 26812)		// warning C26812: The enum type 'BaseLogic::TriState' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).
 

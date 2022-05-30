@@ -217,6 +217,7 @@ namespace PPUPlayer
 			{
 				PPUPlayerInterop.ResetPPU();
 			}
+			PPUPlayerInterop.SetOamDecayBehavior(settings.OAMDecay);
 			UpdateMemLayout();
 
 			/// DEBUG

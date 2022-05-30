@@ -209,4 +209,12 @@ extern "C"
 			board->SetRAWColorMode(enable);
 		}
 	}
+
+	__declspec(dllexport) void SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior)
+	{
+		if (board != nullptr)
+		{
+			board->SetOamDecayBehavior(behavior);
+		}
+	}
 }

@@ -317,4 +317,9 @@ namespace PPUSim
 	{
 		vid_out->ConvertRAWToRGB(rawIn, rgbOut);
 	}
+
+	void PPU::SetOamDecayBehavior(OAMDecayBehavior behavior)
+	{
+		oam->SetOamDecayBehavior(behavior);
+	}
 }

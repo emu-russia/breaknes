@@ -64,6 +64,18 @@ namespace PPUSim
 		float SyncLevel;
 	};
 
+	/// <summary>
+	/// How to handle the OAM Corruption effect.
+	/// </summary>
+	enum class OAMDecayBehavior
+	{
+		Keep = 0,
+		Evaporate,
+		ToZero,
+		ToOne,
+		Randomize,
+	};
+
 #pragma pack(pop)
 }
 
@@ -436,6 +448,11 @@ namespace PPUSim
 		/// <param name="rawIn"></param>
 		/// <param name="rgbOut"></param>
 		void ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
+
+		/// <summary>
+		/// Set one of the ways to decay OAM cells.
+		/// </summary>
+		void SetOamDecayBehavior(OAMDecayBehavior behavior);
 
 		uint8_t Dbg_OAMReadByte(size_t addr);
 		uint8_t Dbg_TempOAMReadByte(size_t addr);
