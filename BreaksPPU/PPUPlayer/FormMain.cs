@@ -690,6 +690,7 @@ namespace PPUPlayer
 			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
+			PPUPlayerInterop.SetOamDecayBehavior(settings.OAMDecay);
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)

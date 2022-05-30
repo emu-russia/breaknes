@@ -145,7 +145,7 @@ namespace PPUPlayer
 			public bool FreeModeVMirroring { get; set; }
 
 			[XmlElement]
-			[Category("Board")]
+			[Category("Board Features")]
 			[Description("Set one of the ways to decay OAM cells.")]
 			public PPUPlayerInterop.OAMDecayBehavior OAMDecay { get; set; }
 		}
