@@ -20,6 +20,7 @@ namespace APUSimUnitTest
 #include "noise.h"
 #include "square.h"
 #include "triangle.h"
+#include "debug.h"
 
 namespace APUSim
 {
