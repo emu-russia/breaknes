@@ -1,4 +1,4 @@
-// Video Signal Generator
+﻿// Video Signal Generator
 
 #include "pch.h"
 
@@ -436,28 +436,15 @@ namespace PPUSim
 
 		// Get the color phase number and determine the phase shift / hue
 
-		float hue = cc - cb_phase;
+		float hue = cc - 1;
 
 		// If necessary, make an Emphasis.
+
+		// TBD: Make a proper Emphasis using the phase batch.
 
 		out.n_PR = cc != 6 ? TriState::Zero : TriState::One;
 		out.n_PG = cc != 10 ? TriState::Zero : TriState::One;
 		out.n_PB = cc != 2 ? TriState::Zero : TriState::One;
-
-		if (out.n_PR == TriState::Zero && rawIn.RAW.TR)
-		{
-			hue = (hue + 6) / 2;
-		}
-
-		if (out.n_PG == TriState::Zero && rawIn.RAW.TG)
-		{
-			hue = (hue + 10) / 2;
-		}
-
-		if (out.n_PB == TriState::Zero && rawIn.RAW.TB)
-		{
-			hue = (hue + 2) / 2;
-		}
 
 		out.sim_Emphasis(
 			NOT(FromByte(rawIn.RAW.TR)),
@@ -473,13 +460,13 @@ namespace PPUSim
 
 		VideoOutSignal bot{}, top{};
 
-		if (cc == 0 && out.TINT == TriState::Zero)
+		if (cc == 0)
 		{
 			out.n_PZ = TriState::Zero;
 			out.sim_CompositeDAC(bot);
 			out.sim_CompositeDAC(top);
 		}
-		else if (cc == 13 && out.TINT == TriState::Zero)
+		else if (cc == 13)
 		{
 			out.n_PZ = TriState::One;
 			out.sim_CompositeDAC(bot);
@@ -500,35 +487,41 @@ namespace PPUSim
 		float luma = ((top.composite + bot.composite) / 2) * normalize_factor;
 		float sat = (top.composite - bot.composite) * normalize_factor;
 
-		// hue/sat -> I/Q
-		// Based on: https://github.com/DragWx/PalGen/blob/master/palgen.js
+		float Y, I, Q;
+		HSL_YIQ(hue, sat, luma, Y, I, Q);
 
-		// TBD: Think about magical values. Tweak the colorimetry.
+		// 6500K color temperature
 
-		//float satAdj = 0.7f;
-		//float con = 1.2f;
-		//sat *= satAdj * con;
-
-		float hueAdj = -0.25f;
-		float irange = 0.599f;
-		float qrange = 0.525f;
-
-		// Colorburst amplitude = -0.208 ~ 0.286 = 0.494
-		// Colorburst bias = 0.039
-		// Hue 8 is used as colorburst. Colorburst is 2.5656 radians.
-		float Y = luma;
-		float I = sin(((hue / 12.f) * 6.2832f) + 2.5656f + hueAdj) * irange;
-		float Q = cos(((hue / 12.f) * 6.2832f) + 2.5656f + hueAdj) * qrange;
-		I *= sat;
-		Q *= sat;
-
-		float R = Y + (0.9469f * I) + (0.6236f * Q);
-		float G = Y - (0.2748f * I) - (0.6357f * Q);
-		float B = Y - (1.1085f * I) + (1.709f * Q);
+		float R = Y + (0.956f * I) + (0.623f * Q);
+		float G = Y - (0.272f * I) - (0.648f * Q);
+		float B = Y - (1.105f * I) + (1.705f * Q);
 
 		rgbOut.RGB.r = (uint8_t)(Clamp(R, 0.f, 1.f) * 255);
 		rgbOut.RGB.g = (uint8_t)(Clamp(G, 0.f, 1.f) * 255);
 		rgbOut.RGB.b = (uint8_t)(Clamp(B, 0.f, 1.f) * 255);
+	}
+
+	/// <summary>
+	/// Preliminary version. Obtaining RGB color from RAW will be converted to work with the phase sample batch.
+	/// </summary>
+	void VideoOut::HSL_YIQ(float H, float S, float L, float& Y, float& I, float& Q)
+	{
+		// hue/sat/luma -> Y/I/Q
+
+		const float π = 3.14159265358979323846f;
+
+		float num_phases = 12;
+		float phase_shift = 2 * π / num_phases;
+		float cb_phase_shift = 7;
+
+		float irange = 0.599f;
+		float qrange = 0.525f;
+
+		Y = L;
+		I = cos((num_phases - cb_phase_shift - H) * phase_shift) * irange;
+		Q = sin((num_phases - cb_phase_shift - H) * phase_shift) * qrange;
+		I *= S;
+		Q *= S;
 	}
 
 	float VideoOut::Clamp(float val, float min, float max)

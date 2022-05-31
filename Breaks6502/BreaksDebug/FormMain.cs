@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace BreaksDebug
 {
-    public partial class Form1 : Form
+    public partial class FormMain : Form
     {
         [DllImport("kernel32")]
         static extern bool AllocConsole();
@@ -72,7 +72,7 @@ namespace BreaksDebug
         UInt64 UnitTestPhiCounter = 0;
         UInt64 UnitTestPhiTraceCounter = 0;
 
-        public Form1()
+        public FormMain()
         {
             InitializeComponent();
         }

@@ -42,6 +42,7 @@
     <ClCompile Include="..\..\bus_control.cpp" />
     <ClCompile Include="..\..\core.cpp" />
     <ClCompile Include="..\..\data_bus.cpp" />
+    <ClCompile Include="..\..\debug.cpp" />
     <ClCompile Include="..\..\decoder.cpp" />
     <ClCompile Include="..\..\dispatch.cpp" />
     <ClCompile Include="..\..\extra_counter.cpp" />
@@ -74,6 +75,7 @@
     <ClInclude Include="..\..\bus_control.h" />
     <ClInclude Include="..\..\core.h" />
     <ClInclude Include="..\..\data_bus.h" />
+    <ClInclude Include="..\..\debug.h" />
     <ClInclude Include="..\..\decoder.h" />
     <ClInclude Include="..\..\dispatch.h" />
     <ClInclude Include="..\..\extra_counter.h" />
