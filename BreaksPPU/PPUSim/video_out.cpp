@@ -516,10 +516,11 @@ namespace PPUSim
 
 		float irange = 0.599f;
 		float qrange = 0.525f;
+		float hue_shift = 0.25f;
 
 		Y = L;
-		I = cos((num_phases - cb_phase_shift - H) * phase_shift) * irange;
-		Q = sin((num_phases - cb_phase_shift - H) * phase_shift) * qrange;
+		I = cos((num_phases - cb_phase_shift - H) * phase_shift + hue_shift) * irange;
+		Q = sin((num_phases - cb_phase_shift - H) * phase_shift + hue_shift) * qrange;
 		I *= S;
 		Q *= S;
 	}
