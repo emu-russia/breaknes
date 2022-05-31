@@ -440,6 +440,8 @@ namespace PPUSim
 
 		// If necessary, make an Emphasis.
 
+		// TBD: Make a proper Emphasis using the phase batch.
+
 		out.n_PR = cc != 6 ? TriState::Zero : TriState::One;
 		out.n_PG = cc != 10 ? TriState::Zero : TriState::One;
 		out.n_PB = cc != 2 ? TriState::Zero : TriState::One;
@@ -486,8 +488,7 @@ namespace PPUSim
 		float sat = (top.composite - bot.composite) * normalize_factor;
 
 		float Y, I, Q;
-		Breaks_HSL_YIQ(hue, sat, luma, Y, I, Q);
-		//DrawWx_HSL_YIQ(hue, sat, luma, Y, I, Q);
+		HSL_YIQ(hue, sat, luma, Y, I, Q);
 
 		// 6500K color temperature
 
@@ -500,29 +501,10 @@ namespace PPUSim
 		rgbOut.RGB.b = (uint8_t)(Clamp(B, 0.f, 1.f) * 255);
 	}
 
-	void VideoOut::DrawWx_HSL_YIQ(float hue, float sat, float luma, float& Y, float& I, float& Q)
-	{
-		// Based on: https://github.com/DragWx/PalGen/blob/master/palgen.js
-
-		//float satAdj = 0.7f;
-		//float con = 1.2f;
-		//sat *= satAdj * con;
-
-		float hueAdj = -0.25f;
-		float irange = 0.599f;
-		float qrange = 0.525f;
-
-		// Colorburst amplitude = -0.208 ~ 0.286 = 0.494
-		// Colorburst bias = 0.039
-		// Hue 8 is used as colorburst. Colorburst is 2.5656 radians.
-		Y = luma;
-		I = sin((((hue - 7) / 12.f) * 6.2832f) + 2.5656f + hueAdj) * irange;
-		Q = cos((((hue - 7) / 12.f) * 6.2832f) + 2.5656f + hueAdj) * qrange;
-		I *= sat;
-		Q *= sat;
-	}
-
-	void VideoOut::Breaks_HSL_YIQ(float hue, float sat, float luma, float& Y, float& I, float& Q)
+	/// <summary>
+	/// Preliminary version. Obtaining RGB color from RAW will be converted to work with the phase sample batch.
+	/// </summary>
+	void VideoOut::HSL_YIQ(float H, float S, float L, float& Y, float& I, float& Q)
 	{
 		// hue/sat/luma -> Y/I/Q
 
@@ -535,11 +517,11 @@ namespace PPUSim
 		float irange = 0.599f;
 		float qrange = 0.525f;
 
-		Y = luma;
-		I = cos((num_phases - cb_phase_shift - hue) * phase_shift) * irange;
-		Q = sin((num_phases - cb_phase_shift - hue) * phase_shift) * qrange;
-		I *= sat;
-		Q *= sat;
+		Y = L;
+		I = cos((num_phases - cb_phase_shift - H) * phase_shift) * irange;
+		Q = sin((num_phases - cb_phase_shift - H) * phase_shift) * qrange;
+		I *= S;
+		Q *= S;
 	}
 
 	float VideoOut::Clamp(float val, float min, float max)

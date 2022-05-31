@@ -80,8 +80,7 @@ namespace PPUSim
 
 		float Clamp(float val, float min, float max);
 
-		void DrawWx_HSL_YIQ(float hue, float sat, float luma, float& Y, float& I, float& Q);
-		void Breaks_HSL_YIQ(float hue, float sat, float luma, float& Y, float& I, float& Q);
+		void HSL_YIQ(float H, float S, float L, float& Y, float& I, float& Q);
 
 	public:
 
