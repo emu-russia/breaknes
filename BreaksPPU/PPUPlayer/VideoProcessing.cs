@@ -131,7 +131,6 @@ namespace PPUPlayer
 		void ProcessScanRAW()
 		{
 			int ReadPtr = SyncPos;
-			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[ppu_features.SamplesPerPCLK];
 
 			// Skip HSync and Back Porch
 
@@ -146,18 +145,15 @@ namespace PPUPlayer
 
 			for (int i = 0; i < 256; i++)
 			{
-				for (int n = 0; n < ppu_features.SamplesPerPCLK; n++)
-				{
-					batch[n] = ScanBuffer[ReadPtr++];
-				}
-
 				if (CurrentScan < 240)
 				{
 					byte r, g, b;
-					PPUPlayerInterop.ConvertRAWToRGB(batch[0].raw, out r, out g, out b);
+					PPUPlayerInterop.ConvertRAWToRGB(ScanBuffer[ReadPtr].raw, out r, out g, out b);
 
 					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
 				}
+
+				ReadPtr += ppu_features.SamplesPerPCLK;
 			}
 
 			CurrentScan++;
@@ -171,7 +167,6 @@ namespace PPUPlayer
 		void ProcessScanRGB()
 		{
 			int ReadPtr = SyncPos;
-			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[ppu_features.SamplesPerPCLK];
 
 			// Skip HSync and Back Porch
 
@@ -186,19 +181,18 @@ namespace PPUPlayer
 
 			for (int i = 0; i < 256; i++)
 			{
-				for (int n = 0; n < ppu_features.SamplesPerPCLK; n++)
-				{
-					batch[n] = ScanBuffer[ReadPtr++];
-				}
-
 				if (CurrentScan < 240)
 				{
-					byte r = batch[0].r;
-					byte g = batch[0].g;
-					byte b = batch[0].b;
+					var sample = ScanBuffer[ReadPtr];
+
+					byte r = sample.r;
+					byte g = sample.g;
+					byte b = sample.b;
 
 					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
 				}
+
+				ReadPtr += ppu_features.SamplesPerPCLK;
 			}
 
 			CurrentScan++;
@@ -213,6 +207,7 @@ namespace PPUPlayer
 		{
 			int ReadPtr = SyncPos;
 			int num_phases = 12;
+			float normalize_factor = 1.0f / ppu_features.WhiteLevel;
 			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[num_phases];
 
 			// Skip HSync
@@ -232,26 +227,31 @@ namespace PPUPlayer
 
 			for (int i = 0; i < 256; i++)
 			{
-				int prev_ReadPtr = ReadPtr;
-
-				for (int n = 0; n < num_phases; n++)
-				{
-					batch[n] = ScanBuffer[ReadPtr++];
-				}
-
-				ReadPtr = prev_ReadPtr + ppu_features.SamplesPerPCLK;
-
 				if (CurrentScan < 240)
 				{
-					float normalize_factor = 1.0f / ppu_features.WhiteLevel;
+					// Extract the median sample batch
+
+					int PrevReadPtr = ReadPtr;
+
+					int MidPtr = ReadPtr - num_phases / 2;
+
+					for (int n = 0; n < num_phases; n++)
+					{
+						batch[n] = ScanBuffer[MidPtr++];
+					}
+
+					ReadPtr = PrevReadPtr + ppu_features.SamplesPerPCLK;
+
+					// YIQ
+
 					float Y = 0, I = 0, Q = 0;
 
 					for (int n = 0; n < num_phases; n++)
 					{
 						float level = ((batch[n].composite - ppu_features.BurstLevel) * normalize_factor) / num_phases;
 						Y += level;
-						I += level * (float)Math.Cos((cb_phase + n) * (2 * Math.PI / num_phases));
-						Q += level * (float)Math.Sin((cb_phase + n) * (2 * Math.PI / num_phases));
+						I += level * (float)Math.Cos(( + n) * (2 * Math.PI / num_phases));
+						Q += level * (float)Math.Sin(( + n) * (2 * Math.PI / num_phases));
 					}
 
 					// 6500K color temperature
