@@ -296,12 +296,12 @@ namespace PPUSim
 			vout.RAW.TR = ToByte(NOT(ppu->wire.n_TR));
 			vout.RAW.TG = ToByte(NOT(ppu->wire.n_TG));
 			vout.RAW.TB = ToByte(NOT(ppu->wire.n_TB));
-			vout.RAW.Sync = ToByte(sync_latch.nget());
 		}
 		else
 		{
 			vout.RAW.raw = 0;
 		}
+		vout.RAW.Sync = ToByte(sync_latch.nget());
 	}
 
 	void VideoOutSRBit::sim(TriState n_shift_in, TriState n_CLK, TriState CLK, TriState RES,
@@ -402,6 +402,7 @@ namespace PPUSim
 				features.SamplesPerPCLK = 8;
 				features.PixelsPerScan = 341;
 				features.ScansPerField = 262;
+				features.BackPorchSize = 40;
 				features.Composite = true;
 				features.BurstLevel = 1.3f;
 				features.WhiteLevel = 1.6f;
@@ -423,8 +424,6 @@ namespace PPUSim
 		// Using a temporary PPU of the same revision, to simulate the video generator
 
 		PPU vppu(ppu->rev, false, true);
-
-		VideoOut out(ppu);
 
 		size_t warmup_halfcycles = 6;
 		size_t num_phases = 12;

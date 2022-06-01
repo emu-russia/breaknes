@@ -80,12 +80,14 @@ namespace PPUPlayer
 			[FieldOffset(8)]
 			public int ScansPerField;
 			[FieldOffset(12)]
-			public int Composite;           // 1: Composite, 0: RGB
+			public int BackPorchSize;		// BackPorch size in pixels.
 			[FieldOffset(16)]
-			public float BurstLevel;		// IRE = 0
+			public int Composite;           // 1: Composite, 0: RGB
 			[FieldOffset(20)]
-			public float WhiteLevel;        // IRE = 100
+			public float BurstLevel;		// IRE = 0
 			[FieldOffset(24)]
+			public float WhiteLevel;        // IRE = 100
+			[FieldOffset(28)]
 			public float SyncLevel;
 		}
 
