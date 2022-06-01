@@ -212,7 +212,8 @@ namespace PPUPlayer
 		void ProcessScanComposite()
 		{
 			int ReadPtr = SyncPos;
-			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[ppu_features.SamplesPerPCLK];
+			int num_phases = 12;
+			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[num_phases];
 
 			// Skip HSync
 
@@ -231,16 +232,19 @@ namespace PPUPlayer
 
 			for (int i = 0; i < 256; i++)
 			{
-				for (int n = 0; n < ppu_features.SamplesPerPCLK; n++)
+				int prev_ReadPtr = ReadPtr;
+
+				for (int n = 0; n < num_phases; n++)
 				{
 					batch[n] = ScanBuffer[ReadPtr++];
 				}
+
+				ReadPtr = prev_ReadPtr + ppu_features.SamplesPerPCLK;
 
 				if (CurrentScan < 240)
 				{
 					float normalize_factor = 1.0f / ppu_features.WhiteLevel;
 					float Y = 0, I = 0, Q = 0;
-					int num_phases = 8;
 
 					for (int n = 0; n < num_phases; n++)
 					{
@@ -274,9 +278,44 @@ namespace PPUPlayer
 
 		int PLL()
 		{
-			// TBD
+			int ReadPtr = SyncPos;
+			int num_phases = 12;
+			int samples = ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
 
-			return 9;
+			// Skip HSync
+
+			while (ScanBuffer[ReadPtr].composite <= ppu_features.SyncLevel)
+			{
+				ReadPtr++;
+			}
+
+			// Lock phase of color burst
+
+			while (ScanBuffer[ReadPtr].composite == ppu_features.BurstLevel && samples != 0)
+			{
+				samples--;
+				ReadPtr++;
+			}
+
+			// Get phase shift
+
+			int cb_shift = 9;
+
+			while (ScanBuffer[ReadPtr].composite < ppu_features.BurstLevel && samples != 0)
+			{
+				samples--;
+				cb_shift--;
+				ReadPtr++;
+			}
+
+			//while (ScanBuffer[ReadPtr].composite > ppu_features.BurstLevel && samples != 0)
+			//{
+			//	samples--;
+			//	cb_shift++;
+			//	ReadPtr++;
+			//}
+
+			return 9; // cb_shift;
 		}
 
 		float Clamp(float val, float min, float max)
@@ -308,10 +347,12 @@ namespace PPUPlayer
 				max_samples--;
 			}
 
-			int hsync_size = 24;
+			// TBD: Think about the best way to make HSync visible, too.
 
-			ReadPtr -= hsync_size * ppu_features.SamplesPerPCLK;
-			max_samples += hsync_size * ppu_features.SamplesPerPCLK;
+			//int hsync_size = 22;
+
+			//ReadPtr -= hsync_size * ppu_features.SamplesPerPCLK;
+			//max_samples += hsync_size * ppu_features.SamplesPerPCLK;
 
 			//int PPUPicturePortion = (hsync_size + ppu_features.BackPorchSize) * ppu_features.SamplesPerPCLK * PixelsPerSample;
 
@@ -331,7 +372,7 @@ namespace PPUPlayer
 				prevPt = pt;
 			}
 
-			// Draw the separator for the visible part of the signal.
+			// TBD: Draw the separator for the visible part of the signal.
 
 			//gr.DrawLine(new(pictureDelimiterColor),
 			//	new(PPUPicturePortion * PixelsPerSample, 0),
