@@ -6,41 +6,64 @@ using namespace BaseLogic;
 
 namespace PPUSim
 {
-	PPU::PPU(Revision _rev, bool _HLEMode)
+	/// <summary>
+	/// Constructor. Creates all PPU modules.
+	/// </summary>
+	/// <param name="_rev">Revision of the PPU chip.</param>
+	/// <param name="_HLEMode">true: High-level circuit emulation mode. Allows you to speed up PPU operation by replacing pieces of logic with fast C++ code.</param>
+	/// <param name="VideoGen">true: Create a special version of the PPU that contains only a video generator.</param>
+	PPU::PPU(Revision _rev, bool _HLEMode, bool VideoGen)
 	{
 		rev = _rev;
 		HLEMode = _HLEMode;
 
-		regs = new ControlRegs(this);
-		h = new HVCounter(this, 9);
-		v = new HVCounter(this, 9);
-		hv_dec = new HVDecoder(this);
-		hv_fsm = new FSM(this);
-		cram = new CRAM(this);
+		if (!VideoGen)
+		{
+			regs = new ControlRegs(this);
+			h = new HVCounter(this, 9);
+			v = new HVCounter(this, 9);
+			hv_dec = new HVDecoder(this);
+			hv_fsm = new FSM(this);
+			cram = new CRAM(this);
+			mux = new Mux(this);
+			eval = new OAMEval(this);
+			oam = new OAM(this);
+			fifo = new FIFO(this);
+			data_reader = new DataReader(this);
+			vram_ctrl = new VRAM_Control(this);
+		}
+
 		vid_out = new VideoOut(this);
-		mux = new Mux(this);
-		eval = new OAMEval(this);
-		oam = new OAM(this);
-		fifo = new FIFO(this);
-		data_reader = new DataReader(this);
-		vram_ctrl = new VRAM_Control(this);
 	}
 
 	PPU::~PPU()
 	{
-		delete regs;
-		delete h;
-		delete v;
-		delete hv_dec;
-		delete hv_fsm;
-		delete cram;
-		delete vid_out;
-		delete mux;
-		delete eval;
-		delete oam;
-		delete fifo;
-		delete data_reader;
-		delete vram_ctrl;
+		if (regs)
+			delete regs;
+		if (h)
+			delete h;
+		if (v)
+			delete v;
+		if (hv_dec)
+			delete hv_dec;
+		if (hv_fsm)
+			delete hv_fsm;
+		if (cram)
+			delete cram;
+		if (vid_out)
+			delete vid_out;
+		if (mux)
+			delete mux;
+		if (eval)
+			delete eval;
+		if (oam)
+			delete oam;
+		if (fifo)
+			delete fifo;
+		if (data_reader)
+			delete data_reader;
+		if (vram_ctrl)
+			delete vram_ctrl;
 	}
 
 	void PPU::sim(TriState inputs[], TriState outputs[], uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus, uint8_t* addrHi_bus, VideoOutSignal& vout)

@@ -390,7 +390,7 @@ namespace PPUSim
 		bool HLEMode = false;
 
 	public:
-		PPU(Revision rev, bool HLEMode = false);
+		PPU(Revision rev, bool HLEMode = false, bool VideoGen = false);
 		~PPU();
 
 		/// <summary>
