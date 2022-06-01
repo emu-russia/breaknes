@@ -183,6 +183,7 @@ extern "C"
 			features->SamplesPerPCLK = 8;
 			features->PixelsPerScan = 341;
 			features->ScansPerField = 262;
+			features->BackPorchSize = 40;
 			features->Composite = true;
 			features->BurstLevel = 1.3f;
 			features->WhiteLevel = 1.6f;

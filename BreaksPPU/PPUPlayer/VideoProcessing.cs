@@ -129,10 +129,16 @@ namespace PPUPlayer
 			int ReadPtr = SyncPos;
 			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[ppu_features.SamplesPerPCLK];
 
-			if ((ScanBuffer[ReadPtr].raw & 0b1000000000) != 0)
+			// Skip HSync and Back Porch
+
+			while ((ScanBuffer[ReadPtr].raw & 0b1000000000) != 0)
 			{
 				ReadPtr++;
 			}
+
+			ReadPtr += ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
+
+			// Output the visible part of the signal
 
 			for (int i = 0; i < 256; i++)
 			{
