@@ -487,13 +487,14 @@ namespace PPUSim
 		const float π = 3.14159265358979323846f;
 		float normalize_factor = 1.f / features.WhiteLevel;
 		float Y = 0, I = 0, Q = 0;
+		size_t cb_phase = 9;
 
 		for (size_t n = 0; n < num_phases; n++)
 		{
 			float level = ((batch[n].composite - features.BurstLevel) * normalize_factor) / num_phases;
 			Y += level;
-			I += level * cos((2) * (2 * π / num_phases));
-			Q += level * sin((2) * (2 * π / num_phases));
+			I += level * cos((cb_phase + n) * (2 * π / num_phases));
+			Q += level * sin((cb_phase + n) * (2 * π / num_phases));
 		}
 
 		delete[] batch;
@@ -507,30 +508,6 @@ namespace PPUSim
 		rgbOut.RGB.r = (uint8_t)(Clamp(R, 0.f, 1.f) * 255);
 		rgbOut.RGB.g = (uint8_t)(Clamp(G, 0.f, 1.f) * 255);
 		rgbOut.RGB.b = (uint8_t)(Clamp(B, 0.f, 1.f) * 255);
-	}
-
-	/// <summary>
-	/// Preliminary version. Obtaining RGB color from RAW will be converted to work with the phase sample batch.
-	/// </summary>
-	void VideoOut::HSL_YIQ(float H, float S, float L, float& Y, float& I, float& Q)
-	{
-		// hue/sat/luma -> Y/I/Q
-
-		const float π = 3.14159265358979323846f;
-
-		float num_phases = 12;
-		float phase_shift = 2 * π / num_phases;
-		float cb_phase_shift = 7;
-
-		float irange = 0.599f;
-		float qrange = 0.525f;
-		float hue_shift = 0.25f;
-
-		Y = L;
-		I = cos((num_phases - cb_phase_shift - H) * phase_shift + hue_shift) * irange;
-		Q = sin((num_phases - cb_phase_shift - H) * phase_shift + hue_shift) * qrange;
-		I *= S;
-		Q *= S;
 	}
 
 	float VideoOut::Clamp(float val, float min, float max)

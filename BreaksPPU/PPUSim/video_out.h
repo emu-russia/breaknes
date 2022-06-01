@@ -80,8 +80,6 @@ namespace PPUSim
 
 		float Clamp(float val, float min, float max);
 
-		void HSL_YIQ(float H, float S, float L, float& Y, float& I, float& Q);
-
 	public:
 
 		VideoOut(PPU* parent);
