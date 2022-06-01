@@ -296,12 +296,12 @@ namespace PPUSim
 			vout.RAW.TR = ToByte(NOT(ppu->wire.n_TR));
 			vout.RAW.TG = ToByte(NOT(ppu->wire.n_TG));
 			vout.RAW.TB = ToByte(NOT(ppu->wire.n_TB));
-			vout.RAW.Sync = ToByte(sync_latch.nget());
 		}
 		else
 		{
 			vout.RAW.raw = 0;
 		}
+		vout.RAW.Sync = ToByte(sync_latch.nget());
 	}
 
 	void VideoOutSRBit::sim(TriState n_shift_in, TriState n_CLK, TriState CLK, TriState RES,

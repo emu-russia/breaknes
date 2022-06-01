@@ -26,6 +26,7 @@ namespace PPUPlayer
 		PPUPlayerInterop.VideoOutSample[] ScanBuffer;
 		int WritePtr = 0;
 		bool SyncFound = false;
+		int SyncPos = -1;
 
 		Color[] field = new Color[256 * 240];
 		int CurrentScan = 0;
@@ -47,13 +48,14 @@ namespace PPUPlayer
 			PPUPlayerInterop.GetSignalFeatures(out ppu_features);
 
 			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
-			ScanBuffer = new PPUPlayerInterop.VideoOutSample[SamplesPerScan];
+			ScanBuffer = new PPUPlayerInterop.VideoOutSample[2 * SamplesPerScan];
 			WritePtr = 0;
 
 			RawMode = RAWMode;
 			PPUPlayerInterop.SetRAWColorMode(RAWMode);
 
 			SyncFound = false;
+			SyncPos = -1;
 			CurrentScan = 0;
 
 			scan_pic = null;
@@ -63,38 +65,107 @@ namespace PPUPlayer
 
 		void ProcessSample(PPUPlayerInterop.VideoOutSample sample)
 		{
-			ScanBuffer[WritePtr++] = sample;
+			ScanBuffer[WritePtr] = sample;
 
-			if (WritePtr >= SamplesPerScan)
+			// Check that the sample is HSync.
+
+			bool sync = false;
+
+			if (RawMode)
 			{
-				int ReadPtr = 0;
-				PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[ppu_features.SamplesPerPCLK];
-
-				for (int i=0; i<256; i++)
+				sync = (sample.raw & 0b1000000000) != 0;
+			}
+			else
+			{
+				if (sample.composite <= ppu_features.SyncLevel && ppu_features.Composite != 0)
 				{
-					for (int n=0; n<ppu_features.SamplesPerPCLK; n++)
+					sync = true;
+				}
+				else if (sample.syncLevel != 0 && ppu_features.Composite == 0)
+				{
+					sync = true;
+				}
+			}
+
+			// If the beginning of HSync is found - remember its offset in the input buffer.
+
+			if (sync && !SyncFound)
+			{
+				SyncPos = WritePtr;
+				SyncFound = true;
+			}
+
+			// Advance write pointer
+
+			WritePtr++;
+
+			// If HSync is found and the number of samples is more than enough, process the scan.
+
+			if ( SyncFound && (SyncPos + WritePtr) >= SamplesPerScan )
+			{
+				if (RawMode)
+				{
+					ProcessScanRAW();
+				}
+				else
+				{
+					if (ppu_features.Composite != 0)
 					{
-						batch[n] = ScanBuffer[ReadPtr++];
+						ProcessScanComposite();
 					}
-
-					if (CurrentScan < 240)
+					else
 					{
-						byte r, g, b;
-						PPUPlayerInterop.ConvertRAWToRGB(batch[0].raw, out r, out g, out b);
-
-						field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
+						ProcessScanRGB();
 					}
 				}
 
-				CurrentScan++;
-				if (CurrentScan >= ppu_features.ScansPerField)
-				{
-					VisualizeField();
-					CurrentScan = 0;
-				}
-
+				SyncFound = false;
 				WritePtr = 0;
 			}
+		}
+
+		void ProcessScanRAW()
+		{
+			int ReadPtr = SyncPos;
+			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[ppu_features.SamplesPerPCLK];
+
+			if ((ScanBuffer[ReadPtr].raw & 0b1000000000) != 0)
+			{
+				ReadPtr++;
+			}
+
+			for (int i = 0; i < 256; i++)
+			{
+				for (int n = 0; n < ppu_features.SamplesPerPCLK; n++)
+				{
+					batch[n] = ScanBuffer[ReadPtr++];
+				}
+
+				if (CurrentScan < 240)
+				{
+					byte r, g, b;
+					PPUPlayerInterop.ConvertRAWToRGB(batch[0].raw, out r, out g, out b);
+
+					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
+				}
+			}
+
+			CurrentScan++;
+			if (CurrentScan >= ppu_features.ScansPerField)
+			{
+				VisualizeField();
+				CurrentScan = 0;
+			}
+		}
+
+		void ProcessScanRGB()
+		{
+			// TBD.
+		}
+
+		void ProcessScanComposite()
+		{
+			// TBD.
 		}
 
 		/// <summary>
