@@ -424,8 +424,6 @@ namespace PPUSim
 
 		PPU vppu(ppu->rev, false, true);
 
-		VideoOut out(ppu);
-
 		size_t warmup_halfcycles = 6;
 		size_t num_phases = 12;
 		VideoOutSignal unused{};
