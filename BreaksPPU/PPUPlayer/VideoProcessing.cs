@@ -231,16 +231,12 @@ namespace PPUPlayer
 				{
 					// Extract the median sample batch
 
-					int PrevReadPtr = ReadPtr;
-
-					int MidPtr = ReadPtr - num_phases / 2;
+					int MidPtr = ReadPtr + i * ppu_features.SamplesPerPCLK - num_phases / 2;
 
 					for (int n = 0; n < num_phases; n++)
 					{
 						batch[n] = ScanBuffer[MidPtr++];
 					}
-
-					ReadPtr = PrevReadPtr + ppu_features.SamplesPerPCLK;
 
 					// YIQ
 
