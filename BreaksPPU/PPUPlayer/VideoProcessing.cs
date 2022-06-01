@@ -244,12 +244,15 @@ namespace PPUPlayer
 
 					float ofs = i * ppu_features.SamplesPerPCLK;
 
+					// TBD: For now, a hack to tweak Hue. Interestingly, PPUSim does not require this tweaking.
+					float hue_adj = 0.35f;
+
 					for (int n = 0; n < num_phases; n++)
 					{
 						float level = ((batch[n].composite - ppu_features.BurstLevel) * normalize_factor) / num_phases;
 						Y += level;
-						I += level * (float)Math.Cos((cb_phase + n + ofs) * (2 * Math.PI / num_phases));
-						Q += level * (float)Math.Sin((cb_phase + n + ofs) * (2 * Math.PI / num_phases));
+						I += level * (float)Math.Cos((cb_phase + n + ofs) * (2 * Math.PI / num_phases) + hue_adj);
+						Q += level * (float)Math.Sin((cb_phase + n + ofs) * (2 * Math.PI / num_phases) + hue_adj);
 					}
 
 					// 6500K color temperature
@@ -289,10 +292,9 @@ namespace PPUPlayer
 
 			// Lock phase of color burst
 
-			while (ScanBuffer[ReadPtr].composite == ppu_features.BurstLevel && samples != 0)
+			while (ScanBuffer[ReadPtr++].composite == ppu_features.BurstLevel && samples != 0)
 			{
 				samples--;
-				ReadPtr++;
 			}
 
 			// Get phase shift
@@ -304,7 +306,7 @@ namespace PPUPlayer
 				while (ScanBuffer[ReadPtr].composite < ppu_features.BurstLevel && samples != 0)
 				{
 					samples--;
-					cb_shift++;
+					cb_shift--;
 					ReadPtr++;
 				}
 			}
@@ -316,9 +318,10 @@ namespace PPUPlayer
 					cb_shift++;
 					ReadPtr++;
 				}
+
 			}
 
-			return Math.Abs(cb_shift % num_phases);
+			return cb_shift % num_phases;
 		}
 
 		float Clamp(float val, float min, float max)
@@ -352,10 +355,10 @@ namespace PPUPlayer
 
 			// TBD: Think about the best way to make HSync visible, too.
 
-			//int hsync_size = 22;
+			int hsync_size = 12;
 
-			//ReadPtr -= hsync_size * ppu_features.SamplesPerPCLK;
-			//max_samples += hsync_size * ppu_features.SamplesPerPCLK;
+			ReadPtr -= hsync_size * ppu_features.SamplesPerPCLK;
+			max_samples += hsync_size * ppu_features.SamplesPerPCLK;
 
 			//int PPUPicturePortion = (hsync_size + ppu_features.BackPorchSize) * ppu_features.SamplesPerPCLK * PixelsPerSample;
 
