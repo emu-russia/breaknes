@@ -417,78 +417,86 @@ namespace PPUSim
 
 	void VideoOut::ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
 	{
-		VideoOut out(ppu);
-
 		VideoSignalFeatures features{};
-
 		GetSignalFeatures(features);
 
-		int cc = rawIn.RAW.raw & 0xf;
+		// Using a temporary PPU of the same revision, to simulate the video generator
 
-		out.sync_latch.set(TriState::One, TriState::One);
-		out.black_latch.set(cc >= 14 ? TriState::Zero : TriState::One, TriState::One);
-		out.cb_latch.set(TriState::Zero, TriState::One);
-		out.n_POUT = cc >= 14 ? TriState::One : TriState::Zero;
+		PPU vppu(ppu->rev, false, true);
 
-		// Get Color Burst Phase number
+		VideoOut out(ppu);
 
-		int cb_phase = 8;
+		size_t warmup_halfcycles = 6;
+		size_t num_phases = 12;
+		VideoOutSignal unused{};
 
-		// Get the color phase number and determine the phase shift / hue
+		// Latch all important signals
 
-		float hue = cc - 1;
+		vppu.wire.n_CC[0] = NOT(FromByte(rawIn.RAW.CC0));
+		vppu.wire.n_CC[1] = NOT(FromByte(rawIn.RAW.CC1));
+		vppu.wire.n_CC[2] = NOT(FromByte(rawIn.RAW.CC2));
+		vppu.wire.n_CC[3] = NOT(FromByte(rawIn.RAW.CC3));
+		vppu.wire.n_LL[0] = NOT(FromByte(rawIn.RAW.LL0));
+		vppu.wire.n_LL[1] = NOT(FromByte(rawIn.RAW.LL1));
+		vppu.wire.n_TR = NOT(FromByte(rawIn.RAW.TR));
+		vppu.wire.n_TG = NOT(FromByte(rawIn.RAW.TG));
+		vppu.wire.n_TB = NOT(FromByte(rawIn.RAW.TB));
 
-		// If necessary, make an Emphasis.
+		vppu.fsm.BURST = TriState::Zero;
+		vppu.fsm.SYNC = FromByte(rawIn.RAW.Sync);
+		vppu.fsm.n_PICTURE = TriState::Zero;
 
-		// TBD: Make a proper Emphasis using the phase batch.
+		vppu.wire.n_PCLK = TriState::Zero;
+		vppu.wire.PCLK = TriState::One;
+		vppu.vid_out->sim(unused);
 
-		out.n_PR = cc != 6 ? TriState::Zero : TriState::One;
-		out.n_PG = cc != 10 ? TriState::Zero : TriState::One;
-		out.n_PB = cc != 2 ? TriState::Zero : TriState::One;
+		vppu.wire.n_PCLK = TriState::One;
+		vppu.wire.PCLK = TriState::Zero;
+		vppu.vid_out->sim(unused);
 
-		out.sim_Emphasis(
-			NOT(FromByte(rawIn.RAW.TR)),
-			NOT(FromByte(rawIn.RAW.TG)),
-			NOT(FromByte(rawIn.RAW.TB)));
+		// Warm up the Phase Shifter, because once it starts, it gives out garbage.
 
-		// Get the luminance / saturation
+		TriState CLK = TriState::Zero;
 
-		TriState n_LL[2]{};
-		n_LL[0] = NOT(FromByte(rawIn.RAW.LL0));
-		n_LL[1] = NOT(FromByte(rawIn.RAW.LL1));
-		out.sim_LumaDecoder(n_LL);
-
-		VideoOutSignal bot{}, top{};
-
-		if (cc == 0)
+		for (size_t n = 0; n < warmup_halfcycles; n++)
 		{
-			out.n_PZ = TriState::Zero;
-			out.sim_CompositeDAC(bot);
-			out.sim_CompositeDAC(top);
-		}
-		else if (cc == 13)
-		{
-			out.n_PZ = TriState::One;
-			out.sim_CompositeDAC(bot);
-			out.sim_CompositeDAC(top);
-		}
-		else
-		{
-			out.n_PZ = TriState::One;
-			out.sim_CompositeDAC(bot);
+			vppu.wire.n_CLK = NOT(CLK);
+			vppu.wire.CLK = CLK;
 
-			out.n_PZ = TriState::Zero;
-			out.sim_CompositeDAC(top);
+			vppu.vid_out->sim(unused);
+
+			CLK = NOT(CLK);
 		}
 
-		top.composite -= features.BurstLevel;
-		bot.composite -= features.BurstLevel;
+		// Get a video signal batch equal to the number of phases
+
+		VideoOutSignal *batch = new VideoOutSignal[num_phases];
+
+		for (size_t n = 0; n < num_phases; n++)
+		{
+			vppu.wire.n_CLK = NOT(CLK);
+			vppu.wire.CLK = CLK;
+
+			vppu.vid_out->sim(batch[n]);
+
+			CLK = NOT(CLK);
+		}
+
+		// Process the batch
+
+		const float π = 3.14159265358979323846f;
 		float normalize_factor = 1.f / features.WhiteLevel;
-		float luma = ((top.composite + bot.composite) / 2) * normalize_factor;
-		float sat = (top.composite - bot.composite) * normalize_factor;
+		float Y = 0, I = 0, Q = 0;
 
-		float Y, I, Q;
-		HSL_YIQ(hue, sat, luma, Y, I, Q);
+		for (size_t n = 0; n < num_phases; n++)
+		{
+			float level = ((batch[n].composite - features.BurstLevel) * normalize_factor) / num_phases;
+			Y += level;
+			I += level * cos((2) * (2 * π / num_phases));
+			Q += level * sin((2) * (2 * π / num_phases));
+		}
+
+		delete[] batch;
 
 		// 6500K color temperature
 
