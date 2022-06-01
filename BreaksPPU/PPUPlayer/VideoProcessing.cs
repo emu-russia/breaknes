@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -34,8 +34,7 @@ namespace PPUPlayer
 		// Visualization settings
 
 		static int PixelsPerSample = 1;     // Discrete pixels (Bitmap)
-		static int ScaleY = 5;
-		//static int PPUPicturePortion = 256 * SamplesPerPCLK;
+		static int ScaleY = 1;
 		Color scanBgColor = Color.Gray;
 		Color scanColor = Color.AliceBlue;
 		Color pictureDelimiterColor = Color.Tomato;
@@ -112,6 +111,11 @@ namespace PPUPlayer
 					if (ppu_features.Composite != 0)
 					{
 						ProcessScanComposite();
+
+						if (pictureBoxScan.Visible)
+						{
+							VisualizeScanComposite();
+						}
 					}
 					else
 					{
@@ -166,12 +170,118 @@ namespace PPUPlayer
 
 		void ProcessScanRGB()
 		{
-			// TBD.
+			int ReadPtr = SyncPos;
+			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[ppu_features.SamplesPerPCLK];
+
+			// Skip HSync and Back Porch
+
+			while (ScanBuffer[ReadPtr].syncLevel != 0)
+			{
+				ReadPtr++;
+			}
+
+			ReadPtr += ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
+
+			// Output the visible part of the signal
+
+			for (int i = 0; i < 256; i++)
+			{
+				for (int n = 0; n < ppu_features.SamplesPerPCLK; n++)
+				{
+					batch[n] = ScanBuffer[ReadPtr++];
+				}
+
+				if (CurrentScan < 240)
+				{
+					byte r = batch[0].r;
+					byte g = batch[0].g;
+					byte b = batch[0].b;
+
+					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
+				}
+			}
+
+			CurrentScan++;
+			if (CurrentScan >= ppu_features.ScansPerField)
+			{
+				VisualizeField();
+				CurrentScan = 0;
+			}
 		}
 
 		void ProcessScanComposite()
 		{
-			// TBD.
+			int ReadPtr = SyncPos;
+			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[ppu_features.SamplesPerPCLK];
+
+			// Skip HSync
+
+			while (ScanBuffer[ReadPtr].composite <= ppu_features.SyncLevel)
+			{
+				ReadPtr++;
+			}
+
+			// Detect Color Burst Phase (simulate TV PLL)
+
+			int cb_phase = PLL();
+
+			ReadPtr += ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
+
+			// Output the visible part of the signal
+
+			for (int i = 0; i < 256; i++)
+			{
+				for (int n = 0; n < ppu_features.SamplesPerPCLK; n++)
+				{
+					batch[n] = ScanBuffer[ReadPtr++];
+				}
+
+				if (CurrentScan < 240)
+				{
+					float normalize_factor = 1.0f / ppu_features.WhiteLevel;
+					float Y = 0, I = 0, Q = 0;
+					int num_phases = 8;
+
+					for (int n = 0; n < num_phases; n++)
+					{
+						float level = ((batch[n].composite - ppu_features.BurstLevel) * normalize_factor) / num_phases;
+						Y += level;
+						I += level * (float)Math.Cos((cb_phase + n) * (2 * Math.PI / num_phases));
+						Q += level * (float)Math.Sin((cb_phase + n) * (2 * Math.PI / num_phases));
+					}
+
+					// 6500K color temperature
+
+					float R = Y + (0.956f * I) + (0.623f * Q);
+					float G = Y - (0.272f * I) - (0.648f * Q);
+					float B = Y - (1.105f * I) + (1.705f * Q);
+
+					byte r = (byte)(Clamp(R, 0.0f, 1.0f) * 255);
+					byte g = (byte)(Clamp(G, 0.0f, 1.0f) * 255);
+					byte b = (byte)(Clamp(B, 0.0f, 1.0f) * 255);
+
+					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
+				}
+			}
+
+			CurrentScan++;
+			if (CurrentScan >= ppu_features.ScansPerField)
+			{
+				VisualizeField();
+				CurrentScan = 0;
+			}
+		}
+
+		int PLL()
+		{
+			// TBD
+
+			return 9;
+		}
+
+		float Clamp(float val, float min, float max)
+		{
+			return Math.Min(max, Math.Max(val, min));
 		}
 
 		/// <summary>
@@ -179,16 +289,31 @@ namespace PPUPlayer
 		/// Therefore, the height of the picture is 250 IRE.
 		/// When converting the sample to the IRE level, it is additionally shifted to make it look nice.
 		/// </summary>
-		void VisualizeScan()
+		void VisualizeScanComposite()
 		{
+			int ReadPtr = SyncPos;
 			int w = SamplesPerScan * PixelsPerSample;
-			int h = 250 * ScaleY;
+			int h = 2000;
 			float IRE = (ppu_features.WhiteLevel - ppu_features.BurstLevel) / 100.0f;
+			int max_samples = SamplesPerScan;
 
 			//if (scan_pic == null)
 			{
 				scan_pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			}
+
+			while (ScanBuffer[ReadPtr].composite <= ppu_features.SyncLevel)
+			{
+				ReadPtr++;
+				max_samples--;
+			}
+
+			int hsync_size = 24;
+
+			ReadPtr -= hsync_size * ppu_features.SamplesPerPCLK;
+			max_samples += hsync_size * ppu_features.SamplesPerPCLK;
+
+			//int PPUPicturePortion = (hsync_size + ppu_features.BackPorchSize) * ppu_features.SamplesPerPCLK * PixelsPerSample;
 
 			Bitmap pic = scan_pic;
 			Graphics gr = Graphics.FromImage(pic);
@@ -196,17 +321,18 @@ namespace PPUPlayer
 			Pen pen = new(scanColor);
 			Point prevPt = new(-SamplesPerScan, 0);
 
-			//for (int n=0; n<SamplesPerScan; n++)
-			//{
-			//	float sample = Scan[n];
-			//	float ires = ((sample - BlankLevel) / IRE) * ScaleY;
+			for (int n = 0; n < max_samples; n++)
+			{
+				float sample = ScanBuffer[ReadPtr + n].composite;
+				float ires = ((sample - ppu_features.BurstLevel) / IRE) * ScaleY;
 
-			//	Point pt = new(PixelsPerSample * n, h - ((int)ires + 200));
-			//	gr.DrawLine(pen, prevPt, pt);
-			//	prevPt = pt;
-			//}
+				Point pt = new(PixelsPerSample * n, h - ((int)ires + 300));
+				gr.DrawLine(pen, prevPt, pt);
+				prevPt = pt;
+			}
 
-			//// Draw the separator for the visible part of the signal.
+			// Draw the separator for the visible part of the signal.
+
 			//gr.DrawLine(new(pictureDelimiterColor),
 			//	new(PPUPicturePortion * PixelsPerSample, 0),
 			//	new(PPUPicturePortion * PixelsPerSample, h - 1));
