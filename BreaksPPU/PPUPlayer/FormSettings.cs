@@ -162,7 +162,7 @@ namespace PPUPlayer
 				List<String> list = new List<String>();
 
 				list.Add("RP2C02G");
-				list.Add("RP2C04-0001");
+				list.Add("RP2C04-0003");
 				list.Add("RP2C07-0");
 
 				return new StandardValuesCollection(list);

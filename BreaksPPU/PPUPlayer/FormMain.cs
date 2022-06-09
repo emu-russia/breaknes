@@ -760,5 +760,22 @@ namespace PPUPlayer
 				PPUPlayerInterop.SetCTRL1((byte)value);
 			}
 		}
+
+		private void loadRAWDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!SimulationStarted)
+			{
+				MessageBox.Show(
+					"You need to run the simulation so that the PPU instance is active.",
+					"Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				return;
+			}
+
+			if (openFileDialogHEX.ShowDialog() == DialogResult.OK)
+			{
+				FormRawViewer formRawViewer = new FormRawViewer(openFileDialogHEX.FileName);
+				formRawViewer.Show();
+			}
+		}
 	}
 }
