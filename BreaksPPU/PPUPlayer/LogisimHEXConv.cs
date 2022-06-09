@@ -16,17 +16,17 @@ namespace PPUPlayer
 		{
 			List<UInt16> res = new List<UInt16>();
 
-            Regex regex = new Regex(@"^v2.0 raw[\r\n]+([\da-f\*]+\s*)*");
+			Regex regex = new Regex(@"^v2.0 raw[\r\n]+([\da-f\*]+\s*)*");
 
-            var matches = regex.Matches(text);
+			var matches = regex.Matches(text);
 
-            foreach (Match match in matches)
-            {
-                foreach (var cap in match.Groups[1].Captures)
+			foreach (Match match in matches)
+			{
+				foreach (var cap in match.Groups[1].Captures)
 				{
-                    string entry = cap.ToString();
+					string entry = cap.ToString();
 
-                    if (entry.Contains('*'))
+					if (entry.Contains('*'))
 					{
 						string[] ab = entry.Trim().Split('*');
 						int counter = Convert.ToInt32(ab[0], 10);
@@ -42,9 +42,9 @@ namespace PPUPlayer
 						res.Add(val);
 					}
 				}
-            }
+			}
 
-            return res.ToArray();
+			return res.ToArray();
 		}
 
 	}
