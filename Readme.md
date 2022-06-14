@@ -10,7 +10,7 @@ The last significant milestone:
 
 ## Build
 
-Use Windows and VS2022. Dotnet 6.0 is also required.
+Use Windows and VS2022. Dotnet 6.0 **Desktop** Runtime is also required.
 
 Builds for Linux will be available as soon as everything settles down.
 
