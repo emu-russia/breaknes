@@ -14,10 +14,12 @@ Note that you have to run the simulation in the PPU Player with the same .nes as
 
 ## CPU I/F Timing
 
-This section describes when (and for how long) to use the CPU I/F PPU to read/write the register.
+This section describes when (and for how long) to use the CPU I/F to read/write the PPU register.
 
 No 6502 load/store instruction can technically execute faster than a single PCLK.
 
 So we will make the assumption that the CPU I/F (signal `/DBE` and others) will be active for the entire PCLK cycle (`/PCLK` + `PCLK`).
 
 If this does not work, we will do some more research on how to do it better.
+
+EDIT: The assumption is correct, it is a working model, you can safely use it.
