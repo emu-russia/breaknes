@@ -72,8 +72,7 @@ namespace PPUPlayer
 		{
 			PPUPlayerInterop.GetSignalFeatures(out ppu_features);
 
-			// In Logisim the samples are sampled every CLK, not every half-cycle as in combat. Therefore, you must divide by 2.
-			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK / 2;
+			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
 			ScanBuffer = new PPUPlayerInterop.VideoOutSample[2 * SamplesPerScan];
 			WritePtr = 0;
 
@@ -118,9 +117,6 @@ namespace PPUPlayer
 		{
 			int ReadPtr = SyncPos;
 
-			// In Logisim the samples are sampled every CLK, not every half-cycle as in combat. Therefore, you must divide by 2.
-			int SamplesPerPixelInLogisimDump = ppu_features.SamplesPerPCLK / 2;
-
 			// Skip HSync and Back Porch
 
 			while ((ScanBuffer[ReadPtr].raw & 0b1000000000) != 0)
@@ -128,7 +124,7 @@ namespace PPUPlayer
 				ReadPtr++;
 			}
 
-			ReadPtr += ppu_features.BackPorchSize * SamplesPerPixelInLogisimDump;
+			ReadPtr += ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
 
 			// Output the visible part of the signal
 
@@ -142,7 +138,7 @@ namespace PPUPlayer
 					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
 				}
 
-				ReadPtr += SamplesPerPixelInLogisimDump;
+				ReadPtr += ppu_features.SamplesPerPCLK;
 			}
 
 			CurrentScan++;
