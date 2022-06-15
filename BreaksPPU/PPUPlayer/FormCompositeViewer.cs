@@ -75,14 +75,6 @@ namespace PPUPlayer
 			}
 		}
 
-		private void FormCompositeViewer_KeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.KeyCode == Keys.Escape)
-			{
-				Close();
-			}
-		}
-
 		void ResetVisualize()
 		{
 			PPUPlayerInterop.GetSignalFeatures(out ppu_features);
@@ -136,9 +128,6 @@ namespace PPUPlayer
 			float normalize_factor = 1.0f / ppu_features.WhiteLevel;
 			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[num_phases];
 
-			// In Logisim the samples are sampled every CLK, not every half-cycle as in combat. Therefore, you must divide by 2.
-			int SamplesPerPixelInLogisimDump = ppu_features.SamplesPerPCLK / 2;
-
 			// Skip HSync
 
 			while (ScanBuffer[ReadPtr].composite <= ppu_features.SyncLevel)
@@ -150,7 +139,7 @@ namespace PPUPlayer
 
 			int cb_phase = PLL();
 
-			ReadPtr += ppu_features.BackPorchSize * SamplesPerPixelInLogisimDump;
+			ReadPtr += ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
 
 			// Output the visible part of the signal
 
@@ -160,7 +149,7 @@ namespace PPUPlayer
 				{
 					// Extract the median sample batch
 
-					int MidPtr = ReadPtr + i * SamplesPerPixelInLogisimDump - num_phases / 2;
+					int MidPtr = ReadPtr + i * ppu_features.SamplesPerPCLK - num_phases / 2;
 
 					for (int n = 0; n < num_phases; n++)
 					{
@@ -171,7 +160,7 @@ namespace PPUPlayer
 
 					float Y = 0, I = 0, Q = 0;
 
-					float ofs = i * SamplesPerPixelInLogisimDump;
+					float ofs = i * ppu_features.SamplesPerPCLK;
 
 					// TBD: For now, a hack to tweak Hue. Interestingly, PPUSim does not require this tweaking.
 					float hue_adj = 0.35f;
@@ -209,12 +198,9 @@ namespace PPUPlayer
 
 		int PLL()
 		{
-			// In Logisim the samples are sampled every CLK, not every half-cycle as in combat. Therefore, you must divide by 2.
-			int SamplesPerPixelInLogisimDump = ppu_features.SamplesPerPCLK / 2;
-
 			int ReadPtr = SyncPos;
 			int num_phases = 12;
-			int samples = ppu_features.BackPorchSize * SamplesPerPixelInLogisimDump;
+			int samples = ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
 
 			// Skip HSync
 
@@ -300,6 +286,14 @@ namespace PPUPlayer
 		{
 			int n = comboBox1.SelectedIndex;
 			ShowField(n);
+		}
+
+		private void FormCompositeViewer_KeyDown_1(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				Close();
+			}
 		}
 	}
 }
