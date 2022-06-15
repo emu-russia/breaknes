@@ -58,7 +58,7 @@ namespace PPUPlayer
 
 				Uifl uifl = new Uifl();
 				uifl.ui = dump[i];
-				sample.composite = uifl.fl;
+				sample.composite = (float)Math.Round(uifl.fl, 3);
 
 				ProcessSample(sample);
 			}
