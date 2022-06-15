@@ -37,7 +37,17 @@ namespace PPUPlayer
 			{
 				if (descr.name == memDescr)
 				{
-					byte[] data = File.ReadAllBytes(filename);
+					byte[] data;
+
+					if (Path.GetExtension(filename).ToLower() == ".hex")
+					{
+						data = LogisimHEXConv.HEXToByteArray(File.ReadAllText(filename));
+					}
+					else
+					{
+						data = File.ReadAllBytes(filename);
+					}
+
 					if (data.Length < descr.size)
 					{
 						throw new Exception("The dump size does not match the size of the PPU memory region. You can specify a larger file, only the desired part will be loaded. But smaller files cannot be used.");

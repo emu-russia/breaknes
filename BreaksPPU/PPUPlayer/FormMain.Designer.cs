@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.choosePPURegsDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,6 +57,8 @@
 			this.stopPPUAndUnloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.miscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pPUColorSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadRAWDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadCompositeDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.sendFeedbackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -110,7 +112,6 @@
 			this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
 			this.saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
 			this.openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
-			this.loadRAWDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -350,7 +351,8 @@
 			// 
 			this.miscToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.pPUColorSpaceToolStripMenuItem,
-            this.loadRAWDumpToolStripMenuItem});
+            this.loadRAWDumpToolStripMenuItem,
+            this.loadCompositeDumpToolStripMenuItem});
 			this.miscToolStripMenuItem.Name = "miscToolStripMenuItem";
 			this.miscToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			this.miscToolStripMenuItem.Text = "Misc";
@@ -358,9 +360,23 @@
 			// pPUColorSpaceToolStripMenuItem
 			// 
 			this.pPUColorSpaceToolStripMenuItem.Name = "pPUColorSpaceToolStripMenuItem";
-			this.pPUColorSpaceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.pPUColorSpaceToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
 			this.pPUColorSpaceToolStripMenuItem.Text = "PPU Color Space";
 			this.pPUColorSpaceToolStripMenuItem.Click += new System.EventHandler(this.pPUColorSpaceToolStripMenuItem_Click);
+			// 
+			// loadRAWDumpToolStripMenuItem
+			// 
+			this.loadRAWDumpToolStripMenuItem.Name = "loadRAWDumpToolStripMenuItem";
+			this.loadRAWDumpToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+			this.loadRAWDumpToolStripMenuItem.Text = "Load RAW Dump...";
+			this.loadRAWDumpToolStripMenuItem.Click += new System.EventHandler(this.loadRAWDumpToolStripMenuItem_Click);
+			// 
+			// loadCompositeDumpToolStripMenuItem
+			// 
+			this.loadCompositeDumpToolStripMenuItem.Name = "loadCompositeDumpToolStripMenuItem";
+			this.loadCompositeDumpToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+			this.loadCompositeDumpToolStripMenuItem.Text = "Load Composite Dump...";
+			this.loadCompositeDumpToolStripMenuItem.Click += new System.EventHandler(this.loadCompositeDumpToolStripMenuItem_Click);
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -836,14 +852,14 @@
 			// dataGridView1
 			// 
 			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle4.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
 			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.dataGridView1.Location = new System.Drawing.Point(0, 0);
 			this.dataGridView1.Name = "dataGridView1";
@@ -855,7 +871,7 @@
 			// openFileDialog1
 			// 
 			this.openFileDialog1.DefaultExt = "bin";
-			this.openFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
+			this.openFileDialog1.Filter = "Binary files|*.bin|Logisim HEX files|*.hex|All files|*.*";
 			// 
 			// openFileDialog2
 			// 
@@ -886,13 +902,6 @@
 			// 
 			this.openFileDialogPPUDump.DefaultExt = "ppumem";
 			this.openFileDialogPPUDump.Filter = "PPU Dump Files|*.ppumem|All files|*.*";
-			// 
-			// loadRAWDumpToolStripMenuItem
-			// 
-			this.loadRAWDumpToolStripMenuItem.Name = "loadRAWDumpToolStripMenuItem";
-			this.loadRAWDumpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.loadRAWDumpToolStripMenuItem.Text = "Load RAW Dump...";
-			this.loadRAWDumpToolStripMenuItem.Click += new System.EventHandler(this.loadRAWDumpToolStripMenuItem_Click);
 			// 
 			// openFileDialogHEX
 			// 
@@ -1037,5 +1046,6 @@
 		private System.Windows.Forms.OpenFileDialog openFileDialogPPUDump;
 		private System.Windows.Forms.ToolStripMenuItem loadRAWDumpToolStripMenuItem;
 		private System.Windows.Forms.OpenFileDialog openFileDialogHEX;
+		private System.Windows.Forms.ToolStripMenuItem loadCompositeDumpToolStripMenuItem;
 	}
 }
