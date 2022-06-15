@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace PPUPlayer
 {
@@ -25,6 +26,16 @@ namespace PPUPlayer
 		Color[] field = new Color[256 * 240];
 		int CurrentScan = 0;
 		List<Bitmap> fields = new List<Bitmap>();
+
+		// https://www.codeproject.com/Messages/5517608/conversion-from-Uint32-to-float.aspx
+		[StructLayout(LayoutKind.Explicit)]
+		public struct Uifl
+		{
+			[FieldOffset(0)]
+			public float fl;
+			[FieldOffset(0)]
+			public uint ui;
+		};
 
 		public FormCompositeViewer(string filename)
 		{
@@ -44,7 +55,11 @@ namespace PPUPlayer
 			for (int i = 0; i < dump.Length; i++)
 			{
 				PPUPlayerInterop.VideoOutSample sample = new();
-				sample.composite = dump[i];
+
+				Uifl uifl = new Uifl();
+				uifl.ui = dump[i];
+				sample.composite = uifl.fl;
+
 				ProcessSample(sample);
 			}
 
