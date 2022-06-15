@@ -79,8 +79,7 @@ namespace PPUPlayer
 		{
 			PPUPlayerInterop.GetSignalFeatures(out ppu_features);
 
-			// In Logisim the samples are sampled every CLK, not every half-cycle as in combat. Therefore, you must divide by 2.
-			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK / 2;
+			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
 			ScanBuffer = new PPUPlayerInterop.VideoOutSample[2 * SamplesPerScan];
 			WritePtr = 0;
 
