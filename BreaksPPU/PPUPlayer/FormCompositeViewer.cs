@@ -18,7 +18,7 @@ namespace PPUPlayer
 		PPUPlayerInterop.VideoSignalFeatures ppu_features;
 		int SamplesPerScan;
 
-		PPUPlayerInterop.VideoOutSample[] ScanBuffer;
+		PPUPlayerInterop.VideoOutSample[]? ScanBuffer;
 		int WritePtr = 0;
 		bool SyncFound = false;
 		int SyncPos = -1;
@@ -58,7 +58,7 @@ namespace PPUPlayer
 
 				Uifl uifl = new Uifl();
 				uifl.ui = dump[i];
-				sample.composite = uifl.fl;
+				sample.composite = (float)Math.Round(uifl.fl, 3);
 
 				ProcessSample(sample);
 			}
@@ -217,6 +217,8 @@ namespace PPUPlayer
 
 			// Get phase shift
 
+			// TBD: Apparently the PPU implementation on Logisim now has mixed colors and reversed signal polarity /PZ for phase alteration. Fix.
+
 			int cb_shift = 0;
 
 			if (ScanBuffer[ReadPtr].composite < ppu_features.BurstLevel)
@@ -236,7 +238,6 @@ namespace PPUPlayer
 					cb_shift++;
 					ReadPtr++;
 				}
-
 			}
 
 			return cb_shift % num_phases;

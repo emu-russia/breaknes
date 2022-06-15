@@ -17,7 +17,7 @@ namespace PPUPlayer
 		PPUPlayerInterop.VideoSignalFeatures ppu_features;
 		int SamplesPerScan;
 
-		PPUPlayerInterop.VideoOutSample[] ScanBuffer;
+		PPUPlayerInterop.VideoOutSample[]? ScanBuffer;
 		int WritePtr = 0;
 		bool SyncFound = false;
 		int SyncPos = -1;
