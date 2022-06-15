@@ -4,6 +4,9 @@
     <Compile Update="DumpsProcessing.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormCompositeViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>

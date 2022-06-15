@@ -175,7 +175,14 @@ namespace PPUPlayer
 
 			if (ppu_dump != null)
 			{
-				logData = File.ReadAllBytes(ppu_dump);
+				if (Path.GetExtension (ppu_dump).ToLower() == ".hex")
+				{
+					logData = LogisimHEXConv.HEXToByteArray(File.ReadAllText(ppu_dump));
+				}
+				else
+				{
+					logData = File.ReadAllBytes(ppu_dump);
+				}
 				logPointer = 0;
 				TotalOps = logData.Length / 8;
 				Console.WriteLine("Number of PPU Dump records: " + TotalOps.ToString());
@@ -775,6 +782,23 @@ namespace PPUPlayer
 			{
 				FormRawViewer formRawViewer = new FormRawViewer(openFileDialogHEX.FileName);
 				formRawViewer.Show();
+			}
+		}
+
+		private void loadCompositeDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!SimulationStarted)
+			{
+				MessageBox.Show(
+					"You need to run the simulation so that the PPU instance is active.",
+					"Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				return;
+			}
+
+			if (openFileDialogHEX.ShowDialog() == DialogResult.OK)
+			{
+				FormCompositeViewer formCompositeViewer = new FormCompositeViewer(openFileDialogHEX.FileName);
+				formCompositeViewer.Show();
 			}
 		}
 	}
