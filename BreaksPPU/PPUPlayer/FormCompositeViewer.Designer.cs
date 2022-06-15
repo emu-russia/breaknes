@@ -82,8 +82,10 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.splitContainer1);
+			this.KeyPreview = true;
 			this.Name = "FormCompositeViewer";
 			this.Text = "Composite Viewer";
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormCompositeViewer_KeyDown_1);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
