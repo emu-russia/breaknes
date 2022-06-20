@@ -918,9 +918,9 @@ namespace PPUSimUnitTest
 				ppu->ConvertRAWToRGB(rawIn, rgbOut);
 
 				Logger::WriteMessage(("Color: " + std::to_string(chroma_luma) + ", RGB: " +
-					std::to_string(rgbOut.RGB.r) + " " +
-					std::to_string(rgbOut.RGB.g) + " " +
-					std::to_string(rgbOut.RGB.b) + "\n").c_str());
+					std::to_string(rgbOut.RGB.RED) + " " +
+					std::to_string(rgbOut.RGB.GREEN) + " " +
+					std::to_string(rgbOut.RGB.BLUE) + "\n").c_str());
 			}
 		}
 	}
