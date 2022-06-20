@@ -657,13 +657,18 @@ namespace PPUSim
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState col[4]{};
+		TriState unpacked[16]{};
 
-		for (size_t n = 0; n < 4; n++)
-		{
-			col[n] = MUX(PCLK, TriState::Zero, rgb_cc_latch[n].nget());
-		}
+		col[0] = MUX(PCLK, TriState::Zero, rgb_cc_latch[2].nget());
+		col[1] = MUX(PCLK, TriState::Zero, rgb_cc_latch[3].nget());
+		col[2] = MUX(PCLK, TriState::Zero, ppu->wire.n_LL[0]);
+		col[3] = MUX(PCLK, TriState::Zero, ppu->wire.n_LL[1]);
 
-		color_matrix->sim(PackNibble(col), &rgb_output);
+		DMX4(col, unpacked);
+
+		size_t packed = Pack(unpacked) | ((size_t)Pack(&unpacked[8]) << 8);
+
+		color_matrix->sim(packed, &rgb_output);
 	}
 
 	void VideoOut::sim_Select12To3()
@@ -675,8 +680,8 @@ namespace PPUSim
 		TriState n_TB = ppu->wire.n_TB;
 		TriState lum_in[2]{};
 
-		lum_in[0] = NOR(n_PCLK, ppu->wire.n_LL[0]);
-		lum_in[1] = NOR(n_PCLK, ppu->wire.n_LL[1]);
+		lum_in[0] = NOR(n_PCLK, NOT(rgb_cc_latch[0].nget()));
+		lum_in[1] = NOR(n_PCLK, NOT(rgb_cc_latch[1].nget()));
 
 		red_sel.sim(PCLK, n_TR, &rgb_output[12 * 0], lum_in);
 		green_sel.sim(PCLK, n_TG, &rgb_output[12 * 1], lum_in);
