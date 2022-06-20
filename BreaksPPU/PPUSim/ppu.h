@@ -21,10 +21,10 @@ namespace PPUSim
 		/// </summary>
 		struct RGBOut
 		{
-			uint8_t r;
-			uint8_t g;
-			uint8_t b;
-			uint8_t syncLevel;	// This field is reserved for the "SYNC" output of the RGB PPU (Sync Level).
+			uint8_t RED;
+			uint8_t GREEN;
+			uint8_t BLUE;
+			uint8_t nSYNC;	// This field is reserved for the "/SYNC" output of the RGB PPU (Sync Level).
 		} RGB;
 
 		/// <summary>

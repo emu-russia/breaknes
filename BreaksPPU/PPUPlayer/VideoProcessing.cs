@@ -80,7 +80,7 @@ namespace PPUPlayer
 				{
 					sync = true;
 				}
-				else if (sample.syncLevel != 0 && ppu_features.Composite == 0)
+				else if (sample.nSYNC == 0 && ppu_features.Composite == 0)
 				{
 					sync = true;
 				}
@@ -170,7 +170,7 @@ namespace PPUPlayer
 
 			// Skip HSync and Back Porch
 
-			while (ScanBuffer[ReadPtr].syncLevel != 0)
+			while (ScanBuffer[ReadPtr].nSYNC == 0)
 			{
 				ReadPtr++;
 			}
@@ -185,9 +185,9 @@ namespace PPUPlayer
 				{
 					var sample = ScanBuffer[ReadPtr];
 
-					byte r = sample.r;
-					byte g = sample.g;
-					byte b = sample.b;
+					byte r = sample.RED;
+					byte g = sample.GREEN;
+					byte b = sample.BLUE;
 
 					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
 				}

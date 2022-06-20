@@ -17,13 +17,13 @@ namespace PPUPlayer
 			[FieldOffset(0)]
 			public float composite;
 			[FieldOffset(0)]
-			public byte r;
+			public byte RED;
 			[FieldOffset(1)]
-			public byte g;
+			public byte GREEN;
 			[FieldOffset(2)]
-			public byte b;
+			public byte BLUE;
 			[FieldOffset(3)]
-			public byte syncLevel;
+			public byte nSYNC;
 			[FieldOffset(0)]
 			public UInt16 raw;		// sBGRLLCCCC (Sync || Tint Blue || Tint Green || Tint Red || Luma[2] || Chroma[4])
 		}

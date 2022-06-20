@@ -406,17 +406,17 @@ namespace PPUSim
 
 	void OAMEval::GetDebugInfo(OAMEvalWires& wires)
 	{
-		wires.OMFG = OMFG;
-		wires.OMSTEP = OMSTEP;
-		wires.OMOUT = OMOUT;
-		wires.OMV = OMV;
-		wires.OSTEP = OSTEP;
-		wires.ORES = ORES;
-		wires.TMV = TMV;
-		wires.OAP = NOT(ppu->wire.OAM8);
-		wires.COPY_STEP = COPY_STEP;
-		wires.DO_COPY = DO_COPY;
-		wires.COPY_OVF = COPY_OVF;
-		wires.OVZ = OVZ;
+		wires.OMFG = ToByte(OMFG);
+		wires.OMSTEP = ToByte(OMSTEP);
+		wires.OMOUT = ToByte(OMOUT);
+		wires.OMV = ToByte(OMV);
+		wires.OSTEP = ToByte(OSTEP);
+		wires.ORES = ToByte(ORES);
+		wires.TMV = ToByte(TMV);
+		wires.OAP = ToByte(NOT(ppu->wire.OAM8));
+		wires.COPY_STEP = ToByte(COPY_STEP);
+		wires.DO_COPY = ToByte(DO_COPY);
+		wires.COPY_OVF = ToByte(COPY_OVF);
+		wires.OVZ = ToByte(OVZ);
 	}
 }
