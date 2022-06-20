@@ -218,7 +218,6 @@ namespace PPUSim
 	/// <summary>
 	/// The Even/Odd circuit is to the right of the V Decoder and does different things in different PPUs.
 	/// </summary>
-	/// <param name="HPLA"></param>
 	void FSM::sim_EvenOdd(TriState* HPLA, TriState *VPLA)
 	{
 		switch (ppu->rev)
