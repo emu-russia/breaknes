@@ -146,6 +146,8 @@ namespace PPUSim
 
 		// TBD: Clone PPUs. Here you can expect a variety of zoo, but in principle they should not differ in circuitry.
 
+		UMC_UA6538,
+
 		Max,
 	};
 
