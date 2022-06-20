@@ -77,6 +77,11 @@ namespace PPUSim
 		BaseLogic::FF EvenOdd_FF1;
 		BaseLogic::FF EvenOdd_FF2;
 
+		// PAL PPU only.
+		BaseLogic::DLatch EvenOdd_latch1;
+		BaseLogic::DLatch EvenOdd_latch2;
+		BaseLogic::DLatch EvenOdd_latch3;
+
 		BaseLogic::DLatch ctrl_latch1;
 		BaseLogic::DLatch ctrl_latch2;
 
@@ -85,7 +90,7 @@ namespace PPUSim
 		void sim_VSYNCEarly(BaseLogic::TriState* VPLA);
 		void sim_VPosLogic(BaseLogic::TriState* VPLA);
 		void sim_VBlankInt();
-		void sim_EvenOdd(BaseLogic::TriState* HPLA);
+		void sim_EvenOdd(BaseLogic::TriState* HPLA, BaseLogic::TriState* VPLA);
 		void sim_CountersControl(BaseLogic::TriState* HPLA, BaseLogic::TriState* VPLA);
 
 	public:
