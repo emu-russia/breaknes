@@ -353,4 +353,9 @@ namespace PPUSim
 	{
 		oam->SetOamDecayBehavior(behavior);
 	}
+
+	bool PPU::IsComposite()
+	{
+		return vid_out->IsComposite();
+	}
 }

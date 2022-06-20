@@ -110,6 +110,9 @@ namespace PPUSim
 
 		OAMDecayBehavior decay_behav = OAMDecayBehavior::Keep;
 
+		void sim_OFETCH_Default();
+		void sim_OFETCH_RGB_PPU();
+
 	public:
 		OAM(PPU* parent);
 		~OAM();

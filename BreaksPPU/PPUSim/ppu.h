@@ -459,6 +459,11 @@ namespace PPUSim
 		/// </summary>
 		void SetOamDecayBehavior(OAMDecayBehavior behavior);
 
+		/// <summary>
+		/// Returns the nature of the PPU - composite or RGB.
+		/// </summary>
+		bool IsComposite();
+
 		uint8_t Dbg_OAMReadByte(size_t addr);
 		uint8_t Dbg_TempOAMReadByte(size_t addr);
 		void Dbg_OAMWriteByte(size_t addr, uint8_t val);

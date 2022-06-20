@@ -12,9 +12,11 @@ namespace PPUPlayer
 {
 	public partial class FormColorSpace : Form
 	{
-		public FormColorSpace()
+		public FormColorSpace(string ppu_rev)
 		{
 			InitializeComponent();
+
+			this.Text += " - " + ppu_rev;
 		}
 
 		private void FormColorSpace_Load(object sender, EventArgs e)

@@ -747,7 +747,8 @@ namespace PPUPlayer
 
 		private void pPUColorSpaceToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			FormColorSpace formColorSpace = new();
+			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
+			FormColorSpace formColorSpace = new FormColorSpace(settings.PPU_Revision);
 			formColorSpace.Show();
 		}
 
