@@ -78,10 +78,27 @@ namespace PPUSim
 		TriState TH_MUX = ppu->wire.TH_MUX;
 		TriState n_PICTURE = ppu->fsm.n_PICTURE;
 
-		dbpar_latch.set(ppu->wire.DB_PAR, ppu->wire.PCLK);
-		ppu->wire.n_CB_DB = NOT(NOR3(n_R7, n_DBE, NOT(TH_MUX)));
-		ppu->wire.n_BW = NOR(AND(ppu->wire.n_CB_DB, n_PICTURE), ppu->wire.BnW);
-		ppu->wire.n_DB_CB = NAND(dbpar_latch.get(), TH_MUX);
+		switch (ppu->rev)
+		{
+			// TBD: Add the remaining RGB PPUs
+
+			case Revision::RP2C04_0003:
+			{
+				dbpar_latch.set(ppu->wire.DB_PAR, ppu->wire.PCLK);
+				ppu->wire.n_BW = NOR(n_PICTURE, ppu->wire.BnW);
+				ppu->wire.n_DB_CB = NAND(dbpar_latch.get(), TH_MUX);
+			}
+			break;
+
+			default:
+			{
+				dbpar_latch.set(ppu->wire.DB_PAR, ppu->wire.PCLK);
+				ppu->wire.n_CB_DB = NOT(NOR3(n_R7, n_DBE, NOT(TH_MUX)));
+				ppu->wire.n_BW = NOR(AND(ppu->wire.n_CB_DB, n_PICTURE), ppu->wire.BnW);
+				ppu->wire.n_DB_CB = NAND(dbpar_latch.get(), TH_MUX);
+			}
+			break;
+		}
 	}
 
 	void CRAM::sim_CRAMDecoder()

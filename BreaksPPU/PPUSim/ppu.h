@@ -363,6 +363,8 @@ namespace PPUSim
 		BaseLogic::DLatch pclk_2;
 		BaseLogic::DLatch pclk_3;
 		BaseLogic::DLatch pclk_4;
+		BaseLogic::DLatch pclk_5;	// PAL PPU
+		BaseLogic::DLatch pclk_6;	// PAL PPU
 		size_t pclk_counter = 0;
 		BaseLogic::TriState Prev_PCLK = BaseLogic::TriState::X;
 

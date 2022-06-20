@@ -284,6 +284,8 @@ namespace PPUSim
 			
 			case Revision::RP2C07_0: return "RP2C07-0";
 
+			case Revision::UMC_UA6538: return "UMC UA6538";
+
 			default:
 				break;
 		}

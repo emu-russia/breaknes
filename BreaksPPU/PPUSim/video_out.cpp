@@ -29,6 +29,10 @@ namespace PPUSim
 				composite = true;
 				break;
 
+			case Revision::RP2C04_0003:
+				composite = false;
+				break;
+
 			// TBD: others (RGB, clones)
 		}
 	}
@@ -407,6 +411,14 @@ namespace PPUSim
 				features.BurstLevel = 1.3f;
 				features.WhiteLevel = 1.6f;
 				features.SyncLevel = 0.781f;
+				break;
+
+			case Revision::RP2C04_0003:
+				features.SamplesPerPCLK = 8;
+				features.PixelsPerScan = 341;
+				features.ScansPerField = 262;
+				features.BackPorchSize = 40;
+				features.Composite = false;
 				break;
 		}
 	}
