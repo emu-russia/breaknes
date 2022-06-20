@@ -21,7 +21,7 @@ namespace PPUSim
 		sim_HPosLogic(HPLA, VPLA);
 		sim_VPosLogic(VPLA);
 		sim_VBlankInt();
-		sim_EvenOdd(HPLA);
+		sim_EvenOdd(HPLA, VPLA);
 		sim_CountersControl(HPLA, VPLA);
 	}
 
@@ -215,17 +215,52 @@ namespace PPUSim
 		ppu->SetDBBit(7, DB7);
 	}
 
-	void FSM::sim_EvenOdd(TriState* HPLA)
+	/// <summary>
+	/// The Even/Odd circuit is to the right of the V Decoder and does different things in different PPUs.
+	/// </summary>
+	void FSM::sim_EvenOdd(TriState* HPLA, TriState *VPLA)
 	{
-		TriState V8 = ppu->v->getBit(8);
-		TriState RES = ppu->wire.RES;
-		TriState RESCL = ppu->fsm.RESCL;	// RESCL can already be used (simulated)
+		switch (ppu->rev)
+		{
+			case Revision::RP2C02G:
+			{
+				TriState V8 = ppu->v->getBit(8);
+				TriState RES = ppu->wire.RES;
+				TriState RESCL = ppu->fsm.RESCL;	// RESCL can already be used (simulated)
 
-		EvenOdd_FF1.set(NOT(NOT(MUX(V8, EvenOdd_FF2.get(), EvenOdd_FF1.get()))));
-		TriState temp = NOR(RES, EvenOdd_FF2.get());
-		EvenOdd_FF2.set(NOT(MUX(V8, temp, EvenOdd_FF1.get())));
+				EvenOdd_FF1.set(NOT(NOT(MUX(V8, EvenOdd_FF2.get(), EvenOdd_FF1.get()))));
+				TriState temp = NOR(RES, EvenOdd_FF2.get());
+				EvenOdd_FF2.set(NOT(MUX(V8, temp, EvenOdd_FF1.get())));
 
-		ppu->wire.EvenOddOut = NOR3(temp, NOT(HPLA[5]), NOT(RESCL));
+				ppu->wire.EvenOddOut = NOR3(temp, NOT(HPLA[5]), NOT(RESCL));
+				break;
+			}
+
+			case Revision::RP2C07_0:
+			{
+				TriState n_PCLK = ppu->wire.n_PCLK;
+				TriState PCLK = ppu->wire.PCLK;
+				TriState BLNK = ppu->fsm.BLNK;
+				TriState H0_D = ppu->wire.H0_Dash;
+
+				EvenOdd_latch1.set(VPLA[9], n_PCLK);
+				EvenOdd_latch2.set(VPLA[8], n_PCLK);
+				EvenOdd_FF1.set(NOR(EvenOdd_latch2.get(), NOR(EvenOdd_FF1.get(), EvenOdd_latch1.get())));
+				EvenOdd_latch3.set(EvenOdd_FF1.nget(), PCLK);
+
+				ppu->wire.EvenOddOut = NOR3(NOT(H0_D), NAND(BLNK, EvenOdd_latch3.nget()), n_PCLK);
+				break;
+			}
+
+			// TBD: Only RP2C04-0003 has a photo so far. The Even/Odd circuit is obviously switched off, as the Dot Crawl is not required.
+			// In other RGB PPU probably similar, but until there is no photo, we will not engage in speculation.
+
+			case Revision::RP2C04_0003:
+			{
+				ppu->wire.EvenOddOut = TriState::Zero;
+				break;
+			}
+		}
 	}
 
 	void FSM::sim_CountersControl(TriState* HPLA, TriState* VPLA)
@@ -233,7 +268,23 @@ namespace PPUSim
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState EvenOddOut = ppu->wire.EvenOddOut;
 
-		ctrl_latch1.set(NOR(HPLA[23], EvenOddOut), n_PCLK);
+		switch (ppu->rev)
+		{
+			// PAL PPU does not use EvenOddOut.
+
+			case Revision::RP2C07_0:
+			{
+				ctrl_latch1.set(NOT(HPLA[23]), n_PCLK);
+			}
+			break;
+
+			default:
+			{
+				ctrl_latch1.set(NOR(HPLA[23], EvenOddOut), n_PCLK);
+			}
+			break;
+		}
+
 		ctrl_latch2.set(VPLA[2], n_PCLK);
 
 		ppu->wire.HC = ctrl_latch1.nget();

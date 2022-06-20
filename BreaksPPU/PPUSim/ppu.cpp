@@ -155,43 +155,34 @@ namespace PPUSim
 		sim_BusOutput(ext, data_bus, ad_bus, addrHi_bus);
 	}
 
-	void PPU::sim_PCLK()
-	{
-		TriState CLK = wire.CLK;
-		TriState n_CLK = wire.n_CLK;
-
-		// TBD: Add support for other PPU revisions when a critical mass of code is ready.
-
-		if (rev == Revision::RP2C02G)
-		{
-			pclk_1.set(NOR(wire.RES, pclk_4.nget()), n_CLK);
-			pclk_2.set(pclk_1.nget(), CLK);
-			pclk_3.set(pclk_2.nget(), n_CLK);
-			pclk_4.set(pclk_3.nget(), CLK);
-
-			TriState pclk = pclk_4.nget();
-
-			// The software PCLK counter is triggered by the falling edge.
-			// This is purely a software design for convenience, and has nothing to do with PPU hardware circuitry.
-
-			if (wire.PCLK /*prev*/ == TriState::One && pclk /*new*/ == TriState::Zero)
-			{
-				pclk_counter++;
-			}
-
-			wire.PCLK = pclk;
-			wire.n_PCLK = NOT(wire.PCLK);
-		}
-	}
-
 	void PPU::sim_BusInput(uint8_t* ext, uint8_t* data_bus, uint8_t* ad_bus)
 	{
-		TriState nSLAVE = regs->get_nSLAVE();
-
-		for (size_t n = 0; n < 4; n++)
+		switch (rev)
 		{
-			TriState extIn = (((*ext) >> n) & 1) ? TriState::One : TriState::Zero;
-			wire.EXT_In[n] = NOR(NOT(extIn), nSLAVE);
+			case Revision::RP2C02G:
+			case Revision::RP2C02H:
+			case Revision::RP2C07_0:
+			{
+				TriState nSLAVE = regs->get_nSLAVE();
+
+				for (size_t n = 0; n < 4; n++)
+				{
+					TriState extIn = (((*ext) >> n) & 1) ? TriState::One : TriState::Zero;
+					wire.EXT_In[n] = NOR(NOT(extIn), nSLAVE);
+				}
+			}
+			break;
+
+			// TBD: The other RGB PPU's appear to be similar, but there are no pictures yet, we do not speculate.
+
+			case Revision::RP2C04_0003:
+			{
+				for (size_t n = 0; n < 4; n++)
+				{
+					wire.EXT_In[n] = TriState::Zero;
+				}
+			}
+			break;
 		}
 
 		if (wire.n_WR == TriState::Zero)
@@ -206,19 +197,34 @@ namespace PPUSim
 	{
 		TriState n_PCLK = wire.n_PCLK;
 
-		for (size_t n = 0; n < 4; n++)
+		switch (rev)
 		{
-			extout_latch[n].set(wire.n_EXT_Out[n], n_PCLK);
-		}
-
-		if (wire.n_SLAVE == TriState::One)
-		{
-			*ext = 0;
-			for (size_t n = 0; n < 4; n++)
+			case Revision::RP2C02G:
+			case Revision::RP2C02H:
+			case Revision::RP2C07_0:
 			{
-				TriState extOut = NOR(NOT(wire.n_SLAVE), extout_latch[n].get());
-				(*ext) |= ((extOut == TriState::One) ? 1 : 0) << n;
+				for (size_t n = 0; n < 4; n++)
+				{
+					extout_latch[n].set(wire.n_EXT_Out[n], n_PCLK);
+				}
+
+				if (wire.n_SLAVE == TriState::One)
+				{
+					*ext = 0;
+					for (size_t n = 0; n < 4; n++)
+					{
+						TriState extOut = NOR(NOT(wire.n_SLAVE), extout_latch[n].get());
+						(*ext) |= ((extOut == TriState::One) ? 1 : 0) << n;
+					}
+				}
 			}
+			break;
+
+			case Revision::RP2C04_0003:
+			{
+				// There are no EXT terminals in the RGB PPUs.
+			}
+			break;
 		}
 
 		if (wire.n_RD == TriState::Zero)
@@ -277,6 +283,8 @@ namespace PPUSim
 			case Revision::RC2C05_99: return "RC2C05-99";
 			
 			case Revision::RP2C07_0: return "RP2C07-0";
+
+			case Revision::UMC_UA6538: return "UMC UA6538";
 
 			default:
 				break;

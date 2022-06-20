@@ -29,6 +29,10 @@ namespace PPUSim
 				composite = true;
 				break;
 
+			case Revision::RP2C04_0003:
+				composite = false;
+				break;
+
 			// TBD: others (RGB, clones)
 		}
 	}
@@ -261,10 +265,10 @@ namespace PPUSim
 	{
 		// TBD.
 
-		vout.RGB.r = 0;
-		vout.RGB.g = 0;
-		vout.RGB.b = 0;
-		vout.RGB.syncLevel = 0;
+		vout.RGB.RED = 0;
+		vout.RGB.GREEN = 0;
+		vout.RGB.BLUE = 0;
+		vout.RGB.nSYNC = 1;
 	}
 
 	float VideoOut::PhaseLevel(float v, TriState sel, size_t level_from, size_t level_to)
@@ -408,6 +412,14 @@ namespace PPUSim
 				features.WhiteLevel = 1.6f;
 				features.SyncLevel = 0.781f;
 				break;
+
+			case Revision::RP2C04_0003:
+				features.SamplesPerPCLK = 8;
+				features.PixelsPerScan = 341;
+				features.ScansPerField = 262;
+				features.BackPorchSize = 40;
+				features.Composite = false;
+				break;
 		}
 	}
 
@@ -504,9 +516,9 @@ namespace PPUSim
 		float G = Y - (0.272f * I) - (0.648f * Q);
 		float B = Y - (1.105f * I) + (1.705f * Q);
 
-		rgbOut.RGB.r = (uint8_t)(Clamp(R, 0.f, 1.f) * 255);
-		rgbOut.RGB.g = (uint8_t)(Clamp(G, 0.f, 1.f) * 255);
-		rgbOut.RGB.b = (uint8_t)(Clamp(B, 0.f, 1.f) * 255);
+		rgbOut.RGB.RED = (uint8_t)(Clamp(R, 0.f, 1.f) * 255);
+		rgbOut.RGB.GREEN = (uint8_t)(Clamp(G, 0.f, 1.f) * 255);
+		rgbOut.RGB.BLUE = (uint8_t)(Clamp(B, 0.f, 1.f) * 255);
 	}
 
 	float VideoOut::Clamp(float val, float min, float max)

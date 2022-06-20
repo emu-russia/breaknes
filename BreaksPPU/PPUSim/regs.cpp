@@ -90,11 +90,26 @@ namespace PPUSim
 		in2[3] = RnW;
 		ppu->wire.n_W0 = NOT(NOR4(in2));
 
-		in2[0] = RS0;
-		in2[1] = RS1;
-		in2[2] = NOT(RS2);
-		in2[3] = NOT(RnW);
-		ppu->wire.n_R4 = NOT(NOR4(in2));
+		switch (ppu->rev)
+		{
+			// TBD: Add the remaining RGB PPUs
+
+			case Revision::RP2C04_0003:
+			{
+				// n_R4 is not used.
+			}
+			break;
+
+			default:
+			{
+				in2[0] = RS0;
+				in2[1] = RS1;
+				in2[2] = NOT(RS2);
+				in2[3] = NOT(RnW);
+				ppu->wire.n_R4 = NOT(NOR4(in2));
+			}
+			break;
+		}
 	}
 
 	void ControlRegs::sim_W56RegOps()

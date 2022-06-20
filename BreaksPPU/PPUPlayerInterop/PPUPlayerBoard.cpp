@@ -305,9 +305,9 @@ namespace PPUPlayer
 			{
 				rawIn.RAW.raw = (uint16_t)n;
 				ppu->ConvertRAWToRGB(rawIn, rgbOut);
-				pal[n].r = rgbOut.RGB.r;
-				pal[n].g = rgbOut.RGB.g;
-				pal[n].b = rgbOut.RGB.b;
+				pal[n].r = rgbOut.RGB.RED;
+				pal[n].g = rgbOut.RGB.GREEN;
+				pal[n].b = rgbOut.RGB.BLUE;
 			}
 
 			pal_cached = true;

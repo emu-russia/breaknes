@@ -21,10 +21,10 @@ namespace PPUSim
 		/// </summary>
 		struct RGBOut
 		{
-			uint8_t r;
-			uint8_t g;
-			uint8_t b;
-			uint8_t syncLevel;	// This field is reserved for the "SYNC" output of the RGB PPU (Sync Level).
+			uint8_t RED;
+			uint8_t GREEN;
+			uint8_t BLUE;
+			uint8_t nSYNC;	// This field is reserved for the "/SYNC" output of the RGB PPU (Sync Level).
 		} RGB;
 
 		/// <summary>
@@ -363,6 +363,8 @@ namespace PPUSim
 		BaseLogic::DLatch pclk_2;
 		BaseLogic::DLatch pclk_3;
 		BaseLogic::DLatch pclk_4;
+		BaseLogic::DLatch pclk_5;	// PAL PPU
+		BaseLogic::DLatch pclk_6;	// PAL PPU
 		size_t pclk_counter = 0;
 		BaseLogic::TriState Prev_PCLK = BaseLogic::TriState::X;
 
