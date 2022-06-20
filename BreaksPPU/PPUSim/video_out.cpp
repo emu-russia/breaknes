@@ -31,6 +31,7 @@ namespace PPUSim
 
 			case Revision::RP2C04_0003:
 				composite = false;
+				SetupColorMatrix();
 				break;
 
 			// TBD: others (RGB, clones)
@@ -524,5 +525,75 @@ namespace PPUSim
 	float VideoOut::Clamp(float val, float min, float max)
 	{
 		return std::min(max, std::max(val, min));
+	}
+
+	void VideoOut::SetupColorMatrix()
+	{
+		char colorMatrixName[0x20] = { 0 };
+
+		// Generate PLA dump name according to the PPU revision.
+
+		sprintf_s(colorMatrixName, sizeof(colorMatrixName), "ColorMatrix_%s.bin", ppu->RevisionToStr(ppu->rev));
+
+		color_matrix = new PLA(color_matrix_inputs, color_matrix_outputs, colorMatrixName);
+
+		// Set matrix
+
+		size_t* bitmask = nullptr;
+
+		switch (ppu->rev)
+		{
+			case Revision::RP2C04_0003:
+			{
+				size_t RP2C04_0003_ColorMatrix[] = {
+					0b1001000111101010,
+					0b1101010101110000,
+					0b1111110101001111,
+					0b1001100110000101,
+					0b0010000111111110,
+					0b1101001001001001,
+					0b0011010101100111,
+					0b0001001110100000,
+					0b1110000111111010,
+					0b1100001101000000,
+					0b0110100101101001,
+					0b1001011101100000,
+
+					0b1001010111001010,
+					0b0101100001010101,
+					0b1111000101101111,
+					0b0100110000101000,
+					0b0111100011000111,
+					0b1101011010000101,
+					0b1110010000001101,
+					0b0000001010111110,
+					0b1000010111011010,
+					0b1100010101000101,
+					0b1001010000101010,
+					0b0010001011011010,
+
+					0b1001101101101000,
+					0b1101101000010001,
+					0b0110000100100010,
+					0b1011100010011001,
+					0b0001111001101111,
+					0b1101001000100001,
+					0b1101100110101010,
+					0b1000101010011001,
+					0b1001110101101010,
+					0b1100000010100000,
+					0b1101100110100010,
+					0b1000101011001011,
+				};
+
+				bitmask = RP2C04_0003_ColorMatrix;
+			}
+			break;
+		}
+
+		if (bitmask != nullptr)
+		{
+			color_matrix->SetMatrix(bitmask);
+		}
 	}
 }

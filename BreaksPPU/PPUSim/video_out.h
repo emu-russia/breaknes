@@ -42,6 +42,11 @@ namespace PPUSim
 		BaseLogic::DLatch npicture_latch1;
 		BaseLogic::DLatch npicture_latch2;
 
+		// RGB PPU Color Matrix
+		const size_t color_matrix_inputs = 16;
+		const size_t color_matrix_outputs = 12*3;	// R->G->B
+		BaseLogic::PLA* color_matrix = nullptr;
+
 		VideoOutSRBit sr[6]{};		// Individual bits of the shift register for the phase shifter.
 
 		BaseLogic::TriState n_PZ = BaseLogic::TriState::X;
@@ -79,6 +84,8 @@ namespace PPUSim
 		bool raw = false;
 
 		float Clamp(float val, float min, float max);
+
+		void SetupColorMatrix();
 
 	public:
 
