@@ -164,6 +164,7 @@ namespace PPUPlayer
 				list.Add("RP2C02G");
 				list.Add("RP2C04-0003");
 				list.Add("RP2C07-0");
+				list.Add("UMC UA6538");
 
 				return new StandardValuesCollection(list);
 			}

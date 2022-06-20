@@ -14,13 +14,17 @@ namespace PPUPlayer
 		{
 			rev = PPUSim::Revision::RP2C02G;
 		}
-		else if (!strcmp(ppuRev, "RP2C04-0001"))
+		else if (!strcmp(ppuRev, "RP2C04-0003"))
 		{
-			rev = PPUSim::Revision::RP2C04_0001;
+			rev = PPUSim::Revision::RP2C04_0003;
 		}
 		else if (!strcmp(ppuRev, "RP2C07-0"))
 		{
 			rev = PPUSim::Revision::RP2C07_0;
+		}
+		else if (!strcmp(ppuRev, "UMC UA6538"))
+		{
+			rev = PPUSim::Revision::UMC_UA6538;
 		}
 		else
 		{
