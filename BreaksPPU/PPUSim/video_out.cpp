@@ -64,18 +64,20 @@ namespace PPUSim
 			return;
 		}
 
-		sim_PhaseShifter(ppu->wire.n_CLK, ppu->wire.CLK, ppu->wire.RES);
-		sim_ChromaDecoder();
-		sim_OutputLatches();
-		sim_LumaDecoder(ppu->wire.n_LL);
-		sim_Emphasis(ppu->wire.n_TR, ppu->wire.n_TG, ppu->wire.n_TB);
-
 		if (composite)
 		{
+			sim_PhaseShifter(ppu->wire.n_CLK, ppu->wire.CLK, ppu->wire.RES);
+			sim_ChromaDecoder();
+			sim_OutputLatches();
+			sim_LumaDecoder(ppu->wire.n_LL);
+			sim_Emphasis(ppu->wire.n_TR, ppu->wire.n_TG, ppu->wire.n_TB);
 			sim_CompositeDAC(vout);
 		}
 		else
 		{
+			sim_ColorMatrix();
+			sim_Select12To3();
+			sim_OutputLatches();
 			sim_RGB_DAC(vout);
 		}
 	}
@@ -87,19 +89,34 @@ namespace PPUSim
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState BURST = ppu->fsm.BURST;
 		TriState SYNC = ppu->fsm.SYNC;
 
-		cc_burst_latch.set(BURST, n_PCLK);
-
-		for (size_t n = 0; n < 4; n++)
+		if (composite)
 		{
-			cc_latch1[n].set(ppu->wire.n_CC[n], PCLK);
-			cc_latch2[n].set(cc_latch1[n].nget(), n_PCLK);
-		}
+			TriState BURST = ppu->fsm.BURST;
 
-		sync_latch.set(NOT(SYNC), n_PCLK);
-		cb_latch.set(BURST, n_PCLK);
+			cc_burst_latch.set(BURST, n_PCLK);
+
+			for (size_t n = 0; n < 4; n++)
+			{
+				cc_latch1[n].set(ppu->wire.n_CC[n], PCLK);
+				cc_latch2[n].set(cc_latch1[n].nget(), n_PCLK);
+			}
+
+			sync_latch.set(NOT(SYNC), n_PCLK);
+			cb_latch.set(BURST, n_PCLK);
+		}
+		else
+		{
+			for (size_t n = 0; n < 4; n++)
+			{
+				rgb_cc_latch[n].set(ppu->wire.n_CC[n], n_PCLK);
+			}
+
+			rgb_sync_latch[0].set(SYNC, n_PCLK);
+			rgb_sync_latch[1].set(rgb_sync_latch[0].nget(), PCLK);
+			rgb_sync_latch[2].set(rgb_sync_latch[1].nget(), n_PCLK);
+		}
 	}
 
 	void VideoOut::sim_PhaseShifter(TriState n_CLK, TriState CLK, TriState RES)
@@ -186,23 +203,52 @@ namespace PPUSim
 	}
 
 	/// <summary>
-	/// Call after Chroma Decoder.
+	/// Call after Chroma Decoder / SEL 12x3.
 	/// </summary>
 	void VideoOut::sim_OutputLatches()
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState BURST = ppu->fsm.BURST;
-		TriState SYNC = ppu->fsm.SYNC;
 		TriState n_PICTURE = VidOut_n_PICTURE;
 
-		// If /POUT = 1 - then the visible part of the signal is not output at all
+		if (composite)
+		{
+			TriState BURST = ppu->fsm.BURST;
+			TriState SYNC = ppu->fsm.SYNC;
 
-		pic_out_latch.set(NOR(PBLACK, n_PICTURE), n_PCLK);
-		n_POUT = pic_out_latch.nget();
+			// If /POUT = 1 - then the visible part of the signal is not output at all
 
-		// For DAC
+			pic_out_latch.set(NOR(PBLACK, n_PICTURE), n_PCLK);
+			n_POUT = pic_out_latch.nget();
 
-		black_latch.set(NOT(NOR3(NOR(PBLACK, n_PICTURE), SYNC, BURST)), n_PCLK);
+			// For DAC
+
+			black_latch.set(NOT(NOR3(NOR(PBLACK, n_PICTURE), SYNC, BURST)), n_PCLK);
+		}
+		else
+		{
+			TriState red_in[3]{};
+			TriState green_in[3]{};
+			TriState blue_in[3]{};
+
+			TriState red_out[8]{};
+			TriState green_out[8]{};
+			TriState blue_out[8]{};
+
+			red_sel.getOut(red_in);
+			green_sel.getOut(green_in);
+			blue_sel.getOut(blue_in);
+
+			DMX3(red_in, red_out);
+			DMX3(green_in, green_out);
+			DMX3(blue_in, blue_out);
+
+			for (size_t n = 0; n < 8; n++)
+			{
+				rgb_red_latch[n].set(MUX(NOT(n_PICTURE), TriState::Zero, red_out[n]), n_PCLK);
+				rgb_green_latch[n].set(MUX(NOT(n_PICTURE), TriState::Zero, green_out[n]), n_PCLK);
+				rgb_blue_latch[n].set(MUX(NOT(n_PICTURE), TriState::Zero, blue_out[n]), n_PCLK);
+			}
+		}
 	}
 
 	void VideoOut::sim_LumaDecoder(TriState n_LL[4])
@@ -262,16 +308,6 @@ namespace PPUSim
 		vout.composite = v;
 	}
 
-	void VideoOut::sim_RGB_DAC(VideoOutSignal& vout)
-	{
-		// TBD.
-
-		vout.RGB.RED = 0;
-		vout.RGB.GREEN = 0;
-		vout.RGB.BLUE = 0;
-		vout.RGB.nSYNC = 1;
-	}
-
 	float VideoOut::PhaseLevel(float v, TriState sel, size_t level_from, size_t level_to)
 	{
 		auto tmp = NOR(sel, n_PZ);
@@ -292,10 +328,20 @@ namespace PPUSim
 	{
 		if (VidOut_n_PICTURE == TriState::Zero)
 		{
-			vout.RAW.CC0 = ToByte(cc_latch2[0].get());
-			vout.RAW.CC1 = ToByte(cc_latch2[1].get());
-			vout.RAW.CC2 = ToByte(cc_latch2[2].get());
-			vout.RAW.CC3 = ToByte(cc_latch2[3].get());
+			if (composite)
+			{
+				vout.RAW.CC0 = ToByte(cc_latch2[0].get());
+				vout.RAW.CC1 = ToByte(cc_latch2[1].get());
+				vout.RAW.CC2 = ToByte(cc_latch2[2].get());
+				vout.RAW.CC3 = ToByte(cc_latch2[3].get());
+			}
+			else
+			{
+				vout.RAW.CC0 = ToByte(rgb_cc_latch[0].nget());
+				vout.RAW.CC1 = ToByte(rgb_cc_latch[1].nget());
+				vout.RAW.CC2 = ToByte(rgb_cc_latch[2].nget());
+				vout.RAW.CC3 = ToByte(rgb_cc_latch[3].nget());
+			}
 			vout.RAW.LL0 = ToByte(NOT(ppu->wire.n_LL[0]));
 			vout.RAW.LL1 = ToByte(NOT(ppu->wire.n_LL[1]));
 			vout.RAW.TR = ToByte(NOT(ppu->wire.n_TR));
@@ -306,7 +352,15 @@ namespace PPUSim
 		{
 			vout.RAW.raw = 0;
 		}
-		vout.RAW.Sync = ToByte(sync_latch.nget());
+
+		if (composite)
+		{
+			vout.RAW.Sync = ToByte(sync_latch.nget());
+		}
+		else
+		{
+			vout.RAW.Sync = ToByte(NOT(rgb_sync_latch[2].nget()));
+		}
 	}
 
 	void VideoOutSRBit::sim(TriState n_shift_in, TriState n_CLK, TriState CLK, TriState RES,
@@ -408,7 +462,6 @@ namespace PPUSim
 				features.PixelsPerScan = 341;
 				features.ScansPerField = 262;
 				features.BackPorchSize = 40;
-				features.Composite = true;
 				features.BurstLevel = 1.3f;
 				features.WhiteLevel = 1.6f;
 				features.SyncLevel = 0.781f;
@@ -419,9 +472,10 @@ namespace PPUSim
 				features.PixelsPerScan = 341;
 				features.ScansPerField = 262;
 				features.BackPorchSize = 40;
-				features.Composite = false;
 				break;
 		}
+
+		features.Composite = IsComposite();
 	}
 
 	void VideoOut::SetRAWOutput(bool enable)
@@ -429,7 +483,7 @@ namespace PPUSim
 		raw = enable;
 	}
 
-	void VideoOut::ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
+	void VideoOut::ConvertRAWToRGB_Composite(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
 	{
 		VideoSignalFeatures features{};
 		GetSignalFeatures(features);
@@ -527,6 +581,8 @@ namespace PPUSim
 		return std::min(max, std::max(val, min));
 	}
 
+#pragma region "RGB PPU Stuff"
+
 	void VideoOut::SetupColorMatrix()
 	{
 		char colorMatrixName[0x20] = { 0 };
@@ -594,6 +650,141 @@ namespace PPUSim
 		if (bitmask != nullptr)
 		{
 			color_matrix->SetMatrix(bitmask);
+		}
+	}
+
+	void VideoOut::sim_ColorMatrix()
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState col[4]{};
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			col[n] = MUX(PCLK, TriState::Zero, rgb_cc_latch[n].nget());
+		}
+
+		color_matrix->sim(PackNibble(col), &rgb_output);
+	}
+
+	void VideoOut::sim_Select12To3()
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState PCLK = ppu->wire.PCLK;
+		TriState n_TR = ppu->wire.n_TR;
+		TriState n_TG = ppu->wire.n_TG;
+		TriState n_TB = ppu->wire.n_TB;
+		TriState lum_in[2]{};
+
+		lum_in[0] = NOR(n_PCLK, ppu->wire.n_LL[0]);
+		lum_in[1] = NOR(n_PCLK, ppu->wire.n_LL[1]);
+
+		red_sel.sim(PCLK, n_TR, &rgb_output[12 * 0], lum_in);
+		green_sel.sim(PCLK, n_TG, &rgb_output[12 * 1], lum_in);
+		blue_sel.sim(PCLK, n_TB, &rgb_output[12 * 2], lum_in);
+	}
+
+	void VideoOut::sim_RGB_DAC(VideoOutSignal& vout)
+	{
+		vout.RGB.RED = 0;
+		vout.RGB.GREEN = 0;
+		vout.RGB.BLUE = 0;
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			if (rgb_red_latch[n].get() == TriState::One)
+			{
+				vout.RGB.RED |= (1 << n);
+			}
+
+			if (rgb_green_latch[n].get() == TriState::One)
+			{
+				vout.RGB.GREEN |= (1 << n);
+			}
+
+			if (rgb_blue_latch[n].get() == TriState::One)
+			{
+				vout.RGB.BLUE |= (1 << n);
+			}
+		}
+
+		vout.RGB.nSYNC = rgb_sync_latch[2].nget();
+	}
+
+	void RGB_SEL12x3::sim(TriState PCLK, TriState n_Tx, TriState col_in[12], TriState lum_in[2])
+	{
+		size_t col_idx = 8;
+		for (size_t n = 0; n < 3; n++)
+		{
+			TriState mux_out = MUX2(lum_in, &col_in[col_idx]);
+			ff[n].set( NAND(NOT(MUX(PCLK, ff[n].get(), mux_out)), n_Tx) );
+			col_idx -= 4;
+		}
+	}
+
+	void RGB_SEL12x3::getOut(TriState col_out[3])
+	{
+		for (size_t n = 0; n < 3; n++)
+		{
+			col_out[n] = ff[n].get();
+		}
+	}
+
+	void VideoOut::ConvertRAWToRGB_Component(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
+	{
+		// Using a temporary PPU of the same revision, to simulate the video generator
+
+		PPU vppu(ppu->rev, false, true);
+
+		// Latch all important signals
+
+		vppu.wire.n_CC[0] = NOT(FromByte(rawIn.RAW.CC0));
+		vppu.wire.n_CC[1] = NOT(FromByte(rawIn.RAW.CC1));
+		vppu.wire.n_CC[2] = NOT(FromByte(rawIn.RAW.CC2));
+		vppu.wire.n_CC[3] = NOT(FromByte(rawIn.RAW.CC3));
+		vppu.wire.n_LL[0] = NOT(FromByte(rawIn.RAW.LL0));
+		vppu.wire.n_LL[1] = NOT(FromByte(rawIn.RAW.LL1));
+		vppu.wire.n_TR = NOT(FromByte(rawIn.RAW.TR));
+		vppu.wire.n_TG = NOT(FromByte(rawIn.RAW.TG));
+		vppu.wire.n_TB = NOT(FromByte(rawIn.RAW.TB));
+
+		vppu.fsm.SYNC = FromByte(rawIn.RAW.Sync);
+		vppu.fsm.n_PICTURE = TriState::Zero;
+
+		// Save the values on the input latches
+
+		vppu.wire.n_PCLK = TriState::One;
+		vppu.wire.PCLK = TriState::Zero;
+		vppu.vid_out->sim(rgbOut);
+
+		// Color Matrix Conversion
+
+		vppu.wire.n_PCLK = TriState::Zero;
+		vppu.wire.PCLK = TriState::One;
+		vppu.vid_out->sim(rgbOut);
+
+		// Output the value to the output latches
+
+		vppu.wire.n_PCLK = TriState::One;
+		vppu.wire.PCLK = TriState::Zero;
+		vppu.vid_out->sim(rgbOut);
+	}
+
+#pragma endregion "RGB PPU Stuff"
+
+	bool VideoOut::IsComposite()
+	{
+		return composite;
+	}
+
+	void VideoOut::ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)
+	{
+		if (composite)
+		{
+			ConvertRAWToRGB_Composite(rawIn, rgbOut);
+		}
+		else
+		{
+			ConvertRAWToRGB_Component(rawIn, rgbOut);
 		}
 	}
 }

@@ -1,7 +1,5 @@
 // Video Signal Generator
 
-// TBD: Once everything is working, add output support for RGB-like PPUs.
-
 #pragma once
 
 namespace PPUSim
@@ -23,6 +21,16 @@ namespace PPUSim
 		BaseLogic::TriState getn_ShiftOut();
 	};
 
+	class RGB_SEL12x3
+	{
+		BaseLogic::FF ff[3]{};
+
+	public:
+		void sim(BaseLogic::TriState PCLK, BaseLogic::TriState n_Tx, BaseLogic::TriState col_in[12], BaseLogic::TriState lum_in[2]);
+
+		void getOut(BaseLogic::TriState col_out[3]);
+	};
+
 	class VideoOut
 	{
 		friend PPUSimUnitTest::UnitTest;
@@ -30,8 +38,8 @@ namespace PPUSim
 
 		float LToV[16]{};
 
-		BaseLogic::DLatch cc_latch1[4];
-		BaseLogic::DLatch cc_latch2[4];
+		BaseLogic::DLatch cc_latch1[4]{};
+		BaseLogic::DLatch cc_latch2[4]{};
 		BaseLogic::DLatch cc_burst_latch;
 		BaseLogic::DLatch sync_latch;
 		BaseLogic::DLatch pic_out_latch;
@@ -41,6 +49,17 @@ namespace PPUSim
 		// For PAL PPU
 		BaseLogic::DLatch npicture_latch1;
 		BaseLogic::DLatch npicture_latch2;
+
+		// For RGB PPU
+		BaseLogic::DLatch rgb_cc_latch[4]{};
+		BaseLogic::DLatch rgb_sync_latch[3]{};
+		BaseLogic::DLatch rgb_red_latch[8]{};
+		BaseLogic::DLatch rgb_green_latch[8]{};
+		BaseLogic::DLatch rgb_blue_latch[8]{};
+		BaseLogic::TriState *rgb_output;
+		RGB_SEL12x3 red_sel;
+		RGB_SEL12x3 green_sel;
+		RGB_SEL12x3 blue_sel;
 
 		// RGB PPU Color Matrix
 		const size_t color_matrix_inputs = 16;
@@ -71,6 +90,8 @@ namespace PPUSim
 		void sim_RGB_DAC(VideoOutSignal& vout);
 		void sim_nPICTURE();
 		void sim_RAWOutput(VideoOutSignal& vout);
+		void sim_ColorMatrix();
+		void sim_Select12To3();
 
 		bool DebugRandomize = false;
 		bool DebugFixed = false;
@@ -87,6 +108,9 @@ namespace PPUSim
 
 		void SetupColorMatrix();
 
+		void ConvertRAWToRGB_Composite(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
+		void ConvertRAWToRGB_Component(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
+
 	public:
 
 		VideoOut(PPU* parent);
@@ -102,5 +126,7 @@ namespace PPUSim
 		void SetRAWOutput(bool enable);
 
 		void ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
+
+		bool IsComposite();
 	};
 }
