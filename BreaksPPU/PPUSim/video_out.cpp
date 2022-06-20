@@ -712,13 +712,29 @@ namespace PPUSim
 
 	void RGB_SEL12x3::sim(TriState PCLK, TriState n_Tx, TriState col_in[12], TriState lum_in[2])
 	{
-		size_t col_idx = 8;
-		for (size_t n = 0; n < 3; n++)
-		{
-			TriState mux_out = MUX2(lum_in, &col_in[col_idx]);
-			ff[n].set( NAND(NOT(MUX(PCLK, ff[n].get(), mux_out)), n_Tx) );
-			col_idx -= 4;
-		}
+		TriState mux_in[4]{};
+		TriState mux_out{};
+
+		mux_in[0] = col_in[8];
+		mux_in[1] = col_in[10];
+		mux_in[2] = col_in[9];
+		mux_in[3] = col_in[11];
+		mux_out = MUX2(lum_in, mux_in);
+		ff[0].set(NAND(NOT(MUX(PCLK, ff[0].get(), mux_out)), n_Tx));
+
+		mux_in[0] = col_in[4];
+		mux_in[1] = col_in[6];
+		mux_in[2] = col_in[5];
+		mux_in[3] = col_in[7];
+		mux_out = MUX2(lum_in, mux_in);
+		ff[1].set(NAND(NOT(MUX(PCLK, ff[1].get(), mux_out)), n_Tx));
+
+		mux_in[0] = col_in[0];
+		mux_in[1] = col_in[2];
+		mux_in[2] = col_in[1];
+		mux_in[3] = col_in[3];
+		mux_out = MUX2(lum_in, mux_in);
+		ff[2].set(NAND(NOT(MUX(PCLK, ff[2].get(), mux_out)), n_Tx));
 	}
 
 	void RGB_SEL12x3::getOut(TriState col_out[3])
