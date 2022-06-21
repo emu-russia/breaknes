@@ -698,17 +698,17 @@ namespace PPUSim
 		{
 			if (rgb_red_latch[n].get() == TriState::One)
 			{
-				vout.RGB.RED |= (1 << n);
+				vout.RGB.RED = n * 35;
 			}
 
 			if (rgb_green_latch[n].get() == TriState::One)
 			{
-				vout.RGB.GREEN |= (1 << n);
+				vout.RGB.GREEN = n * 35;
 			}
 
 			if (rgb_blue_latch[n].get() == TriState::One)
 			{
-				vout.RGB.BLUE |= (1 << n);
+				vout.RGB.BLUE = n * 35;
 			}
 		}
 
