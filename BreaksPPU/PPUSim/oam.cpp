@@ -12,7 +12,18 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			ob[n] = new OAMBufferBit(ppu);
+			switch (ppu->rev)
+			{
+				// TBD: Check how things are in other RGB PPUs.
+
+				case Revision::RP2C04_0003:
+					ob[n] = new OAMBufferBit_RGB(ppu);
+					break;
+
+				default:
+					ob[n] = new OAMBufferBit(ppu);
+					break;
+			}
 		}
 
 		for (size_t n = 0; n < num_lanes; n++)
@@ -422,5 +433,33 @@ namespace PPUSim
 	OAMDecayBehavior OAM::GetOamDecayBehavior()
 	{
 		return decay_behav;
+	}
+
+	/// <summary>
+	/// The different version for RGB PPU (the one studied) is that OAM is Write-Only.
+	/// </summary>
+	void OAMBufferBit_RGB::sim(OAMLane* lane, size_t column, size_t bit_num, TriState OB_OAM, TriState n_WE)
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState BLNK = ppu->fsm.BLNK;
+		TriState I_OAM2 = ppu->fsm.IOAM2;
+
+		TriState FromOAM = TriState::Z;
+		if (lane != nullptr)
+		{
+			lane->sim(column, bit_num, FromOAM);
+		}
+
+		Input_FF.set(MUX(PCLK, FromOAM, TriState::Zero));
+		OB_FF.set(NOT(MUX(PCLK, NOR(I_OAM2, Input_FF.get()), NOT(OB_FF.get()))));
+		auto OBOut = OB_FF.get();
+		ppu->wire.OB[bit_num] = OBOut;
+		out_latch.set(MUX(BLNK, MUX(OB_OAM, TriState::Z, OBOut), ppu->GetDBBit(bit_num)), TriState::One);
+
+		if (lane != nullptr)
+		{
+			TriState val_out = MUX(NOT(n_WE), TriState::Z, out_latch.get());
+			lane->sim(column, bit_num, val_out);
+		}
 	}
 }

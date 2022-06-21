@@ -113,6 +113,7 @@
 			this.saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
 			this.openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
+			this.loadRGBDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -352,7 +353,8 @@
 			this.miscToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.pPUColorSpaceToolStripMenuItem,
             this.loadRAWDumpToolStripMenuItem,
-            this.loadCompositeDumpToolStripMenuItem});
+            this.loadCompositeDumpToolStripMenuItem,
+            this.loadRGBDumpToolStripMenuItem});
 			this.miscToolStripMenuItem.Name = "miscToolStripMenuItem";
 			this.miscToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			this.miscToolStripMenuItem.Text = "Misc";
@@ -908,6 +910,13 @@
 			this.openFileDialogHEX.DefaultExt = "hex";
 			this.openFileDialogHEX.Filter = "Logisim Hex files|*.hex|All files|*.*";
 			// 
+			// loadRGBDumpToolStripMenuItem
+			// 
+			this.loadRGBDumpToolStripMenuItem.Name = "loadRGBDumpToolStripMenuItem";
+			this.loadRGBDumpToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+			this.loadRGBDumpToolStripMenuItem.Text = "Load RGB Dump...";
+			this.loadRGBDumpToolStripMenuItem.Click += new System.EventHandler(this.loadRGBDumpToolStripMenuItem_Click);
+			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1047,5 +1056,6 @@
 		private System.Windows.Forms.ToolStripMenuItem loadRAWDumpToolStripMenuItem;
 		private System.Windows.Forms.OpenFileDialog openFileDialogHEX;
 		private System.Windows.Forms.ToolStripMenuItem loadCompositeDumpToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem loadRGBDumpToolStripMenuItem;
 	}
 }

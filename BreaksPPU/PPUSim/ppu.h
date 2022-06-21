@@ -187,6 +187,7 @@ namespace PPUSim
 		friend Mux;
 		friend OAMEval;
 		friend OAMBufferBit;
+		friend OAMBufferBit_RGB;
 		friend OAMCell;
 		friend OAM;
 		friend FIFOLane;

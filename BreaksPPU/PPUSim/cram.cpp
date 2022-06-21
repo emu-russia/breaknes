@@ -301,7 +301,7 @@ namespace PPUSim
 	/// <summary>
 	/// The different version for RGB PPU (the one studied) is that CRAM is Write-Only.
 	/// </summary>
-	void CBBit_RGB::sim(size_t bit_num, BaseLogic::TriState* cell, BaseLogic::TriState n_OE)
+	void CBBit_RGB::sim(size_t bit_num, TriState* cell, TriState n_OE)
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_PCLK = ppu->wire.n_PCLK;

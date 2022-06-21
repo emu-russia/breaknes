@@ -682,21 +682,25 @@ namespace PPUSim
 		vout.RGB.GREEN = 0;
 		vout.RGB.BLUE = 0;
 
+		// By multiplying by 35 we are just a little bit short of 255 for a component of 7, but that will do.
+
+		const size_t Current_summation_factor = 35;
+
 		for (size_t n = 0; n < 8; n++)
 		{
 			if (rgb_red_latch[n].get() == TriState::One)
 			{
-				vout.RGB.RED = n * 35;
+				vout.RGB.RED = (uint8_t)(n * Current_summation_factor);
 			}
 
 			if (rgb_green_latch[n].get() == TriState::One)
 			{
-				vout.RGB.GREEN = n * 35;
+				vout.RGB.GREEN = (uint8_t)(n * Current_summation_factor);
 			}
 
 			if (rgb_blue_latch[n].get() == TriState::One)
 			{
-				vout.RGB.BLUE = n * 35;
+				vout.RGB.BLUE = (uint8_t)(n * Current_summation_factor);
 			}
 		}
 

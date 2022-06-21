@@ -802,5 +802,22 @@ namespace PPUPlayer
 				formCompositeViewer.Show();
 			}
 		}
+
+		private void loadRGBDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!SimulationStarted)
+			{
+				MessageBox.Show(
+					"You need to run the simulation so that the PPU instance is active.",
+					"Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				return;
+			}
+
+			if (openFileDialogHEX.ShowDialog() == DialogResult.OK)
+			{
+				FormComponentViewer formComponentViewer = new FormComponentViewer(openFileDialogHEX.FileName);
+				formComponentViewer.Show();
+			}
+		}
 	}
 }
