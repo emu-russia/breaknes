@@ -183,16 +183,23 @@ namespace PPUPlayer
 			{
 				if (CurrentScan < 240)
 				{
-					var sample = ScanBuffer[ReadPtr];
+					int red = 0, green = 0, blue = 0;
 
-					byte r = sample.RED;
-					byte g = sample.GREEN;
-					byte b = sample.BLUE;
+					for (int n = 0; n < ppu_features.SamplesPerPCLK; n++)
+					{
+						var sample = ScanBuffer[ReadPtr];
+						red += sample.RED;
+						green += sample.GREEN;
+						blue += sample.BLUE;
+						ReadPtr++;
+					}
+
+					byte r = (byte)(red / ppu_features.SamplesPerPCLK);
+					byte g = (byte)(green / ppu_features.SamplesPerPCLK);
+					byte b = (byte)(blue / ppu_features.SamplesPerPCLK);
 
 					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
 				}
-
-				ReadPtr += ppu_features.SamplesPerPCLK;
 			}
 
 			CurrentScan++;
