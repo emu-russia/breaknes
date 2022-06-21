@@ -126,6 +126,12 @@ namespace PPUPlayer
 				SyncFound = false;
 				WritePtr = 0;
 			}
+
+			if (WritePtr >= 2 * SamplesPerScan)
+			{
+				SyncFound = false;
+				WritePtr = 0;
+			}
 		}
 
 		void ProcessScanRAW()
@@ -173,6 +179,14 @@ namespace PPUPlayer
 			while (ScanBuffer[ReadPtr].nSYNC == 0)
 			{
 				ReadPtr++;
+
+				if (ReadPtr >= ScanBuffer.Length)
+					break;
+			}
+
+			if (ReadPtr >= ScanBuffer.Length)
+			{
+				return;
 			}
 
 			ReadPtr += ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
