@@ -43,5 +43,6 @@ namespace PPUSimUnitTest
 		bool TestNtscPpuChromaDecoderOutputs();
 		void DumpNtscPpuPhaseShifter(bool reset);
 		void DumpNtscPpuColorSpace(bool emphasis);
+		void Dump_2C04_0003_ColorSpace();
 	};
 }

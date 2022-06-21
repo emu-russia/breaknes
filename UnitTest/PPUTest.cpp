@@ -924,4 +924,33 @@ namespace PPUSimUnitTest
 			}
 		}
 	}
+
+	/// <summary>
+	/// Output the RP2C04-0003 color space.
+	/// </summary>
+	void UnitTest::Dump_2C04_0003_ColorSpace()
+	{
+		size_t colorBandCounter = 0;
+
+		for (size_t chroma_luma = 0; chroma_luma < 64; chroma_luma++)
+		{
+			PPUSim::VideoOutSignal rawIn{}, rgbOut{};
+
+			rawIn.RAW.raw = (uint16_t)chroma_luma;
+			ppu->ConvertRAWToRGB(rawIn, rgbOut);
+
+			char text[0x100]{};
+
+			sprintf_s(text, sizeof(text), "%02X%02X%02X ", rgbOut.RGB.RED, rgbOut.RGB.GREEN, rgbOut.RGB.BLUE);
+
+			Logger::WriteMessage(text);
+
+			colorBandCounter++;
+			if (colorBandCounter >= 16)
+			{
+				colorBandCounter = 0;
+				Logger::WriteMessage("\n");
+			}
+		}
+	}
 }
