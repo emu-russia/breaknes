@@ -657,16 +657,19 @@ namespace PPUSim
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState col[4]{};
-		TriState unpacked[16]{};
+		size_t packed = 0;
 
-		col[0] = MUX(PCLK, TriState::Zero, rgb_cc_latch[2].nget());
-		col[1] = MUX(PCLK, TriState::Zero, rgb_cc_latch[3].nget());
-		col[2] = MUX(PCLK, TriState::Zero, ppu->wire.n_LL[0]);
-		col[3] = MUX(PCLK, TriState::Zero, ppu->wire.n_LL[1]);
+		if (PCLK == TriState::One)
+		{
+			TriState unpacked[16]{};
+			col[0] = rgb_cc_latch[2].nget();
+			col[1] = rgb_cc_latch[3].nget();
+			col[2] = ppu->wire.n_LL[0];
+			col[3] = ppu->wire.n_LL[1];
 
-		DMX4(col, unpacked);
-
-		size_t packed = Pack(unpacked) | ((size_t)Pack(&unpacked[8]) << 8);
+			DMX4(col, unpacked);
+			packed = Pack(unpacked) | ((size_t)Pack(&unpacked[8]) << 8);
+		}
 
 		color_matrix->sim(packed, &rgb_output);
 	}
