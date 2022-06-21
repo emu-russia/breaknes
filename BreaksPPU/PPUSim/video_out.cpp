@@ -602,44 +602,44 @@ namespace PPUSim
 			case Revision::RP2C04_0003:
 			{
 				size_t RP2C04_0003_ColorMatrix[] = {
-					0b1001000111101010,
-					0b1101010101110000,
-					0b1111110101001111,
-					0b1001100110000101,
-					0b0010000111111110,
-					0b1101001001001001,
-					0b0011010101100111,
-					0b0001001110100000,
-					0b1110000111111010,
-					0b1100001101000000,
+					0b1010100001110110,
+					0b1111000101010100,
+					0b0000110101000000,
+					0b0101111001100110,
+					0b1000000001111011,
+					0b0110110110110100,
+					0b0001100101010011,
+					0b1111101000110111,
+					0b1010000001111000,
+					0b1111110100111100,
 					0b0110100101101001,
-					0b1001011101100000,
+					0b1111100100010110,
 
-					0b1001010111001010,
-					0b0101100001010101,
-					0b1111000101101111,
-					0b0100110000101000,
-					0b0111100011000111,
-					0b1101011010000101,
-					0b1110010000001101,
-					0b0000001010111110,
-					0b1000010111011010,
-					0b1100010101000101,
-					0b1001010000101010,
-					0b0010001011011010,
+					0b1010110001010110,
+					0b0101010111100101,
+					0b0000100101110000,
+					0b1110101111001101,
+					0b0001110011100001,
+					0b0101111010010100,
+					0b0100111111011000,
+					0b1000001010111111,
+					0b1010010001011110,
+					0b0101110101011100,
+					0b1010101111010110,
+					0b1010010010111011,
 
-					0b1001101101101000,
-					0b1101101000010001,
-					0b0110000100100010,
-					0b1011100010011001,
-					0b0001111001101111,
-					0b1101001000100001,
-					0b1101100110101010,
-					0b1000101010011001,
-					0b1001110101101010,
-					0b1100000010100000,
-					0b1101100110100010,
-					0b1000101011001011,
+					0b1110100100100110,
+					0b0111011110100100,
+					0b1011101101111001,
+					0b0110011011100010,
+					0b0000100110000111,
+					0b0111101110110100,
+					0b1010101001100100,
+					0b0110011010101110,
+					0b1010100101000110,
+					0b1111101111111100,
+					0b1011101001100100,
+					0b0010110010101110,
 				};
 
 				bitmask = RP2C04_0003_ColorMatrix;
@@ -657,13 +657,21 @@ namespace PPUSim
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState col[4]{};
+		size_t packed = 0;
 
-		for (size_t n = 0; n < 4; n++)
+		if (PCLK == TriState::One)
 		{
-			col[n] = MUX(PCLK, TriState::Zero, rgb_cc_latch[n].nget());
+			TriState unpacked[16]{};
+			col[0] = rgb_cc_latch[2].nget();
+			col[1] = rgb_cc_latch[3].nget();
+			col[2] = ppu->wire.n_LL[0];
+			col[3] = ppu->wire.n_LL[1];
+
+			DMX4(col, unpacked);
+			packed = Pack(unpacked) | ((size_t)Pack(&unpacked[8]) << 8);
 		}
 
-		color_matrix->sim(PackNibble(col), &rgb_output);
+		color_matrix->sim(packed, &rgb_output);
 	}
 
 	void VideoOut::sim_Select12To3()
@@ -675,8 +683,8 @@ namespace PPUSim
 		TriState n_TB = ppu->wire.n_TB;
 		TriState lum_in[2]{};
 
-		lum_in[0] = NOR(n_PCLK, ppu->wire.n_LL[0]);
-		lum_in[1] = NOR(n_PCLK, ppu->wire.n_LL[1]);
+		lum_in[0] = NOR(n_PCLK, NOT(rgb_cc_latch[0].nget()));
+		lum_in[1] = NOR(n_PCLK, NOT(rgb_cc_latch[1].nget()));
 
 		red_sel.sim(PCLK, n_TR, &rgb_output[12 * 0], lum_in);
 		green_sel.sim(PCLK, n_TG, &rgb_output[12 * 1], lum_in);
@@ -693,17 +701,17 @@ namespace PPUSim
 		{
 			if (rgb_red_latch[n].get() == TriState::One)
 			{
-				vout.RGB.RED |= (1 << n);
+				vout.RGB.RED = n * 35;
 			}
 
 			if (rgb_green_latch[n].get() == TriState::One)
 			{
-				vout.RGB.GREEN |= (1 << n);
+				vout.RGB.GREEN = n * 35;
 			}
 
 			if (rgb_blue_latch[n].get() == TriState::One)
 			{
-				vout.RGB.BLUE |= (1 << n);
+				vout.RGB.BLUE = n * 35;
 			}
 		}
 
@@ -712,13 +720,29 @@ namespace PPUSim
 
 	void RGB_SEL12x3::sim(TriState PCLK, TriState n_Tx, TriState col_in[12], TriState lum_in[2])
 	{
-		size_t col_idx = 8;
-		for (size_t n = 0; n < 3; n++)
-		{
-			TriState mux_out = MUX2(lum_in, &col_in[col_idx]);
-			ff[n].set( NAND(NOT(MUX(PCLK, ff[n].get(), mux_out)), n_Tx) );
-			col_idx -= 4;
-		}
+		TriState mux_in[4]{};
+		TriState mux_out{};
+
+		mux_in[0] = col_in[8];
+		mux_in[1] = col_in[10];
+		mux_in[2] = col_in[9];
+		mux_in[3] = col_in[11];
+		mux_out = MUX2(lum_in, mux_in);
+		ff[0].set(NAND(NOT(MUX(PCLK, ff[0].get(), mux_out)), n_Tx));
+
+		mux_in[0] = col_in[4];
+		mux_in[1] = col_in[6];
+		mux_in[2] = col_in[5];
+		mux_in[3] = col_in[7];
+		mux_out = MUX2(lum_in, mux_in);
+		ff[1].set(NAND(NOT(MUX(PCLK, ff[1].get(), mux_out)), n_Tx));
+
+		mux_in[0] = col_in[0];
+		mux_in[1] = col_in[2];
+		mux_in[2] = col_in[1];
+		mux_in[3] = col_in[3];
+		mux_out = MUX2(lum_in, mux_in);
+		ff[2].set(NAND(NOT(MUX(PCLK, ff[2].get(), mux_out)), n_Tx));
 	}
 
 	void RGB_SEL12x3::getOut(TriState col_out[3])
@@ -737,10 +761,10 @@ namespace PPUSim
 
 		// Latch all important signals
 
-		vppu.wire.n_CC[0] = NOT(FromByte(rawIn.RAW.CC0));
-		vppu.wire.n_CC[1] = NOT(FromByte(rawIn.RAW.CC1));
-		vppu.wire.n_CC[2] = NOT(FromByte(rawIn.RAW.CC2));
-		vppu.wire.n_CC[3] = NOT(FromByte(rawIn.RAW.CC3));
+		vppu.wire.n_CC[0] = (FromByte(rawIn.RAW.CC0));
+		vppu.wire.n_CC[1] = (FromByte(rawIn.RAW.CC1));
+		vppu.wire.n_CC[2] = (FromByte(rawIn.RAW.CC2));
+		vppu.wire.n_CC[3] = (FromByte(rawIn.RAW.CC3));
 		vppu.wire.n_LL[0] = NOT(FromByte(rawIn.RAW.LL0));
 		vppu.wire.n_LL[1] = NOT(FromByte(rawIn.RAW.LL1));
 		vppu.wire.n_TR = NOT(FromByte(rawIn.RAW.TR));

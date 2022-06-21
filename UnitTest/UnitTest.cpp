@@ -209,5 +209,11 @@ namespace UnitTest
 			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
 			ut.DumpNtscPpuColorSpace(false);
 		}
+
+		TEST_METHOD(Dump_2C04_0003_PpuColorSpace)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C04_0003);
+			ut.Dump_2C04_0003_ColorSpace();
+		}
 	};
 }

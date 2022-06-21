@@ -217,8 +217,6 @@ namespace PPUPlayer
 
 			// Get phase shift
 
-			// TBD: Apparently the PPU implementation on Logisim now has mixed colors and reversed signal polarity /PZ for phase alteration. Fix.
-
 			int cb_shift = 0;
 
 			if (ScanBuffer[ReadPtr].composite < ppu_features.BurstLevel)
