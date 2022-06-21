@@ -91,28 +91,23 @@ namespace PPUSim
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState SYNC = ppu->fsm.SYNC;
 
+		for (size_t n = 0; n < 4; n++)
+		{
+			cc_latch1[n].set(ppu->wire.n_CC[n], PCLK);
+			cc_latch2[n].set(cc_latch1[n].nget(), n_PCLK);
+		}
+
 		if (composite)
 		{
 			TriState BURST = ppu->fsm.BURST;
 
 			cc_burst_latch.set(BURST, n_PCLK);
 
-			for (size_t n = 0; n < 4; n++)
-			{
-				cc_latch1[n].set(ppu->wire.n_CC[n], PCLK);
-				cc_latch2[n].set(cc_latch1[n].nget(), n_PCLK);
-			}
-
 			sync_latch.set(NOT(SYNC), n_PCLK);
 			cb_latch.set(BURST, n_PCLK);
 		}
 		else
 		{
-			for (size_t n = 0; n < 4; n++)
-			{
-				rgb_cc_latch[n].set(ppu->wire.n_CC[n], n_PCLK);
-			}
-
 			rgb_sync_latch[0].set(SYNC, n_PCLK);
 			rgb_sync_latch[1].set(rgb_sync_latch[0].nget(), PCLK);
 			rgb_sync_latch[2].set(rgb_sync_latch[1].nget(), n_PCLK);
@@ -328,20 +323,10 @@ namespace PPUSim
 	{
 		if (VidOut_n_PICTURE == TriState::Zero)
 		{
-			if (composite)
-			{
-				vout.RAW.CC0 = ToByte(cc_latch2[0].get());
-				vout.RAW.CC1 = ToByte(cc_latch2[1].get());
-				vout.RAW.CC2 = ToByte(cc_latch2[2].get());
-				vout.RAW.CC3 = ToByte(cc_latch2[3].get());
-			}
-			else
-			{
-				vout.RAW.CC0 = ToByte(rgb_cc_latch[0].nget());
-				vout.RAW.CC1 = ToByte(rgb_cc_latch[1].nget());
-				vout.RAW.CC2 = ToByte(rgb_cc_latch[2].nget());
-				vout.RAW.CC3 = ToByte(rgb_cc_latch[3].nget());
-			}
+			vout.RAW.CC0 = ToByte(cc_latch2[0].get());
+			vout.RAW.CC1 = ToByte(cc_latch2[1].get());
+			vout.RAW.CC2 = ToByte(cc_latch2[2].get());
+			vout.RAW.CC3 = ToByte(cc_latch2[3].get());
 			vout.RAW.LL0 = ToByte(NOT(ppu->wire.n_LL[0]));
 			vout.RAW.LL1 = ToByte(NOT(ppu->wire.n_LL[1]));
 			vout.RAW.TR = ToByte(NOT(ppu->wire.n_TR));
@@ -662,8 +647,8 @@ namespace PPUSim
 		if (PCLK == TriState::One)
 		{
 			TriState unpacked[16]{};
-			col[0] = rgb_cc_latch[2].nget();
-			col[1] = rgb_cc_latch[3].nget();
+			col[0] = cc_latch2[2].nget();
+			col[1] = cc_latch2[3].nget();
 			col[2] = ppu->wire.n_LL[0];
 			col[3] = ppu->wire.n_LL[1];
 
@@ -683,8 +668,8 @@ namespace PPUSim
 		TriState n_TB = ppu->wire.n_TB;
 		TriState lum_in[2]{};
 
-		lum_in[0] = NOR(n_PCLK, NOT(rgb_cc_latch[0].nget()));
-		lum_in[1] = NOR(n_PCLK, NOT(rgb_cc_latch[1].nget()));
+		lum_in[0] = NOR(n_PCLK, NOT(cc_latch2[0].nget()));
+		lum_in[1] = NOR(n_PCLK, NOT(cc_latch2[1].nget()));
 
 		red_sel.sim(PCLK, n_TR, &rgb_output[12 * 0], lum_in);
 		green_sel.sim(PCLK, n_TG, &rgb_output[12 * 1], lum_in);
@@ -761,10 +746,10 @@ namespace PPUSim
 
 		// Latch all important signals
 
-		vppu.wire.n_CC[0] = (FromByte(rawIn.RAW.CC0));
-		vppu.wire.n_CC[1] = (FromByte(rawIn.RAW.CC1));
-		vppu.wire.n_CC[2] = (FromByte(rawIn.RAW.CC2));
-		vppu.wire.n_CC[3] = (FromByte(rawIn.RAW.CC3));
+		vppu.wire.n_CC[0] = NOT(FromByte(rawIn.RAW.CC0));
+		vppu.wire.n_CC[1] = NOT(FromByte(rawIn.RAW.CC1));
+		vppu.wire.n_CC[2] = NOT(FromByte(rawIn.RAW.CC2));
+		vppu.wire.n_CC[3] = NOT(FromByte(rawIn.RAW.CC3));
 		vppu.wire.n_LL[0] = NOT(FromByte(rawIn.RAW.LL0));
 		vppu.wire.n_LL[1] = NOT(FromByte(rawIn.RAW.LL1));
 		vppu.wire.n_TR = NOT(FromByte(rawIn.RAW.TR));
@@ -774,23 +759,17 @@ namespace PPUSim
 		vppu.fsm.SYNC = FromByte(rawIn.RAW.Sync);
 		vppu.fsm.n_PICTURE = TriState::Zero;
 
-		// Save the values on the input latches
+		size_t numHalfs = 6;
 
 		vppu.wire.n_PCLK = TriState::One;
 		vppu.wire.PCLK = TriState::Zero;
-		vppu.vid_out->sim(rgbOut);
 
-		// Color Matrix Conversion
-
-		vppu.wire.n_PCLK = TriState::Zero;
-		vppu.wire.PCLK = TriState::One;
-		vppu.vid_out->sim(rgbOut);
-
-		// Output the value to the output latches
-
-		vppu.wire.n_PCLK = TriState::One;
-		vppu.wire.PCLK = TriState::Zero;
-		vppu.vid_out->sim(rgbOut);
+		for (size_t n = 0; n < numHalfs; n++)
+		{
+			vppu.vid_out->sim(rgbOut);
+			vppu.wire.n_PCLK = NOT(vppu.wire.n_PCLK);
+			vppu.wire.PCLK = NOT(vppu.wire.PCLK);
+		}
 	}
 
 #pragma endregion "RGB PPU Stuff"

@@ -51,7 +51,6 @@ namespace PPUSim
 		BaseLogic::DLatch npicture_latch2;
 
 		// For RGB PPU
-		BaseLogic::DLatch rgb_cc_latch[4]{};
 		BaseLogic::DLatch rgb_sync_latch[3]{};
 		BaseLogic::DLatch rgb_red_latch[8]{};
 		BaseLogic::DLatch rgb_green_latch[8]{};

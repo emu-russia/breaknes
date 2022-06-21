@@ -6,6 +6,7 @@ namespace PPUSim
 {
 	class CBBit
 	{
+	protected:
 		PPU* ppu = nullptr;
 
 		BaseLogic::FF ff;
@@ -16,9 +17,21 @@ namespace PPUSim
 		CBBit(PPU* parent) { ppu = parent; }
 		~CBBit() {}
 
-		void sim(size_t bit_num, BaseLogic::TriState * cell, BaseLogic::TriState n_OE);
+		virtual void sim(size_t bit_num, BaseLogic::TriState * cell, BaseLogic::TriState n_OE);
 
 		BaseLogic::TriState get_CBOut(BaseLogic::TriState n_OE);
+	};
+
+	/// <summary>
+	/// Special version for RGB PPU.
+	/// </summary>
+	class CBBit_RGB : public CBBit
+	{
+	public:
+		CBBit_RGB(PPU* parent) : CBBit (parent) {}
+		~CBBit_RGB() {}
+
+		virtual void sim(size_t bit_num, BaseLogic::TriState* cell, BaseLogic::TriState n_OE);
 	};
 
 	class CRAM

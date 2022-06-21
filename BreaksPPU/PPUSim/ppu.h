@@ -181,6 +181,7 @@ namespace PPUSim
 		friend HVDecoder;
 		friend FSM;
 		friend CBBit;
+		friend CBBit_RGB;
 		friend CRAM;
 		friend VideoOut;
 		friend Mux;
