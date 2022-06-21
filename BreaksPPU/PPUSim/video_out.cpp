@@ -758,10 +758,10 @@ namespace PPUSim
 
 		// Latch all important signals
 
-		vppu.wire.n_CC[0] = NOT(FromByte(rawIn.RAW.CC0));
-		vppu.wire.n_CC[1] = NOT(FromByte(rawIn.RAW.CC1));
-		vppu.wire.n_CC[2] = NOT(FromByte(rawIn.RAW.CC2));
-		vppu.wire.n_CC[3] = NOT(FromByte(rawIn.RAW.CC3));
+		vppu.wire.n_CC[0] = (FromByte(rawIn.RAW.CC0));
+		vppu.wire.n_CC[1] = (FromByte(rawIn.RAW.CC1));
+		vppu.wire.n_CC[2] = (FromByte(rawIn.RAW.CC2));
+		vppu.wire.n_CC[3] = (FromByte(rawIn.RAW.CC3));
 		vppu.wire.n_LL[0] = NOT(FromByte(rawIn.RAW.LL0));
 		vppu.wire.n_LL[1] = NOT(FromByte(rawIn.RAW.LL1));
 		vppu.wire.n_TR = NOT(FromByte(rawIn.RAW.TR));
