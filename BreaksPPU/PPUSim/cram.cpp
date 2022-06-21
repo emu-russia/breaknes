@@ -52,7 +52,18 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 6; n++)
 		{
-			cb[n] = new CBBit(ppu);
+			switch (ppu->rev)
+			{
+				// TBD: Check how things are in other RGB PPUs.
+
+				case Revision::RP2C04_0003:
+					cb[n] = new CBBit_RGB(ppu);
+					break;
+
+				default:
+					cb[n] = new CBBit(ppu);
+					break;
+			}
 		}
 	}
 
@@ -284,6 +295,35 @@ namespace PPUSim
 		{
 			TriState bit_val = ((val >> n) & 1) ? TriState::One : TriState::Zero;
 			cram[row * cram_lane_cols + col][n] = bit_val;
+		}
+	}
+
+	/// <summary>
+	/// The different version for RGB PPU (the one studied) is that CRAM is Write-Only.
+	/// </summary>
+	void CBBit_RGB::sim(size_t bit_num, BaseLogic::TriState* cell, BaseLogic::TriState n_OE)
+	{
+		TriState PCLK = ppu->wire.PCLK;
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState n_DB_CB = ppu->wire.n_DB_CB;
+
+		if (n_DB_CB == TriState::Zero)
+		{
+			TriState DBBit = ppu->GetDBBit(bit_num);
+
+			if (*cell != TriState::Z && DBBit != TriState::Z)
+			{
+				*cell = DBBit;
+			}
+		}
+
+		if (PCLK == TriState::One)
+		{
+			ff.set(TriState::Zero);
+		}
+		else
+		{
+			ff.set(*cell);
 		}
 	}
 }
