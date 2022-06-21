@@ -66,6 +66,7 @@ namespace PPUSim
 
 	class OAMBufferBit
 	{
+	protected:
 		PPU* ppu = nullptr;
 
 		BaseLogic::FF Input_FF;
@@ -77,10 +78,22 @@ namespace PPUSim
 		OAMBufferBit(PPU* parent) { ppu = parent; }
 		~OAMBufferBit() {}
 
-		void sim(OAMLane *lane, size_t column, size_t bit_num, BaseLogic::TriState OB_OAM, BaseLogic::TriState n_WE);
+		virtual void sim(OAMLane *lane, size_t column, size_t bit_num, BaseLogic::TriState OB_OAM, BaseLogic::TriState n_WE);
 
 		BaseLogic::TriState get();
 		void set(BaseLogic::TriState val);
+	};
+
+	/// <summary>
+	/// Special version for RGB PPU.
+	/// </summary>
+	class OAMBufferBit_RGB : public OAMBufferBit
+	{
+	public:
+		OAMBufferBit_RGB(PPU* parent) : OAMBufferBit(parent) {}
+		~OAMBufferBit_RGB() {}
+
+		virtual void sim(OAMLane* lane, size_t column, size_t bit_num, BaseLogic::TriState OB_OAM, BaseLogic::TriState n_WE);
 	};
 
 	class OAM
