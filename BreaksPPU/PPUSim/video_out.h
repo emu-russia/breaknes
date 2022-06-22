@@ -49,6 +49,10 @@ namespace PPUSim
 		// For PAL PPU
 		BaseLogic::DLatch npicture_latch1;
 		BaseLogic::DLatch npicture_latch2;
+		BaseLogic::DLatch v0_latch;
+		const size_t chroma_decoder_inputs = 10;
+		const size_t chroma_decoder_outputs = 12 * 2 + 1;	// 12*2 phases + 1 for grays
+		BaseLogic::PLA* chroma_decoder = nullptr;
 
 		// For RGB PPU
 		BaseLogic::DLatch rgb_sync_latch[3]{};
@@ -82,6 +86,8 @@ namespace PPUSim
 		void sim_InputLatches();
 		void sim_PhaseShifter(BaseLogic::TriState n_CLK, BaseLogic::TriState CLK, BaseLogic::TriState RES);
 		void sim_ChromaDecoder();
+		void sim_ChromaDecoder_PAL();
+		void sim_ChromaDecoder_NTSC();
 		void sim_OutputLatches();
 		void sim_LumaDecoder(BaseLogic::TriState n_LL[4]);
 		void sim_Emphasis(BaseLogic::TriState n_TR, BaseLogic::TriState n_TG, BaseLogic::TriState n_TB);
@@ -92,13 +98,7 @@ namespace PPUSim
 		void sim_ColorMatrix();
 		void sim_Select12To3();
 
-		bool DebugRandomize = false;
-		bool DebugFixed = false;
-
-		void sim_RandomizeChromaLuma();
-		void sim_FixedChromaLuma();
-
-		float PhaseLevel(float v, BaseLogic::TriState sel, size_t level_from, size_t level_to);
+		float PhaseSwing(float v, BaseLogic::TriState sel, size_t level_from, size_t level_to);
 
 		bool composite = false;
 		bool raw = false;
@@ -106,6 +106,7 @@ namespace PPUSim
 		float Clamp(float val, float min, float max);
 
 		void SetupColorMatrix();
+		void SetupChromaDecoderPAL();
 
 		void ConvertRAWToRGB_Composite(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
 		void ConvertRAWToRGB_Component(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
@@ -117,9 +118,6 @@ namespace PPUSim
 		
 		void sim(VideoOutSignal& vout);
 
-		void Dbg_RandomizePicture(bool enable);
-		void Dbg_FixedPicture(bool enable);
-
 		void GetSignalFeatures(VideoSignalFeatures& features);
 
 		void SetRAWOutput(bool enable);
@@ -127,5 +125,23 @@ namespace PPUSim
 		void ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
 
 		bool IsComposite();
+	};
+
+	union PALChromaInputs
+	{
+		struct
+		{
+			unsigned n_V0 : 1;
+			unsigned V0 : 1;
+			unsigned n_CC0 : 1;
+			unsigned CC0 : 1;
+			unsigned n_CC1 : 1;
+			unsigned CC1 : 1;
+			unsigned n_CC2 : 1;
+			unsigned CC2 : 1;
+			unsigned n_CC3 : 1;
+			unsigned CC3 : 1;
+		};
+		size_t packed_bits;
 	};
 }

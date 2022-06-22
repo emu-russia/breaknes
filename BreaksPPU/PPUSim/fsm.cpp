@@ -275,17 +275,17 @@ namespace PPUSim
 			case Revision::RP2C07_0:
 			{
 				ctrl_latch1.set(NOT(HPLA[23]), n_PCLK);
+				ctrl_latch2.set(VPLA[8], n_PCLK);
 			}
 			break;
 
 			default:
 			{
 				ctrl_latch1.set(NOR(HPLA[23], EvenOddOut), n_PCLK);
+				ctrl_latch2.set(VPLA[2], n_PCLK);
 			}
 			break;
 		}
-
-		ctrl_latch2.set(VPLA[2], n_PCLK);
 
 		ppu->wire.HC = ctrl_latch1.nget();
 		ppu->wire.VC = NOR(NOT(ppu->wire.HC), ctrl_latch2.nget());
