@@ -23,9 +23,12 @@ namespace PPUSim
 
 		sim_RegFFs();
 
-		if (ppu->rev == Revision::RP2C07_0)
+		switch (ppu->rev)
 		{
-			sim_PalBLACK();
+			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
+				sim_PalBLACK();
+				break;
 		}
 	}
 
@@ -213,6 +216,7 @@ namespace PPUSim
 			// The PAL PPU uses a hidden latch for the VBL signal, which is stored between the open transistor and the inverter in the VBlank INT circuit.
 
 			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
 				vbl_latch.set(PPU_CTRL0[7].get(), NOT(W0_Enable));
 				ppu->wire.VBL = vbl_latch.get();
 				break;

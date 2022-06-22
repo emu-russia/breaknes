@@ -136,7 +136,8 @@ namespace PPUPlayer
 
 			// Detect Color Burst Phase (simulate TV PLL)
 
-			int cb_phase = PLL();
+			bool odd = (CurrentScan % 2) != 0 && ppu_features.PhaseAlteration != 0;
+			int cb_phase = PLL(odd, ppu_features.PhaseAlteration != 0 ? 10 : 0);
 
 			ReadPtr += ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
 
@@ -169,7 +170,7 @@ namespace PPUPlayer
 						float level = ((batch[n].composite - ppu_features.BurstLevel) * normalize_factor) / num_phases;
 						Y += level;
 						I += level * (float)Math.Cos((cb_phase + n + ofs) * (2 * Math.PI / num_phases) + hue_adj);
-						Q += level * (float)Math.Sin((cb_phase + n + ofs) * (2 * Math.PI / num_phases) + hue_adj);
+						Q += level * (float)Math.Sin((cb_phase + n + ofs) * (2 * Math.PI / num_phases) + hue_adj) * (odd ? -1.0f : +1.0f);
 					}
 
 					// 6500K color temperature
@@ -195,11 +196,18 @@ namespace PPUPlayer
 			}
 		}
 
-		int PLL()
+		int prev_cb_shift = 0;
+
+		int PLL(bool odd, int cb)
 		{
 			int ReadPtr = SyncPos;
 			int num_phases = 12;
 			int samples = ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
+
+			if (odd)
+			{
+				return Math.Abs((prev_cb_shift + 5) % num_phases);
+			}
 
 			// Skip HSync
 
@@ -217,7 +225,7 @@ namespace PPUPlayer
 
 			// Get phase shift
 
-			int cb_shift = 0;
+			int cb_shift = cb;
 
 			if (ScanBuffer[ReadPtr].composite < ppu_features.BurstLevel)
 			{
@@ -238,7 +246,9 @@ namespace PPUPlayer
 				}
 			}
 
-			return cb_shift % num_phases;
+			int res = cb_shift % num_phases;
+			prev_cb_shift = res;
+			return res;
 		}
 
 		float Clamp(float val, float min, float max)

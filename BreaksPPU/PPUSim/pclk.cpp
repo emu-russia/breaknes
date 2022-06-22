@@ -33,6 +33,7 @@ namespace PPUSim
 			break;
 
 			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
 			{
 				pclk_1.set(NOR(pclk_6.get(), wire.RES), CLK);
 				pclk_2.set(pclk_1.nget(), n_CLK);

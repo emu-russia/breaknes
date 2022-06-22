@@ -15,6 +15,7 @@ namespace PPUSim
 			case Revision::RP2C02G:
 			case Revision::RP2C02H:
 			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
 				LToV[0] = 0.781f;		// Synch
 				LToV[1] = 1.000f;		// Colorburst L
 				LToV[2] = 1.131f;		// Color 0D
@@ -43,6 +44,7 @@ namespace PPUSim
 		switch (ppu->rev)
 		{
 			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
 				SetupChromaDecoderPAL();
 				break;
 		}
@@ -168,6 +170,7 @@ namespace PPUSim
 			break;
 
 			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
 			{
 				TriState n_PCLK = ppu->wire.n_PCLK;
 				if (ppu->v != nullptr)
@@ -488,11 +491,14 @@ namespace PPUSim
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState n_PICTURE = ppu->fsm.n_PICTURE;
 
-		if (ppu->rev == Revision::RP2C07_0)
+		switch (ppu->rev)
 		{
-			npicture_latch1.set(NOT(n_PICTURE), n_PCLK);
-			npicture_latch2.set(npicture_latch1.nget(), PCLK);
-			n_PICTURE = npicture_latch2.get();
+			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
+				npicture_latch1.set(NOT(n_PICTURE), n_PCLK);
+				npicture_latch2.set(npicture_latch1.nget(), PCLK);
+				n_PICTURE = npicture_latch2.get();
+				break;
 		}
 
 		VidOut_n_PICTURE = n_PICTURE;
@@ -511,6 +517,7 @@ namespace PPUSim
 				features.BurstLevel = 1.3f;
 				features.WhiteLevel = 1.6f;
 				features.SyncLevel = 0.781f;
+				features.PhaseAlteration = false;
 				break;
 
 			case Revision::RP2C07_0:
@@ -521,6 +528,21 @@ namespace PPUSim
 				features.BurstLevel = 1.3f;
 				features.WhiteLevel = 1.6f;
 				features.SyncLevel = 0.781f;
+				features.PhaseAlteration = true;
+				break;
+
+			// TBD: Technically the DAC should not differ from the PAL PPU, but there are reports that the colors are brighter.
+			// Apparently this is due to the slight difference in the crystal area.
+
+			case Revision::UMC_UA6538:
+				features.SamplesPerPCLK = 10;
+				features.PixelsPerScan = 341;
+				features.ScansPerField = 312;
+				features.BackPorchSize = 42;
+				features.BurstLevel = 1.3f;
+				features.WhiteLevel = 1.6f;
+				features.SyncLevel = 0.781f;
+				features.PhaseAlteration = true;
 				break;
 
 			case Revision::RP2C04_0003:
@@ -626,8 +648,12 @@ namespace PPUSim
 			float level = ((batch[n].composite - features.BurstLevel) * normalize_factor) / num_phases;
 			Y += level;
 			I += level * cos((cb_phase + n) * (2 * π / num_phases));
-			Q += level * sin((cb_phase + n) * (2 * π / num_phases));
+			Q += level * sin((cb_phase + n) * (2 * π / num_phases)) * +1.0f;
 		}
+
+		// Note to PAL researchers. Read math behind PAL, or just use these:
+		//		cb_phase = 1
+		//		Q += level * sin((cb_phase + n) * (2 * π / num_phases)) * -1.0f;    <----   Minus
 
 		delete[] batch;
 

@@ -162,6 +162,7 @@ namespace PPUSim
 			case Revision::RP2C02G:
 			case Revision::RP2C02H:
 			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
 			{
 				TriState nSLAVE = regs->get_nSLAVE();
 
@@ -202,6 +203,7 @@ namespace PPUSim
 			case Revision::RP2C02G:
 			case Revision::RP2C02H:
 			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
 			{
 				for (size_t n = 0; n < 4; n++)
 				{

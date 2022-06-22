@@ -160,16 +160,16 @@ namespace PPUPlayer
 				return;
 			}
 
+			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
+
 			// If the user did not select anything, but just clicked the `Play` button - notify him that he is in free flight.
 
 			if (ppu_dump == null && nes_file == null)
 			{
 				string text = DefaultTitle;
-				text += " - Free Flight";
+				text += " - Free Flight (" + settings.PPU_Revision + ")";
 				this.Text = text;
 			}
-
-			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
 
 			// If the user has specified RegDump - use it. Otherwise, create a dummy RegDump with an `infinite` wait to read register $2002.
 

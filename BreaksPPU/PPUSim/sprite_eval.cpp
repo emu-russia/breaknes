@@ -155,6 +155,7 @@ namespace PPUSim
 			// For the PAL PPU, the $2003 write delay is screwed on. This is most likely how they fight OAM Corruption.
 
 			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
 			{
 				auto W3 = NOR(n_W3, n_DBE);
 				W3_FF1.set(NOR(NOR(W3, W3_FF1.get()), w3_latch3.nget()));
@@ -322,6 +323,7 @@ namespace PPUSim
 		switch (ppu->rev)
 		{
 			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
 			{
 				TriState n_PCLK = ppu->wire.n_PCLK;
 				blnk_latch.set(BLNK, n_PCLK);
