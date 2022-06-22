@@ -517,7 +517,7 @@ namespace PPUSim
 				features.SamplesPerPCLK = 10;
 				features.PixelsPerScan = 341;
 				features.ScansPerField = 312;
-				features.BackPorchSize = 40;
+				features.BackPorchSize = 42;
 				features.BurstLevel = 1.3f;
 				features.WhiteLevel = 1.6f;
 				features.SyncLevel = 0.781f;

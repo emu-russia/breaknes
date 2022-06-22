@@ -71,6 +71,16 @@ namespace PPUSim
 		BaseLogic::TriState DO_COPY = BaseLogic::TriState::X;
 		BaseLogic::TriState COPY_OVF = BaseLogic::TriState::X;
 		BaseLogic::TriState OB_Bits[8]{};
+		BaseLogic::TriState W3_Enable = BaseLogic::TriState::X;
+
+		// For PAL PPU
+		BaseLogic::DLatch blnk_latch;
+		BaseLogic::FF W3_FF1;
+		BaseLogic::FF W3_FF2;
+		BaseLogic::DLatch w3_latch1;
+		BaseLogic::DLatch w3_latch2;
+		BaseLogic::DLatch w3_latch3;
+		BaseLogic::DLatch w3_latch4;
 
 		BaseLogic::DLatch init_latch;
 		BaseLogic::DLatch ofetch_latch;

@@ -141,18 +141,47 @@ namespace PPUSim
 	void OAMEval::sim_MainCounterControl()
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState PCLK = ppu->wire.PCLK;
 		TriState I_OAM2 = ppu->fsm.IOAM2;
 		TriState n_VIS = ppu->fsm.nVIS;
 		TriState H0_DD = ppu->wire.H0_Dash2;
 		TriState OFETCH = ppu->wire.OFETCH;
 		TriState n_W3 = ppu->wire.n_W3;
 		TriState n_DBE = ppu->wire.n_DBE;
+		TriState ZOMG{};
 
-		auto W3_Enable = NOR(n_W3, n_DBE);
+		switch (ppu->rev)
+		{
+			// For the PAL PPU, the $2003 write delay is screwed on. This is most likely how they fight OAM Corruption.
+
+			case Revision::RP2C07_0:
+			{
+				auto W3 = NOR(n_W3, n_DBE);
+				W3_FF1.set(NOR(NOR(W3, W3_FF1.get()), w3_latch3.nget()));
+				auto w3_ff1_out = NOR(W3_FF1.nget(), W3);
+				W3_FF2.set(NOT(NOT(MUX(PCLK, W3_FF2.get(), w3_ff1_out))));
+				w3_latch1.set(W3_FF2.nget(), n_PCLK);
+				w3_latch2.set(w3_latch1.nget(), PCLK);
+				w3_latch3.set(w3_latch2.nget(), n_PCLK);
+				w3_latch4.set(w3_latch3.nget(), PCLK);
+				W3_Enable = NOR(w3_latch4.get(), w3_latch2.nget());
+
+				// ZOMG comes from the circuit located in the same place as the EVEN/ODD circuit for the NTSC PPU (to the right of the V Decoder).
+
+				ZOMG = ppu->wire.EvenOddOut;
+				break;
+			}
+
+			default:
+				W3_Enable = NOR(n_W3, n_DBE);
+				// In order not to change the logic below the pseudo-ZOMG is made equal to 0 and NOR becomes NOT.
+				ZOMG = TriState::Zero;
+				break;
+		}
 
 		init_latch.set(NAND(NOR(I_OAM2, n_VIS), H0_DD), n_PCLK);
 		ofetch_latch.set(OFETCH, n_PCLK);
-		OMSTEP = NAND(OR(init_latch.get(), n_PCLK), NOT(NOR(ofetch_latch.nget(), n_PCLK)));
+		OMSTEP = NAND(OR(init_latch.get(), n_PCLK), NOR(NOR(ofetch_latch.nget(), n_PCLK), ZOMG));
 		OMOUT = NOR(OMSTEP, W3_Enable);
 	}
 
@@ -164,11 +193,8 @@ namespace PPUSim
 		TriState PAR_O = ppu->fsm.PARO;
 		TriState OMOUT = this->OMOUT;
 		TriState OMSTEP = this->OMSTEP;
-		TriState n_W3 = ppu->wire.n_W3;
-		TriState n_DBE = ppu->wire.n_DBE;
 		TriState n_out[8]{};
 		auto Mode4 = NOR(BLNK, NOT(OMFG));
-		auto W3_Enable = NOR(n_W3, n_DBE);
 		TriState carry_in;
 		TriState carry_out;
 
@@ -291,8 +317,23 @@ namespace PPUSim
 		TriState n_VIS = ppu->fsm.nVIS;
 		TriState H0_DD = ppu->wire.H0_Dash2;
 		TriState BLNK = ppu->fsm.BLNK;
+		TriState OAP{};
 
-		auto OAP = NAND(OR(n_VIS, H0_DD), NOT(BLNK));
+		switch (ppu->rev)
+		{
+			case Revision::RP2C07_0:
+			{
+				TriState n_PCLK = ppu->wire.n_PCLK;
+				blnk_latch.set(BLNK, n_PCLK);
+				OAP = NAND(OR(n_VIS, H0_DD), blnk_latch.nget());
+				break;
+			}
+
+			default:
+				OAP = NAND(OR(n_VIS, H0_DD), NOT(BLNK));
+				break;
+		}
+
 		ppu->wire.OAM8 = NOT(OAP);
 
 		for (size_t n = 0; n < 3; n++)

@@ -207,7 +207,20 @@ namespace PPUSim
 		ppu->wire.O8_16 = NOT(o816_latch.nget());
 
 		ppu->wire.n_SLAVE = PPU_CTRL0[6].get();
-		ppu->wire.VBL = PPU_CTRL0[7].get();
+
+		switch (ppu->rev)
+		{
+			// The PAL PPU uses a hidden latch for the VBL signal, which is stored between the open transistor and the inverter in the VBlank INT circuit.
+
+			case Revision::RP2C07_0:
+				vbl_latch.set(PPU_CTRL0[7].get(), NOT(W0_Enable));
+				ppu->wire.VBL = vbl_latch.get();
+				break;
+
+			default:
+				ppu->wire.VBL = PPU_CTRL0[7].get();
+				break;
+		}
 
 		// CTRL1
 
