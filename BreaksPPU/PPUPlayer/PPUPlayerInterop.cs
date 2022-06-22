@@ -89,6 +89,8 @@ namespace PPUPlayer
 			public float WhiteLevel;        // IRE = 100
 			[FieldOffset(28)]
 			public float SyncLevel;
+			[FieldOffset(32)]
+			public int PhaseAlteration;		// 1: PAL
 		}
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]

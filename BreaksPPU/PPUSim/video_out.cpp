@@ -517,6 +517,7 @@ namespace PPUSim
 				features.BurstLevel = 1.3f;
 				features.WhiteLevel = 1.6f;
 				features.SyncLevel = 0.781f;
+				features.PhaseAlteration = false;
 				break;
 
 			case Revision::RP2C07_0:
@@ -527,6 +528,7 @@ namespace PPUSim
 				features.BurstLevel = 1.3f;
 				features.WhiteLevel = 1.6f;
 				features.SyncLevel = 0.781f;
+				features.PhaseAlteration = true;
 				break;
 
 			// TBD: Technically the DAC should not differ from the PAL PPU, but there are reports that the colors are brighter.
@@ -540,6 +542,7 @@ namespace PPUSim
 				features.BurstLevel = 1.3f;
 				features.WhiteLevel = 1.6f;
 				features.SyncLevel = 0.781f;
+				features.PhaseAlteration = true;
 				break;
 
 			case Revision::RP2C04_0003:
@@ -645,8 +648,12 @@ namespace PPUSim
 			float level = ((batch[n].composite - features.BurstLevel) * normalize_factor) / num_phases;
 			Y += level;
 			I += level * cos((cb_phase + n) * (2 * π / num_phases));
-			Q += level * sin((cb_phase + n) * (2 * π / num_phases));
+			Q += level * sin((cb_phase + n) * (2 * π / num_phases)) * +1.0f;
 		}
+
+		// Note to PAL researchers. Read math behind PAL, or just use these:
+		//		cb_phase = 1
+		//		Q += level * sin((cb_phase + n) * (2 * π / num_phases)) * -1.0f;    <----   Minus
 
 		delete[] batch;
 

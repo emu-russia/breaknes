@@ -63,6 +63,7 @@ namespace PPUSim
 		float BurstLevel;		// IRE = 0
 		float WhiteLevel;		// IRE = 100
 		float SyncLevel;
+		int32_t PhaseAlteration;	// 1: PAL
 	};
 
 	/// <summary>
