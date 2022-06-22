@@ -260,6 +260,12 @@ namespace PPUSim
 				ppu->wire.EvenOddOut = TriState::Zero;
 				break;
 			}
+
+			case Revision::UMC_UA6538:
+			{
+				ppu->wire.EvenOddOut = TriState::Zero;
+				break;
+			}
 		}
 	}
 
@@ -273,6 +279,7 @@ namespace PPUSim
 			// PAL PPU does not use EvenOddOut.
 
 			case Revision::RP2C07_0:
+			case Revision::UMC_UA6538:
 			{
 				ctrl_latch1.set(NOT(HPLA[23]), n_PCLK);
 				ctrl_latch2.set(VPLA[8], n_PCLK);
