@@ -38,6 +38,7 @@ namespace PPUSim
 		BaseLogic::FF BLACK_FF2;
 		BaseLogic::DLatch black_latch1;
 		BaseLogic::DLatch black_latch2;
+		BaseLogic::DLatch vbl_latch;
 
 		void sim_RegularRegOps();
 		void sim_W56RegOps();

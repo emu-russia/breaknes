@@ -278,16 +278,6 @@ namespace PPUSim
 		return ((uint16_t)PATop << 8) | PABot;
 	}
 
-	void PPU::Dbg_RandomizePicture(bool enable)
-	{
-		vid_out->Dbg_RandomizePicture(enable);
-	}
-
-	void PPU::Dbg_FixedPicture(bool enable)
-	{
-		vid_out->Dbg_FixedPicture(enable);
-	}
-
 	void PPU::Dbg_RenderAlwaysEnabled(bool enable)
 	{
 		regs->Debug_RenderAlwaysEnabled(enable);

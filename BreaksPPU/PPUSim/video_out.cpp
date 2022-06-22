@@ -36,23 +36,33 @@ namespace PPUSim
 
 			// TBD: others (RGB, clones)
 		}
+
+		// For PAL-like composite PPUs, the Chroma decoder simulation is done using PLA, since the decoder there is big enough (so you don't have to bother with it).
+		// TBD: Check the PPU clones.
+
+		switch (ppu->rev)
+		{
+			case Revision::RP2C07_0:
+				SetupChromaDecoderPAL();
+				break;
+		}
 	}
 
 	VideoOut::~VideoOut()
 	{
+		if (chroma_decoder != nullptr)
+		{
+			delete chroma_decoder;
+		}
+		
+		if (color_matrix != nullptr)
+		{
+			delete color_matrix;
+		}
 	}
 
 	void VideoOut::sim(VideoOutSignal& vout)
 	{
-		if (DebugRandomize)
-		{
-			sim_RandomizeChromaLuma();
-		}
-		else if (DebugFixed)
-		{
-			sim_FixedChromaLuma();
-		}
-
 		sim_nPICTURE();
 		sim_InputLatches();
 		
@@ -102,7 +112,6 @@ namespace PPUSim
 			TriState BURST = ppu->fsm.BURST;
 
 			cc_burst_latch.set(BURST, n_PCLK);
-
 			sync_latch.set(NOT(SYNC), n_PCLK);
 			cb_latch.set(BURST, n_PCLK);
 		}
@@ -118,8 +127,6 @@ namespace PPUSim
 	{
 		TriState unused{};
 		TriState sr0_sout{};
-
-		// TBD: PAL
 
 		// SR Bit5
 
@@ -147,15 +154,113 @@ namespace PPUSim
 
 		sr[0].sim(PZ[10], n_CLK, CLK, RES, unused, PZ[12], PZ[11]);
 
-		n_PR = PZ[0];
-		n_PG = PZ[9];
-		n_PB = PZ[5];
+		switch (ppu->rev)
+		{
+			// TBD: Check and add the remaining "composite" PPUs
+
+			case Revision::RP2C02G:
+			case Revision::RP2C02H:
+			{
+				n_PR = PZ[0];
+				n_PG = PZ[9];
+				n_PB = PZ[5];
+			}
+			break;
+
+			case Revision::RP2C07_0:
+			{
+				TriState n_PCLK = ppu->wire.n_PCLK;
+				if (ppu->v != nullptr)
+				{
+					v0_latch.set(ppu->v->getBit(0), n_PCLK);
+				}
+				else
+				{
+					// To convert RAW -> Composite, a virtual PPU is created in which there is nothing else but a video generator.
+
+					v0_latch.set(TriState::Zero, n_PCLK);
+				}
+				TriState n_V0D = v0_latch.nget();
+
+				n_PR = NOT(MUX(n_V0D, PZ[7], PZ[2]));
+				n_PG = NOT(MUX(n_V0D, PZ[2], PZ[7]));
+				n_PB = PZ[5];
+			}
+			break;
+		}
 	}
 
 	void VideoOut::sim_ChromaDecoder()
 	{
-		// TBD: PAL
+		if (chroma_decoder != nullptr)
+		{
+			sim_ChromaDecoder_PAL();
+		}
+		else
+		{
+			sim_ChromaDecoder_NTSC();
+		}
+	}
 
+	void VideoOut::sim_ChromaDecoder_PAL()
+	{
+		PALChromaInputs chroma_in{};
+
+		chroma_in.n_V0 = v0_latch.nget();
+		chroma_in.V0 = ~chroma_in.n_V0;
+		chroma_in.CC0 = cc_latch2[0].nget();
+		chroma_in.n_CC0 = ~chroma_in.CC0;
+		chroma_in.CC1 = NOR(cc_latch2[1].get(), cc_burst_latch.get());
+		chroma_in.n_CC1 = ~chroma_in.CC1;
+		chroma_in.CC2 = cc_latch2[2].nget();
+		chroma_in.n_CC2 = ~chroma_in.CC2;
+		chroma_in.CC3 = NOR(cc_latch2[3].get(), cc_burst_latch.get());
+		chroma_in.n_CC3 = ~chroma_in.CC3;
+
+		PBLACK = NOR3(NOR(cc_latch2[1].get(), cc_burst_latch.get()), cc_latch2[2].nget(), NOR(cc_latch2[3].get(), cc_burst_latch.get()));
+
+		TriState* chroma_out;
+
+		chroma_decoder->sim(chroma_in.packed_bits, &chroma_out);
+
+		TriState pz[25]{};
+
+		pz[0] = AND(chroma_out[0], NOT(PZ[0]));
+		pz[1] = AND(chroma_out[1], NOT(PZ[0]));
+		pz[2] = AND(chroma_out[2], NOT(PZ[1]));
+		pz[3] = AND(chroma_out[3], NOT(PZ[1]));
+
+		pz[4] = AND(chroma_out[4], NOT(PZ[2]));
+		pz[5] = AND(chroma_out[5], NOT(PZ[2]));
+		pz[6] = AND(chroma_out[6], NOT(PZ[3]));
+		pz[7] = AND(chroma_out[7], NOT(PZ[3]));
+
+		pz[8] = AND(chroma_out[8], NOT(PZ[5]));
+		pz[9] = AND(chroma_out[9], NOT(PZ[5]));
+		pz[10] = chroma_out[10];
+		pz[11] = AND(chroma_out[11], NOT(PZ[6]));
+
+		pz[12] = AND(chroma_out[12], NOT(PZ[6]));
+		pz[13] = AND(chroma_out[13], NOT(PZ[7]));
+		pz[14] = AND(chroma_out[14], NOT(PZ[7]));
+		pz[15] = AND(chroma_out[15], NOT(PZ[8]));
+
+		pz[16] = AND(chroma_out[16], NOT(PZ[8]));
+		pz[17] = AND(chroma_out[17], NOT(PZ[9]));
+		pz[18] = AND(chroma_out[18], NOT(PZ[9]));
+		pz[19] = AND(chroma_out[19], NOT(PZ[10]));
+
+		pz[20] = AND(chroma_out[20], NOT(PZ[10]));
+		pz[21] = AND(chroma_out[21], NOT(PZ[11]));
+		pz[22] = AND(chroma_out[22], NOT(PZ[11]));
+		pz[23] = AND(chroma_out[23], NOT(PZ[12]));
+		pz[24] = AND(chroma_out[24], NOT(PZ[12]));
+
+		n_PZ = NOR25(pz);
+	}
+
+	void VideoOut::sim_ChromaDecoder_NTSC()
+	{
 		TriState dmxin[4]{};
 		TriState dmxout[16]{};
 		dmxin[0] = cc_latch2[0].nget();
@@ -284,14 +389,14 @@ namespace PPUSim
 
 		// Colorburst phase level
 
-		v = PhaseLevel(v, cb_latch.nget(), 1, 4);
+		v = PhaseSwing(v, cb_latch.nget(), 1, 4);
 
 		// Luminance phase levels
 
-		v = PhaseLevel(v, n_LU[0], 2, 6);
-		v = PhaseLevel(v, n_LU[1], 3, 7);
-		v = PhaseLevel(v, n_LU[2], 5, 9);
-		v = PhaseLevel(v, n_LU[3], 8, 9);
+		v = PhaseSwing(v, n_LU[0], 2, 6);
+		v = PhaseSwing(v, n_LU[1], 3, 7);
+		v = PhaseSwing(v, n_LU[2], 5, 9);
+		v = PhaseSwing(v, n_LU[3], 8, 9);
 
 		// Emphasis is calculated by scaling voltage with additional resistance.
 
@@ -303,7 +408,7 @@ namespace PPUSim
 		vout.composite = v;
 	}
 
-	float VideoOut::PhaseLevel(float v, TriState sel, size_t level_from, size_t level_to)
+	float VideoOut::PhaseSwing(float v, TriState sel, size_t level_from, size_t level_to)
 	{
 		auto tmp = NOR(sel, n_PZ);
 		if (tmp == TriState::One)
@@ -374,50 +479,6 @@ namespace PPUSim
 	}
 
 	/// <summary>
-	/// Always produce a random color for PICTURE debugging.
-	/// </summary>
-	void VideoOut::sim_RandomizeChromaLuma()
-	{
-		std::random_device dev;
-		std::mt19937 rng(dev());
-		std::uniform_int_distribution<std::mt19937::result_type> dist(0, 0x3f); // distribution in range [0, 0x3f]
-
-		auto res = dist(rng);
-
-		ppu->wire.n_CC[0] = (res & 1) != 0 ? TriState::One : TriState::Zero;
-		ppu->wire.n_CC[1] = (res & 2) != 0 ? TriState::One : TriState::Zero;
-		ppu->wire.n_CC[2] = (res & 4) != 0 ? TriState::One : TriState::Zero;
-		ppu->wire.n_CC[3] = (res & 8) != 0 ? TriState::One : TriState::Zero;
-
-		ppu->wire.n_LL[0] = (res & 16) != 0 ? TriState::One : TriState::Zero;
-		ppu->wire.n_LL[1] = (res & 32) != 0 ? TriState::One : TriState::Zero;
-	}
-
-	/// <summary>
-	/// Always output some neutral color for PICTURE debugging.
-	/// </summary>
-	void VideoOut::sim_FixedChromaLuma()
-	{
-		ppu->wire.n_CC[0] = TriState::Zero;
-		ppu->wire.n_CC[1] = TriState::One;
-		ppu->wire.n_CC[2] = TriState::One;
-		ppu->wire.n_CC[3] = TriState::Zero;
-
-		ppu->wire.n_LL[0] = TriState::Zero;
-		ppu->wire.n_LL[1] = TriState::One;
-	}
-
-	void VideoOut::Dbg_RandomizePicture(bool enable)
-	{
-		DebugRandomize = enable;
-	}
-
-	void VideoOut::Dbg_FixedPicture(bool enable)
-	{
-		DebugFixed = enable;
-	}
-
-	/// <summary>
 	/// The PAL PPU contains an additional DLatch chain for /PICTURE signal propagation.
 	/// </summary>
 	/// <returns></returns>
@@ -447,6 +508,16 @@ namespace PPUSim
 				features.PixelsPerScan = 341;
 				features.ScansPerField = 262;
 				features.BackPorchSize = 40;
+				features.BurstLevel = 1.3f;
+				features.WhiteLevel = 1.6f;
+				features.SyncLevel = 0.781f;
+				break;
+
+			case Revision::RP2C07_0:
+				features.SamplesPerPCLK = 10;
+				features.PixelsPerScan = 341;
+				features.ScansPerField = 312;
+				features.BackPorchSize = 42;
 				features.BurstLevel = 1.3f;
 				features.WhiteLevel = 1.6f;
 				features.SyncLevel = 0.781f;
@@ -496,6 +567,16 @@ namespace PPUSim
 		vppu.fsm.BURST = TriState::Zero;
 		vppu.fsm.SYNC = FromByte(rawIn.RAW.Sync);
 		vppu.fsm.n_PICTURE = TriState::Zero;
+
+		vppu.wire.n_PCLK = TriState::Zero;
+		vppu.wire.PCLK = TriState::One;
+		vppu.vid_out->sim(unused);
+
+		vppu.wire.n_PCLK = TriState::One;
+		vppu.wire.PCLK = TriState::Zero;
+		vppu.vid_out->sim(unused);
+
+		// And again, for PAL PPU
 
 		vppu.wire.n_PCLK = TriState::Zero;
 		vppu.wire.PCLK = TriState::One;
@@ -564,6 +645,43 @@ namespace PPUSim
 	float VideoOut::Clamp(float val, float min, float max)
 	{
 		return std::min(max, std::max(val, min));
+	}
+
+	void VideoOut::SetupChromaDecoderPAL()
+	{
+		chroma_decoder = new PLA(chroma_decoder_inputs, chroma_decoder_outputs, (char *)"PALChromaDecoder.bin");
+
+		// Set matrix
+
+		size_t bitmask[] = {
+			0b1001100110,
+			0b0110100101,
+			0b1010100101,
+			0b0101100110,
+			0b1001010110,
+			0b0110011001,
+			0b1010011010,
+			0b0101011010,
+			0b1001101001,
+			0b0110101001,
+			0b0010101010,
+			0b1010100110,
+			0b0101101010,
+			0b1001011001,
+			0b0110010110,
+			0b1010010110,
+			0b0101011001,
+			0b1001101010,
+			0b0110100110,
+			0b1010101001,
+			0b0101101001,
+			0b1001011010,
+			0b0110011010,
+			0b1010011001,
+			0b0101010110,
+		};
+
+		chroma_decoder->SetMatrix(bitmask);
 	}
 
 #pragma region "RGB PPU Stuff"

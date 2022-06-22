@@ -96,6 +96,13 @@ namespace BaseLogic
 	TriState NOR13(TriState in[13]);
 
 	/// <summary>
+	/// 25-nor
+	/// </summary>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	TriState NOR25(TriState in[25]);
+
+	/// <summary>
 	/// 2-nand
 	/// </summary>
 	/// <param name="a"></param>

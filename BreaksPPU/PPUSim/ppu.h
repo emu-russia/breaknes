@@ -474,8 +474,6 @@ namespace PPUSim
 		void Dbg_CRAMWriteByte(size_t addr, uint8_t val);
 		uint8_t Dbg_GetCRAMAddress();
 		uint16_t Dbg_GetPPUAddress();
-		void Dbg_RandomizePicture(bool enable);
-		void Dbg_FixedPicture(bool enable);
 		void Dbg_RenderAlwaysEnabled(bool enable);
 		void Dbg_SetCTRL0(uint8_t val);
 		void Dbg_SetCTRL1(uint8_t val);
