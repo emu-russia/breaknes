@@ -47,6 +47,8 @@ namespace PPUPlayer
 		size_t ppuRegId = 0;
 		uint8_t writeValue = 0;
 		size_t savedPclk = 0;
+		size_t faithDelayCounter = 0;
+		const size_t faithDelay = 8;	// Pending CPU operation can cancel at the PCLK boundary and be executed in one CLK. Not good, it should last longer.
 
 		bool pendingReset = false;
 		int resetHalfClkCounter = 0;

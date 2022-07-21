@@ -131,6 +131,19 @@ namespace PPUPlayer
 			pendingCpuOperation = false;
 		}
 
+		// Another scenario for canceling a CPU operation.
+		// If the operation is started at the PCLK boundary, the PCLK Counter can change quite quickly.
+		// To be sure, we will artificially delay the execution of the CPU operation to make it look natural.
+
+		if (pendingCpuOperation && faithDelayCounter != 0)
+		{
+			faithDelayCounter--;
+			if (faithDelayCounter == 0)
+			{
+				pendingCpuOperation = false;
+			}
+		}
+
 		if (pendingReset)
 		{
 			resetHalfClkCounter--;
@@ -154,6 +167,7 @@ namespace PPUPlayer
 			pendingCpuOperation = true;
 			pendingWrite = true;
 			savedPclk = ppu->GetPCLKCounter();
+			faithDelayCounter = faithDelay;
 		}
 	}
 
@@ -169,6 +183,7 @@ namespace PPUPlayer
 			pendingCpuOperation = true;
 			pendingWrite = false;
 			savedPclk = ppu->GetPCLKCounter();
+			faithDelayCounter = faithDelay;
 		}
 	}
 
