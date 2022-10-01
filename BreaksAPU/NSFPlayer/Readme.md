@@ -12,3 +12,5 @@ NSF features that require extended support for different chips and architectures
 - NSF extensions (NSFe, NSF2)
 
 The most confusing thing about the NSF format is the presence of NTSC/PAL entities in the header, which are generally speaking related to the video part and have nothing to do with the APU (sound).
+
+About image by u/ThatPixelArtDude.

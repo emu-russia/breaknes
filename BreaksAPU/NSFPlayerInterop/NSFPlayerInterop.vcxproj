@@ -159,10 +159,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="APUDebug.h" />
+    <ClInclude Include="BankedSRAM.h" />
+    <ClInclude Include="NSFPlayerBoard.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="APUDebug.cpp" />
+    <ClCompile Include="BankedSRAM.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="NSFPlayerBoard.cpp" />
+    <ClCompile Include="NSFPlayerBoardDebug.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -171,6 +178,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Breaks6502\M6502Core\Scripts\VS2022\M6502Core.vcxproj">
+      <Project>{75210c0a-a812-4246-a179-b50d8a25a121}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
     </ProjectReference>

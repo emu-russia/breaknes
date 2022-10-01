@@ -106,5 +106,9 @@ namespace APUSim
 		~APU();
 
 		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t *data, uint16_t* addr, float *AUX_A, float* AUX_B);
+
+		void GetDebugInfo_Wires(APU_Interconnects& wires);
+
+		void GetDebugInfo_Regs(APU_Registers& regs);
 	};
 }
