@@ -1,4 +1,4 @@
-﻿// Converts Logisim .hex dump to UInt16 array.
+﻿// Converts Logisim .hex dump to byte/UInt16/UInt32 array.
 
 using System;
 using System.Collections.Generic;
