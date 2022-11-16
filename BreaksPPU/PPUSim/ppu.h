@@ -467,6 +467,12 @@ namespace PPUSim
 		/// </summary>
 		bool IsComposite();
 
+		/// <summary>
+		/// Noise value (V).
+		/// </summary>
+		/// <param name="volts">Noise +/- value. 0 to disable.</param>
+		void SetCompositeNoise(float volts);
+
 		uint8_t Dbg_OAMReadByte(size_t addr);
 		uint8_t Dbg_TempOAMReadByte(size_t addr);
 		void Dbg_OAMWriteByte(size_t addr, uint8_t val);

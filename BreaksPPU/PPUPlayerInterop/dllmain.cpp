@@ -234,4 +234,12 @@ extern "C"
 			board->SetCTRL1(val);
 		}
 	}
+
+	__declspec(dllexport) void SetNoiseLevel(float volts)
+	{
+		if (board != nullptr)
+		{
+			board->SetNoiseLevel(volts);
+		}
+	}
 }

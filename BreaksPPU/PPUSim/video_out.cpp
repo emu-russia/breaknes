@@ -408,6 +408,13 @@ namespace PPUSim
 			v *= LToV[10];
 		}
 
+		// In order not to torture the video decoder too much we will mix the noise only in the visible part of the line.
+
+		if (noise_enable && VidOut_n_PICTURE == TriState::Zero)
+		{
+			v += GetNoise();
+		}
+
 		vout.composite = v;
 	}
 
@@ -925,6 +932,28 @@ namespace PPUSim
 	bool VideoOut::IsComposite()
 	{
 		return composite;
+	}
+
+	float VideoOut::GetNoise()
+	{
+		float a = -noise;
+		float b = noise;
+		float r = a + (float)rand() / ((float)RAND_MAX / (b - a));
+		return r;
+	}
+
+	void VideoOut::SetCompositeNoise(float volts)
+	{
+		if (volts != 0.0f)
+		{
+			srand((unsigned)time(0));
+			noise = volts;
+			noise_enable = true;
+		}
+		else
+		{
+			noise_enable = false;
+		}
 	}
 
 	void VideoOut::ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut)

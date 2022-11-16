@@ -353,11 +353,19 @@ namespace PPUSim
 
 	void PPU::SetOamDecayBehavior(OAMDecayBehavior behavior)
 	{
-		oam->SetOamDecayBehavior(behavior);
+		if (oam != nullptr)
+		{
+			oam->SetOamDecayBehavior(behavior);
+		}
 	}
 
 	bool PPU::IsComposite()
 	{
 		return vid_out->IsComposite();
+	}
+
+	void PPU::SetCompositeNoise(float volts)
+	{
+		vid_out->SetCompositeNoise(volts);
 	}
 }

@@ -102,6 +102,10 @@ namespace PPUSim
 
 		bool composite = false;
 		bool raw = false;
+		
+		bool noise_enable = false;
+		float noise = 0.0f;
+		float GetNoise();
 
 		float Clamp(float val, float min, float max);
 
@@ -125,6 +129,8 @@ namespace PPUSim
 		void ConvertRAWToRGB(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
 
 		bool IsComposite();
+
+		void SetCompositeNoise(float volts);
 	};
 
 	union PALChromaInputs
