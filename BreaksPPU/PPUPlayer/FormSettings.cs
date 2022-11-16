@@ -68,6 +68,7 @@ namespace PPUPlayer
 			settings.PpuRAWMode = false;
 			settings.FreeModeVMirroring = true;
 			settings.OAMDecay = PPUPlayerInterop.OAMDecayBehavior.Keep;
+			settings.PpuNoise = 0.0f;
 
 			SaveSettings(settings);
 
@@ -148,6 +149,11 @@ namespace PPUPlayer
 			[Category("Board Features")]
 			[Description("Set one of the ways to decay OAM cells.")]
 			public PPUPlayerInterop.OAMDecayBehavior OAMDecay { get; set; }
+
+			[XmlElement]
+			[Category("Board Features")]
+			[Description("Determines the noise of the video signal. Value in volts (if not equal to zero, the signal will be noisy by +/- the specified value. Works only for the composite output.")]
+			public float PpuNoise { get; set; }
 		}
 
 

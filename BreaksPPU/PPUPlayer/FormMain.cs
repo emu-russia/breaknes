@@ -225,6 +225,7 @@ namespace PPUPlayer
 				PPUPlayerInterop.ResetPPU();
 			}
 			PPUPlayerInterop.SetOamDecayBehavior(settings.OAMDecay);
+			PPUPlayerInterop.SetNoiseLevel(settings.PpuNoise);
 			UpdateMemLayout();
 
 			ResetVisualize(settings.PpuRAWMode);

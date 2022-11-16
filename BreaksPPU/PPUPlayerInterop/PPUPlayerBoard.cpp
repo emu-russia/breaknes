@@ -352,4 +352,13 @@ namespace PPUPlayer
 	{
 		ppu->SetOamDecayBehavior(behavior);
 	}
+
+	/// <summary>
+	/// Set the noise for the composite video signal (in volts).
+	/// </summary>
+	/// <param name="volts"></param>
+	void Board::SetNoiseLevel(float volts)
+	{
+		ppu->SetCompositeNoise(volts);
+	}
 }
