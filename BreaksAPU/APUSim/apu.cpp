@@ -10,14 +10,16 @@ namespace APUSim
 		rev = _rev;
 
 		dma = new DMA(this);
+		regs = new RegsDecoder(this);
 	}
 
 	APU::~APU()
 	{
 		delete dma;
+		delete regs;
 	}
 
-	void APU::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr, float* AUX_A, float* AUX_B)
+	void APU::sim(TriState inputs[], TriState outputs[], uint8_t* data, uint16_t* addr, float* AUX_A, float* AUX_B)
 	{
 
 	}
