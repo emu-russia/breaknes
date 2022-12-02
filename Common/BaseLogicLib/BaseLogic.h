@@ -59,6 +59,7 @@ namespace BaseLogic
 	/// <param name="in"></param>
 	/// <returns></returns>
 	TriState NOR6(TriState in[6]);
+	TriState NOR6(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5);
 
 	/// <summary>
 	/// 7-nor
@@ -87,6 +88,14 @@ namespace BaseLogic
 	/// <param name="in"></param>
 	/// <returns></returns>
 	TriState NOR10(TriState in[10]);
+
+	/// <summary>
+	/// 12-nor
+	/// </summary>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	TriState NOR12(TriState in[12]);
+	TriState NOR12(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7, TriState in8, TriState in9, TriState in10, TriState in11);
 
 	/// <summary>
 	/// 13-nor
