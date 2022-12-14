@@ -4,5 +4,14 @@
 
 namespace APUSim
 {
+	class DpcmChan
+	{
+		APU* apu = nullptr;
 
+	public:
+		DpcmChan(APU* parent);
+		~DpcmChan();
+
+		void sim();
+	};
 }

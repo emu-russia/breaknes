@@ -4,5 +4,14 @@
 
 namespace APUSim
 {
+	class CoreBinding
+	{
+		APU* apu = nullptr;
 
+	public:
+		CoreBinding(APU* parent);
+		~CoreBinding();
+
+		void sim();
+	};
 }
