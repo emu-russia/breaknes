@@ -22,6 +22,7 @@ namespace APUSimUnitTest
 #include "triangle.h"
 #include "regs.h"
 #include "debug.h"
+#include "dac.h"
 
 namespace APUSim
 {
@@ -61,9 +62,17 @@ namespace APUSim
 	class APU
 	{
 		friend APUSimUnitTest::UnitTest;
+		friend CoreBinding;
+		friend CLKGen;
+		friend RegsDecoder;
+		friend LengthCounter;
+		friend DpcmChan;
+		friend NoiseChan;
+		friend SquareChan;
+		friend TriangleChan;
 		friend DMACounterBit;
 		friend DMA;
-		friend RegsDecoder;
+		friend DAC;
 
 		/// <summary>
 		/// Internal auxiliary and intermediate connections.
@@ -124,10 +133,20 @@ namespace APUSim
 		} wire{};
 
 		Revision rev = Revision::Unknown;
-		M6502Core::M6502* core = nullptr;
 
-		DMA* dma = nullptr;
+		// Instances of internal APU modules, including the core
+
+		M6502Core::M6502* core = nullptr;
+		CoreBinding* core_int = nullptr;
+		CLKGen* clkgen = nullptr;
 		RegsDecoder* regs = nullptr;
+		LengthCounter* lc[4]{};
+		DpcmChan* dpcm = nullptr;
+		NoiseChan* noise = nullptr;
+		SquareChan* square[2]{};
+		TriangleChan* tri = nullptr;
+		DMA* dma = nullptr;
+		DAC* dac = nullptr;
 
 		// Internal buses.
 
@@ -138,6 +157,9 @@ namespace APUSim
 		uint16_t SPR_Addr;
 		uint16_t CPU_Addr;			// Core to mux & regs predecoder
 		uint16_t Ax;			// Mux to pads & regs decoder
+
+		void sim_InputPads(BaseLogic::TriState inputs[], uint8_t* data);
+		void sim_OutputPads(BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr);
 
 	public:
 		APU(M6502Core::M6502 *core, Revision rev);

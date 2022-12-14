@@ -4,5 +4,14 @@
 
 namespace APUSim
 {
+	class CLKGen
+	{
+		APU* apu = nullptr;
 
+	public:
+		CLKGen(APU* parent);
+		~CLKGen();
+
+		void sim();
+	};
 }
