@@ -10,11 +10,11 @@ namespace NSFPlayer
 	{
 		APUSim::Revision rev;
 
-		if (!strcmp(ppuRev, "RP2A03"))
+		if (!strcmp(apuRev, "RP2A03"))
 		{
 			rev = APUSim::Revision::RP2A03;
 		}
-		else if (!strcmp(ppuRev, "RP2A07"))
+		else if (!strcmp(apuRev, "RP2A07"))
 		{
 			rev = APUSim::Revision::RP2A07;
 		}
@@ -40,7 +40,7 @@ namespace NSFPlayer
 	}
 
 	/// <summary>
-	/// Simulate 1 half cycle of the test board with PPUPlayer. The simulation of the signal edge is not supported, this is overkill.
+	/// Simulate 1 half cycle of the test board with NSFPlayer. The simulation of the signal edge is not supported, this is overkill.
 	/// </summary>
 	void Board::Step()
 	{
