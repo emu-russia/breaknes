@@ -172,7 +172,7 @@ namespace NSFPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), CORE_WIRES_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetCoreDebugInfo, this);
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Core, entry, GetCoreDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(core_regs); n++)
@@ -183,7 +183,7 @@ namespace NSFPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), CORE_REGS_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPURegs, entry, GetCoreRegsDebugInfo, this);
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_CoreRegs, entry, GetCoreRegsDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(apu_wires); n++)
@@ -194,7 +194,7 @@ namespace NSFPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), APU_WIRES_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetApuDebugInfo, this);
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APU, entry, GetApuDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(apu_regs); n++)
@@ -205,7 +205,7 @@ namespace NSFPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), APU_REGS_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPURegs, entry, GetApuRegsDebugInfo, this);
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APURegs, entry, GetApuRegsDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(board_signals); n++)
