@@ -86,6 +86,11 @@ namespace APUSim
 			BaseLogic::TriState ACLK;
 			BaseLogic::TriState n_ACLK;
 			BaseLogic::TriState RES;
+			BaseLogic::TriState n_CLK;
+			BaseLogic::TriState n_M2;
+			BaseLogic::TriState n_NMI;
+			BaseLogic::TriState n_IRQ;
+			BaseLogic::TriState INT;
 			BaseLogic::TriState RUNDMC;
 			BaseLogic::TriState DMCReady;
 			BaseLogic::TriState SPRE;

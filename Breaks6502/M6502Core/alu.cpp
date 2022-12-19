@@ -120,7 +120,9 @@ namespace M6502Core
 			{
 				// The above random logic is arranged so that these commands are singleton (only one of them can be set).
 
-				#if _DEBUG
+				// Sometimes the processor goes "crazy" and this is possible (for example after Power Up)
+
+				#if 0
 				size_t checkSum = (size_t)ANDS + (size_t)EORS + (size_t)ORS + (size_t)SRS + (size_t)SUMS;
 				if (checkSum > 1)
 				{

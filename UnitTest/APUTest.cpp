@@ -17,6 +17,52 @@ namespace APUSimUnitTest
 		delete core;
 	}
 
+	/// <summary>
+	/// Run few full cycles and see what happens. The success of the test is checked by the M2 Duty Cycle.
+	/// </summary>
+	/// <returns></returns>
+	bool UnitTest::TestDiv(bool trace)
+	{
+		char text[0x100]{};
+		TriState CLK = TriState::Zero;
+		size_t m2_duty = 0;
+		size_t run_hcycles = 32LL * 2;
+		float Expected_duty_cycle = 2.f / 3.f;		// approx 66%, but not exact
+
+		apu->wire.RDY = TriState::Zero;
+
+		for (size_t n = 0; n < run_hcycles; n++)
+		{
+			apu->wire.n_CLK = NOT(CLK);
+
+			apu->core_int->sim();
+
+			if (trace)
+			{
+				sprintf_s(text, sizeof(text), "CLK: %d, PHI0: %d, #M2: %d\n",
+					BaseLogic::ToByte(CLK), BaseLogic::ToByte(apu->wire.PHI0), BaseLogic::ToByte(apu->wire.n_M2));
+				Logger::WriteMessage(text);
+			}
+
+			if (apu->wire.n_M2 == TriState::Zero)
+			{
+				m2_duty++;
+			}
+
+			CLK = NOT(CLK);
+		}
+
+		float duty = (float)m2_duty / (float)run_hcycles;
+		float duty_trunc = truncf(duty * 10) / 10;
+		float Expected_duty_cycle_trunc = truncf(Expected_duty_cycle * 10) / 10;
+
+		sprintf_s(text, sizeof(text), "M2 duty: %f (trunc: %f), expected: %f (trunc: %f)\n", 
+			duty, duty_trunc, Expected_duty_cycle, Expected_duty_cycle_trunc);
+		Logger::WriteMessage(text);
+
+		return duty_trunc == Expected_duty_cycle_trunc;
+	}
+
 	bool UnitTest::VerifyRegOpByAddress(uint16_t addr, bool read)
 	{
 		switch (addr)
@@ -137,6 +183,10 @@ namespace APUSimUnitTest
 		return true;
 	}
 
+	/// <summary>
+	/// Check that register operations are as expected (mapped to the correct addresses).
+	/// </summary>
+	/// <returns></returns>
 	bool UnitTest::TestRegOps()
 	{
 		apu->wire.DBG = TriState::One;
@@ -154,7 +204,7 @@ namespace APUSimUnitTest
 
 			if (!VerifyRegOpByAddress(apu->Ax, true))
 			{
-				Logger::WriteMessage(("RegOp failed! Idx: " + std::to_string(n) + ", Read").c_str());
+				Logger::WriteMessage(("RegOp failed! Idx: " + std::to_string(n) + ", Read\n").c_str());
 				return false;
 			}
 
@@ -174,7 +224,7 @@ namespace APUSimUnitTest
 
 			if (!VerifyRegOpByAddress(apu->Ax, false))
 			{
-				Logger::WriteMessage(("RegOp failed! Idx: " + std::to_string(n) + ", Write").c_str());
+				Logger::WriteMessage(("RegOp failed! Idx: " + std::to_string(n) + ", Write\n").c_str());
 				return false;
 			}
 
