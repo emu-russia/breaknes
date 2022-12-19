@@ -4,8 +4,15 @@ namespace APUSimUnitTest
 {
 	class UnitTest
 	{
+		M6502Core::M6502* core = nullptr;
+		APUSim::APU* apu = nullptr;
+
+		bool VerifyRegOpByAddress(uint16_t addr, bool read);
+
 	public:
-		UnitTest();
+		UnitTest(APUSim::Revision rev);
 		~UnitTest();
+
+		bool TestRegOps();
 	};
 }

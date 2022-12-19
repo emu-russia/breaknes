@@ -78,6 +78,17 @@ namespace UnitTest
 		}
 	};
 
+	TEST_CLASS(ApuUnitTest)
+	{
+	public:
+
+		TEST_METHOD(TestRegOps)
+		{
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			Assert::IsTrue(ut.TestRegOps());
+		}
+	};
+
 	TEST_CLASS(PpuUnitTest)
 	{
 	public:

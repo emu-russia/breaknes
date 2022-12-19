@@ -119,8 +119,7 @@ namespace APUSim
 		apu->wire.W4014 = NOR(PHI1, NOT(pla[28]));
 
 		apu->wire.n_R4019 = NAND(DBG, pla[1]);
-		auto w401a_temp = NAND(DBG, pla[3]);
-		apu->wire.W401A = NOR(PHI1, w401a_temp);
+		apu->wire.W401A = NOR(PHI1, NAND(DBG, pla[3]));
 		
 		apu->wire.W4003 = NOR(PHI1, NOT(pla[5]));
 		apu->wire.W4007 = NOR(PHI1, NOT(pla[7]));
