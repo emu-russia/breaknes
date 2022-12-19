@@ -41,7 +41,7 @@ Builds for Linux will be available as soon as everything settles down.
 - Breaknes GUI (managed part): 30%
 - BreaksCore (native part): 50%
 - 6502 Core: 100%
-- APU: 2/12
+- APU: 3/12
 - PPU: 100%
 - Boards: 1/5
 - Mappers: 0.5 (Only NROM partially)

@@ -13,6 +13,7 @@ namespace APUSimUnitTest
 		UnitTest(APUSim::Revision rev);
 		~UnitTest();
 
+		bool TestDiv(bool trace);
 		bool TestRegOps();
 	};
 }

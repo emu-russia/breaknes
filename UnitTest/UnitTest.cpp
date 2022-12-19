@@ -82,6 +82,12 @@ namespace UnitTest
 	{
 	public:
 
+		TEST_METHOD(TestDiv)
+		{
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			Assert::IsTrue(ut.TestDiv(false));
+		}
+
 		TEST_METHOD(TestRegOps)
 		{
 			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
