@@ -114,6 +114,12 @@ namespace APUSimUnitTest
 		return true;
 	}
 
+	/// <summary>
+	/// Simulate one second and count how many times the LFO 1/2 signals are triggered.
+	/// TODO: the number of nanoseconds executed is for some reason very different from 10^9 (shows 536870912 ns).
+	/// </summary>
+	/// <param name="mode">SoftCLK mode (0 - normal, 1 - extended)</param>
+	/// <returns></returns>
 	bool UnitTest::TestLFO(bool mode)
 	{
 		char text[0x100]{};
