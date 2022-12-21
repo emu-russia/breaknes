@@ -18,9 +18,10 @@ namespace APUSim
 	void CLKGen::sim()
 	{
 		sim_ACLK();
+		sim_SoftCLK_Mode();
 		sim_SoftCLK_PLA();
-		sim_SoftCLK_LFSR();
 		sim_SoftCLK_Control();
+		sim_SoftCLK_LFSR();
 	}
 
 	void CLKGen::sim_ACLK()
@@ -37,6 +38,19 @@ namespace APUSim
 		apu->wire.n_ACLK = NOR(NOT(PHI1), phi2_latch.nget());
 	}
 
+	void CLKGen::sim_SoftCLK_Mode()
+	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState W4017 = apu->wire.W4017;
+
+		// Mode
+
+		reg_mode.sim(n_ACLK, W4017, apu->GetDBBit(7));
+		n_mode = reg_mode.nget();
+		md_latch.set(n_mode, n_ACLK);
+		mode = md_latch.nget();
+	}
+
 	void CLKGen::sim_SoftCLK_Control()
 	{
 		TriState ACLK = apu->wire.ACLK;
@@ -46,13 +60,6 @@ namespace APUSim
 		TriState DMCINT = apu->wire.DMCINT;
 		TriState n_R4015 = apu->wire.n_R4015;
 		TriState W4017 = apu->wire.W4017;
-
-		// Mode
-
-		reg_mode.sim (n_ACLK, W4017, apu->GetDBBit(7));
-		n_mode = reg_mode.nget();
-		md_latch.set(n_mode, n_ACLK);
-		mode = md_latch.nget();
 
 		// Interrupt(s)
 
@@ -104,6 +111,15 @@ namespace APUSim
 	void CLKGen::sim_SoftCLK_LFSR()
 	{
 		TriState n_ACLK = apu->wire.n_ACLK;
+
+		// Feedback
+
+		TriState C13 = lfsr[13].get_nsout();
+		TriState C14 = lfsr[14].get_nsout();
+		n_sin = NOR(AND(C13, C14), NOR3(C13, C14, pla[5]));
+
+		// SR15
+
 		TriState nsin = n_sin;
 
 		for (size_t n = 0; n < 15; n++)

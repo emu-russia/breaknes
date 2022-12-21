@@ -47,6 +47,7 @@ namespace APUSim
 		RegisterBit reg_mask{};
 
 		void sim_ACLK();
+		void sim_SoftCLK_Mode();
 		void sim_SoftCLK_Control();
 		void sim_SoftCLK_PLA();
 		void sim_SoftCLK_LFSR();
