@@ -4,24 +4,13 @@
 
 namespace APUSim
 {
-	class DMACounterBit
-	{
-		APU* apu = nullptr;
-
-	public:
-		DMACounterBit(APU* parent) { apu = parent; }
-
-		BaseLogic::TriState sim(BaseLogic::TriState Carry, BaseLogic::TriState Clear, BaseLogic::TriState Load, BaseLogic::TriState val);
-		BaseLogic::TriState getOut();
-	};
-
 	class DMA
 	{
 		APU* apu = nullptr;
 
 		static const uint16_t PPU_Addr = 0x2004;
 
-		DMACounterBit* spr_lo[8];
+		CounterBit spr_lo[8]{};
 		BaseLogic::DLatch spr_hi[8];
 
 		BaseLogic::DLatch spre_latch;

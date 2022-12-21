@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\apu.cpp" />
+    <ClCompile Include="..\..\common.cpp" />
     <ClCompile Include="..\..\core.cpp" />
     <ClCompile Include="..\..\dac.cpp" />
     <ClCompile Include="..\..\debug.cpp" />
@@ -40,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\apu.h" />
+    <ClInclude Include="..\..\common.h" />
     <ClInclude Include="..\..\core.h" />
     <ClInclude Include="..\..\dac.h" />
     <ClInclude Include="..\..\debug.h" />
