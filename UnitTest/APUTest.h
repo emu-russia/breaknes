@@ -14,6 +14,8 @@ namespace APUSimUnitTest
 		~UnitTest();
 
 		bool TestDiv(bool trace);
+		bool TestAclk();
+		bool TestLFO(bool mode);
 		bool TestRegOps();
 	};
 }

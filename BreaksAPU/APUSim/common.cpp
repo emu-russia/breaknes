@@ -8,19 +8,17 @@ namespace APUSim
 {
 	void RegisterBit::sim(TriState n_ACLK, TriState Enable, TriState Value)
 	{
-		// TBD.
+		transp_latch.set(MUX(n_ACLK, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), TriState::One);
 	}
 
 	TriState RegisterBit::get()
 	{
-		// TBD.
-		return TriState::Zero;
+		return NOT(transp_latch.nget());
 	}
 
 	TriState RegisterBit::nget()
 	{
-		// TBD.
-		return TriState::Zero;
+		return transp_latch.nget();
 	}
 
 	TriState CounterBit::sim(TriState Carry, TriState Clear, TriState Load, TriState val)

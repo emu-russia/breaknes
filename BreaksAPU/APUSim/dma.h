@@ -6,6 +6,8 @@ namespace APUSim
 {
 	class DMA
 	{
+		friend APUSimUnitTest::UnitTest;
+
 		APU* apu = nullptr;
 
 		static const uint16_t PPU_Addr = 0x2004;

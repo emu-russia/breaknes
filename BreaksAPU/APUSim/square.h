@@ -16,6 +16,8 @@ namespace APUSim
 
 	class SquareChan
 	{
+		friend APUSimUnitTest::UnitTest;
+
 		APU* apu = nullptr;
 		SquareChanCarryIn cin_type = SquareChanCarryIn::Unknown;
 

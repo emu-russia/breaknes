@@ -63,6 +63,143 @@ namespace APUSimUnitTest
 		return duty_trunc == Expected_duty_cycle_trunc;
 	}
 
+	bool UnitTest::TestAclk()
+	{
+		const size_t hcycles = 12 * 4;
+		char clk_dump[hcycles + 1] = { 0 };
+		char phi_dump[hcycles + 1] = { 0 };
+		char aclk_dump[hcycles + 1] = { 0 };
+		char naclk_dump[hcycles + 1] = { 0 };
+		int aclk_integral = 0;
+		int naclk_integral = 0;
+
+		apu->wire.n_CLK = TriState::One;	// CLK = 0
+		apu->wire.RES = TriState::Zero;
+
+		for (size_t n = 0; n < hcycles; n++)
+		{
+			apu->core_int->sim();
+
+			apu->clkgen->sim_ACLK();
+
+			clk_dump[n] = NOT(apu->wire.n_CLK) == TriState::One ? '1' : '0';
+			phi_dump[n] = (apu->wire.PHI0) == TriState::One ? '1' : '0';
+			aclk_dump[n] = (apu->wire.ACLK) == TriState::One ? '1' : '0';
+			naclk_dump[n] = (apu->wire.n_ACLK) == TriState::One ? '1' : '0';
+
+			if (apu->wire.ACLK == TriState::One)
+				aclk_integral++;
+			else
+				aclk_integral--;
+
+			if (apu->wire.n_ACLK == TriState::One)
+				naclk_integral++;
+			else
+				naclk_integral--;
+
+			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
+		}
+
+		Logger::WriteMessage(("CLK  :" + std::string(clk_dump) + "\n").c_str());
+		Logger::WriteMessage(("PHI  :" + std::string(phi_dump) + "\n").c_str());
+		Logger::WriteMessage(("ACLK :" + std::string(aclk_dump) + "\n").c_str());
+		Logger::WriteMessage(("#ACLK:" + std::string(naclk_dump) + "\n").c_str());
+
+		if (aclk_integral != (36 - 12))
+			return false;
+
+		if (naclk_integral != (-12 + 12 - 24))
+			return false;
+
+		return true;
+	}
+
+	/// <summary>
+	/// Simulate one second and count how many times the LFO 1/2 signals are triggered.
+	/// TODO: the number of nanoseconds executed is for some reason very different from 10^9 (shows 536870912 ns).
+	/// </summary>
+	/// <param name="mode">SoftCLK mode (0 - normal, 1 - extended)</param>
+	/// <returns></returns>
+	bool UnitTest::TestLFO(bool mode)
+	{
+		char text[0x100]{};
+		const size_t osc = 21477272;	// Hz
+		const size_t hcycles = osc * 2;	// 1 sumulated second
+		TriState prev_nLFO1 = TriState::X;
+		TriState prev_nLFO2 = TriState::X;
+		const float ns_in_second = 1000000000.f;
+		const float hcycle_len = ns_in_second / (float)osc / 2.f;  // in nanoseconds
+		float t = 0.f;
+		size_t lfo1_counter = 0;
+		size_t lfo2_counter = 0;
+		bool trace = false;
+
+		apu->wire.n_CLK = TriState::One;	// CLK = 0
+		apu->wire.RES = TriState::Zero;
+		apu->wire.DMCINT = TriState::Zero;
+
+		apu->clkgen->reg_mode.sim(TriState::Zero, TriState::One, mode ? TriState::One : TriState::Zero);
+		apu->clkgen->reg_mask.sim(TriState::Zero, TriState::One, TriState::Zero); // 0 - int enable
+
+		sprintf_s(text, sizeof(text), "Test LFO in Mode: %d\n", mode ? 1 : 0);
+		Logger::WriteMessage(text);
+
+		for (size_t n = 0; n < hcycles; n++)
+		{
+			apu->core_int->sim();
+
+			apu->clkgen->sim();
+
+			// Detect the negedge for LFO 1/2
+
+			if (apu->wire.n_LFO1 != prev_nLFO1)
+			{
+				if (prev_nLFO1 == TriState::One && apu->wire.n_LFO1 == TriState::Zero)
+				{
+					if (trace)
+					{
+						sprintf_s(text, sizeof(text), "LFO1: %f ns\n", t);
+						Logger::WriteMessage(text);
+					}
+
+					lfo1_counter++;
+				}
+
+				prev_nLFO1 = apu->wire.n_LFO1;
+			}
+
+			if (apu->wire.n_LFO2 != prev_nLFO2)
+			{
+				if (prev_nLFO2 == TriState::One && apu->wire.n_LFO2 == TriState::Zero)
+				{
+					if (trace)
+					{
+						sprintf_s(text, sizeof(text), "LFO2: %f ns\n", t);
+						Logger::WriteMessage(text);
+					}
+
+					lfo2_counter++;
+				}
+
+				prev_nLFO2 = apu->wire.n_LFO2;
+			}
+
+			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
+			t += hcycle_len;
+		}
+
+		sprintf_s(text, sizeof(text), "Executed %f ns. CLK: %f ns\n", t, hcycle_len * 2.f);
+		Logger::WriteMessage(text);
+
+		sprintf_s(text, sizeof(text), "LFO1 freq: %zd Hz\n", lfo1_counter);
+		Logger::WriteMessage(text);
+
+		sprintf_s(text, sizeof(text), "LFO2 freq: %zd Hz\n\n", lfo2_counter);
+		Logger::WriteMessage(text);
+
+		return true;
+	}
+
 	bool UnitTest::VerifyRegOpByAddress(uint16_t addr, bool read)
 	{
 		switch (addr)

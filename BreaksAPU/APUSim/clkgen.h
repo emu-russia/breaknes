@@ -18,6 +18,8 @@ namespace APUSim
 
 	class CLKGen
 	{
+		friend APUSimUnitTest::UnitTest;
+
 		APU* apu = nullptr;
 
 		BaseLogic::DLatch phi1_latch{};
@@ -45,6 +47,7 @@ namespace APUSim
 		RegisterBit reg_mask{};
 
 		void sim_ACLK();
+		void sim_SoftCLK_Mode();
 		void sim_SoftCLK_Control();
 		void sim_SoftCLK_PLA();
 		void sim_SoftCLK_LFSR();

@@ -18,6 +18,8 @@ namespace APUSim
 
 	class CoreBinding
 	{
+		friend APUSimUnitTest::UnitTest;
+
 		APU* apu = nullptr;
 
 		BaseLogic::FF CLK_FF{};

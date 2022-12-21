@@ -6,6 +6,8 @@ namespace APUSim
 {
 	class TriangleChan
 	{
+		friend APUSimUnitTest::UnitTest;
+
 		APU* apu = nullptr;
 
 	public:

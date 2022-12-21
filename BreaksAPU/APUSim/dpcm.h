@@ -6,6 +6,8 @@ namespace APUSim
 {
 	class DpcmChan
 	{
+		friend APUSimUnitTest::UnitTest;
+
 		APU* apu = nullptr;
 
 	public:
