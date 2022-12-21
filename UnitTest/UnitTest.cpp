@@ -88,6 +88,19 @@ namespace UnitTest
 			Assert::IsTrue(ut.TestDiv(false));
 		}
 
+		TEST_METHOD(TestAclk)
+		{
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			Assert::IsTrue(ut.TestAclk());
+		}
+
+		TEST_METHOD(TestLFO)
+		{
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			Assert::IsTrue(ut.TestLFO(false));
+			Assert::IsTrue(ut.TestLFO(true));
+		}
+
 		TEST_METHOD(TestRegOps)
 		{
 			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);

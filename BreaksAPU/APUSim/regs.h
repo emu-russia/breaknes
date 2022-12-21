@@ -6,6 +6,8 @@ namespace APUSim
 {
 	class RegsDecoder
 	{
+		friend APUSimUnitTest::UnitTest;
+
 		APU* apu = nullptr;
 
 		BaseLogic::TriState pla[29]{};		// Decoder

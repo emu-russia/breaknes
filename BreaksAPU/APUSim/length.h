@@ -6,6 +6,8 @@ namespace APUSim
 {
 	class LengthCounter
 	{
+		friend APUSimUnitTest::UnitTest;
+
 		APU* apu = nullptr;
 
 	public:

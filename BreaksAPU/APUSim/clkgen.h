@@ -18,6 +18,8 @@ namespace APUSim
 
 	class CLKGen
 	{
+		friend APUSimUnitTest::UnitTest;
+
 		APU* apu = nullptr;
 
 		BaseLogic::DLatch phi1_latch{};

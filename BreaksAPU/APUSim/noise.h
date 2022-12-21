@@ -6,6 +6,8 @@ namespace APUSim
 {
 	class NoiseChan
 	{
+		friend APUSimUnitTest::UnitTest;
+
 		APU* apu = nullptr;
 
 	public:

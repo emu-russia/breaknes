@@ -63,6 +63,62 @@ namespace APUSimUnitTest
 		return duty_trunc == Expected_duty_cycle_trunc;
 	}
 
+	bool UnitTest::TestAclk()
+	{
+		const size_t hcycles = 12 * 4;
+		char clk_dump[hcycles + 1] = { 0 };
+		char phi_dump[hcycles + 1] = { 0 };
+		char aclk_dump[hcycles + 1] = { 0 };
+		char naclk_dump[hcycles + 1] = { 0 };
+		int aclk_integral = 0;
+		int naclk_integral = 0;
+
+		apu->wire.n_CLK = TriState::One;	// CLK = 0
+		apu->wire.RES = TriState::Zero;
+
+		for (size_t n = 0; n < hcycles; n++)
+		{
+			apu->core_int->sim();
+
+			apu->clkgen->sim_ACLK();
+
+			clk_dump[n] = NOT(apu->wire.n_CLK) == TriState::One ? '1' : '0';
+			phi_dump[n] = (apu->wire.PHI0) == TriState::One ? '1' : '0';
+			aclk_dump[n] = (apu->wire.ACLK) == TriState::One ? '1' : '0';
+			naclk_dump[n] = (apu->wire.n_ACLK) == TriState::One ? '1' : '0';
+
+			if (apu->wire.ACLK == TriState::One)
+				aclk_integral++;
+			else
+				aclk_integral--;
+
+			if (apu->wire.n_ACLK == TriState::One)
+				naclk_integral++;
+			else
+				naclk_integral--;
+
+			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
+		}
+
+		Logger::WriteMessage(("CLK  :" + std::string(clk_dump) + "\n").c_str());
+		Logger::WriteMessage(("PHI  :" + std::string(phi_dump) + "\n").c_str());
+		Logger::WriteMessage(("ACLK :" + std::string(aclk_dump) + "\n").c_str());
+		Logger::WriteMessage(("#ACLK:" + std::string(naclk_dump) + "\n").c_str());
+
+		if (aclk_integral != (36 - 12))
+			return false;
+
+		if (naclk_integral != (-12 + 12 - 24))
+			return false;
+
+		return true;
+	}
+
+	bool UnitTest::TestLFO(bool mode)
+	{
+		return true;
+	}
+
 	bool UnitTest::VerifyRegOpByAddress(uint16_t addr, bool read)
 	{
 		switch (addr)
