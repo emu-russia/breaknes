@@ -12,6 +12,7 @@ namespace APUSimUnitTest
 	class UnitTest;
 }
 
+#include "common.h"
 #include "clkgen.h"
 #include "core.h"
 #include "dma.h"
@@ -70,7 +71,6 @@ namespace APUSim
 		friend NoiseChan;
 		friend SquareChan;
 		friend TriangleChan;
-		friend DMACounterBit;
 		friend DMA;
 		friend DAC;
 
@@ -91,7 +91,10 @@ namespace APUSim
 			BaseLogic::TriState n_NMI;
 			BaseLogic::TriState n_IRQ;
 			BaseLogic::TriState INT;
+			BaseLogic::TriState n_LFO1;
+			BaseLogic::TriState n_LFO2;
 			BaseLogic::TriState RUNDMC;
+			BaseLogic::TriState DMCINT;
 			BaseLogic::TriState DMCReady;
 			BaseLogic::TriState SPRE;
 			BaseLogic::TriState SPRS;
@@ -165,6 +168,9 @@ namespace APUSim
 
 		void sim_InputPads(BaseLogic::TriState inputs[], uint8_t* data);
 		void sim_OutputPads(BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr);
+
+		BaseLogic::TriState GetDBBit(size_t n);
+		void SetDBBit(size_t n, BaseLogic::TriState bit_val);
 
 	public:
 		APU(M6502Core::M6502 *core, Revision rev);

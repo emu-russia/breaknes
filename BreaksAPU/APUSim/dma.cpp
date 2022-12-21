@@ -9,33 +9,10 @@ namespace APUSim
 	DMA::DMA(APU* parent)
 	{
 		apu = parent;
-
-		for (size_t n = 0; n < 8; n++)
-		{
-			spr_lo[n] = new DMACounterBit(apu);
-		}
 	}
 
 	DMA::~DMA()
 	{
-		for (size_t n = 0; n < 8; n++)
-		{
-			delete spr_lo[n];
-		}
-	}
-
-	// TBD: When the counters of the rest of the APU are done - copy-paste here the code of one counter bit.
-
-	TriState DMACounterBit::sim(TriState Carry, TriState Clear, TriState Load, TriState val)
-	{
-		// TBD.
-		return TriState::Zero;
-	}
-
-	TriState DMACounterBit::getOut()
-	{
-		// TBD.
-		return TriState::Zero;
 	}
 
 	void DMA::sim()
@@ -59,7 +36,7 @@ namespace APUSim
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			Carry = spr_lo[n]->sim(Carry, RES, W4014, TriState::Zero);
+			Carry = spr_lo[n].sim(Carry, RES, W4014, TriState::Zero);
 		}
 
 		apu->wire.SPRE = Carry;
@@ -84,7 +61,7 @@ namespace APUSim
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			apu->SPR_Addr |= ((spr_lo[n]->getOut() == TriState::One ? 1 : 0) << n);
+			apu->SPR_Addr |= ((spr_lo[n].get() == TriState::One ? 1 : 0) << n);
 			apu->SPR_Addr |= ((spr_hi[n].get() == TriState::One ? 1 : 0) << (8 + n));
 		}
 	}

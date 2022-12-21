@@ -84,4 +84,20 @@ namespace APUSim
 	{
 
 	}
+
+	TriState APU::GetDBBit(size_t n)
+	{
+		TriState DBBit = (DB & (1 << n)) != 0 ? TriState::One : TriState::Zero;
+		return DBBit;
+	}
+
+	void APU::SetDBBit(size_t n, TriState bit_val)
+	{
+		if (bit_val != TriState::Z)
+		{
+			uint8_t out = DB & ~(1 << n);
+			out |= (bit_val == BaseLogic::One ? 1 : 0) << n;
+			DB = out;
+		}
+	}
 }
