@@ -36,7 +36,7 @@ namespace APUSim
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			Carry = spr_lo[n].sim(Carry, RES, W4014, TriState::Zero);
+			Carry = spr_lo[n].sim(Carry, RES, W4014, SPRS, n_ACLK, TriState::Zero);
 		}
 
 		apu->wire.SPRE = Carry;

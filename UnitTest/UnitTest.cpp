@@ -82,6 +82,12 @@ namespace UnitTest
 	{
 	public:
 
+		TEST_METHOD(TestCounters)
+		{
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			Assert::IsTrue(ut.TestCounters());
+		}
+
 		TEST_METHOD(TestDiv)
 		{
 			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);

@@ -13,6 +13,7 @@ namespace APUSimUnitTest
 		UnitTest(APUSim::Revision rev);
 		~UnitTest();
 
+		bool TestCounters();
 		bool TestDiv(bool trace);
 		bool TestAclk();
 		bool TestLFO(bool mode);
