@@ -17,6 +17,43 @@ namespace APUSimUnitTest
 		delete core;
 	}
 
+	bool UnitTest::TestCounters()
+	{
+		char text[0x100]{};
+		TriState CLK = TriState::Zero;
+		APUSim::CounterBit down_counter[8]{};
+		uint8_t last_val;
+
+		for (size_t n = 0; n < 0x200; n++)
+		{
+			TriState carry = TriState::One;
+
+			for (size_t cnt_bit = 0; cnt_bit < 8; cnt_bit++)
+			{
+				carry = down_counter[cnt_bit].sim(carry, TriState::Zero, TriState::Zero, CLK, NOT(CLK), TriState::Z);
+			}
+
+			if (CLK == TriState::Zero)
+			{
+				uint8_t val = 0;
+				for (size_t cnt_bit = 0; cnt_bit < 8; cnt_bit++)
+				{
+					val |= (down_counter[cnt_bit].get() == TriState::One ? 1 : 0) << cnt_bit;
+				}
+
+				sprintf_s(text, sizeof(text), "%zd: 0x%02X\n", n / 2, val);
+				Logger::WriteMessage(text);
+				last_val = val;
+			}
+
+			CLK = NOT(CLK);
+		}
+
+		// The other counters are isomorphic and there is no point in testing them (rly?)
+
+		return last_val == 0xff;
+	}
+
 	/// <summary>
 	/// Run few full cycles and see what happens. The success of the test is checked by the M2 Duty Cycle.
 	/// </summary>
