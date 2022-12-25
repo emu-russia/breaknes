@@ -135,6 +135,15 @@ namespace APUSim
 			BaseLogic::TriState W4017;
 			BaseLogic::TriState W401A;
 
+			BaseLogic::TriState SQA_LC;
+			BaseLogic::TriState SQB_LC;
+			BaseLogic::TriState TRI_LC;
+			BaseLogic::TriState RND_LC;
+			BaseLogic::TriState NOSQA;
+			BaseLogic::TriState NOSQB;
+			BaseLogic::TriState NOTRI;
+			BaseLogic::TriState NORND;
+
 			// Auxiliary signals associated with the Test mode, which seems to be present only on 2A03.
 			BaseLogic::TriState DBG;			// from pad
 			BaseLogic::TriState n_DBGRD;		// from regs decoder

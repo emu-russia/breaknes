@@ -14,34 +14,34 @@ Use Windows and VS2022. Dotnet 6.0 **Desktop** Runtime is also required.
 
 Builds for Linux will be available as soon as everything settles down.
 
-## Что будет и чего не будет в эмуляторе
+## What will and will not be in the emulator
 
-Эмулятор ещё не готов, поэтому можно сразу написать чего не будет.
+The emulator is not ready yet, so you can immediately write what will not.
 
-- Save States. Не нужно, играйте без них. Используйте виртуальную машину и песочницу, в которой запущен эмулятор.
-- AVI Record. Нах. Используйте программы захвата
-- TAS. Есть уже дофига эмуляторов для TAS
-- Удобный отладчик. Используйте Mesen. В эмуляторе будут базовые отладочные механизмы, чтобы проверить что там что-то шевелится. Всё остальное мы проверяем специализированными тулзами (Breaks Debugger, PPU Player) и юнит-тестами
-- Frame Skip. Это что?
-- Перемотка. Используйте виртуальную машину и песочницу, в которой запущен эмулятор.
-- Скорости. Пока на первое время 1-2 FPS будет достаточно
-- Запись аудио. Используйте программы захвата
-- Game Genie. Нах нужно.
+- Save States. No need, play without them. Use the virtual machine and the sandbox in which the emulator is running.
+- AVI Record. Nah. Use capture software
+- TAS. There are already plenty of emulators for TAS
+- Handy debugger. Use Mesen. The emulator will have basic debugging mechanisms to check that something is moving there. Everything else we check with specialized tools (Breaks Debugger, PPU Player etc.) and unit-tests
+- Frame Skip. What is this?
+- Rewind. Use the virtual machine and the sandbox in which the emulator is running.
+- Speed. For now, 1-2 FPS will be enough for the first time
+- Audio Recording. Use capture software
+- Game Genie. No need.
 
-Короче видно что эмулятор будет максимально казуальным и примерно соответствует реальной консоли. Что умеет консоль, то умеет и эмулятор. Примерно так.
+In short, it is clear that the emulator will be the most casual and roughly corresponds to the real console. What the console can do, the emulator can do. It's roughly like this.
 
-Киллер фичи.
+Killer features.
 
-- Точная симуляция основных чипов (собственно основная суть всей затеи)
-- Настраиваемые борды. Можно слепить свою борду.
-- @eugene-s-nesdev попросил также сделать возможность лепить химеру из чипов, т.к. нет ни одного полностью нормального денди-чипа, поэтому лучше всего будет взять по кускам из разных и слепить свой
+- Accurate simulation of the main chips (actually the main point of the whole idea)
+- Customizable boards. You can design your own board.
+- @eugene-s-nesdev also asked to make it possible to mold a chimera from chips, since there is no fully proper Famiclone-chip, so the best thing would be to take pieces from different ones and mold your own
 
 ## Procrastination Chart
 
 - Breaknes GUI (managed part): 30%
 - BreaksCore (native part): 50%
 - 6502 Core: 100%
-- APU: 4/12
+- APU: 5/12
 - PPU: 100%
 - Boards: 1/5
 - Mappers: 0.5 (Only NROM partially)

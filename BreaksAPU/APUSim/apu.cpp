@@ -59,10 +59,11 @@ namespace APUSim
 
 		// Sound channels
 
-		for (size_t n = 0; n < 4; n++)
-		{
-			lc[n]->sim();
-		}
+		lc[0]->sim(0, wire.W4003, wire.SQA_LC, wire.NOSQA);
+		lc[1]->sim(1, wire.W4007, wire.SQB_LC, wire.NOSQB);
+		lc[2]->sim(2, wire.W400B, wire.TRI_LC, wire.NOTRI);
+		lc[3]->sim(3, wire.W400F, wire.RND_LC, wire.NORND);
+
 		for (size_t n = 0; n < 2; n++)
 		{
 			square[n]->sim();
