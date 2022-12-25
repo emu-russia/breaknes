@@ -34,5 +34,7 @@ namespace APUSim
 		~LengthCounter();
 
 		void sim(size_t bit_ena, BaseLogic::TriState WriteEn, BaseLogic::TriState LC_CarryIn, BaseLogic::TriState & LC_NoCount);
+
+		uint8_t Debug_GetCnt();
 	};
 }
