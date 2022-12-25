@@ -454,8 +454,95 @@ namespace APUSimUnitTest
 		return true;
 	}
 
+	/// <summary>
+	/// The test repeats /HDL/Framework/Icarus/apu/length_conter.v
+	/// </summary>
+	/// <returns></returns>
 	bool UnitTest::TestLengthCounter()
 	{
+		char text[0x100]{};
+		TriState NoCount{};				// After the countdown is complete, the LC triggers this signal
+		size_t hcycles = 512;
+		bool trace_run = false;
+
+		apu->wire.n_CLK = TriState::One;	// CLK = 0  (instead of the global CLK pad we use the output from it in the inverse polarity)
+		apu->wire.RES = TriState::Zero;
+		apu->wire.DMCINT = TriState::Zero;
+		apu->wire.n_LFO2 = TriState::One;
+
+		APUSim::LengthCounter lc(apu);
+
+		// Load initial value
+
+		apu->wire.W4015 = TriState::Zero;
+		apu->wire.n_R4015 = TriState::One;
+		apu->DB = 0b01001'001;		// The counter is set to 0x9, which becomes 0x7 after the decoder (the lsb is used to enable the LC).
+		lc.sim(0, TriState::One, TriState::Zero, NoCount);
+
+		sprintf_s(text, sizeof(text), "Initial LC Value: %d\n", lc.Debug_GetCnt());
+		Logger::WriteMessage(text);
+
+		if (lc.Debug_GetCnt() != 7)
+			return false;
+
+		// Enable LC and check that the current counter value is not broken
+
+		apu->wire.W4015 = TriState::One;
+		lc.sim(0, TriState::Zero, TriState::Zero, NoCount);
+		apu->wire.W4015 = TriState::Zero;
+
+		sprintf_s(text, sizeof(text), "LC Value after Enable: %d\n", lc.Debug_GetCnt());
+		Logger::WriteMessage(text);
+
+		if (lc.Debug_GetCnt() != 7)
+			return false;
+
+		// Start counting
+
+		TriState prev_aclk = TriState::X;
+		TriState prev_clk = TriState::X;
+
+		for (size_t n = 0; n < hcycles; n++)
+		{
+			// Divider and ACLK simulation is required to follow the ACLK phase pattern
+
+			apu->core_int->sim();
+
+			apu->clkgen->sim();
+
+			// We apply synthetic LFO2 control so that it triggers more often and the test finishes faster.
+
+			if (prev_aclk == TriState::One && apu->wire.ACLK == TriState::Zero)		// negedge ACLK
+			{
+				apu->wire.n_LFO2 = TriState::Zero;
+			}
+			if (prev_clk == TriState::Zero && NOT(apu->wire.n_CLK) == TriState::One)	// posedge CLK
+			{
+				apu->wire.n_LFO2 = TriState::One;
+			}
+
+			lc.sim(0, TriState::Zero, TriState::One, NoCount);
+
+			if (trace_run)
+			{
+				sprintf_s(text, sizeof(text), "LC Value: %d, NoCount: %d\n", lc.Debug_GetCnt(), ToByte(NoCount));
+				Logger::WriteMessage(text);
+			}
+
+			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
+
+			prev_aclk = apu->wire.ACLK;
+			prev_clk = NOT(apu->wire.n_CLK);
+		}
+
+		// Check after everything that the counter is 0xff and NoCount = 1
+
+		if (lc.Debug_GetCnt() != 0xff)
+			return false;
+
+		if (NoCount != TriState::One)
+			return false;
+
 		return true;
 	}
 }

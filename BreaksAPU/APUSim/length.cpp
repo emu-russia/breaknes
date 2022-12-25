@@ -158,4 +158,16 @@ namespace APUSim
 
 		carry_out = carry;
 	}
+
+	uint8_t LengthCounter::Debug_GetCnt()
+	{
+		TriState cnt_out[8]{};
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			cnt_out[n] = cnt[n].get();
+		}
+
+		return Pack(cnt_out);
+	}
 }
