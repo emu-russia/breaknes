@@ -105,6 +105,7 @@ namespace BaseLogic
 	/// <param name="in"></param>
 	/// <returns></returns>
 	TriState NOR13(TriState in[13]);
+	TriState NOR13(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7, TriState in8, TriState in9, TriState in10, TriState in11, TriState in12);
 
 	/// <summary>
 	/// 15-nor
@@ -128,6 +129,27 @@ namespace BaseLogic
 	/// <param name="in"></param>
 	/// <returns></returns>
 	TriState NOR25(TriState in[25]);
+
+	/// <summary>
+	/// 27-nor
+	/// </summary>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	TriState NOR27(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7, TriState in8, TriState in9, TriState in10, TriState in11, TriState in12, TriState in13, TriState in14, TriState in15, TriState in16, TriState in17, TriState in18, TriState in19, TriState in20, TriState in21, TriState in22, TriState in23, TriState in24, TriState in25, TriState in26);
+
+	/// <summary>
+	/// 28-nor
+	/// </summary>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	TriState NOR28(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7, TriState in8, TriState in9, TriState in10, TriState in11, TriState in12, TriState in13, TriState in14, TriState in15, TriState in16, TriState in17, TriState in18, TriState in19, TriState in20, TriState in21, TriState in22, TriState in23, TriState in24, TriState in25, TriState in26, TriState in27);
+
+	/// <summary>
+	/// 29-nor
+	/// </summary>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	TriState NOR29(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7, TriState in8, TriState in9, TriState in10, TriState in11, TriState in12, TriState in13, TriState in14, TriState in15, TriState in16, TriState in17, TriState in18, TriState in19, TriState in20, TriState in21, TriState in22, TriState in23, TriState in24, TriState in25, TriState in26, TriState in27, TriState in28);
 
 	/// <summary>
 	/// 2-nand
