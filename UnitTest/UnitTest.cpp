@@ -112,6 +112,18 @@ namespace UnitTest
 			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
 			Assert::IsTrue(ut.TestRegOps());
 		}
+
+		TEST_METHOD(TestLengthDecoder)
+		{
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			Assert::IsTrue(ut.TestLengthDecoder());
+		}
+
+		TEST_METHOD(TestLengthCounter)
+		{
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			Assert::IsTrue(ut.TestLengthCounter());
+		}
 	};
 
 	TEST_CLASS(PpuUnitTest)
