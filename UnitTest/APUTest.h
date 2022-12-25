@@ -18,5 +18,7 @@ namespace APUSimUnitTest
 		bool TestAclk();
 		bool TestLFO(bool mode);
 		bool TestRegOps();
+		bool TestLengthDecoder();
+		bool TestLengthCounter();
 	};
 }

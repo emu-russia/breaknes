@@ -17,6 +17,10 @@ namespace APUSimUnitTest
 		delete core;
 	}
 
+	/// <summary>
+	/// Check the operation of the counters from common.cpp.
+	/// </summary>
+	/// <returns></returns>
 	bool UnitTest::TestCounters()
 	{
 		char text[0x100]{};
@@ -100,6 +104,10 @@ namespace APUSimUnitTest
 		return duty_trunc == Expected_duty_cycle_trunc;
 	}
 
+	/// <summary>
+	/// Check the ACLK phase pattern.
+	/// </summary>
+	/// <returns></returns>
 	bool UnitTest::TestAclk()
 	{
 		const size_t hcycles = 12 * 4;
@@ -406,6 +414,48 @@ namespace APUSimUnitTest
 			apu->CPU_Addr++;
 		}
 
+		return true;
+	}
+
+	/// <summary>
+	/// Check the correctness of the length decoder with the reference values.
+	/// </summary>
+	/// <returns></returns>
+	bool UnitTest::TestLengthDecoder()
+	{
+		char text[0x100]{};
+		size_t lc_out[32] = { 
+			0x9, 0xfd, 0x13, 0x1, 0x27, 0x3, 0x4f, 0x5, 0x9f, 0x7, 0x3b, 0x9, 0xd, 0xb, 0x19, 0xd,
+			0xb, 0xf, 0x17, 0x11, 0x2f, 0x13, 0x5f, 0x15, 0xbf, 0x17, 0x47, 0x19, 0xf, 0x1b, 0x1f, 0x1d,
+		};
+
+		APUSim::LengthCounter lc(apu);
+
+		for (size_t n = 0; n < 32; n++)
+		{
+			apu->SetDBBit(3, (n >> 0) & 1 ? TriState::One : TriState::Zero);
+			apu->SetDBBit(4, (n >> 1) & 1 ? TriState::One : TriState::Zero);
+			apu->SetDBBit(5, (n >> 2) & 1 ? TriState::One : TriState::Zero);
+			apu->SetDBBit(6, (n >> 3) & 1 ? TriState::One : TriState::Zero);
+			apu->SetDBBit(7, (n >> 4) & 1 ? TriState::One : TriState::Zero);
+
+			lc.sim_Decoder1();
+			lc.sim_Decoder2();
+
+			size_t dec_out = Pack(lc.LC);
+
+			sprintf_s(text, sizeof(text), "dec %zd: 0x%02X\n", n, (uint8_t)dec_out);
+			Logger::WriteMessage(text);
+
+			if (dec_out != lc_out[n])
+				return false;
+		}
+
+		return true;
+	}
+
+	bool UnitTest::TestLengthCounter()
+	{
 		return true;
 	}
 }
