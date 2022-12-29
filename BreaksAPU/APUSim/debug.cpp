@@ -1,4 +1,4 @@
-// Debugging mechanisms of the APU.
+// Debugging mechanisms of the APUSim.
 
 #include "pch.h"
 

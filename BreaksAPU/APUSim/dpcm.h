@@ -67,9 +67,9 @@ namespace APUSim
 		BaseLogic::DLatch stop_latch{};
 		BaseLogic::DLatch pcm_latch{};
 
-		RegisterBit reg_f[4]{};
-		RegisterBit reg_loop{};
-		RegisterBit reg_irq{};
+		RegisterBit f_reg[4]{};
+		RegisterBit loop_reg{};
+		RegisterBit irq_reg{};
 		DPCM_LFSRBit lfsr[9]{};
 		RegisterBit scnt_reg[8]{};
 		DownCounterBit scnt[12]{};
@@ -80,7 +80,7 @@ namespace APUSim
 		CounterBit addr_lo[8]{};
 		CounterBit addr_hi[7]{};
 		RevCounterBit out_cnt[6]{};
-		RegisterBit out_b0{};
+		RegisterBit out_reg{};
 
 		void sim_IntControl();
 		void sim_EnableControl();
