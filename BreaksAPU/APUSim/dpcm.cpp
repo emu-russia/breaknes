@@ -19,6 +19,8 @@ namespace APUSim
 	{
 		n_ACLK2 = NOT(apu->wire.ACLK);
 
+		// TBD: Rearrange propagation delays while debugging APUSim in combat conditions.
+
 		sim_ControlReg();
 		sim_IntControl();
 		sim_EnableControl();
@@ -287,32 +289,67 @@ namespace APUSim
 
 	void DpcmChan::sim_AddressReg()
 	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState W4012 = apu->wire.W4012;
 
-		//RegisterBit addr_reg[7:0](.n_ACLK(n_ACLK), .ena(W4012), .d(DB[7:0]), .q(DPA[7:0]));
+		for (size_t n = 0; n < 8; n++)
+		{
+			addr_reg[n].sim(n_ACLK, W4012, apu->GetDBBit(n));
+		}
 	}
 
 	void DpcmChan::sim_AddressCounter()
 	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState RES = apu->wire.RES;
 
-		//wire[7:0] addr_lo_cout;
-		//wire[6:0] addr_hi_cout;
-		//wire[7:0] addr_lo_q;
-		//wire[6:0] addr_hi_q;
-		//CounterBit addr_lo[7:0](.n_ACLK(n_ACLK), .d({ DPA[1:0], 6'b000000}), .load(DSLOAD), .clear(RES), .step(DSSTEP), .cin({addr_lo_cout[6:0],1'b1 }), .q(addr_lo_q), .cout(addr_lo_cout));
-		//CounterBit addr_hi[6:0](.n_ACLK(n_ACLK), .d({ 1'b1, DPA[7:2]}), .load(DSLOAD), .clear(RES), .step(DSSTEP), .cin({addr_hi_cout[5:0],addr_lo_cout[7]}), .q(addr_hi_q), .cout(addr_hi_cout) );
-		//assign DMC_Addr = {1'b1,addr_hi_q,addr_lo_q};
+		TriState carry = TriState::One;
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			carry = addr_lo[n].sim(carry, RES, DSLOAD, DSSTEP, n_ACLK, n < 6 ? TriState::Zero : addr_reg[n - 6].get());
+		}
+
+		for (size_t n = 0; n < 7; n++)
+		{
+			carry = addr_hi[n].sim(carry, RES, DSLOAD, DSSTEP, n_ACLK, n < 6 ? addr_reg[n + 2].get() : TriState::One);
+		}
+
+		apu->DMC_Addr = 0;
+		for (size_t n = 0; n < 8; n++)
+		{
+			apu->DMC_Addr |= (addr_lo[n].get() == TriState::One ? 1 : 0) << n;
+			if (n < 7)
+			{
+				apu->DMC_Addr |= (addr_hi[n].get() == TriState::One ? 1 : 0) << (8 + n);
+			}
+		}
+		apu->DMC_Addr |= 0x8000;
 	}
 
 	void DpcmChan::sim_Output()
 	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState RES = apu->wire.RES;
+		TriState W4011 = apu->wire.W4011;
+		TriState CountDown = n_BOUT;
 
-		//wire out_reg_q;
-		//wire[5:0] out_cnt_q;
-		//wire[5:0] cout;
-		//RevCounterBit out_cnt[5:0](.n_ACLK(n_ACLK), .d(DB[6:1]), .load(W4011), .clear(RES), .step(DSTEP), .cin({ cout[4:0],1'b1}), .dec(CountDown), .q(out_cnt_q), .cout(cout) );
-		//RegisterBit out_reg(.n_ACLK(n_ACLK), .ena(W4011), .d(DB[0]), .q(out_reg_q));
-		//assign DMC_Out = {out_cnt_q,out_reg_q};
-		//assign DOUT = cout[5];
+		TriState carry = TriState::One;
+
+		for (size_t n = 0; n < 6; n++)
+		{
+			carry = out_cnt[n].sim(carry, CountDown, RES, W4011, DSTEP, n_ACLK, apu->GetDBBit(n + 1));
+		}
+
+		DOUT = carry;
+
+		out_reg.sim(n_ACLK, W4011, apu->GetDBBit(0));
+
+		apu->DMC_Out[0] = out_reg.get();
+		for (size_t n = 0; n < 6; n++)
+		{
+			apu->DMC_Out[n + 1] = out_cnt[n].get();
+		}
 	}
 
 #pragma endregion "DPCM Addressing & Output"

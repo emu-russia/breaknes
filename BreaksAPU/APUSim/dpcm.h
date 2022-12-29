@@ -44,8 +44,6 @@ namespace APUSim
 		BaseLogic::TriState SOUT = BaseLogic::TriState::X;
 		BaseLogic::TriState DFLOAD = BaseLogic::TriState::X;
 		BaseLogic::TriState n_BOUT = BaseLogic::TriState::X;
-		BaseLogic::TriState DPA[8]{};
-		BaseLogic::TriState DSC[8]{};
 		BaseLogic::TriState Fx[4]{};
 		BaseLogic::TriState FR[9]{};
 		BaseLogic::TriState Dec1_out[16]{};
