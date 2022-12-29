@@ -93,12 +93,13 @@ namespace APUSim
 		RevCounterBit out_cnt[6]{};
 		RegisterBit out_reg{};
 
+		void sim_ControlReg();
 		void sim_IntControl();
 		void sim_EnableControl();
 		void sim_DMAControl();
 		void sim_SampleCounterControl();
 		void sim_SampleBufferControl();
-		void sim_ControlReg();
+
 		void sim_Decoder1();
 		void sim_Decoder2();
 		void sim_FreqLFSR();
@@ -106,6 +107,7 @@ namespace APUSim
 		void sim_SampleCounter();
 		void sim_SampleBitCounter();
 		void sim_SampleBuffer();
+
 		void sim_AddressReg();
 		void sim_AddressCounter();
 		void sim_Output();

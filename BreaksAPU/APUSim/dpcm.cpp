@@ -33,9 +33,30 @@ namespace APUSim
 		sim_SampleCounter();
 		sim_SampleBitCounter();
 		sim_SampleBuffer();
+
 		sim_AddressReg();
 		sim_AddressCounter();
 		sim_Output();
+	}
+
+#pragma region "DPCM Control"
+
+	void DpcmChan::sim_ControlReg()
+	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState W4010 = apu->wire.W4010;
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			f_reg[n].sim(n_ACLK, W4010, apu->GetDBBit(n));
+			Fx[n] = f_reg[n].get();
+		}
+
+		loop_reg.sim(n_ACLK, W4010, apu->GetDBBit(6));
+		LOOPMode = loop_reg.get();
+
+		irq_reg.sim(n_ACLK, W4010, apu->GetDBBit(7));
+		n_IRQEN = irq_reg.nget();
 	}
 
 	void DpcmChan::sim_IntControl()
@@ -132,23 +153,9 @@ namespace APUSim
 		BSTEP = NOR(n_DFLOAD, NOT(NOUT));
 	}
 
-	void DpcmChan::sim_ControlReg()
-	{
-		TriState n_ACLK = apu->wire.n_ACLK;
-		TriState W4010 = apu->wire.W4010;
+#pragma endregion "DPCM Control"
 
-		for (size_t n = 0; n < 4; n++)
-		{
-			f_reg[n].sim(n_ACLK, W4010, apu->GetDBBit(n));
-			Fx[n] = f_reg[n].get();
-		}
-
-		loop_reg.sim(n_ACLK, W4010, apu->GetDBBit(6));
-		LOOPMode = loop_reg.get();
-
-		irq_reg.sim(n_ACLK, W4010, apu->GetDBBit(7));
-		n_IRQEN = irq_reg.nget();
-	}
+#pragma region "DPCM Sampling"
 
 	void DpcmChan::sim_Decoder1()
 	{
@@ -274,6 +281,10 @@ namespace APUSim
 		return out_latch.nget();
 	}
 
+#pragma endregion "DPCM Sampling"
+
+#pragma region "DPCM Addressing & Output"
+
 	void DpcmChan::sim_AddressReg()
 	{
 
@@ -303,4 +314,6 @@ namespace APUSim
 		//assign DMC_Out = {out_cnt_q,out_reg_q};
 		//assign DOUT = cout[5];
 	}
+
+#pragma endregion "DPCM Addressing & Output"
 }
