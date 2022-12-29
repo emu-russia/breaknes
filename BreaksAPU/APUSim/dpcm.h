@@ -83,7 +83,7 @@ namespace APUSim
 		RegisterBit scnt_reg[8]{};
 		DownCounterBit scnt[12]{};
 		CounterBit sbcnt[3]{};
-		RegisterBit buf_reg{};
+		RegisterBit buf_reg[8]{};
 		DPCM_SRBit shift_reg[8]{};
 		RegisterBit addr_reg[8]{};
 		CounterBit addr_lo[8]{};

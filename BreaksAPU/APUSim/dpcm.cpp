@@ -206,17 +206,31 @@ namespace APUSim
 
 	void DpcmChan::sim_FreqLFSR()
 	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState RES = apu->wire.RES;
 
-		//assign feedback = ~((sout[0] & sout[4]) | RES | ~(sout[0] | sout[4] | nor1_out));
-		//assign nor3_out = ~(RES | ~nor2_out);
-		//assign DFLOAD = ~(~n_ACLK2 | ~nor3_out);
-		//assign DFSTEP = ~(~n_ACLK2 | nor3_out);
+		TriState sout[9]{};
 
-		//nor(nor1_out, sout[0], sout[1], sout[2], sout[3], sout[4], sout[5], sout[6], sout[7], sout[8]);
-		//nor(nor2_out, ~sout[0], sout[1], sout[2], sout[3], sout[4], sout[5], sout[6], sout[7], sout[8]);
+		for (size_t n = 0; n < 9; n++)
+		{
+			sout[n] = lfsr[n].get_sout();
+		}
 
-		//DPCM_LFSRBit lfsr[8:0](.n_ACLK(n_ACLK), .load(DFLOAD), .step(DFSTEP), .val(FR), .sin({ sout[7:0],feedback }), .sout(sout));
+		TriState nor1_out = NOR9(sout[0], sout[1], sout[2], sout[3], sout[4], sout[5], sout[6], sout[7], sout[8]);
+		TriState nor2_out = NOR9(NOT(sout[0]), sout[1], sout[2], sout[3], sout[4], sout[5], sout[6], sout[7], sout[8]);
 
+		TriState feedback = NOR3(AND(sout[0], sout[4]), RES, NOR3(sout[0], sout[4], nor1_out));
+		TriState nor3_out = NOR(RES, NOT(nor2_out));
+		DFLOAD = NOR(NOT(n_ACLK2), NOT(nor3_out));
+		TriState DFSTEP = NOR(NOT(n_ACLK2), nor3_out);
+
+		TriState sin = feedback;
+
+		for (int n = 8; n >= 0; n--)
+		{
+			lfsr[n].sim(n_ACLK, DFLOAD, DFSTEP, FR[n], sin);
+			sin = lfsr[n].get_sout();
+		}
 	}
 
 	void DPCM_LFSRBit::sim(TriState n_ACLK, TriState load, TriState step, TriState val, TriState sin)
@@ -232,36 +246,64 @@ namespace APUSim
 
 	void DpcmChan::sim_SampleCounterReg()
 	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState W4013 = apu->wire.W4013;
 
-		//RegisterBit scnt_reg[7:0](.n_ACLK(n_ACLK), .ena(W4013), .d(DB[7:0]), .q(DSC[7:0]));
-
+		for (size_t n = 0; n < 8; n++)
+		{
+			scnt_reg[n].sim(n_ACLK, W4013, apu->GetDBBit(n));
+		}
 	}
 
 	void DpcmChan::sim_SampleCounter()
 	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState RES = apu->wire.RES;
 
-		//wire[11:0] cout;
-		//DownCounterBit cnt[11:0](.n_ACLK(), .d({ DSC[7:0],4'b0000}), .load(DSLOAD), .clear(RES), .step(DSSTEP), .cin({cout[10:0],1'b1 }), .cout(cout));
-		//assign SOUT = cout[11];
+		TriState carry = TriState::One;
+
+		for (size_t n = 0; n < 12; n++)
+		{
+			carry = scnt[n].sim(carry, RES, DSLOAD, DSSTEP, n_ACLK, n < 4 ? TriState::Zero : scnt_reg[n - 4].get());
+		}
+
+		SOUT = carry;
 	}
 
 	void DpcmChan::sim_SampleBitCounter()
 	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState RES = apu->wire.RES;
 
-		//wire[2:0] cout;
-		//CounterBit cnt[2:0](.n_ACLK(n_ACLK), .d(3'b000), .load(RES), .clear(RES), .step(NSTEP), .cin({cout[1:0],1'b1}), .cout(cout));
-		//assign NOUT = cout[2];
+		TriState carry = TriState::One;
 
+		for (size_t n = 0; n < 3; n++)
+		{
+			carry = sbcnt[n].sim(carry, RES, RES, NSTEP, n_ACLK, TriState::Zero);
+		}
+
+		NOUT = carry;
 	}
 
 	void DpcmChan::sim_SampleBuffer()
 	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState RES = apu->wire.RES;
 
-		//wire [7:0] buf_nq;
-		//wire [7:0] sout;
-		//RegisterBit buf_reg [7:0] (.n_ACLK(n_ACLK), .ena(PCM), .d(DB), .nq(buf_nq) );
-		//DPCM_SRBit shift_reg [7:0] (.n_ACLK(n_ACLK), .clear(RES), .load(BLOAD), .step(BSTEP), .n_val(buf_nq), .sin({1'b0,sout[7:1]}), .sout(sout) );
-		//assign n_BOUT = ~sout[0];
+		for (size_t n = 0; n < 8; n++)
+		{
+			buf_reg[n].sim(n_ACLK, PCM, apu->GetDBBit(n));
+		}
+
+		TriState sin = TriState::Zero;
+
+		for (int n = 7; n >= 0; n--)
+		{
+			shift_reg[n].sim(n_ACLK, RES, BLOAD, BSTEP, buf_reg[n].nget(), sin);
+			sin = shift_reg[n].get_sout();
+		}
+
+		n_BOUT = NOT(shift_reg[0].get_sout());
 	}
 
 	void DPCM_SRBit::sim(TriState n_ACLK, TriState clear, TriState load, TriState step, TriState n_val, TriState sin)
