@@ -10,7 +10,8 @@ namespace APUSim
 		BaseLogic::DLatch out_latch{};
 
 	public:
-		void sim();
+		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState load, BaseLogic::TriState step, BaseLogic::TriState val, BaseLogic::TriState sin);
+		BaseLogic::TriState get_sout();
 	};
 
 	class DPCM_SRBit
@@ -19,7 +20,8 @@ namespace APUSim
 		BaseLogic::DLatch out_latch{};
 
 	public:
-		void sim();
+		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState clear, BaseLogic::TriState load, BaseLogic::TriState step, BaseLogic::TriState n_val, BaseLogic::TriState sin);
+		BaseLogic::TriState get_sout();
 	};
 
 	class DpcmChan
@@ -28,25 +30,34 @@ namespace APUSim
 
 		APU* apu = nullptr;
 
-		BaseLogic::TriState LOOPMode;
-		BaseLogic::TriState n_IRQEN;
-		BaseLogic::TriState DSLOAD;
-		BaseLogic::TriState DSSTEP;
-		BaseLogic::TriState BLOAD;
-		BaseLogic::TriState BSTEP;
-		BaseLogic::TriState NSTEP;
-		BaseLogic::TriState DSTEP;
-		BaseLogic::TriState PCM;
-		BaseLogic::TriState DOUT;
-		BaseLogic::TriState NOUT;
-		BaseLogic::TriState SOUT;
-		BaseLogic::TriState DFLOAD;
-		BaseLogic::TriState n_BOUT;
+		BaseLogic::TriState LOOPMode = BaseLogic::TriState::X;
+		BaseLogic::TriState n_IRQEN = BaseLogic::TriState::X;
+		BaseLogic::TriState DSLOAD = BaseLogic::TriState::X;
+		BaseLogic::TriState DSSTEP = BaseLogic::TriState::X;
+		BaseLogic::TriState BLOAD = BaseLogic::TriState::X;
+		BaseLogic::TriState BSTEP = BaseLogic::TriState::X;
+		BaseLogic::TriState NSTEP = BaseLogic::TriState::X;
+		BaseLogic::TriState DSTEP = BaseLogic::TriState::X;
+		BaseLogic::TriState PCM = BaseLogic::TriState::X;
+		BaseLogic::TriState DOUT = BaseLogic::TriState::X;
+		BaseLogic::TriState NOUT = BaseLogic::TriState::X;
+		BaseLogic::TriState SOUT = BaseLogic::TriState::X;
+		BaseLogic::TriState DFLOAD = BaseLogic::TriState::X;
+		BaseLogic::TriState n_BOUT = BaseLogic::TriState::X;
 		BaseLogic::TriState DPA[8]{};
 		BaseLogic::TriState DSC[8]{};
 		BaseLogic::TriState Fx[4]{};
 		BaseLogic::TriState FR[9]{};
 		BaseLogic::TriState Dec1_out[16]{};
+
+		BaseLogic::TriState ED1 = BaseLogic::TriState::X;
+		BaseLogic::TriState ED2 = BaseLogic::TriState::X;
+		BaseLogic::TriState DMC1 = BaseLogic::TriState::X;
+		BaseLogic::TriState DMC2 = BaseLogic::TriState::X;
+		BaseLogic::TriState CTRL1 = BaseLogic::TriState::X;
+		BaseLogic::TriState CTRL2 = BaseLogic::TriState::X;
+
+		BaseLogic::TriState n_ACLK2 = BaseLogic::TriState::X;
 
 		BaseLogic::FF int_ff{};
 		BaseLogic::DLatch sout_latch{};
