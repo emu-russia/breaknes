@@ -14,6 +14,26 @@ namespace APUSim
 		BaseLogic::TriState nget();
 	};
 
+	class RegisterBitRes
+	{
+		BaseLogic::DLatch transp_latch{};
+
+	public:
+		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState Enable, BaseLogic::TriState Value, BaseLogic::TriState Res);
+		BaseLogic::TriState get();
+		BaseLogic::TriState nget();
+	};
+
+	class RegisterBitRes2
+	{
+		BaseLogic::DLatch transp_latch{};
+
+	public:
+		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState Enable, BaseLogic::TriState Value, BaseLogic::TriState Res1, BaseLogic::TriState Res2);
+		BaseLogic::TriState get();
+		BaseLogic::TriState nget();
+	};
+
 	class CounterBit
 	{
 		BaseLogic::DLatch transp_latch{};

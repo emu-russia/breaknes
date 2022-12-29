@@ -24,6 +24,9 @@ namespace APUSim
 
 		BaseLogic::DLatch spr_buf[8];
 
+		BaseLogic::TriState SPRE = BaseLogic::TriState::X;
+		BaseLogic::TriState SPRS = BaseLogic::TriState::X;
+
 		void sim_DMA_Address();
 		void sim_DMA_Control();
 		void sim_DMA_Buffer();
