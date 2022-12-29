@@ -93,16 +93,14 @@ namespace APUSim
 			BaseLogic::TriState INT;
 			BaseLogic::TriState n_LFO1;
 			BaseLogic::TriState n_LFO2;
-			BaseLogic::TriState RUNDMC;
-			BaseLogic::TriState DMCINT;
-			BaseLogic::TriState DMCReady;
-			BaseLogic::TriState SPRE;
-			BaseLogic::TriState SPRS;
 			BaseLogic::TriState RnW;			// From core
 			BaseLogic::TriState SPR_CPU;
 			BaseLogic::TriState SPR_PPU;
 			BaseLogic::TriState RW;				// To pad
 			BaseLogic::TriState n_DMC_AB;
+			BaseLogic::TriState RUNDMC;
+			BaseLogic::TriState DMCINT;
+			BaseLogic::TriState DMCReady;
 			
 			// RegOps
 			BaseLogic::TriState n_R4015;
@@ -147,6 +145,7 @@ namespace APUSim
 			// Auxiliary signals associated with the Test mode, which seems to be present only on 2A03.
 			BaseLogic::TriState DBG;			// from pad
 			BaseLogic::TriState n_DBGRD;		// from regs decoder
+			BaseLogic::TriState LOCK;
 		} wire{};
 
 		Revision rev = Revision::Unknown;
@@ -174,6 +173,14 @@ namespace APUSim
 		uint16_t SPR_Addr;
 		uint16_t CPU_Addr;			// Core to mux & regs predecoder
 		uint16_t Ax;			// Mux to pads & regs decoder
+
+		// DAC Inputs
+
+		BaseLogic::TriState SQA_Out[4]{};
+		BaseLogic::TriState SQB_Out[4]{};
+		BaseLogic::TriState TRI_Out[4]{};
+		BaseLogic::TriState RND_Out[4]{};
+		BaseLogic::TriState DMC_Out[7]{};
 
 		void sim_InputPads(BaseLogic::TriState inputs[], uint8_t* data);
 		void sim_OutputPads(BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr);

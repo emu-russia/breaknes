@@ -28,7 +28,6 @@ namespace APUSim
 		TriState n_ACLK = apu->wire.n_ACLK;
 		TriState W4014 = apu->wire.W4014;	// Load / SetAddr
 		TriState RES = apu->wire.RES;		// Clear
-		TriState SPRS = apu->wire.SPRE;		// Step
 
 		// Low
 
@@ -39,7 +38,7 @@ namespace APUSim
 			Carry = spr_lo[n].sim(Carry, RES, W4014, SPRS, n_ACLK, TriState::Zero);
 		}
 
-		apu->wire.SPRE = Carry;
+		SPRE = Carry;
 
 		// High
 
@@ -73,7 +72,6 @@ namespace APUSim
 		TriState RES = apu->wire.RES;
 		TriState W4014 = apu->wire.W4014;
 		TriState RUNDMC = apu->wire.RUNDMC;
-		TriState SPRE = apu->wire.SPRE;
 		TriState PHI1 = apu->wire.PHI1;
 		TriState RnW = apu->wire.RnW;
 		TriState DMCReady = apu->wire.DMCReady;
@@ -90,11 +88,10 @@ namespace APUSim
 		dospr_latch.set(StartDMA.get(), n_ACLK2);
 		TriState DOSPR = NOR(dospr_latch.get(), NAND(NOT(PHI1), RnW));
 
-		TriState SPRS = NOR3(NOSPR, RUNDMC, NOT(n_ACLK2));
+		SPRS = NOR3(NOSPR, RUNDMC, NOT(n_ACLK2));
 		StopDMA.set(NOR3(AND(SPRS, spre_latch.get()), RES, NOR(DOSPR, StopDMA.get())));
 		nospr_latch.set(StopDMA.get(), n_ACLK);
 
-		apu->wire.SPRS = SPRS;
 		apu->wire.RDY = NOT(NAND(NOR(NOT(NOSPR), NOT(StartDMA.get())), DMCReady));
 		apu->wire.SPR_PPU = NOR3(NOSPR, RUNDMC, NOT(DMADirToggle.get()));
 		apu->wire.SPR_CPU = NOR3(NOSPR, RUNDMC, DMADirToggle.get());
