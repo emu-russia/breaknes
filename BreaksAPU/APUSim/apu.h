@@ -79,14 +79,14 @@ namespace APUSim
 		/// </summary>
 		struct InternalWires
 		{
+			BaseLogic::TriState n_CLK;
 			BaseLogic::TriState PHI0;
 			BaseLogic::TriState PHI1;
 			BaseLogic::TriState PHI2;
-			BaseLogic::TriState RDY;
+			BaseLogic::TriState RDY;			// To core
 			BaseLogic::TriState ACLK;
 			BaseLogic::TriState n_ACLK;
 			BaseLogic::TriState RES;
-			BaseLogic::TriState n_CLK;
 			BaseLogic::TriState n_M2;
 			BaseLogic::TriState n_NMI;
 			BaseLogic::TriState n_IRQ;
@@ -97,10 +97,13 @@ namespace APUSim
 			BaseLogic::TriState SPR_CPU;
 			BaseLogic::TriState SPR_PPU;
 			BaseLogic::TriState RW;				// To pad
+			BaseLogic::TriState RD;
+			BaseLogic::TriState WR;
+			
 			BaseLogic::TriState n_DMC_AB;
 			BaseLogic::TriState RUNDMC;
 			BaseLogic::TriState DMCINT;
-			BaseLogic::TriState DMCReady;
+			BaseLogic::TriState DMCRDY;
 			
 			// RegOps
 			BaseLogic::TriState n_R4015;

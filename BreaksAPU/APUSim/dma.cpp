@@ -74,7 +74,7 @@ namespace APUSim
 		TriState RUNDMC = apu->wire.RUNDMC;
 		TriState PHI1 = apu->wire.PHI1;
 		TriState RnW = apu->wire.RnW;
-		TriState DMCReady = apu->wire.DMCReady;
+		TriState DMCRDY = apu->wire.DMCRDY;
 
 		// TBD: Check that the circuit is stabilized correctly on the uroboros associated with the NOSPR signal.
 		// Also check that the DMA DirToggle goes back and forth properly.
@@ -92,7 +92,7 @@ namespace APUSim
 		StopDMA.set(NOR3(AND(SPRS, spre_latch.get()), RES, NOR(DOSPR, StopDMA.get())));
 		nospr_latch.set(StopDMA.get(), n_ACLK);
 
-		apu->wire.RDY = NOT(NAND(NOR(NOT(NOSPR), NOT(StartDMA.get())), DMCReady));
+		apu->wire.RDY = NOT(NAND(NOR(NOT(NOSPR), NOT(StartDMA.get())), DMCRDY));
 		apu->wire.SPR_PPU = NOR3(NOSPR, RUNDMC, NOT(DMADirToggle.get()));
 		apu->wire.SPR_CPU = NOR3(NOSPR, RUNDMC, DMADirToggle.get());
 	}

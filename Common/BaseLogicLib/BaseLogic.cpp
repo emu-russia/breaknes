@@ -60,9 +60,19 @@ namespace BaseLogic
 		return (TriState)((~(in[0] | in[1] | in[2] | in[3] | in[4] | in[5] | in[6])) & 1);
 	}
 
+	TriState NOR7(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6)
+	{
+		return (TriState)((~(in0 | in1 | in2 | in3 | in4 | in5 | in6)) & 1);
+	}
+
 	TriState NOR8(TriState in[8])
 	{
 		return (TriState)((~(in[0] | in[1] | in[2] | in[3] | in[4] | in[5] | in[6] | in[7])) & 1);
+	}
+
+	TriState NOR8(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7)
+	{
+		return (TriState)((~(in0 | in1 | in2 | in3 | in4 | in5 | in6 | in7)) & 1);
 	}
 
 	TriState NOR9(TriState in[9])
@@ -70,9 +80,19 @@ namespace BaseLogic
 		return (TriState)((~(in[0] | in[1] | in[2] | in[3] | in[4] | in[5] | in[6] | in[7] | in[8])) & 1);
 	}
 
+	TriState NOR9(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7, TriState in8)
+	{
+		return (TriState)((~(in0 | in1 | in2 | in3 | in4 | in5 | in6 | in7 | in8)) & 1);
+	}
+
 	TriState NOR10(TriState in[10])
 	{
 		return (TriState)((~(in[0] | in[1] | in[2] | in[3] | in[4] | in[5] | in[6] | in[7] | in[8] | in[9])) & 1);
+	}
+
+	TriState NOR10(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7, TriState in8, TriState in9)
+	{
+		return (TriState)((~(in0 | in1 | in2 | in3 | in4 | in5 | in6 | in7 | in8 | in9)) & 1);
 	}
 
 	TriState NOR12(TriState in[12])
