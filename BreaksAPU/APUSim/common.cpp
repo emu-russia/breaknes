@@ -21,6 +21,36 @@ namespace APUSim
 		return transp_latch.nget();
 	}
 
+	void RegisterBitRes::sim(TriState n_ACLK, TriState Enable, TriState Value, TriState Res)
+	{
+		transp_latch.set(AND(MUX(n_ACLK, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), NOT(Res)), TriState::One);
+	}
+
+	TriState RegisterBitRes::get()
+	{
+		return NOT(transp_latch.nget());
+	}
+
+	TriState RegisterBitRes::nget()
+	{
+		return transp_latch.nget();
+	}
+
+	void RegisterBitRes2::sim(TriState n_ACLK, TriState Enable, TriState Value, TriState Res1, TriState Res2)
+	{
+		transp_latch.set(AND(MUX(n_ACLK, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), NOT(OR(Res1, Res2))), TriState::One);
+	}
+
+	TriState RegisterBitRes2::get()
+	{
+		return NOT(transp_latch.nget());
+	}
+
+	TriState RegisterBitRes2::nget()
+	{
+		return transp_latch.nget();
+	}
+
 	TriState CounterBit::sim(TriState Carry, TriState Clear, TriState Load, TriState Step, TriState n_ACLK, TriState val)
 	{
 		TriState latch_in = 

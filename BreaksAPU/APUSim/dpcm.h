@@ -50,7 +50,7 @@ namespace APUSim
 
 		BaseLogic::FF int_ff{};
 		BaseLogic::DLatch sout_latch{};
-		//RegisterBitRes2 ena_ff;
+		RegisterBitRes2 ena_ff{};
 		BaseLogic::DLatch run_latch1{};
 		BaseLogic::DLatch run_latch2{};
 		BaseLogic::FF start_ff{};
