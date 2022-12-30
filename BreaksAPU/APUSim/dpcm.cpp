@@ -282,7 +282,8 @@ namespace APUSim
 			carry = sbcnt[n].sim(carry, RES, RES, NSTEP, n_ACLK, TriState::Zero);
 		}
 
-		NOUT = carry;
+		nout_latch.set(carry, n_ACLK);
+		NOUT = nout_latch.nget();
 	}
 
 	void DpcmChan::sim_SampleBuffer()
