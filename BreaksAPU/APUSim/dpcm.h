@@ -75,6 +75,7 @@ namespace APUSim
 		BaseLogic::DLatch dstep_latch{};
 		BaseLogic::DLatch stop_latch{};
 		BaseLogic::DLatch pcm_latch{};
+		BaseLogic::DLatch nout_latch{};
 
 		RegisterBit f_reg[4]{};
 		RegisterBit loop_reg{};
