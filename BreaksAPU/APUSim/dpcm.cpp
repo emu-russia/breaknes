@@ -138,7 +138,7 @@ namespace APUSim
 		TriState LOCK = apu->wire.LOCK;
 		TriState n_DFLOAD = NOT(DFLOAD);
 
-		step_ff.set(NOR3(NOR(step_ff.get(), BLOAD), NOR3(NOT(stop_latch.nget()), n_DFLOAD, NOUT), RES));
+		step_ff.set(NOR3(NOR(step_ff.get(), BLOAD), NOR3(NOT(stop_latch.nget()), n_DFLOAD, n_NOUT), RES));
 		stop_ff.set(NOR3(NOR(stop_ff.get(), PCM), BLOAD, RES));
 		CTRL1 = stop_ff.nget();
 		pcm_ff.set(NOR3(NOR(pcm_ff.get(), PCM), DMC1, RES));
@@ -151,8 +151,8 @@ namespace APUSim
 		PCM = NOR(PHI1, n_DMC_AB);
 		DMC1 = NOR(pcm_latch.get(), NOT(n_ACLK2));
 		DSTEP = NOR4(dout_latch.get(), dstep_latch.get(), n_DFLOAD, LOCK);
-		BLOAD = NOR3(stop_latch.nget(), n_DFLOAD, NOUT);
-		BSTEP = NOR(n_DFLOAD, NOT(NOUT));
+		BLOAD = NOR3(stop_latch.nget(), n_DFLOAD, n_NOUT);
+		BSTEP = NOR(n_DFLOAD, NOT(n_NOUT));
 	}
 
 #pragma endregion "DPCM Control"
@@ -283,7 +283,7 @@ namespace APUSim
 		}
 
 		nout_latch.set(carry, n_ACLK);
-		NOUT = nout_latch.nget();
+		n_NOUT = nout_latch.nget();
 	}
 
 	void DpcmChan::sim_SampleBuffer()

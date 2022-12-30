@@ -40,7 +40,7 @@ namespace APUSim
 		BaseLogic::TriState DSTEP = BaseLogic::TriState::X;
 		BaseLogic::TriState PCM = BaseLogic::TriState::X;
 		BaseLogic::TriState DOUT = BaseLogic::TriState::X;
-		BaseLogic::TriState NOUT = BaseLogic::TriState::X;
+		BaseLogic::TriState n_NOUT = BaseLogic::TriState::X;
 		BaseLogic::TriState SOUT = BaseLogic::TriState::X;
 		BaseLogic::TriState DFLOAD = BaseLogic::TriState::X;
 		BaseLogic::TriState n_BOUT = BaseLogic::TriState::X;
