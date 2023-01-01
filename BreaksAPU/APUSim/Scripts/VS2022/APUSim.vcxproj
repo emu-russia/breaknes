@@ -26,6 +26,7 @@
     <ClCompile Include="..\..\debug.cpp" />
     <ClCompile Include="..\..\dma.cpp" />
     <ClCompile Include="..\..\dpcm.cpp" />
+    <ClCompile Include="..\..\env.cpp" />
     <ClCompile Include="..\..\length.cpp" />
     <ClCompile Include="..\..\noise.cpp" />
     <ClCompile Include="..\..\pch.cpp">
@@ -47,6 +48,7 @@
     <ClInclude Include="..\..\debug.h" />
     <ClInclude Include="..\..\dma.h" />
     <ClInclude Include="..\..\dpcm.h" />
+    <ClInclude Include="..\..\env.h" />
     <ClInclude Include="..\..\length.h" />
     <ClInclude Include="..\..\noise.h" />
     <ClInclude Include="..\..\pch.h" />
