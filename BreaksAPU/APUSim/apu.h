@@ -18,6 +18,7 @@ namespace APUSimUnitTest
 #include "dma.h"
 #include "dpcm.h"
 #include "length.h"
+#include "env.h"
 #include "noise.h"
 #include "square.h"
 #include "triangle.h"
@@ -67,6 +68,7 @@ namespace APUSim
 		friend CLKGen;
 		friend RegsDecoder;
 		friend LengthCounter;
+		friend EnvelopeUnit;
 		friend DpcmChan;
 		friend NoiseChan;
 		friend SquareChan;
