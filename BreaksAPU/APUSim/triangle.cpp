@@ -42,7 +42,7 @@ namespace APUSim
 		reload_latch2.set(TRELOAD, n_ACLK);
 		tco_latch.set(TCO, n_ACLK);
 
-		LOAD = NOR(n_LFO1, tco_latch.nget());
+		LOAD = NOR(n_LFO1, reload_latch2.nget());
 		STEP = NOR3(n_LFO1, reload_latch2.get(), tco_latch.get());
 		TSTEP = NOR5(TCO, apu->wire.LOCK, apu->wire.PHI1, apu->wire.NOTRI, n_FOUT);
 	}
