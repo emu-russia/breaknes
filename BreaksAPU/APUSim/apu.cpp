@@ -69,8 +69,8 @@ namespace APUSim
 		lc[2]->sim(2, wire.W400B, wire.TRI_LC, wire.NOTRI);
 		lc[3]->sim(3, wire.W400F, wire.RND_LC, wire.NORND);
 
-		square[0]->sim(wire.W4000, wire.W4001, wire.W4002, wire.W4003);
-		square[1]->sim(wire.W4004, wire.W4005, wire.W4006, wire.W4007);
+		square[0]->sim(wire.W4000, wire.W4001, wire.W4002, wire.W4003, wire.NOSQA, SQA_Out);
+		square[1]->sim(wire.W4004, wire.W4005, wire.W4006, wire.W4007, wire.NOSQB, SQB_Out);
 		tri->sim();
 		noise->sim();
 		dpcm->sim();
