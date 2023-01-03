@@ -15,6 +15,9 @@ namespace APUSim
 		BaseLogic::TriState nREGWR = BaseLogic::TriState::X;
 		BaseLogic::TriState nREGRD = BaseLogic::TriState::X;
 
+		BaseLogic::DLatch lock_latch{};
+
+		void sim_DebugLock();
 		void sim_Predecode();
 		void sim_Decoder();
 		void sim_RegOps();
@@ -24,5 +27,6 @@ namespace APUSim
 		~RegsDecoder();
 
 		void sim();
+		void sim_DebugRegisters();
 	};
 }

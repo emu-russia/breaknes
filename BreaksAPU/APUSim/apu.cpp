@@ -44,7 +44,7 @@ namespace APUSim
 		delete dac;
 	}
 
-	void APU::sim(TriState inputs[], TriState outputs[], uint8_t* data, uint16_t* addr, float* AUX_A, float* AUX_B)
+	void APU::sim(TriState inputs[], TriState outputs[], uint8_t* data, uint16_t* addr, AudioOutSignal& AUX)
 	{
 		sim_InputPads(inputs, data);
 
@@ -75,8 +75,10 @@ namespace APUSim
 		noise->sim();
 		dpcm->sim();
 
+		regs->sim_DebugRegisters();
+
 		sim_OutputPads(outputs, data, addr);
-		dac->sim(AUX_A, AUX_B);
+		dac->sim(AUX);
 	}
 
 	void APU::sim_InputPads(TriState inputs[], uint8_t* data)
@@ -103,5 +105,15 @@ namespace APUSim
 			out |= (bit_val == BaseLogic::One ? 1 : 0) << n;
 			DB = out;
 		}
+	}
+
+	void APU::SetRAWOutput(bool enable)
+	{
+		dac->SetRAWOutput(enable);
+	}
+
+	void APU::SetNormalizedOutput(bool enable)
+	{
+		dac->SetNormalizedOutput(enable);
 	}
 }

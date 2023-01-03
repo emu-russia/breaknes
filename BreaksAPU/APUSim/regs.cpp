@@ -20,6 +20,7 @@ namespace APUSim
 		sim_Predecode();
 		sim_Decoder();
 		sim_RegOps();
+		sim_DebugLock();
 	}
 
 	void RegsDecoder::sim_Predecode()
@@ -133,5 +134,37 @@ namespace APUSim
 		apu->wire.n_R4016 = NOT(pla[23]);
 		apu->wire.W4016 = NOR(PHI1, NOT(pla[25]));
 		apu->wire.W4017 = NOR(PHI1, NOT(pla[27]));
+	}
+
+	void RegsDecoder::sim_DebugLock()
+	{
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState RES = apu->wire.RES;
+		TriState W401A = apu->wire.W401A;
+
+		TriState d = MUX(W401A, MUX(n_ACLK, TriState::Z, NOR(lock_latch.nget(), RES)), apu->GetDBBit(7));
+		lock_latch.set(d, TriState::One);
+		apu->wire.LOCK = NOR(lock_latch.nget(), RES);
+	}
+
+	void RegsDecoder::sim_DebugRegisters()
+	{
+		if (apu->wire.DBG == TriState::Zero)
+		{
+			return;
+		}
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			apu->SetDBBit(n, NOT(apu->wire.n_R4018) ? apu->SQA_Out[n] : TriState::Z);
+			apu->SetDBBit(n + 4, NOT(apu->wire.n_R4018) ? apu->SQB_Out[n] : TriState::Z);
+			apu->SetDBBit(n, NOT(apu->wire.n_R4019) ? apu->TRI_Out[n] : TriState::Z);
+			apu->SetDBBit(n + 4, NOT(apu->wire.n_R4019) ? apu->RND_Out[n] : TriState::Z);
+		}
+
+		for (size_t n = 0; n < 7; n++)
+		{
+			apu->SetDBBit(n, NOT(apu->wire.n_R401A) ? apu->DMC_Out[n] : TriState::Z);
+		}
 	}
 }

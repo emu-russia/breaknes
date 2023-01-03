@@ -1,5 +1,7 @@
 #include "pch.h"
 
+// All tests are performed on the reference APU RP2A03G
+
 using namespace BaseLogic;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

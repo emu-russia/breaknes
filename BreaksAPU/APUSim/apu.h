@@ -3,6 +3,52 @@
 namespace APUSim
 {
 	class APU;
+
+#pragma pack(push,1)
+
+	/// <summary>
+	/// A software descriptor of the current audio sample.
+	/// </summary>
+	union AudioOutSignal
+	{
+		struct AnalogOut
+		{
+			float a;		// Analog output AUX_A in mV
+			float b;		// Analog output AUX_B in mV
+		} AUX;
+
+		struct NormalizedOut
+		{
+			float a;	// Analog output AUX_A, normalized to the interval [0.0; 1.0]
+			float b;	// Analog output AUX_B, normalized to the interval [0.0; 1.0]
+		} normalized;
+
+		/// <summary>
+		/// "Raw" output from the sound generators.
+		/// </summary>
+		struct RAWOut
+		{
+			uint8_t sqa;	// Square0 channel digital output 0..15 (4 bit)
+			uint8_t sqb;	// Square1 channel digital output 0..15 (4 bit)
+			uint8_t tri;	// Triangle channel digital output 0..15 (4 bit)
+			uint8_t rnd;	// Noise channel digital output 0..15 (4 bit)
+			uint8_t dmc;	// DeltaMod channel digital output 0..127 (6 bit)
+		} RAW;
+	};
+
+	/// <summary>
+	/// The structure describes all the features of the signal and helps organize its rendering.
+	/// </summary>
+	struct AudioSignalFeatures
+	{
+		int32_t SampleRate;		// The sampling frequency of the audio signal (samples per "virtual" second). The audio is actually sampled every PHI (core clock) halfcycle.
+		float AUXA_LowLevel;		// Lower signal level for AUX_A (mV)
+		float AUXA_HighLevel;		// Upper signal level for AUX_A (mV)
+		float AUXB_LowLevel;		// Lower signal level for AUX_B (mV)
+		float AUXB_HighLevel;		// Upper signal level for AUX_B (mV)
+	};
+
+#pragma pack(pop)
 }
 
 // An external class that has access to all internals. Use for unit testing.
@@ -34,8 +80,11 @@ namespace APUSim
 	enum class Revision
 	{
 		Unknown = 0,
-		RP2A03,
+		RP2A03G,
+		RP2A03H,
 		RP2A07,
+		UA6527P,
+		TA03NP1,
 		Max,
 	};
 
@@ -185,7 +234,7 @@ namespace APUSim
 		BaseLogic::TriState SQB_Out[4]{};
 		BaseLogic::TriState TRI_Out[4]{};
 		BaseLogic::TriState RND_Out[4]{};
-		BaseLogic::TriState DMC_Out[7]{};
+		BaseLogic::TriState DMC_Out[8]{};		// msb is not used. This is done for the convenience of packing the value in byte.
 
 		void sim_InputPads(BaseLogic::TriState inputs[], uint8_t* data);
 		void sim_OutputPads(BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr);
@@ -197,10 +246,22 @@ namespace APUSim
 		APU(M6502Core::M6502 *core, Revision rev);
 		~APU();
 
-		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t *data, uint16_t* addr, float *AUX_A, float* AUX_B);
+		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t *data, uint16_t* addr, AudioOutSignal& AUX);
 
 		void GetDebugInfo_Wires(APU_Interconnects& wires);
 
 		void GetDebugInfo_Regs(APU_Registers& regs);
+
+		/// <summary>
+		/// Turn on the digital output, instead of the analog DAC levels.
+		/// </summary>
+		/// <param name="enable"></param>
+		void SetRAWOutput(bool enable);
+
+		/// <summary>
+		/// Turn on the normalized analog level output from the DAC.
+		/// </summary>
+		/// <param name="enable"></param>
+		void SetNormalizedOutput(bool enable);
 	};
 }
