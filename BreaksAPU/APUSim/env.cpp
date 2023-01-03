@@ -16,7 +16,7 @@ namespace APUSim
 	{
 	}
 
-	void EnvelopeUnit::sim(TriState V[4], TriState WR_Reg, TriState WR_LC, TriState& LC)
+	void EnvelopeUnit::sim(TriState V[4], TriState WR_Reg, TriState WR_LC)
 	{
 		TriState n_ACLK = apu->wire.n_ACLK;
 		TriState n_LFO1 = apu->wire.n_LFO1;
@@ -26,7 +26,7 @@ namespace APUSim
 
 		TriState RLOAD = NOR(n_LFO1, rco_latch.get());
 		TriState RSTEP = NOR(n_LFO1, rco_latch.nget());
-		TriState EIN = NAND(eco_latch.get(), LC);
+		TriState EIN = NAND(eco_latch.get(), get_LC());
 		TriState eco_reload = NOR(eco_latch.get(), reload_latch.get());
 		TriState ESTEP = NOR(NOT(RLOAD), NOT(eco_reload));
 		TriState ERES = NOR(NOT(RLOAD), eco_reload);
@@ -65,5 +65,10 @@ namespace APUSim
 		{
 			V[n] = MUX(ENVDIS, env_cnt[n].get(), vol_reg[n].get());
 		}
+	}
+
+	TriState EnvelopeUnit::get_LC()
+	{
+		return lc_reg.nget();
 	}
 }

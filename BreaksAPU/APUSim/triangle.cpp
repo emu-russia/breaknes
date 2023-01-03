@@ -117,4 +117,9 @@ namespace APUSim
 			apu->TRI_Out[n] = NOT(MUX(T4, T[n], nT[n]));
 		}
 	}
+
+	TriState TriangleChan::get_LC()
+	{
+		return lc_reg.nget();
+	}
 }

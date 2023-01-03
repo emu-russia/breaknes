@@ -25,7 +25,7 @@ namespace APUSim
 		sim_FreqLFSR();
 		sim_RandomLFSR();
 		
-		env_unit->sim(Vol, apu->wire.W400C, apu->wire.W400F, apu->wire.RND_LC);
+		env_unit->sim(Vol, apu->wire.W400C, apu->wire.W400F);
 		for (size_t n = 0; n < 4; n++)
 		{
 			apu->RND_Out[n] = NOR(NOT(Vol[n]), RNDOUT);
@@ -171,5 +171,10 @@ namespace APUSim
 	TriState RandomLFSRBit::get_sout()
 	{
 		return out_latch.nget();
+	}
+
+	TriState NoiseChan::get_LC()
+	{
+		return env_unit->get_LC();
 	}
 }

@@ -39,5 +39,6 @@ namespace APUSim
 		~TriangleChan();
 
 		void sim();
+		BaseLogic::TriState get_LC();
 	};
 }

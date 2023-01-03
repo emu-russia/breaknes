@@ -53,5 +53,6 @@ namespace APUSim
 		~NoiseChan();
 
 		void sim();
+		BaseLogic::TriState get_LC();
 	};
 }

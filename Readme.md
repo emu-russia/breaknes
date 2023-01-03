@@ -41,7 +41,7 @@ Killer features.
 - Breaknes GUI (managed part): 30%
 - BreaksCore (native part): 50%
 - 6502 Core: 100%
-- APU: 10/15
+- APU: 11/15
 - PPU: 100%
 - Boards: 1/5
 - Mappers: 0.5 (Only NROM partially)
