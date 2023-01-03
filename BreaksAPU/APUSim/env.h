@@ -26,6 +26,7 @@ namespace APUSim
 		EnvelopeUnit(APU* parent);
 		~EnvelopeUnit();
 
-		void sim(BaseLogic::TriState V[4], BaseLogic::TriState WR_Reg, BaseLogic::TriState WR_LC, BaseLogic::TriState& LC);
+		void sim(BaseLogic::TriState V[4], BaseLogic::TriState WR_Reg, BaseLogic::TriState WR_LC);
+		BaseLogic::TriState get_LC();
 	};
 }

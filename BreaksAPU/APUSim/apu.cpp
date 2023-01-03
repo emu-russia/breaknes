@@ -59,17 +59,20 @@ namespace APUSim
 
 		// Sound channels
 
+		wire.SQA_LC = square[0]->get_LC();
+		wire.SQB_LC = square[1]->get_LC();
+		wire.TRI_LC = tri->get_LC();
+		wire.RND_LC = noise->get_LC();
+
 		lc[0]->sim(0, wire.W4003, wire.SQA_LC, wire.NOSQA);
 		lc[1]->sim(1, wire.W4007, wire.SQB_LC, wire.NOSQB);
 		lc[2]->sim(2, wire.W400B, wire.TRI_LC, wire.NOTRI);
 		lc[3]->sim(3, wire.W400F, wire.RND_LC, wire.NORND);
 
-		for (size_t n = 0; n < 2; n++)
-		{
-			square[n]->sim();
-		}
-		noise->sim();
+		square[0]->sim(wire.W4000, wire.W4001, wire.W4002, wire.W4003);
+		square[1]->sim(wire.W4004, wire.W4005, wire.W4006, wire.W4007);
 		tri->sim();
+		noise->sim();
 		dpcm->sim();
 
 		sim_OutputPads(outputs, data, addr);
