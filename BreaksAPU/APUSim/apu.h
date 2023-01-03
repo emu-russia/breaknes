@@ -59,6 +59,7 @@ namespace APUSimUnitTest
 }
 
 #include "common.h"
+#include "debug.h"
 #include "clkgen.h"
 #include "core.h"
 #include "dma.h"
@@ -69,7 +70,6 @@ namespace APUSimUnitTest
 #include "square.h"
 #include "triangle.h"
 #include "regs.h"
-#include "debug.h"
 #include "dac.h"
 
 namespace APUSim
@@ -148,8 +148,8 @@ namespace APUSim
 			BaseLogic::TriState SPR_CPU;
 			BaseLogic::TriState SPR_PPU;
 			BaseLogic::TriState RW;				// To pad
-			BaseLogic::TriState RD;
-			BaseLogic::TriState WR;
+			BaseLogic::TriState RD;				// To DataBus pads
+			BaseLogic::TriState WR;				// To DataBus pads
 			
 			BaseLogic::TriState n_DMC_AB;
 			BaseLogic::TriState RUNDMC;

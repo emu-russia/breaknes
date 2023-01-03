@@ -31,27 +31,20 @@ namespace APUSim
 
 		// Low
 
-		TriState Carry = TriState::One;
+		TriState carry = TriState::One;
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			Carry = spr_lo[n].sim(Carry, RES, W4014, SPRS, n_ACLK, TriState::Zero);
+			carry = spr_lo[n].sim(carry, RES, W4014, SPRS, n_ACLK, TriState::Zero);
 		}
 
-		SPRE = Carry;
+		SPRE = carry;
 
 		// High
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			// In this place, for simplicity, the FF based on n_ACLK is not simulated.
-
-			if (W4014 == TriState::One)
-			{
-				TriState Dx = (apu->DB >> n) & 1 ? TriState::One : TriState::Zero;
-
-				spr_hi[n].set(Dx, TriState::One);
-			}
+			spr_hi[n].sim(n_ACLK, W4014, apu->GetDBBit(n));
 		}
 
 		// SPR_Addr
@@ -100,31 +93,19 @@ namespace APUSim
 	void DMA::sim_DMA_Buffer()
 	{
 		apu->wire.RW = NOR(apu->wire.SPR_PPU, NOT(apu->wire.RnW));
+		apu->wire.RD = apu->wire.RW;
+		apu->wire.WR = NAND3(apu->wire.n_R4015, apu->wire.n_DBGRD, apu->wire.RW);
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			TriState Dx = (apu->DB >> n) & 1 ? TriState::One : TriState::Zero;
-
-			spr_buf[n].set (Dx, apu->wire.PHI2);
+			spr_buf[n].set (apu->GetDBBit(n), apu->wire.PHI2);
 		}
 
 		if (apu->wire.SPR_PPU)
 		{
-			uint8_t val = 0;
-
 			for (size_t n = 0; n < 8; n++)
 			{
-				val |= (NOT(spr_buf[n].nget()) == TriState::One ? 1 : 0) << n;
-			}
-
-			if (apu->DB_Dirty)
-			{
-				apu->DB &= val;
-			}
-			else
-			{
-				apu->DB = val;
-				apu->DB_Dirty = true;
+				apu->SetDBBit(n, NOT(spr_buf[n].nget()));
 			}
 		}
 	}
@@ -136,21 +117,40 @@ namespace APUSim
 
 		// Only one tristate can be active
 
-		if (DMC_AB)
+		if (DMC_AB == TriState::One)
 		{
 			apu->Ax = apu->DMC_Addr;
 		}
-		if (apu->wire.SPR_CPU)
+		if (apu->wire.SPR_CPU == TriState::One)
 		{
 			apu->Ax = apu->SPR_Addr;
 		}
-		if (apu->wire.SPR_PPU)
+		if (apu->wire.SPR_PPU == TriState::One)
 		{
 			apu->Ax = PPU_Addr;
 		}
-		if (CPU_AB)
+		if (CPU_AB == TriState::One)
 		{
 			apu->Ax = apu->CPU_Addr;
 		}
+	}
+
+	void DMA::Debug_Get(APU_Registers* info)
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[8]{};
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val_lo[n] = spr_buf[n].get();
+		}
+		info->DMABuffer = Pack(val_lo);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val_lo[n] = spr_lo[n].get();
+			val_hi[n] = spr_hi[n].get();
+		}
+		info->DMAAddress = Pack(val_lo) | ((uint32_t)Pack(val_hi) << 8);
 	}
 }

@@ -76,6 +76,19 @@ namespace APUSim
 
 	void APU::GetDebugInfo_Regs(APU_Registers& regs)
 	{
-
+		//TBD:
+		//DBOutputLatch
+		//DBInputLatch
+		//OutReg
+		regs.LengthCounterSQA = lc[0]->Debug_GetCnt();
+		regs.LengthCounterSQB = lc[1]->Debug_GetCnt();
+		regs.LengthCounterTRI = lc[2]->Debug_GetCnt();
+		regs.LengthCounterRND = lc[3]->Debug_GetCnt();
+		square[0]->Debug_Get(&regs, 0, regs.SQVolumeReg[0], regs.SQDecayCounter[0], regs.SQEnvelopeCounter[0]);
+		square[1]->Debug_Get(&regs, 1, regs.SQVolumeReg[1], regs.SQDecayCounter[1], regs.SQEnvelopeCounter[1]);
+		tri->Debug_Get(&regs);
+		noise->Debug_Get(&regs, regs.RNDVolumeReg, regs.RNDDecayCounter, regs.RNDEnvelopeCounter);
+		dpcm->Debug_Get(&regs);
+		dma->Debug_Get(&regs);
 	}
 }

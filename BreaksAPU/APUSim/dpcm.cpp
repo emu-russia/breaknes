@@ -50,8 +50,8 @@ namespace APUSim
 
 		for (size_t n = 0; n < 4; n++)
 		{
-			f_reg[n].sim(n_ACLK, W4010, apu->GetDBBit(n));
-			Fx[n] = f_reg[n].get();
+			freq_reg[n].sim(n_ACLK, W4010, apu->GetDBBit(n));
+			Fx[n] = freq_reg[n].get();
 		}
 
 		loop_reg.sim(n_ACLK, W4010, apu->GetDBBit(6));
@@ -396,4 +396,70 @@ namespace APUSim
 	}
 
 #pragma endregion "DPCM Addressing & Output"
+
+	void DpcmChan::Debug_Get(APU_Registers* info)
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[8]{};
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			val_lo[n] = freq_reg[n].get();
+		}
+		info->DPCMFreqReg = PackNibble(val_lo);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val_lo[n] = scnt_reg[n].get();
+		}
+		info->DPCMSampleReg = Pack(val_lo);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val_lo[n] = scnt[n].get();
+		}
+		for (size_t n = 0; n < 4; n++)
+		{
+			val_hi[n] = scnt[n + 8].get();
+		}
+		info->DPCMSampleCounter = Pack(val_lo) | ((uint32_t)PackNibble(val_hi) << 8);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val_lo[n] = buf_reg[n].get();
+		}
+		info->DPCMSampleBuffer = Pack(val_lo);
+
+		for (size_t n = 0; n < 3; n++)
+		{
+			val_lo[n] = sbcnt[n].get();
+		}
+		val_lo[3] = TriState::Zero;
+		info->DPCMSampleBitCounter = PackNibble(val_lo);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val_lo[n] = addr_reg[n].get();
+		}
+		info->DPCMAddressReg = Pack(val_lo);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val_lo[n] = addr_lo[n].get();
+		}
+		for (size_t n = 0; n < 7; n++)
+		{
+			val_hi[n] = addr_hi[n].get();
+		}
+		val_hi[7] = TriState::One;
+		info->DPCMAddressCounter = Pack(val_lo) | ((uint32_t)Pack(val_hi) << 8);
+
+		val_lo[0] = out_reg.get();
+		for (size_t n = 0; n < 6; n++)
+		{
+			val_lo[n + 1] = out_cnt[n].get();
+		}
+		val_lo[7] = TriState::Zero;
+		info->DPCMOutput = Pack(val_lo);
+	}
 }

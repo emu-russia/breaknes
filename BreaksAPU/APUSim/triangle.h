@@ -40,5 +40,7 @@ namespace APUSim
 
 		void sim();
 		BaseLogic::TriState get_LC();
+
+		void Debug_Get(APU_Registers* info);
 	};
 }

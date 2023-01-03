@@ -55,7 +55,6 @@ namespace APUSim
 		clkgen->sim();
 		core_int->sim();
 		regs->sim();
-		dma->sim();
 
 		// Sound channels
 
@@ -76,6 +75,8 @@ namespace APUSim
 		dpcm->sim();
 
 		regs->sim_DebugRegisters();
+
+		dma->sim();
 
 		sim_OutputPads(outputs, data, addr);
 		dac->sim(AUX);

@@ -28,5 +28,7 @@ namespace APUSim
 
 		void sim(BaseLogic::TriState V[4], BaseLogic::TriState WR_Reg, BaseLogic::TriState WR_LC);
 		BaseLogic::TriState get_LC();
+
+		void Debug_Get(uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter);
 	};
 }

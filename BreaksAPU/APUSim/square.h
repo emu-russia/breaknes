@@ -25,6 +25,7 @@ namespace APUSim
 		void sim(BaseLogic::TriState n_ACLK3, BaseLogic::TriState n_ACLK, BaseLogic::TriState WR, BaseLogic::TriState DB_in, BaseLogic::TriState ADDOUT, BaseLogic::TriState n_sum);
 		BaseLogic::TriState get_nFx(BaseLogic::TriState ADDOUT);
 		BaseLogic::TriState get_Fx(BaseLogic::TriState ADDOUT);
+		BaseLogic::TriState get();
 	};
 
 	class AdderBit
@@ -89,5 +90,7 @@ namespace APUSim
 
 		void sim(BaseLogic::TriState WR0, BaseLogic::TriState WR1, BaseLogic::TriState WR2, BaseLogic::TriState WR3, BaseLogic::TriState NOSQ, BaseLogic::TriState* SQ_Out);
 		BaseLogic::TriState get_LC();
+
+		void Debug_Get(APU_Registers *info, size_t id, uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter);
 	};
 }

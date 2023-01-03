@@ -71,4 +71,27 @@ namespace APUSim
 	{
 		return lc_reg.nget();
 	}
+
+	void EnvelopeUnit::Debug_Get(uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter)
+	{
+		TriState val[4]{};
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			val[n] = vol_reg[n].get();
+		}
+		VolumeReg = PackNibble(val);
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			val[n] = decay_cnt[n].get();
+		}
+		DecayCounter = PackNibble(val);
+
+		for (size_t n = 0; n < 4; n++)
+		{
+			val[n] = env_cnt[n].get();
+		}
+		EnvCounter = PackNibble(val);
+	}
 }
