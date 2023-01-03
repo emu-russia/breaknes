@@ -96,6 +96,14 @@ namespace BaseLogic
 	TriState NOR10(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7, TriState in8, TriState in9);
 
 	/// <summary>
+	/// 11-nor
+	/// </summary>
+	/// <param name="in"></param>
+	/// <returns></returns>
+	TriState NOR11(TriState in[11]);
+	TriState NOR11(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7, TriState in8, TriState in9, TriState in10);
+
+	/// <summary>
 	/// 12-nor
 	/// </summary>
 	/// <param name="in"></param>

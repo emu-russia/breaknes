@@ -95,6 +95,16 @@ namespace BaseLogic
 		return (TriState)((~(in0 | in1 | in2 | in3 | in4 | in5 | in6 | in7 | in8 | in9)) & 1);
 	}
 
+	TriState NOR11(TriState in[11])
+	{
+		return (TriState)((~(in[0] | in[1] | in[2] | in[3] | in[4] | in[5] | in[6] | in[7] | in[8] | in[9] | in[10])) & 1);
+	}
+
+	TriState NOR11(TriState in0, TriState in1, TriState in2, TriState in3, TriState in4, TriState in5, TriState in6, TriState in7, TriState in8, TriState in9, TriState in10)
+	{
+		return (TriState)((~(in0 | in1 | in2 | in3 | in4 | in5 | in6 | in7 | in8 | in9 | in10)) & 1);
+	}
+
 	TriState NOR12(TriState in[12])
 	{
 		return (TriState)((~(in[0] | in[1] | in[2] | in[3] | in[4] | in[5] | in[6] | in[7] | in[8] | in[9] | in[10] | in[11])) & 1);
