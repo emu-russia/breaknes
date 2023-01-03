@@ -10,18 +10,30 @@ namespace NSFPlayer
 	{
 		APUSim::Revision rev;
 
-		if (!strcmp(apuRev, "RP2A03"))
+		if (!strcmp(apuRev, "RP2A03G"))
 		{
-			rev = APUSim::Revision::RP2A03;
+			rev = APUSim::Revision::RP2A03G;
+		}
+		else if (!strcmp(apuRev, "RP2A03H"))
+		{
+			rev = APUSim::Revision::RP2A03H;
 		}
 		else if (!strcmp(apuRev, "RP2A07"))
 		{
 			rev = APUSim::Revision::RP2A07;
 		}
+		else if (!strcmp(apuRev, "UA6527P"))
+		{
+			rev = APUSim::Revision::UA6527P;
+		}
+		else if (!strcmp(apuRev, "TA03NP1"))
+		{
+			rev = APUSim::Revision::TA03NP1;
+		}
 		else
 		{
-			// If someone passed on an obscure APU revision, stay with the default reference RP2A03, as the most studied.
-			rev = APUSim::Revision::RP2A03;
+			// If someone passed on an obscure APU revision, stay with the default reference RP2A03G, as the most studied.
+			rev = APUSim::Revision::RP2A03G;
 		}
 
 		core = new M6502Core::M6502(true, true);
