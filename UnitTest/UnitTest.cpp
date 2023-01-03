@@ -84,44 +84,44 @@ namespace UnitTest
 
 		TEST_METHOD(TestCounters)
 		{
-			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
 			Assert::IsTrue(ut.TestCounters());
 		}
 
 		TEST_METHOD(TestDiv)
 		{
-			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
 			Assert::IsTrue(ut.TestDiv(false));
 		}
 
 		TEST_METHOD(TestAclk)
 		{
-			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
 			Assert::IsTrue(ut.TestAclk());
 		}
 
 		TEST_METHOD(TestLFO)
 		{
-			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
 			Assert::IsTrue(ut.TestLFO(false));
 			Assert::IsTrue(ut.TestLFO(true));
 		}
 
 		TEST_METHOD(TestRegOps)
 		{
-			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
 			Assert::IsTrue(ut.TestRegOps());
 		}
 
 		TEST_METHOD(TestLengthDecoder)
 		{
-			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
 			Assert::IsTrue(ut.TestLengthDecoder());
 		}
 
 		TEST_METHOD(TestLengthCounter)
 		{
-			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03);
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
 			Assert::IsTrue(ut.TestLengthCounter());
 		}
 	};
