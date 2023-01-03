@@ -32,7 +32,7 @@ namespace APUSim
 			uint8_t sqb;	// Square1 channel digital output 0..15 (4 bit)
 			uint8_t tri;	// Triangle channel digital output 0..15 (4 bit)
 			uint8_t rnd;	// Noise channel digital output 0..15 (4 bit)
-			uint8_t dmc;	// DeltaMod channel digital output 0..127 (6 bit)
+			uint8_t dmc;	// DeltaMod channel digital output 0..127 (7 bit)
 		} RAW;
 	};
 

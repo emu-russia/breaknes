@@ -58,7 +58,7 @@ namespace APUSim
 			lin_reg[n].sim(n_ACLK, W4008, apu->GetDBBit(n));
 		}
 
-		TriState carry;
+		TriState carry = TriState::One;
 
 		for (size_t n = 0; n < 7; n++)
 		{
