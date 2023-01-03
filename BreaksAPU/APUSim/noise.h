@@ -54,5 +54,7 @@ namespace APUSim
 
 		void sim();
 		BaseLogic::TriState get_LC();
+
+		void Debug_Get(APU_Registers* info, uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter);
 	};
 }

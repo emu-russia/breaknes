@@ -77,6 +77,40 @@ namespace APUSim
 	/// </summary>
 	struct APU_Registers
 	{
-		uint32_t Bogus;
+		uint32_t DBOutputLatch;		// 8
+		uint32_t DBInputLatch;		// 8
+		uint32_t OutReg;			// 3, latched
+		uint32_t LengthCounterSQA;	// 8
+		uint32_t LengthCounterSQB;	// 8
+		uint32_t LengthCounterTRI;	// 8
+		uint32_t LengthCounterRND;	// 8
+		uint32_t SQFreqReg[2];		// 11
+		uint32_t SQShiftReg[2];		// 3
+		uint32_t SQFreqCounter[2];	// 11
+		uint32_t SQVolumeReg[2];		// 4
+		uint32_t SQDecayCounter[2];	// 4
+		uint32_t SQEnvelopeCounter[2]; // 4
+		uint32_t SQSweepReg[2];		// 3
+		uint32_t SQSweepCounter[2];	// 3
+		uint32_t SQDutyCounter[2];	// 3
+		uint32_t TRILinearReg;		// 7
+		uint32_t TRILinearCounter;	// 7
+		uint32_t TRIFreqReg;		// 11
+		uint32_t TRIFreqCounter;	// 11
+		uint32_t TRIOutputCounter;	// 5
+		uint32_t RNDFreqReg;		// 4
+		uint32_t RNDVolumeReg;		// 4
+		uint32_t RNDDecayCounter;	// 4
+		uint32_t RNDEnvelopeCounter;	// 4
+		uint32_t DPCMFreqReg;		// 4
+		uint32_t DPCMSampleReg;		// 8
+		uint32_t DPCMSampleCounter;	// 12
+		uint32_t DPCMSampleBuffer;	// 8
+		uint32_t DPCMSampleBitCounter;	// 3
+		uint32_t DPCMAddressReg;	// 8
+		uint32_t DPCMAddressCounter;	// 15
+		uint32_t DPCMOutput;		// 7, counter + lsb
+		uint32_t DMABuffer;			// 8
+		uint32_t DMAAddress;		// 16, counter + register
 	};
 }

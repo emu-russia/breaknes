@@ -223,6 +223,11 @@ namespace APUSim
 		return NOR(get_nFx(ADDOUT), AND(sum_latch.get(), ADDOUT));
 	}
 
+	TriState FreqRegBit::get()
+	{
+		return transp_latch.get();
+	}
+
 	void AdderBit::sim(TriState F, TriState nF, TriState S, TriState nS, TriState C, TriState nC,
 		TriState& cout, TriState& n_cout, TriState& n_sum)
 	{
@@ -234,5 +239,63 @@ namespace APUSim
 	TriState SquareChan::get_LC()
 	{
 		return env_unit->get_LC();
+	}
+
+	void SquareChan::Debug_Get(APU_Registers* info, size_t id, uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter)
+	{
+		TriState val[4]{};
+		TriState val_byte[8]{};
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val_byte[n] = freq_reg[n].get();
+		}
+		for (size_t n = 0; n < 3; n++)
+		{
+			val[n] = freq_reg[n + 8].get();
+		}
+		val[3] = TriState::Zero;
+		info->SQFreqReg[id] = Pack(val_byte) | ((uint32_t)PackNibble(val) << 8);
+
+		for (size_t n = 0; n < 3; n++)
+		{
+			val[n] = sr_reg[n].get();
+		}
+		val[3] = TriState::Zero;
+		info->SQShiftReg[id] = PackNibble(val);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			val_byte[n] = freq_cnt[n].get();
+		}
+		for (size_t n = 0; n < 3; n++)
+		{
+			val[n] = freq_cnt[n + 8].get();
+		}
+		val[3] = TriState::Zero;
+		info->SQFreqCounter[id] = Pack(val_byte) | ((uint32_t)PackNibble(val) << 8);
+
+		for (size_t n = 0; n < 3; n++)
+		{
+			val[n] = sweep_reg[n].get();
+		}
+		val[3] = TriState::Zero;
+		info->SQSweepReg[id] = PackNibble(val);
+
+		for (size_t n = 0; n < 3; n++)
+		{
+			val[n] = sweep_cnt[n].get();
+		}
+		val[3] = TriState::Zero;
+		info->SQSweepCounter[id] = PackNibble(val);
+
+		for (size_t n = 0; n < 3; n++)
+		{
+			val[n] = duty_cnt[n].get();
+		}
+		val[3] = TriState::Zero;
+		info->SQDutyCounter[id] = PackNibble(val);
+
+		env_unit->Debug_Get(VolumeReg, DecayCounter, EnvCounter);
 	}
 }

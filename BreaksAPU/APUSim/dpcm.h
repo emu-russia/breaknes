@@ -77,7 +77,7 @@ namespace APUSim
 		BaseLogic::DLatch pcm_latch{};
 		BaseLogic::DLatch nout_latch{};
 
-		RegisterBit f_reg[4]{};
+		RegisterBit freq_reg[4]{};
 		RegisterBit loop_reg{};
 		RegisterBit irq_reg{};
 		DPCM_LFSRBit lfsr[9]{};
@@ -116,5 +116,7 @@ namespace APUSim
 		~DpcmChan();
 
 		void sim();
+
+		void Debug_Get(APU_Registers* info);
 	};
 }
