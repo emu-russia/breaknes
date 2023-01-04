@@ -17,10 +17,8 @@ namespace APUSim
 
 	void DMA::sim()
 	{
-		sim_DMA_Address();
 		sim_DMA_Control();
-		sim_DMA_Buffer();
-		sim_AddressMux();
+		sim_DMA_Address();
 	}
 
 	void DMA::sim_DMA_Address()
@@ -39,6 +37,7 @@ namespace APUSim
 		}
 
 		SPRE = carry;
+		spre_latch.set(SPRE, n_ACLK);
 
 		// High
 
@@ -74,7 +73,6 @@ namespace APUSim
 
 		DMADirToggle.set(NOR(n_ACLK, NOR(n_ACLK2, DMADirToggle.get())));
 
-		spre_latch.set(SPRE, n_ACLK);
 		TriState NOSPR = nospr_latch.nget();
 
 		StartDMA.set(NOR(W4014, NOR3(NOT(NOSPR), RES, StartDMA.get())));

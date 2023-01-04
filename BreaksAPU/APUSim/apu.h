@@ -70,6 +70,7 @@ namespace APUSimUnitTest
 #include "square.h"
 #include "triangle.h"
 #include "regs.h"
+#include "pads.h"
 #include "dac.h"
 
 namespace APUSim
@@ -123,6 +124,7 @@ namespace APUSim
 		friend SquareChan;
 		friend TriangleChan;
 		friend DMA;
+		friend Pads;
 		friend DAC;
 
 		/// <summary>
@@ -216,6 +218,7 @@ namespace APUSim
 		SquareChan* square[2]{};
 		TriangleChan* tri = nullptr;
 		DMA* dma = nullptr;
+		Pads* pads = nullptr;
 		DAC* dac = nullptr;
 
 		// Internal buses.
@@ -235,9 +238,6 @@ namespace APUSim
 		BaseLogic::TriState TRI_Out[4]{};
 		BaseLogic::TriState RND_Out[4]{};
 		BaseLogic::TriState DMC_Out[8]{};		// msb is not used. This is done for the convenience of packing the value in byte.
-
-		void sim_InputPads(BaseLogic::TriState inputs[], uint8_t* data);
-		void sim_OutputPads(BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr);
 
 		BaseLogic::TriState GetDBBit(size_t n);
 		void SetDBBit(size_t n, BaseLogic::TriState bit_val);
