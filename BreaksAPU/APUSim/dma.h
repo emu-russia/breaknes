@@ -29,14 +29,14 @@ namespace APUSim
 
 		void sim_DMA_Address();
 		void sim_DMA_Control();
-		void sim_DMA_Buffer();
-		void sim_AddressMux();
 
 	public:
 		DMA(APU* parent);
 		~DMA();
 
 		void sim();
+		void sim_DMA_Buffer();
+		void sim_AddressMux();
 
 		void Debug_Get(APU_Registers* info);
 	};

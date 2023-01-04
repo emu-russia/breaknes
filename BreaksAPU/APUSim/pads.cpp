@@ -15,7 +15,7 @@ namespace APUSim
 	{
 	}
 
-	void Pads::sim_InputPads(TriState inputs[], uint8_t* data)
+	void Pads::sim_InputPads(TriState inputs[])
 	{
 		apu->wire.n_CLK = NOT(inputs[(size_t)APU_Input::CLK]);
 		apu->wire.DBG = inputs[(size_t)APU_Input::DBG];
@@ -28,7 +28,7 @@ namespace APUSim
 			apu->wire.n_IRQ, unused, TriState::One, TriState::Zero);
 	}
 
-	void Pads::sim_OutputPads(TriState outputs[], uint8_t* data, uint16_t* addr)
+	void Pads::sim_OutputPads(TriState outputs[], uint16_t* addr)
 	{
 		TriState NotDBG_RES = NOR(apu->wire.DBG, NOT(apu->wire.RES));
 		outputs[(size_t)APU_Output::M2] = NOT(NotDBG_RES) == TriState::One ? NOR(apu->wire.n_M2, NotDBG_RES) : TriState::Z;
@@ -50,6 +50,43 @@ namespace APUSim
 		out[0].sim(unused, OUT[0], unused, outputs[(size_t)APU_Output::OUT_0], apu->wire.RES, TriState::One);
 		out[1].sim(unused, OUT[1], unused, outputs[(size_t)APU_Output::OUT_1], apu->wire.RES, TriState::One);
 		out[2].sim(unused, OUT[2], unused, outputs[(size_t)APU_Output::OUT_2], apu->wire.RES, TriState::One);
+	}
+
+	void Pads::sim_DataBusInput(uint8_t* data)
+	{
+		TriState val[8]{};
+
+		if (apu->wire.RD != TriState::One)
+		{
+			apu->DB_Dirty = false;
+			return;
+		}
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			TriState db_bit = ((*data) >> n) & 1 ? TriState::One : TriState::Zero;
+			data_bus[n].sim_Input(db_bit, val[n], apu->wire.RD);
+		}
+
+		apu->DB = Pack(val);
+		apu->DB_Dirty = true;
+	}
+
+	void Pads::sim_DataBusOutput(uint8_t* data)
+	{
+		TriState val[8]{};
+
+		if (apu->wire.WR != TriState::One)
+		{
+			return;
+		}
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			data_bus[n].sim_Output(apu->GetDBBit(n), val[n], apu->wire.WR);
+;		}
+
+		*data = Pack(val);
 	}
 
 	void Pads::sim_OutReg()
@@ -82,6 +119,26 @@ namespace APUSim
 		if (NOT(rd) == TriState::One)
 		{
 			pad_out = NOT(NOR(out_latch.get(), rd));
+		}
+	}
+
+	void BIDIR::sim_Input(TriState pad_in, TriState& from_pad, TriState rd)
+	{
+		in_latch.set(pad_in, TriState::One);
+
+		if (rd == TriState::One)
+		{
+			from_pad = NOT(in_latch.nget());
+		}
+	}
+
+	void BIDIR::sim_Output(TriState to_pad, TriState& pad_out, TriState wr)
+	{
+		out_latch.set(to_pad, TriState::One);
+
+		if (wr == TriState::One)
+		{
+			pad_out = out_latch.get();
 		}
 	}
 

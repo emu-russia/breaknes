@@ -48,7 +48,7 @@ namespace APUSim
 
 	void APU::sim(TriState inputs[], TriState outputs[], uint8_t* data, uint16_t* addr, AudioOutSignal& AUX)
 	{
-		pads->sim_InputPads(inputs, data);
+		pads->sim_InputPads(inputs);
 
 		// TBD: For now it is preliminary, but it will be propagated as the individual modules are debugged and simulated
 
@@ -57,6 +57,10 @@ namespace APUSim
 		clkgen->sim();
 		core_int->sim();
 		regs->sim();
+		dma->sim();
+
+		pads->sim_DataBusInput(data);
+		dma->sim_DMA_Buffer();
 
 		// Sound channels
 
@@ -78,9 +82,10 @@ namespace APUSim
 
 		regs->sim_DebugRegisters();
 
-		dma->sim();
+		dma->sim_AddressMux();
 
-		pads->sim_OutputPads(outputs, data, addr);
+		pads->sim_OutputPads(outputs, addr);
+		pads->sim_DataBusOutput(data);
 		dac->sim(AUX);
 	}
 

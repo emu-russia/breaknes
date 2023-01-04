@@ -14,6 +14,9 @@ namespace APUSim
 			BaseLogic::TriState& from_pad, BaseLogic::TriState& pad_out,
 			BaseLogic::TriState rd, BaseLogic::TriState wr);
 
+		void sim_Input(BaseLogic::TriState pad_in, BaseLogic::TriState& from_pad, BaseLogic::TriState rd);
+		void sim_Output(BaseLogic::TriState to_pad, BaseLogic::TriState& pad_out, BaseLogic::TriState wr);
+
 		BaseLogic::TriState get_in();
 		BaseLogic::TriState get_out();
 	};
@@ -42,8 +45,11 @@ namespace APUSim
 		Pads(APU* parent);
 		~Pads();
 
-		void sim_InputPads(BaseLogic::TriState inputs[], uint8_t* data);
-		void sim_OutputPads(BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr);
+		void sim_InputPads(BaseLogic::TriState inputs[]);
+		void sim_OutputPads(BaseLogic::TriState outputs[], uint16_t* addr);
+
+		void sim_DataBusInput(uint8_t* data);
+		void sim_DataBusOutput(uint8_t* data);
 
 		void Debug_Get(APU_Registers* info);
 	};
