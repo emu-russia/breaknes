@@ -76,10 +76,7 @@ namespace APUSim
 
 	void APU::GetDebugInfo_Regs(APU_Registers& regs)
 	{
-		//TBD:
-		//DBOutputLatch
-		//DBInputLatch
-		//OutReg
+		pads->Debug_Get(&regs);
 		regs.LengthCounterSQA = lc[0]->Debug_GetCnt();
 		regs.LengthCounterSQB = lc[1]->Debug_GetCnt();
 		regs.LengthCounterTRI = lc[2]->Debug_GetCnt();
