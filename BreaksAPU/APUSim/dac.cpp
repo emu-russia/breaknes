@@ -85,7 +85,9 @@ namespace APUSim
 		{
 			for (size_t sqa = 0; sqa < 16; sqa++)
 			{
-				float v = AUX_A_Resistance(sqa, sqb) * 1000.f;
+				float r = AUX_A_Resistance(sqa, sqb);
+				float i = Vdd / (r + ExtRes);
+				float v = i * ExtRes * 1000.f;
 				if (v > maxv)
 				{
 					maxv = v;
@@ -98,7 +100,9 @@ namespace APUSim
 		{
 			for (size_t sqa = 0; sqa < 16; sqa++)
 			{
-				float v = AUX_A_Resistance(sqa, sqb) * 1000.f;
+				float r = AUX_A_Resistance(sqa, sqb);
+				float i = Vdd / (r + ExtRes);
+				float v = i * ExtRes * 1000.f;
 				auxa_norm[(sqb << 4) | sqa] = v / maxv;
 			}
 		}
@@ -113,7 +117,9 @@ namespace APUSim
 			{
 				for (size_t tri = 0; tri < 16; tri++)
 				{
-					float v = AUX_B_Resistance(tri, rnd, dmc) * 1000.f;
+					float r = AUX_B_Resistance(tri, rnd, dmc);
+					float i = Vdd / (r + ExtRes);
+					float v = i * ExtRes * 1000.f;
 					if (v > maxv)
 					{
 						maxv = v;
@@ -129,7 +135,9 @@ namespace APUSim
 			{
 				for (size_t tri = 0; tri < 16; tri++)
 				{
-					float v = AUX_B_Resistance(tri, rnd, dmc) * 1000.f;
+					float r = AUX_B_Resistance(tri, rnd, dmc);
+					float i = Vdd / (r + ExtRes);
+					float v = i * ExtRes * 1000.f;
 					auxb_norm[(dmc << 8) | (rnd << 4) | tri] = v / maxv;
 				}
 			}
