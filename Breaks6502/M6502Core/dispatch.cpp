@@ -83,15 +83,15 @@ namespace M6502Core
 		memop_in[4] = d[125];
 		TriState n_MemOp = NOR5(memop_in);
 
-		// T5 / T6
+		// T6 / T7 (RMW)
 
-		t5_latch1.set(NOR(AND(t5_latch2.get(), n_ready), t56_latch.get()), PHI1);
-		t6_latch2.set(t6_latch1.nget(), PHI1);
-		t56_latch.set(NOR3(n_SHIFT, n_MemOp, n_ready), PHI2);
-		t5_latch2.set(t5_latch1.nget(), PHI2);
-		TriState RMW_T6 = t5_latch1.nget();
-		t6_latch1.set(NAND(RMW_T6, NOT(n_ready)), PHI2);
-		TriState RMW_T7 = NOT(t6_latch2.nget());
+		t6_latch1.set(NOR(AND(t6_latch2.get(), n_ready), t67_latch.get()), PHI1);
+		t7_latch2.set(t7_latch1.nget(), PHI1);
+		t67_latch.set(NOR3(n_SHIFT, n_MemOp, n_ready), PHI2);
+		t6_latch2.set(t6_latch1.nget(), PHI2);
+		TriState RMW_T6 = t6_latch1.nget();
+		t7_latch1.set(NAND(RMW_T6, NOT(n_ready)), PHI2);
+		TriState RMW_T7 = NOT(t7_latch2.nget());
 
 		core->wire.RMW_T6 = RMW_T6;
 		core->wire.RMW_T7 = RMW_T7;

@@ -7,11 +7,11 @@ namespace M6502Core
 		BaseLogic::DLatch acr_latch1;
 		BaseLogic::DLatch acr_latch2;
 
-		BaseLogic::DLatch t56_latch;
-		BaseLogic::DLatch t5_latch1;
-		BaseLogic::DLatch t5_latch2;
+		BaseLogic::DLatch t67_latch;
 		BaseLogic::DLatch t6_latch1;
 		BaseLogic::DLatch t6_latch2;
+		BaseLogic::DLatch t7_latch1;
+		BaseLogic::DLatch t7_latch2;
 		
 		BaseLogic::DLatch tres2_latch;
 		BaseLogic::DLatch tresx_latch1;
