@@ -20,12 +20,12 @@ namespace M6502Core
 			bool n_T5 = (n >> 13) & 1;
 			bool n_ready = (n >> 14) & 1;
 			bool T0 = (n >> 15) & 1;
-			bool T5 = (n >> 16) & 1;
+			bool RMW_T6 = (n >> 16) & 1;
 			bool BRFW = (n >> 17) & 1;
 			bool n_C_OUT = (n >> 18) & 1;
 
 			temp_tab1[n] = PreCalc1(ir, n_T0, n_T1X, n_T2, n_T3, n_T4, n_T5, 
-				n_ready, T0, T5, BRFW, n_C_OUT);
+				n_ready, T0, RMW_T6, BRFW, n_C_OUT);
 		}
 
 		prev_temp1.bits = 0xff;
@@ -126,7 +126,7 @@ namespace M6502Core
 
 		if (PHI2 == TriState::One)
 		{
-			// Vector: IR+TX, n_ready, T0, T5, BRFW, n_C_OUT  (lsb -> msb)
+			// Vector: IR+TX, n_ready, T0, RMW_T6, BRFW, n_C_OUT  (lsb -> msb)
 
 			size_t n = 0;
 			n |= core->ir->IROut;
@@ -291,7 +291,7 @@ namespace M6502Core
 	}
 
 	CarryBCD_TempWire ALUControl::PreCalc1(uint8_t ir, bool n_T0, bool n_T1X, bool n_T2, bool n_T3, bool n_T4, bool n_T5,
-		bool n_ready, bool T0, bool T5, bool BRFW, bool n_C_OUT)
+		bool n_ready, bool T0, bool RMW_T6, bool BRFW, bool n_C_OUT)
 	{
 		TriState* d;
 		DecoderInput decoder_in{};
@@ -354,12 +354,12 @@ namespace M6502Core
 		incsb[2] = d[41];
 		incsb[3] = d[42];
 		incsb[4] = d[43];
-		incsb[5] = AND(T5 ? TriState::One : TriState::Zero, d[44]);
+		incsb[5] = AND(RMW_T6 ? TriState::One : TriState::Zero, d[44]);
 		temp.INC_SB = NOT(NOR6(incsb));
 
 		temp.BRX = NOT(NOR3(d[49], d[50], NOR(NOT(BR3), BRFW ? TriState::One : TriState::Zero)));
 
-		temp.CSET = NAND(NAND(NOR(n_C_OUT ? TriState::One : TriState::Zero, NOR(T0 ? TriState::One : TriState::Zero, T5 ? TriState::One : TriState::Zero)), OR(d[52], d[53])), NOT(d[54]));
+		temp.CSET = NAND(NAND(NOR(n_C_OUT ? TriState::One : TriState::Zero, NOR(T0 ? TriState::One : TriState::Zero, RMW_T6 ? TriState::One : TriState::Zero)), OR(d[52], d[53])), NOT(d[54]));
 
 		temp.n_ADL_ADD_Derived = NOR(temp.n_ADL_ADD ? TriState::One : TriState::Zero, NOT(RET));
 
