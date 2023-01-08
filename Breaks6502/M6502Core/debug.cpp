@@ -64,12 +64,12 @@ namespace M6502Core
 		info->ACRL1 = wire.ACRL1 == TriState::One ? 1 : 0;
 		info->ACRL2 = wire.ACRL2 == TriState::One ? 1 : 0;
 		info->T1 = disp->getT1() == TriState::One ? 1 : 0;
-		info->T5 = wire.T5 == TriState::One ? 1 : 0;
-		info->T6 = wire.T6 == TriState::One ? 1 : 0;
+		info->RMW_T6 = wire.RMW_T6 == TriState::One ? 1 : 0;
+		info->RMW_T7 = wire.RMW_T7 == TriState::One ? 1 : 0;
 		info->ENDS = wire.ENDS == TriState::One ? 1 : 0;
 		info->ENDX = wire.ENDX == TriState::One ? 1 : 0;
 		info->TRES1 = wire.TRES1 == TriState::One ? 1 : 0;
-		info->TRESX = wire.TRESX == TriState::One ? 1 : 0;
+		info->n_TRESX = wire.n_TRESX == TriState::One ? 1 : 0;
 		info->BRFW = wire.BRFW == TriState::One ? 1 : 0;
 		info->n_BRTAKEN = wire.n_BRTAKEN == TriState::One ? 1 : 0;
 		info->ACR = alu->getACR() == TriState::One ? 1 : 0;

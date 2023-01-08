@@ -36,14 +36,14 @@ namespace M6502Core
 
 		if (PHI2 == TriState::One)
 		{
-			TriState T5 = core->wire.T5;
-			TriState T6 = core->wire.T6;
+			TriState RMW_T6 = core->wire.RMW_T6;
+			TriState RMW_T7 = core->wire.RMW_T7;
 
 			size_t n = 0;
 			n |= core->ir->IROut;
 			n |= ((size_t)core->TxBits << 8);
-			n |= ((size_t)T5 << 14);
-			n |= ((size_t)T6 << 15);
+			n |= ((size_t)RMW_T6 << 14);
+			n |= ((size_t)RMW_T7 << 15);
 
 			FlagsControl_TempWire temp = temp_tab[n];
 
@@ -146,10 +146,10 @@ namespace M6502Core
 
 		TriState n_SB_X = NOR3(d[14], d[15], d[16]);
 		TriState n_SB_Y = NOR3(d[18], d[19], d[20]);
-		TriState SBXY = NAND(n_SB_X, n_SB_Y);
+		TriState n_SBXY = NAND(n_SB_X, n_SB_Y);
 
 		TriState ztst[4]{};
-		ztst[0] = SBXY;
+		ztst[0] = n_SBXY;
 		ztst[1] = NOT(n_SB_AC);
 		ztst[2] = T6 ? TriState::One : TriState::Zero;
 		ztst[3] = _AND;

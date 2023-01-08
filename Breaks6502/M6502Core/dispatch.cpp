@@ -89,12 +89,12 @@ namespace M6502Core
 		t6_latch2.set(t6_latch1.nget(), PHI1);
 		t56_latch.set(NOR3(n_SHIFT, n_MemOp, n_ready), PHI2);
 		t5_latch2.set(t5_latch1.nget(), PHI2);
-		TriState T5 = t5_latch1.nget();
-		t6_latch1.set(NAND(T5, NOT(n_ready)), PHI2);
-		TriState T6 = NOT(t6_latch2.nget());
+		TriState RMW_T6 = t5_latch1.nget();
+		t6_latch1.set(NAND(RMW_T6, NOT(n_ready)), PHI2);
+		TriState RMW_T7 = NOT(t6_latch2.nget());
 
-		core->wire.T5 = T5;
-		core->wire.T6 = T6;
+		core->wire.RMW_T6 = RMW_T6;
+		core->wire.RMW_T7 = RMW_T7;
 	}
 
 	void Dispatcher::sim_AfterRandomLogic()
@@ -114,8 +114,8 @@ namespace M6502Core
 		TriState n_ready = core->wire.n_ready;
 		TriState T0 = core->wire.T0;
 		TriState B_OUT = core->brk->getB_OUT(BRK6E);
-		TriState T5 = core->wire.T5;
-		TriState T6 = core->wire.T6;
+		TriState RMW_T6 = core->wire.RMW_T6;
+		TriState RMW_T7 = core->wire.RMW_T7;
 		TriState ACRL1 = core->wire.ACRL1;
 		TriState ACRL2 = core->wire.ACRL2;
 		TriState RDY = core->wire.RDY;
@@ -184,7 +184,7 @@ namespace M6502Core
 
 			TriState endx_2[4]{};
 			endx_2[0] = NOR3(d[96], NOT(n_SHIFT), n_MemOp);
-			endx_2[1] = T6;
+			endx_2[1] = RMW_T7;
 			endx_2[2] = NOT(NOR6(endx_1));
 			endx_2[3] = BR3;
 
@@ -202,12 +202,12 @@ namespace M6502Core
 		tresx_nor[1] = tresx_latch1.get();
 		tresx_nor[2] = n_ready;
 		tresx_nor[3] = REST;
-		TriState TRESX = NOR3(NOR4(tresx_nor), BRK6E, tresx_latch2.nget());
-		tres2_latch.set(TRESX, PHI1);
+		TriState n_TRESX = NOR3(NOR4(tresx_nor), BRK6E, tresx_latch2.nget());
+		tres2_latch.set(n_TRESX, PHI1);
 
 		comp_latch1.set(TRES1, PHI1);
 		comp_latch2.set(n_TWOCYCLE, PHI1);
-		comp_latch3.set(TRESX, PHI1);
+		comp_latch3.set(n_TRESX, PHI1);
 
 		// WR
 
@@ -220,8 +220,8 @@ namespace M6502Core
 			wr_in[1] = PC_DB;
 			wr_in[2] = d[98];
 			wr_in[3] = d[100];
-			wr_in[4] = T5;
-			wr_in[5] = T6;
+			wr_in[4] = RMW_T6;
+			wr_in[5] = RMW_T7;
 			wr_latch.set(NOR6(wr_in), PHI2);
 		}
 
@@ -239,7 +239,7 @@ namespace M6502Core
 		core->wire.ENDS = ENDS;
 		core->wire.ENDX = ENDX;
 		core->wire.TRES1 = TRES1;
-		core->wire.TRESX = TRESX;
+		core->wire.n_TRESX = n_TRESX;
 	}
 
 	TriState Dispatcher::getTRES2()

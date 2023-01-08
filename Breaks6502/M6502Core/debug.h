@@ -65,12 +65,12 @@ namespace M6502Core
 		uint8_t ACRL1;
 		uint8_t ACRL2;
 		uint8_t T1;
-		uint8_t T5;
-		uint8_t T6;
+		uint8_t RMW_T6;
+		uint8_t RMW_T7;
 		uint8_t ENDS;
 		uint8_t ENDX;
 		uint8_t TRES1;
-		uint8_t TRESX;
+		uint8_t n_TRESX;
 		uint8_t BRFW;
 		uint8_t n_BRTAKEN;
 		uint8_t ACR;
