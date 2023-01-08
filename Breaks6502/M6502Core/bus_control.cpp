@@ -13,11 +13,11 @@ namespace M6502Core
 		{
 			TriState BR0 = AND(d[73], NOT(core->wire.n_PRDY));
 			TriState _AND = NOT(NOR(d[69], d[70]));
-			TriState T6 = core->wire.T6;
+			TriState RMW_T7 = core->wire.RMW_T7;
 
 			TriState n_SB_X = NOR3(d[14], d[15], d[16]);
 			TriState n_SB_Y = NOR3(d[18], d[19], d[20]);
-			TriState SBXY = NAND(n_SB_X, n_SB_Y);
+			TriState n_SBXY = NAND(n_SB_X, n_SB_Y);
 
 			TriState PGX = NAND(NOR(d[71], d[72]), NOT(BR0));
 
@@ -38,13 +38,13 @@ namespace M6502Core
 			incsb[2] = d[41];
 			incsb[3] = d[42];
 			incsb[4] = d[43];
-			incsb[5] = AND(core->wire.T5, d[44]);
+			incsb[5] = AND(core->wire.RMW_T6, d[44]);
 			TriState INC_SB = NOT(NOR6(incsb));
 
 			TriState BRK6E = core->wire.BRK6E;
 			TriState T0 = core->wire.T0;
 			TriState T1 = core->disp->getT1();
-			TriState T5 = core->wire.T5;
+			TriState T5 = core->wire.RMW_T6;
 			TriState IR0 = core->ir->IROut & 1 ? TriState::One : TriState::Zero;
 
 			TriState n_DL_ADL = NOR(d[81], d[82]);
@@ -86,7 +86,7 @@ namespace M6502Core
 
 			// External address bus control
 
-			TriState n_ADL_ABL = NAND(NOR(T5, T6), NOR(NOT(NOR(d[71], d[72])), n_ready));
+			TriState n_ADL_ABL = NAND(NOR(T5, RMW_T7), NOR(NOT(NOR(d[71], d[72])), n_ready));
 			adl_abl_latch.set(n_ADL_ABL, PHI2);
 
 			TriState n1[4];
@@ -127,9 +127,9 @@ namespace M6502Core
 			z_adh17_latch.set(NOR(d[57], NOT(n_DL_ADL)), PHI2);
 
 			TriState ztst[4]{};
-			ztst[0] = SBXY;
+			ztst[0] = n_SBXY;
 			ztst[1] = NOT(n_SB_AC);
-			ztst[2] = T6;
+			ztst[2] = RMW_T7;
 			ztst[3] = _AND;
 			TriState n_ZTST = NOR4(ztst);
 

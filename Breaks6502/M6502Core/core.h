@@ -154,13 +154,13 @@ namespace M6502Core
 			BaseLogic::TriState n_T0;
 			BaseLogic::TriState n_T1X;
 			BaseLogic::TriState WR;
-			BaseLogic::TriState T5;				// Processor in cycle RMW T6 (the name T5 is the old name of the signal, but we will not rename it anymore)
-			BaseLogic::TriState T6;				// Processor in cycle RMW T7 (the name T6 is the old name of the signal, but we will not rename it anymore)
+			BaseLogic::TriState RMW_T6;			// Processor in cycle RMW T6 (the name T5 is the old name of the signal)
+			BaseLogic::TriState RMW_T7;			// Processor in cycle RMW T7 (the name T6 is the old name of the signal)
 			BaseLogic::TriState n_1PC;			// 0: Increment the program counter
 			BaseLogic::TriState ENDS;
 			BaseLogic::TriState ENDX;
 			BaseLogic::TriState TRES1;
-			BaseLogic::TriState TRESX;
+			BaseLogic::TriState n_TRESX;
 			BaseLogic::TriState n_T2;
 			BaseLogic::TriState n_T3;
 			BaseLogic::TriState n_T4;

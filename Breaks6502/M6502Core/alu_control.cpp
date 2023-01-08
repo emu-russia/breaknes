@@ -37,7 +37,7 @@ namespace M6502Core
 		TriState PHI1 = core->wire.PHI1;
 		TriState PHI2 = core->wire.PHI2;
 		TriState n_ready = core->wire.n_ready;
-		TriState T5 = core->wire.T5;
+		TriState RMW_T6 = core->wire.RMW_T6;
 		TriState n_C_OUT = core->random->flags->getn_C_OUT();
 
 		nready_latch.set(n_ready, PHI1);
@@ -62,7 +62,7 @@ namespace M6502Core
 
 		// ADD/SB7
 
-		TriState SR = NOT(NOR(d[75], AND(d[76], T5)));
+		TriState SR = NOT(NOR(d[75], AND(d[76], RMW_T6)));
 		TriState n_ROR = NOT(d[27]);
 		cout_latch.set(NOT(n_C_OUT), PHI2);
 		mux_latch1.set(NOR(nready_latch.get(), NOT(SR)), PHI2);
@@ -115,7 +115,7 @@ namespace M6502Core
 		TriState PHI2 = core->wire.PHI2;
 		TriState n_ready = core->wire.n_ready;
 		TriState T0 = core->wire.T0;
-		TriState T5 = core->wire.T5;
+		TriState RMW_T6 = core->wire.RMW_T6;
 		TriState BRFW = core->random->branch_logic->getBRFW();
 		TriState n_C_OUT = core->random->flags->getn_C_OUT();
 		TriState n_D_OUT = core->random->flags->getn_D_OUT();
@@ -133,7 +133,7 @@ namespace M6502Core
 			n |= ((size_t)core->TxBits << 8);
 			n |= ((size_t)n_ready << 14);
 			n |= ((size_t)T0 << 15);
-			n |= ((size_t)T5 << 16);
+			n |= ((size_t)RMW_T6 << 16);
 			n |= ((size_t)BRFW << 17);
 			n |= ((size_t)n_C_OUT << 18);
 
@@ -214,12 +214,12 @@ namespace M6502Core
 		TriState PHI1 = core->wire.PHI1;
 		TriState PHI2 = core->wire.PHI2;
 		TriState n_ready = core->wire.n_ready;
-		TriState T5 = core->wire.T5;
+		TriState RMW_T6 = core->wire.RMW_T6;
 
 		TriState EOR = d[29];
 		TriState _OR = NOT(NOR(d[32], n_ready));
 		TriState _AND = NOT(NOR(d[69], d[70]));
-		TriState SR = NOT(NOR(d[75], AND(d[76], T5)));
+		TriState SR = NOT(NOR(d[75], AND(d[76], RMW_T6)));
 
 		// ALU operation commands (ANDS, EORS, ORS, SRS, SUMS)
 
@@ -253,7 +253,7 @@ namespace M6502Core
 		TriState* d = core->decoder_out;
 		TriState PHI2 = core->wire.PHI2;
 		TriState T1 = core->disp->getT1();
-		TriState T6 = core->wire.T6;
+		TriState RMW_T7 = core->wire.RMW_T7;
 
 		TriState RTS_5 = d[84];
 		TriState RTI_5 = d[26];
@@ -267,7 +267,7 @@ namespace M6502Core
 		if (PHI2 == TriState::One)
 		{
 			TriState sb06[5]{};
-			sb06[0] = T6;
+			sb06[0] = RMW_T7;
 			sb06[1] = STKOP;
 			sb06[2] = JSR_5;
 			sb06[3] = T1;

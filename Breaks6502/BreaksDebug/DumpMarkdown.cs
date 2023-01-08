@@ -56,11 +56,11 @@ namespace BreaksDebug
             }
             else
             {
-                if (internals.T5 != 0)
+                if (internals.RMW_T6 != 0)
                 {
                     Tx = "T6_RMW";
                 }
-                else if (internals.T6 != 0)
+                else if (internals.RMW_T7 != 0)
                 {
                     Tx = "T7_RMW";
                 }
@@ -107,12 +107,12 @@ namespace BreaksDebug
             md += "WR: " + internals.WR + ", ";
             md += "ACRL1: " + internals.ACRL1 + ", ";
             md += "ACRL2: " + internals.ACRL2 + ", ";
-            md += "T5: " + internals.T5 + ", ";
-            md += "T6: " + internals.T6 + ", ";
+            md += "T6: " + internals.RMW_T6 + ", ";
+            md += "T7: " + internals.RMW_T7 + ", ";
             md += "ENDS: " + internals.ENDS + ", ";
             md += "ENDX: " + internals.ENDX + ", ";
             md += "TRES1: " + internals.TRES1 + ", ";
-            md += "TRESX: " + internals.TRESX;
+            md += "/TRESX: " + internals.n_TRESX;
             md += "|\n";
 
             // Interrupts

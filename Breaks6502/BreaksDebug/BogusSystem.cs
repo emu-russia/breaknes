@@ -183,9 +183,9 @@ namespace BreaksDebug
             [Category("Dispatcher")]
             public byte T1 { get; set; }
             [Category("Dispatcher")]
-            public byte T5 { get; set; }
+            public byte RMW_T6 { get; set; }
             [Category("Dispatcher")]
-            public byte T6 { get; set; }
+            public byte RMW_T7 { get; set; }
             [Category("Dispatcher")]
             public byte ENDS { get; set; }
             [Category("Dispatcher")]
@@ -193,7 +193,7 @@ namespace BreaksDebug
             [Category("Dispatcher")]
             public byte TRES1 { get; set; }
             [Category("Dispatcher")]
-            public byte TRESX { get; set; }
+            public byte n_TRESX { get; set; }
             [Category("Branch Logic")]
             public byte BRFW { get; set; }
             [Category("Branch Logic")]
@@ -356,12 +356,12 @@ namespace BreaksDebug
             public byte ACRL1;
             public byte ACRL2;
             public byte T1;
-            public byte T5;
-            public byte T6;
+            public byte RMW_T6;
+            public byte RMW_T7;
             public byte ENDS;
             public byte ENDX;
             public byte TRES1;
-            public byte TRESX;
+            public byte n_TRESX;
             public byte BRFW;
             public byte n_BRTAKEN;
             public byte ACR;
@@ -611,12 +611,12 @@ namespace BreaksDebug
             res.ACRL1 = info.ACRL1;
             res.ACRL2 = info.ACRL2;
             res.T1 = info.T1;
-            res.T5 = info.T5;
-            res.T6 = info.T6;
+            res.RMW_T6 = info.RMW_T6;
+            res.RMW_T7 = info.RMW_T7;
             res.ENDS = info.ENDS;
             res.ENDX = info.ENDX;
             res.TRES1 = info.TRES1;
-            res.TRESX = info.TRESX;
+            res.n_TRESX = info.n_TRESX;
             res.BRFW = info.BRFW;
             res.n_BRTAKEN = info.n_BRTAKEN;
             res.ACR = info.ACR;
