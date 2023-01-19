@@ -65,7 +65,7 @@ namespace APUSim
 
 		reg_mask.sim(n_ACLK, W4017, apu->GetDBBit(6));
 		int_ff.set(NOR4(NOR(int_ff.get(), AND(n_mode, pla[3])), NOR(n_R4015, PHI1), reg_mask.get(), RES));
-		int_status.set(int_ff.nget(), ACLK);
+		int_status.set(int_ff.nget(), n_ACLK);
 		apu->SetDBBit(6, NOT(n_R4015) == TriState::One ? NOT(int_status.get()) : TriState::Z);
 		apu->wire.INT = NOT(NOR(int_ff.get(), DMCINT));
 
