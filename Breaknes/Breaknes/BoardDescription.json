@@ -8,7 +8,7 @@
 	[
 		{
 			"name": "HVC-CPU-01",
-			"apu": "RP2A03",
+			"apu": "RP2A03G",
 			"ppu": "RP2C02G",
 			"p1": "Fami"
 		}

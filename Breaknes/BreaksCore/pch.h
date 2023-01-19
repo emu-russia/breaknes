@@ -7,6 +7,7 @@
 #include <Windows.h>
 
 #include "../../Common/BaseLogicLib/BaseLogic.h"
+#include "../../Common/JsonLib/Json.h"
 
 #include "../../Breaks6502/M6502Core/core.h"
 #include "../../BreaksAPU/APUSim/apu.h"

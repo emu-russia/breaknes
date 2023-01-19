@@ -33,7 +33,7 @@ namespace APUSim
 		BIDIR n_in[2]{};
 		BIDIR out[3]{};
 
-		BaseLogic::TriState OUT[3]{};
+		BaseLogic::TriState OUT_Signal[3]{};
 		RegisterBit out_reg[3]{};
 		BaseLogic::DLatch out_latch[3]{};
 

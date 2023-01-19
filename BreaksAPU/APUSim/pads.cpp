@@ -47,9 +47,9 @@ namespace APUSim
 		n_in[0].sim(unused, apu->wire.n_R4016, unused, outputs[(size_t)APU_Output::n_IN0], apu->wire.RES, TriState::One);
 		n_in[1].sim(unused, apu->wire.n_R4017, unused, outputs[(size_t)APU_Output::n_IN1], apu->wire.RES, TriState::One);
 
-		out[0].sim(unused, OUT[0], unused, outputs[(size_t)APU_Output::OUT_0], apu->wire.RES, TriState::One);
-		out[1].sim(unused, OUT[1], unused, outputs[(size_t)APU_Output::OUT_1], apu->wire.RES, TriState::One);
-		out[2].sim(unused, OUT[2], unused, outputs[(size_t)APU_Output::OUT_2], apu->wire.RES, TriState::One);
+		out[0].sim(unused, OUT_Signal[0], unused, outputs[(size_t)APU_Output::OUT_0], apu->wire.RES, TriState::One);
+		out[1].sim(unused, OUT_Signal[1], unused, outputs[(size_t)APU_Output::OUT_1], apu->wire.RES, TriState::One);
+		out[2].sim(unused, OUT_Signal[2], unused, outputs[(size_t)APU_Output::OUT_2], apu->wire.RES, TriState::One);
 	}
 
 	void Pads::sim_DataBusInput(uint8_t* data)
@@ -100,7 +100,7 @@ namespace APUSim
 		{
 			out_reg[n].sim(n_ACLK, W4016, apu->GetDBBit(n));
 			out_latch[n].set(out_reg[n].get(), n_ACLK5);
-			OUT[n] = NOT(out_latch[n].nget());
+			OUT_Signal[n] = NOT(out_latch[n].nget());
 		}
 	}
 
