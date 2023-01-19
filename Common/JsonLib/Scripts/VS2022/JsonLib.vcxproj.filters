@@ -15,43 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="UnitTest.cpp">
+    <ClCompile Include="..\..\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CoreUnitTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="APUTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PPUTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EventLog.cpp">
+    <ClCompile Include="..\..\Json.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
+    <ClInclude Include="..\..\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CoreUnitTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="APUTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PPUTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EventLog.h">
+    <ClInclude Include="..\..\Json.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Readme.md" />
+    <None Include="..\..\Readme.md" />
   </ItemGroup>
 </Project>

@@ -12,7 +12,7 @@
 #include "../BreaksAPU/APUSim/apu.h"
 #include "../BreaksPPU/PPUSim/ppu.h"
 
-#include "Json.h"
+#include "../Common/JsonLib/Json.h"
 #include "EventLog.h"
 
 #include "CoreUnitTest.h"

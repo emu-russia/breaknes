@@ -8,13 +8,25 @@ namespace Breaknes
 
 		// Perform a reflection for APU
 
-		if (apu == "RP2A03")
+		if (apu == "RP2A03G")
 		{
-			apu_rev = APUSim::Revision::RP2A03;
+			apu_rev = APUSim::Revision::RP2A03G;
+		}
+		else if (apu == "RP2A03H")
+		{
+			apu_rev = APUSim::Revision::RP2A03H;
 		}
 		else if (apu == "RP2A07")
 		{
 			apu_rev = APUSim::Revision::RP2A07;
+		}
+		else if (apu == "UA6527P")
+		{
+			apu_rev = APUSim::Revision::UA6527P;
+		}
+		else if (apu == "TA03NP1")
+		{
+			apu_rev = APUSim::Revision::TA03NP1;
 		}
 		else
 		{

@@ -163,7 +163,6 @@
     <ClCompile Include="APUTest.cpp" />
     <ClCompile Include="CoreUnitTest.cpp" />
     <ClCompile Include="EventLog.cpp" />
-    <ClCompile Include="Json.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -177,7 +176,6 @@
     <ClInclude Include="APUTest.h" />
     <ClInclude Include="CoreUnitTest.h" />
     <ClInclude Include="EventLog.h" />
-    <ClInclude Include="Json.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PPUTest.h" />
   </ItemGroup>
@@ -193,6 +191,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\JsonLib\Scripts\VS2022\JsonLib.vcxproj">
+      <Project>{8782459b-4e38-4227-aa98-6e7e8e06659c}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
