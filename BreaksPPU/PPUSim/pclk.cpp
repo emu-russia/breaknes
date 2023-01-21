@@ -53,7 +53,7 @@ namespace PPUSim
 		// The software PCLK counter is triggered by the falling edge.
 		// This is purely a software design for convenience, and has nothing to do with PPU hardware circuitry.
 
-		if (prev_pclk == TriState::One && new_pclk == TriState::Zero)
+		if (IsNegedge(prev_pclk, new_pclk))
 		{
 			pclk_counter++;
 		}
