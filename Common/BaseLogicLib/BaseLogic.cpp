@@ -563,4 +563,14 @@ namespace BaseLogic
 	{
 		return (TriState)val;
 	}
+
+	bool IsPosedge(TriState prev_CLK, TriState CLK)
+	{
+		return (prev_CLK == TriState::Zero && CLK == TriState::One);
+	}
+
+	bool IsNegedge(TriState prev_CLK, TriState CLK)
+	{
+		return (prev_CLK == TriState::One && CLK == TriState::Zero);
+	}
 }

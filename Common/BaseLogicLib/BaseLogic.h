@@ -426,4 +426,20 @@ namespace BaseLogic
 	/// <param name="val"></param>
 	/// <returns></returns>
 	TriState FromByte(uint8_t val);
+
+	/// <summary>
+	/// Check that the CLK is in the posedge state.
+	/// </summary>
+	/// <param name="prev_CLK">Previous CLK level</param>
+	/// <param name="CLK">Current CLK level</param>
+	/// <returns></returns>
+	bool IsPosedge(TriState prev_CLK, TriState CLK);
+
+	/// <summary>
+	/// Check that the CLK is in the negedge state.
+	/// </summary>
+	/// <param name="prev_CLK">Previous CLK level</param>
+	/// <param name="CLK">Current CLK level</param>
+	/// <returns></returns>
+	bool IsNegedge(TriState prev_CLK, TriState CLK);
 }
