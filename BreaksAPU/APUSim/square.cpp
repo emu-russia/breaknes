@@ -136,7 +136,8 @@ namespace APUSim
 		reload_latch.set(reload_ff.get(), n_ACLK);
 		reload_ff.set(NOR(NOR3(reload_ff.get(), n_LFO2, reload_latch.get()), WR1));
 
-		swdis_reg.sim(n_ACLK, WR1, apu->GetDBBit(3));
+		swdis_reg.sim(n_ACLK, WR1, apu->GetDBBit(7));
+		TriState SWDIS = swdis_reg.nget();
 
 		for (size_t n = 0; n < 3; n++)
 		{
@@ -158,7 +159,7 @@ namespace APUSim
 
 		SWCTRL = NOR(DEC, n_COUT);
 		TriState SRZ = NOR3(SR[0], SR[1], SR[2]);
-		ADDOUT = NOR7(SRZ, swdis_reg.nget(), NOSQ, SWCTRL, NOT(SCO), n_LFO2, SWEEP);
+		ADDOUT = NOR7(SRZ, SWDIS, NOSQ, SWCTRL, NOT(SCO), n_LFO2, SWEEP);
 	}
 
 	void SquareChan::sim_Duty(TriState WR0, TriState WR3)
