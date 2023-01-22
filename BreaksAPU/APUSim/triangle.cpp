@@ -95,7 +95,7 @@ namespace APUSim
 
 	void TriangleChan::sim_Output()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState PHI1 = apu->wire.PHI1;
 		TriState RES = apu->wire.RES;
 		TriState W401A = apu->wire.W401A;
 		TriState T[5]{};
@@ -103,9 +103,10 @@ namespace APUSim
 
 		TriState carry = TriState::One;
 
+		// The developers decided to use PHI1 for the triangle channel instead of ACLK to smooth out the "stepped" signal.
 		for (size_t n = 0; n < 5; n++)
 		{
-			carry = out_cnt[n].sim(carry, RES, W401A, TSTEP, n_ACLK, apu->GetDBBit(n));
+			carry = out_cnt[n].sim(carry, RES, W401A, TSTEP, PHI1 /* !!! */, apu->GetDBBit(n));
 		}
 
 		TriState T4 = out_cnt[4].get();
