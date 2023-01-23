@@ -47,3 +47,7 @@ Killer features.
 - Mappers: 0.5 (Only NROM partially)
 
 The values reflect mostly a subjective feeling about reaching a critical mass of code. Bugs and improvements can be made ad infinitum.
+
+## License
+
+The license used is Creative Commons Zero 1.0, but with one exception: "You are not allowed to use the source code published here in projects aimed at earning a profit through donations or other means".
