@@ -22,6 +22,7 @@ namespace Breaknes
 #include "../../Common/BaseBoardLib/LS368.h"
 #include "../../Common/BaseBoardLib/LS373.h"
 #include "../../Common/BaseBoardLib/SRAM.h"
+#include "../../Common/DebugHub/DebugHub.h"
 
 #include "AbstractCartridge.h"
 #include "CartridgeFactory.h"

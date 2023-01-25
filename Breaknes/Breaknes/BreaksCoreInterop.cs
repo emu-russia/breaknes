@@ -87,6 +87,9 @@ namespace Breaknes
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void DumpMem(int descrID, [In, Out] [MarshalAs(UnmanagedType.LPArray)] byte [] ptr);
 
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void WriteMem(int descrID, [In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] ptr);
+
 		public static List<MemDesciptor> GetMemoryLayout()
         {
 			List<MemDesciptor> list = new();
@@ -196,6 +199,21 @@ namespace Breaknes
 			return list;
 		}
 
+		public static List<DebugInfoEntry> GetTestDebugInfo()
+		{
+			List<DebugInfoEntry> list = new();
+
+			DebugInfoEntry testEntry = new();
+
+			testEntry.category = "Test Category";
+			testEntry.name = "Test Entry";
+			testEntry.bits = 8;
+			testEntry.value = 123;
+
+			list.Add(testEntry);
+
+			return list;
+		}
 	}
 
 }

@@ -9,10 +9,4 @@
 #include <list>
 #include <cassert>
 
-#include "../../Common/BaseLogicLib/BaseLogic.h"
-#include "../../Breaks6502/M6502Core/core.h"
-#include "../APUSim/apu.h"
-#include "../../Common/DebugHub/DebugHub.h"
-
-#include "BankedSRAM.h"
-#include "NSFPlayerBoard.h"
+#include "DebugHub.h"
