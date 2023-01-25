@@ -67,6 +67,9 @@
     <ProjectReference Include="..\..\..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Common\DebugHub\Scripts\VS2022\DebugHub.vcxproj">
+      <Project>{27b4ef20-6df4-4a3b-9436-9c07ad24ef98}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Common\JsonLib\Scripts\VS2022\JsonLib.vcxproj">
       <Project>{8782459b-4e38-4227-aa98-6e7e8e06659c}</Project>
     </ProjectReference>

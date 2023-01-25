@@ -1,104 +1,169 @@
-// A debug module that basically replicates the Breaknes debug interface and partially implements it for the APU.
+// A debug module that implements the Breaknes debug interface.
 
 #include "pch.h"
 
-NSFPlayer::DebugHub* dbg_hub;
+DebugHub* dbg_hub;
 
-namespace NSFPlayer
+DebugHub::DebugHub()
 {
-	DebugHub::DebugHub()
+}
+
+DebugHub::~DebugHub()
+{
+	DisposeDebugInfo();
+	DisposeMemMap();
+}
+
+void DebugHub::AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry, uint8_t& bits), void* opaque)
+{
+	DebugInfoProvider prov{};
+
+	prov.entry = entry;
+	prov.GetValue = GetValue;
+	prov.opaque = opaque;
+
+	switch (type)
 	{
+		case DebugInfoType::DebugInfoType_Test:
+			testInfo.push_back(prov);
+			break;
+
+		case DebugInfoType::DebugInfoType_Core:
+			coreInfo.push_back(prov);
+			break;
+
+		case DebugInfoType::DebugInfoType_CoreRegs:
+			coreRegsInfo.push_back(prov);
+			break;
+
+		case DebugInfoType::DebugInfoType_APU:
+			apuInfo.push_back(prov);
+			break;
+
+		case DebugInfoType::DebugInfoType_APURegs:
+			apuRegsInfo.push_back(prov);
+			break;
+
+		case DebugInfoType::DebugInfoType_PPU:
+			ppuInfo.push_back(prov);
+			break;
+
+		case DebugInfoType::DebugInfoType_PPURegs:
+			ppuRegsInfo.push_back(prov);
+			break;
+
+		case DebugInfoType::DebugInfoType_Board:
+			boardInfo.push_back(prov);
+			break;
+
+		case DebugInfoType::DebugInfoType_Cart:
+			cartInfo.push_back(prov);
+			break;
 	}
+}
 
-	DebugHub::~DebugHub()
+void DebugHub::DisposeDebugInfo()
+{
+	for (auto it = testInfo.begin(); it != testInfo.end(); ++it)
 	{
-		DisposeDebugInfo();
-		DisposeMemMap();
+		delete it->entry;
 	}
+	testInfo.clear();
 
-	void DebugHub::AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry, uint8_t& bits), void* opaque)
+	for (auto it = coreInfo.begin(); it != coreInfo.end(); ++it)
 	{
-		DebugInfoProvider prov{};
-
-		prov.entry = entry;
-		prov.GetValue = GetValue;
-		prov.opaque = opaque;
-
-		switch (type)
-		{
-			case DebugInfoType::DebugInfoType_Core:
-				coreInfo.push_back(prov);
-				break;
-
-			case DebugInfoType::DebugInfoType_CoreRegs:
-				coreRegsInfo.push_back(prov);
-				break;
-
-			case DebugInfoType::DebugInfoType_APU:
-				apuInfo.push_back(prov);
-				break;
-
-			case DebugInfoType::DebugInfoType_APURegs:
-				apuRegsInfo.push_back(prov);
-				break;
-
-			case DebugInfoType::DebugInfoType_Board:
-				boardInfo.push_back(prov);
-				break;
-		}
+		delete it->entry;
 	}
+	coreInfo.clear();
 
-	void DebugHub::DisposeDebugInfo()
+	for (auto it = coreRegsInfo.begin(); it != coreRegsInfo.end(); ++it)
 	{
-		for (auto it = coreInfo.begin(); it != coreInfo.end(); ++it)
-		{
-			delete it->entry;
-		}
-		coreInfo.clear();
-
-		for (auto it = coreRegsInfo.begin(); it != coreRegsInfo.end(); ++it)
-		{
-			delete it->entry;
-		}
-		coreRegsInfo.clear();
-
-		for (auto it = apuInfo.begin(); it != apuInfo.end(); ++it)
-		{
-			delete it->entry;
-		}
-		apuInfo.clear();
-
-		for (auto it = apuRegsInfo.begin(); it != apuRegsInfo.end(); ++it)
-		{
-			delete it->entry;
-		}
-		apuRegsInfo.clear();
-
-		for (auto it = boardInfo.begin(); it != boardInfo.end(); ++it)
-		{
-			delete it->entry;
-		}
-		boardInfo.clear();
+		delete it->entry;
 	}
+	coreRegsInfo.clear();
 
-	void DebugHub::AddMemRegion(MemDesciptor* descr, uint8_t(*ReadByte)(void* opaque, size_t addr), void(*WriteByte)(void* opaque, size_t addr, uint8_t data), void* opaque, bool cartRelated)
+	for (auto it = apuInfo.begin(); it != apuInfo.end(); ++it)
 	{
-		MemProvider prov{};
-		prov.descr = descr;
-		prov.ReadByte = ReadByte;
-		prov.WriteByte = WriteByte;
-		prov.opaque = opaque;
-		prov.cartRelated = cartRelated;
-		memMap.push_back(prov);
+		delete it->entry;
 	}
+	apuInfo.clear();
 
-	void DebugHub::DisposeMemMap()
+	for (auto it = apuRegsInfo.begin(); it != apuRegsInfo.end(); ++it)
 	{
-		for (auto it = memMap.begin(); it != memMap.end(); ++it)
+		delete it->entry;
+	}
+	apuRegsInfo.clear();
+
+	for (auto it = ppuInfo.begin(); it != ppuInfo.end(); ++it)
+	{
+		delete it->entry;
+	}
+	ppuInfo.clear();
+
+	for (auto it = ppuRegsInfo.begin(); it != ppuRegsInfo.end(); ++it)
+	{
+		delete it->entry;
+	}
+	ppuRegsInfo.clear();
+
+	for (auto it = boardInfo.begin(); it != boardInfo.end(); ++it)
+	{
+		delete it->entry;
+	}
+	boardInfo.clear();
+
+	for (auto it = cartInfo.begin(); it != cartInfo.end(); ++it)
+	{
+		delete it->entry;
+	}
+	cartInfo.clear();
+}
+
+void DebugHub::DisposeCartDebugInfo()
+{
+	for (auto it = cartInfo.begin(); it != cartInfo.end(); ++it)
+	{
+		delete it->entry;
+	}
+	cartInfo.clear();
+}
+
+void DebugHub::AddMemRegion(MemDesciptor* descr, uint8_t(*ReadByte)(void* opaque, size_t addr), void(*WriteByte)(void* opaque, size_t addr, uint8_t data), void* opaque, bool cartRelated)
+{
+	MemProvider prov{};
+	prov.descr = descr;
+	prov.ReadByte = ReadByte;
+	prov.WriteByte = WriteByte;
+	prov.opaque = opaque;
+	prov.cartRelated = cartRelated;
+	memMap.push_back(prov);
+}
+
+void DebugHub::DisposeMemMap()
+{
+	for (auto it = memMap.begin(); it != memMap.end(); ++it)
+	{
+		delete it->descr;
+	}
+	memMap.clear();
+}
+
+void DebugHub::DisposeCartMemMap()
+{
+	auto it = memMap.begin();
+	while (it != memMap.end())
+	{
+		MemProvider prov = *it;
+
+		if (prov.cartRelated)
 		{
-			delete it->descr;
+			delete prov.descr;
+			memMap.erase(it++);
 		}
-		memMap.clear();
+		else
+		{
+			it++;
+		}
 	}
 }
 
@@ -106,7 +171,7 @@ void CreateDebugHub()
 {
 	if (dbg_hub == nullptr)
 	{
-		dbg_hub = new NSFPlayer::DebugHub();
+		dbg_hub = new DebugHub();
 	}
 }
 
@@ -137,7 +202,7 @@ extern "C"
 		switch (type)
 		{
 			case DebugInfoType::DebugInfoType_Test:
-				return 0;
+				return dbg_hub->testInfo.size();
 
 			case DebugInfoType::DebugInfoType_Core:
 				return dbg_hub->coreInfo.size();
@@ -152,22 +217,22 @@ extern "C"
 				return dbg_hub->apuRegsInfo.size();
 
 			case DebugInfoType::DebugInfoType_PPU:
-				return 0;
+				return dbg_hub->ppuInfo.size();
 
 			case DebugInfoType::DebugInfoType_PPURegs:
-				return 0;
+				return dbg_hub->ppuRegsInfo.size();
 
 			case DebugInfoType::DebugInfoType_Board:
 				return dbg_hub->boardInfo.size();
 
 			case DebugInfoType::DebugInfoType_Cart:
-				return 0;
+				return dbg_hub->cartInfo.size();
 		}
 
 		return 0;
 	}
 
-	void CopyOutDebugInfo(std::list<NSFPlayer::DebugInfoProvider>& coll, DebugInfoEntry* entries)
+	void CopyOutDebugInfo(std::list<DebugInfoProvider>& coll, DebugInfoEntry* entries)
 	{
 		DebugInfoEntry* ptr = entries;
 
@@ -193,6 +258,10 @@ extern "C"
 
 		switch (type)
 		{
+			case DebugInfoType::DebugInfoType_Test:
+				CopyOutDebugInfo(dbg_hub->testInfo, entries);
+				break;
+
 			case DebugInfoType::DebugInfoType_Core:
 				CopyOutDebugInfo(dbg_hub->coreInfo, entries);
 				break;
@@ -209,8 +278,20 @@ extern "C"
 				CopyOutDebugInfo(dbg_hub->coreRegsInfo, entries);
 				break;
 
+			case DebugInfoType::DebugInfoType_PPU:
+				CopyOutDebugInfo(dbg_hub->ppuInfo, entries);
+				break;
+
+			case DebugInfoType::DebugInfoType_PPURegs:
+				CopyOutDebugInfo(dbg_hub->ppuRegsInfo, entries);
+				break;
+
 			case DebugInfoType::DebugInfoType_Board:
 				CopyOutDebugInfo(dbg_hub->boardInfo, entries);
+				break;
+
+			case DebugInfoType::DebugInfoType_Cart:
+				CopyOutDebugInfo(dbg_hub->cartInfo, entries);
 				break;
 		}
 	}
@@ -264,7 +345,7 @@ extern "C"
 		if (!dbg_hub)
 			return;
 
-		NSFPlayer::MemProvider prov;
+		MemProvider prov;
 		bool provFound = false;
 
 		size_t counter = 0;
@@ -301,7 +382,7 @@ extern "C"
 		if (!dbg_hub)
 			return;
 
-		NSFPlayer::MemProvider prov;
+		MemProvider prov;
 		bool provFound = false;
 
 		size_t counter = 0;

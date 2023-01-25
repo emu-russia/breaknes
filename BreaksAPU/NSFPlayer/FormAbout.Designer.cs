@@ -63,7 +63,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(177, 50);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "NSFPlayer, 1.0\r\n© emu-russia, 2022";
+			this.label1.Text = "NSFPlayer, 1.0\r\n© emu-russia, 2023";
 			// 
 			// FormAbout
 			// 

@@ -160,12 +160,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Breaknes\BreaksCore\CoreApi.h" />
-    <ClInclude Include="PPUDebug.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PPUPlayerBoard.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PPUDebug.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -185,6 +183,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\DebugHub\Scripts\VS2022\DebugHub.vcxproj">
+      <Project>{27b4ef20-6df4-4a3b-9436-9c07ad24ef98}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\Mappers\Scripts\VS2022\Mappers.vcxproj">
       <Project>{1ce1efd6-4dbf-4d93-ad3a-94c808ea70ab}</Project>

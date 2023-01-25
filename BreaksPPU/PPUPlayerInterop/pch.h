@@ -13,12 +13,12 @@
 #include "../PPUSim/ppu.h"
 #include "../../Common/BaseBoardLib/SRAM.h"
 #include "../../Common/BaseBoardLib/LS373.h"
-#include "../../Breaknes/BreaksCore/CoreApi.h"
 
 #include "../../Mappers/NES_Header.h"
 #include "../../Mappers/NROM.h"
 
-#include "PPUDebug.h"
+#include "../../Common/DebugHub/DebugHub.h"
+
 #include "PPUPlayerBoard.h"
 
 extern PPUPlayer::Board* board;
