@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using System.Runtime.InteropServices;
 
-namespace PPUPlayer
+namespace NSFPlayer
 {
 	public class NSFPlayerInterop
 	{
