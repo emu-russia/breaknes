@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.choosePPURegsDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -84,6 +84,7 @@
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.pictureBoxField = new System.Windows.Forms.PictureBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.signalPlotScan = new System.Windows.Forms.SignalPlot();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -113,7 +114,6 @@
 			this.saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
 			this.openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
-			this.signalPlotScan = new System.Windows.Forms.SignalPlot();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -592,6 +592,21 @@
 			this.tabPage2.Text = "Current Scan";
 			this.tabPage2.UseVisualStyleBackColor = true;
 			// 
+			// signalPlotScan
+			// 
+			this.signalPlotScan.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.signalPlotScan.FillColor = System.Drawing.Color.Black;
+			this.signalPlotScan.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.signalPlotScan.GridColor = System.Drawing.Color.Green;
+			this.signalPlotScan.LabelsColor = System.Drawing.Color.White;
+			this.signalPlotScan.Location = new System.Drawing.Point(0, 0);
+			this.signalPlotScan.Name = "signalPlotScan";
+			this.signalPlotScan.SignalColor = System.Drawing.Color.LightGreen;
+			this.signalPlotScan.Size = new System.Drawing.Size(850, 436);
+			this.signalPlotScan.TabIndex = 0;
+			this.signalPlotScan.Text = "signalPlot1";
+			this.signalPlotScan.ZeroColor = System.Drawing.Color.Red;
+			// 
 			// tabPage3
 			// 
 			this.tabPage3.Controls.Add(this.splitContainer1);
@@ -850,14 +865,14 @@
 			// dataGridView1
 			// 
 			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
 			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.dataGridView1.Location = new System.Drawing.Point(0, 0);
 			this.dataGridView1.Name = "dataGridView1";
@@ -905,20 +920,6 @@
 			// 
 			this.openFileDialogHEX.DefaultExt = "hex";
 			this.openFileDialogHEX.Filter = "Logisim Hex files|*.hex|All files|*.*";
-			// 
-			// signalPlotScan
-			// 
-			this.signalPlotScan.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.signalPlotScan.FillColor = System.Drawing.Color.Black;
-			this.signalPlotScan.GridColor = System.Drawing.Color.Green;
-			this.signalPlotScan.LabelsColor = System.Drawing.Color.White;
-			this.signalPlotScan.Location = new System.Drawing.Point(0, 0);
-			this.signalPlotScan.Name = "signalPlotScan";
-			this.signalPlotScan.SignalColor = System.Drawing.Color.LightGreen;
-			this.signalPlotScan.Size = new System.Drawing.Size(850, 436);
-			this.signalPlotScan.TabIndex = 0;
-			this.signalPlotScan.Text = "signalPlot1";
-			this.signalPlotScan.ZeroColor = System.Drawing.Color.Red;
 			// 
 			// FormMain
 			// 

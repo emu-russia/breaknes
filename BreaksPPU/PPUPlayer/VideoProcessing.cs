@@ -31,17 +31,8 @@ namespace PPUPlayer
 		Color[] field = new Color[256 * 240];
 		int CurrentScan = 0;
 
-		// Visualization settings
-
-		static int PixelsPerSample = 1;     // Discrete pixels (Bitmap)
-		static int ScaleY = 1;
-		Color scanBgColor = Color.Gray;
-		Color scanColor = Color.AliceBlue;
-		Color pictureDelimiterColor = Color.Tomato;
-
 		float[] composite_samples = Array.Empty<float>();
 
-		Bitmap? scan_pic = null;
 		Bitmap? field_pic = null;
 
 		void ResetVisualize(bool RAWMode)
@@ -60,9 +51,8 @@ namespace PPUPlayer
 			CurrentScan = 0;
 
 			composite_samples = new float[SamplesPerScan];
-			signalPlotScan.ForceMinMax(true, ppu_features.SyncLevel, ppu_features.WhiteLevel * 4);
+			signalPlotScan.ForceMinMax(true, -0.5f, ppu_features.WhiteLevel * 2);
 
-			scan_pic = null;
 			field_pic = null;
 			GC.Collect();
 		}
@@ -371,10 +361,14 @@ namespace PPUPlayer
 		/// </summary>
 		void VisualizeScanComposite()
 		{
-			for (int i=0; i<SamplesPerScan; i++)
+			int ReadPtr = SyncPos;
+			int max_samples = SamplesPerScan;
+
+			for (int i=0; i<max_samples; i++)
 			{
-				composite_samples[i] = ScanBuffer[i].composite;
+				composite_samples[i] = ScanBuffer[ReadPtr + i].composite;
 			}
+
 			signalPlotScan.PlotSignal(composite_samples);
 		}
 

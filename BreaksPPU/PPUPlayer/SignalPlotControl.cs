@@ -18,10 +18,10 @@ namespace System.Windows.Forms
         private float maxVal = float.MaxValue;
         private bool forced_minmax = false;
 
-		private Pen grid_pen;
-		private Pen signal_pen;
-		private Brush label_brush;
-		private Pen zero_pen;
+		private Pen? grid_pen;
+		private Pen? signal_pen;
+		private Brush? label_brush;
+		private Pen? zero_pen;
 
         private bool gdi_init = false;
 
@@ -34,21 +34,26 @@ namespace System.Windows.Forms
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 		}
 
-        public void ForceMinMax (bool force, float minv, float maxv)
+		/// <summary>
+		/// Prohibit automatic determination of min/max values for the plot.
+		/// </summary>
+		/// <param name="force">true: Prohibit automatic min/max detection; false: Allow</param>
+		/// <param name="minv">Constant minimum value</param>
+		/// <param name="maxv">Constant maximum value</param>
+		public void ForceMinMax (bool force, float minv, float maxv)
         {
             minVal = minv;
             maxVal = maxv;
             forced_minmax = force;
 
-			// Make a slight padding of the signal (10%) at the top and bottom
-
-			float paddingPrc = 5.0f;
-			float gap = (paddingPrc * Math.Abs(maxVal - minVal)) / 100;
-			maxVal += gap;
-			minVal -= gap;
+			MinMaxPadding(5.0f);
 		}
 
-        public void PlotSignal(float[] samples)
+		/// <summary>
+		/// Outputs a signal dump. Automatically performs a control update.
+		/// </summary>
+		/// <param name="samples">Signal dump, float array</param>
+		public void PlotSignal(float[] samples)
         {
             if (data.Length != samples.Length)
             {
@@ -69,12 +74,7 @@ namespace System.Windows.Forms
                         maxVal = data[i];
                 }
 
-				// Make a slight padding of the signal (10%) at the top and bottom
-
-				float paddingPrc = 5.0f;
-				float gap = (paddingPrc * Math.Abs(maxVal - minVal)) / 100;
-				maxVal += gap;
-				minVal -= gap;
+                MinMaxPadding(5.0f);
 			}
 
 			if (!gdi_init)
@@ -83,12 +83,21 @@ namespace System.Windows.Forms
                 signal_pen = new Pen(new SolidBrush(SignalColor));
                 label_brush = new SolidBrush(LabelsColor);
                 zero_pen = new Pen(new SolidBrush(ZeroColor));
-
                 gdi_init = true;
 			}
 
 			Invalidate();
         }
+
+		/// <summary>
+		/// Make a slight padding of the signal (prc) at the top and bottom
+		/// </summary>
+		private void MinMaxPadding (float paddingPrc)
+        {
+			float gap = (paddingPrc * Math.Abs(maxVal - minVal)) / 100;
+			maxVal += gap;
+			minVal -= gap;
+		}
 
 		private void ReallocateGraphics()
         {
@@ -104,27 +113,31 @@ namespace System.Windows.Forms
 			int horizontalStepping = data.Length / 10;
             float verticalStepping = (maxVal - minVal) / 20;
 
-			for (int i = 0; i < data.Length; i += horizontalStepping)
-			{
-				PointF pt = TransformCoord(i, 0.0f);
-                p1.X = pt.X;
-                p1.Y = 0;
-                p2.X = pt.X;
-                p2.Y = Height;
-                gr.DrawLine(grid_pen, p1, p2);
-			}
-
-            for (float val = minVal; val <maxVal; val+=verticalStepping)
+            if (grid_pen != null)
             {
-                PointF pt = TransformCoord(0, val);
-                p1.X = 0;
-                p1.Y = pt.Y;
-                p2.X = Width;
-                p2.Y = pt.Y;
-				gr.DrawLine(grid_pen, p1, p2);
-			}
+                for (int i = 0; i < data.Length; i += horizontalStepping)
+                {
+                    PointF pt = TransformCoord(i, 0.0f);
+                    p1.X = pt.X;
+                    p1.Y = 0;
+                    p2.X = pt.X;
+                    p2.Y = Height;
+                    gr.DrawLine(grid_pen, p1, p2);
+                }
+
+                for (float val = minVal; val < maxVal; val += verticalStepping)
+                {
+                    PointF pt = TransformCoord(0, val);
+                    p1.X = 0;
+                    p1.Y = pt.Y;
+                    p2.X = Width;
+                    p2.Y = pt.Y;
+                    gr.DrawLine(grid_pen, p1, p2);
+                }
+            }
 
             // Zero
+            if (zero_pen != null)
             {
 				PointF pt = TransformCoord(0, 0);
                 p1.X = 0;
@@ -139,11 +152,14 @@ namespace System.Windows.Forms
         {
             PointF prev = TransformCoord(0, data[0]);
 
-            for (int i=1; i<data.Length; i++)
+            if (signal_pen != null)
             {
-                PointF pos = TransformCoord(i, data[i]);
-                gr.DrawLine(signal_pen, prev, pos);
-                prev = pos;
+                for (int i = 1; i < data.Length; i++)
+                {
+                    PointF pos = TransformCoord(i, data[i]);
+                    gr.DrawLine(signal_pen, prev, pos);
+                    prev = pos;
+                }
             }
         }
 
@@ -164,17 +180,20 @@ namespace System.Windows.Forms
 			int horizontalStepping = data.Length / 10;
 			float verticalStepping = (maxVal - minVal) / 20;
 
-			for (int i = horizontalStepping; i < data.Length; i += horizontalStepping)
-			{
-				PointF pt = TransformCoord(i, 0.0f);
-                gr.DrawString(i.ToString(), Font, label_brush, pt);
-			}
+            if (label_brush != null)
+            {
+                for (int i = horizontalStepping; i < data.Length; i += horizontalStepping)
+                {
+                    PointF pt = TransformCoord(i, 0.0f);
+                    gr.DrawString(i.ToString(), Font, label_brush, pt);
+                }
 
-			for (float val = minVal; val < maxVal; val += verticalStepping)
-			{
-				PointF pt = TransformCoord(0, val);
-				gr.DrawString(val.ToString("0.##"), Font, label_brush, pt);
-			}
+                for (float val = minVal; val < maxVal; val += verticalStepping)
+                {
+                    PointF pt = TransformCoord(0, val);
+                    gr.DrawString(val.ToString("0.##"), Font, label_brush, pt);
+                }
+            }
 		}
 
         private void DrawPlot (Graphics gr)
