@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.choosePPURegsDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,6 +59,7 @@
 			this.pPUColorSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadRAWDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadCompositeDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadRGBDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.sendFeedbackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,7 +84,6 @@
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.pictureBoxField = new System.Windows.Forms.PictureBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.pictureBoxScan = new System.Windows.Forms.PictureBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -113,7 +113,7 @@
 			this.saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
 			this.openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
-			this.loadRGBDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.signalPlotScan = new System.Windows.Forms.SignalPlot();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -121,7 +121,6 @@
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxField)).BeginInit();
 			this.tabPage2.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBoxScan)).BeginInit();
 			this.tabPage3.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -380,6 +379,13 @@
 			this.loadCompositeDumpToolStripMenuItem.Text = "Load Composite Dump...";
 			this.loadCompositeDumpToolStripMenuItem.Click += new System.EventHandler(this.loadCompositeDumpToolStripMenuItem_Click);
 			// 
+			// loadRGBDumpToolStripMenuItem
+			// 
+			this.loadRGBDumpToolStripMenuItem.Name = "loadRGBDumpToolStripMenuItem";
+			this.loadRGBDumpToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+			this.loadRGBDumpToolStripMenuItem.Text = "Load RGB Dump...";
+			this.loadRGBDumpToolStripMenuItem.Click += new System.EventHandler(this.loadRGBDumpToolStripMenuItem_Click);
+			// 
 			// helpToolStripMenuItem
 			// 
 			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -578,23 +584,13 @@
 			// 
 			// tabPage2
 			// 
-			this.tabPage2.Controls.Add(this.pictureBoxScan);
+			this.tabPage2.Controls.Add(this.signalPlotScan);
 			this.tabPage2.Location = new System.Drawing.Point(4, 24);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Size = new System.Drawing.Size(850, 436);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Current Scan";
 			this.tabPage2.UseVisualStyleBackColor = true;
-			// 
-			// pictureBoxScan
-			// 
-			this.pictureBoxScan.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.pictureBoxScan.Location = new System.Drawing.Point(0, 0);
-			this.pictureBoxScan.Name = "pictureBoxScan";
-			this.pictureBoxScan.Size = new System.Drawing.Size(850, 436);
-			this.pictureBoxScan.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.pictureBoxScan.TabIndex = 0;
-			this.pictureBoxScan.TabStop = false;
 			// 
 			// tabPage3
 			// 
@@ -854,14 +850,14 @@
 			// dataGridView1
 			// 
 			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
 			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.dataGridView1.Location = new System.Drawing.Point(0, 0);
 			this.dataGridView1.Name = "dataGridView1";
@@ -910,12 +906,19 @@
 			this.openFileDialogHEX.DefaultExt = "hex";
 			this.openFileDialogHEX.Filter = "Logisim Hex files|*.hex|All files|*.*";
 			// 
-			// loadRGBDumpToolStripMenuItem
+			// signalPlotScan
 			// 
-			this.loadRGBDumpToolStripMenuItem.Name = "loadRGBDumpToolStripMenuItem";
-			this.loadRGBDumpToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-			this.loadRGBDumpToolStripMenuItem.Text = "Load RGB Dump...";
-			this.loadRGBDumpToolStripMenuItem.Click += new System.EventHandler(this.loadRGBDumpToolStripMenuItem_Click);
+			this.signalPlotScan.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.signalPlotScan.FillColor = System.Drawing.Color.Black;
+			this.signalPlotScan.GridColor = System.Drawing.Color.Green;
+			this.signalPlotScan.LabelsColor = System.Drawing.Color.White;
+			this.signalPlotScan.Location = new System.Drawing.Point(0, 0);
+			this.signalPlotScan.Name = "signalPlotScan";
+			this.signalPlotScan.SignalColor = System.Drawing.Color.LightGreen;
+			this.signalPlotScan.Size = new System.Drawing.Size(850, 436);
+			this.signalPlotScan.TabIndex = 0;
+			this.signalPlotScan.Text = "signalPlot1";
+			this.signalPlotScan.ZeroColor = System.Drawing.Color.Red;
 			// 
 			// FormMain
 			// 
@@ -940,7 +943,6 @@
 			this.tabPage1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxField)).EndInit();
 			this.tabPage2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBoxScan)).EndInit();
 			this.tabPage3.ResumeLayout(false);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
@@ -1018,7 +1020,6 @@
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.PictureBox pictureBoxForHuman;
-        private System.Windows.Forms.PictureBox pictureBoxScan;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
@@ -1057,5 +1058,6 @@
 		private System.Windows.Forms.OpenFileDialog openFileDialogHEX;
 		private System.Windows.Forms.ToolStripMenuItem loadCompositeDumpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem loadRGBDumpToolStripMenuItem;
+		private System.Windows.Forms.SignalPlot signalPlotScan;
 	}
 }
