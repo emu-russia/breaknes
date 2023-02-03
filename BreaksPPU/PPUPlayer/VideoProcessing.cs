@@ -31,15 +31,8 @@ namespace PPUPlayer
 		Color[] field = new Color[256 * 240];
 		int CurrentScan = 0;
 
-		// Visualization settings
+		float[] composite_samples = Array.Empty<float>();
 
-		static int PixelsPerSample = 1;     // Discrete pixels (Bitmap)
-		static int ScaleY = 1;
-		Color scanBgColor = Color.Gray;
-		Color scanColor = Color.AliceBlue;
-		Color pictureDelimiterColor = Color.Tomato;
-
-		Bitmap? scan_pic = null;
 		Bitmap? field_pic = null;
 
 		void ResetVisualize(bool RAWMode)
@@ -57,7 +50,9 @@ namespace PPUPlayer
 			SyncPos = -1;
 			CurrentScan = 0;
 
-			scan_pic = null;
+			composite_samples = new float[SamplesPerScan];
+			signalPlotScan.ForceMinMax(true, -0.5f, ppu_features.WhiteLevel * 2);
+
 			field_pic = null;
 			GC.Collect();
 		}
@@ -112,7 +107,7 @@ namespace PPUPlayer
 					{
 						ProcessScanComposite();
 
-						if (pictureBoxScan.Visible)
+						if (signalPlotScan.Visible)
 						{
 							VisualizeScanComposite();
 						}
@@ -367,55 +362,14 @@ namespace PPUPlayer
 		void VisualizeScanComposite()
 		{
 			int ReadPtr = SyncPos;
-			int w = SamplesPerScan * PixelsPerSample;
-			int h = 2000;
-			float IRE = (ppu_features.WhiteLevel - ppu_features.BurstLevel) / 100.0f;
 			int max_samples = SamplesPerScan;
 
-			//if (scan_pic == null)
+			for (int i=0; i<max_samples; i++)
 			{
-				scan_pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+				composite_samples[i] = ScanBuffer[ReadPtr + i].composite;
 			}
 
-			while (ScanBuffer[ReadPtr].composite <= ppu_features.SyncLevel)
-			{
-				ReadPtr++;
-				max_samples--;
-			}
-
-			// TBD: Think about the best way to make HSync visible, too.
-
-			int hsync_size = 12;
-
-			ReadPtr -= hsync_size * ppu_features.SamplesPerPCLK;
-			max_samples += hsync_size * ppu_features.SamplesPerPCLK;
-
-			//int PPUPicturePortion = (hsync_size + ppu_features.BackPorchSize) * ppu_features.SamplesPerPCLK * PixelsPerSample;
-
-			Bitmap pic = scan_pic;
-			Graphics gr = Graphics.FromImage(pic);
-			gr.Clear(scanBgColor);
-			Pen pen = new(scanColor);
-			Point prevPt = new(-SamplesPerScan, 0);
-
-			for (int n = 0; n < max_samples; n++)
-			{
-				float sample = ScanBuffer[ReadPtr + n].composite;
-				float ires = ((sample - ppu_features.BurstLevel) / IRE) * ScaleY;
-
-				Point pt = new(PixelsPerSample * n, h - ((int)ires + 300));
-				gr.DrawLine(pen, prevPt, pt);
-				prevPt = pt;
-			}
-
-			// TBD: Draw the separator for the visible part of the signal.
-
-			//gr.DrawLine(new(pictureDelimiterColor),
-			//	new(PPUPicturePortion * PixelsPerSample, 0),
-			//	new(PPUPicturePortion * PixelsPerSample, h - 1));
-
-			pictureBoxScan.Image = scan_pic;
-			gr.Dispose();
+			signalPlotScan.PlotSignal(composite_samples);
 		}
 
 		void VisualizeField()

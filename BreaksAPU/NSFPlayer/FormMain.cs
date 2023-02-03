@@ -57,5 +57,20 @@ namespace NSFPlayer
 			FormAbout dlg = new FormAbout();
 			dlg.ShowDialog();
 		}
+
+		private void loadSaveLogisimHexAsBinToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if ( openFileDialogHEX.ShowDialog() == DialogResult.OK )
+			{
+				string hex_filename = openFileDialogHEX.FileName;
+				byte [] arr = LogisimHEXConv.HEXToByteArray (File.ReadAllText(hex_filename));
+
+				if (saveFileDialogBin.ShowDialog() == DialogResult.OK)
+				{
+					string bin_filename = saveFileDialogBin.FileName;
+					File.WriteAllBytes (bin_filename, arr);
+				}
+			}
+		}
 	}
 }

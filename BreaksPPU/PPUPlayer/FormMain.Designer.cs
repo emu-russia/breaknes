@@ -59,6 +59,7 @@
 			this.pPUColorSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadRAWDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadCompositeDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadRGBDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.sendFeedbackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,7 +84,7 @@
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.pictureBoxField = new System.Windows.Forms.PictureBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.pictureBoxScan = new System.Windows.Forms.PictureBox();
+			this.signalPlotScan = new System.Windows.Forms.SignalPlot();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -113,7 +114,6 @@
 			this.saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
 			this.openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
-			this.loadRGBDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -121,7 +121,6 @@
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxField)).BeginInit();
 			this.tabPage2.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBoxScan)).BeginInit();
 			this.tabPage3.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -380,6 +379,13 @@
 			this.loadCompositeDumpToolStripMenuItem.Text = "Load Composite Dump...";
 			this.loadCompositeDumpToolStripMenuItem.Click += new System.EventHandler(this.loadCompositeDumpToolStripMenuItem_Click);
 			// 
+			// loadRGBDumpToolStripMenuItem
+			// 
+			this.loadRGBDumpToolStripMenuItem.Name = "loadRGBDumpToolStripMenuItem";
+			this.loadRGBDumpToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+			this.loadRGBDumpToolStripMenuItem.Text = "Load RGB Dump...";
+			this.loadRGBDumpToolStripMenuItem.Click += new System.EventHandler(this.loadRGBDumpToolStripMenuItem_Click);
+			// 
 			// helpToolStripMenuItem
 			// 
 			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -578,7 +584,7 @@
 			// 
 			// tabPage2
 			// 
-			this.tabPage2.Controls.Add(this.pictureBoxScan);
+			this.tabPage2.Controls.Add(this.signalPlotScan);
 			this.tabPage2.Location = new System.Drawing.Point(4, 24);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Size = new System.Drawing.Size(850, 436);
@@ -586,15 +592,20 @@
 			this.tabPage2.Text = "Current Scan";
 			this.tabPage2.UseVisualStyleBackColor = true;
 			// 
-			// pictureBoxScan
+			// signalPlotScan
 			// 
-			this.pictureBoxScan.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.pictureBoxScan.Location = new System.Drawing.Point(0, 0);
-			this.pictureBoxScan.Name = "pictureBoxScan";
-			this.pictureBoxScan.Size = new System.Drawing.Size(850, 436);
-			this.pictureBoxScan.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.pictureBoxScan.TabIndex = 0;
-			this.pictureBoxScan.TabStop = false;
+			this.signalPlotScan.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.signalPlotScan.FillColor = System.Drawing.Color.Black;
+			this.signalPlotScan.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.signalPlotScan.GridColor = System.Drawing.Color.Green;
+			this.signalPlotScan.LabelsColor = System.Drawing.Color.White;
+			this.signalPlotScan.Location = new System.Drawing.Point(0, 0);
+			this.signalPlotScan.Name = "signalPlotScan";
+			this.signalPlotScan.SignalColor = System.Drawing.Color.LightGreen;
+			this.signalPlotScan.Size = new System.Drawing.Size(850, 436);
+			this.signalPlotScan.TabIndex = 0;
+			this.signalPlotScan.Text = "signalPlot1";
+			this.signalPlotScan.ZeroColor = System.Drawing.Color.Red;
 			// 
 			// tabPage3
 			// 
@@ -910,13 +921,6 @@
 			this.openFileDialogHEX.DefaultExt = "hex";
 			this.openFileDialogHEX.Filter = "Logisim Hex files|*.hex|All files|*.*";
 			// 
-			// loadRGBDumpToolStripMenuItem
-			// 
-			this.loadRGBDumpToolStripMenuItem.Name = "loadRGBDumpToolStripMenuItem";
-			this.loadRGBDumpToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-			this.loadRGBDumpToolStripMenuItem.Text = "Load RGB Dump...";
-			this.loadRGBDumpToolStripMenuItem.Click += new System.EventHandler(this.loadRGBDumpToolStripMenuItem_Click);
-			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -940,7 +944,6 @@
 			this.tabPage1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxField)).EndInit();
 			this.tabPage2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBoxScan)).EndInit();
 			this.tabPage3.ResumeLayout(false);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
@@ -1018,7 +1021,6 @@
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.PictureBox pictureBoxForHuman;
-        private System.Windows.Forms.PictureBox pictureBoxScan;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
@@ -1057,5 +1059,6 @@
 		private System.Windows.Forms.OpenFileDialog openFileDialogHEX;
 		private System.Windows.Forms.ToolStripMenuItem loadCompositeDumpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem loadRGBDumpToolStripMenuItem;
+		private System.Windows.Forms.SignalPlot signalPlotScan;
 	}
 }
