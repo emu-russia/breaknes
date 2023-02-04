@@ -15,16 +15,18 @@ namespace System.Windows.Forms
 		private BufferedGraphics? gfx;
 		private BufferedGraphicsContext? context;
 
-		private const int fftSize = 1 << 9;		// Power of 2
-		private const int fftSpans = 128;
-		Complex[][] spans = new Complex[fftSpans][];
-		int current_span = 0;
+		private const int fftSize = 1 << 9;     // The size of a single batch for the FFT. Power of 2
+		private const int fftSpans = 128;       // FFT history size
 
-		Complex[] sample_buffer = new Complex[fftSize];
-		int sample_ptr = 0;
-		bool draw = false;      // atomic
+		private Complex[][] spans = new Complex[fftSpans][];        // History of all FFT windows
+		private int current_span = 0;
 
-		double[] window = new double[fftSize];
+		private Complex[] sample_buffer = new Complex[fftSize];     // Buffer for the current signal batch
+		private int sample_ptr = 0;
+
+		private bool draw = false;      // atomic
+
+		private readonly double[] window = new double[fftSize];
 
 		public FurryPlot()
 		{
@@ -42,15 +44,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void ReallocateGraphics()
-		{
-			context = BufferedGraphicsManager.Current;
-			context.MaximumBuffer = new Size(Width + 1, Height + 1);
-
-			gfx = context.Allocate(CreateGraphics(),
-				 new Rectangle(0, 0, Width, Height));
-		}
-
+		/// <summary>
+		/// Add a sample by performing a window transformation beforehand.
+		/// When there are enough samples for the size of the FFT window, the whole batch is processed.
+		/// </summary>
 		public void AddSample (float sample)
 		{
 			while (draw) ;
@@ -61,6 +58,7 @@ namespace System.Windows.Forms
 			{
 				DoFft();
 				sample_ptr = 0;
+				Invalidate();
 			}
 		}
 
@@ -76,7 +74,6 @@ namespace System.Windows.Forms
 			{
 				current_span = 0;
 			}
-			Invalidate();
 		}
 
 		private void DrawFft(Graphics gr)
@@ -88,9 +85,7 @@ namespace System.Windows.Forms
 				int real_x = (current_span + x) % fftSpans;
 				for (int y = 0; y < fftSize; y++)
 				{
-					var ft = spans[real_x][y].Magnitude;
-					var val = (ft / fftSize) * fftSize;
-					val = Math.Min(Math.Max(val, 0), 255);
+					var val = spans[real_x][y].Magnitude;
 					bmp.SetPixel(x, y, GetInfernoRGB((byte)val));
 				}
 			}
@@ -131,6 +126,15 @@ namespace System.Windows.Forms
 
 			Invalidate();
 			base.OnSizeChanged(e);
+		}
+
+		private void ReallocateGraphics()
+		{
+			context = BufferedGraphicsManager.Current;
+			context.MaximumBuffer = new Size(Width + 1, Height + 1);
+
+			gfx = context.Allocate(CreateGraphics(),
+				 new Rectangle(0, 0, Width, Height));
 		}
 
 		// https://ru.wikibooks.org/wiki/Реализации_алгоритмов/Быстрое_преобразование_Фурье

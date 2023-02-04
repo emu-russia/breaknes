@@ -22,10 +22,8 @@ namespace FurryPlotDemo
 
 			while (true)
 			{
-				//furryPlot1.AddSample((float)rnd.NextDouble());
-
-				furryPlot1.AddSample((float)Math.Cos(x));
-				x += (float)(Math.PI / 4);
+				furryPlot1.AddSample((float)Math.Sin(x) + (float)Math.Sin(16 * x));
+				x += 0.1f;
 			}
 		}
 	}
