@@ -78,14 +78,15 @@ namespace System.Windows.Forms
 
 		private void DrawFft(Graphics gr)
 		{
-			Bitmap bmp = new Bitmap(fftSpans, fftSize);
+			Bitmap bmp = new Bitmap(fftSpans, fftSize / 2);
 
 			for (int x=0; x<fftSpans; x++)
 			{
 				int real_x = (current_span + x) % fftSpans;
-				for (int y = 0; y < fftSize; y++)
+				for (int y = 0; y < fftSize / 2; y++)
 				{
-					var val = spans[real_x][y].Magnitude;
+					int real_y = fftSize / 2 + y;
+					var val = spans[real_x][real_y].Magnitude;
 					bmp.SetPixel(x, y, GetInfernoRGB((byte)val));
 				}
 			}
