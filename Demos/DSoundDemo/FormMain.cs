@@ -203,7 +203,6 @@ namespace DSoundDemo
 					int bytesForSamp = bitDepth / 8;
 					int nValues = bytes / bytesForSamp;
 
-
 					float[] asFloat = null;
 					switch (bitDepth)
 					{
