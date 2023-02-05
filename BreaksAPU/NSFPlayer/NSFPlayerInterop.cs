@@ -69,22 +69,22 @@ namespace NSFPlayer
 		}
 
 
-		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetDebugInfoEntryCount(DebugInfoType type);
 
-		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern void GetDebugInfo(DebugInfoType type, IntPtr entries);
 
-		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetMemLayout();
 
-		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern void GetMemDescriptor(int descrID, IntPtr descr);
 
-		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void DumpMem(int descrID, [In, Out] [MarshalAs(UnmanagedType.LPArray)] byte[] ptr);
 
-		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void WriteMem(int descrID, [In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] ptr);
 
 

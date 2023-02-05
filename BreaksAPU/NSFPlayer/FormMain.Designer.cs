@@ -28,12 +28,15 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadNSFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadSaveLogisimHexAsBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.playToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,17 +49,35 @@
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-			this.tabControl1 = new System.Windows.Forms.TabControl();
-			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.toolStripStatusLabelSamples = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabelMsec = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabelState = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel7 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabelACLK = new System.Windows.Forms.ToolStripStatusLabel();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.loadSaveLogisimHexAsBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			this.saveFileDialogBin = new System.Windows.Forms.SaveFileDialog();
+			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButtonDiscard = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
+			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.signalPlot1 = new System.Windows.Forms.SignalPlot();
+			this.furryPlot1 = new System.Windows.Forms.FurryPlot();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
+			this.toolStrip1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
+			this.tabPage1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+			this.splitContainer1.Panel1.SuspendLayout();
+			this.splitContainer1.Panel2.SuspendLayout();
+			this.splitContainer1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuStrip1
@@ -68,7 +89,7 @@
             this.helpToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(691, 24);
+			this.menuStrip1.Size = new System.Drawing.Size(908, 24);
 			this.menuStrip1.TabIndex = 0;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -109,6 +130,21 @@
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
+			// debugToolStripMenuItem
+			// 
+			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadSaveLogisimHexAsBinToolStripMenuItem});
+			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
+			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+			this.debugToolStripMenuItem.Text = "Debug";
+			// 
+			// loadSaveLogisimHexAsBinToolStripMenuItem
+			// 
+			this.loadSaveLogisimHexAsBinToolStripMenuItem.Name = "loadSaveLogisimHexAsBinToolStripMenuItem";
+			this.loadSaveLogisimHexAsBinToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
+			this.loadSaveLogisimHexAsBinToolStripMenuItem.Text = "Load->Save Logisim hex as bin";
+			this.loadSaveLogisimHexAsBinToolStripMenuItem.Click += new System.EventHandler(this.loadSaveLogisimHexAsBinToolStripMenuItem_Click);
+			// 
 			// controlsToolStripMenuItem
 			// 
 			this.controlsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -119,8 +155,8 @@
             this.previousTrackToolStripMenuItem,
             this.nextTrackToolStripMenuItem});
 			this.controlsToolStripMenuItem.Name = "controlsToolStripMenuItem";
-			this.controlsToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
-			this.controlsToolStripMenuItem.Text = "Controls";
+			this.controlsToolStripMenuItem.Size = new System.Drawing.Size(88, 20);
+			this.controlsToolStripMenuItem.Text = "NSF Controls";
 			// 
 			// playToolStripMenuItem
 			// 
@@ -188,69 +224,75 @@
 			// statusStrip1
 			// 
 			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
-			this.statusStrip1.Location = new System.Drawing.Point(0, 389);
+            this.toolStripStatusLabel1,
+            this.toolStripStatusLabelSamples,
+            this.toolStripStatusLabel3,
+            this.toolStripStatusLabelMsec,
+            this.toolStripStatusLabel5,
+            this.toolStripStatusLabelState,
+            this.toolStripStatusLabel7,
+            this.toolStripStatusLabelACLK});
+			this.statusStrip1.Location = new System.Drawing.Point(0, 461);
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size(691, 22);
+			this.statusStrip1.Size = new System.Drawing.Size(908, 24);
 			this.statusStrip1.TabIndex = 1;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
 			// toolStripStatusLabel1
 			// 
 			this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-			this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
-			this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+			this.toolStripStatusLabel1.Size = new System.Drawing.Size(105, 19);
+			this.toolStripStatusLabel1.Text = "Samples collected:";
 			// 
-			// tabControl1
+			// toolStripStatusLabelSamples
 			// 
-			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage2);
-			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tabControl1.Location = new System.Drawing.Point(0, 24);
-			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(691, 365);
-			this.tabControl1.TabIndex = 2;
+			this.toolStripStatusLabelSamples.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			this.toolStripStatusLabelSamples.Name = "toolStripStatusLabelSamples";
+			this.toolStripStatusLabelSamples.Size = new System.Drawing.Size(17, 19);
+			this.toolStripStatusLabelSamples.Text = "0";
 			// 
-			// tabPage1
+			// toolStripStatusLabel3
 			// 
-			this.tabPage1.Location = new System.Drawing.Point(4, 24);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(683, 337);
-			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "Wave Dump";
-			this.tabPage1.UseVisualStyleBackColor = true;
+			this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+			this.toolStripStatusLabel3.Size = new System.Drawing.Size(91, 19);
+			this.toolStripStatusLabel3.Text = "Samples length:";
 			// 
-			// tabPage2
+			// toolStripStatusLabelMsec
 			// 
-			this.tabPage2.Location = new System.Drawing.Point(4, 24);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(600, 244);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "APU Debug";
-			this.tabPage2.UseVisualStyleBackColor = true;
+			this.toolStripStatusLabelMsec.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			this.toolStripStatusLabelMsec.Name = "toolStripStatusLabelMsec";
+			this.toolStripStatusLabelMsec.Size = new System.Drawing.Size(36, 19);
+			this.toolStripStatusLabelMsec.Text = "0 ms";
+			// 
+			// toolStripStatusLabel5
+			// 
+			this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+			this.toolStripStatusLabel5.Size = new System.Drawing.Size(48, 19);
+			this.toolStripStatusLabel5.Text = "Worker:";
+			// 
+			// toolStripStatusLabelState
+			// 
+			this.toolStripStatusLabelState.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			this.toolStripStatusLabelState.Name = "toolStripStatusLabelState";
+			this.toolStripStatusLabelState.Size = new System.Drawing.Size(49, 19);
+			this.toolStripStatusLabelState.Text = "Paused";
+			// 
+			// toolStripStatusLabel7
+			// 
+			this.toolStripStatusLabel7.Name = "toolStripStatusLabel7";
+			this.toolStripStatusLabel7.Size = new System.Drawing.Size(62, 19);
+			this.toolStripStatusLabel7.Text = "ACLK/Sec:";
+			// 
+			// toolStripStatusLabelACLK
+			// 
+			this.toolStripStatusLabelACLK.Name = "toolStripStatusLabelACLK";
+			this.toolStripStatusLabelACLK.Size = new System.Drawing.Size(13, 19);
+			this.toolStripStatusLabelACLK.Text = "0";
 			// 
 			// openFileDialog1
 			// 
 			this.openFileDialog1.DefaultExt = "nsf";
 			this.openFileDialog1.Filter = "NSF files|*.nsf|All files|*.*";
-			// 
-			// debugToolStripMenuItem
-			// 
-			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadSaveLogisimHexAsBinToolStripMenuItem});
-			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
-			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
-			this.debugToolStripMenuItem.Text = "Debug";
-			// 
-			// loadSaveLogisimHexAsBinToolStripMenuItem
-			// 
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Name = "loadSaveLogisimHexAsBinToolStripMenuItem";
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Text = "Load->Save Logisim hex as bin";
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Click += new System.EventHandler(this.loadSaveLogisimHexAsBinToolStripMenuItem_Click);
 			// 
 			// openFileDialogHEX
 			// 
@@ -262,12 +304,129 @@
 			this.saveFileDialogBin.DefaultExt = "bin";
 			this.saveFileDialogBin.Filter = "Binary files|*.bin|All files|*.*";
 			// 
+			// toolStrip1
+			// 
+			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonPlay,
+            this.toolStripButtonDiscard,
+            this.toolStripButtonStop});
+			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+			this.toolStrip1.Name = "toolStrip1";
+			this.toolStrip1.Size = new System.Drawing.Size(908, 25);
+			this.toolStrip1.TabIndex = 2;
+			this.toolStrip1.Text = "toolStrip1";
+			// 
+			// toolStripButtonPlay
+			// 
+			this.toolStripButtonPlay.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButtonPlay.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonPlay.Image")));
+			this.toolStripButtonPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButtonPlay.Name = "toolStripButtonPlay";
+			this.toolStripButtonPlay.Size = new System.Drawing.Size(33, 22);
+			this.toolStripButtonPlay.Text = "Play";
+			this.toolStripButtonPlay.Click += new System.EventHandler(this.toolStripButtonPlay_Click);
+			// 
+			// toolStripButtonDiscard
+			// 
+			this.toolStripButtonDiscard.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButtonDiscard.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonDiscard.Image")));
+			this.toolStripButtonDiscard.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButtonDiscard.Name = "toolStripButtonDiscard";
+			this.toolStripButtonDiscard.Size = new System.Drawing.Size(50, 22);
+			this.toolStripButtonDiscard.Text = "Discard";
+			this.toolStripButtonDiscard.Click += new System.EventHandler(this.toolStripButtonDiscard_Click);
+			// 
+			// toolStripButtonStop
+			// 
+			this.toolStripButtonStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButtonStop.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonStop.Image")));
+			this.toolStripButtonStop.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButtonStop.Name = "toolStripButtonStop";
+			this.toolStripButtonStop.Size = new System.Drawing.Size(35, 22);
+			this.toolStripButtonStop.Text = "Stop";
+			this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
+			// 
+			// tabControl1
+			// 
+			this.tabControl1.Controls.Add(this.tabPage1);
+			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tabControl1.Location = new System.Drawing.Point(0, 49);
+			this.tabControl1.Name = "tabControl1";
+			this.tabControl1.SelectedIndex = 0;
+			this.tabControl1.Size = new System.Drawing.Size(908, 412);
+			this.tabControl1.TabIndex = 3;
+			// 
+			// tabPage1
+			// 
+			this.tabPage1.Controls.Add(this.splitContainer1);
+			this.tabPage1.Location = new System.Drawing.Point(4, 24);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage1.Size = new System.Drawing.Size(900, 384);
+			this.tabPage1.TabIndex = 0;
+			this.tabPage1.Text = "Wave Dump";
+			this.tabPage1.UseVisualStyleBackColor = true;
+			// 
+			// splitContainer1
+			// 
+			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+			this.splitContainer1.Name = "splitContainer1";
+			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// splitContainer1.Panel1
+			// 
+			this.splitContainer1.Panel1.Controls.Add(this.signalPlot1);
+			// 
+			// splitContainer1.Panel2
+			// 
+			this.splitContainer1.Panel2.Controls.Add(this.furryPlot1);
+			this.splitContainer1.Size = new System.Drawing.Size(894, 378);
+			this.splitContainer1.SplitterDistance = 169;
+			this.splitContainer1.TabIndex = 0;
+			// 
+			// signalPlot1
+			// 
+			this.signalPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.signalPlot1.FillColor = System.Drawing.Color.Black;
+			this.signalPlot1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.signalPlot1.GridColor = System.Drawing.Color.Green;
+			this.signalPlot1.LabelsColor = System.Drawing.Color.White;
+			this.signalPlot1.Location = new System.Drawing.Point(0, 0);
+			this.signalPlot1.Name = "signalPlot1";
+			this.signalPlot1.SignalColor = System.Drawing.Color.LightGreen;
+			this.signalPlot1.Size = new System.Drawing.Size(894, 169);
+			this.signalPlot1.TabIndex = 0;
+			this.signalPlot1.Text = "signalPlot1";
+			this.signalPlot1.ZeroColor = System.Drawing.Color.Red;
+			// 
+			// furryPlot1
+			// 
+			this.furryPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.furryPlot1.Location = new System.Drawing.Point(0, 0);
+			this.furryPlot1.Name = "furryPlot1";
+			this.furryPlot1.Size = new System.Drawing.Size(894, 205);
+			this.furryPlot1.TabIndex = 0;
+			this.furryPlot1.Text = "furryPlot1";
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Location = new System.Drawing.Point(4, 24);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage2.Size = new System.Drawing.Size(900, 384);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "APU Debug";
+			this.tabPage2.UseVisualStyleBackColor = true;
+			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(691, 411);
+			this.ClientSize = new System.Drawing.Size(908, 485);
 			this.Controls.Add(this.tabControl1);
+			this.Controls.Add(this.toolStrip1);
 			this.Controls.Add(this.statusStrip1);
 			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
@@ -277,7 +436,14 @@
 			this.menuStrip1.PerformLayout();
 			this.statusStrip1.ResumeLayout(false);
 			this.statusStrip1.PerformLayout();
+			this.toolStrip1.ResumeLayout(false);
+			this.toolStrip1.PerformLayout();
 			this.tabControl1.ResumeLayout(false);
+			this.tabPage1.ResumeLayout(false);
+			this.splitContainer1.Panel1.ResumeLayout(false);
+			this.splitContainer1.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+			this.splitContainer1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -303,13 +469,27 @@
 		private ToolStripMenuItem previousTrackToolStripMenuItem;
 		private ToolStripMenuItem nextTrackToolStripMenuItem;
 		private ToolStripMenuItem nSFInfoToolStripMenuItem;
-		private TabControl tabControl1;
-		private TabPage tabPage1;
-		private TabPage tabPage2;
 		private OpenFileDialog openFileDialog1;
 		private ToolStripMenuItem debugToolStripMenuItem;
 		private ToolStripMenuItem loadSaveLogisimHexAsBinToolStripMenuItem;
 		private OpenFileDialog openFileDialogHEX;
 		private SaveFileDialog saveFileDialogBin;
+		private ToolStrip toolStrip1;
+		private ToolStripButton toolStripButtonPlay;
+		private ToolStripButton toolStripButtonDiscard;
+		private ToolStripButton toolStripButtonStop;
+		private TabControl tabControl1;
+		private TabPage tabPage1;
+		private TabPage tabPage2;
+		private ToolStripStatusLabel toolStripStatusLabelSamples;
+		private ToolStripStatusLabel toolStripStatusLabel3;
+		private ToolStripStatusLabel toolStripStatusLabelMsec;
+		private ToolStripStatusLabel toolStripStatusLabel5;
+		private ToolStripStatusLabel toolStripStatusLabelState;
+		private ToolStripStatusLabel toolStripStatusLabel7;
+		private ToolStripStatusLabel toolStripStatusLabelACLK;
+		private SplitContainer splitContainer1;
+		private SignalPlot signalPlot1;
+		private FurryPlot furryPlot1;
 	}
 }

@@ -22,6 +22,8 @@ namespace NSFPlayer
 			Close();
 		}
 
+		#region "NSF Controls"
+
 		private void playToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 
@@ -49,8 +51,11 @@ namespace NSFPlayer
 
 		private void nSFInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			FormNSFInfo info = new FormNSFInfo();
+			info.ShowDialog();
 		}
+
+		#endregion "NSF Controls"
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -72,5 +77,24 @@ namespace NSFPlayer
 				}
 			}
 		}
+
+		#region "Sample Buffer Playback Controls"
+
+		private void toolStripButtonPlay_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void toolStripButtonDiscard_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void toolStripButtonStop_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		#endregion "Sample Buffer Playback Controls"
 	}
 }
