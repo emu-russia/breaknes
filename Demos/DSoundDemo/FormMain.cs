@@ -9,10 +9,10 @@ namespace DSoundDemo
 {
 	public partial class FormMain : Form
 	{
-		DirectSound directSound;
-		PrimarySoundBuffer primarySoundBuffer;
-		SecondarySoundBuffer secondarySoundBuffer;
-		WaveFormat waveFormat;
+		DirectSound? directSound;
+		PrimarySoundBuffer? primarySoundBuffer;
+		SecondarySoundBuffer? secondarySoundBuffer;
+		WaveFormat? waveFormat;
 
 		public FormMain()
 		{

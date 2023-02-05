@@ -13,7 +13,7 @@ namespace DSoundDemo
 		/// <returns></returns>
 		static public bool Load (string filename, out float[] smono)
 		{
-			smono = null;
+			smono = Array.Empty<float>();
 
 			try
 			{
@@ -56,7 +56,7 @@ namespace DSoundDemo
 					int bytesForSamp = bitDepth / 8;
 					int nValues = bytes / bytesForSamp;
 
-					float[] asFloat = null;
+					float[] asFloat = Array.Empty<float>();
 					switch (bitDepth)
 					{
 						case 64:
