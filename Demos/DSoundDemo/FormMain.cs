@@ -42,8 +42,8 @@ namespace DSoundDemo
 			// Play the PrimarySound Buffer
 			primarySoundBuffer.Play(0, PlayFlags.Looping);
 
-			// Default WaveFormat Stereo 44100 16 bit
-			waveFormat = new WaveFormat();
+			// Default WaveFormat Mono 44100 16 bit
+			waveFormat = new WaveFormat(44100, 16, 1);
 
 			// Create SecondarySoundBuffer
 			var secondaryBufferDesc = new SoundBufferDescription();
@@ -81,7 +81,6 @@ namespace DSoundDemo
 					furryPlot1.AddSample(value);
 				}
 
-				dataPart1.Write(value);
 				dataPart1.Write(value);
 			}
 
@@ -135,7 +134,6 @@ namespace DSoundDemo
 				}
 
 				dataPart1.Write(value);
-				dataPart1.Write(value);
 			}
 
 			signalPlot1.PlotSignal(plot_samples);
@@ -161,7 +159,7 @@ namespace DSoundDemo
 		private void toolStripButton1_Click(object sender, EventArgs e)
 		{
 			// Play the song
-			secondarySoundBuffer.Play(0, PlayFlags.Looping);
+			secondarySoundBuffer.Play(0, PlayFlags.None);
 		}
 
 		private void toolStripButton2_Click(object sender, EventArgs e)
