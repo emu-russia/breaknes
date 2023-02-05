@@ -52,6 +52,8 @@
 			this.signalPlot1 = new System.Windows.Forms.SignalPlot();
 			this.furryPlot1 = new System.Windows.Forms.FurryPlot();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+			this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel6 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.menuStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -185,7 +187,9 @@
             this.toolStripStatusLabel1,
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel3,
-            this.toolStripStatusLabel4});
+            this.toolStripStatusLabel4,
+            this.toolStripStatusLabel5,
+            this.toolStripStatusLabel6});
 			this.statusStrip1.Location = new System.Drawing.Point(0, 426);
 			this.statusStrip1.Name = "statusStrip1";
 			this.statusStrip1.Size = new System.Drawing.Size(800, 24);
@@ -213,8 +217,9 @@
 			// 
 			// toolStripStatusLabel4
 			// 
+			this.toolStripStatusLabel4.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
 			this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-			this.toolStripStatusLabel4.Size = new System.Drawing.Size(32, 19);
+			this.toolStripStatusLabel4.Size = new System.Drawing.Size(36, 19);
 			this.toolStripStatusLabel4.Text = "0 ms";
 			// 
 			// splitContainer1
@@ -263,6 +268,18 @@
 			// 
 			this.backgroundWorker1.WorkerSupportsCancellation = true;
 			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+			// 
+			// toolStripStatusLabel5
+			// 
+			this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+			this.toolStripStatusLabel5.Size = new System.Drawing.Size(141, 19);
+			this.toolStripStatusLabel5.Text = "Background worker state:";
+			// 
+			// toolStripStatusLabel6
+			// 
+			this.toolStripStatusLabel6.Name = "toolStripStatusLabel6";
+			this.toolStripStatusLabel6.Size = new System.Drawing.Size(45, 19);
+			this.toolStripStatusLabel6.Text = "Paused";
 			// 
 			// FormMain
 			// 
@@ -317,5 +334,7 @@
 		private ToolStripMenuItem debugToolStripMenuItem;
 		private ToolStripMenuItem generateVibratoSoundToolStripMenuItem;
 		private System.ComponentModel.BackgroundWorker backgroundWorker1;
+		private ToolStripStatusLabel toolStripStatusLabel5;
+		private ToolStripStatusLabel toolStripStatusLabel6;
 	}
 }

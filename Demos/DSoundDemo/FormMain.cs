@@ -36,6 +36,7 @@ namespace DSoundDemo
 		private void FormMain_Load(object sender, EventArgs e)
 		{
 			InitDSound();
+			PauseWorker(true);
 			backgroundWorker1.RunWorkerAsync();
 		}
 
@@ -85,7 +86,7 @@ namespace DSoundDemo
 			}
 
 			SourceSamplesPtr = 0;
-			Paused = false;
+			PauseWorker(false);
 		}
 
 		private void PaintWavFile (string wav_name)
@@ -108,7 +109,7 @@ namespace DSoundDemo
 			}
 
 			SourceSamplesPtr = 0;
-			Paused = false;
+			PauseWorker(false);
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -168,7 +169,7 @@ namespace DSoundDemo
 
 				if (SourceSamplesPtr >= SourceSamples.Length)
 				{
-					Paused = true;
+					PauseWorker(true);
 					continue;
 				}
 
@@ -205,7 +206,8 @@ namespace DSoundDemo
 		private void UpdateSampleBufStats()
 		{
 			toolStripStatusLabel2.Text = SampleBuf.Count.ToString();
-			toolStripStatusLabel4.Text = "0 ms";
+			int ms = (SampleBuf.Count * 1000) / SourceSampleRate;
+			toolStripStatusLabel4.Text = ms.ToString() + " ms";
 		}
 
 		private void UpdateSignalPlot()
@@ -226,11 +228,16 @@ namespace DSoundDemo
 			if (SampleBuf.Count == 0)
 				return;
 
+			// SRC
+
+			List<float> SampleBufPrepared = new();
 			Plotting = true;
+			SRC.SampleRateConv(SampleBuf, SourceSampleRate, SampleBufPrepared, 44100);
+			Plotting = false;
 
 			// Create SecondarySoundBuffer
 			var secondaryBufferDesc = new SoundBufferDescription();
-			secondaryBufferDesc.BufferBytes = SampleBuf.Count * 2;
+			secondaryBufferDesc.BufferBytes = SampleBufPrepared.Count * 2;
 			secondaryBufferDesc.Format = waveFormat;
 			secondaryBufferDesc.Flags = BufferFlags.GetCurrentPosition2 | BufferFlags.ControlPositionNotify | BufferFlags.GlobalFocus |
 										BufferFlags.ControlVolume | BufferFlags.StickyFocus;
@@ -245,15 +252,13 @@ namespace DSoundDemo
 			var dataPart1 = secondarySoundBuffer.Lock(0, capabilities.BufferBytes, LockFlags.EntireBuffer, out dataPart2);
 
 			// Fill the buffer with some sound
-			int numberOfSamples = SampleBuf.Count;
+			int numberOfSamples = SampleBufPrepared.Count;
 
 			for (int i = 0; i < numberOfSamples; i++)
 			{
-				short value = (short)(SampleBuf[i] * Int16.MaxValue);
+				short value = (short)(SampleBufPrepared[i] * Int16.MaxValue);
 				dataPart1.Write(value);
 			}
-
-			Plotting = false;
 
 			// Unlock the buffer
 			secondarySoundBuffer.Unlock(dataPart1, dataPart2);
@@ -266,6 +271,12 @@ namespace DSoundDemo
 		{
 			if (secondarySoundBuffer != null)
 				secondarySoundBuffer.Stop();
+		}
+
+		private void PauseWorker (bool pause)
+		{
+			Paused = pause;
+			toolStripStatusLabel6.Text = pause ? "Paused" : "Running";
 		}
 	}
 }
