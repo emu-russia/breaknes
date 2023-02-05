@@ -15,18 +15,19 @@ namespace DSoundDemo
 		WaveFormat? waveFormat;
 
 		float[] SourceSamples = Array.Empty<float>();
-		int SourceSamplesPtr = 0;
+		long SourceSamplesPtr = 0;
 		int SourceSampleRate;
+		int DestSampleRate = 48000;
 
 		List<float> SampleBuf = new();
 
 		float FurryIntensity = 4.0f;
 
-		bool Paused = true;
+		bool Paused = true;			// atomic
 		long timeStamp;
 		int workerDelayCounter = 0;
 		int workerDelay = 10000;
-		bool Plotting = false;
+		bool Plotting = false;		// atomic
 
 		public FormMain()
 		{
@@ -57,24 +58,12 @@ namespace DSoundDemo
 
 			// Play the PrimarySound Buffer
 			primarySoundBuffer.Play(0, PlayFlags.Looping);
-
-			// Default WaveFormat Mono 44100 16 bit
-			waveFormat = new WaveFormat(44100, 16, 1);
-
-			// Create SecondarySoundBuffer
-			var secondaryBufferDesc = new SoundBufferDescription();
-			secondaryBufferDesc.BufferBytes = waveFormat.ConvertLatencyToByteSize(60000);
-			secondaryBufferDesc.Format = waveFormat;
-			secondaryBufferDesc.Flags = BufferFlags.GetCurrentPosition2 | BufferFlags.ControlPositionNotify | BufferFlags.GlobalFocus |
-										BufferFlags.ControlVolume | BufferFlags.StickyFocus;
-			secondaryBufferDesc.AlgorithmFor3D = Guid.Empty;
-			secondarySoundBuffer = new SecondarySoundBuffer(directSound, secondaryBufferDesc);
 		}
 
 		private void PaintSound()
 		{
 			int numberOfSamples = 100000;
-			SourceSampleRate = 44100;
+			SourceSampleRate = DestSampleRate;
 			SourceSamples = new float[numberOfSamples];
 
 			for (int i = 0; i < numberOfSamples; i++)
@@ -206,8 +195,10 @@ namespace DSoundDemo
 		private void UpdateSampleBufStats()
 		{
 			toolStripStatusLabel2.Text = SampleBuf.Count.ToString();
-			int ms = (SampleBuf.Count * 1000) / SourceSampleRate;
+			long ms = (SampleBuf.Count * 1000) / (long)SourceSampleRate;
 			toolStripStatusLabel4.Text = ms.ToString() + " ms";
+			long hz = Paused ? 0 : (long)SourceSampleRate;
+			toolStripStatusLabel8.Text = hz.ToString() + " Hz";
 		}
 
 		private void UpdateSignalPlot()
@@ -230,10 +221,16 @@ namespace DSoundDemo
 
 			// SRC
 
+			// HACK: Putting resampling on the shoulders of DSound
+			DestSampleRate = SourceSampleRate;
+
 			List<float> SampleBufPrepared = new();
 			Plotting = true;
-			SRC.SampleRateConv(SampleBuf, SourceSampleRate, SampleBufPrepared, 44100);
+			SRC.SampleRateConv(SampleBuf, SourceSampleRate, SampleBufPrepared, DestSampleRate);
 			Plotting = false;
+
+			// WaveFormat Mono, DestSampleRate Hz, 16 bit
+			waveFormat = new WaveFormat(DestSampleRate, 16, 1);
 
 			// Create SecondarySoundBuffer
 			var secondaryBufferDesc = new SoundBufferDescription();
