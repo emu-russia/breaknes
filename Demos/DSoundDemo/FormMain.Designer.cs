@@ -34,6 +34,8 @@
 			this.loadwavFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.generateVibratoSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -49,8 +51,7 @@
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.signalPlot1 = new System.Windows.Forms.SignalPlot();
 			this.furryPlot1 = new System.Windows.Forms.FurryPlot();
-			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.generateVibratoSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.menuStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -100,6 +101,21 @@
 			this.exitToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+			// 
+			// debugToolStripMenuItem
+			// 
+			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.generateVibratoSoundToolStripMenuItem});
+			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
+			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+			this.debugToolStripMenuItem.Text = "Debug";
+			// 
+			// generateVibratoSoundToolStripMenuItem
+			// 
+			this.generateVibratoSoundToolStripMenuItem.Name = "generateVibratoSoundToolStripMenuItem";
+			this.generateVibratoSoundToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+			this.generateVibratoSoundToolStripMenuItem.Text = "Generate Vibrato Sound";
+			this.generateVibratoSoundToolStripMenuItem.Click += new System.EventHandler(this.generateVibratoSoundToolStripMenuItem_Click);
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -243,20 +259,10 @@
 			this.furryPlot1.TabIndex = 0;
 			this.furryPlot1.Text = "furryPlot1";
 			// 
-			// debugToolStripMenuItem
+			// backgroundWorker1
 			// 
-			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.generateVibratoSoundToolStripMenuItem});
-			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
-			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
-			this.debugToolStripMenuItem.Text = "Debug";
-			// 
-			// generateVibratoSoundToolStripMenuItem
-			// 
-			this.generateVibratoSoundToolStripMenuItem.Name = "generateVibratoSoundToolStripMenuItem";
-			this.generateVibratoSoundToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
-			this.generateVibratoSoundToolStripMenuItem.Text = "Generate Vibrato Sound";
-			this.generateVibratoSoundToolStripMenuItem.Click += new System.EventHandler(this.generateVibratoSoundToolStripMenuItem_Click);
+			this.backgroundWorker1.WorkerSupportsCancellation = true;
+			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
 			// 
 			// FormMain
 			// 
@@ -310,5 +316,6 @@
 		private ToolStripButton toolStripButton3;
 		private ToolStripMenuItem debugToolStripMenuItem;
 		private ToolStripMenuItem generateVibratoSoundToolStripMenuItem;
+		private System.ComponentModel.BackgroundWorker backgroundWorker1;
 	}
 }

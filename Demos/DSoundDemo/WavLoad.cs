@@ -11,9 +11,10 @@ namespace DSoundDemo
 		/// <param name="filename">Name and path of the .wav file</param>
 		/// <param name="smono">Normalized float output buffer</param>
 		/// <returns></returns>
-		static public bool Load (string filename, out float[] smono)
+		static public bool Load (string filename, out float[] smono, out int sampleRate)
 		{
 			smono = Array.Empty<float>();
+			sampleRate = 0;
 
 			try
 			{
@@ -26,7 +27,6 @@ namespace DSoundDemo
 					int fileSize = reader.ReadInt32();
 					int riffType = reader.ReadInt32();
 
-
 					// chunk 1
 					int fmtID = reader.ReadInt32();
 					int fmtSize = reader.ReadInt32(); // bytes for this chunk (expect 16 or 18)
@@ -34,7 +34,7 @@ namespace DSoundDemo
 					// 16 bytes coming...
 					int fmtCode = reader.ReadInt16();
 					int channels = reader.ReadInt16();
-					int sampleRate = reader.ReadInt32();
+					sampleRate = reader.ReadInt32();
 					int byteRate = reader.ReadInt32();
 					int fmtBlockAlign = reader.ReadInt16();
 					int bitDepth = reader.ReadInt16();

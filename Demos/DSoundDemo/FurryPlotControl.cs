@@ -16,7 +16,7 @@ namespace System.Windows.Forms
 		private BufferedGraphicsContext? context;
 
 		private const int fftSize = 1 << 9;     // The size of a single batch for the FFT. Power of 2
-		private const int fftSpans = 128;       // FFT history size
+		private const int fftSpans = 512;       // FFT history size
 
 		private Complex[][] spans = new Complex[fftSpans][];        // History of all FFT windows
 		private int current_span = 0;
@@ -87,7 +87,7 @@ namespace System.Windows.Forms
 				{
 					int real_y = fftSize / 2 + y;
 					var val = spans[real_x][real_y].Magnitude;
-					bmp.SetPixel(x, y, GetInfernoRGB((byte)val));
+					bmp.SetPixel(fftSpans - x - 1, y, GetInfernoRGB((byte)val));
 				}
 			}
 
