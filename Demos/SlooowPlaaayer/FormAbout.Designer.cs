@@ -36,7 +36,7 @@
 			// 
 			// pictureBox1
 			// 
-			this.pictureBox1.Image = global::DSoundDemo.Properties.Resources.SlooowPlaaayer;
+			this.pictureBox1.Image = global::SlooowPlaaayer.Properties.Resources.SlooowPlaaayer;
 			this.pictureBox1.Location = new System.Drawing.Point(12, 10);
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.Size = new System.Drawing.Size(252, 189);
