@@ -255,5 +255,11 @@ namespace DSoundDemo
 
 			return false;
 		}
+
+		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FormAbout about = new FormAbout();
+			about.ShowDialog();
+		}
 	}
 }
