@@ -121,14 +121,24 @@ namespace DSoundDemo
 			// Fill the buffer with some sound
 			int numberOfSamples = smono.Length;
 
+			int plot_samples_count = Math.Min(numberOfSamples, 4096 * 16);
+			float[] plot_samples = new float[plot_samples_count];
+
 			for (int i = 0; i < numberOfSamples; i++)
 			{
-				short value_l = (short)(smono[i] * Int16.MaxValue);
-				short value_r = (short)(smono[i] * Int16.MaxValue);
+				short value = (short)(smono[i] * Int16.MaxValue);
 
-				dataPart1.Write(value_l);
-				dataPart1.Write(value_r);
+				if (i < plot_samples_count)
+				{
+					plot_samples[i] = value;
+					furryPlot1.AddSample(value);
+				}
+
+				dataPart1.Write(value);
+				dataPart1.Write(value);
 			}
+
+			signalPlot1.PlotSignal(plot_samples);
 
 			// Unlock the buffer
 			secondarySoundBuffer.Unlock(dataPart1, dataPart2);
