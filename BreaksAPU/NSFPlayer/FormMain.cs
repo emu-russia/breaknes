@@ -1,11 +1,18 @@
+using System.Runtime.InteropServices;
+
 namespace NSFPlayer
 {
 	public partial class FormMain : Form
 	{
+		[DllImport("kernel32")]
+		static extern bool AllocConsole();
+
 		private DSound? audio_backend;
 
-		int SourceSampleRate = 48000;
-		List<float> SampleBuf = new();
+		private int SourceSampleRate = 48000;
+		private List<float> SampleBuf = new();
+
+		private string DefaultTitle = "";
 
 		public FormMain()
 		{
@@ -14,7 +21,13 @@ namespace NSFPlayer
 
 		private void FormMain_Load(object sender, EventArgs e)
 		{
+#if DEBUG
+			AllocConsole();
+#endif
+
 			audio_backend = new DSound(Handle);
+
+			DefaultTitle = this.Text;
 		}
 
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
