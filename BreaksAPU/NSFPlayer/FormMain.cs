@@ -2,9 +2,19 @@ namespace NSFPlayer
 {
 	public partial class FormMain : Form
 	{
+		private DSound? audio_backend;
+
+		int SourceSampleRate = 48000;
+		List<float> SampleBuf = new();
+
 		public FormMain()
 		{
 			InitializeComponent();
+		}
+
+		private void FormMain_Load(object sender, EventArgs e)
+		{
+			audio_backend = new DSound(Handle);
 		}
 
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -82,19 +92,24 @@ namespace NSFPlayer
 
 		private void toolStripButtonPlay_Click(object sender, EventArgs e)
 		{
-
+			if (audio_backend != null)
+				audio_backend.PlaySampleBuf(SourceSampleRate, SampleBuf);
 		}
 
 		private void toolStripButtonDiscard_Click(object sender, EventArgs e)
 		{
-
+			if (audio_backend != null)
+				audio_backend.StopSampleBuf();
+			SampleBuf.Clear();
 		}
 
 		private void toolStripButtonStop_Click(object sender, EventArgs e)
 		{
-
+			if (audio_backend != null)
+				audio_backend.StopSampleBuf();
 		}
 
 		#endregion "Sample Buffer Playback Controls"
+
 	}
 }
