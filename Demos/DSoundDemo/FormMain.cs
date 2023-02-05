@@ -69,7 +69,7 @@ namespace DSoundDemo
 			// Fill the buffer with some sound
 			int numberOfSamples = capabilities.BufferBytes / waveFormat.BlockAlign;
 
-			int plot_samples_count = Math.Min(numberOfSamples, 4096);
+			int plot_samples_count = Math.Min(numberOfSamples, 4096 * 16);
 			float[] plot_samples = new float[plot_samples_count];
 
 			for (int i = 0; i < numberOfSamples; i++)
@@ -80,6 +80,7 @@ namespace DSoundDemo
 				if (i < plot_samples_count)
 				{
 					plot_samples[i] = value;
+					furryPlot1.AddSample(value);
 				}
 
 				dataPart1.Write(value);
@@ -154,6 +155,11 @@ namespace DSoundDemo
 		{
 			// Play the song
 			secondarySoundBuffer.Play(0, PlayFlags.Looping);
+		}
+
+		private void toolStripButton2_Click(object sender, EventArgs e)
+		{
+
 		}
 
 		// https://stackoverflow.com/questions/8754111/how-to-read-the-data-in-a-wav-file-to-an-array
@@ -261,5 +267,7 @@ namespace DSoundDemo
 			FormAbout about = new FormAbout();
 			about.ShowDialog();
 		}
+
+
 	}
 }

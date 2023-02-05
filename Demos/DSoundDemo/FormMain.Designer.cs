@@ -39,11 +39,18 @@
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.signalPlot1 = new System.Windows.Forms.SignalPlot();
 			this.furryPlot1 = new System.Windows.Forms.FurryPlot();
+			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
 			this.menuStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
+			this.statusStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -113,7 +120,8 @@
 			// toolStrip1
 			// 
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1});
+            this.toolStripButton1,
+            this.toolStripButton2});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -130,6 +138,19 @@
 			this.toolStripButton1.Text = "Play";
 			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
 			// 
+			// statusStrip1
+			// 
+			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.toolStripStatusLabel2,
+            this.toolStripStatusLabel3,
+            this.toolStripStatusLabel4});
+			this.statusStrip1.Location = new System.Drawing.Point(0, 426);
+			this.statusStrip1.Name = "statusStrip1";
+			this.statusStrip1.Size = new System.Drawing.Size(800, 24);
+			this.statusStrip1.TabIndex = 2;
+			this.statusStrip1.Text = "statusStrip1";
+			// 
 			// splitContainer1
 			// 
 			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -144,9 +165,9 @@
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.furryPlot1);
-			this.splitContainer1.Size = new System.Drawing.Size(800, 401);
-			this.splitContainer1.SplitterDistance = 184;
-			this.splitContainer1.TabIndex = 2;
+			this.splitContainer1.Size = new System.Drawing.Size(800, 377);
+			this.splitContainer1.SplitterDistance = 181;
+			this.splitContainer1.TabIndex = 3;
 			// 
 			// signalPlot1
 			// 
@@ -158,7 +179,7 @@
 			this.signalPlot1.Location = new System.Drawing.Point(0, 0);
 			this.signalPlot1.Name = "signalPlot1";
 			this.signalPlot1.SignalColor = System.Drawing.Color.SpringGreen;
-			this.signalPlot1.Size = new System.Drawing.Size(800, 184);
+			this.signalPlot1.Size = new System.Drawing.Size(800, 181);
 			this.signalPlot1.TabIndex = 0;
 			this.signalPlot1.Text = "signalPlot1";
 			this.signalPlot1.ZeroColor = System.Drawing.Color.Red;
@@ -168,9 +189,44 @@
 			this.furryPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.furryPlot1.Location = new System.Drawing.Point(0, 0);
 			this.furryPlot1.Name = "furryPlot1";
-			this.furryPlot1.Size = new System.Drawing.Size(800, 213);
+			this.furryPlot1.Size = new System.Drawing.Size(800, 192);
 			this.furryPlot1.TabIndex = 0;
 			this.furryPlot1.Text = "furryPlot1";
+			// 
+			// toolStripStatusLabel1
+			// 
+			this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+			this.toolStripStatusLabel1.Size = new System.Drawing.Size(105, 19);
+			this.toolStripStatusLabel1.Text = "Samples collected:";
+			// 
+			// toolStripStatusLabel2
+			// 
+			this.toolStripStatusLabel2.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(17, 19);
+			this.toolStripStatusLabel2.Text = "0";
+			// 
+			// toolStripStatusLabel3
+			// 
+			this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+			this.toolStripStatusLabel3.Size = new System.Drawing.Size(91, 19);
+			this.toolStripStatusLabel3.Text = "Samples length:";
+			// 
+			// toolStripStatusLabel4
+			// 
+			this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+			this.toolStripStatusLabel4.Size = new System.Drawing.Size(32, 19);
+			this.toolStripStatusLabel4.Text = "0 ms";
+			// 
+			// toolStripButton2
+			// 
+			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton2.Name = "toolStripButton2";
+			this.toolStripButton2.Size = new System.Drawing.Size(50, 22);
+			this.toolStripButton2.Text = "Discard";
+			this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
 			// 
 			// FormMain
 			// 
@@ -178,6 +234,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.splitContainer1);
+			this.Controls.Add(this.statusStrip1);
 			this.Controls.Add(this.toolStrip1);
 			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
@@ -188,6 +245,8 @@
 			this.menuStrip1.PerformLayout();
 			this.toolStrip1.ResumeLayout(false);
 			this.toolStrip1.PerformLayout();
+			this.statusStrip1.ResumeLayout(false);
+			this.statusStrip1.PerformLayout();
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -207,9 +266,15 @@
 		private OpenFileDialog openFileDialog1;
 		private ToolStrip toolStrip1;
 		private ToolStripButton toolStripButton1;
-		private SplitContainer splitContainer1;
 		private ToolStripMenuItem helpToolStripMenuItem;
 		private ToolStripMenuItem aboutToolStripMenuItem;
+		private ToolStripButton toolStripButton2;
+		private StatusStrip statusStrip1;
+		private ToolStripStatusLabel toolStripStatusLabel1;
+		private ToolStripStatusLabel toolStripStatusLabel2;
+		private ToolStripStatusLabel toolStripStatusLabel3;
+		private ToolStripStatusLabel toolStripStatusLabel4;
+		private SplitContainer splitContainer1;
 		private SignalPlot signalPlot1;
 		private FurryPlot furryPlot1;
 	}
