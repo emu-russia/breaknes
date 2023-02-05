@@ -195,7 +195,7 @@ namespace DSoundDemo
 		private void UpdateSampleBufStats()
 		{
 			toolStripStatusLabel2.Text = SampleBuf.Count.ToString();
-			long ms = (SampleBuf.Count * 1000) / (long)SourceSampleRate;
+			long ms = SourceSampleRate != 0 ? (SampleBuf.Count * 1000) / (long)SourceSampleRate : 0;
 			toolStripStatusLabel4.Text = ms.ToString() + " ms";
 			long hz = Paused ? 0 : (long)SourceSampleRate;
 			toolStripStatusLabel8.Text = hz.ToString() + " Hz";
