@@ -39,15 +39,18 @@
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.signalPlot1 = new System.Windows.Forms.SignalPlot();
-			this.furryPlot1 = new System.Windows.Forms.FurryPlot();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
-			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.signalPlot1 = new System.Windows.Forms.SignalPlot();
+			this.furryPlot1 = new System.Windows.Forms.FurryPlot();
+			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.generateVibratoSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -61,6 +64,7 @@
 			// 
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.debugToolStripMenuItem,
             this.helpToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
@@ -108,7 +112,7 @@
 			// aboutToolStripMenuItem
 			// 
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
 			this.aboutToolStripMenuItem.Text = "About";
 			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
 			// 
@@ -121,7 +125,8 @@
 			// 
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
-            this.toolStripButton2});
+            this.toolStripButton2,
+            this.toolStripButton3});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -138,6 +143,26 @@
 			this.toolStripButton1.Text = "Play";
 			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
 			// 
+			// toolStripButton2
+			// 
+			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton2.Name = "toolStripButton2";
+			this.toolStripButton2.Size = new System.Drawing.Size(50, 22);
+			this.toolStripButton2.Text = "Discard";
+			this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+			// 
+			// toolStripButton3
+			// 
+			this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
+			this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton3.Name = "toolStripButton3";
+			this.toolStripButton3.Size = new System.Drawing.Size(35, 22);
+			this.toolStripButton3.Text = "Stop";
+			this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
+			// 
 			// statusStrip1
 			// 
 			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -150,6 +175,31 @@
 			this.statusStrip1.Size = new System.Drawing.Size(800, 24);
 			this.statusStrip1.TabIndex = 2;
 			this.statusStrip1.Text = "statusStrip1";
+			// 
+			// toolStripStatusLabel1
+			// 
+			this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+			this.toolStripStatusLabel1.Size = new System.Drawing.Size(105, 19);
+			this.toolStripStatusLabel1.Text = "Samples collected:";
+			// 
+			// toolStripStatusLabel2
+			// 
+			this.toolStripStatusLabel2.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(17, 19);
+			this.toolStripStatusLabel2.Text = "0";
+			// 
+			// toolStripStatusLabel3
+			// 
+			this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+			this.toolStripStatusLabel3.Size = new System.Drawing.Size(91, 19);
+			this.toolStripStatusLabel3.Text = "Samples length:";
+			// 
+			// toolStripStatusLabel4
+			// 
+			this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+			this.toolStripStatusLabel4.Size = new System.Drawing.Size(32, 19);
+			this.toolStripStatusLabel4.Text = "0 ms";
 			// 
 			// splitContainer1
 			// 
@@ -193,40 +243,20 @@
 			this.furryPlot1.TabIndex = 0;
 			this.furryPlot1.Text = "furryPlot1";
 			// 
-			// toolStripStatusLabel1
+			// debugToolStripMenuItem
 			// 
-			this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-			this.toolStripStatusLabel1.Size = new System.Drawing.Size(105, 19);
-			this.toolStripStatusLabel1.Text = "Samples collected:";
+			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.generateVibratoSoundToolStripMenuItem});
+			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
+			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+			this.debugToolStripMenuItem.Text = "Debug";
 			// 
-			// toolStripStatusLabel2
+			// generateVibratoSoundToolStripMenuItem
 			// 
-			this.toolStripStatusLabel2.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-			this.toolStripStatusLabel2.Size = new System.Drawing.Size(17, 19);
-			this.toolStripStatusLabel2.Text = "0";
-			// 
-			// toolStripStatusLabel3
-			// 
-			this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-			this.toolStripStatusLabel3.Size = new System.Drawing.Size(91, 19);
-			this.toolStripStatusLabel3.Text = "Samples length:";
-			// 
-			// toolStripStatusLabel4
-			// 
-			this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-			this.toolStripStatusLabel4.Size = new System.Drawing.Size(32, 19);
-			this.toolStripStatusLabel4.Text = "0 ms";
-			// 
-			// toolStripButton2
-			// 
-			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton2.Name = "toolStripButton2";
-			this.toolStripButton2.Size = new System.Drawing.Size(50, 22);
-			this.toolStripButton2.Text = "Discard";
-			this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+			this.generateVibratoSoundToolStripMenuItem.Name = "generateVibratoSoundToolStripMenuItem";
+			this.generateVibratoSoundToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+			this.generateVibratoSoundToolStripMenuItem.Text = "Generate Vibrato Sound";
+			this.generateVibratoSoundToolStripMenuItem.Click += new System.EventHandler(this.generateVibratoSoundToolStripMenuItem_Click);
 			// 
 			// FormMain
 			// 
@@ -277,5 +307,8 @@
 		private SplitContainer splitContainer1;
 		private SignalPlot signalPlot1;
 		private FurryPlot furryPlot1;
+		private ToolStripButton toolStripButton3;
+		private ToolStripMenuItem debugToolStripMenuItem;
+		private ToolStripMenuItem generateVibratoSoundToolStripMenuItem;
 	}
 }
