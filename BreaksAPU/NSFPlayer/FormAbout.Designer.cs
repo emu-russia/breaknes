@@ -47,6 +47,7 @@
 			// 
 			// button1
 			// 
+			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.button1.Location = new System.Drawing.Point(635, 230);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(80, 26);
@@ -63,7 +64,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(177, 50);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "NSFPlayer, 1.0\r\n© emu-russia, 2023";
+			this.label1.Text = "NSFPlayer, 1.1\r\n© emu-russia, 2023";
 			// 
 			// FormAbout
 			// 

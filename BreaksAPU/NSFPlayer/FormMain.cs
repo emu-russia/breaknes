@@ -1,10 +1,33 @@
+using System.Runtime.InteropServices;
+
 namespace NSFPlayer
 {
 	public partial class FormMain : Form
 	{
+		[DllImport("kernel32")]
+		static extern bool AllocConsole();
+
+		private DSound? audio_backend;
+
+		private int SourceSampleRate = 48000;
+		private List<float> SampleBuf = new();
+
+		private string DefaultTitle = "";
+
 		public FormMain()
 		{
 			InitializeComponent();
+		}
+
+		private void FormMain_Load(object sender, EventArgs e)
+		{
+#if DEBUG
+			AllocConsole();
+#endif
+
+			audio_backend = new DSound(Handle);
+
+			DefaultTitle = this.Text;
 		}
 
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -21,6 +44,8 @@ namespace NSFPlayer
 		{
 			Close();
 		}
+
+		#region "NSF Controls"
 
 		private void playToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -49,8 +74,11 @@ namespace NSFPlayer
 
 		private void nSFInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			FormNSFInfo info = new FormNSFInfo();
+			info.ShowDialog();
 		}
+
+		#endregion "NSF Controls"
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -72,5 +100,29 @@ namespace NSFPlayer
 				}
 			}
 		}
+
+		#region "Sample Buffer Playback Controls"
+
+		private void toolStripButtonPlay_Click(object sender, EventArgs e)
+		{
+			if (audio_backend != null)
+				audio_backend.PlaySampleBuf(SourceSampleRate, SampleBuf);
+		}
+
+		private void toolStripButtonDiscard_Click(object sender, EventArgs e)
+		{
+			if (audio_backend != null)
+				audio_backend.StopSampleBuf();
+			SampleBuf.Clear();
+		}
+
+		private void toolStripButtonStop_Click(object sender, EventArgs e)
+		{
+			if (audio_backend != null)
+				audio_backend.StopSampleBuf();
+		}
+
+		#endregion "Sample Buffer Playback Controls"
+
 	}
 }
