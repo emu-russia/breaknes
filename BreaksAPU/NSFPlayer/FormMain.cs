@@ -10,6 +10,10 @@ namespace NSFPlayer
 		static extern bool AllocConsole();
 
 		private DSound? audio_backend;
+		private NSFLoader nsf = new();
+		private bool nsf_loaded = false;
+		private byte current_song = 0;
+		private bool Paused = true;
 
 		private int SourceSampleRate = 48000;
 		private List<float> SampleBuf = new();
@@ -56,38 +60,94 @@ namespace NSFPlayer
 
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			if (openFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				string nsf_filename = openFileDialog1.FileName;
+				byte[] data = File.ReadAllBytes(nsf_filename);
+				nsf.LoadNSF(data);
+				nsf_loaded = true;
+				SetSong(nsf.GetHead().StartingSong);
+				this.Text = DefaultTitle + " - " + nsf_filename;
+				// Autoplay
+				SetPaused(false);
+			}
 		}
 
 		private void playToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			SetPaused(false);
 		}
 
 		private void pauseToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			SetPaused(true);
 		}
 
 		private void stopToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			SetPaused(true);
+			nsf_loaded = false;
+			nsf = new();
+			this.Text = DefaultTitle;
+			UpdateTrackStat();
 		}
 
 		private void previousTrackToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			PrevSong();
 		}
 
 		private void nextTrackToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			NextSong();
 		}
 
 		private void nSFInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			FormNSFInfo info = new FormNSFInfo();
+			FormNSFInfo info = new FormNSFInfo(nsf_loaded ? nsf.GetHead() : null);
 			info.ShowDialog();
+		}
+
+		private void SetSong(byte n)
+		{
+			current_song = n;
+			UpdateTrackStat();
+		}
+
+		private void PrevSong()
+		{
+			if (!nsf_loaded)
+				return;
+			byte total = nsf.GetHead().TotalSongs;
+			if (current_song <= 1)
+				return;
+			current_song--;
+			UpdateTrackStat();
+		}
+
+		private void NextSong()
+		{
+			if (!nsf_loaded)
+				return;
+			byte total = nsf.GetHead().TotalSongs;
+			if (current_song >= total)
+				return;
+			current_song++;
+			UpdateTrackStat();
+		}
+
+		private void UpdateTrackStat()
+		{
+			if (nsf_loaded)
+				toolStripStatusLabel4.Text = current_song.ToString() + " / " + nsf.GetHead().TotalSongs.ToString();
+			else
+				toolStripStatusLabel4.Text = "Not loaded";
+		}
+
+		private void SetPaused(bool paused)
+		{
+			Paused = paused;
+			toolStripStatusLabelState.Text = paused ? "Paused" : "Running";
 		}
 
 		#endregion "NSF Controls"
@@ -259,5 +319,46 @@ namespace NSFPlayer
 		}
 
 		#endregion "APU Debug"
+
+		private void sendFeedbackToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			OpenUrl("https://github.com/emu-russia/breaknes/issues");
+		}
+
+		private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			OpenUrl("https://github.com/emu-russia/breaknes/releases");
+		}
+
+		private void OpenUrl(string url)
+		{
+			// https://stackoverflow.com/questions/4580263/how-to-open-in-default-browser-in-c-sharp
+
+			try
+			{
+				System.Diagnostics.Process.Start(url);
+			}
+			catch
+			{
+				// hack because of this: https://github.com/dotnet/corefx/issues/10361
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				{
+					url = url.Replace("&", "^&");
+					System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+				}
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				{
+					System.Diagnostics.Process.Start("xdg-open", url);
+				}
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+				{
+					System.Diagnostics.Process.Start("open", url);
+				}
+				else
+				{
+					throw;
+				}
+			}
+		}
 	}
 }

@@ -45,6 +45,9 @@
 			this.previousTrackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.nextTrackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.sendFeedbackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.nSFInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -176,8 +179,8 @@
             this.pauseToolStripMenuItem,
             this.stopToolStripMenuItem,
             this.toolStripSeparator2,
-            this.previousTrackToolStripMenuItem,
-            this.nextTrackToolStripMenuItem});
+            this.nextTrackToolStripMenuItem,
+            this.previousTrackToolStripMenuItem});
 			this.controlsToolStripMenuItem.Name = "controlsToolStripMenuItem";
 			this.controlsToolStripMenuItem.Size = new System.Drawing.Size(88, 20);
 			this.controlsToolStripMenuItem.Text = "NSF Controls";
@@ -225,23 +228,45 @@
 			// helpToolStripMenuItem
 			// 
 			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sendFeedbackToolStripMenuItem,
+            this.checkForUpdatesToolStripMenuItem,
+            this.toolStripSeparator3,
             this.nSFInfoToolStripMenuItem,
             this.aboutToolStripMenuItem});
 			this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
 			this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			this.helpToolStripMenuItem.Text = "Help";
 			// 
+			// sendFeedbackToolStripMenuItem
+			// 
+			this.sendFeedbackToolStripMenuItem.Name = "sendFeedbackToolStripMenuItem";
+			this.sendFeedbackToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+			this.sendFeedbackToolStripMenuItem.Text = "Send feedback";
+			this.sendFeedbackToolStripMenuItem.Click += new System.EventHandler(this.sendFeedbackToolStripMenuItem_Click);
+			// 
+			// checkForUpdatesToolStripMenuItem
+			// 
+			this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+			this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+			this.checkForUpdatesToolStripMenuItem.Text = "Check for updates";
+			this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator3
+			// 
+			this.toolStripSeparator3.Name = "toolStripSeparator3";
+			this.toolStripSeparator3.Size = new System.Drawing.Size(167, 6);
+			// 
 			// nSFInfoToolStripMenuItem
 			// 
 			this.nSFInfoToolStripMenuItem.Name = "nSFInfoToolStripMenuItem";
-			this.nSFInfoToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+			this.nSFInfoToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
 			this.nSFInfoToolStripMenuItem.Text = "NSF Info";
 			this.nSFInfoToolStripMenuItem.Click += new System.EventHandler(this.nSFInfoToolStripMenuItem_Click);
 			// 
 			// aboutToolStripMenuItem
 			// 
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
 			this.aboutToolStripMenuItem.Text = "About";
 			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
 			// 
@@ -688,5 +713,8 @@
 		private Button button1;
 		private ComboBox comboBox1;
 		private Be.Windows.Forms.HexBox hexBox1;
+		private ToolStripMenuItem sendFeedbackToolStripMenuItem;
+		private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
+		private ToolStripSeparator toolStripSeparator3;
 	}
 }
