@@ -52,4 +52,20 @@ extern "C"
 			board->Step();
 		}
 	}
+
+	__declspec(dllexport) size_t GetACLKCounter()
+	{
+		if (board != nullptr)
+		{
+			return board->GetACLKCounter();
+		}
+	}
+
+	__declspec(dllexport) void SampleAudioSignal(float* sample)
+	{
+		if (board != nullptr)
+		{
+			board->SampleAudioSignal(sample);
+		}
+	}
 }

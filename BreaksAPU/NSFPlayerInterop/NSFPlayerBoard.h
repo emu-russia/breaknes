@@ -39,6 +39,8 @@ namespace NSFPlayer
 
 		void GetDebugInfo(BoardDebugInfo& info);
 
+		APUSim::AudioOutSignal aux{};
+
 	public:
 		Board(char* boardName, char* apu, char* ppu, char* p1);
 		~Board();
@@ -52,5 +54,9 @@ namespace NSFPlayer
 		void ResetAPU();
 
 		bool APUInResetState();
+
+		size_t GetACLKCounter();
+
+		void SampleAudioSignal(float* sample);
 	};
 }

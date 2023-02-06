@@ -13,7 +13,9 @@ namespace NSFPlayer
 		private NSFLoader nsf = new();
 		private bool nsf_loaded = false;
 		private byte current_song = 0;
-		private bool Paused = true;			// atomic
+		private bool Paused = true;         // atomic
+
+		private long timeStamp;
 
 		private int SourceSampleRate = 48000;
 		private List<float> SampleBuf = new();
@@ -36,6 +38,8 @@ namespace NSFPlayer
 			DefaultTitle = this.Text;
 
 			comboBox2.SelectedIndex = 0;
+
+			backgroundWorker1.RunWorkerAsync();
 		}
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -58,6 +62,28 @@ namespace NSFPlayer
 
 		#region "NSF Controls"
 
+		private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+		{
+			while (!backgroundWorker1.CancellationPending)
+			{
+				if (Paused || !nsf_loaded)
+				{
+					Thread.Sleep(10);
+					continue;
+				}
+
+				NSFPlayerInterop.Step();
+
+				// Show statistics that are updated once every 1 second.
+
+				long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+				if (now > (timeStamp + 1000))
+				{
+					timeStamp = now;
+				}
+			}
+		}
+
 		private void InitBoard(string nsf_filename)
 		{
 			byte[] data = File.ReadAllBytes(nsf_filename);
@@ -67,7 +93,8 @@ namespace NSFPlayer
 			this.Text = DefaultTitle + " - " + nsf_filename;
 
 			var settings = FormSettings.LoadSettings();
-			NSFPlayerInterop.CreateBoard("NSFPlayer", settings.APU_Revision, "", "");
+			NSFPlayerInterop.CreateBoard("NSFPlayer", settings.APU_Revision, "None", "None");
+			UpdateMemLayout();
 
 			// Autoplay
 			SetPaused(false);
@@ -88,6 +115,7 @@ namespace NSFPlayer
 			if (openFileDialog1.ShowDialog() == DialogResult.OK)
 			{
 				string nsf_filename = openFileDialog1.FileName;
+				DisposeBoard();
 				InitBoard(nsf_filename);
 			}
 		}
@@ -375,5 +403,6 @@ namespace NSFPlayer
 				}
 			}
 		}
+
 	}
 }

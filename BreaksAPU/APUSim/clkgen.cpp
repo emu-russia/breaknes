@@ -29,13 +29,24 @@ namespace APUSim
 		TriState PHI1 = apu->wire.PHI1;
 		TriState PHI2 = apu->wire.PHI2;
 		TriState RES = apu->wire.RES;
+		TriState prev_aclk = apu->wire.ACLK;
 
 		TriState temp = NOR(RES, phi2_latch.nget());
 		phi1_latch.set(temp, PHI1);
 		phi2_latch.set(phi1_latch.nget(), PHI2);
 
-		apu->wire.ACLK = NOT(NOR(NOT(PHI1), temp));
+		TriState new_aclk = NOT(NOR(NOT(PHI1), temp));
+
+		apu->wire.ACLK = new_aclk;
 		apu->wire.n_ACLK = NOR(NOT(PHI1), phi2_latch.nget());
+
+		// The software ACLK counter is triggered by the falling edge.
+		// This is purely a software design for convenience, and has nothing to do with APU hardware circuitry.
+
+		if (IsNegedge(prev_aclk, new_aclk))
+		{
+			apu->aclk_counter++;
+		}
 	}
 
 	void CLKGen::sim_SoftCLK_Mode()

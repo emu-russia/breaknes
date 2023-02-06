@@ -40,6 +40,8 @@ namespace NSFPlayer
 		apu = new APUSim::APU(core, rev);
 		sram = new BankedSRAM();
 
+		apu->SetNormalizedOutput(true);
+
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
 	}
@@ -128,6 +130,7 @@ namespace NSFPlayer
 	/// </summary>
 	void Board::ResetAPU()
 	{
+		apu->ResetACLKCounter();
 		pendingReset = true;
 		resetHalfClkCounter = 4;
 	}
@@ -139,5 +142,18 @@ namespace NSFPlayer
 	bool Board::APUInResetState()
 	{
 		return pendingReset;
+	}
+
+	size_t Board::GetACLKCounter()
+	{
+		return apu->GetACLKCounter();
+	}
+
+	void Board::SampleAudioSignal(float* sample)
+	{
+		if (sample != nullptr)
+		{
+			*sample = (aux.normalized.a + aux.normalized.b) / 2.0f;
+		}
 	}
 }
