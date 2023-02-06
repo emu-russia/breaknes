@@ -12,6 +12,10 @@ namespace NSFPlayer
 	{
 	}
 
+	void BankedSRAM::sim(BaseLogic::TriState RnW, uint16_t addr, uint8_t* data)
+	{
+	}
+
 	size_t BankedSRAM::Dbg_GetSize()
 	{
 		return 0;

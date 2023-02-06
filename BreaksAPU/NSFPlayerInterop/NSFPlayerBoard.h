@@ -18,11 +18,10 @@ namespace NSFPlayer
 		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
 
 		uint8_t data_bus = 0;
+		uint16_t addr_bus = 0;
 
 		bool pendingReset = false;
 		int resetHalfClkCounter = 0;
-
-		BaseLogic::TriState n_INT = BaseLogic::TriState::X;
 
 		static uint8_t DumpSRAM(void* opaque, size_t addr);
 

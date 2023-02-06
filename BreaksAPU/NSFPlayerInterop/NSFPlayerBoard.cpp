@@ -60,35 +60,22 @@ namespace NSFPlayer
 	{
 		// Simulate APU
 
-		// TBD: By analogy.
+		TriState inputs[(size_t)APUSim::APU_Input::Max]{};
+		TriState outputs[(size_t)APUSim::APU_Output::Max]{};
 
-		//TriState inputs[(size_t)PPUSim::InputPad::Max]{};
-		//TriState outputs[(size_t)PPUSim::OutputPad::Max]{};
+		inputs[(size_t)APUSim::APU_Input::CLK] = CLK;
 
-		//inputs[(size_t)PPUSim::InputPad::CLK] = CLK;
-		//inputs[(size_t)PPUSim::InputPad::n_RES] = pendingReset ? TriState::Zero : TriState::One;
-		//inputs[(size_t)PPUSim::InputPad::RnW] = pendingWrite ? TriState::Zero : TriState::One;
-		//inputs[(size_t)PPUSim::InputPad::RS0] = pendingCpuOperation ? ((ppuRegId & 1) ? TriState::One : TriState::Zero) : TriState::Zero;
-		//inputs[(size_t)PPUSim::InputPad::RS1] = pendingCpuOperation ? ((ppuRegId & 2) ? TriState::One : TriState::Zero) : TriState::Zero;
-		//inputs[(size_t)PPUSim::InputPad::RS2] = pendingCpuOperation ? ((ppuRegId & 4) ? TriState::One : TriState::Zero) : TriState::Zero;
-		//inputs[(size_t)PPUSim::InputPad::n_DBE] = pendingCpuOperation ? TriState::Zero : TriState::One;
+		inputs[(size_t)APUSim::APU_Input::n_NMI] = TriState::One;
+		inputs[(size_t)APUSim::APU_Input::n_IRQ] = TriState::One;
+		inputs[(size_t)APUSim::APU_Input::n_RES] = pendingReset ? TriState::Zero : TriState::One;
+		inputs[(size_t)APUSim::APU_Input::DBG] = TriState::Zero;
 
-		//if (pendingCpuOperation && pendingWrite)
-		//{
-		//	data_bus = writeValue;
-		//}
+		apu->sim(inputs, outputs, &data_bus, &addr_bus, aux);
 
-		//ppu->sim(inputs, outputs, &ext_bus, &data_bus, &ad_bus, &pa8_13, vidSample);
+		TriState RnW = outputs[(size_t)APUSim::APU_Output::RnW];
+		TriState M2 = outputs[(size_t)APUSim::APU_Output::M2];
 
-		//ALE = outputs[(size_t)PPUSim::OutputPad::ALE];
-		//n_RD = outputs[(size_t)PPUSim::OutputPad::n_RD];
-		//n_WR = outputs[(size_t)PPUSim::OutputPad::n_WR];
-		//n_INT = outputs[(size_t)PPUSim::OutputPad::n_INT];
-
-		if (n_INT == TriState::Z)
-		{
-			n_INT = TriState::One;		// pullup
-		}
+		sram->sim(RnW, addr_bus, &data_bus);
 
 		// Tick
 

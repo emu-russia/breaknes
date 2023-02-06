@@ -1,6 +1,7 @@
 using Be.Windows.Forms;
 using NSFPlayerCustomClass;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace NSFPlayer
 {
@@ -15,7 +16,9 @@ namespace NSFPlayer
 		private byte current_song = 0;
 		private bool Paused = true;         // atomic
 
+		// Stats
 		private long timeStamp;
+		private int aclkCounter = 0;
 
 		private int SourceSampleRate = 48000;
 		private List<float> SampleBuf = new();
@@ -72,7 +75,16 @@ namespace NSFPlayer
 					continue;
 				}
 
+				// Simulate APU
+
 				NSFPlayerInterop.Step();
+
+				// Add audio sample
+
+				float next_sample;
+				NSFPlayerInterop.SampleAudioSignal(out next_sample);
+				SampleBuf.Add(next_sample);
+				furryPlot1.AddSample(next_sample);
 
 				// Show statistics that are updated once every 1 second.
 
@@ -80,6 +92,14 @@ namespace NSFPlayer
 				if (now > (timeStamp + 1000))
 				{
 					timeStamp = now;
+
+					UpdateSampleBufStats();
+					UpdateSignalPlot();
+
+					int aclk_per_sec = NSFPlayerInterop.GetACLKCounter() - aclkCounter;
+					toolStripStatusLabelACLK.Text = aclk_per_sec.ToString();
+
+					aclkCounter = NSFPlayerInterop.GetACLKCounter();
 				}
 			}
 		}
@@ -108,6 +128,7 @@ namespace NSFPlayer
 			nsf = new();
 			this.Text = DefaultTitle;
 			UpdateTrackStat();
+			aclkCounter = 0;
 		}
 
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -215,6 +236,28 @@ namespace NSFPlayer
 		{
 			if (audio_backend != null)
 				audio_backend.StopSampleBuf();
+		}
+
+		private void UpdateSampleBufStats()
+		{
+			toolStripStatusLabelSamples.Text = SampleBuf.Count.ToString();
+			long ms = SourceSampleRate != 0 ? (SampleBuf.Count * 1000) / (long)SourceSampleRate : 0;
+			toolStripStatusLabelMsec.Text = ms.ToString() + " ms";
+			//long hz = Paused ? 0 : (long)SourceSampleRate;
+			//toolStripStatusLabel8.Text = hz.ToString() + " Hz";
+		}
+
+		private void UpdateSignalPlot()
+		{
+			int numberOfSamples = SampleBuf.Count;
+			float[] plot_samples = new float[numberOfSamples];
+
+			for (int i = 0; i < numberOfSamples; i++)
+			{
+				plot_samples[i] = SampleBuf[i];
+			}
+
+			signalPlot1.PlotSignal(plot_samples);
 		}
 
 		#endregion "Sample Buffer Playback Controls"
