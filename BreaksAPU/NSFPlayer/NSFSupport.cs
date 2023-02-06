@@ -1,25 +1,44 @@
 // https://www.nesdev.org/wiki/NSF
 
+using System.ComponentModel;
+
 namespace NSFPlayer
 {
 	public class NSFHeader
 	{
+		[Description("denotes an NES sound format file")]
 		public byte[] Signature { get; set; } = new byte[5];
+		[Description("Version number $01 (or $02 for NSF2)")]
 		public byte Version { get; set; }
+		[Description("Total songs   (1=1 song, 2=2 songs, etc)")]
 		public byte TotalSongs { get; set; }
+		[Description("Starting song (1=1st song, 2=2nd song, etc)")]
 		public byte StartingSong { get; set; }
+		[Description("(lo, hi) load address of data ($8000-FFFF)")]
 		public UInt16 LoadAddress { get; set; }
+		[Description("(lo, hi) init address of data ($8000-FFFF)")]
 		public UInt16 InitAddress { get; set; }
+		[Description("(lo, hi) play address of data ($8000-FFFF)")]
 		public UInt16 PlayAddress { get; set; }
+		[Description("The name of the song, null terminated")]
 		public string Name { get; set; } = "";
+		[Description("The artist, if known, null terminated")]
 		public string Artist { get; set; } = "";
+		[Description("The copyright holder, null terminated")]
 		public string Copyright { get; set; } = "";
+		[Description("(lo, hi) Play speed, in 1/1000000th sec ticks, NTSC")]
 		public UInt16 PlaySpeedNtsc { get; set; }
+		[Description("Bankswitch init values")]
 		public byte[] Bankswitch { get; set; } = new byte[8];
+		[Description("(lo, hi) Play speed, in 1/1000000th sec ticks, PAL")]
 		public UInt16 PlaySpeedPal { get; set; }
+		[Description("PAL/NTSC bits; bit 0: if clear, this is an NTSC tune; bit 0: if set, this is a PAL tune; bit 1: if set, this is a dual PAL/NTSC tune; bits 2-7: reserved")]
 		public byte PalNtscBits { get; set; }
+		[Description("Extra Sound Chip Support")]
 		public byte ExtraChips { get; set; }
+		[Description("Reserved for NSF2")]
 		public byte ReservedNSF2 { get; set; }
+		[Description("24-bit length of contained program data")]
 		public int DataLength { get; set; }
 	}
 
@@ -27,7 +46,7 @@ namespace NSFPlayer
 	{
 		private NSFHeader head = new NSFHeader();
 		private byte[] nsf_data = Array.Empty<byte>();
-		private const int data_offset = 0x80;
+		private const int data_offset = 0x80;       // The music program/data follows
 
 		public NSFHeader GetHead()
 		{
@@ -98,6 +117,7 @@ namespace NSFPlayer
 
 			head.DataLength = (int)((data[0x7f] << 16) | (data[0x7e] << 8) | data[0x7d]);
 
+			// If 0, all data until end of file is part of the program. If used, can be used to provide NSF2 metadata in a backward compatible way.
 			if (head.DataLength == 0)
 			{
 				head.DataLength = data.Length - data_offset;
