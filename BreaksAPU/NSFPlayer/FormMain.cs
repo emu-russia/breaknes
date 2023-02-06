@@ -37,7 +37,8 @@ namespace NSFPlayer
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			FormSettings formSettings = new();
+			formSettings.ShowDialog();
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)

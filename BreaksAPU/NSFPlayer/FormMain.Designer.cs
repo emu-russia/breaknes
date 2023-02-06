@@ -54,6 +54,8 @@
 			this.toolStripStatusLabelMsec = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabelState = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel7 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabelACLK = new System.Windows.Forms.ToolStripStatusLabel();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -89,7 +91,7 @@
             this.helpToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(908, 24);
+			this.menuStrip1.Size = new System.Drawing.Size(1018, 24);
 			this.menuStrip1.TabIndex = 0;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -230,11 +232,13 @@
             this.toolStripStatusLabelMsec,
             this.toolStripStatusLabel5,
             this.toolStripStatusLabelState,
+            this.toolStripStatusLabel2,
+            this.toolStripStatusLabel4,
             this.toolStripStatusLabel7,
             this.toolStripStatusLabelACLK});
-			this.statusStrip1.Location = new System.Drawing.Point(0, 461);
+			this.statusStrip1.Location = new System.Drawing.Point(0, 533);
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size(908, 24);
+			this.statusStrip1.Size = new System.Drawing.Size(1018, 24);
 			this.statusStrip1.TabIndex = 1;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
@@ -277,6 +281,19 @@
 			this.toolStripStatusLabelState.Size = new System.Drawing.Size(49, 19);
 			this.toolStripStatusLabelState.Text = "Paused";
 			// 
+			// toolStripStatusLabel2
+			// 
+			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(60, 19);
+			this.toolStripStatusLabel2.Text = "NSF track:";
+			// 
+			// toolStripStatusLabel4
+			// 
+			this.toolStripStatusLabel4.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+			this.toolStripStatusLabel4.Size = new System.Drawing.Size(70, 19);
+			this.toolStripStatusLabel4.Text = "Not loaded";
+			// 
 			// toolStripStatusLabel7
 			// 
 			this.toolStripStatusLabel7.Name = "toolStripStatusLabel7";
@@ -312,7 +329,7 @@
             this.toolStripButtonStop});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(908, 25);
+			this.toolStrip1.Size = new System.Drawing.Size(1018, 25);
 			this.toolStrip1.TabIndex = 2;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
@@ -354,7 +371,7 @@
 			this.tabControl1.Location = new System.Drawing.Point(0, 49);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(908, 412);
+			this.tabControl1.Size = new System.Drawing.Size(1018, 484);
 			this.tabControl1.TabIndex = 3;
 			// 
 			// tabPage1
@@ -363,7 +380,7 @@
 			this.tabPage1.Location = new System.Drawing.Point(4, 24);
 			this.tabPage1.Name = "tabPage1";
 			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(900, 384);
+			this.tabPage1.Size = new System.Drawing.Size(1010, 456);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Wave Dump";
 			this.tabPage1.UseVisualStyleBackColor = true;
@@ -382,8 +399,8 @@
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.furryPlot1);
-			this.splitContainer1.Size = new System.Drawing.Size(894, 378);
-			this.splitContainer1.SplitterDistance = 169;
+			this.splitContainer1.Size = new System.Drawing.Size(1004, 450);
+			this.splitContainer1.SplitterDistance = 261;
 			this.splitContainer1.TabIndex = 0;
 			// 
 			// signalPlot1
@@ -396,7 +413,7 @@
 			this.signalPlot1.Location = new System.Drawing.Point(0, 0);
 			this.signalPlot1.Name = "signalPlot1";
 			this.signalPlot1.SignalColor = System.Drawing.Color.LightGreen;
-			this.signalPlot1.Size = new System.Drawing.Size(894, 169);
+			this.signalPlot1.Size = new System.Drawing.Size(1004, 261);
 			this.signalPlot1.TabIndex = 0;
 			this.signalPlot1.Text = "signalPlot1";
 			this.signalPlot1.ZeroColor = System.Drawing.Color.Red;
@@ -406,7 +423,7 @@
 			this.furryPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.furryPlot1.Location = new System.Drawing.Point(0, 0);
 			this.furryPlot1.Name = "furryPlot1";
-			this.furryPlot1.Size = new System.Drawing.Size(894, 205);
+			this.furryPlot1.Size = new System.Drawing.Size(1004, 185);
 			this.furryPlot1.TabIndex = 0;
 			this.furryPlot1.Text = "furryPlot1";
 			// 
@@ -415,7 +432,7 @@
 			this.tabPage2.Location = new System.Drawing.Point(4, 24);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(900, 384);
+			this.tabPage2.Size = new System.Drawing.Size(1010, 456);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "APU Debug";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -424,7 +441,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(908, 485);
+			this.ClientSize = new System.Drawing.Size(1018, 557);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.toolStrip1);
 			this.Controls.Add(this.statusStrip1);
@@ -492,5 +509,7 @@
 		private SplitContainer splitContainer1;
 		private SignalPlot signalPlot1;
 		private FurryPlot furryPlot1;
+		private ToolStripStatusLabel toolStripStatusLabel2;
+		private ToolStripStatusLabel toolStripStatusLabel4;
 	}
 }
