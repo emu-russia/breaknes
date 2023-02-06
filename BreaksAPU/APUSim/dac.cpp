@@ -154,7 +154,7 @@ namespace APUSim
 	{
 		bool sqa_r_exists[] = { false, false, false, false };
 		bool sqb_r_exists[] = { false, false, false, false };
-		float stage_reciprocal[] = { 1.f, 2.f, 4.f, 8.f };
+		static float stage_reciprocal[] = { 1.f, 2.f, 4.f, 8.f };
 		bool any_exists = false;
 
 		// First determine which resistances are present
@@ -200,9 +200,9 @@ namespace APUSim
 		bool tri_r_exists[] = { false, false, false, false };
 		bool rnd_r_exists[] = { false, false, false, false };
 		bool dmc_r_exists[] = { false, false, false, false, false, false, false };
-		float tri_reciprocal[] = { 2.f, 4.f, 8.f, 16.f };
-		float rnd_reciprocal[] = { 1.f, 2.f, 4.f, 8.f };
-		float dmc_reciprocal[] = { 0.5f, 1.f, 2.f, 4.f, 8.f, 16.f, 32.f };
+		static float tri_reciprocal[] = { 2.f, 4.f, 8.f, 16.f };
+		static float rnd_reciprocal[] = { 1.f, 2.f, 4.f, 8.f };
+		static float dmc_reciprocal[] = { 0.5f, 1.f, 2.f, 4.f, 8.f, 16.f, 32.f };
 		bool any_exists = false;
 
 		// First determine which resistances are present
