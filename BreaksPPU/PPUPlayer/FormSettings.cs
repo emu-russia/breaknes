@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 using System.Xml.Serialization;
 using System.IO;
+using static PPUPlayer.FormSettings;
 
 namespace PPUPlayer
 {
@@ -34,7 +35,11 @@ namespace PPUPlayer
 
 			using (TextReader reader = new StringReader(text))
 			{
-				settings = (PPUPlayerSettings)ser.Deserialize(reader);
+				var res = ser.Deserialize(reader);
+				if (res != null)
+				{
+					settings = (PPUPlayerSettings)res;
+				}
 			}
 
 			return settings;

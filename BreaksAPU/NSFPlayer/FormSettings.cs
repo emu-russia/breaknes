@@ -33,7 +33,11 @@ namespace NSFPlayer
 
 			using (TextReader reader = new StringReader(text))
 			{
-				settings = (APUPlayerSettings)ser.Deserialize(reader);
+				var res = ser.Deserialize(reader);
+				if (res != null)
+				{
+					settings = (APUPlayerSettings)res;
+				}
 			}
 
 			return settings;
