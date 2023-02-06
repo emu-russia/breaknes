@@ -114,4 +114,14 @@ namespace APUSim
 	{
 		dac->SetNormalizedOutput(enable);
 	}
+
+	size_t APU::GetACLKCounter()
+	{
+		return aclk_counter;
+	}
+
+	void APU::ResetACLKCounter()
+	{
+		aclk_counter = 0;
+	}
 }

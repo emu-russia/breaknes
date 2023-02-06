@@ -25,13 +25,13 @@ namespace APUSim
 		BaseLogic::DLatch phi1_latch{};
 		BaseLogic::DLatch phi2_latch{};
 
-		BaseLogic::TriState n_sin;
-		BaseLogic::TriState F1;
-		BaseLogic::TriState F2;
-		BaseLogic::TriState Z1;
-		BaseLogic::TriState Z2;
-		BaseLogic::TriState mode;
-		BaseLogic::TriState n_mode;
+		BaseLogic::TriState n_sin = BaseLogic::TriState::X;
+		BaseLogic::TriState F1 = BaseLogic::TriState::X;
+		BaseLogic::TriState F2 = BaseLogic::TriState::X;
+		BaseLogic::TriState Z1 = BaseLogic::TriState::X;
+		BaseLogic::TriState Z2 = BaseLogic::TriState::X;
+		BaseLogic::TriState mode = BaseLogic::TriState::X;
+		BaseLogic::TriState n_mode = BaseLogic::TriState::X;
 		BaseLogic::TriState pla[6]{};
 
 		BaseLogic::FF z_ff{};

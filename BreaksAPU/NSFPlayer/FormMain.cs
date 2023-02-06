@@ -1,6 +1,7 @@
 using Be.Windows.Forms;
 using NSFPlayerCustomClass;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace NSFPlayer
 {
@@ -10,6 +11,14 @@ namespace NSFPlayer
 		static extern bool AllocConsole();
 
 		private DSound? audio_backend;
+		private NSFLoader nsf = new();
+		private bool nsf_loaded = false;
+		private byte current_song = 0;
+		private bool Paused = true;         // atomic
+
+		// Stats
+		private long timeStamp;
+		private int aclkCounter = 0;
 
 		private int SourceSampleRate = 48000;
 		private List<float> SampleBuf = new();
@@ -32,6 +41,8 @@ namespace NSFPlayer
 			DefaultTitle = this.Text;
 
 			comboBox2.SelectedIndex = 0;
+
+			backgroundWorker1.RunWorkerAsync();
 		}
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -54,40 +65,153 @@ namespace NSFPlayer
 
 		#region "NSF Controls"
 
+		private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+		{
+			while (!backgroundWorker1.CancellationPending)
+			{
+				if (Paused || !nsf_loaded)
+				{
+					Thread.Sleep(10);
+					continue;
+				}
+
+				// Simulate APU
+
+				NSFPlayerInterop.Step();
+
+				// Add audio sample
+
+				float next_sample;
+				NSFPlayerInterop.SampleAudioSignal(out next_sample);
+				SampleBuf.Add(next_sample);
+				furryPlot1.AddSample(next_sample);
+
+				// Show statistics that are updated once every 1 second.
+
+				long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+				if (now > (timeStamp + 1000))
+				{
+					timeStamp = now;
+
+					UpdateSampleBufStats();
+					UpdateSignalPlot();
+
+					int aclk_per_sec = NSFPlayerInterop.GetACLKCounter() - aclkCounter;
+					toolStripStatusLabelACLK.Text = aclk_per_sec.ToString();
+
+					aclkCounter = NSFPlayerInterop.GetACLKCounter();
+				}
+			}
+		}
+
+		private void InitBoard(string nsf_filename)
+		{
+			byte[] data = File.ReadAllBytes(nsf_filename);
+			nsf.LoadNSF(data);
+			nsf_loaded = true;
+			SetSong(nsf.GetHead().StartingSong);
+			this.Text = DefaultTitle + " - " + nsf_filename;
+
+			var settings = FormSettings.LoadSettings();
+			NSFPlayerInterop.CreateBoard("NSFPlayer", settings.APU_Revision, "None", "None");
+			UpdateMemLayout();
+
+			// Autoplay
+			SetPaused(false);
+		}
+
+		private void DisposeBoard()
+		{
+			SetPaused(true);
+			NSFPlayerInterop.DestroyBoard();
+			nsf_loaded = false;
+			nsf = new();
+			this.Text = DefaultTitle;
+			UpdateTrackStat();
+			aclkCounter = 0;
+		}
+
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			if (openFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				string nsf_filename = openFileDialog1.FileName;
+				DisposeBoard();
+				InitBoard(nsf_filename);
+			}
 		}
 
 		private void playToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			SetPaused(false);
 		}
 
 		private void pauseToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			SetPaused(true);
 		}
 
 		private void stopToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			DisposeBoard();
 		}
 
 		private void previousTrackToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			PrevSong();
 		}
 
 		private void nextTrackToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			NextSong();
 		}
 
 		private void nSFInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			FormNSFInfo info = new FormNSFInfo();
+			FormNSFInfo info = new FormNSFInfo(nsf_loaded ? nsf.GetHead() : null);
 			info.ShowDialog();
+		}
+
+		private void SetSong(byte n)
+		{
+			current_song = n;
+			UpdateTrackStat();
+		}
+
+		private void PrevSong()
+		{
+			if (!nsf_loaded)
+				return;
+			byte total = nsf.GetHead().TotalSongs;
+			if (current_song <= 1)
+				return;
+			current_song--;
+			UpdateTrackStat();
+		}
+
+		private void NextSong()
+		{
+			if (!nsf_loaded)
+				return;
+			byte total = nsf.GetHead().TotalSongs;
+			if (current_song >= total)
+				return;
+			current_song++;
+			UpdateTrackStat();
+		}
+
+		private void UpdateTrackStat()
+		{
+			if (nsf_loaded)
+				toolStripStatusLabel4.Text = current_song.ToString() + " / " + nsf.GetHead().TotalSongs.ToString();
+			else
+				toolStripStatusLabel4.Text = "Not loaded";
+		}
+
+		private void SetPaused(bool paused)
+		{
+			Paused = paused;
+			toolStripStatusLabelState.Text = paused ? "Paused" : "Running";
 		}
 
 		#endregion "NSF Controls"
@@ -112,6 +236,28 @@ namespace NSFPlayer
 		{
 			if (audio_backend != null)
 				audio_backend.StopSampleBuf();
+		}
+
+		private void UpdateSampleBufStats()
+		{
+			toolStripStatusLabelSamples.Text = SampleBuf.Count.ToString();
+			long ms = SourceSampleRate != 0 ? (SampleBuf.Count * 1000) / (long)SourceSampleRate : 0;
+			toolStripStatusLabelMsec.Text = ms.ToString() + " ms";
+			//long hz = Paused ? 0 : (long)SourceSampleRate;
+			//toolStripStatusLabel8.Text = hz.ToString() + " Hz";
+		}
+
+		private void UpdateSignalPlot()
+		{
+			int numberOfSamples = SampleBuf.Count;
+			float[] plot_samples = new float[numberOfSamples];
+
+			for (int i = 0; i < numberOfSamples; i++)
+			{
+				plot_samples[i] = SampleBuf[i];
+			}
+
+			signalPlot1.PlotSignal(plot_samples);
 		}
 
 		#endregion "Sample Buffer Playback Controls"
@@ -259,5 +405,47 @@ namespace NSFPlayer
 		}
 
 		#endregion "APU Debug"
+
+		private void sendFeedbackToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			OpenUrl("https://github.com/emu-russia/breaknes/issues");
+		}
+
+		private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			OpenUrl("https://github.com/emu-russia/breaknes/releases");
+		}
+
+		private void OpenUrl(string url)
+		{
+			// https://stackoverflow.com/questions/4580263/how-to-open-in-default-browser-in-c-sharp
+
+			try
+			{
+				System.Diagnostics.Process.Start(url);
+			}
+			catch
+			{
+				// hack because of this: https://github.com/dotnet/corefx/issues/10361
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				{
+					url = url.Replace("&", "^&");
+					System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+				}
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				{
+					System.Diagnostics.Process.Start("xdg-open", url);
+				}
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+				{
+					System.Diagnostics.Process.Start("open", url);
+				}
+				else
+				{
+					throw;
+				}
+			}
+		}
+
 	}
 }

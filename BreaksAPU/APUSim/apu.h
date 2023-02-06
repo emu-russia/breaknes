@@ -242,6 +242,8 @@ namespace APUSim
 		BaseLogic::TriState GetDBBit(size_t n);
 		void SetDBBit(size_t n, BaseLogic::TriState bit_val);
 
+		size_t aclk_counter = 0;
+
 	public:
 		APU(M6502Core::M6502 *core, Revision rev);
 		~APU();
@@ -263,5 +265,9 @@ namespace APUSim
 		/// </summary>
 		/// <param name="enable"></param>
 		void SetNormalizedOutput(bool enable);
+
+		size_t GetACLKCounter();
+
+		void ResetACLKCounter();
 	};
 }

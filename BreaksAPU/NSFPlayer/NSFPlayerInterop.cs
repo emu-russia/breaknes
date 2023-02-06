@@ -10,7 +10,6 @@ namespace NSFPlayer
 {
 	public class NSFPlayerInterop
 	{
-
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void CreateBoard(string boardName, string apu, string ppu, string p1);
 
@@ -19,6 +18,12 @@ namespace NSFPlayer
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void Step();
+
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetACLKCounter();
+
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SampleAudioSignal(out float sample);
 	}
 
 

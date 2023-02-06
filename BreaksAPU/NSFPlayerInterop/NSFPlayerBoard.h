@@ -18,11 +18,10 @@ namespace NSFPlayer
 		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
 
 		uint8_t data_bus = 0;
+		uint16_t addr_bus = 0;
 
 		bool pendingReset = false;
 		int resetHalfClkCounter = 0;
-
-		BaseLogic::TriState n_INT = BaseLogic::TriState::X;
 
 		static uint8_t DumpSRAM(void* opaque, size_t addr);
 
@@ -39,6 +38,8 @@ namespace NSFPlayer
 
 		void GetDebugInfo(BoardDebugInfo& info);
 
+		APUSim::AudioOutSignal aux{};
+
 	public:
 		Board(char* boardName, char* apu, char* ppu, char* p1);
 		~Board();
@@ -52,5 +53,9 @@ namespace NSFPlayer
 		void ResetAPU();
 
 		bool APUInResetState();
+
+		size_t GetACLKCounter();
+
+		void SampleAudioSignal(float* sample);
 	};
 }
