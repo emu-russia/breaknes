@@ -13,7 +13,7 @@ namespace NSFPlayer
 		private NSFLoader nsf = new();
 		private bool nsf_loaded = false;
 		private byte current_song = 0;
-		private bool Paused = true;
+		private bool Paused = true;			// atomic
 
 		private int SourceSampleRate = 48000;
 		private List<float> SampleBuf = new();
@@ -58,18 +58,37 @@ namespace NSFPlayer
 
 		#region "NSF Controls"
 
+		private void InitBoard(string nsf_filename)
+		{
+			byte[] data = File.ReadAllBytes(nsf_filename);
+			nsf.LoadNSF(data);
+			nsf_loaded = true;
+			SetSong(nsf.GetHead().StartingSong);
+			this.Text = DefaultTitle + " - " + nsf_filename;
+
+			var settings = FormSettings.LoadSettings();
+			NSFPlayerInterop.CreateBoard("NSFPlayer", settings.APU_Revision, "", "");
+
+			// Autoplay
+			SetPaused(false);
+		}
+
+		private void DisposeBoard()
+		{
+			SetPaused(true);
+			NSFPlayerInterop.DestroyBoard();
+			nsf_loaded = false;
+			nsf = new();
+			this.Text = DefaultTitle;
+			UpdateTrackStat();
+		}
+
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (openFileDialog1.ShowDialog() == DialogResult.OK)
 			{
 				string nsf_filename = openFileDialog1.FileName;
-				byte[] data = File.ReadAllBytes(nsf_filename);
-				nsf.LoadNSF(data);
-				nsf_loaded = true;
-				SetSong(nsf.GetHead().StartingSong);
-				this.Text = DefaultTitle + " - " + nsf_filename;
-				// Autoplay
-				SetPaused(false);
+				InitBoard(nsf_filename);
 			}
 		}
 
@@ -85,11 +104,7 @@ namespace NSFPlayer
 
 		private void stopToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			SetPaused(true);
-			nsf_loaded = false;
-			nsf = new();
-			this.Text = DefaultTitle;
-			UpdateTrackStat();
+			DisposeBoard();
 		}
 
 		private void previousTrackToolStripMenuItem_Click(object sender, EventArgs e)
