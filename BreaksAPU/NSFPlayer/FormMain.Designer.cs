@@ -68,6 +68,8 @@
 			this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonDiscard = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
+			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -189,40 +191,40 @@
 			// playToolStripMenuItem
 			// 
 			this.playToolStripMenuItem.Name = "playToolStripMenuItem";
-			this.playToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.playToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.playToolStripMenuItem.Text = "Play";
 			this.playToolStripMenuItem.Click += new System.EventHandler(this.playToolStripMenuItem_Click);
 			// 
 			// pauseToolStripMenuItem
 			// 
 			this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
-			this.pauseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.pauseToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.pauseToolStripMenuItem.Text = "Pause";
 			this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseToolStripMenuItem_Click);
 			// 
 			// stopToolStripMenuItem
 			// 
 			this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-			this.stopToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.stopToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.stopToolStripMenuItem.Text = "Stop";
 			this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
 			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+			this.toolStripSeparator2.Size = new System.Drawing.Size(146, 6);
 			// 
 			// nextTrackToolStripMenuItem
 			// 
 			this.nextTrackToolStripMenuItem.Name = "nextTrackToolStripMenuItem";
-			this.nextTrackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.nextTrackToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.nextTrackToolStripMenuItem.Text = "Next Track";
 			this.nextTrackToolStripMenuItem.Click += new System.EventHandler(this.nextTrackToolStripMenuItem_Click);
 			// 
 			// previousTrackToolStripMenuItem
 			// 
 			this.previousTrackToolStripMenuItem.Name = "previousTrackToolStripMenuItem";
-			this.previousTrackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.previousTrackToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.previousTrackToolStripMenuItem.Text = "Previous Track";
 			this.previousTrackToolStripMenuItem.Click += new System.EventHandler(this.previousTrackToolStripMenuItem_Click);
 			// 
@@ -374,7 +376,9 @@
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonPlay,
             this.toolStripButtonDiscard,
-            this.toolStripButtonStop});
+            this.toolStripButtonStop,
+            this.toolStripSeparator4,
+            this.toolStripButton1});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(1018, 25);
@@ -410,6 +414,22 @@
 			this.toolStripButtonStop.Size = new System.Drawing.Size(35, 22);
 			this.toolStripButtonStop.Text = "Stop";
 			this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
+			// 
+			// toolStripSeparator4
+			// 
+			this.toolStripSeparator4.Name = "toolStripSeparator4";
+			this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+			// 
+			// toolStripButton1
+			// 
+			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton1.Name = "toolStripButton1";
+			this.toolStripButton1.Size = new System.Drawing.Size(38, 22);
+			this.toolStripButton1.Text = "Furry";
+			this.toolStripButton1.ToolTipText = "Enable FFT";
+			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
 			// 
 			// tabControl1
 			// 
@@ -723,5 +743,7 @@
 		private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator3;
 		private System.ComponentModel.BackgroundWorker backgroundWorker1;
+		private ToolStripSeparator toolStripSeparator4;
+		private ToolStripButton toolStripButton1;
 	}
 }

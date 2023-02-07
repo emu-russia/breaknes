@@ -25,6 +25,8 @@ namespace NSFPlayer
 
 		private string DefaultTitle = "";
 
+		private bool fft = false;
+
 		public FormMain()
 		{
 			InitializeComponent();
@@ -84,7 +86,8 @@ namespace NSFPlayer
 				float next_sample;
 				NSFPlayerInterop.SampleAudioSignal(out next_sample);
 				SampleBuf.Add(next_sample);
-				furryPlot1.AddSample(next_sample);
+				if (fft)
+					furryPlot1.AddSample(next_sample);
 
 				// Show statistics that are updated once every 1 second.
 
@@ -447,5 +450,23 @@ namespace NSFPlayer
 			}
 		}
 
+		/// <summary>
+		/// FFT enable button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void toolStripButton1_Click(object sender, EventArgs e)
+		{
+			if (toolStripButton1.Checked)
+			{
+				toolStripButton1.Checked = false;
+				fft = false;
+			}
+			else
+			{
+				toolStripButton1.Checked = true;
+				fft = true;
+			}
+		}
 	}
 }
