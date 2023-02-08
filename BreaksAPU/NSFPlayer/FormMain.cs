@@ -8,7 +8,7 @@ namespace NSFPlayer
 	public partial class FormMain : Form
 	{
 		private DSound? audio_backend;
-		private NSFLoader nsf = new();
+		private NSFSupport nsf = new();
 		private bool nsf_loaded = false;
 		private byte current_song = 0;
 		private bool Paused = true;         // atomic
