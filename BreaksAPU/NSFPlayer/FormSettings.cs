@@ -60,6 +60,7 @@ namespace NSFPlayer
 			APUPlayerSettings settings = new();
 
 			settings.APU_Revision = "RP2A03G";
+			settings.OutputSampleRate = 48000;
 
 			SaveSettings(settings);
 
@@ -94,6 +95,10 @@ namespace NSFPlayer
 			[TypeConverter(typeof(FormatStringConverter_APU_Revision))]
 			public string? APU_Revision { get; set; }
 
+			[XmlElement]
+			[Category("Host Features")]
+			[Description("The AUX output is sampled at a high frequency, which cannot be played by a ordinary sound card. Therefore, some of the samples are skipped to match the DSound playback frequency (this setting).")]
+			public int OutputSampleRate { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid

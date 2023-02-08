@@ -7,9 +7,6 @@ namespace NSFPlayer
 {
 	public partial class FormMain : Form
 	{
-		[DllImport("kernel32")]
-		static extern bool AllocConsole();
-
 		private DSound? audio_backend;
 		private NSFLoader nsf = new();
 		private bool nsf_loaded = false;
@@ -35,15 +32,14 @@ namespace NSFPlayer
 
 		private void FormMain_Load(object sender, EventArgs e)
 		{
-#if DEBUG
-			AllocConsole();
-#endif
-
 			audio_backend = new DSound(Handle);
 
 			DefaultTitle = this.Text;
 
 			comboBox2.SelectedIndex = 0;
+
+			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
+			SourceSampleRate = settings.OutputSampleRate;
 
 			backgroundWorker1.RunWorkerAsync();
 		}
@@ -51,7 +47,14 @@ namespace NSFPlayer
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			FormSettings formSettings = new();
+			formSettings.FormClosed += FormSettings_FormClosed;
 			formSettings.ShowDialog();
+		}
+
+		private void FormSettings_FormClosed(object? sender, FormClosedEventArgs e)
+		{
+			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
+			SourceSampleRate = settings.OutputSampleRate;
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -427,7 +430,9 @@ namespace NSFPlayer
 
 		#endregion "APU Debug"
 
-		
+
+		#region "What's that for?"
+
 		private void sendFeedbackToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			OpenUrl("https://github.com/emu-russia/breaknes/issues");
@@ -488,5 +493,8 @@ namespace NSFPlayer
 				fft = true;
 			}
 		}
+
+		#endregion "What's that for?"
+
 	}
 }
