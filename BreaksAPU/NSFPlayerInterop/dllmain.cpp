@@ -30,6 +30,7 @@ extern "C"
 			printf("CreateBoard\n");
 			CreateDebugHub();
 			board = new NSFPlayer::Board(boardName, apu, ppu, p1);
+			board->ResetAPU();
 		}
 	}
 
@@ -58,6 +59,10 @@ extern "C"
 		if (board != nullptr)
 		{
 			return board->GetACLKCounter();
+		}
+		else
+		{
+			return 0;
 		}
 	}
 

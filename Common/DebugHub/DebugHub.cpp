@@ -271,11 +271,11 @@ extern "C"
 				break;
 
 			case DebugInfoType::DebugInfoType_APU:
-				CopyOutDebugInfo(dbg_hub->coreInfo, entries);
+				CopyOutDebugInfo(dbg_hub->apuInfo, entries);
 				break;
 
 			case DebugInfoType::DebugInfoType_APURegs:
-				CopyOutDebugInfo(dbg_hub->coreRegsInfo, entries);
+				CopyOutDebugInfo(dbg_hub->apuRegsInfo, entries);
 				break;
 
 			case DebugInfoType::DebugInfoType_PPU:

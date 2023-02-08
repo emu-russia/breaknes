@@ -39,6 +39,7 @@ namespace NSFPlayer
 		core = new M6502Core::M6502(true, true);
 		apu = new APUSim::APU(core, rev);
 		sram = new BankedSRAM();
+		wram = new BaseBoard::SRAM(wram_bits);
 
 		apu->SetNormalizedOutput(true);
 
@@ -51,6 +52,7 @@ namespace NSFPlayer
 		delete apu;
 		delete core;
 		delete sram;
+		delete wram;
 	}
 
 	/// <summary>
@@ -118,6 +120,12 @@ namespace NSFPlayer
 	void Board::ResetAPU()
 	{
 		apu->ResetACLKCounter();
+
+		for (int i = 0; i < wram->Dbg_GetSize(); i++)
+		{
+			wram->Dbg_WriteByte(i, 0);
+		}
+
 		pendingReset = true;
 		resetHalfClkCounter = 4;
 	}

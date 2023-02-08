@@ -42,9 +42,9 @@ namespace NSFPlayer
 		public int DataLength { get; set; }
 	}
 
-	public class NSFLoader
+	public class NSFSupport
 	{
-		private NSFHeader head = new NSFHeader();
+		private readonly NSFHeader head = new();
 		private byte[] nsf_data = Array.Empty<byte>();
 		private const int data_offset = 0x80;       // The music program/data follows
 
@@ -123,5 +123,7 @@ namespace NSFPlayer
 				head.DataLength = data.Length - data_offset;
 			}
 		}
+
+
 	}
 }

@@ -7,14 +7,12 @@ namespace NSFPlayer
 {
 	public partial class FormMain : Form
 	{
-		[DllImport("kernel32")]
-		static extern bool AllocConsole();
-
 		private DSound? audio_backend;
-		private NSFLoader nsf = new();
+		private NSFSupport nsf = new();
 		private bool nsf_loaded = false;
 		private byte current_song = 0;
 		private bool Paused = true;         // atomic
+		private bool Dma = false;		// atomic
 
 		// Stats
 		private long timeStamp;
@@ -34,15 +32,16 @@ namespace NSFPlayer
 
 		private void FormMain_Load(object sender, EventArgs e)
 		{
-#if DEBUG
-			AllocConsole();
-#endif
-
 			audio_backend = new DSound(Handle);
 
 			DefaultTitle = this.Text;
 
 			comboBox2.SelectedIndex = 0;
+
+			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
+			SourceSampleRate = settings.OutputSampleRate;
+
+			SetPaused(true);
 
 			backgroundWorker1.RunWorkerAsync();
 		}
@@ -50,7 +49,14 @@ namespace NSFPlayer
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			FormSettings formSettings = new();
+			formSettings.FormClosed += FormSettings_FormClosed;
 			formSettings.ShowDialog();
+		}
+
+		private void FormSettings_FormClosed(object? sender, FormClosedEventArgs e)
+		{
+			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
+			SourceSampleRate = settings.OutputSampleRate;
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -71,7 +77,7 @@ namespace NSFPlayer
 		{
 			while (!backgroundWorker1.CancellationPending)
 			{
-				if (Paused || !nsf_loaded)
+				if (Paused || !nsf_loaded || Dma)
 				{
 					Thread.Sleep(10);
 					continue;
@@ -85,7 +91,7 @@ namespace NSFPlayer
 
 				float next_sample;
 				NSFPlayerInterop.SampleAudioSignal(out next_sample);
-				SampleBuf.Add(next_sample);
+				FeedSample(next_sample);
 				if (fft)
 					furryPlot1.AddSample(next_sample);
 
@@ -215,6 +221,16 @@ namespace NSFPlayer
 		{
 			Paused = paused;
 			toolStripStatusLabelState.Text = paused ? "Paused" : "Running";
+			if (paused)
+			{
+				playToolStripMenuItem.Checked = false;
+				pauseToolStripMenuItem.Checked = true;
+			}
+			else
+			{
+				playToolStripMenuItem.Checked = true;
+				pauseToolStripMenuItem.Checked = false;
+			}
 		}
 
 		#endregion "NSF Controls"
@@ -225,14 +241,20 @@ namespace NSFPlayer
 		private void toolStripButtonPlay_Click(object sender, EventArgs e)
 		{
 			if (audio_backend != null)
+			{
+				Dma = true;
 				audio_backend.PlaySampleBuf(SourceSampleRate, SampleBuf);
+				Dma = false;
+			}
 		}
 
 		private void toolStripButtonDiscard_Click(object sender, EventArgs e)
 		{
 			if (audio_backend != null)
 				audio_backend.StopSampleBuf();
+			Dma = true;
 			SampleBuf.Clear();
+			Dma = false;
 		}
 
 		private void toolStripButtonStop_Click(object sender, EventArgs e)
@@ -246,8 +268,6 @@ namespace NSFPlayer
 			toolStripStatusLabelSamples.Text = SampleBuf.Count.ToString();
 			long ms = SourceSampleRate != 0 ? (SampleBuf.Count * 1000) / (long)SourceSampleRate : 0;
 			toolStripStatusLabelMsec.Text = ms.ToString() + " ms";
-			//long hz = Paused ? 0 : (long)SourceSampleRate;
-			//toolStripStatusLabel8.Text = hz.ToString() + " Hz";
 		}
 
 		private void UpdateSignalPlot()
@@ -261,6 +281,19 @@ namespace NSFPlayer
 			}
 
 			signalPlot1.PlotSignal(plot_samples);
+		}
+
+		/// <summary>
+		/// This sampler is used for SRC.
+		/// The AUX output is sampled at a high frequency, which cannot be played by a ordinary sound card.
+		/// Therefore, some of the samples are skipped to match the DSound playback frequency (SourceSampleRate variable).
+		/// </summary>
+		/// <param name="sample"></param>
+		private void FeedSample (float sample)
+		{
+			// TODO: Skip some samples :)
+
+			SampleBuf.Add(sample);
 		}
 
 		#endregion "Sample Buffer Playback Controls"
@@ -409,6 +442,9 @@ namespace NSFPlayer
 
 		#endregion "APU Debug"
 
+
+		#region "What's that for?"
+
 		private void sendFeedbackToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			OpenUrl("https://github.com/emu-russia/breaknes/issues");
@@ -450,6 +486,7 @@ namespace NSFPlayer
 			}
 		}
 
+		
 		/// <summary>
 		/// FFT enable button.
 		/// </summary>
@@ -468,5 +505,8 @@ namespace NSFPlayer
 				fft = true;
 			}
 		}
+
+		#endregion "What's that for?"
+
 	}
 }
