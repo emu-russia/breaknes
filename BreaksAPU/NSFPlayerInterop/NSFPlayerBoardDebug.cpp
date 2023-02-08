@@ -455,7 +455,7 @@ namespace NSFPlayer
 	void Board::GetDebugInfo(BoardDebugInfo& info)
 	{
 		info.CLK = CLK;
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < _countof(info.bank_reg); i++)
 		{
 			info.bank_reg[i] = sram->GetBankReg(i);
 		}
