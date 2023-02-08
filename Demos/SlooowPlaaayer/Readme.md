@@ -15,7 +15,3 @@ The Background Worker runs in the background and collects samples from the sourc
 Once every (real) second, statistics are updated and a signal graph is plotted.
 
 If the source samples run out, the worker falls asleep until it gets a new source.
-
-## TODO
-
-Currently only 44100 Hz for audio sources is supported. You need to implement the SRC.

@@ -40,20 +40,16 @@ namespace NSFPlayer
 			if (SampleBuf.Count == 0)
 				return;
 
-			// SRC
-
-			// HACK: Putting resampling on the shoulders of DSound
+			// Putting resampling on the shoulders of DSound
+			
 			DestSampleRate = SourceSampleRate;
-
-			List<float> SampleBufPrepared = new();
-			SRC.SampleRateConv(SampleBuf, SourceSampleRate, SampleBufPrepared, DestSampleRate);
 
 			// WaveFormat Mono, DestSampleRate Hz, 16 bit
 			waveFormat = new WaveFormat(DestSampleRate, 16, 1);
 
 			// Create SecondarySoundBuffer
 			var secondaryBufferDesc = new SoundBufferDescription();
-			secondaryBufferDesc.BufferBytes = SampleBufPrepared.Count * 2;
+			secondaryBufferDesc.BufferBytes = SampleBuf.Count * 2;
 			secondaryBufferDesc.Format = waveFormat;
 			secondaryBufferDesc.Flags = BufferFlags.GetCurrentPosition2 | BufferFlags.ControlPositionNotify | BufferFlags.GlobalFocus |
 										BufferFlags.ControlVolume | BufferFlags.StickyFocus;
@@ -68,11 +64,11 @@ namespace NSFPlayer
 			var dataPart1 = secondarySoundBuffer.Lock(0, capabilities.BufferBytes, LockFlags.EntireBuffer, out dataPart2);
 
 			// Fill the buffer with some sound
-			int numberOfSamples = SampleBufPrepared.Count;
+			int numberOfSamples = SampleBuf.Count;
 
 			for (int i = 0; i < numberOfSamples; i++)
 			{
-				short value = (short)(SampleBufPrepared[i] * Int16.MaxValue);
+				short value = (short)(SampleBuf[i] * Int16.MaxValue);
 				dataPart1.Write(value);
 			}
 

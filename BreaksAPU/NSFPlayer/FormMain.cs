@@ -15,6 +15,7 @@ namespace NSFPlayer
 		private bool nsf_loaded = false;
 		private byte current_song = 0;
 		private bool Paused = true;         // atomic
+		private bool Dma = false;		// atomic
 
 		// Stats
 		private long timeStamp;
@@ -71,7 +72,7 @@ namespace NSFPlayer
 		{
 			while (!backgroundWorker1.CancellationPending)
 			{
-				if (Paused || !nsf_loaded)
+				if (Paused || !nsf_loaded || Dma)
 				{
 					Thread.Sleep(10);
 					continue;
@@ -85,7 +86,7 @@ namespace NSFPlayer
 
 				float next_sample;
 				NSFPlayerInterop.SampleAudioSignal(out next_sample);
-				SampleBuf.Add(next_sample);
+				FeedSample(next_sample);
 				if (fft)
 					furryPlot1.AddSample(next_sample);
 
@@ -225,14 +226,20 @@ namespace NSFPlayer
 		private void toolStripButtonPlay_Click(object sender, EventArgs e)
 		{
 			if (audio_backend != null)
+			{
+				Dma = true;
 				audio_backend.PlaySampleBuf(SourceSampleRate, SampleBuf);
+				Dma = false;
+			}
 		}
 
 		private void toolStripButtonDiscard_Click(object sender, EventArgs e)
 		{
 			if (audio_backend != null)
 				audio_backend.StopSampleBuf();
+			Dma = true;
 			SampleBuf.Clear();
+			Dma = false;
 		}
 
 		private void toolStripButtonStop_Click(object sender, EventArgs e)
@@ -246,8 +253,6 @@ namespace NSFPlayer
 			toolStripStatusLabelSamples.Text = SampleBuf.Count.ToString();
 			long ms = SourceSampleRate != 0 ? (SampleBuf.Count * 1000) / (long)SourceSampleRate : 0;
 			toolStripStatusLabelMsec.Text = ms.ToString() + " ms";
-			//long hz = Paused ? 0 : (long)SourceSampleRate;
-			//toolStripStatusLabel8.Text = hz.ToString() + " Hz";
 		}
 
 		private void UpdateSignalPlot()
@@ -261,6 +266,19 @@ namespace NSFPlayer
 			}
 
 			signalPlot1.PlotSignal(plot_samples);
+		}
+
+		/// <summary>
+		/// This sampler is used for SRC.
+		/// The AUX output is sampled at a high frequency, which cannot be played by a ordinary sound card.
+		/// Therefore, some of the samples are skipped to match the DSound playback frequency (SourceSampleRate variable).
+		/// </summary>
+		/// <param name="sample"></param>
+		private void FeedSample (float sample)
+		{
+			// TODO: Skip some samples :)
+
+			SampleBuf.Add(sample);
 		}
 
 		#endregion "Sample Buffer Playback Controls"
@@ -409,6 +427,7 @@ namespace NSFPlayer
 
 		#endregion "APU Debug"
 
+		
 		private void sendFeedbackToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			OpenUrl("https://github.com/emu-russia/breaknes/issues");
@@ -450,6 +469,7 @@ namespace NSFPlayer
 			}
 		}
 
+		
 		/// <summary>
 		/// FFT enable button.
 		/// </summary>

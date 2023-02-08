@@ -59,6 +59,10 @@ extern "C"
 		{
 			return board->GetACLKCounter();
 		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	__declspec(dllexport) void SampleAudioSignal(float* sample)
