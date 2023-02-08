@@ -41,6 +41,8 @@ namespace NSFPlayer
 			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
 			SourceSampleRate = settings.OutputSampleRate;
 
+			SetPaused(true);
+
 			backgroundWorker1.RunWorkerAsync();
 		}
 
@@ -219,6 +221,16 @@ namespace NSFPlayer
 		{
 			Paused = paused;
 			toolStripStatusLabelState.Text = paused ? "Paused" : "Running";
+			if (paused)
+			{
+				playToolStripMenuItem.Checked = false;
+				pauseToolStripMenuItem.Checked = true;
+			}
+			else
+			{
+				playToolStripMenuItem.Checked = true;
+				pauseToolStripMenuItem.Checked = false;
+			}
 		}
 
 		#endregion "NSF Controls"

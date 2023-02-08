@@ -191,40 +191,40 @@
 			// playToolStripMenuItem
 			// 
 			this.playToolStripMenuItem.Name = "playToolStripMenuItem";
-			this.playToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.playToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.playToolStripMenuItem.Text = "Play";
 			this.playToolStripMenuItem.Click += new System.EventHandler(this.playToolStripMenuItem_Click);
 			// 
 			// pauseToolStripMenuItem
 			// 
 			this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
-			this.pauseToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.pauseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.pauseToolStripMenuItem.Text = "Pause";
 			this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseToolStripMenuItem_Click);
 			// 
 			// stopToolStripMenuItem
 			// 
 			this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-			this.stopToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.stopToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.stopToolStripMenuItem.Text = "Stop";
 			this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
 			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(146, 6);
+			this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
 			// 
 			// nextTrackToolStripMenuItem
 			// 
 			this.nextTrackToolStripMenuItem.Name = "nextTrackToolStripMenuItem";
-			this.nextTrackToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.nextTrackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.nextTrackToolStripMenuItem.Text = "Next Track";
 			this.nextTrackToolStripMenuItem.Click += new System.EventHandler(this.nextTrackToolStripMenuItem_Click);
 			// 
 			// previousTrackToolStripMenuItem
 			// 
 			this.previousTrackToolStripMenuItem.Name = "previousTrackToolStripMenuItem";
-			this.previousTrackToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.previousTrackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.previousTrackToolStripMenuItem.Text = "Previous Track";
 			this.previousTrackToolStripMenuItem.Click += new System.EventHandler(this.previousTrackToolStripMenuItem_Click);
 			// 
@@ -573,7 +573,7 @@
 			// propertyGrid1
 			// 
 			this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.propertyGrid1.Font = new System.Drawing.Font("Segoe UI", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.propertyGrid1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.propertyGrid1.Location = new System.Drawing.Point(0, 0);
 			this.propertyGrid1.Name = "propertyGrid1";
 			this.propertyGrid1.Size = new System.Drawing.Size(334, 404);

@@ -146,7 +146,18 @@ namespace NSFPlayerCustomClass
 
 		public override void SetValue(object? component, object? value)
 		{
-			m_Property.Value = value;
+			if (value != null)
+			{
+				//if (value is UInt32)
+				//{
+				//	UInt32 int_val = (UInt32)value;
+				//	m_Property.Value = int_val > 1 ? int_val.ToString("X") : int_val;
+				//}
+				//else
+				{
+					m_Property.Value = value;
+				}
+			}
 		}
 
 		public override bool ShouldSerializeValue(object component)
