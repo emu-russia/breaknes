@@ -5,6 +5,7 @@
 using namespace BaseLogic;
 
 #define BANKED_SRAM_NAME "BankedSRAM"
+#define WRAM_NAME "WRAM"
 #define CORE_WIRES_CATEGORY "Core Wires"
 #define CORE_REGS_CATEGORY "Core Regs"
 #define APU_WIRES_CATEGORY "APU Wires"
@@ -22,6 +23,14 @@ namespace NSFPlayer
 		strcpy_s(sramRegion->name, sizeof(sramRegion->name), BANKED_SRAM_NAME);
 		sramRegion->size = (int32_t)sram->Dbg_GetSize();
 		dbg_hub->AddMemRegion(sramRegion, DumpSRAM, WriteSRAM, this, false);
+
+		// WRAM
+
+		MemDesciptor* wramRegion = new MemDesciptor;
+		memset(wramRegion, 0, sizeof(MemDesciptor));
+		strcpy_s(wramRegion->name, sizeof(wramRegion->name), WRAM_NAME);
+		wramRegion->size = (int32_t)wram->Dbg_GetSize();
+		dbg_hub->AddMemRegion(wramRegion, DumpWRAM, WriteWRAM, this, false);
 	}
 
 	struct SignalOffsetPair
@@ -261,7 +270,14 @@ namespace NSFPlayer
 	SignalOffsetPair board_signals[] = {
 		"BoardCLK", offsetof(BoardDebugInfo, CLK), 1,
 
-		// TBD: Add here all the debugging APU entities as they appear.
+		"Bank0", offsetof(BoardDebugInfo, bank_reg[0]), 8,
+		"Bank1", offsetof(BoardDebugInfo, bank_reg[1]), 8,
+		"Bank2", offsetof(BoardDebugInfo, bank_reg[2]), 8,
+		"Bank3", offsetof(BoardDebugInfo, bank_reg[3]), 8,
+		"Bank4", offsetof(BoardDebugInfo, bank_reg[4]), 8,
+		"Bank5", offsetof(BoardDebugInfo, bank_reg[5]), 8,
+		"Bank6", offsetof(BoardDebugInfo, bank_reg[6]), 8,
+		"Bank7", offsetof(BoardDebugInfo, bank_reg[7]), 8,
 	};
 
 	void Board::AddDebugInfoProviders()
@@ -334,6 +350,18 @@ namespace NSFPlayer
 		board->sram->Dbg_WriteByte(addr, data);
 	}
 
+	uint8_t Board::DumpWRAM(void* opaque, size_t addr)
+	{
+		Board* board = (Board*)opaque;
+		return board->wram->Dbg_ReadByte(addr);
+	}
+
+	void Board::WriteWRAM(void* opaque, size_t addr, uint8_t data)
+	{
+		Board* board = (Board*)opaque;
+		board->wram->Dbg_WriteByte(addr, data);
+	}
+
 	uint32_t Board::GetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
 	{
 		Board* board = (Board*)opaque;
@@ -372,7 +400,7 @@ namespace NSFPlayer
 
 				bits = sp->bits;
 				uint8_t* ptr = (uint8_t*)&regs + sp->offset;
-				return *(uint32_t*)ptr;
+				return *ptr;
 			}
 		}
 
@@ -427,6 +455,10 @@ namespace NSFPlayer
 	void Board::GetDebugInfo(BoardDebugInfo& info)
 	{
 		info.CLK = CLK;
+		for (int i = 0; i < 8; i++)
+		{
+			info.bank_reg[i] = sram->GetBankReg(i);
+		}
 	}
 
 	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)

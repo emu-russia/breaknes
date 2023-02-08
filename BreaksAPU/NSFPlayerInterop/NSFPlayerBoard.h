@@ -7,6 +7,7 @@ namespace NSFPlayer
 	struct BoardDebugInfo
 	{
 		uint32_t CLK;
+		uint32_t bank_reg[8];
 	};
 
 	class Board
@@ -14,6 +15,9 @@ namespace NSFPlayer
 		APUSim::APU* apu = nullptr;
 		M6502Core::M6502* core = nullptr;
 		BankedSRAM* sram = nullptr;
+		BaseBoard::SRAM* wram = nullptr;
+		const size_t wram_bits = 11;
+		const size_t wram_size = 1ULL << wram_bits;
 
 		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
 
@@ -24,8 +28,10 @@ namespace NSFPlayer
 		int resetHalfClkCounter = 0;
 
 		static uint8_t DumpSRAM(void* opaque, size_t addr);
-
 		static void WriteSRAM(void* opaque, size_t addr, uint8_t data);
+
+		static uint8_t DumpWRAM(void* opaque, size_t addr);
+		static void WriteWRAM(void* opaque, size_t addr, uint8_t data);
 
 		static uint32_t GetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
 		static uint32_t GetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);

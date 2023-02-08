@@ -13,6 +13,7 @@
 #include "../../Breaks6502/M6502Core/core.h"
 #include "../APUSim/apu.h"
 #include "../../Common/DebugHub/DebugHub.h"
+#include "../../Common/BaseBoardLib/SRAM.h"
 
 #include "BankedSRAM.h"
 #include "NSFPlayerBoard.h"

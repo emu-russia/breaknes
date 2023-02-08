@@ -179,6 +179,9 @@
     <ProjectReference Include="..\..\Breaks6502\M6502Core\Scripts\VS2022\M6502Core.vcxproj">
       <Project>{75210c0a-a812-4246-a179-b50d8a25a121}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\BaseBoardLib\Scripts\VS2022\BaseBoardLib.vcxproj">
+      <Project>{36f535ad-b87b-4f4d-a5f9-0f2377fba7ea}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
     </ProjectReference>
