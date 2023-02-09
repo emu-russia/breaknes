@@ -192,4 +192,34 @@ namespace M6502Core
 	{
 		return v_latch1.nget();
 	}
+
+	void Flags::set_Z_OUT(TriState val)
+	{
+		z_latch1.set(val, TriState::One);
+	}
+
+	void Flags::set_N_OUT(TriState val)
+	{
+		n_latch1.set(val, TriState::One);
+	}
+
+	void Flags::set_C_OUT(TriState val)
+	{
+		c_latch1.set(val, TriState::One);
+	}
+
+	void Flags::set_D_OUT(TriState val)
+	{
+		d_latch1.set(val, TriState::One);
+	}
+
+	void Flags::set_I_OUT(TriState val)
+	{
+		i_latch1.set(val, TriState::One);
+	}
+
+	void Flags::set_V_OUT(TriState val)
+	{
+		v_latch1.set(val, TriState::One);
+	}
 }

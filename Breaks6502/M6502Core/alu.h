@@ -44,11 +44,17 @@ namespace M6502Core
 		BaseLogic::TriState getACR();
 
 		BaseLogic::TriState getAVR();
+		void setAVR(BaseLogic::TriState);
 
 		uint8_t getAI();
 		uint8_t getBI();
 		uint8_t getADD();
 		uint8_t getAC();
+
+		void setAI(uint8_t val);
+		void setBI(uint8_t val);
+		void setADD(uint8_t val);
+		void setAC(uint8_t val);
 
 		void SetBCDHack(bool enable) { BCD_Hack = enable; }
 	};

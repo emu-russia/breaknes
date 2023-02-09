@@ -40,5 +40,12 @@ namespace M6502Core
 		BaseLogic::TriState getn_D_OUT();
 		BaseLogic::TriState getn_I_OUT(BaseLogic::TriState BRK6E);
 		BaseLogic::TriState getn_V_OUT();
+
+		void set_Z_OUT(BaseLogic::TriState val);
+		void set_N_OUT(BaseLogic::TriState val);
+		void set_C_OUT(BaseLogic::TriState val);
+		void set_D_OUT(BaseLogic::TriState val);
+		void set_I_OUT(BaseLogic::TriState val);
+		void set_V_OUT(BaseLogic::TriState val);
 	};
 }

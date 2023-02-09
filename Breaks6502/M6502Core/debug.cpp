@@ -299,7 +299,131 @@ namespace M6502Core
 
 	void M6502::setDebugSingle(int ofs, uint8_t val)
 	{
+		TriState BRK6E = wire.BRK6E;
 
+		switch (ofs)
+		{
+			case offsetof(DebugInfo, SB): SB = val; break;
+			case offsetof(DebugInfo, DB): DB = val; break;
+			case offsetof(DebugInfo, ADL): ADL = val; break;
+			case offsetof(DebugInfo, ADH): ADH = val; break;
+
+			case offsetof(DebugInfo, IR): ir->IROut = val; break;
+			case offsetof(DebugInfo, PD): predecode->PD = val; break;
+			case offsetof(DebugInfo, Y): regs->setY(val); break;
+			case offsetof(DebugInfo, X): regs->setX(val); break;
+			case offsetof(DebugInfo, S): regs->setS(val); break;
+			case offsetof(DebugInfo, AI): alu->setAI(val); break;
+			case offsetof(DebugInfo, BI): alu->setBI(val); break;
+			case offsetof(DebugInfo, ADD): alu->setADD(val); break;
+			case offsetof(DebugInfo, AC): alu->setAC(val); break;
+			case offsetof(DebugInfo, PCL): pc->setPCL(val); break;
+			case offsetof(DebugInfo, PCH): pc->setPCH(val); break;
+			case offsetof(DebugInfo, PCLS): pc->setPCLS(val); break;
+			case offsetof(DebugInfo, PCHS): pc->setPCHS(val); break;
+			case offsetof(DebugInfo, ABL): addr_bus->setABL(val); break;
+			case offsetof(DebugInfo, ABH): addr_bus->setABH(val); break;
+			case offsetof(DebugInfo, DL): data_bus->setDL(val); break;
+			case offsetof(DebugInfo, DOR): data_bus->setDOR(val); break;
+
+			case offsetof(DebugInfo, C_OUT): random->flags->set_C_OUT(FromByte(val)); break;
+			case offsetof(DebugInfo, Z_OUT): random->flags->set_Z_OUT(FromByte(val)); break;
+			case offsetof(DebugInfo, I_OUT): random->flags->set_I_OUT(FromByte(val)); break;
+			case offsetof(DebugInfo, D_OUT): random->flags->set_D_OUT(FromByte(val)); break;
+			case offsetof(DebugInfo, V_OUT): random->flags->set_V_OUT(FromByte(val)); break;
+			case offsetof(DebugInfo, N_OUT): random->flags->set_N_OUT(FromByte(val)); break;
+
+			case offsetof(DebugInfo, BRK6E): wire.BRK6E = FromByte(val); break;
+			case offsetof(DebugInfo, BRK7): wire.BRK7 = FromByte(val); break;
+			case offsetof(DebugInfo, DORES): wire.DORES = FromByte(val); break;
+			case offsetof(DebugInfo, n_DONMI): wire.n_DONMI = FromByte(val); break;
+			case offsetof(DebugInfo, n_T2): wire.n_T2 = FromByte(val); break;
+			case offsetof(DebugInfo, n_T3): wire.n_T3 = FromByte(val); break;
+			case offsetof(DebugInfo, n_T4): wire.n_T4 = FromByte(val); break;
+			case offsetof(DebugInfo, n_T5): wire.n_T5 = FromByte(val); break;
+			case offsetof(DebugInfo, T0): wire.T0 = FromByte(val); break;
+			case offsetof(DebugInfo, n_T0): wire.n_T0 = FromByte(val); break;
+			case offsetof(DebugInfo, n_T1X): wire.n_T1X = FromByte(val); break;
+			case offsetof(DebugInfo, Z_IR): wire.Z_IR = FromByte(val); break;
+			case offsetof(DebugInfo, FETCH): wire.FETCH = FromByte(val); break;
+			case offsetof(DebugInfo, n_ready): wire.n_ready = FromByte(val); break;
+			case offsetof(DebugInfo, WR): wire.WR = FromByte(val); break;
+			case offsetof(DebugInfo, ACRL1): wire.ACRL1 = FromByte(val); break;
+			case offsetof(DebugInfo, ACRL2): wire.ACRL2 = FromByte(val); break;
+			case offsetof(DebugInfo, RMW_T6): wire.RMW_T6 = FromByte(val); break;
+			case offsetof(DebugInfo, RMW_T7): wire.RMW_T7 = FromByte(val); break;
+			case offsetof(DebugInfo, ENDS): wire.ENDS = FromByte(val); break;
+			case offsetof(DebugInfo, ENDX): wire.ENDX = FromByte(val); break;
+			case offsetof(DebugInfo, TRES1): wire.TRES1 = FromByte(val); break;
+			case offsetof(DebugInfo, n_TRESX): wire.n_TRESX = FromByte(val); break;
+			case offsetof(DebugInfo, BRFW): wire.BRFW = FromByte(val); break;
+			case offsetof(DebugInfo, n_BRTAKEN): wire.n_BRTAKEN = FromByte(val); break;
+			case offsetof(DebugInfo, AVR): alu->setAVR(FromByte(val)); break;
+	
+			case offsetof(DebugInfo, Y_SB): cmd.Y_SB = val; break;
+			case offsetof(DebugInfo, SB_Y): cmd.SB_Y = val; break;
+			case offsetof(DebugInfo, X_SB): cmd.X_SB = val; break;
+			case offsetof(DebugInfo, SB_X): cmd.SB_X = val; break;
+			case offsetof(DebugInfo, S_ADL): cmd.S_ADL = val; break;
+			case offsetof(DebugInfo, S_SB): cmd.S_SB = val; break;
+			case offsetof(DebugInfo, SB_S): cmd.SB_S = val; break;
+			case offsetof(DebugInfo, S_S): cmd.S_S = val; break;
+			case offsetof(DebugInfo, NDB_ADD): cmd.NDB_ADD = val; break;
+			case offsetof(DebugInfo, DB_ADD): cmd.DB_ADD = val; break;
+			case offsetof(DebugInfo, Z_ADD): cmd.Z_ADD = val; break;
+			case offsetof(DebugInfo, SB_ADD): cmd.SB_ADD = val; break;
+			case offsetof(DebugInfo, ADL_ADD): cmd.ADL_ADD = val; break;
+			case offsetof(DebugInfo, n_ACIN): cmd.n_ACIN = val; break;
+			case offsetof(DebugInfo, ANDS): cmd.ANDS = val; break;
+			case offsetof(DebugInfo, EORS): cmd.EORS = val; break;
+			case offsetof(DebugInfo, ORS): cmd.ORS = val; break;
+			case offsetof(DebugInfo, SRS): cmd.SRS = val; break;
+			case offsetof(DebugInfo, SUMS): cmd.SUMS = val; break;
+			case offsetof(DebugInfo, n_DAA): cmd.n_DAA = val; break;
+			case offsetof(DebugInfo, n_DSA): cmd.n_DSA = val; break;
+			case offsetof(DebugInfo, ADD_SB7): cmd.ADD_SB7 = val; break;
+			case offsetof(DebugInfo, ADD_SB06): cmd.ADD_SB06 = val; break;
+			case offsetof(DebugInfo, ADD_ADL): cmd.ADD_ADL = val; break;
+			case offsetof(DebugInfo, SB_AC): cmd.SB_AC = val; break;
+			case offsetof(DebugInfo, AC_SB): cmd.AC_SB = val; break;
+			case offsetof(DebugInfo, AC_DB): cmd.AC_DB = val; break;
+			case offsetof(DebugInfo, n_1PC): wire.n_1PC = FromByte(val); break;
+			case offsetof(DebugInfo, ADH_PCH): cmd.ADH_PCH = val; break;
+			case offsetof(DebugInfo, PCH_PCH): cmd.PCH_PCH = val; break;
+			case offsetof(DebugInfo, PCH_ADH): cmd.PCH_ADH = val; break;
+			case offsetof(DebugInfo, PCH_DB): cmd.PCH_DB = val; break;
+			case offsetof(DebugInfo, ADL_PCL): cmd.ADL_PCL = val; break;
+			case offsetof(DebugInfo, PCL_PCL): cmd.PCL_PCL = val; break;
+			case offsetof(DebugInfo, PCL_ADL): cmd.PCL_ADL = val; break;
+			case offsetof(DebugInfo, PCL_DB): cmd.PCL_DB = val; break;
+			case offsetof(DebugInfo, ADH_ABH): cmd.ADH_ABH = val; break;
+			case offsetof(DebugInfo, ADL_ABL): cmd.ADL_ABL = val; break;
+			case offsetof(DebugInfo, Z_ADL0): cmd.Z_ADL0 = val; break;
+			case offsetof(DebugInfo, Z_ADL1): cmd.Z_ADL1 = val; break;
+			case offsetof(DebugInfo, Z_ADL2): cmd.Z_ADL2 = val; break;
+			case offsetof(DebugInfo, Z_ADH0): cmd.Z_ADH0 = val; break;
+			case offsetof(DebugInfo, Z_ADH17): cmd.Z_ADH17 = val; break;
+			case offsetof(DebugInfo, SB_DB): cmd.SB_DB = val; break;
+			case offsetof(DebugInfo, SB_ADH): cmd.SB_ADH = val; break;
+			case offsetof(DebugInfo, DL_ADL): cmd.DL_ADL = val; break;
+			case offsetof(DebugInfo, DL_ADH): cmd.DL_ADH = val; break;
+			case offsetof(DebugInfo, DL_DB): cmd.DL_DB = val; break;
+			case offsetof(DebugInfo, P_DB): cmd.P_DB = val; break;
+			case offsetof(DebugInfo, DB_P): cmd.DB_P = val; break;
+			case offsetof(DebugInfo, DBZ_Z): cmd.DBZ_Z = val; break;
+			case offsetof(DebugInfo, DB_N): cmd.DB_N = val; break;
+			case offsetof(DebugInfo, IR5_C): cmd.IR5_C = val; break;
+			case offsetof(DebugInfo, DB_C): cmd.DB_C = val; break;
+			case offsetof(DebugInfo, ACR_C): cmd.ACR_C = val; break;
+			case offsetof(DebugInfo, IR5_D): cmd.IR5_D = val; break;
+			case offsetof(DebugInfo, IR5_I): cmd.IR5_I = val; break;
+			case offsetof(DebugInfo, DB_V): cmd.DB_V = val; break;
+			case offsetof(DebugInfo, AVR_V): cmd.AVR_V = val; break;
+			case offsetof(DebugInfo, Z_V): cmd.Z_V = val; break;
+
+			default:
+				break;
+		}
 	}
 
 	uint8_t M6502::getUserRegSingle(int ofs)

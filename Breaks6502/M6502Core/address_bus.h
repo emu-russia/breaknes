@@ -19,5 +19,8 @@ namespace M6502Core
 
 		uint8_t getABL();
 		uint8_t getABH();
+
+		void setABL(uint8_t val);
+		void setABH(uint8_t val);
 	};
 }

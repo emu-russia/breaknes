@@ -70,4 +70,14 @@ namespace M6502Core
 	{
 		return ABH;
 	}
+
+	void AddressBus::setABL(uint8_t val)
+	{
+		ABL = val;
+	}
+
+	void AddressBus::setABH(uint8_t val)
+	{
+		ABH = val;
+	}
 }

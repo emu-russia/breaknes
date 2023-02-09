@@ -419,4 +419,91 @@ namespace M6502Core
 
 		return Pack(v);
 	}
+
+	void ProgramCounter::setPCL(uint8_t val)
+	{
+		if (HLE)
+		{
+			PackedPCL = val;
+			return;
+		}
+
+		TriState v[8]{};
+		Unpack(val, v);
+
+		// The value stored in PCL alternates between inversion, because of the inverted carry chain.
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			if (n & 1)
+			{
+				PCL[n].set(NOT(v[n]), TriState::One);
+			}
+			else
+			{
+				PCL[n].set(v[n], TriState::One);
+			}
+		}
+	}
+
+	void ProgramCounter::setPCH(uint8_t val)
+	{
+		if (HLE)
+		{
+			PackedPCH = val;
+			return;
+		}
+
+		TriState v[8]{};
+		Unpack(val, v);
+
+		// The value stored in PCH alternates between inversion, because of the inverted carry chain.
+		// The storage inversion is different from the storage inversion of the PCL register (because of the alteration of the PCL and PCH bit circuits).
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			if (n & 1)
+			{
+				PCH[n].set(v[n], TriState::One);
+			}
+			else
+			{
+				PCH[n].set(NOT(v[n]), TriState::One);
+			}
+		}
+	}
+
+	void ProgramCounter::setPCLS(uint8_t val)
+	{
+		if (HLE)
+		{
+			PackedPCLS = val;
+			return;
+		}
+
+		TriState v[8]{};
+		Unpack(val, v);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			PCLS[n].set(v[n], TriState::One);
+		}
+	}
+
+	void ProgramCounter::setPCHS(uint8_t val)
+	{
+		if (HLE)
+		{
+			PackedPCHS = val;
+			return;
+		}
+
+		TriState v[8]{};
+		Unpack(val, v);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			PCHS[n].set(v[n], TriState::One);
+		}
+	}
 }

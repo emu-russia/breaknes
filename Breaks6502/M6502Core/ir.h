@@ -12,7 +12,7 @@ namespace M6502Core
 
 		IR(M6502* parent) { core = parent; }
 
-		uint8_t IROut;
+		uint8_t IROut = 0;
 
 		void sim();
 	};
