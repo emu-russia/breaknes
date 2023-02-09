@@ -395,6 +395,13 @@ namespace BaseLogic
 	void Unpack(uint8_t val, TriState out[8]);
 
 	/// <summary>
+	/// Unpack a nibble into a bit vector.
+	/// </summary>
+	/// <param name="val"></param>
+	/// <param name="out"></param>
+	void UnpackNibble(uint8_t val, TriState out[4]);
+
+	/// <summary>
 	/// Dump vector.
 	/// </summary>
 	/// <param name="in"></param>

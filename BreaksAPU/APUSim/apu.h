@@ -251,8 +251,13 @@ namespace APUSim
 		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t *data, uint16_t* addr, AudioOutSignal& AUX);
 
 		void GetDebugInfo_Wires(APU_Interconnects& wires);
-
 		void GetDebugInfo_Regs(APU_Registers& regs);
+
+		uint8_t GetDebugInfo_Wire(int ofs);
+		void SetDebugInfo_Wire(int ofs, uint8_t val);
+
+		uint32_t GetDebugInfo_Reg(int ofs);
+		void SetDebugInfo_Reg(int ofs, uint32_t val);
 
 		/// <summary>
 		/// Turn on the digital output, instead of the analog DAC levels.

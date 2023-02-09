@@ -12,6 +12,7 @@ namespace APUSim
 		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState Enable, BaseLogic::TriState Value);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
+		void set(BaseLogic::TriState val);
 	};
 
 	class RegisterBitRes
@@ -22,6 +23,7 @@ namespace APUSim
 		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState Enable, BaseLogic::TriState Value, BaseLogic::TriState Res);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
+		void set(BaseLogic::TriState val);
 	};
 
 	class RegisterBitRes2
@@ -32,6 +34,7 @@ namespace APUSim
 		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState Enable, BaseLogic::TriState Value, BaseLogic::TriState Res1, BaseLogic::TriState Res2);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
+		void set(BaseLogic::TriState val);
 	};
 
 	class CounterBit
@@ -49,6 +52,7 @@ namespace APUSim
 			BaseLogic::TriState val);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
+		void set(BaseLogic::TriState val);
 	};
 
 	class DownCounterBit
@@ -66,6 +70,7 @@ namespace APUSim
 			BaseLogic::TriState val);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
+		void set(BaseLogic::TriState val);
 	};
 
 	class RevCounterBit
@@ -84,5 +89,6 @@ namespace APUSim
 			BaseLogic::TriState val);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
+		void set(BaseLogic::TriState val);
 	};
 }

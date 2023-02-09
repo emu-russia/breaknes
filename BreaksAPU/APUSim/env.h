@@ -30,5 +30,13 @@ namespace APUSim
 		BaseLogic::TriState get_LC();
 
 		void Debug_Get(uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter);
+
+		uint32_t Debug_Get_VolumeReg();
+		uint32_t Debug_Get_DecayCounter();
+		uint32_t Debug_Get_EnvCounter();
+
+		void Debug_Set_VolumeReg(uint32_t val);
+		void Debug_Set_DecayCounter(uint32_t val);
+		void Debug_Set_EnvCounter(uint32_t val);
 	};
 }

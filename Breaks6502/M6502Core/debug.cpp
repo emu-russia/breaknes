@@ -33,51 +33,51 @@ namespace M6502Core
 		info->DL = data_bus->getDL();
 		info->DOR = data_bus->getDOR();
 
-		info->C_OUT = NOT(random->flags->getn_C_OUT()) == TriState::One ? 1 : 0;
-		info->Z_OUT = NOT(random->flags->getn_Z_OUT()) == TriState::One ? 1 : 0;
-		info->I_OUT = NOT(random->flags->getn_I_OUT(BRK6E)) == TriState::One ? 1 : 0;
-		info->D_OUT = NOT(random->flags->getn_D_OUT()) == TriState::One ? 1 : 0;
-		info->B_OUT = brk->getB_OUT(BRK6E) == TriState::One ? 1 : 0;
-		info->V_OUT = NOT(random->flags->getn_V_OUT()) == TriState::One ? 1 : 0;
-		info->N_OUT = NOT(random->flags->getn_N_OUT()) == TriState::One ? 1 : 0;
+		info->C_OUT = ToByte(NOT(random->flags->getn_C_OUT()));
+		info->Z_OUT = ToByte(NOT(random->flags->getn_Z_OUT()));
+		info->I_OUT = ToByte(NOT(random->flags->getn_I_OUT(BRK6E)));
+		info->D_OUT = ToByte(NOT(random->flags->getn_D_OUT()));
+		info->B_OUT = ToByte(brk->getB_OUT(BRK6E));
+		info->V_OUT = ToByte(NOT(random->flags->getn_V_OUT()));
+		info->N_OUT = ToByte(NOT(random->flags->getn_N_OUT()));
 
-		info->n_PRDY = prdy_latch2.nget() == TriState::One ? 1 : 0;
-		info->n_NMIP = NOT(nmip_ff.get()) == TriState::One ? 1 : 0;
-		info->n_IRQP = irqp_latch.nget() == TriState::One ? 1 : 0;
-		info->RESP = resp_latch.nget() == TriState::One ? 1 : 0;
-		info->BRK6E = BRK6E == TriState::One ? 1 : 0;
-		info->BRK7 = wire.BRK7 == TriState::One ? 1 : 0;
-		info->DORES = wire.DORES == TriState::One ? 1 : 0;
-		info->n_DONMI = wire.n_DONMI == TriState::One ? 1 : 0;
-		info->n_T2 = wire.n_T2 == TriState::One ? 1 : 0;
-		info->n_T3 = wire.n_T3 == TriState::One ? 1 : 0;
-		info->n_T4 = wire.n_T4 == TriState::One ? 1 : 0;
-		info->n_T5 = wire.n_T5 == TriState::One ? 1 : 0;
-		info->T0 = wire.T0 == TriState::One ? 1 : 0;
-		info->n_T0 = wire.n_T0 == TriState::One ? 1 : 0;
-		info->n_T1X = wire.n_T1X == TriState::One ? 1 : 0;
-		info->Z_IR = wire.Z_IR == TriState::One ? 1 : 0;
-		info->FETCH = wire.FETCH == TriState::One ? 1 : 0;
-		info->n_ready = wire.n_ready == TriState::One ? 1 : 0;
-		info->WR = wire.WR == TriState::One ? 1 : 0;
-		info->TRES2 = disp->getTRES2() == TriState::One ? 1 : 0;
-		info->ACRL1 = wire.ACRL1 == TriState::One ? 1 : 0;
-		info->ACRL2 = wire.ACRL2 == TriState::One ? 1 : 0;
-		info->T1 = disp->getT1() == TriState::One ? 1 : 0;
-		info->RMW_T6 = wire.RMW_T6 == TriState::One ? 1 : 0;
-		info->RMW_T7 = wire.RMW_T7 == TriState::One ? 1 : 0;
-		info->ENDS = wire.ENDS == TriState::One ? 1 : 0;
-		info->ENDX = wire.ENDX == TriState::One ? 1 : 0;
-		info->TRES1 = wire.TRES1 == TriState::One ? 1 : 0;
-		info->n_TRESX = wire.n_TRESX == TriState::One ? 1 : 0;
-		info->BRFW = wire.BRFW == TriState::One ? 1 : 0;
-		info->n_BRTAKEN = wire.n_BRTAKEN == TriState::One ? 1 : 0;
-		info->ACR = alu->getACR() == TriState::One ? 1 : 0;
-		info->AVR = alu->getAVR() == TriState::One ? 1 : 0;
+		info->n_PRDY = ToByte(prdy_latch2.nget());
+		info->n_NMIP = ToByte(NOT(nmip_ff.get()));
+		info->n_IRQP = ToByte(irqp_latch.nget());
+		info->RESP = ToByte(resp_latch.nget());
+		info->BRK6E = ToByte(BRK6E);
+		info->BRK7 = ToByte(wire.BRK7);
+		info->DORES = ToByte(wire.DORES);
+		info->n_DONMI = ToByte(wire.n_DONMI);
+		info->n_T2 = ToByte(wire.n_T2);
+		info->n_T3 = ToByte(wire.n_T3);
+		info->n_T4 = ToByte(wire.n_T4);
+		info->n_T5 = ToByte(wire.n_T5);
+		info->T0 = ToByte(wire.T0);
+		info->n_T0 = ToByte(wire.n_T0);
+		info->n_T1X = ToByte(wire.n_T1X);
+		info->Z_IR = ToByte(wire.Z_IR);
+		info->FETCH = ToByte(wire.FETCH);
+		info->n_ready = ToByte(wire.n_ready);
+		info->WR = ToByte(wire.WR);
+		info->TRES2 = ToByte(disp->getTRES2());
+		info->ACRL1 = ToByte(wire.ACRL1);
+		info->ACRL2 = ToByte(wire.ACRL2);
+		info->T1 = ToByte(disp->getT1());
+		info->RMW_T6 = ToByte(wire.RMW_T6);
+		info->RMW_T7 = ToByte(wire.RMW_T7);
+		info->ENDS = ToByte(wire.ENDS);
+		info->ENDX = ToByte(wire.ENDX);
+		info->TRES1 = ToByte(wire.TRES1);
+		info->n_TRESX = ToByte(wire.n_TRESX);
+		info->BRFW = ToByte(wire.BRFW);
+		info->n_BRTAKEN = ToByte(wire.n_BRTAKEN);
+		info->ACR = ToByte(alu->getACR());
+		info->AVR = ToByte(alu->getAVR());
 
 		for (size_t n = 0; n < Decoder::outputs_count; n++)
 		{
-			info->decoder_out[n] = decoder_out[n] == TriState::One ? 1 : 0;
+			info->decoder_out[n] = ToByte(decoder_out[n]);
 		}
 
 		info->Y_SB = cmd.Y_SB;
@@ -107,7 +107,7 @@ namespace M6502Core
 		info->SB_AC = cmd.SB_AC;
 		info->AC_SB = cmd.AC_SB;
 		info->AC_DB = cmd.AC_DB;
-		info->n_1PC = wire.n_1PC == TriState::One ? 1 : 0;			// From Dispatcher
+		info->n_1PC = ToByte(wire.n_1PC);			// From Dispatcher
 		info->ADH_PCH = cmd.ADH_PCH;
 		info->PCH_PCH = cmd.PCH_PCH;
 		info->PCH_ADH = cmd.PCH_ADH;
@@ -152,11 +152,11 @@ namespace M6502Core
 		userRegs->PCL = pc->getPCL();
 		userRegs->PCH = pc->getPCH();
 
-		userRegs->C_OUT = NOT(random->flags->getn_C_OUT()) == TriState::One ? 1 : 0;
-		userRegs->Z_OUT = NOT(random->flags->getn_Z_OUT()) == TriState::One ? 1 : 0;
-		userRegs->I_OUT = NOT(random->flags->getn_I_OUT(wire.BRK6E)) == TriState::One ? 1 : 0;
-		userRegs->D_OUT = NOT(random->flags->getn_D_OUT()) == TriState::One ? 1 : 0;
-		userRegs->V_OUT = NOT(random->flags->getn_V_OUT()) == TriState::One ? 1 : 0;
-		userRegs->N_OUT = NOT(random->flags->getn_N_OUT()) == TriState::One ? 1 : 0;
+		userRegs->C_OUT = ToByte(NOT(random->flags->getn_C_OUT()));
+		userRegs->Z_OUT = ToByte(NOT(random->flags->getn_Z_OUT()));
+		userRegs->I_OUT = ToByte(NOT(random->flags->getn_I_OUT(wire.BRK6E)));
+		userRegs->D_OUT = ToByte(NOT(random->flags->getn_D_OUT()));
+		userRegs->V_OUT = ToByte(NOT(random->flags->getn_V_OUT()));
+		userRegs->N_OUT = ToByte(NOT(random->flags->getn_N_OUT()));
 	}
 }
