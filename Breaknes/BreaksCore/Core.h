@@ -6,7 +6,8 @@ namespace Breaknes
 	{
 		static uint8_t ReadTestMem(void* opaque, size_t addr);
 		static void WriteTestMem(void* opaque, size_t addr, uint8_t data);
-		static uint32_t GetTestInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
+		static uint32_t GetTestInfo(void* opaque, DebugInfoEntry* entry);
+		static void SetTestInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 
 		Board* this_board = nullptr;
 
