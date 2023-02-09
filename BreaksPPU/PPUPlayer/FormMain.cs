@@ -189,7 +189,7 @@ namespace PPUPlayer
 			}
 			else
 			{
-				logData = new byte[] { 0xff, 0xff, 0xff, 0xff, 0x82, 0x00, 0x00, 0x00 };
+				logData = new byte[] { 0xff, 0xff, 0xff, 0x7f, 0x82, 0x00, 0x00, 0x00 };
 				logPointer = 0;
 				TotalOps = 1;
 				Console.WriteLine("Created one dummy read of register $2002 through an `infinite` number of PCLKs.");

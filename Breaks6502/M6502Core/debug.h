@@ -145,7 +145,6 @@ namespace M6502Core
 		uint8_t n_DSA;
 		uint8_t n_1PC;			// From Dispatcher
 	};
-#pragma pack(pop)
 
 	struct UserRegs
 	{
@@ -162,4 +161,5 @@ namespace M6502Core
 		uint8_t PCH;
 		uint8_t PCL;
 	};
+#pragma pack(pop)
 }

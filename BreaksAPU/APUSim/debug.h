@@ -4,6 +4,7 @@
 
 namespace APUSim
 {
+#pragma pack(push, 1)
 	struct APU_Interconnects
 	{
 		uint8_t n_CLK;
@@ -113,4 +114,5 @@ namespace APUSim
 		uint32_t DMABuffer;			// 8
 		uint32_t DMAAddress;		// 16, counter + register
 	};
+#pragma pack(pop)
 }

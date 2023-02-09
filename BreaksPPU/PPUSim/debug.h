@@ -4,6 +4,7 @@
 
 namespace PPUSim
 {
+#pragma pack(push, 1)
 	struct PPU_Interconnects
 	{
 		uint8_t CLK;
@@ -180,4 +181,5 @@ namespace PPUSim
 		uint32_t SCC_TV;
 		uint32_t SCC_TH;
 	};
+#pragma pack(pop)
 }

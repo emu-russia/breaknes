@@ -5,12 +5,10 @@ Breaknes debug infrastructure.
 Since Breaknes is a gate-level emulator, the main focus of debugging is monitoring various signals, buses and other internal states of the emulated system.
 
 Debug entities are divided into the following categories:
-- DebugInfo: getting internal state
-- MemLayout: getting memory dumps
+- DebugInfo: get/set internal state
+- MemLayout: read/write memory dumps
 
 ![debug](/UserManual/imgstore/debug.jpg)
-
-TBD: Add symmetric ability to do `set` (but not really needed yet).
 
 ## DebugInfo
 
@@ -28,9 +26,9 @@ Debug Information Types (DebugInfoType):
 
 Methods:
 - GetDebugInfoEntryCount: Get the number of debug entries of the specified type
-- GetDebugInfo: Get entries of the specified type
-
-A Managed application must first know the number of records and allocate an array to retrieve them.
+- GetDebugInfo: Get all entries of the specified type. Managed application must first know the number of records and allocate an array to retrieve them.
+- GetDebugInfoByName: Get one DebugInfo record with the specified name
+- SetDebugInfoByName: Set one DebugInfo record with the specified name
 
 ## MemLayout
 
@@ -40,3 +38,4 @@ Methods:
 - GetMemLayout: Get the number of memory descriptors that are registered in the DebugHub
 - GetMemDescriptor: Get information about a memory block
 - DumpMem: Get the whole memory block. We are emulating NES here, so dump sizes will be small and it won't make sense to dump in parts.
+- WriteMem: Set the entire memory block

@@ -79,10 +79,15 @@ namespace PPUPlayer
 		static void WriteOAM(void* opaque, size_t addr, uint8_t data);
 		static void WriteTempOAM(void* opaque, size_t addr, uint8_t data);
 
-		static uint32_t GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
-		static uint32_t GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
-		static uint32_t GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
-		static uint32_t GetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
+		static uint32_t GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetCartDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry);
+
+		static void SetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 
 		void AddBoardMemDescriptors();
 		void AddCartMemDescriptors();

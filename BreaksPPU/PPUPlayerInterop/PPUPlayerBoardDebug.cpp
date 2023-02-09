@@ -319,7 +319,8 @@ namespace PPUPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), PPU_WIRES_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(fsm_signals); n++)
@@ -330,7 +331,8 @@ namespace PPUPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), PPU_FSM_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(eval_signals); n++)
@@ -341,7 +343,8 @@ namespace PPUPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), PPU_EVAL_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(ppu_regs); n++)
@@ -352,7 +355,8 @@ namespace PPUPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), PPU_REGS_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPURegs, entry, GetPpuRegsDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPURegs, entry, GetPpuRegsDebugInfo, SetPpuRegsDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(board_signals); n++)
@@ -363,7 +367,8 @@ namespace PPUPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), BOARD_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Board, entry, GetBoardDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Board, entry, GetBoardDebugInfo, SetBoardDebugInfo, this);
 		}
 	}
 
@@ -377,7 +382,8 @@ namespace PPUPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), NROM_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Cart, entry, GetCartDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Cart, entry, GetCartDebugInfo, SetCartDebugInfo, this);
 		}
 	}
 
@@ -441,7 +447,7 @@ namespace PPUPlayer
 		board->ppu->Dbg_TempOAMWriteByte(addr, data);
 	}
 
-	uint32_t Board::GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
+	uint32_t Board::GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		Board* board = (Board*)opaque;
 
@@ -457,8 +463,6 @@ namespace PPUPlayer
 					board->ppu->GetDebugInfo_Wires(wires);
 
 					uint8_t* ptr = (uint8_t*)&wires;
-
-					bits = sp->bits;
 					return ptr[sp->offset];
 				}
 			}
@@ -476,8 +480,6 @@ namespace PPUPlayer
 					board->ppu->GetDebugInfo_FSMStates(fsm_states);
 
 					uint8_t* ptr = (uint8_t*)&fsm_states;
-
-					bits = sp->bits;
 					return ptr[sp->offset];
 				}
 			}
@@ -495,8 +497,6 @@ namespace PPUPlayer
 					board->ppu->GetDebugInfo_OAMEval(wires);
 
 					uint8_t* ptr = (uint8_t*)&wires;
-
-					bits = sp->bits;
 					return ptr[sp->offset];
 				}
 			}
@@ -505,7 +505,12 @@ namespace PPUPlayer
 		return 0;
 	}
 
-	uint32_t Board::GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
+	void Board::SetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
+
+	}
+
+	uint32_t Board::GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		Board* board = (Board*)opaque;
 
@@ -518,7 +523,6 @@ namespace PPUPlayer
 				PPUSim::PPU_Registers regs{};
 				board->ppu->GetDebugInfo_Regs(regs);
 
-				bits = sp->bits;
 				uint8_t* ptr = (uint8_t*)&regs + sp->offset;
 				return *(uint32_t*)ptr;
 			}
@@ -527,7 +531,12 @@ namespace PPUPlayer
 		return 0;
 	}
 
-	uint32_t Board::GetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
+	void Board::SetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
+
+	}
+
+	uint32_t Board::GetCartDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		Board* board = (Board*)opaque;
 
@@ -543,13 +552,17 @@ namespace PPUPlayer
 				NROM_DebugInfo nrom_info{};
 				board->cart->GetDebugInfo(nrom_info);
 
-				bits = sp->bits;
 				uint8_t* ptr = (uint8_t*)&nrom_info + sp->offset;
 				return *(uint32_t *)ptr;
 			}
 		}
 
 		return 0;
+	}
+
+	void Board::SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
+
 	}
 
 	void Board::GetDebugInfo(BoardDebugInfo& info)
@@ -574,7 +587,7 @@ namespace PPUPlayer
 		info.PD = ad_bus;
 	}
 
-	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
+	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		Board* board = (Board*)opaque;
 
@@ -587,13 +600,17 @@ namespace PPUPlayer
 				BoardDebugInfo info{};
 				board->GetDebugInfo(info);
 
-				bits = sp->bits;
 				uint8_t* ptr = (uint8_t*)&info + sp->offset;
 				return *(uint32_t*)ptr;
 			}
 		}
 
 		return 0;
+	}
+
+	void Board::SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
+
 	}
 
 	void Board::SetCTRL0(uint8_t val)
