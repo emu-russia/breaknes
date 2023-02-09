@@ -159,6 +159,8 @@ namespace APUSim
 		carry_out = carry;
 	}
 
+#pragma region "Debug"
+
 	uint8_t LengthCounter::Debug_GetCnt()
 	{
 		TriState cnt_out[8]{};
@@ -170,4 +172,17 @@ namespace APUSim
 
 		return Pack(cnt_out);
 	}
+
+	void LengthCounter::Debug_SetCnt(uint8_t value)
+	{
+		TriState cnt_out[8]{};
+		Unpack(value, cnt_out);
+
+		for (size_t n = 0; n < 8; n++)
+		{
+			cnt[n].set(cnt_out[n]);
+		}
+	}
+
+#pragma endregion "Debug"
 }

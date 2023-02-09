@@ -26,6 +26,7 @@ namespace APUSim
 		BaseLogic::TriState get_nFx(BaseLogic::TriState ADDOUT);
 		BaseLogic::TriState get_Fx(BaseLogic::TriState ADDOUT);
 		BaseLogic::TriState get();
+		void set(BaseLogic::TriState value);
 	};
 
 	class AdderBit
@@ -38,6 +39,7 @@ namespace APUSim
 	class SquareChan
 	{
 		friend APUSimUnitTest::UnitTest;
+		friend APU;
 
 		APU* apu = nullptr;
 		SquareChanCarryIn cin_type = SquareChanCarryIn::Unknown;
@@ -91,6 +93,18 @@ namespace APUSim
 		void sim(BaseLogic::TriState WR0, BaseLogic::TriState WR1, BaseLogic::TriState WR2, BaseLogic::TriState WR3, BaseLogic::TriState NOSQ, BaseLogic::TriState* SQ_Out);
 		BaseLogic::TriState get_LC();
 
-		void Debug_Get(APU_Registers *info, size_t id, uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter);
+		uint32_t Get_FreqReg();
+		uint32_t Get_ShiftReg();
+		uint32_t Get_FreqCounter();
+		uint32_t Get_SweepReg();
+		uint32_t Get_SweepCounter();
+		uint32_t Get_DutyCounter();
+
+		void Set_FreqReg(uint32_t value);
+		void Set_ShiftReg(uint32_t value);
+		void Set_FreqCounter(uint32_t value);
+		void Set_SweepReg(uint32_t value);
+		void Set_SweepCounter(uint32_t value);
+		void Set_DutyCounter(uint32_t value);
 	};
 }
