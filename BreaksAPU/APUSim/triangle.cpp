@@ -124,25 +124,34 @@ namespace APUSim
 		return lc_reg.nget();
 	}
 
-	void TriangleChan::Debug_Get(APU_Registers* info)
+#pragma region "Debug"
+
+	uint32_t TriangleChan::Get_LinearReg()
 	{
 		TriState val_lo[8]{};
-		TriState val_hi[4]{};
-
 		for (size_t n = 0; n < 7; n++)
 		{
 			val_lo[n] = lin_reg[n].get();
 		}
 		val_lo[7] = TriState::Zero;
-		info->TRILinearReg = Pack(val_lo);
+		return Pack(val_lo);
+	}
 
+	uint32_t TriangleChan::Get_LinearCounter()
+	{
+		TriState val_lo[8]{};
 		for (size_t n = 0; n < 7; n++)
 		{
 			val_lo[n] = lin_cnt[n].get();
 		}
 		val_lo[7] = TriState::Zero;
-		info->TRILinearCounter = Pack(val_lo);
+		return Pack(val_lo);
+	}
 
+	uint32_t TriangleChan::Get_FreqReg()
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[4]{};
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_lo[n] = freq_reg[n].get();
@@ -152,8 +161,13 @@ namespace APUSim
 			val_hi[n] = freq_reg[n + 8].get();
 		}
 		val_hi[3] = TriState::Zero;
-		info->TRIFreqReg = Pack(val_lo) | ((uint32_t)PackNibble(val_hi) << 8);
+		return Pack(val_lo) | ((uint32_t)PackNibble(val_hi) << 8);
+	}
 
+	uint32_t TriangleChan::Get_FreqCounter()
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[4]{};
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_lo[n] = freq_cnt[n].get();
@@ -163,8 +177,12 @@ namespace APUSim
 			val_hi[n] = freq_cnt[n + 8].get();
 		}
 		val_hi[3] = TriState::Zero;
-		info->TRIFreqCounter = Pack(val_lo) | ((uint32_t)PackNibble(val_hi) << 8);
+		return Pack(val_lo) | ((uint32_t)PackNibble(val_hi) << 8);
+	}
 
+	uint32_t TriangleChan::Get_OutputCounter()
+	{
+		TriState val_lo[8]{};
 		for (size_t n = 0; n < 5; n++)
 		{
 			val_lo[n] = out_cnt[n].get();
@@ -172,6 +190,70 @@ namespace APUSim
 		val_lo[5] = TriState::Zero;
 		val_lo[6] = TriState::Zero;
 		val_lo[7] = TriState::Zero;
-		info->TRIOutputCounter = Pack(val_lo);
+		return Pack(val_lo);
 	}
+
+	void TriangleChan::Set_LinearReg(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 7; n++)
+		{
+			lin_reg[n].set(val_lo[n]);
+		}
+	}
+
+	void TriangleChan::Set_LinearCounter(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 7; n++)
+		{
+			lin_cnt[n].set(val_lo[n]);
+		}
+	}
+
+	void TriangleChan::Set_FreqReg(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[4]{};
+		Unpack(value, val_lo);
+		UnpackNibble(value >> 8, val_hi);
+		for (size_t n = 0; n < 8; n++)
+		{
+			freq_reg[n].set(val_lo[n]);
+		}
+		for (size_t n = 0; n < 3; n++)
+		{
+			freq_reg[n + 8].set(val_hi[n]);
+		}
+	}
+
+	void TriangleChan::Set_FreqCounter(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[4]{};
+		Unpack(value, val_lo);
+		UnpackNibble(value >> 8, val_hi);
+		for (size_t n = 0; n < 8; n++)
+		{
+			freq_cnt[n].set(val_lo[n]);
+		}
+		for (size_t n = 0; n < 3; n++)
+		{
+			freq_cnt[n + 8].set(val_hi[n]);
+		}
+	}
+
+	void TriangleChan::Set_OutputCounter(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 5; n++)
+		{
+			out_cnt[n].set(val_lo[n]);
+		}
+	}
+
+#pragma endregion "Debug"
 }

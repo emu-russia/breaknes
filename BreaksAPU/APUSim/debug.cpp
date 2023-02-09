@@ -107,7 +107,11 @@ namespace APUSim
 		regs.SQDecayCounter[1] = square[1]->env_unit->Debug_Get_DecayCounter();
 		regs.SQEnvelopeCounter[1] = square[1]->env_unit->Debug_Get_EnvCounter();
 
-		tri->Debug_Get(&regs);
+		regs.TRILinearReg = tri->Get_LinearReg();
+		regs.TRILinearCounter = tri->Get_LinearCounter();
+		regs.TRIFreqReg = tri->Get_FreqReg();
+		regs.TRIFreqCounter = tri->Get_FreqCounter();
+		regs.TRIOutputCounter = tri->Get_OutputCounter();
 
 		noise->Debug_Get(&regs, regs.RNDVolumeReg, regs.RNDDecayCounter, regs.RNDEnvelopeCounter);
 
@@ -293,11 +297,11 @@ namespace APUSim
 			case offsetof(APU_Registers, SQSweepCounter[1]): return square[1]->Get_SweepCounter();
 			case offsetof(APU_Registers, SQDutyCounter[0]): return square[0]->Get_DutyCounter();
 			case offsetof(APU_Registers, SQDutyCounter[1]): return square[1]->Get_DutyCounter();
-			case offsetof(APU_Registers, TRILinearReg): return 0;
-			case offsetof(APU_Registers, TRILinearCounter): return 0;
-			case offsetof(APU_Registers, TRIFreqReg): return 0;
-			case offsetof(APU_Registers, TRIFreqCounter): return 0;
-			case offsetof(APU_Registers, TRIOutputCounter): return 0;
+			case offsetof(APU_Registers, TRILinearReg): return tri->Get_LinearReg();
+			case offsetof(APU_Registers, TRILinearCounter): return tri->Get_LinearCounter();
+			case offsetof(APU_Registers, TRIFreqReg): return tri->Get_FreqReg();
+			case offsetof(APU_Registers, TRIFreqCounter): return tri->Get_FreqCounter();
+			case offsetof(APU_Registers, TRIOutputCounter): return tri->Get_OutputCounter();
 			case offsetof(APU_Registers, RNDFreqReg): return 0;
 			case offsetof(APU_Registers, RNDVolumeReg): return 0;
 			case offsetof(APU_Registers, RNDDecayCounter): return 0;
@@ -349,11 +353,11 @@ namespace APUSim
 			case offsetof(APU_Registers, SQSweepCounter[1]): square[1]->Set_SweepCounter(val); break;
 			case offsetof(APU_Registers, SQDutyCounter[0]): square[0]->Set_DutyCounter(val); break;
 			case offsetof(APU_Registers, SQDutyCounter[1]): square[1]->Set_DutyCounter(val); break;
-			case offsetof(APU_Registers, TRILinearReg): break;
-			case offsetof(APU_Registers, TRILinearCounter): break;
-			case offsetof(APU_Registers, TRIFreqReg): break;
-			case offsetof(APU_Registers, TRIFreqCounter): break;
-			case offsetof(APU_Registers, TRIOutputCounter): break;
+			case offsetof(APU_Registers, TRILinearReg): tri->Set_LinearReg(val); break;
+			case offsetof(APU_Registers, TRILinearCounter): tri->Set_LinearCounter(val); break;
+			case offsetof(APU_Registers, TRIFreqReg): tri->Set_FreqReg(val); break;
+			case offsetof(APU_Registers, TRIFreqCounter): tri->Set_FreqCounter(val); break;
+			case offsetof(APU_Registers, TRIOutputCounter): tri->Set_OutputCounter(val); break;
 			case offsetof(APU_Registers, RNDFreqReg): break;
 			case offsetof(APU_Registers, RNDVolumeReg): break;
 			case offsetof(APU_Registers, RNDDecayCounter): break;
