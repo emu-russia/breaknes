@@ -259,5 +259,11 @@ namespace M6502Core
 		void getDebug(DebugInfo* info);
 
 		void getUserRegs(UserRegs* userRegs);
+
+		uint8_t getDebugSingle(int ofs);
+		void setDebugSingle(int ofs, uint8_t val);
+
+		uint8_t getUserRegSingle(int ofs);
+		void setUserRegSingle(int ofs, uint8_t val);
 	};
 }
