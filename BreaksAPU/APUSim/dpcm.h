@@ -117,6 +117,22 @@ namespace APUSim
 
 		void sim();
 
-		void Debug_Get(APU_Registers* info);
+		uint32_t Get_FreqReg();
+		uint32_t Get_SampleReg();
+		uint32_t Get_SampleCounter();
+		uint32_t Get_SampleBuffer();
+		uint32_t Get_SampleBitCounter();
+		uint32_t Get_AddressReg();
+		uint32_t Get_AddressCounter();
+		uint32_t Get_Output();
+
+		void Set_FreqReg(uint32_t value);
+		void Set_SampleReg(uint32_t value);
+		void Set_SampleCounter(uint32_t value);
+		void Set_SampleBuffer(uint32_t value);
+		void Set_SampleBitCounter(uint32_t value);
+		void Set_AddressReg(uint32_t value);
+		void Set_AddressCounter(uint32_t value);
+		void Set_Output(uint32_t value);
 	};
 }

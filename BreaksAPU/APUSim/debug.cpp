@@ -118,7 +118,14 @@ namespace APUSim
 		regs.RNDDecayCounter = noise->env_unit->Debug_Get_DecayCounter();
 		regs.RNDEnvelopeCounter = noise->env_unit->Debug_Get_EnvCounter();
 
-		dpcm->Debug_Get(&regs);
+		regs.DPCMFreqReg = dpcm->Get_FreqReg();
+		regs.DPCMSampleReg = dpcm->Get_SampleReg();
+		regs.DPCMSampleCounter = dpcm->Get_SampleCounter();
+		regs.DPCMSampleBuffer = dpcm->Get_SampleBuffer();
+		regs.DPCMSampleBitCounter = dpcm->Get_SampleBitCounter();
+		regs.DPCMAddressReg = dpcm->Get_AddressReg();
+		regs.DPCMAddressCounter = dpcm->Get_AddressCounter();
+		regs.DPCMOutput = dpcm->Get_Output();
 
 		dma->Debug_Get(&regs);
 	}
@@ -309,14 +316,14 @@ namespace APUSim
 			case offsetof(APU_Registers, RNDVolumeReg): return noise->env_unit->Debug_Get_VolumeReg();
 			case offsetof(APU_Registers, RNDDecayCounter): return noise->env_unit->Debug_Get_DecayCounter();
 			case offsetof(APU_Registers, RNDEnvelopeCounter): return noise->env_unit->Debug_Get_EnvCounter();
-			case offsetof(APU_Registers, DPCMFreqReg): return 0;
-			case offsetof(APU_Registers, DPCMSampleReg): return 0;
-			case offsetof(APU_Registers, DPCMSampleCounter): return 0;
-			case offsetof(APU_Registers, DPCMSampleBuffer): return 0;
-			case offsetof(APU_Registers, DPCMSampleBitCounter): return 0;
-			case offsetof(APU_Registers, DPCMAddressReg): return 0;
-			case offsetof(APU_Registers, DPCMAddressCounter): return 0;
-			case offsetof(APU_Registers, DPCMOutput): return 0;
+			case offsetof(APU_Registers, DPCMFreqReg): return dpcm->Get_FreqReg();
+			case offsetof(APU_Registers, DPCMSampleReg): return dpcm->Get_SampleReg();
+			case offsetof(APU_Registers, DPCMSampleCounter): return dpcm->Get_SampleCounter();
+			case offsetof(APU_Registers, DPCMSampleBuffer): return dpcm->Get_SampleBuffer();
+			case offsetof(APU_Registers, DPCMSampleBitCounter): return dpcm->Get_SampleBitCounter();
+			case offsetof(APU_Registers, DPCMAddressReg): return dpcm->Get_AddressReg();
+			case offsetof(APU_Registers, DPCMAddressCounter): return dpcm->Get_AddressCounter();
+			case offsetof(APU_Registers, DPCMOutput): return dpcm->Get_Output();
 			case offsetof(APU_Registers, DMABuffer): return 0;
 			case offsetof(APU_Registers, DMAAddress): return 0;
 
@@ -365,14 +372,14 @@ namespace APUSim
 			case offsetof(APU_Registers, RNDVolumeReg): noise->env_unit->Debug_Set_VolumeReg(val); break;
 			case offsetof(APU_Registers, RNDDecayCounter): noise->env_unit->Debug_Set_DecayCounter(val); break;
 			case offsetof(APU_Registers, RNDEnvelopeCounter): noise->env_unit->Debug_Set_EnvCounter(val); break;
-			case offsetof(APU_Registers, DPCMFreqReg): break;
-			case offsetof(APU_Registers, DPCMSampleReg): break;
-			case offsetof(APU_Registers, DPCMSampleCounter): break;
-			case offsetof(APU_Registers, DPCMSampleBuffer): break;
-			case offsetof(APU_Registers, DPCMSampleBitCounter): break;
-			case offsetof(APU_Registers, DPCMAddressReg): break;
-			case offsetof(APU_Registers, DPCMAddressCounter): break;
-			case offsetof(APU_Registers, DPCMOutput): break;
+			case offsetof(APU_Registers, DPCMFreqReg): dpcm->Set_FreqReg(val); break;
+			case offsetof(APU_Registers, DPCMSampleReg): dpcm->Set_SampleReg(val); break;
+			case offsetof(APU_Registers, DPCMSampleCounter): dpcm->Set_SampleCounter(val); break;
+			case offsetof(APU_Registers, DPCMSampleBuffer): dpcm->Set_SampleBuffer(val); break;
+			case offsetof(APU_Registers, DPCMSampleBitCounter): dpcm->Set_SampleBitCounter(val); break;
+			case offsetof(APU_Registers, DPCMAddressReg): dpcm->Set_AddressReg(val); break;
+			case offsetof(APU_Registers, DPCMAddressCounter): dpcm->Set_AddressCounter(val); break;
+			case offsetof(APU_Registers, DPCMOutput): dpcm->Set_Output(val); break;
 			case offsetof(APU_Registers, DMABuffer): break;
 			case offsetof(APU_Registers, DMAAddress): break;
 
