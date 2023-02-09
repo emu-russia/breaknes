@@ -4,7 +4,7 @@ namespace M6502Core
 {
 	class DataBus
 	{
-		BaseLogic::DLatch rd_latch;
+		BaseLogic::DLatch rd_latch{};
 		uint8_t DL;
 		uint8_t DOR;
 

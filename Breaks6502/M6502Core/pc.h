@@ -4,10 +4,10 @@ namespace M6502Core
 {
 	class ProgramCounter
 	{
-		BaseLogic::DLatch PCL[8];
-		BaseLogic::DLatch PCLS[8];
-		BaseLogic::DLatch PCH[8];
-		BaseLogic::DLatch PCHS[8];
+		BaseLogic::DLatch PCL[8]{};
+		BaseLogic::DLatch PCLS[8]{};
+		BaseLogic::DLatch PCH[8]{};
+		BaseLogic::DLatch PCHS[8]{};
 
 		uint8_t PackedPCL;
 		uint8_t PackedPCLS;

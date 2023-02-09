@@ -6,23 +6,23 @@ namespace M6502Core
 	{
 		// There is no point in making FFs, the DLatch outputs will be their role.
 
-		BaseLogic::DLatch z_latch1;
-		BaseLogic::DLatch z_latch2;
-		BaseLogic::DLatch n_latch1;
-		BaseLogic::DLatch n_latch2;
-		BaseLogic::DLatch c_latch1;
-		BaseLogic::DLatch c_latch2;
-		BaseLogic::DLatch d_latch1;
-		BaseLogic::DLatch d_latch2;
-		BaseLogic::DLatch i_latch1;
-		BaseLogic::DLatch i_latch2;
-		BaseLogic::DLatch v_latch1;
-		BaseLogic::DLatch v_latch2;
-		BaseLogic::DLatch avr_latch;
-		BaseLogic::DLatch so_latch1;
-		BaseLogic::DLatch so_latch2;
-		BaseLogic::DLatch so_latch3;
-		BaseLogic::DLatch vset_latch;
+		BaseLogic::DLatch z_latch1{};
+		BaseLogic::DLatch z_latch2{};
+		BaseLogic::DLatch n_latch1{};
+		BaseLogic::DLatch n_latch2{};
+		BaseLogic::DLatch c_latch1{};
+		BaseLogic::DLatch c_latch2{};
+		BaseLogic::DLatch d_latch1{};
+		BaseLogic::DLatch d_latch2{};
+		BaseLogic::DLatch i_latch1{};
+		BaseLogic::DLatch i_latch2{};
+		BaseLogic::DLatch v_latch1{};
+		BaseLogic::DLatch v_latch2{};
+		BaseLogic::DLatch avr_latch{};
+		BaseLogic::DLatch so_latch1{};
+		BaseLogic::DLatch so_latch2{};
+		BaseLogic::DLatch so_latch3{};
+		BaseLogic::DLatch vset_latch{};
 
 		M6502* core = nullptr;
 

@@ -4,8 +4,8 @@ namespace M6502Core
 {
 	class AddressBus
 	{
-		uint8_t ABL;
-		uint8_t ABH;
+		uint8_t ABL = 0;
+		uint8_t ABH = 0;
 
 		M6502* core = nullptr;
 
