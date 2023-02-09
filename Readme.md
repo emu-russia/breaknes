@@ -4,10 +4,6 @@
 
 NES/Famicom/Dendy emulator at the gate level.
 
-The last significant milestone:
-
-![mariwa](/UserManual/imgstore/mariwa.png)
-
 ## Build
 
 Use Windows and VS2022. Dotnet 6.0 **Desktop** Runtime is also required.
