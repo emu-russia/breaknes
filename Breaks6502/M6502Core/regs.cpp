@@ -124,4 +124,19 @@ namespace M6502Core
 	{
 		return ~S_out;
 	}
+
+	void Regs::setY(uint8_t val)
+	{
+		Y = val;
+	}
+
+	void Regs::setX(uint8_t val)
+	{
+		X = val;
+	}
+
+	void Regs::setS(uint8_t val)
+	{
+		S_out = ~val;
+	}
 }

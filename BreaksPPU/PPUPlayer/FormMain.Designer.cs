@@ -712,6 +712,7 @@
 			// 
 			// button1
 			// 
+			this.button1.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.button1.BackgroundImage = global::PPUPlayer.Properties.Resources.button_get_debug;
 			this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
 			this.button1.Location = new System.Drawing.Point(528, 5);
@@ -723,6 +724,7 @@
 			// 
 			// comboBox1
 			// 
+			this.comboBox1.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboBox1.FormattingEnabled = true;
 			this.comboBox1.Location = new System.Drawing.Point(309, 9);

@@ -74,24 +74,68 @@ namespace APUSim
 
 	void EnvelopeUnit::Debug_Get(uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter)
 	{
-		TriState val[4]{};
+		VolumeReg = Debug_Get_VolumeReg();
+		DecayCounter = Debug_Get_DecayCounter();
+		EnvCounter = Debug_Get_EnvCounter();
+	}
 
+	uint32_t EnvelopeUnit::Debug_Get_VolumeReg()
+	{
+		TriState val[4]{};
 		for (size_t n = 0; n < 4; n++)
 		{
 			val[n] = vol_reg[n].get();
 		}
-		VolumeReg = PackNibble(val);
+		return PackNibble(val);
+	}
 
+	uint32_t EnvelopeUnit::Debug_Get_DecayCounter()
+	{
+		TriState val[4]{};
 		for (size_t n = 0; n < 4; n++)
 		{
 			val[n] = decay_cnt[n].get();
 		}
-		DecayCounter = PackNibble(val);
+		return PackNibble(val);
+	}
 
+	uint32_t EnvelopeUnit::Debug_Get_EnvCounter()
+	{
+		TriState val[4]{};
 		for (size_t n = 0; n < 4; n++)
 		{
 			val[n] = env_cnt[n].get();
 		}
-		EnvCounter = PackNibble(val);
+		return PackNibble(val);
+	}
+
+	void EnvelopeUnit::Debug_Set_VolumeReg(uint32_t val)
+	{
+		TriState unpacked[4]{};
+		UnpackNibble(val, unpacked);
+		for (size_t n = 0; n < 4; n++)
+		{
+			vol_reg[n].set(unpacked[n]);
+		}
+	}
+
+	void EnvelopeUnit::Debug_Set_DecayCounter(uint32_t val)
+	{
+		TriState unpacked[4]{};
+		UnpackNibble(val, unpacked);
+		for (size_t n = 0; n < 4; n++)
+		{
+			decay_cnt[n].set(unpacked[n]);
+		}
+	}
+
+	void EnvelopeUnit::Debug_Set_EnvCounter(uint32_t val)
+	{
+		TriState unpacked[4]{};
+		UnpackNibble(val, unpacked);
+		for (size_t n = 0; n < 4; n++)
+		{
+			env_cnt[n].set(unpacked[n]);
+		}
 	}
 }

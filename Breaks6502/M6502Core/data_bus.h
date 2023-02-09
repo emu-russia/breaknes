@@ -4,9 +4,9 @@ namespace M6502Core
 {
 	class DataBus
 	{
-		BaseLogic::DLatch rd_latch;
-		uint8_t DL;
-		uint8_t DOR;
+		BaseLogic::DLatch rd_latch{};
+		uint8_t DL = 0;
+		uint8_t DOR = 0;
 
 		M6502* core = nullptr;
 
@@ -20,5 +20,8 @@ namespace M6502Core
 
 		uint8_t getDL();
 		uint8_t getDOR();
+
+		void setDL(uint8_t val);
+		void setDOR(uint8_t val);
 	};
 }

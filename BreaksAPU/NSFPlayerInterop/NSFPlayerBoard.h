@@ -33,11 +33,17 @@ namespace NSFPlayer
 		static uint8_t DumpWRAM(void* opaque, size_t addr);
 		static void WriteWRAM(void* opaque, size_t addr, uint8_t data);
 
-		static uint32_t GetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
-		static uint32_t GetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
-		static uint32_t GetApuDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
-		static uint32_t GetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
-		static uint32_t GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
+		static uint32_t GetCoreDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetApuDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry);
+
+		static void SetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetApuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 
 		void AddBoardMemDescriptors();
 		void AddDebugInfoProviders();

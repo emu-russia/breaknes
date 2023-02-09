@@ -228,10 +228,13 @@ namespace PPUPlayer
 
 			// Skip HSync
 
-			while (ScanBuffer[ReadPtr].composite <= ppu_features.SyncLevel)
+			while (ScanBuffer[ReadPtr].composite <= ppu_features.SyncLevel && ReadPtr < (ScanBuffer.Length - 1))
 			{
 				ReadPtr++;
 			}
+
+			if (ReadPtr == (ScanBuffer.Length - 1))
+				return;
 
 			// Detect Color Burst Phase (simulate TV PLL)
 
@@ -309,10 +312,13 @@ namespace PPUPlayer
 
 			// Skip HSync
 
-			while (ScanBuffer[ReadPtr].composite <= ppu_features.SyncLevel)
+			while (ScanBuffer[ReadPtr].composite <= ppu_features.SyncLevel && ReadPtr < (ScanBuffer.Length - 1))
 			{
 				ReadPtr++;
 			}
+
+			if (ReadPtr == (ScanBuffer.Length - 1))
+				return 0;
 
 			// Lock phase of color burst
 

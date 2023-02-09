@@ -505,6 +505,14 @@ namespace BaseLogic
 		}
 	}
 
+	void UnpackNibble(uint8_t val, TriState out[4])
+	{
+		for (size_t i = 0; i < 4; i++)
+		{
+			out[i] = ((val >> i) & 1) ? TriState::One : TriState::Zero;
+		}
+	}
+
 	void Dump(TriState in[8], const char* name)
 	{
 		printf("%s: ", name);

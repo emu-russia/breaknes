@@ -14,12 +14,16 @@ DebugHub::~DebugHub()
 	DisposeMemMap();
 }
 
-void DebugHub::AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry, uint8_t& bits), void* opaque)
+void DebugHub::AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, 
+	uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry), 
+	void (*SetValue)(void* opaque, DebugInfoEntry* entry, uint32_t value),
+	void* opaque)
 {
 	DebugInfoProvider prov{};
 
 	prov.entry = entry;
 	prov.GetValue = GetValue;
+	prov.SetValue = SetValue;
 	prov.opaque = opaque;
 
 	switch (type)
@@ -240,7 +244,8 @@ extern "C"
 		{
 			memcpy(ptr->category, it->entry->category, sizeof(ptr->category));
 			memcpy(ptr->name, it->entry->name, sizeof(ptr->name));
-			ptr->value = it->GetValue(it->opaque, it->entry, ptr->bits);
+			ptr->value = it->GetValue(it->opaque, it->entry);
+			ptr->bits = it->entry->bits;
 			ptr++;
 		}
 	}
@@ -294,6 +299,28 @@ extern "C"
 				CopyOutDebugInfo(dbg_hub->cartInfo, entries);
 				break;
 		}
+	}
+
+	/// <summary>
+	/// Get one DebugInfo record with the specified name
+	/// </summary>
+	/// <param name="type"></param>
+	/// <param name="entry"></param>
+	__declspec(dllexport)
+	void GetDebugInfoByName(DebugInfoType type, DebugInfoEntry* entry)
+	{
+
+	}
+
+	/// <summary>
+	/// Set one DebugInfo record with the specified name
+	/// </summary>
+	/// <param name="type"></param>
+	/// <param name="entry"></param>
+	__declspec(dllexport)
+	void SetDebugInfoByName(DebugInfoType type, DebugInfoEntry* entry)
+	{
+
 	}
 
 	/// <summary>

@@ -503,6 +503,11 @@ namespace M6502Core
 		return AVRLatch.nget();
 	}
 
+	void ALU::setAVR(TriState val)
+	{
+		AVRLatch.set(NOT(val), TriState::One);
+	}
+
 	uint8_t ALU::getAI()
 	{
 		return AI;
@@ -521,5 +526,25 @@ namespace M6502Core
 	uint8_t ALU::getAC()
 	{
 		return AC;
+	}
+
+	void ALU::setAI(uint8_t val)
+	{
+		AI = val;
+	}
+
+	void ALU::setBI(uint8_t val)
+	{
+		BI = val;
+	}
+
+	void ALU::setADD(uint8_t val)
+	{
+		n_ADD = ~val;
+	}
+
+	void ALU::setAC(uint8_t val)
+	{
+		AC = val;
 	}
 }

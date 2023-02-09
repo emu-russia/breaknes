@@ -21,6 +21,11 @@ namespace APUSim
 		return transp_latch.nget();
 	}
 
+	void RegisterBit::set(TriState val)
+	{
+		transp_latch.set(val, TriState::One);
+	}
+
 	void RegisterBitRes::sim(TriState n_ACLK, TriState Enable, TriState Value, TriState Res)
 	{
 		transp_latch.set(AND(MUX(n_ACLK, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), NOT(Res)), TriState::One);
@@ -36,6 +41,11 @@ namespace APUSim
 		return transp_latch.nget();
 	}
 
+	void RegisterBitRes::set(TriState val)
+	{
+		transp_latch.set(val, TriState::One);
+	}
+
 	void RegisterBitRes2::sim(TriState n_ACLK, TriState Enable, TriState Value, TriState Res1, TriState Res2)
 	{
 		transp_latch.set(AND(MUX(n_ACLK, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), NOT(OR(Res1, Res2))), TriState::One);
@@ -49,6 +59,11 @@ namespace APUSim
 	TriState RegisterBitRes2::nget()
 	{
 		return transp_latch.nget();
+	}
+
+	void RegisterBitRes2::set(TriState val)
+	{
+		transp_latch.set(val, TriState::One);
 	}
 
 	TriState CounterBit::sim(TriState Carry, TriState Clear, TriState Load, TriState Step, TriState n_ACLK, TriState val)
@@ -79,6 +94,11 @@ namespace APUSim
 		return transp_latch.nget();
 	}
 
+	void CounterBit::set(BaseLogic::TriState val)
+	{
+		transp_latch.set(val, TriState::One);
+	}
+
 	TriState DownCounterBit::sim(TriState Carry, TriState Clear, TriState Load, TriState Step, TriState n_ACLK, TriState val)
 	{
 		TriState latch_in =
@@ -107,6 +127,11 @@ namespace APUSim
 		return transp_latch.nget();
 	}
 
+	void DownCounterBit::set(BaseLogic::TriState val)
+	{
+		transp_latch.set(val, TriState::One);
+	}
+
 	TriState RevCounterBit::sim(TriState Carry, TriState Dec, TriState Clear, TriState Load, TriState Step, TriState n_ACLK, TriState val)
 	{
 		TriState latch_in =
@@ -133,5 +158,10 @@ namespace APUSim
 	TriState RevCounterBit::nget()
 	{
 		return transp_latch.nget();
+	}
+
+	void RevCounterBit::set(BaseLogic::TriState val)
+	{
+		transp_latch.set(val, TriState::One);
 	}
 }

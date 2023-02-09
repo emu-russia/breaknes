@@ -4,7 +4,7 @@ namespace M6502Core
 {
 	class IR
 	{
-		uint8_t ir_latch;
+		uint8_t ir_latch = 0;
 
 		M6502* core = nullptr;
 
@@ -12,7 +12,7 @@ namespace M6502Core
 
 		IR(M6502* parent) { core = parent; }
 
-		uint8_t IROut;
+		uint8_t IROut = 0;
 
 		void sim();
 	};

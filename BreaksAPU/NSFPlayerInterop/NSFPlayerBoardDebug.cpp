@@ -290,7 +290,8 @@ namespace NSFPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), CORE_WIRES_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Core, entry, GetCoreDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Core, entry, GetCoreDebugInfo, SetCoreDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(core_regs); n++)
@@ -301,7 +302,8 @@ namespace NSFPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), CORE_REGS_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_CoreRegs, entry, GetCoreRegsDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_CoreRegs, entry, GetCoreRegsDebugInfo, SetCoreRegsDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(apu_wires); n++)
@@ -312,7 +314,8 @@ namespace NSFPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), APU_WIRES_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APU, entry, GetApuDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APU, entry, GetApuDebugInfo, SetApuDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(apu_regs); n++)
@@ -323,7 +326,8 @@ namespace NSFPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), APU_REGS_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APURegs, entry, GetApuRegsDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APURegs, entry, GetApuRegsDebugInfo, SetApuRegsDebugInfo, this);
 		}
 
 		for (size_t n = 0; n < _countof(board_signals); n++)
@@ -334,7 +338,8 @@ namespace NSFPlayer
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy_s(entry->category, sizeof(entry->category), BOARD_CATEGORY);
 			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Board, entry, GetBoardDebugInfo, this);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Board, entry, GetBoardDebugInfo, SetBoardDebugInfo, this);
 		}
 	}
 
@@ -362,7 +367,7 @@ namespace NSFPlayer
 		board->wram->Dbg_WriteByte(addr, data);
 	}
 
-	uint32_t Board::GetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
+	uint32_t Board::GetCoreDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		Board* board = (Board*)opaque;
 
@@ -376,8 +381,6 @@ namespace NSFPlayer
 				board->core->getDebug(&wires);
 
 				uint8_t* ptr = (uint8_t*)&wires;
-
-				bits = sp->bits;
 				return ptr[sp->offset];
 			}
 		}
@@ -385,7 +388,7 @@ namespace NSFPlayer
 		return 0;
 	}
 
-	uint32_t Board::GetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
+	uint32_t Board::GetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		Board* board = (Board*)opaque;
 
@@ -398,7 +401,6 @@ namespace NSFPlayer
 				M6502Core::UserRegs regs{};
 				board->core->getUserRegs(&regs);
 
-				bits = sp->bits;
 				uint8_t* ptr = (uint8_t*)&regs + sp->offset;
 				return *ptr;
 			}
@@ -407,7 +409,7 @@ namespace NSFPlayer
 		return 0;
 	}
 
-	uint32_t Board::GetApuDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
+	uint32_t Board::GetApuDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		Board* board = (Board*)opaque;
 
@@ -421,8 +423,6 @@ namespace NSFPlayer
 				board->apu->GetDebugInfo_Wires(wires);
 
 				uint8_t* ptr = (uint8_t*)&wires;
-
-				bits = sp->bits;
 				return ptr[sp->offset];
 			}
 		}
@@ -430,7 +430,7 @@ namespace NSFPlayer
 		return 0;
 	}
 
-	uint32_t Board::GetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
+	uint32_t Board::GetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		Board* board = (Board*)opaque;
 
@@ -443,13 +443,32 @@ namespace NSFPlayer
 				APUSim::APU_Registers regs{};
 				board->apu->GetDebugInfo_Regs(regs);
 
-				bits = sp->bits;
 				uint8_t* ptr = (uint8_t*)&regs + sp->offset;
 				return *(uint32_t*)ptr;
 			}
 		}
 
 		return 0;
+	}
+
+	void Board::SetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
+
+	}
+
+	void Board::SetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
+
+	}
+
+	void Board::SetApuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
+
+	}
+
+	void Board::SetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
+
 	}
 
 	void Board::GetDebugInfo(BoardDebugInfo& info)
@@ -461,7 +480,7 @@ namespace NSFPlayer
 		}
 	}
 
-	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
+	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
 		Board* board = (Board*)opaque;
 
@@ -474,12 +493,16 @@ namespace NSFPlayer
 				BoardDebugInfo info{};
 				board->GetDebugInfo(info);
 
-				bits = sp->bits;
 				uint8_t* ptr = (uint8_t*)&info + sp->offset;
 				return *(uint32_t*)ptr;
 			}
 		}
 
 		return 0;
+	}
+
+	void Board::SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
+
 	}
 }

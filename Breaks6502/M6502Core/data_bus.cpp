@@ -93,4 +93,14 @@ namespace M6502Core
 	{
 		return ~DOR;
 	}
+
+	void DataBus::setDL(uint8_t val)
+	{
+		DL = ~val;
+	}
+
+	void DataBus::setDOR(uint8_t val)
+	{
+		DOR = ~val;
+	}
 }

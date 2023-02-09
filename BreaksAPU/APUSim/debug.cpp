@@ -88,4 +88,162 @@ namespace APUSim
 		dpcm->Debug_Get(&regs);
 		dma->Debug_Get(&regs);
 	}
+
+	uint8_t APU::GetDebugInfo_Wire(int ofs)
+	{
+		switch (ofs)
+		{
+			case offsetof(APU_Interconnects, n_CLK): return ToByte(wire.n_CLK);
+			case offsetof(APU_Interconnects, PHI0): return ToByte(wire.PHI0);
+			case offsetof(APU_Interconnects, PHI1): return ToByte(wire.PHI1);
+			case offsetof(APU_Interconnects, PHI2): return ToByte(wire.PHI2);
+			case offsetof(APU_Interconnects, RDY): return ToByte(wire.RDY);
+			case offsetof(APU_Interconnects, ACLK): return ToByte(wire.ACLK);
+			case offsetof(APU_Interconnects, n_ACLK): return ToByte(wire.n_ACLK);
+			case offsetof(APU_Interconnects, RES): return ToByte(wire.RES);
+			case offsetof(APU_Interconnects, n_M2): return ToByte(wire.n_M2);
+			case offsetof(APU_Interconnects, n_NMI): return ToByte(wire.n_NMI);
+			case offsetof(APU_Interconnects, n_IRQ): return ToByte(wire.n_IRQ);
+			case offsetof(APU_Interconnects, INT): return ToByte(wire.INT);
+			case offsetof(APU_Interconnects, n_LFO1): return ToByte(wire.n_LFO1);
+			case offsetof(APU_Interconnects, n_LFO2): return ToByte(wire.n_LFO2);
+			case offsetof(APU_Interconnects, RnW): return ToByte(wire.RnW);
+			case offsetof(APU_Interconnects, SPR_CPU): return ToByte(wire.SPR_CPU);
+			case offsetof(APU_Interconnects, SPR_PPU): return ToByte(wire.SPR_PPU);
+			case offsetof(APU_Interconnects, RW): return ToByte(wire.RW);
+			case offsetof(APU_Interconnects, RD): return ToByte(wire.RD);
+			case offsetof(APU_Interconnects, WR): return ToByte(wire.WR);
+			case offsetof(APU_Interconnects, n_DMC_AB): return ToByte(wire.n_DMC_AB);
+			case offsetof(APU_Interconnects, RUNDMC): return ToByte(wire.RUNDMC);
+			case offsetof(APU_Interconnects, DMCINT): return ToByte(wire.DMCINT);
+			case offsetof(APU_Interconnects, DMCRDY): return ToByte(wire.DMCRDY);
+			case offsetof(APU_Interconnects, n_R4015): return ToByte(wire.n_R4015);
+			case offsetof(APU_Interconnects, n_R4016): return ToByte(wire.n_R4016);
+			case offsetof(APU_Interconnects, n_R4017): return ToByte(wire.n_R4017);
+			case offsetof(APU_Interconnects, n_R4018): return ToByte(wire.n_R4018);
+			case offsetof(APU_Interconnects, n_R4019): return ToByte(wire.n_R4019);
+			case offsetof(APU_Interconnects, n_R401A): return ToByte(wire.n_R401A);
+			case offsetof(APU_Interconnects, W4000): return ToByte(wire.W4000);
+			case offsetof(APU_Interconnects, W4001): return ToByte(wire.W4001);
+			case offsetof(APU_Interconnects, W4002): return ToByte(wire.W4002);
+			case offsetof(APU_Interconnects, W4003): return ToByte(wire.W4003);
+			case offsetof(APU_Interconnects, W4004): return ToByte(wire.W4004);
+			case offsetof(APU_Interconnects, W4005): return ToByte(wire.W4005);
+			case offsetof(APU_Interconnects, W4006): return ToByte(wire.W4006);
+			case offsetof(APU_Interconnects, W4007): return ToByte(wire.W4007);
+			case offsetof(APU_Interconnects, W4008): return ToByte(wire.W4008);
+			case offsetof(APU_Interconnects, W400A): return ToByte(wire.W400A);
+			case offsetof(APU_Interconnects, W400B): return ToByte(wire.W400B);
+			case offsetof(APU_Interconnects, W400C): return ToByte(wire.W400C);
+			case offsetof(APU_Interconnects, W400E): return ToByte(wire.W400E);
+			case offsetof(APU_Interconnects, W400F): return ToByte(wire.W400F);
+			case offsetof(APU_Interconnects, W4010): return ToByte(wire.W4010);
+			case offsetof(APU_Interconnects, W4011): return ToByte(wire.W4011);
+			case offsetof(APU_Interconnects, W4012): return ToByte(wire.W4012);
+			case offsetof(APU_Interconnects, W4013): return ToByte(wire.W4013);
+			case offsetof(APU_Interconnects, W4014): return ToByte(wire.W4014);
+			case offsetof(APU_Interconnects, W4015): return ToByte(wire.W4015);
+			case offsetof(APU_Interconnects, W4016): return ToByte(wire.W4016);
+			case offsetof(APU_Interconnects, W4017): return ToByte(wire.W4017);
+			case offsetof(APU_Interconnects, W401A): return ToByte(wire.W401A);
+			case offsetof(APU_Interconnects, SQA_LC): return ToByte(wire.SQA_LC);
+			case offsetof(APU_Interconnects, SQB_LC): return ToByte(wire.SQB_LC);
+			case offsetof(APU_Interconnects, TRI_LC): return ToByte(wire.TRI_LC);
+			case offsetof(APU_Interconnects, RND_LC): return ToByte(wire.RND_LC);
+			case offsetof(APU_Interconnects, NOSQA): return ToByte(wire.NOSQA);
+			case offsetof(APU_Interconnects, NOSQB): return ToByte(wire.NOSQB);
+			case offsetof(APU_Interconnects, NOTRI): return ToByte(wire.NOTRI);
+			case offsetof(APU_Interconnects, NORND): return ToByte(wire.NORND);
+			case offsetof(APU_Interconnects, DBG): return ToByte(wire.DBG);
+			case offsetof(APU_Interconnects, n_DBGRD): return ToByte(wire.n_DBGRD);
+			case offsetof(APU_Interconnects, LOCK): return ToByte(wire.LOCK);
+
+			default:
+				return 0;
+		}
+	}
+
+	void APU::SetDebugInfo_Wire(int ofs, uint8_t val)
+	{
+		switch (ofs)
+		{
+			case offsetof(APU_Interconnects, n_CLK): wire.n_CLK = FromByte(val); break;
+			case offsetof(APU_Interconnects, PHI0): wire.PHI0 = FromByte(val); break;
+			case offsetof(APU_Interconnects, PHI1): wire.PHI1 = FromByte(val); break;
+			case offsetof(APU_Interconnects, PHI2): wire.PHI2 = FromByte(val); break;
+			case offsetof(APU_Interconnects, RDY): wire.RDY = FromByte(val); break;
+			case offsetof(APU_Interconnects, ACLK): wire.ACLK = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_ACLK): wire.n_ACLK = FromByte(val); break;
+			case offsetof(APU_Interconnects, RES): wire.RES = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_M2): wire.n_M2 = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_NMI): wire.n_NMI = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_IRQ): wire.n_IRQ = FromByte(val); break;
+			case offsetof(APU_Interconnects, INT): wire.INT = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_LFO1): wire.n_LFO1 = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_LFO2): wire.n_LFO2 = FromByte(val); break;
+			case offsetof(APU_Interconnects, RnW): wire.RnW = FromByte(val); break;
+			case offsetof(APU_Interconnects, SPR_CPU): wire.SPR_CPU = FromByte(val); break;
+			case offsetof(APU_Interconnects, SPR_PPU): wire.SPR_PPU = FromByte(val); break;
+			case offsetof(APU_Interconnects, RW): wire.RW = FromByte(val); break;
+			case offsetof(APU_Interconnects, RD): wire.RD = FromByte(val); break;
+			case offsetof(APU_Interconnects, WR): wire.WR = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_DMC_AB): wire.n_DMC_AB = FromByte(val); break;
+			case offsetof(APU_Interconnects, RUNDMC): wire.RUNDMC = FromByte(val); break;
+			case offsetof(APU_Interconnects, DMCINT): wire.DMCINT = FromByte(val); break;
+			case offsetof(APU_Interconnects, DMCRDY): wire.DMCRDY = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_R4015): wire.n_R4015 = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_R4016): wire.n_R4016 = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_R4017): wire.n_R4017 = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_R4018): wire.n_R4018 = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_R4019): wire.n_R4019 = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_R401A): wire.n_R401A = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4000): wire.W4000 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4001): wire.W4001 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4002): wire.W4002 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4003): wire.W4003 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4004): wire.W4004 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4005): wire.W4005 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4006): wire.W4006 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4007): wire.W4007 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4008): wire.W4008 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W400A): wire.W400A = FromByte(val); break;
+			case offsetof(APU_Interconnects, W400B): wire.W400B = FromByte(val); break;
+			case offsetof(APU_Interconnects, W400C): wire.W400C = FromByte(val); break;
+			case offsetof(APU_Interconnects, W400E): wire.W400E = FromByte(val); break;
+			case offsetof(APU_Interconnects, W400F): wire.W400F = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4010): wire.W4010 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4011): wire.W4011 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4012): wire.W4012 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4013): wire.W4013 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4014): wire.W4014 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4015): wire.W4015 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4016): wire.W4016 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W4017): wire.W4017 = FromByte(val); break;
+			case offsetof(APU_Interconnects, W401A): wire.W401A = FromByte(val); break;
+			case offsetof(APU_Interconnects, SQA_LC): wire.SQA_LC = FromByte(val); break;
+			case offsetof(APU_Interconnects, SQB_LC): wire.SQB_LC = FromByte(val); break;
+			case offsetof(APU_Interconnects, TRI_LC): wire.TRI_LC = FromByte(val); break;
+			case offsetof(APU_Interconnects, RND_LC): wire.RND_LC = FromByte(val); break;
+			case offsetof(APU_Interconnects, NOSQA): wire.NOSQA = FromByte(val); break;
+			case offsetof(APU_Interconnects, NOSQB): wire.NOSQB = FromByte(val); break;
+			case offsetof(APU_Interconnects, NOTRI): wire.NOTRI = FromByte(val); break;
+			case offsetof(APU_Interconnects, NORND): wire.NORND = FromByte(val); break;
+			case offsetof(APU_Interconnects, DBG): wire.DBG = FromByte(val); break;
+			case offsetof(APU_Interconnects, n_DBGRD): wire.n_DBGRD = FromByte(val); break;
+			case offsetof(APU_Interconnects, LOCK): wire.LOCK = FromByte(val); break;
+
+			default:
+				break;
+		}
+	}
+
+	uint32_t APU::GetDebugInfo_Reg(int ofs)
+	{
+		return 0;
+	}
+
+	void APU::SetDebugInfo_Reg(int ofs, uint32_t val)
+	{
+
+	}
 }

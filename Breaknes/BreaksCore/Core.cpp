@@ -12,7 +12,8 @@ namespace Breaknes
 		memset(testEntry, 0, sizeof(DebugInfoEntry));
 		strcpy(testEntry->category, "Test");
 		strcpy(testEntry->name, "test");
-		dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Test, testEntry, GetTestInfo, this);
+		testEntry->bits = 8;
+		dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Test, testEntry, GetTestInfo, SetTestInfo, this);
 
 		MemDesciptor* testRegion = new MemDesciptor;
 		memset(testRegion, 0, sizeof(MemDesciptor));
@@ -29,10 +30,14 @@ namespace Breaknes
 	}
 
 	// DEBUG: To be deleted after GUI debugging
-	uint32_t Core::GetTestInfo(void* opaque, DebugInfoEntry* entry, uint8_t& bits)
+	uint32_t Core::GetTestInfo(void* opaque, DebugInfoEntry* entry)
 	{
-		bits = 8;
 		return 123;
+	}
+
+	// DEBUG: To be deleted after GUI debugging
+	void Core::SetTestInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
 	}
 
 	// DEBUG: To be deleted after GUI debugging

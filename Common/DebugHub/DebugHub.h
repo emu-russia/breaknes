@@ -25,7 +25,7 @@ struct DebugInfoEntry
 {
 	char category[32];
 	char name[32];
-	uint8_t bits;
+	uint8_t bits;			// The number of significant bits in the value
 	uint32_t value;
 };
 #pragma pack(pop)
@@ -44,7 +44,8 @@ struct MemDesciptor
 struct DebugInfoProvider
 {
 	DebugInfoEntry* entry;
-	uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry, uint8_t& bits);
+	uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry);
+	void (*SetValue)(void* opaque, DebugInfoEntry* entry, uint32_t value);
 	void* opaque;
 };
 
@@ -82,8 +83,12 @@ public:
 	/// <param name="type">Type of debugging information (corresponds to single PropertyGrid)</param>
 	/// <param name="entry">One entry of debugging information. Corresponds to a single signal/register/whatever. (auto-delete)</param>
 	/// <param name="GetValue">Delegate to get the value</param>
+	/// <param name="SetValue">Delegate to set the value</param>
 	/// <param name="opaque">Transparent pointer to pass to the delegate (usually `this`)</param>
-	void AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry, uint8_t& bits), void* opaque);
+	void AddDebugInfo(DebugInfoType type, DebugInfoEntry* entry, 
+		uint32_t(*GetValue)(void* opaque, DebugInfoEntry* entry), 
+		void (*SetValue)(void* opaque, DebugInfoEntry* entry, uint32_t value),
+		void* opaque);
 
 	/// <summary>
 	/// Delete all debugging information handlers
