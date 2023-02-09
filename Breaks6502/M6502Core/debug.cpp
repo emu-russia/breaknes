@@ -428,11 +428,47 @@ namespace M6502Core
 
 	uint8_t M6502::getUserRegSingle(int ofs)
 	{
+		switch (ofs)
+		{
+			case offsetof(UserRegs, Y): return regs->getY();
+			case offsetof(UserRegs, X): return regs->getX();
+			case offsetof(UserRegs, S): return regs->getS();
+			case offsetof(UserRegs, A): return alu->getAC();
+			case offsetof(UserRegs, PCL): return pc->getPCL();
+			case offsetof(UserRegs, PCH): return pc->getPCH();
 
+			case offsetof(UserRegs, C_OUT): return ToByte(NOT(random->flags->getn_C_OUT()));
+			case offsetof(UserRegs, Z_OUT): return ToByte(NOT(random->flags->getn_Z_OUT()));
+			case offsetof(UserRegs, I_OUT): return ToByte(NOT(random->flags->getn_I_OUT(wire.BRK6E)));
+			case offsetof(UserRegs, D_OUT): return ToByte(NOT(random->flags->getn_D_OUT()));
+			case offsetof(UserRegs, V_OUT): return ToByte(NOT(random->flags->getn_V_OUT()));
+			case offsetof(UserRegs, N_OUT): return ToByte(NOT(random->flags->getn_N_OUT()));
+
+			default:
+				return 0;
+		}
 	}
 
 	void M6502::setUserRegSingle(int ofs, uint8_t val)
 	{
+		switch (ofs)
+		{
+			case offsetof(UserRegs, Y): regs->setY(val); break;
+			case offsetof(UserRegs, X): regs->setX(val); break;
+			case offsetof(UserRegs, S): regs->setS(val); break;
+			case offsetof(UserRegs, A): alu->setAC(val); break;
+			case offsetof(UserRegs, PCL): pc->setPCL(val); break;
+			case offsetof(UserRegs, PCH): pc->setPCH(val); break;
 
+			case offsetof(UserRegs, C_OUT): random->flags->set_C_OUT(FromByte(val)); break;
+			case offsetof(UserRegs, Z_OUT): random->flags->set_Z_OUT(FromByte(val)); break;
+			case offsetof(UserRegs, I_OUT): random->flags->set_I_OUT(FromByte(val)); break;
+			case offsetof(UserRegs, D_OUT): random->flags->set_D_OUT(FromByte(val)); break;
+			case offsetof(UserRegs, V_OUT): random->flags->set_V_OUT(FromByte(val)); break;
+			case offsetof(UserRegs, N_OUT): random->flags->set_N_OUT(FromByte(val)); break;
+
+			default:
+				break;
+		}
 	}
 }
