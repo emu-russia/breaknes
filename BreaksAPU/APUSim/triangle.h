@@ -41,6 +41,16 @@ namespace APUSim
 		void sim();
 		BaseLogic::TriState get_LC();
 
-		void Debug_Get(APU_Registers* info);
+		uint32_t Get_LinearReg();
+		uint32_t Get_LinearCounter();
+		uint32_t Get_FreqReg();
+		uint32_t Get_FreqCounter();
+		uint32_t Get_OutputCounter();
+
+		void Set_LinearReg(uint32_t value);
+		void Set_LinearCounter(uint32_t value);
+		void Set_FreqReg(uint32_t value);
+		void Set_FreqCounter(uint32_t value);
+		void Set_OutputCounter(uint32_t value);
 	};
 }

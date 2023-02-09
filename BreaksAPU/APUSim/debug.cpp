@@ -76,17 +76,59 @@ namespace APUSim
 
 	void APU::GetDebugInfo_Regs(APU_Registers& regs)
 	{
-		pads->Debug_Get(&regs);
+		regs.DBInputLatch = pads->Get_DBInputLatch();
+		regs.DBOutputLatch = pads->Get_DBOutputLatch();
+		regs.OutReg = pads->Get_OutReg();
+
 		regs.LengthCounterSQA = lc[0]->Debug_GetCnt();
 		regs.LengthCounterSQB = lc[1]->Debug_GetCnt();
 		regs.LengthCounterTRI = lc[2]->Debug_GetCnt();
 		regs.LengthCounterRND = lc[3]->Debug_GetCnt();
-		square[0]->Debug_Get(&regs, 0, regs.SQVolumeReg[0], regs.SQDecayCounter[0], regs.SQEnvelopeCounter[0]);
-		square[1]->Debug_Get(&regs, 1, regs.SQVolumeReg[1], regs.SQDecayCounter[1], regs.SQEnvelopeCounter[1]);
-		tri->Debug_Get(&regs);
-		noise->Debug_Get(&regs, regs.RNDVolumeReg, regs.RNDDecayCounter, regs.RNDEnvelopeCounter);
-		dpcm->Debug_Get(&regs);
-		dma->Debug_Get(&regs);
+
+		regs.SQFreqReg[0] = square[0]->Get_FreqReg();
+		regs.SQShiftReg[0] = square[0]->Get_ShiftReg();
+		regs.SQFreqCounter[0] = square[0]->Get_FreqCounter();
+		regs.SQSweepReg[0] = square[0]->Get_SweepReg();
+		regs.SQSweepCounter[0] = square[0]->Get_SweepCounter();
+		regs.SQDutyCounter[0] = square[0]->Get_DutyCounter();
+
+		regs.SQFreqReg[1] = square[1]->Get_FreqReg();
+		regs.SQShiftReg[1] = square[1]->Get_ShiftReg();
+		regs.SQFreqCounter[1] = square[1]->Get_FreqCounter();
+		regs.SQSweepReg[1] = square[1]->Get_SweepReg();
+		regs.SQSweepCounter[1] = square[1]->Get_SweepCounter();
+		regs.SQDutyCounter[1] = square[1]->Get_DutyCounter();
+
+		regs.SQVolumeReg[0] = square[0]->env_unit->Debug_Get_VolumeReg();
+		regs.SQDecayCounter[0] = square[0]->env_unit->Debug_Get_DecayCounter();
+		regs.SQEnvelopeCounter[0] = square[0]->env_unit->Debug_Get_EnvCounter();
+
+		regs.SQVolumeReg[1] = square[1]->env_unit->Debug_Get_VolumeReg();
+		regs.SQDecayCounter[1] = square[1]->env_unit->Debug_Get_DecayCounter();
+		regs.SQEnvelopeCounter[1] = square[1]->env_unit->Debug_Get_EnvCounter();
+
+		regs.TRILinearReg = tri->Get_LinearReg();
+		regs.TRILinearCounter = tri->Get_LinearCounter();
+		regs.TRIFreqReg = tri->Get_FreqReg();
+		regs.TRIFreqCounter = tri->Get_FreqCounter();
+		regs.TRIOutputCounter = tri->Get_OutputCounter();
+
+		regs.RNDFreqReg = noise->Get_FreqReg();
+		regs.RNDVolumeReg = noise->env_unit->Debug_Get_VolumeReg();
+		regs.RNDDecayCounter = noise->env_unit->Debug_Get_DecayCounter();
+		regs.RNDEnvelopeCounter = noise->env_unit->Debug_Get_EnvCounter();
+
+		regs.DPCMFreqReg = dpcm->Get_FreqReg();
+		regs.DPCMSampleReg = dpcm->Get_SampleReg();
+		regs.DPCMSampleCounter = dpcm->Get_SampleCounter();
+		regs.DPCMSampleBuffer = dpcm->Get_SampleBuffer();
+		regs.DPCMSampleBitCounter = dpcm->Get_SampleBitCounter();
+		regs.DPCMAddressReg = dpcm->Get_AddressReg();
+		regs.DPCMAddressCounter = dpcm->Get_AddressCounter();
+		regs.DPCMOutput = dpcm->Get_Output();
+
+		regs.DMABuffer = dma->Get_DMABuffer();
+		regs.DMAAddress = dma->Get_DMAAddress();
 	}
 
 	uint8_t APU::GetDebugInfo_Wire(int ofs)
@@ -239,11 +281,111 @@ namespace APUSim
 
 	uint32_t APU::GetDebugInfo_Reg(int ofs)
 	{
+		switch (ofs)
+		{
+			case offsetof(APU_Registers, DBOutputLatch): return pads->Get_DBOutputLatch();
+			case offsetof(APU_Registers, DBInputLatch): return pads->Get_DBInputLatch();
+			case offsetof(APU_Registers, OutReg): return pads->Get_OutReg();
+			case offsetof(APU_Registers, LengthCounterSQA): return lc[0]->Debug_GetCnt();
+			case offsetof(APU_Registers, LengthCounterSQB): return lc[1]->Debug_GetCnt();
+			case offsetof(APU_Registers, LengthCounterTRI): return lc[2]->Debug_GetCnt();
+			case offsetof(APU_Registers, LengthCounterRND): return lc[3]->Debug_GetCnt();
+			case offsetof(APU_Registers, SQFreqReg[0]): return square[0]->Get_FreqReg();
+			case offsetof(APU_Registers, SQFreqReg[1]): return square[1]->Get_FreqReg();
+			case offsetof(APU_Registers, SQShiftReg[0]): return square[0]->Get_ShiftReg();
+			case offsetof(APU_Registers, SQShiftReg[1]): return square[1]->Get_ShiftReg();
+			case offsetof(APU_Registers, SQFreqCounter[0]): return square[0]->Get_FreqCounter();
+			case offsetof(APU_Registers, SQFreqCounter[1]): return square[1]->Get_FreqCounter();
+			case offsetof(APU_Registers, SQVolumeReg[0]): return square[0]->env_unit->Debug_Get_VolumeReg();
+			case offsetof(APU_Registers, SQVolumeReg[1]): return square[1]->env_unit->Debug_Get_VolumeReg();
+			case offsetof(APU_Registers, SQDecayCounter[0]): return square[0]->env_unit->Debug_Get_DecayCounter();
+			case offsetof(APU_Registers, SQDecayCounter[1]): return square[1]->env_unit->Debug_Get_DecayCounter();
+			case offsetof(APU_Registers, SQEnvelopeCounter[0]): return square[0]->env_unit->Debug_Get_EnvCounter();
+			case offsetof(APU_Registers, SQEnvelopeCounter[1]): return square[1]->env_unit->Debug_Get_EnvCounter();
+			case offsetof(APU_Registers, SQSweepReg[0]): return square[0]->Get_SweepReg();
+			case offsetof(APU_Registers, SQSweepReg[1]): return square[1]->Get_SweepReg();
+			case offsetof(APU_Registers, SQSweepCounter[0]): return square[0]->Get_SweepCounter();
+			case offsetof(APU_Registers, SQSweepCounter[1]): return square[1]->Get_SweepCounter();
+			case offsetof(APU_Registers, SQDutyCounter[0]): return square[0]->Get_DutyCounter();
+			case offsetof(APU_Registers, SQDutyCounter[1]): return square[1]->Get_DutyCounter();
+			case offsetof(APU_Registers, TRILinearReg): return tri->Get_LinearReg();
+			case offsetof(APU_Registers, TRILinearCounter): return tri->Get_LinearCounter();
+			case offsetof(APU_Registers, TRIFreqReg): return tri->Get_FreqReg();
+			case offsetof(APU_Registers, TRIFreqCounter): return tri->Get_FreqCounter();
+			case offsetof(APU_Registers, TRIOutputCounter): return tri->Get_OutputCounter();
+			case offsetof(APU_Registers, RNDFreqReg): return noise->Get_FreqReg();
+			case offsetof(APU_Registers, RNDVolumeReg): return noise->env_unit->Debug_Get_VolumeReg();
+			case offsetof(APU_Registers, RNDDecayCounter): return noise->env_unit->Debug_Get_DecayCounter();
+			case offsetof(APU_Registers, RNDEnvelopeCounter): return noise->env_unit->Debug_Get_EnvCounter();
+			case offsetof(APU_Registers, DPCMFreqReg): return dpcm->Get_FreqReg();
+			case offsetof(APU_Registers, DPCMSampleReg): return dpcm->Get_SampleReg();
+			case offsetof(APU_Registers, DPCMSampleCounter): return dpcm->Get_SampleCounter();
+			case offsetof(APU_Registers, DPCMSampleBuffer): return dpcm->Get_SampleBuffer();
+			case offsetof(APU_Registers, DPCMSampleBitCounter): return dpcm->Get_SampleBitCounter();
+			case offsetof(APU_Registers, DPCMAddressReg): return dpcm->Get_AddressReg();
+			case offsetof(APU_Registers, DPCMAddressCounter): return dpcm->Get_AddressCounter();
+			case offsetof(APU_Registers, DPCMOutput): return dpcm->Get_Output();
+			case offsetof(APU_Registers, DMABuffer): return dma->Get_DMABuffer();
+			case offsetof(APU_Registers, DMAAddress): return dma->Get_DMAAddress();
+
+			default:
+				break;
+		}
+
 		return 0;
 	}
 
 	void APU::SetDebugInfo_Reg(int ofs, uint32_t val)
 	{
+		switch (ofs)
+		{
+			case offsetof(APU_Registers, DBOutputLatch): pads->Set_DBOutputLatch(val); break;
+			case offsetof(APU_Registers, DBInputLatch): pads->Set_DBInputLatch(val); break;
+			case offsetof(APU_Registers, OutReg): pads->Set_OutReg(val); break;
+			case offsetof(APU_Registers, LengthCounterSQA): lc[0]->Debug_SetCnt(val); break;
+			case offsetof(APU_Registers, LengthCounterSQB): lc[1]->Debug_SetCnt(val); break;
+			case offsetof(APU_Registers, LengthCounterTRI): lc[2]->Debug_SetCnt(val); break;
+			case offsetof(APU_Registers, LengthCounterRND): lc[3]->Debug_SetCnt(val); break;
+			case offsetof(APU_Registers, SQFreqReg[0]): square[0]->Set_FreqReg(val); break;
+			case offsetof(APU_Registers, SQFreqReg[1]): square[1]->Set_FreqReg(val); break;
+			case offsetof(APU_Registers, SQShiftReg[0]): square[0]->Set_ShiftReg(val); break;
+			case offsetof(APU_Registers, SQShiftReg[1]): square[1]->Set_ShiftReg(val); break;
+			case offsetof(APU_Registers, SQFreqCounter[0]): square[0]->Set_FreqCounter(val); break;
+			case offsetof(APU_Registers, SQFreqCounter[1]): square[1]->Set_FreqCounter(val); break;
+			case offsetof(APU_Registers, SQVolumeReg[0]): square[0]->env_unit->Debug_Set_VolumeReg(val); break;
+			case offsetof(APU_Registers, SQVolumeReg[1]): square[1]->env_unit->Debug_Set_VolumeReg(val); break;
+			case offsetof(APU_Registers, SQDecayCounter[0]): square[0]->env_unit->Debug_Set_DecayCounter(val); break;
+			case offsetof(APU_Registers, SQDecayCounter[1]): square[1]->env_unit->Debug_Set_DecayCounter(val); break;
+			case offsetof(APU_Registers, SQEnvelopeCounter[0]): square[0]->env_unit->Debug_Set_EnvCounter(val); break;
+			case offsetof(APU_Registers, SQEnvelopeCounter[1]): square[1]->env_unit->Debug_Set_EnvCounter(val); break;
+			case offsetof(APU_Registers, SQSweepReg[0]): square[0]->Set_SweepReg(val); break;
+			case offsetof(APU_Registers, SQSweepReg[1]): square[1]->Set_SweepReg(val); break;
+			case offsetof(APU_Registers, SQSweepCounter[0]): square[0]->Set_SweepCounter(val); break;
+			case offsetof(APU_Registers, SQSweepCounter[1]): square[1]->Set_SweepCounter(val); break;
+			case offsetof(APU_Registers, SQDutyCounter[0]): square[0]->Set_DutyCounter(val); break;
+			case offsetof(APU_Registers, SQDutyCounter[1]): square[1]->Set_DutyCounter(val); break;
+			case offsetof(APU_Registers, TRILinearReg): tri->Set_LinearReg(val); break;
+			case offsetof(APU_Registers, TRILinearCounter): tri->Set_LinearCounter(val); break;
+			case offsetof(APU_Registers, TRIFreqReg): tri->Set_FreqReg(val); break;
+			case offsetof(APU_Registers, TRIFreqCounter): tri->Set_FreqCounter(val); break;
+			case offsetof(APU_Registers, TRIOutputCounter): tri->Set_OutputCounter(val); break;
+			case offsetof(APU_Registers, RNDFreqReg): noise->Set_FreqReg(val); break;
+			case offsetof(APU_Registers, RNDVolumeReg): noise->env_unit->Debug_Set_VolumeReg(val); break;
+			case offsetof(APU_Registers, RNDDecayCounter): noise->env_unit->Debug_Set_DecayCounter(val); break;
+			case offsetof(APU_Registers, RNDEnvelopeCounter): noise->env_unit->Debug_Set_EnvCounter(val); break;
+			case offsetof(APU_Registers, DPCMFreqReg): dpcm->Set_FreqReg(val); break;
+			case offsetof(APU_Registers, DPCMSampleReg): dpcm->Set_SampleReg(val); break;
+			case offsetof(APU_Registers, DPCMSampleCounter): dpcm->Set_SampleCounter(val); break;
+			case offsetof(APU_Registers, DPCMSampleBuffer): dpcm->Set_SampleBuffer(val); break;
+			case offsetof(APU_Registers, DPCMSampleBitCounter): dpcm->Set_SampleBitCounter(val); break;
+			case offsetof(APU_Registers, DPCMAddressReg): dpcm->Set_AddressReg(val); break;
+			case offsetof(APU_Registers, DPCMAddressCounter): dpcm->Set_AddressCounter(val); break;
+			case offsetof(APU_Registers, DPCMOutput): dpcm->Set_Output(val); break;
+			case offsetof(APU_Registers, DMABuffer): dma->Set_DMABuffer(val); break;
+			case offsetof(APU_Registers, DMAAddress): dma->Set_DMAAddress(val); break;
 
+			default:
+				break;
+		}
 	}
 }

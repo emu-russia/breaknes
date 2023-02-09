@@ -19,6 +19,8 @@ namespace APUSim
 
 		BaseLogic::TriState get_in();
 		BaseLogic::TriState get_out();
+		void set_in(BaseLogic::TriState val);
+		void set_out(BaseLogic::TriState val);
 	};
 
 	class Pads
@@ -51,6 +53,12 @@ namespace APUSim
 		void sim_DataBusInput(uint8_t* data);
 		void sim_DataBusOutput(uint8_t* data);
 
-		void Debug_Get(APU_Registers* info);
+		uint32_t Get_DBOutputLatch();
+		uint32_t Get_DBInputLatch();
+		uint32_t Get_OutReg();
+
+		void Set_DBOutputLatch(uint32_t value);
+		void Set_DBInputLatch(uint32_t value);
+		void Set_OutReg(uint32_t value);
 	};
 }

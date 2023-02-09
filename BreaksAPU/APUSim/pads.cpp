@@ -152,27 +152,78 @@ namespace APUSim
 		return out_latch.get();
 	}
 
-	void Pads::Debug_Get(APU_Registers* info)
+	void BIDIR::set_in(TriState val)
+	{
+		in_latch.set(val, TriState::One);
+	}
+
+	void BIDIR::set_out(TriState val)
+	{
+		out_latch.set(val, TriState::One);
+	}
+
+#pragma region "Debug"
+
+	uint32_t Pads::Get_DBOutputLatch()
 	{
 		TriState val[8]{};
-
-		for (size_t n = 0; n < 8; n++)
-		{
-			val[n] = data_bus[n].get_in();
-		}
-		info->DBInputLatch = Pack(val);
-
 		for (size_t n = 0; n < 8; n++)
 		{
 			val[n] = data_bus[n].get_out();
 		}
-		info->DBOutputLatch = Pack(val);
+		return Pack(val);
+	}
 
+	uint32_t Pads::Get_DBInputLatch()
+	{
+		TriState val[8]{};
+		for (size_t n = 0; n < 8; n++)
+		{
+			val[n] = data_bus[n].get_in();
+		}
+		return Pack(val);
+	}
+
+	uint32_t Pads::Get_OutReg()
+	{
+		TriState val[4]{};
 		for (size_t n = 0; n < 3; n++)
 		{
 			val[n] = out_latch[n].get();
 		}
 		val[3] = TriState::Zero;
-		info->OutReg = PackNibble(val);
+		return PackNibble(val);
 	}
+
+	void Pads::Set_DBOutputLatch(uint32_t value)
+	{
+		TriState val[8]{};
+		Unpack(value, val);
+		for (size_t n = 0; n < 8; n++)
+		{
+			data_bus[n].set_out(val[n]);
+		}
+	}
+
+	void Pads::Set_DBInputLatch(uint32_t value)
+	{
+		TriState val[8]{};
+		Unpack(value, val);
+		for (size_t n = 0; n < 8; n++)
+		{
+			data_bus[n].set_in(val[n]);
+		}
+	}
+
+	void Pads::Set_OutReg(uint32_t value)
+	{
+		TriState val[4]{};
+		UnpackNibble(value, val);
+		for (size_t n = 0; n < 3; n++)
+		{
+			out_latch[n].set(val[n], TriState::One);
+		}
+	}
+
+#pragma endregion "Debug"
 }

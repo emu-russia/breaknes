@@ -229,6 +229,11 @@ namespace APUSim
 		return transp_latch.get();
 	}
 
+	void FreqRegBit::set(TriState value)
+	{
+		transp_latch.set(value, TriState::One);
+	}
+
 	void AdderBit::sim(TriState F, TriState nF, TriState S, TriState nS, TriState C, TriState nC,
 		TriState& cout, TriState& n_cout, TriState& n_sum)
 	{
@@ -242,11 +247,12 @@ namespace APUSim
 		return env_unit->get_LC();
 	}
 
-	void SquareChan::Debug_Get(APU_Registers* info, size_t id, uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter)
+#pragma region "Debug"
+
+	uint32_t SquareChan::Get_FreqReg()
 	{
 		TriState val[4]{};
 		TriState val_byte[8]{};
-
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_byte[n] = freq_reg[n].get();
@@ -256,15 +262,24 @@ namespace APUSim
 			val[n] = freq_reg[n + 8].get();
 		}
 		val[3] = TriState::Zero;
-		info->SQFreqReg[id] = Pack(val_byte) | ((uint32_t)PackNibble(val) << 8);
+		return Pack(val_byte) | ((uint32_t)PackNibble(val) << 8);
+	}
 
+	uint32_t SquareChan::Get_ShiftReg()
+	{
+		TriState val[4]{};
 		for (size_t n = 0; n < 3; n++)
 		{
 			val[n] = sr_reg[n].get();
 		}
 		val[3] = TriState::Zero;
-		info->SQShiftReg[id] = PackNibble(val);
+		return PackNibble(val);
+	}
 
+	uint32_t SquareChan::Get_FreqCounter()
+	{
+		TriState val[4]{};
+		TriState val_byte[8]{};
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_byte[n] = freq_cnt[n].get();
@@ -274,29 +289,113 @@ namespace APUSim
 			val[n] = freq_cnt[n + 8].get();
 		}
 		val[3] = TriState::Zero;
-		info->SQFreqCounter[id] = Pack(val_byte) | ((uint32_t)PackNibble(val) << 8);
+		return Pack(val_byte) | ((uint32_t)PackNibble(val) << 8);
+	}
 
+	uint32_t SquareChan::Get_SweepReg()
+	{
+		TriState val[4]{};
 		for (size_t n = 0; n < 3; n++)
 		{
 			val[n] = sweep_reg[n].get();
 		}
 		val[3] = TriState::Zero;
-		info->SQSweepReg[id] = PackNibble(val);
+		return PackNibble(val);
+	}
 
+	uint32_t SquareChan::Get_SweepCounter()
+	{
+		TriState val[4]{};
 		for (size_t n = 0; n < 3; n++)
 		{
 			val[n] = sweep_cnt[n].get();
 		}
 		val[3] = TriState::Zero;
-		info->SQSweepCounter[id] = PackNibble(val);
+		return PackNibble(val);
+	}
 
+	uint32_t SquareChan::Get_DutyCounter()
+	{
+		TriState val[4]{};
 		for (size_t n = 0; n < 3; n++)
 		{
 			val[n] = duty_cnt[n].get();
 		}
 		val[3] = TriState::Zero;
-		info->SQDutyCounter[id] = PackNibble(val);
-
-		env_unit->Debug_Get(VolumeReg, DecayCounter, EnvCounter);
+		return PackNibble(val);
 	}
+
+	void SquareChan::Set_FreqReg(uint32_t value)
+	{
+		TriState val[4]{};
+		TriState val_byte[8]{};
+		Unpack(value, val_byte);
+		UnpackNibble(value >> 8, val);
+		for (size_t n = 0; n < 8; n++)
+		{
+			freq_reg[n].set(val_byte[n]);
+		}
+		for (size_t n = 0; n < 3; n++)
+		{
+			freq_reg[n + 8].set(val[n]);
+		}
+	}
+
+	void SquareChan::Set_ShiftReg(uint32_t value)
+	{
+		TriState val[4]{};
+		UnpackNibble(value, val);
+		for (size_t n = 0; n < 3; n++)
+		{
+			sr_reg[n].set(val[n]);
+		}
+	}
+
+	void SquareChan::Set_FreqCounter(uint32_t value)
+	{
+		TriState val[4]{};
+		TriState val_byte[8]{};
+		Unpack(value, val_byte);
+		UnpackNibble(value >> 8, val);
+		for (size_t n = 0; n < 8; n++)
+		{
+			freq_cnt[n].set(val_byte[n]);
+		}
+		for (size_t n = 0; n < 3; n++)
+		{
+			freq_cnt[n + 8].set(val[n]);
+		}
+	}
+
+	void SquareChan::Set_SweepReg(uint32_t value)
+	{
+		TriState val[4]{};
+		UnpackNibble(value, val);
+		for (size_t n = 0; n < 3; n++)
+		{
+			sweep_reg[n].set(val[n]);
+		}
+	}
+
+	void SquareChan::Set_SweepCounter(uint32_t value)
+	{
+		TriState val[4]{};
+		UnpackNibble(value, val);
+		for (size_t n = 0; n < 3; n++)
+		{
+			sweep_cnt[n].set(val[n]);
+		}
+	}
+
+	void SquareChan::Set_DutyCounter(uint32_t value)
+	{
+		TriState val[4]{};
+		UnpackNibble(value, val);
+		for (size_t n = 0; n < 3; n++)
+		{
+			duty_cnt[n].set(val[n]);
+		}
+	}
+
+#pragma endregion "Debug"
 }

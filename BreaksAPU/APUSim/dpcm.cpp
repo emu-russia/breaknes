@@ -397,23 +397,32 @@ namespace APUSim
 
 #pragma endregion "DPCM Addressing & Output"
 
-	void DpcmChan::Debug_Get(APU_Registers* info)
+#pragma region "Debug"
+
+	uint32_t DpcmChan::Get_FreqReg()
 	{
 		TriState val_lo[8]{};
-		TriState val_hi[8]{};
-
 		for (size_t n = 0; n < 4; n++)
 		{
 			val_lo[n] = freq_reg[n].get();
 		}
-		info->DPCMFreqReg = PackNibble(val_lo);
+		return PackNibble(val_lo);
+	}
 
+	uint32_t DpcmChan::Get_SampleReg()
+	{
+		TriState val_lo[8]{};
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_lo[n] = scnt_reg[n].get();
 		}
-		info->DPCMSampleReg = Pack(val_lo);
+		return Pack(val_lo);
+	}
 
+	uint32_t DpcmChan::Get_SampleCounter()
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[8]{};
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_lo[n] = scnt[n].get();
@@ -422,27 +431,44 @@ namespace APUSim
 		{
 			val_hi[n] = scnt[n + 8].get();
 		}
-		info->DPCMSampleCounter = Pack(val_lo) | ((uint32_t)PackNibble(val_hi) << 8);
+		return Pack(val_lo) | ((uint32_t)PackNibble(val_hi) << 8);
+	}
 
+	uint32_t DpcmChan::Get_SampleBuffer()
+	{
+		TriState val_lo[8]{};
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_lo[n] = buf_reg[n].get();
 		}
-		info->DPCMSampleBuffer = Pack(val_lo);
+		return Pack(val_lo);
+	}
 
+	uint32_t DpcmChan::Get_SampleBitCounter()
+	{
+		TriState val_lo[8]{};
 		for (size_t n = 0; n < 3; n++)
 		{
 			val_lo[n] = sbcnt[n].get();
 		}
 		val_lo[3] = TriState::Zero;
-		info->DPCMSampleBitCounter = PackNibble(val_lo);
+		return PackNibble(val_lo);
+	}
 
+	uint32_t DpcmChan::Get_AddressReg()
+	{
+		TriState val_lo[8]{};
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_lo[n] = addr_reg[n].get();
 		}
-		info->DPCMAddressReg = Pack(val_lo);
+		return Pack(val_lo);
+	}
 
+	uint32_t DpcmChan::Get_AddressCounter()
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[8]{};
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_lo[n] = addr_lo[n].get();
@@ -452,14 +478,113 @@ namespace APUSim
 			val_hi[n] = addr_hi[n].get();
 		}
 		val_hi[7] = TriState::One;
-		info->DPCMAddressCounter = Pack(val_lo) | ((uint32_t)Pack(val_hi) << 8);
+		return Pack(val_lo) | ((uint32_t)Pack(val_hi) << 8);
+	}
 
+	uint32_t DpcmChan::Get_Output()
+	{
+		TriState val_lo[8]{};
 		val_lo[0] = out_reg.get();
 		for (size_t n = 0; n < 6; n++)
 		{
 			val_lo[n + 1] = out_cnt[n].get();
 		}
 		val_lo[7] = TriState::Zero;
-		info->DPCMOutput = Pack(val_lo);
+		return Pack(val_lo);
 	}
+
+	void DpcmChan::Set_FreqReg(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		UnpackNibble(value, val_lo);
+		for (size_t n = 0; n < 4; n++)
+		{
+			freq_reg[n].set(val_lo[n]);
+		}
+	}
+
+	void DpcmChan::Set_SampleReg(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 8; n++)
+		{
+			scnt_reg[n].set(val_lo[n]);
+		}
+	}
+
+	void DpcmChan::Set_SampleCounter(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[8]{};
+		Unpack(value, val_lo);
+		UnpackNibble(value >> 8, val_hi);
+		for (size_t n = 0; n < 8; n++)
+		{
+			scnt[n].set(val_lo[n]);
+		}
+		for (size_t n = 0; n < 4; n++)
+		{
+			scnt[n + 8].set(val_hi[n]);
+		}
+	}
+
+	void DpcmChan::Set_SampleBuffer(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 8; n++)
+		{
+			buf_reg[n].set(val_lo[n]);
+		}
+	}
+
+	void DpcmChan::Set_SampleBitCounter(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		UnpackNibble(value, val_lo);
+		for (size_t n = 0; n < 3; n++)
+		{
+			sbcnt[n].set(val_lo[n]);
+		}
+	}
+
+	void DpcmChan::Set_AddressReg(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 8; n++)
+		{
+			addr_reg[n].set(val_lo[n]);
+		}
+	}
+
+	void DpcmChan::Set_AddressCounter(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[8]{};
+		Unpack(value, val_lo);
+		Unpack(value >> 8, val_hi);
+		for (size_t n = 0; n < 8; n++)
+		{
+			addr_lo[n].set(val_lo[n]);
+		}
+		for (size_t n = 0; n < 7; n++)
+		{
+			addr_hi[n].set(val_hi[n]);
+		}
+	}
+
+	void DpcmChan::Set_Output(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		out_reg.set(val_lo[0]);
+		for (size_t n = 0; n < 6; n++)
+		{
+			out_cnt[n].set(val_lo[n + 1]);
+		}
+	}
+
+#pragma endregion "Debug"
 }

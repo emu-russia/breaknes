@@ -178,7 +178,9 @@ namespace APUSim
 		return env_unit->get_LC();
 	}
 
-	void NoiseChan::Debug_Get(APU_Registers* info, uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter)
+#pragma region "Debug"
+
+	uint32_t NoiseChan::Get_FreqReg()
 	{
 		TriState val[4]{};
 
@@ -186,8 +188,18 @@ namespace APUSim
 		{
 			val[n] = freq_reg[n].get();
 		}
-		info->RNDFreqReg = PackNibble(val);
-
-		env_unit->Debug_Get(VolumeReg, DecayCounter, EnvCounter);
+		return PackNibble(val);
 	}
+
+	void NoiseChan::Set_FreqReg(uint32_t value)
+	{
+		TriState val[4]{};
+		UnpackNibble(value, val);
+		for (size_t n = 0; n < 4; n++)
+		{
+			freq_reg[n].set(val[n]);
+		}
+	}
+
+#pragma endregion "Debug"
 }

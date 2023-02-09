@@ -38,6 +38,10 @@ namespace APUSim
 		void sim_DMA_Buffer();
 		void sim_AddressMux();
 
-		void Debug_Get(APU_Registers* info);
+		uint32_t Get_DMABuffer();
+		uint32_t Get_DMAAddress();
+
+		void Set_DMABuffer(uint32_t value);
+		void Set_DMAAddress(uint32_t value);
 	};
 }
