@@ -127,7 +127,8 @@ namespace APUSim
 		regs.DPCMAddressCounter = dpcm->Get_AddressCounter();
 		regs.DPCMOutput = dpcm->Get_Output();
 
-		dma->Debug_Get(&regs);
+		regs.DMABuffer = dma->Get_DMABuffer();
+		regs.DMAAddress = dma->Get_DMAAddress();
 	}
 
 	uint8_t APU::GetDebugInfo_Wire(int ofs)
@@ -324,8 +325,8 @@ namespace APUSim
 			case offsetof(APU_Registers, DPCMAddressReg): return dpcm->Get_AddressReg();
 			case offsetof(APU_Registers, DPCMAddressCounter): return dpcm->Get_AddressCounter();
 			case offsetof(APU_Registers, DPCMOutput): return dpcm->Get_Output();
-			case offsetof(APU_Registers, DMABuffer): return 0;
-			case offsetof(APU_Registers, DMAAddress): return 0;
+			case offsetof(APU_Registers, DMABuffer): return dma->Get_DMABuffer();
+			case offsetof(APU_Registers, DMAAddress): return dma->Get_DMAAddress();
 
 			default:
 				break;
@@ -380,8 +381,8 @@ namespace APUSim
 			case offsetof(APU_Registers, DPCMAddressReg): dpcm->Set_AddressReg(val); break;
 			case offsetof(APU_Registers, DPCMAddressCounter): dpcm->Set_AddressCounter(val); break;
 			case offsetof(APU_Registers, DPCMOutput): dpcm->Set_Output(val); break;
-			case offsetof(APU_Registers, DMABuffer): break;
-			case offsetof(APU_Registers, DMAAddress): break;
+			case offsetof(APU_Registers, DMABuffer): dma->Set_DMABuffer(val); break;
+			case offsetof(APU_Registers, DMAAddress): dma->Set_DMAAddress(val); break;
 
 			default:
 				break;

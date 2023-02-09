@@ -133,22 +133,52 @@ namespace APUSim
 		}
 	}
 
-	void DMA::Debug_Get(APU_Registers* info)
+#pragma region "Debug"
+
+	uint32_t DMA::Get_DMABuffer()
 	{
 		TriState val_lo[8]{};
-		TriState val_hi[8]{};
-
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_lo[n] = spr_buf[n].get();
 		}
-		info->DMABuffer = Pack(val_lo);
+		return Pack(val_lo);
+	}
 
+	uint32_t DMA::Get_DMAAddress()
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[8]{};
 		for (size_t n = 0; n < 8; n++)
 		{
 			val_lo[n] = spr_lo[n].get();
 			val_hi[n] = spr_hi[n].get();
 		}
-		info->DMAAddress = Pack(val_lo) | ((uint32_t)Pack(val_hi) << 8);
+		return Pack(val_lo) | ((uint32_t)Pack(val_hi) << 8);
 	}
+
+	void DMA::Set_DMABuffer(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 8; n++)
+		{
+			spr_buf[n].set(val_lo[n], TriState::One);
+		}
+	}
+
+	void DMA::Set_DMAAddress(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		TriState val_hi[8]{};
+		Unpack(value, val_lo);
+		Unpack(value >> 8, val_hi);
+		for (size_t n = 0; n < 8; n++)
+		{
+			spr_lo[n].set(val_lo[n]);
+			spr_hi[n].set(val_hi[n]);
+		}
+	}
+
+#pragma endregion "Debug"
 }
