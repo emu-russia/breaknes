@@ -63,7 +63,7 @@ About that:
 |ADL|0x0E|
 |ADH|0xC0|
 
-![20_JSR_T1_PHI1](/BreakingNESWiki/imgstore/ops/20_JSR_T1_PHI1.jpg)
+![20_JSR_T1_PHI1](/UserManual/imgstore/20_JSR_T1_PHI1.jpg)
 
 ## UnitTest
 
