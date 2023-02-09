@@ -204,14 +204,7 @@ namespace PPUSim
 		regs.CTRL1 = this->regs->Debug_GetCTRL1();	// $2001
 		regs.MainOAMCounter = eval->Debug_GetMainCounter();		// $2003
 		regs.TempOAMCounter = eval->Debug_GetTempCounter();
-
-		TriState ob[8]{};
-		for (size_t n = 0; n < 8; n++)
-		{
-			ob[n] = oam->get_OB(n);
-		}
-		regs.OAMBuffer = Pack(ob);		// $2004
-
+		regs.OAMBuffer = oam->Dbg_Get_OAMBuffer();		// $2004
 		regs.ReadBuffer = vram_ctrl->Debug_GetRB();			// $2007
 		regs.SCC_FH = Pack3(wire.FH);		// $2005/2006
 		regs.SCC_FV = Pack3(wire.FV);
@@ -288,13 +281,53 @@ namespace PPUSim
 		eval->GetDebugInfo(wires);
 	}
 
-	void PPU::Dbg_SetCTRL0(uint8_t val)
+	uint32_t PPU::Dbg_ReadRegister(int ofs)
 	{
-		regs->Debug_SetCTRL0(val);
+		switch (ofs)
+		{
+			case offsetof(PPU_Registers, HCounter): return (uint32_t)h->get();
+			case offsetof(PPU_Registers, VCounter): return (uint32_t)v->get();
+			case offsetof(PPU_Registers, CTRL0): return regs->Debug_GetCTRL0();
+			case offsetof(PPU_Registers, CTRL1): return regs->Debug_GetCTRL1();
+			case offsetof(PPU_Registers, MainOAMCounter): return eval->Debug_GetMainCounter();
+			case offsetof(PPU_Registers, TempOAMCounter): return eval->Debug_GetTempCounter();
+			case offsetof(PPU_Registers, OAMBuffer): return oam->Dbg_Get_OAMBuffer();
+			case offsetof(PPU_Registers, ReadBuffer): return vram_ctrl->Debug_GetRB();
+			case offsetof(PPU_Registers, SCC_FH): return Pack3(wire.FH);
+			case offsetof(PPU_Registers, SCC_FV): return Pack3(wire.FV);
+			case offsetof(PPU_Registers, SCC_NTV): return ToByte(wire.NTV);
+			case offsetof(PPU_Registers, SCC_NTH): return ToByte(wire.NTH);
+			case offsetof(PPU_Registers, SCC_TV): return Pack5(wire.TV);
+			case offsetof(PPU_Registers, SCC_TH): return Pack5(wire.TH);
+
+			default:
+				break;
+		}
+
+		return 0;
 	}
 
-	void PPU::Dbg_SetCTRL1(uint8_t val)
+	void PPU::Dbg_WriteRegister(int ofs, uint32_t val)
 	{
-		regs->Debug_SetCTRL1(val);
+		switch (ofs)
+		{
+			case offsetof(PPU_Registers, HCounter): h->set(val); break;
+			case offsetof(PPU_Registers, VCounter): v->set(val); break;
+			case offsetof(PPU_Registers, CTRL0): regs->Debug_SetCTRL0(val); break;
+			case offsetof(PPU_Registers, CTRL1): regs->Debug_SetCTRL1(val); break;
+			case offsetof(PPU_Registers, MainOAMCounter): eval->Debug_SetMainCounter(val); break;
+			case offsetof(PPU_Registers, TempOAMCounter): eval->Debug_SetTempCounter(val); break;
+			case offsetof(PPU_Registers, OAMBuffer): oam->Dbg_Set_OAMBuffer(val); break;
+			case offsetof(PPU_Registers, ReadBuffer): vram_ctrl->Debug_SetRB(val); break;
+			case offsetof(PPU_Registers, SCC_FH): break;
+			case offsetof(PPU_Registers, SCC_FV): break;
+			case offsetof(PPU_Registers, SCC_NTV): break;
+			case offsetof(PPU_Registers, SCC_NTH): break;
+			case offsetof(PPU_Registers, SCC_TV): break;
+			case offsetof(PPU_Registers, SCC_TH): break;
+
+			default:
+				break;
+		}
 	}
 }

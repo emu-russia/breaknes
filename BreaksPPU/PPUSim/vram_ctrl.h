@@ -17,6 +17,7 @@ namespace PPUSim
 		void sim(size_t bit_num);
 
 		BaseLogic::TriState get();
+		void set(BaseLogic::TriState value);
 	};
 
 	class VRAM_Control
@@ -63,5 +64,6 @@ namespace PPUSim
 		void sim_ReadBuffer();
 
 		uint8_t Debug_GetRB();
+		void Debug_SetRB(uint8_t value);
 	};
 }

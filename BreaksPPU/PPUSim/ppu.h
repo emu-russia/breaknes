@@ -482,7 +482,8 @@ namespace PPUSim
 		uint8_t Dbg_GetCRAMAddress();
 		uint16_t Dbg_GetPPUAddress();
 		void Dbg_RenderAlwaysEnabled(bool enable);
-		void Dbg_SetCTRL0(uint8_t val);
-		void Dbg_SetCTRL1(uint8_t val);
+
+		uint32_t Dbg_ReadRegister(int ofs);
+		void Dbg_WriteRegister(int ofs, uint32_t val);
 	};
 }

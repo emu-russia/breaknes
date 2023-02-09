@@ -20,6 +20,9 @@ namespace PPUSim
 			BaseLogic::TriState carry_in,
 			BaseLogic::TriState & val_out,
 			BaseLogic::TriState & n_val_out );
+
+		BaseLogic::TriState get();
+		void set(BaseLogic::TriState value);
 	};
 
 	class OAMCmprBit
@@ -131,6 +134,9 @@ namespace PPUSim
 
 		uint32_t Debug_GetMainCounter();
 		uint32_t Debug_GetTempCounter();
+
+		void Debug_SetMainCounter(uint32_t value);
+		void Debug_SetTempCounter(uint32_t value);
 
 		void GetDebugInfo(OAMEvalWires& wires);
 	};

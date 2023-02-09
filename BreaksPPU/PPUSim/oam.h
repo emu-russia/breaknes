@@ -144,5 +144,8 @@ namespace PPUSim
 
 		void SetOamDecayBehavior(OAMDecayBehavior behavior);
 		OAMDecayBehavior GetOamDecayBehavior();
+
+		uint32_t Dbg_Get_OAMBuffer();
+		void Dbg_Set_OAMBuffer(uint32_t value);
 	};
 }
