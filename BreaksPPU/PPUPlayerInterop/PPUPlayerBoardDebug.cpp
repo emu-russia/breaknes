@@ -615,11 +615,11 @@ namespace PPUPlayer
 
 	void Board::SetCTRL0(uint8_t val)
 	{
-		ppu->Dbg_SetCTRL0(val);
+		ppu->Dbg_WriteRegister(offsetof(PPUSim::PPU_Registers, CTRL0), val);
 	}
 
 	void Board::SetCTRL1(uint8_t val)
 	{
-		ppu->Dbg_SetCTRL1(val);
+		ppu->Dbg_WriteRegister(offsetof(PPUSim::PPU_Registers, CTRL1), val);
 	}
 }

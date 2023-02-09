@@ -131,6 +131,11 @@ namespace PPUSim
 		return ff.get();
 	}
 
+	void RB_Bit::set(TriState value)
+	{
+		ff.set(value);
+	}
+
 	uint8_t VRAM_Control::Debug_GetRB()
 	{
 		uint8_t val = 0;
@@ -141,5 +146,15 @@ namespace PPUSim
 		}
 
 		return val;
+	}
+
+	void VRAM_Control::Debug_SetRB(uint8_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 8; n++)
+		{
+			RB[n]->set(val_lo[n]);
+		}
 	}
 }

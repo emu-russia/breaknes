@@ -462,4 +462,24 @@ namespace PPUSim
 			lane->sim(column, bit_num, val_out);
 		}
 	}
+
+	uint32_t OAM::Dbg_Get_OAMBuffer()
+	{
+		TriState val_lo[8]{};
+		for (size_t n = 0; n < 8; n++)
+		{
+			val_lo[n] = get_OB(n);
+		}
+		return Pack(val_lo);
+	}
+
+	void OAM::Dbg_Set_OAMBuffer(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 8; n++)
+		{
+			set_OB(n, val_lo[n]);
+		}
+	}
 }

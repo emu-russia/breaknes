@@ -370,6 +370,16 @@ namespace PPUSim
 		return carry_out;
 	}
 
+	TriState OAMCounterBit::get()
+	{
+		return keep_ff.get();
+	}
+
+	void OAMCounterBit::set(TriState value)
+	{
+		keep_ff.set(value);
+	}
+
 	TriState OAMCmprBit::sim (
 		TriState OB_Even,
 		TriState V_Even,
@@ -425,26 +435,45 @@ namespace PPUSim
 
 	uint32_t OAMEval::Debug_GetMainCounter()
 	{
-		uint32_t val = 0;
-
+		TriState val_lo[8]{};
 		for (size_t n = 0; n < 8; n++)
 		{
-			val |= (OAM_x[n] == TriState::One ? 1ULL : 0) << n;
+			val_lo[n] = MainCounter[n].get();
 		}
-
-		return val;
+		return Pack(val_lo);
 	}
 
 	uint32_t OAMEval::Debug_GetTempCounter()
 	{
-		uint32_t val = 0;
-
+		TriState val_lo[8]{};
 		for (size_t n = 0; n < 5; n++)
 		{
-			val |= (OAM_Temp[n] == TriState::One ? 1ULL : 0) << n;
+			val_lo[n] = TempCounter[n].get();
 		}
+		val_lo[5] = TriState::Zero;
+		val_lo[6] = TriState::Zero;
+		val_lo[7] = TriState::Zero;
+		return Pack(val_lo);
+	}
 
-		return val;
+	void OAMEval::Debug_SetMainCounter(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 8; n++)
+		{
+			MainCounter[n].set(val_lo[n]);
+		}
+	}
+
+	void OAMEval::Debug_SetTempCounter(uint32_t value)
+	{
+		TriState val_lo[8]{};
+		Unpack(value, val_lo);
+		for (size_t n = 0; n < 5; n++)
+		{
+			TempCounter[n].set(val_lo[n]);
+		}
 	}
 
 	void OAMEval::GetDebugInfo(OAMEvalWires& wires)
