@@ -113,7 +113,10 @@ namespace APUSim
 		regs.TRIFreqCounter = tri->Get_FreqCounter();
 		regs.TRIOutputCounter = tri->Get_OutputCounter();
 
-		noise->Debug_Get(&regs, regs.RNDVolumeReg, regs.RNDDecayCounter, regs.RNDEnvelopeCounter);
+		regs.RNDFreqReg = noise->Get_FreqReg();
+		regs.RNDVolumeReg = noise->env_unit->Debug_Get_VolumeReg();
+		regs.RNDDecayCounter = noise->env_unit->Debug_Get_DecayCounter();
+		regs.RNDEnvelopeCounter = noise->env_unit->Debug_Get_EnvCounter();
 
 		dpcm->Debug_Get(&regs);
 
@@ -302,10 +305,10 @@ namespace APUSim
 			case offsetof(APU_Registers, TRIFreqReg): return tri->Get_FreqReg();
 			case offsetof(APU_Registers, TRIFreqCounter): return tri->Get_FreqCounter();
 			case offsetof(APU_Registers, TRIOutputCounter): return tri->Get_OutputCounter();
-			case offsetof(APU_Registers, RNDFreqReg): return 0;
-			case offsetof(APU_Registers, RNDVolumeReg): return 0;
-			case offsetof(APU_Registers, RNDDecayCounter): return 0;
-			case offsetof(APU_Registers, RNDEnvelopeCounter): return 0;
+			case offsetof(APU_Registers, RNDFreqReg): return noise->Get_FreqReg();
+			case offsetof(APU_Registers, RNDVolumeReg): return noise->env_unit->Debug_Get_VolumeReg();
+			case offsetof(APU_Registers, RNDDecayCounter): return noise->env_unit->Debug_Get_DecayCounter();
+			case offsetof(APU_Registers, RNDEnvelopeCounter): return noise->env_unit->Debug_Get_EnvCounter();
 			case offsetof(APU_Registers, DPCMFreqReg): return 0;
 			case offsetof(APU_Registers, DPCMSampleReg): return 0;
 			case offsetof(APU_Registers, DPCMSampleCounter): return 0;
@@ -358,10 +361,10 @@ namespace APUSim
 			case offsetof(APU_Registers, TRIFreqReg): tri->Set_FreqReg(val); break;
 			case offsetof(APU_Registers, TRIFreqCounter): tri->Set_FreqCounter(val); break;
 			case offsetof(APU_Registers, TRIOutputCounter): tri->Set_OutputCounter(val); break;
-			case offsetof(APU_Registers, RNDFreqReg): break;
-			case offsetof(APU_Registers, RNDVolumeReg): break;
-			case offsetof(APU_Registers, RNDDecayCounter): break;
-			case offsetof(APU_Registers, RNDEnvelopeCounter): break;
+			case offsetof(APU_Registers, RNDFreqReg): noise->Set_FreqReg(val); break;
+			case offsetof(APU_Registers, RNDVolumeReg): noise->env_unit->Debug_Set_VolumeReg(val); break;
+			case offsetof(APU_Registers, RNDDecayCounter): noise->env_unit->Debug_Set_DecayCounter(val); break;
+			case offsetof(APU_Registers, RNDEnvelopeCounter): noise->env_unit->Debug_Set_EnvCounter(val); break;
 			case offsetof(APU_Registers, DPCMFreqReg): break;
 			case offsetof(APU_Registers, DPCMSampleReg): break;
 			case offsetof(APU_Registers, DPCMSampleCounter): break;

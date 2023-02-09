@@ -27,6 +27,7 @@ namespace APUSim
 	class NoiseChan
 	{
 		friend APUSimUnitTest::UnitTest;
+		friend APU;
 
 		APU* apu = nullptr;
 
@@ -55,6 +56,7 @@ namespace APUSim
 		void sim();
 		BaseLogic::TriState get_LC();
 
-		void Debug_Get(APU_Registers* info, uint32_t& VolumeReg, uint32_t& DecayCounter, uint32_t& EnvCounter);
+		uint32_t Get_FreqReg();
+		void Set_FreqReg(uint32_t value);
 	};
 }
