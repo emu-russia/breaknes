@@ -120,10 +120,6 @@ namespace NSFPlayer
 		{
 			*data = ram[ofs];
 		}
-		else
-		{
-			ram[ofs] = *data;
-		}
 	}
 
 	void BankedSRAM::sim_AccessBanked(TriState RnW, uint16_t addr, uint8_t* data)
@@ -142,15 +138,11 @@ namespace NSFPlayer
 		{
 			*data = ram[ofs];
 		}
-		else
-		{
-			ram[ofs] = *data;
-		}
 	}
 
-	int BankedSRAM::RoundUpPage(int size)
+	size_t BankedSRAM::RoundUpPage(size_t size)
 	{
-		int page_size = 0x1000;
-		return ((((int)(size)) + page_size - 1) & (~(page_size - 1)));
+		const size_t page_size = 0x1000;
+		return ((((size_t)(size)) + page_size - 1) & (~(page_size - 1)));
 	}
 }

@@ -20,7 +20,7 @@ namespace NSFPlayer
 
 		const uint16_t BankRegBase = 0x5ff8;
 
-		int RoundUpPage(int size);
+		size_t RoundUpPage(size_t size);
 
 	public:
 		BankedSRAM();
