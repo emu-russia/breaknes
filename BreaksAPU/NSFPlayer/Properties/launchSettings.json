@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NSFPlayer": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

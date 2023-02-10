@@ -19,21 +19,23 @@ namespace APUSim
 	{
 		n_ACLK2 = NOT(apu->wire.ACLK);
 
-		// TBD: Rearrange propagation delays while debugging APUSim in combat conditions.
-
+		sim_SampleCounterReg();
+		
 		sim_ControlReg();
+		sim_Decoder1();
+		sim_Decoder2();
+
+		sim_FreqLFSR();
+
 		sim_IntControl();
 		sim_EnableControl();
 		sim_DMAControl();
-		sim_SampleCounterControl();
-		sim_SampleBufferControl();
 		
-		sim_Decoder1();
-		sim_Decoder2();
-		sim_FreqLFSR();
-		sim_SampleCounterReg();
+		sim_SampleCounterControl();
 		sim_SampleCounter();
 		sim_SampleBitCounter();
+
+		sim_SampleBufferControl();
 		sim_SampleBuffer();
 
 		sim_AddressReg();
@@ -79,7 +81,7 @@ namespace APUSim
 		TriState W4015 = apu->wire.W4015;
 		TriState n_R4015 = apu->wire.n_R4015;
 		TriState RES = apu->wire.RES;
-		TriState PCMDone = DMC1;
+		TriState PCMDone = get_DMC1();
 
 		sout_latch.set(SOUT, n_ACLK);
 		DMC2 = sout_latch.get();
@@ -95,8 +97,8 @@ namespace APUSim
 		TriState PHI1 = apu->wire.PHI1;
 		TriState RnW = apu->wire.RnW;
 		TriState RES = apu->wire.RES;
-		TriState nDMCEnableDelay = CTRL2;
-		TriState nDMAStop = CTRL1;
+		TriState nDMCEnableDelay = get_CTRL2();
+		TriState nDMAStop = get_CTRL1();
 
 		run_latch1.set(start_ff.get(), n_ACLK2);
 		run_latch2.set(run_latch1.nget(), n_ACLK);
@@ -113,7 +115,7 @@ namespace APUSim
 	{
 		TriState ACLK = apu->wire.ACLK;
 		TriState n_ACLK = apu->wire.n_ACLK;
-		TriState PCMDone = DMC1;
+		TriState PCMDone = get_DMC1();
 		TriState DMCFinish = DMC2;
 		TriState DMCEnable = ED2;
 
@@ -153,6 +155,21 @@ namespace APUSim
 		DSTEP = NOR4(dout_latch.get(), dstep_latch.get(), n_DFLOAD, LOCK);
 		BLOAD = NOR3(stop_latch.nget(), n_DFLOAD, n_NOUT);
 		BSTEP = NOR(n_DFLOAD, NOT(n_NOUT));
+	}
+
+	TriState DpcmChan::get_CTRL1()
+	{
+		return stop_ff.nget();
+	}
+
+	TriState DpcmChan::get_CTRL2()
+	{
+		return en_latch3.nget();
+	}
+
+	TriState DpcmChan::get_DMC1()
+	{
+		return NOR(pcm_latch.get(), NOT(n_ACLK2));
 	}
 
 #pragma endregion "DPCM Control"

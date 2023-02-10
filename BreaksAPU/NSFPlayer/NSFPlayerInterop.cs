@@ -24,6 +24,12 @@ namespace NSFPlayer
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SampleAudioSignal(out float sample);
+
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void LoadNSFData([In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] data, int data_size, UInt16 load_address);
+
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void EnableNSFBanking(bool enable);
 	}
 
 
@@ -79,6 +85,12 @@ namespace NSFPlayer
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern void GetDebugInfo(DebugInfoType type, IntPtr entries);
+
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		static extern int GetDebugInfoByName(DebugInfoType type, ref DebugInfoEntryRaw entry);
+
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		static extern int SetDebugInfoByName(DebugInfoType type, ref DebugInfoEntryRaw entry);
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetMemLayout();
@@ -222,6 +234,55 @@ namespace NSFPlayer
 
 			return list;
 		}
-	}
 
+		public static UInt32 GetDebugInfoByName (DebugInfoType type, string category, string name)
+		{
+			DebugInfoEntryRaw entry = new();
+
+			unsafe
+			{
+				for (int i = 0; i < 32; i++)
+				{
+					if (i < category.Length)
+						entry.category[i] = (byte)category[i];
+					else
+						entry.category[i] = 0;
+
+					if (i < name.Length)
+						entry.name[i] = (byte)name[i];
+					else
+						entry.name[i] = 0;
+				}
+			}
+
+			GetDebugInfoByName(type, ref entry);
+
+			return entry.value;
+		}
+
+		public static void SetDebugInfoByName(DebugInfoType type, string category, string name, UInt32 value)
+		{
+			DebugInfoEntryRaw entry = new();
+
+			unsafe
+			{
+				for (int i = 0; i < 32; i++)
+				{
+					if (i < category.Length)
+						entry.category[i] = (byte)category[i];
+					else
+						entry.category[i] = 0;
+
+					if (i < name.Length)
+						entry.name[i] = (byte)name[i];
+					else
+						entry.name[i] = 0;
+				}
+			}
+
+			entry.value = value;
+
+			SetDebugInfoByName(type, ref entry);
+		}
+	}
 }

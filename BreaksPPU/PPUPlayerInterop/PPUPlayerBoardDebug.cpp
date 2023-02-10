@@ -520,11 +520,7 @@ namespace PPUPlayer
 
 			if (!strcmp(sp->name, entry->name))
 			{
-				PPUSim::PPU_Registers regs{};
-				board->ppu->GetDebugInfo_Regs(regs);
-
-				uint8_t* ptr = (uint8_t*)&regs + sp->offset;
-				return *(uint32_t*)ptr;
+				return board->ppu->Dbg_ReadRegister((int)sp->offset);
 			}
 		}
 
@@ -533,7 +529,17 @@ namespace PPUPlayer
 
 	void Board::SetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
+		Board* board = (Board*)opaque;
 
+		for (size_t n = 0; n < _countof(ppu_regs); n++)
+		{
+			SignalOffsetPair* sp = &ppu_regs[n];
+
+			if (!strcmp(sp->name, entry->name))
+			{
+				board->ppu->Dbg_WriteRegister((int)sp->offset, value);
+			}
+		}
 	}
 
 	uint32_t Board::GetCartDebugInfo(void* opaque, DebugInfoEntry* entry)
@@ -562,7 +568,7 @@ namespace PPUPlayer
 
 	void Board::SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
-
+		// not need
 	}
 
 	void Board::GetDebugInfo(BoardDebugInfo& info)
@@ -610,16 +616,6 @@ namespace PPUPlayer
 
 	void Board::SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
-
-	}
-
-	void Board::SetCTRL0(uint8_t val)
-	{
-		ppu->Dbg_WriteRegister(offsetof(PPUSim::PPU_Registers, CTRL0), val);
-	}
-
-	void Board::SetCTRL1(uint8_t val)
-	{
-		ppu->Dbg_WriteRegister(offsetof(PPUSim::PPU_Registers, CTRL1), val);
+		// not need
 	}
 }

@@ -2,6 +2,8 @@
 
 Breaknes debug infrastructure.
 
+:warning: The current implementation is based on string associative lists and cannot be considered superfast.
+
 Since Breaknes is a gate-level emulator, the main focus of debugging is monitoring various signals, buses and other internal states of the emulated system.
 
 Debug entities are divided into the following categories:

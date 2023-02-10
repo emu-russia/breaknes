@@ -236,7 +236,7 @@ extern "C"
 		return 0;
 	}
 
-	void CopyOutDebugInfo(std::list<DebugInfoProvider>& coll, DebugInfoEntry* entries)
+	static void CopyOutDebugInfo(std::list<DebugInfoProvider>& coll, DebugInfoEntry* entries)
 	{
 		DebugInfoEntry* ptr = entries;
 
@@ -301,15 +301,80 @@ extern "C"
 		}
 	}
 
+	static std::list<DebugInfoProvider>* GetDebugInfoListByType(DebugInfoType type)
+	{
+		std::list<DebugInfoProvider> * info_list = nullptr;
+
+		switch (type)
+		{
+			case DebugInfoType::DebugInfoType_Test:
+				info_list = &dbg_hub->testInfo;
+				break;
+
+			case DebugInfoType::DebugInfoType_Core:
+				info_list = &dbg_hub->coreInfo;
+				break;
+
+			case DebugInfoType::DebugInfoType_CoreRegs:
+				info_list = &dbg_hub->coreRegsInfo;
+				break;
+
+			case DebugInfoType::DebugInfoType_APU:
+				info_list = &dbg_hub->apuInfo;
+				break;
+
+			case DebugInfoType::DebugInfoType_APURegs:
+				info_list = &dbg_hub->apuRegsInfo;
+				break;
+
+			case DebugInfoType::DebugInfoType_PPU:
+				info_list = &dbg_hub->ppuInfo;
+				break;
+
+			case DebugInfoType::DebugInfoType_PPURegs:
+				info_list = &dbg_hub->ppuRegsInfo;
+				break;
+
+			case DebugInfoType::DebugInfoType_Board:
+				info_list = &dbg_hub->boardInfo;
+				break;
+
+			case DebugInfoType::DebugInfoType_Cart:
+				info_list = &dbg_hub->cartInfo;
+				break;
+		}
+
+		return info_list;
+	}
+
 	/// <summary>
 	/// Get one DebugInfo record with the specified name
 	/// </summary>
 	/// <param name="type"></param>
 	/// <param name="entry"></param>
 	__declspec(dllexport)
-	void GetDebugInfoByName(DebugInfoType type, DebugInfoEntry* entry)
+	int GetDebugInfoByName(DebugInfoType type, DebugInfoEntry* entry)
 	{
+		if (!dbg_hub)
+			return -1;
 
+		auto info_list = GetDebugInfoListByType(type);
+		if (!info_list)
+			return -1;
+
+		for (auto it = info_list->begin(); it != info_list->end(); ++it)
+		{
+			bool same_category = strcmp(entry->category, it->entry->category) == 0;
+			bool same_name = strcmp(entry->name, it->entry->name) == 0;
+			if (same_category && same_name)
+			{
+				entry->value = it->GetValue(it->opaque, it->entry);
+				entry->bits = it->entry->bits;
+				return 0;
+			}
+		}
+
+		return -1;	// not found
 	}
 
 	/// <summary>
@@ -318,9 +383,27 @@ extern "C"
 	/// <param name="type"></param>
 	/// <param name="entry"></param>
 	__declspec(dllexport)
-	void SetDebugInfoByName(DebugInfoType type, DebugInfoEntry* entry)
+	int SetDebugInfoByName(DebugInfoType type, DebugInfoEntry* entry)
 	{
+		if (!dbg_hub)
+			return -1;
 
+		auto info_list = GetDebugInfoListByType(type);
+		if (!info_list)
+			return -1;
+
+		for (auto it = info_list->begin(); it != info_list->end(); ++it)
+		{
+			bool same_category = strcmp(entry->category, it->entry->category) == 0;
+			bool same_name = strcmp(entry->name, it->entry->name) == 0;
+			if (same_category && same_name)
+			{
+				it->SetValue(it->opaque, it->entry, entry->value);
+				return 0;
+			}
+		}
+
+		return -1;	// not found
 	}
 
 	/// <summary>

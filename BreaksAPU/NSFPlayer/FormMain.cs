@@ -44,6 +44,8 @@ namespace NSFPlayer
 			SetPaused(true);
 
 			backgroundWorker1.RunWorkerAsync();
+
+			signalPlot1.ForceMinMax(true, -0.5f, +2.0f);
 		}
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -123,10 +125,34 @@ namespace NSFPlayer
 
 			var settings = FormSettings.LoadSettings();
 			NSFPlayerInterop.CreateBoard("NSFPlayer", settings.APU_Revision, "None", "None");
+
+			// Setup NSF
+
+			bool bank_switching = false;
+			for (int i=0; i<8; i++)
+			{
+				if (nsf.GetHead().Bankswitch[i] != 0)
+				{
+					bank_switching = true;
+					break;
+				}
+			}
+
+			NSFPlayerInterop.LoadNSFData(nsf.GetData(), nsf.GetData().Length, nsf.GetHead().LoadAddress);
+			NSFPlayerInterop.EnableNSFBanking(bank_switching);
+
+			var head = nsf.GetHead();
+			for (int i = 0; i < 8; i++)
+			{
+				BreaksCore.SetDebugInfoByName(
+					BreaksCore.DebugInfoType.DebugInfoType_Board, 
+					"NSFPlayer Board", "Bank" + i.ToString(), head.Bankswitch[i]);
+			}
+
 			UpdateMemLayout();
 
 			// Autoplay
-			SetPaused(false);
+			SetPaused(!settings.AutoPlay);
 		}
 
 		private void DisposeBoard()
@@ -440,6 +466,21 @@ namespace NSFPlayer
 			UpdateMemLayoutInProgress = false;
 		}
 
+		/// <summary>
+		/// A tool for short-range debugging.
+		/// Step-by-step execution of the simulation. Available only if the worker is stopped.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void button3_Click(object sender, EventArgs e)
+		{
+			if (Paused && nsf_loaded)
+			{
+				NSFPlayerInterop.Step();
+				Button2Click();
+			}
+		}
+
 		#endregion "APU Debug"
 
 
@@ -507,6 +548,7 @@ namespace NSFPlayer
 		}
 
 		#endregion "What's that for?"
+
 
 	}
 }

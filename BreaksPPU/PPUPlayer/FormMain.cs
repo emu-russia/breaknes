@@ -754,19 +754,14 @@ namespace PPUPlayer
 		}
 
 		/// <summary>
-		/// Used to change the value of PPU registers $2000/$2001 on the fly. Use for Free Mode.
+		/// Used to change the value of PPU registers on the fly. Use for Free Mode.
 		/// </summary>
 		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
 		{
-			if (e.ChangedItem.Label == "CTRL0" )
+			if (e.ChangedItem != null)
 			{
-				UInt32 value = (UInt32)e.ChangedItem.Value;
-				PPUPlayerInterop.SetCTRL0((byte)value);
-			}
-			else if (e.ChangedItem.Label == "CTRL1")
-			{
-				UInt32 value = (UInt32)e.ChangedItem.Value;
-				PPUPlayerInterop.SetCTRL1((byte)value);
+				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_PPURegs,
+					"PPU Regs", e.ChangedItem.Label, (UInt32)e.ChangedItem.Value);
 			}
 		}
 

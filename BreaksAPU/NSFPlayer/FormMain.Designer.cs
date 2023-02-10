@@ -86,6 +86,7 @@
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.hexBox1 = new Be.Windows.Forms.HexBox();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+			this.button3 = new System.Windows.Forms.Button();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -191,40 +192,40 @@
 			// playToolStripMenuItem
 			// 
 			this.playToolStripMenuItem.Name = "playToolStripMenuItem";
-			this.playToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.playToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.playToolStripMenuItem.Text = "Play";
 			this.playToolStripMenuItem.Click += new System.EventHandler(this.playToolStripMenuItem_Click);
 			// 
 			// pauseToolStripMenuItem
 			// 
 			this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
-			this.pauseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.pauseToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.pauseToolStripMenuItem.Text = "Pause";
 			this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseToolStripMenuItem_Click);
 			// 
 			// stopToolStripMenuItem
 			// 
 			this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-			this.stopToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.stopToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.stopToolStripMenuItem.Text = "Stop";
 			this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
 			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+			this.toolStripSeparator2.Size = new System.Drawing.Size(146, 6);
 			// 
 			// nextTrackToolStripMenuItem
 			// 
 			this.nextTrackToolStripMenuItem.Name = "nextTrackToolStripMenuItem";
-			this.nextTrackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.nextTrackToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.nextTrackToolStripMenuItem.Text = "Next Track";
 			this.nextTrackToolStripMenuItem.Click += new System.EventHandler(this.nextTrackToolStripMenuItem_Click);
 			// 
 			// previousTrackToolStripMenuItem
 			// 
 			this.previousTrackToolStripMenuItem.Name = "previousTrackToolStripMenuItem";
-			this.previousTrackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.previousTrackToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.previousTrackToolStripMenuItem.Text = "Previous Track";
 			this.previousTrackToolStripMenuItem.Click += new System.EventHandler(this.previousTrackToolStripMenuItem_Click);
 			// 
@@ -589,6 +590,7 @@
 			// 
 			// splitContainer4.Panel1
 			// 
+			this.splitContainer4.Panel1.Controls.Add(this.button3);
 			this.splitContainer4.Panel1.Controls.Add(this.button1);
 			this.splitContainer4.Panel1.Controls.Add(this.comboBox1);
 			// 
@@ -642,6 +644,16 @@
 			// 
 			this.backgroundWorker1.WorkerSupportsCancellation = true;
 			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+			// 
+			// button3
+			// 
+			this.button3.Location = new System.Drawing.Point(9, 9);
+			this.button3.Name = "button3";
+			this.button3.Size = new System.Drawing.Size(70, 27);
+			this.button3.TabIndex = 2;
+			this.button3.Text = "Step";
+			this.button3.UseVisualStyleBackColor = true;
+			this.button3.Click += new System.EventHandler(this.button3_Click);
 			// 
 			// FormMain
 			// 
@@ -745,5 +757,6 @@
 		private System.ComponentModel.BackgroundWorker backgroundWorker1;
 		private ToolStripSeparator toolStripSeparator4;
 		private ToolStripButton toolStripButton1;
+		private Button button3;
 	}
 }

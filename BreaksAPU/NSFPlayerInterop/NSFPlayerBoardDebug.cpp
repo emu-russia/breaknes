@@ -278,6 +278,8 @@ namespace NSFPlayer
 		"Bank5", offsetof(BoardDebugInfo, bank_reg[5]), 8,
 		"Bank6", offsetof(BoardDebugInfo, bank_reg[6]), 8,
 		"Bank7", offsetof(BoardDebugInfo, bank_reg[7]), 8,
+
+		"LoadAddress", offsetof(BoardDebugInfo, load_addr), 16,
 	};
 
 	void Board::AddDebugInfoProviders()
@@ -398,11 +400,7 @@ namespace NSFPlayer
 
 			if (!strcmp(sp->name, entry->name))
 			{
-				M6502Core::UserRegs regs{};
-				board->core->getUserRegs(&regs);
-
-				uint8_t* ptr = (uint8_t*)&regs + sp->offset;
-				return *ptr;
+				return board->core->getUserRegSingle((int)sp->offset);
 			}
 		}
 
@@ -440,11 +438,7 @@ namespace NSFPlayer
 
 			if (!strcmp(sp->name, entry->name))
 			{
-				APUSim::APU_Registers regs{};
-				board->apu->GetDebugInfo_Regs(regs);
-
-				uint8_t* ptr = (uint8_t*)&regs + sp->offset;
-				return *(uint32_t*)ptr;
+				return board->apu->GetDebugInfo_Reg((int)sp->offset);
 			}
 		}
 
@@ -453,22 +447,42 @@ namespace NSFPlayer
 
 	void Board::SetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
-
+		// not need
 	}
 
 	void Board::SetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
+		Board* board = (Board*)opaque;
 
+		for (size_t n = 0; n < _countof(core_regs); n++)
+		{
+			SignalOffsetPair* sp = &core_regs[n];
+
+			if (!strcmp(sp->name, entry->name))
+			{
+				board->core->setUserRegSingle((int)sp->offset, value);
+			}
+		}
 	}
 
 	void Board::SetApuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
-
+		// not need
 	}
 
 	void Board::SetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
+		Board* board = (Board*)opaque;
 
+		for (size_t n = 0; n < _countof(apu_regs); n++)
+		{
+			SignalOffsetPair* sp = &apu_regs[n];
+
+			if (!strcmp(sp->name, entry->name))
+			{
+				board->apu->SetDebugInfo_Reg((int)sp->offset, value);
+			}
+		}
 	}
 
 	void Board::GetDebugInfo(BoardDebugInfo& info)
@@ -478,6 +492,7 @@ namespace NSFPlayer
 		{
 			info.bank_reg[i] = sram->GetBankReg(i);
 		}
+		info.load_addr = sram_load_addr;
 	}
 
 	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
@@ -503,6 +518,14 @@ namespace NSFPlayer
 
 	void Board::SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
+		Board* board = (Board*)opaque;
 
+		// wow!
+		bool Bank = entry->name[0] == 'B' && entry->name[1] == 'a' && entry->name[2] == 'n' && entry->name[3] == 'k';
+		if (Bank)
+		{
+			int reg_id = entry->name[4] - '0';
+			board->sram->SetBankReg(reg_id, (uint8_t)value);
+		}
 	}
 }

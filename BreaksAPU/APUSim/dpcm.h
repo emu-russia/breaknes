@@ -111,6 +111,10 @@ namespace APUSim
 		void sim_AddressCounter();
 		void sim_Output();
 
+		BaseLogic::TriState get_CTRL1();
+		BaseLogic::TriState get_CTRL2();
+		BaseLogic::TriState get_DMC1();
+
 	public:
 		DpcmChan(APU* parent);
 		~DpcmChan();
