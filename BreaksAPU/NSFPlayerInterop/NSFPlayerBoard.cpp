@@ -77,6 +77,11 @@ namespace NSFPlayer
 		TriState RnW = outputs[(size_t)APUSim::APU_Output::RnW];
 		TriState M2 = outputs[(size_t)APUSim::APU_Output::M2];		// There doesn't seem to be any use for it...
 
+		if (RnW == TriState::Z)
+		{
+			RnW = TriState::One;
+		}
+
 		TriState wram_cs = (addr_bus >> wram_bits) == 0 ? TriState::One : TriState::Zero;
 
 		TriState n_WE = RnW;

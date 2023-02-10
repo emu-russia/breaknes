@@ -14,9 +14,13 @@ namespace NSFPlayer
 		uint16_t load_addr = 0;
 		bool bank_switch_enabled = false;
 
-		void do_banking(BaseLogic::TriState RnW, int reg_id, uint8_t* data);
+		void sim_BankRegs (BaseLogic::TriState RnW, int reg_id, uint8_t* data);
+		void sim_AccessNotBanked(BaseLogic::TriState RnW, uint16_t addr, uint8_t* data);
+		void sim_AccessBanked(BaseLogic::TriState RnW, uint16_t addr, uint8_t* data);
 
 		const uint16_t BankRegBase = 0x5ff8;
+
+		int RoundUpPage(int size);
 
 	public:
 		BankedSRAM();

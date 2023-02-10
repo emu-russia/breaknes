@@ -25,13 +25,20 @@ namespace NSFPlayer
 		if (CS == TriState::Zero)
 			return;
 
-		if ((addr & ~7) == BankRegBase && bank_switch_enabled)
+		if (bank_switch_enabled)
 		{
-			do_banking(RnW, addr & 7, data);
+			if ((addr & ~7) == BankRegBase)
+			{
+				sim_BankRegs(RnW, addr & 7, data);
+			}
+			else
+			{
+				sim_AccessBanked(RnW, addr, data);
+			}
 		}
 		else
 		{
-
+			sim_AccessNotBanked(RnW, addr, data);
 		}
 	}
 
@@ -78,13 +85,14 @@ namespace NSFPlayer
 			ram = nullptr;
 		}
 
-		ram_size = data_size;
+		ram_size = RoundUpPage(data_size);
 		ram = new uint8_t[ram_size];
+		memset(ram, 0xff, ram_size);
 		memcpy(ram, data, data_size);
 		load_addr = load_address;
 	}
 
-	void BankedSRAM::do_banking(TriState RnW, int reg_id, uint8_t* data)
+	void BankedSRAM::sim_BankRegs(TriState RnW, int reg_id, uint8_t* data)
 	{
 		if (RnW == TriState::One)
 		{
@@ -99,5 +107,50 @@ namespace NSFPlayer
 	void BankedSRAM::EnableNSFBanking(bool enable)
 	{
 		bank_switch_enabled = enable;
+	}
+
+	void BankedSRAM::sim_AccessNotBanked(TriState RnW, uint16_t addr, uint8_t* data)
+	{
+		if (addr < load_addr)
+			return;
+
+		int ofs = addr - load_addr;
+
+		if (RnW == TriState::One)
+		{
+			*data = ram[ofs];
+		}
+		else
+		{
+			ram[ofs] = *data;
+		}
+	}
+
+	void BankedSRAM::sim_AccessBanked(TriState RnW, uint16_t addr, uint8_t* data)
+	{
+		if (addr < 0x8000)
+			return;
+
+		// wtf?
+		// "take the logical AND of the load address with $0FFF, and the result specifies the number of bytes of padding at the start of the ROM image."
+
+		int bank = (addr >> 12) - 8;
+		int mapped = bank_regs[bank];
+		int ofs = mapped * 0x1000 + (addr & 0xFFF);
+
+		if (RnW == TriState::One)
+		{
+			*data = ram[ofs];
+		}
+		else
+		{
+			ram[ofs] = *data;
+		}
+	}
+
+	int BankedSRAM::RoundUpPage(int size)
+	{
+		int page_size = 0x1000;
+		return ((((int)(size)) + page_size - 1) & (~(page_size - 1)));
 	}
 }
