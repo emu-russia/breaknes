@@ -141,6 +141,14 @@ namespace NSFPlayer
 			NSFPlayerInterop.LoadNSFData(nsf.GetData(), nsf.GetData().Length, nsf.GetHead().LoadAddress);
 			NSFPlayerInterop.EnableNSFBanking(bank_switching);
 
+			var head = nsf.GetHead();
+			for (int i = 0; i < 8; i++)
+			{
+				BreaksCore.SetDebugInfoByName(
+					BreaksCore.DebugInfoType.DebugInfoType_Board, 
+					"NSFPlayer Board", "Bank" + i.ToString(), head.Bankswitch[i]);
+			}
+
 			UpdateMemLayout();
 
 			// Autoplay

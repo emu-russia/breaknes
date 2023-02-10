@@ -506,6 +506,14 @@ namespace NSFPlayer
 
 	void Board::SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
+		Board* board = (Board*)opaque;
 
+		// wow!
+		bool Bank = entry->name[0] == 'B' && entry->name[1] == 'a' && entry->name[2] == 'n' && entry->name[3] == 'k';
+		if (Bank)
+		{
+			int reg_id = entry->name[4] - '0';
+			board->sram->SetBankReg(reg_id, (uint8_t)value);
+		}
 	}
 }
