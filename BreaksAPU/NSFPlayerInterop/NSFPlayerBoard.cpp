@@ -75,9 +75,17 @@ namespace NSFPlayer
 		apu->sim(inputs, outputs, &data_bus, &addr_bus, aux);
 
 		TriState RnW = outputs[(size_t)APUSim::APU_Output::RnW];
-		TriState M2 = outputs[(size_t)APUSim::APU_Output::M2];
+		TriState M2 = outputs[(size_t)APUSim::APU_Output::M2];		// There doesn't seem to be any use for it...
 
-		sram->sim(RnW, addr_bus, &data_bus);
+		TriState wram_cs = (addr_bus >> wram_bits) == 0 ? TriState::One : TriState::Zero;
+
+		TriState n_WE = RnW;
+		TriState n_OE = NOT(RnW);
+		uint32_t wram_addr = addr_bus;
+		bool dz = false;
+		wram->sim(NOT(wram_cs), n_WE, n_OE, &wram_addr, &data_bus, dz);
+
+		sram->sim(RnW, NOT(wram_cs), addr_bus, &data_bus);
 
 		// Tick
 
@@ -149,6 +157,36 @@ namespace NSFPlayer
 		if (sample != nullptr)
 		{
 			*sample = (aux.normalized.a + aux.normalized.b) / 2.0f;
+		}
+	}
+
+	/// <summary>
+	/// Load the whole NSF data image to the BankedSRAM device.
+	/// </summary>
+	/// <param name="data">nsf data offset +0x80</param>
+	/// <param name="data_size">nsf data size</param>
+	/// <param name="load_address">nsf load address (from header)</param>
+	void Board::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
+	{
+		if (sram != nullptr)
+		{
+			sram_load_addr = load_address;
+			sram->LoadNSFData(data, data_size, load_address);
+
+			dbg_hub->DisposeMemMap();
+			AddBoardMemDescriptors();
+		}
+	}
+
+	/// <summary>
+	/// Enable the bank switching circuit for the BankedSRAM device.
+	/// </summary>
+	/// <param name="enable"></param>
+	void Board::EnableNSFBanking(bool enable)
+	{
+		if (sram != nullptr)
+		{
+			sram->EnableNSFBanking(enable);
 		}
 	}
 }

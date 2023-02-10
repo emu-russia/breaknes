@@ -73,4 +73,20 @@ extern "C"
 			board->SampleAudioSignal(sample);
 		}
 	}
+
+	__declspec(dllexport) void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
+	{
+		if (board != nullptr)
+		{
+			board->LoadNSFData(data, data_size, load_address);
+		}
+	}
+
+	__declspec(dllexport) void EnableNSFBanking(bool enable)
+	{
+		if (board != nullptr)
+		{
+			board->EnableNSFBanking(enable);
+		}
+	}
 }

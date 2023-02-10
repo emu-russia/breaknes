@@ -278,6 +278,8 @@ namespace NSFPlayer
 		"Bank5", offsetof(BoardDebugInfo, bank_reg[5]), 8,
 		"Bank6", offsetof(BoardDebugInfo, bank_reg[6]), 8,
 		"Bank7", offsetof(BoardDebugInfo, bank_reg[7]), 8,
+
+		"LoadAddress", offsetof(BoardDebugInfo, load_addr), 16,
 	};
 
 	void Board::AddDebugInfoProviders()
@@ -478,6 +480,7 @@ namespace NSFPlayer
 		{
 			info.bank_reg[i] = sram->GetBankReg(i);
 		}
+		info.load_addr = sram_load_addr;
 	}
 
 	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
