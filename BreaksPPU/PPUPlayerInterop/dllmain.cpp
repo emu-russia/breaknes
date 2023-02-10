@@ -219,22 +219,6 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void SetCTRL0(uint8_t val)
-	{
-		if (board != nullptr)
-		{
-			board->SetCTRL0(val);
-		}
-	}
-
-	__declspec(dllexport) void SetCTRL1(uint8_t val)
-	{
-		if (board != nullptr)
-		{
-			board->SetCTRL1(val);
-		}
-	}
-
 	__declspec(dllexport) void SetNoiseLevel(float volts)
 	{
 		if (board != nullptr)

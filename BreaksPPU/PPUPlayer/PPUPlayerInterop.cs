@@ -116,12 +116,6 @@ namespace PPUPlayer
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetOamDecayBehavior(OAMDecayBehavior behavior);
-
-		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SetCTRL0(byte val);
-
-		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void SetCTRL1(byte val);
 		
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetNoiseLevel(float volts);
@@ -180,6 +174,12 @@ namespace PPUPlayer
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern void GetDebugInfo(DebugInfoType type, IntPtr entries);
+
+		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		static extern int GetDebugInfoByName(DebugInfoType type, ref DebugInfoEntryRaw entry);
+
+		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		static extern int SetDebugInfoByName(DebugInfoType type, ref DebugInfoEntryRaw entry);
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetMemLayout();
@@ -322,6 +322,56 @@ namespace PPUPlayer
 			list.Add(testEntry);
 
 			return list;
+		}
+
+		public static UInt32 GetDebugInfoByName(DebugInfoType type, string category, string name)
+		{
+			DebugInfoEntryRaw entry = new();
+
+			unsafe
+			{
+				for (int i = 0; i < 32; i++)
+				{
+					if (i < category.Length)
+						entry.category[i] = (byte)category[i];
+					else
+						entry.category[i] = 0;
+
+					if (i < name.Length)
+						entry.name[i] = (byte)name[i];
+					else
+						entry.name[i] = 0;
+				}
+			}
+
+			GetDebugInfoByName(type, ref entry);
+
+			return entry.value;
+		}
+
+		public static void SetDebugInfoByName(DebugInfoType type, string category, string name, UInt32 value)
+		{
+			DebugInfoEntryRaw entry = new();
+
+			unsafe
+			{
+				for (int i = 0; i < 32; i++)
+				{
+					if (i < category.Length)
+						entry.category[i] = (byte)category[i];
+					else
+						entry.category[i] = 0;
+
+					if (i < name.Length)
+						entry.name[i] = (byte)name[i];
+					else
+						entry.name[i] = 0;
+				}
+			}
+
+			entry.value = value;
+
+			SetDebugInfoByName(type, ref entry);
 		}
 	}
 
