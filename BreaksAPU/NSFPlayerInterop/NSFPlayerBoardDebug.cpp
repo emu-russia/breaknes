@@ -41,6 +41,7 @@ namespace NSFPlayer
 	};
 
 	SignalOffsetPair core_wires[] = {
+		"IR", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::IR), 8,
 		"/PRDY", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_PRDY), 1,
 		"/NMIP", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_NMIP), 1,
 		"/IRQP", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_IRQP), 1,
@@ -139,6 +140,10 @@ namespace NSFPlayer
 	};
 
 	SignalOffsetPair core_regs[] = {
+		"PCH", offsetof(M6502Core::UserRegs, PCH), 8,
+		"PCL", offsetof(M6502Core::UserRegs, PCL), 8,
+		"PCHS", offsetof(M6502Core::UserRegs, PCHS), 8,
+		"PCLS", offsetof(M6502Core::UserRegs, PCLS), 8,
 		"A", offsetof(M6502Core::UserRegs, A), 8,
 		"X", offsetof(M6502Core::UserRegs, X), 8,
 		"Y", offsetof(M6502Core::UserRegs, Y), 8,
@@ -149,8 +154,6 @@ namespace NSFPlayer
 		"D_OUT", offsetof(M6502Core::UserRegs, D_OUT), 8,
 		"V_OUT", offsetof(M6502Core::UserRegs, V_OUT), 8,
 		"N_OUT", offsetof(M6502Core::UserRegs, N_OUT), 8,
-		"PCH", offsetof(M6502Core::UserRegs, PCH), 8,
-		"PCL", offsetof(M6502Core::UserRegs, PCL), 8,
 	};
 
 	SignalOffsetPair apu_wires[] = {
@@ -159,6 +162,7 @@ namespace NSFPlayer
 		"PHI1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI1), 1,
 		"PHI2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI2), 1,
 		"RDY", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RDY), 1,
+		"RDY2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RDY2), 1,
 		"ACLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::ACLK), 1,
 		"/ACLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_ACLK), 1,
 		"RES", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RES), 1,
@@ -174,6 +178,7 @@ namespace NSFPlayer
 		"RW", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RW), 1,
 		"RD", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RD), 1,
 		"WR", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::WR), 1,
+		"SYNC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SYNC), 1,
 		"#DMC/AB", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_DMC_AB), 1,
 		"RUNDMC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RUNDMC), 1,
 		"DMCINT", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::DMCINT), 1,
@@ -268,9 +273,9 @@ namespace NSFPlayer
 	};
 
 	SignalOffsetPair board_signals[] = {
+		"SYNC", offsetof(BoardDebugInfo, sync), 1,				// 6502 Core SYNC terminal
 		"BoardCLK", offsetof(BoardDebugInfo, CLK), 1,
-
-		"Bank0", offsetof(BoardDebugInfo, bank_reg[0]), 8,
+		"Bank0", offsetof(BoardDebugInfo, bank_reg[0]), 8,		// Bank switch registers
 		"Bank1", offsetof(BoardDebugInfo, bank_reg[1]), 8,
 		"Bank2", offsetof(BoardDebugInfo, bank_reg[2]), 8,
 		"Bank3", offsetof(BoardDebugInfo, bank_reg[3]), 8,
@@ -278,8 +283,7 @@ namespace NSFPlayer
 		"Bank5", offsetof(BoardDebugInfo, bank_reg[5]), 8,
 		"Bank6", offsetof(BoardDebugInfo, bank_reg[6]), 8,
 		"Bank7", offsetof(BoardDebugInfo, bank_reg[7]), 8,
-
-		"LoadAddress", offsetof(BoardDebugInfo, load_addr), 16,
+		"LoadAddress", offsetof(BoardDebugInfo, load_addr), 16,		// NSF Load address
 	};
 
 	void Board::AddDebugInfoProviders()
@@ -379,11 +383,7 @@ namespace NSFPlayer
 
 			if (!strcmp(sp->name, entry->name))
 			{
-				M6502Core::DebugInfo wires{};
-				board->core->getDebug(&wires);
-
-				uint8_t* ptr = (uint8_t*)&wires;
-				return ptr[sp->offset];
+				return board->core->getDebugSingle((int)sp->offset);
 			}
 		}
 
@@ -493,6 +493,7 @@ namespace NSFPlayer
 			info.bank_reg[i] = sram->GetBankReg(i);
 		}
 		info.load_addr = sram_load_addr;
+		info.sync = ToByte(SYNC);
 	}
 
 	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)

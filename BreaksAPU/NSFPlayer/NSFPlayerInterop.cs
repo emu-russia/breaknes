@@ -20,6 +20,12 @@ namespace NSFPlayer
 		public static extern void Step();
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void ResetAPU(UInt16 addr);
+
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern bool APUInResetState();
+
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int GetACLKCounter();
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -48,6 +54,14 @@ namespace NSFPlayer
 			DebugInfoType_Board,
 			DebugInfoType_Cart,
 		};
+
+		public const string BANKED_SRAM_NAME = "BankedSRAM";
+		public const string WRAM_NAME = "WRAM";
+		public const string CORE_WIRES_CATEGORY = "Core Wires";
+		public const string CORE_REGS_CATEGORY = "Core Regs";
+		public const string APU_WIRES_CATEGORY = "APU Wires";
+		public const string APU_REGS_CATEGORY = "APU Regs";
+		public const string BOARD_CATEGORY = "NSFPlayer Board";
 
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		unsafe struct DebugInfoEntryRaw

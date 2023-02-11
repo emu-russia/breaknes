@@ -50,8 +50,16 @@ namespace APUSim
 		out[0].sim(unused, OUT_Signal[0], unused, outputs[(size_t)APU_Output::OUT_0], apu->wire.RES, TriState::One);
 		out[1].sim(unused, OUT_Signal[1], unused, outputs[(size_t)APU_Output::OUT_1], apu->wire.RES, TriState::One);
 		out[2].sim(unused, OUT_Signal[2], unused, outputs[(size_t)APU_Output::OUT_2], apu->wire.RES, TriState::One);
+
+		// Extra
+
+		outputs[(size_t)APU_Output::SYNC] = apu->wire.SYNC;
 	}
 
+	/// <summary>
+	/// External data bus -> Internal data bus
+	/// </summary>
+	/// <param name="data">External data bus</param>
 	void Pads::sim_DataBusInput(uint8_t* data)
 	{
 		TriState val[8]{};
@@ -72,6 +80,10 @@ namespace APUSim
 		apu->DB_Dirty = true;
 	}
 
+	/// <summary>
+	/// Internal data bus -> External data bus
+	/// </summary>
+	/// <param name="data">External data bus</param>
 	void Pads::sim_DataBusOutput(uint8_t* data)
 	{
 		TriState val[8]{};

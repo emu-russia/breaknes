@@ -12,6 +12,7 @@ namespace APUSim
 		uint8_t PHI1;
 		uint8_t PHI2;
 		uint8_t RDY;
+		uint8_t RDY2;
 		uint8_t ACLK;
 		uint8_t n_ACLK;
 		uint8_t RES;
@@ -27,6 +28,7 @@ namespace APUSim
 		uint8_t RW;
 		uint8_t RD;
 		uint8_t WR;
+		uint8_t SYNC;
 		uint8_t n_DMC_AB;
 		uint8_t RUNDMC;
 		uint8_t DMCINT;

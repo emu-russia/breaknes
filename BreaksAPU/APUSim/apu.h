@@ -108,6 +108,7 @@ namespace APUSim
 		OUT_2,
 		M2,
 		RnW,
+		SYNC,			// In a real APU the SYNC core terminal is not connected anywhere. We put it on the outside
 		Max,
 	};
 
@@ -137,6 +138,7 @@ namespace APUSim
 			BaseLogic::TriState PHI1;
 			BaseLogic::TriState PHI2;
 			BaseLogic::TriState RDY;			// To core
+			BaseLogic::TriState RDY2;			// Default 1 (2A03)
 			BaseLogic::TriState ACLK;
 			BaseLogic::TriState n_ACLK;
 			BaseLogic::TriState RES;
@@ -152,6 +154,7 @@ namespace APUSim
 			BaseLogic::TriState RW;				// To pad
 			BaseLogic::TriState RD;				// To DataBus pads
 			BaseLogic::TriState WR;				// To DataBus pads
+			BaseLogic::TriState SYNC;			// From core
 			
 			BaseLogic::TriState n_DMC_AB;
 			BaseLogic::TriState RUNDMC;

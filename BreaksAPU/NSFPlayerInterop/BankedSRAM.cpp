@@ -25,6 +25,18 @@ namespace NSFPlayer
 		if (CS == TriState::Zero)
 			return;
 
+		if (faking_reset)
+		{
+			if (addr == 0xfffc && RnW == TriState::One)
+			{
+				*data = (uint8_t)fake_reset;
+			}
+			else if (addr == 0xfffd && RnW == TriState::One)
+			{
+				*data = (uint8_t)(fake_reset >> 8);
+			}
+		}
+
 		if (bank_switch_enabled)
 		{
 			if ((addr & ~7) == BankRegBase)
@@ -136,6 +148,7 @@ namespace NSFPlayer
 
 		if (RnW == TriState::One)
 		{
+			printf("NSF read: 0x%04x, bank: %d, mapped: %d, offs: 0x%x\n", addr, bank, mapped, 0x80 + ofs);
 			*data = ram[ofs];
 		}
 	}
@@ -144,5 +157,15 @@ namespace NSFPlayer
 	{
 		const size_t page_size = 0x1000;
 		return ((((size_t)(size)) + page_size - 1) & (~(page_size - 1)));
+	}
+
+	void BankedSRAM::EnableFakeResetVector(bool enable)
+	{
+		faking_reset = enable;
+	}
+
+	void BankedSRAM::SetFakeResetVector(uint16_t addr)
+	{
+		fake_reset = addr;
 	}
 }

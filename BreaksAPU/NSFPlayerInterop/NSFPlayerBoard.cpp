@@ -74,6 +74,8 @@ namespace NSFPlayer
 
 		apu->sim(inputs, outputs, &data_bus, &addr_bus, aux);
 
+		SYNC = outputs[(size_t)APUSim::APU_Output::SYNC];
+
 		TriState RnW = outputs[(size_t)APUSim::APU_Output::RnW];
 		TriState M2 = outputs[(size_t)APUSim::APU_Output::M2];		// There doesn't seem to be any use for it...
 
@@ -102,6 +104,7 @@ namespace NSFPlayer
 			if (resetHalfClkCounter == 0)
 			{
 				pendingReset = false;
+				sram->EnableFakeResetVector(false);
 			}
 		}
 	}
@@ -130,7 +133,7 @@ namespace NSFPlayer
 	/// <summary>
 	/// Make the APU /RES pin = 0 for a few CLK half cycles so that the APU resets all of its internal circuits.
 	/// </summary>
-	void Board::ResetAPU()
+	void Board::ResetAPU(uint16_t addr)
 	{
 		apu->ResetACLKCounter();
 
@@ -141,10 +144,13 @@ namespace NSFPlayer
 
 		pendingReset = true;
 		resetHalfClkCounter = 4;
+
+		sram->EnableFakeResetVector(true);
+		sram->SetFakeResetVector(addr);
 	}
 
 	/// <summary>
-	/// The parent application can check that the APU is in the reset process and ignore the video signal for that time.
+	/// The parent application can check that the APU is in the reset process and ignore the audio signal for that time.
 	/// </summary>
 	/// <returns></returns>
 	bool Board::APUInResetState()

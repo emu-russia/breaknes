@@ -9,6 +9,7 @@ namespace NSFPlayer
 		uint32_t CLK;
 		uint32_t bank_reg[8];
 		uint32_t load_addr;
+		uint32_t sync;			// Core SYNC
 	};
 
 	class Board
@@ -22,6 +23,7 @@ namespace NSFPlayer
 		const size_t wram_size = 1ULL << wram_bits;
 
 		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
+		BaseLogic::TriState SYNC = BaseLogic::TriState::X;
 
 		uint8_t data_bus = 0;
 		uint16_t addr_bus = 0;
@@ -64,7 +66,7 @@ namespace NSFPlayer
 
 		void EjectCartridge();
 
-		void ResetAPU();
+		void ResetAPU(uint16_t addr);
 
 		bool APUInResetState();
 

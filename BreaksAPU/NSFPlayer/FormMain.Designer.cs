@@ -36,7 +36,8 @@
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.loadSaveLogisimHexAsBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.executeINITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.executePLAYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.playToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,11 +83,11 @@
 			this.comboBox2 = new System.Windows.Forms.ComboBox();
 			this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
 			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+			this.button3 = new System.Windows.Forms.Button();
 			this.button1 = new System.Windows.Forms.Button();
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.hexBox1 = new Be.Windows.Forms.HexBox();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-			this.button3 = new System.Windows.Forms.Button();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -164,17 +165,25 @@
 			// debugToolStripMenuItem
 			// 
 			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadSaveLogisimHexAsBinToolStripMenuItem});
+            this.executeINITToolStripMenuItem,
+            this.executePLAYToolStripMenuItem});
 			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
 			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
 			this.debugToolStripMenuItem.Text = "Debug";
 			// 
-			// loadSaveLogisimHexAsBinToolStripMenuItem
+			// executeINITToolStripMenuItem
 			// 
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Name = "loadSaveLogisimHexAsBinToolStripMenuItem";
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Text = "Load->Save Logisim hex as bin";
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Click += new System.EventHandler(this.loadSaveLogisimHexAsBinToolStripMenuItem_Click);
+			this.executeINITToolStripMenuItem.Name = "executeINITToolStripMenuItem";
+			this.executeINITToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.executeINITToolStripMenuItem.Text = "Execute INIT";
+			this.executeINITToolStripMenuItem.Click += new System.EventHandler(this.executeINITToolStripMenuItem_Click);
+			// 
+			// executePLAYToolStripMenuItem
+			// 
+			this.executePLAYToolStripMenuItem.Name = "executePLAYToolStripMenuItem";
+			this.executePLAYToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.executePLAYToolStripMenuItem.Text = "Execute PLAY";
+			this.executePLAYToolStripMenuItem.Click += new System.EventHandler(this.executePLAYToolStripMenuItem_Click);
 			// 
 			// controlsToolStripMenuItem
 			// 
@@ -601,6 +610,16 @@
 			this.splitContainer4.SplitterDistance = 42;
 			this.splitContainer4.TabIndex = 0;
 			// 
+			// button3
+			// 
+			this.button3.Location = new System.Drawing.Point(9, 9);
+			this.button3.Name = "button3";
+			this.button3.Size = new System.Drawing.Size(70, 27);
+			this.button3.TabIndex = 2;
+			this.button3.Text = "Step";
+			this.button3.UseVisualStyleBackColor = true;
+			this.button3.Click += new System.EventHandler(this.button3_Click);
+			// 
 			// button1
 			// 
 			this.button1.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -644,16 +663,6 @@
 			// 
 			this.backgroundWorker1.WorkerSupportsCancellation = true;
 			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-			// 
-			// button3
-			// 
-			this.button3.Location = new System.Drawing.Point(9, 9);
-			this.button3.Name = "button3";
-			this.button3.Size = new System.Drawing.Size(70, 27);
-			this.button3.TabIndex = 2;
-			this.button3.Text = "Step";
-			this.button3.UseVisualStyleBackColor = true;
-			this.button3.Click += new System.EventHandler(this.button3_Click);
 			// 
 			// FormMain
 			// 
@@ -720,7 +729,6 @@
 		private ToolStripMenuItem nSFInfoToolStripMenuItem;
 		private OpenFileDialog openFileDialog1;
 		private ToolStripMenuItem debugToolStripMenuItem;
-		private ToolStripMenuItem loadSaveLogisimHexAsBinToolStripMenuItem;
 		private OpenFileDialog openFileDialogHEX;
 		private SaveFileDialog saveFileDialogBin;
 		private ToolStrip toolStrip1;
@@ -758,5 +766,7 @@
 		private ToolStripSeparator toolStripSeparator4;
 		private ToolStripButton toolStripButton1;
 		private Button button3;
+		private ToolStripMenuItem executeINITToolStripMenuItem;
+		private ToolStripMenuItem executePLAYToolStripMenuItem;
 	}
 }

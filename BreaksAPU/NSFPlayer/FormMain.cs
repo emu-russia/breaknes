@@ -7,6 +7,9 @@ namespace NSFPlayer
 {
 	public partial class FormMain : Form
 	{
+		[DllImport("kernel32")]
+		static extern bool AllocConsole();
+
 		private DSound? audio_backend;
 		private NSFSupport nsf = new();
 		private bool nsf_loaded = false;
@@ -28,6 +31,7 @@ namespace NSFPlayer
 		public FormMain()
 		{
 			InitializeComponent();
+			AllocConsole();
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
@@ -88,6 +92,7 @@ namespace NSFPlayer
 				// Simulate APU
 
 				NSFPlayerInterop.Step();
+				nsf.SyncExec();
 
 				// Add audio sample
 
@@ -146,7 +151,7 @@ namespace NSFPlayer
 			{
 				BreaksCore.SetDebugInfoByName(
 					BreaksCore.DebugInfoType.DebugInfoType_Board, 
-					"NSFPlayer Board", "Bank" + i.ToString(), head.Bankswitch[i]);
+					BreaksCore.BOARD_CATEGORY, "Bank" + i.ToString(), head.Bankswitch[i]);
 			}
 
 			UpdateMemLayout();
@@ -327,21 +332,6 @@ namespace NSFPlayer
 
 		#region "APU Debug"
 
-		private void loadSaveLogisimHexAsBinToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (openFileDialogHEX.ShowDialog() == DialogResult.OK)
-			{
-				string hex_filename = openFileDialogHEX.FileName;
-				byte[] arr = LogisimHEXConv.HEXToByteArray(File.ReadAllText(hex_filename));
-
-				if (saveFileDialogBin.ShowDialog() == DialogResult.OK)
-				{
-					string bin_filename = saveFileDialogBin.FileName;
-					File.WriteAllBytes(bin_filename, arr);
-				}
-			}
-		}
-
 		List<BreaksCore.MemDesciptor> mem = new();
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -477,7 +467,45 @@ namespace NSFPlayer
 			if (Paused && nsf_loaded)
 			{
 				NSFPlayerInterop.Step();
+				TraceCore();
+				nsf.SyncExec();
 				Button2Click();
+			}
+		}
+
+		private void TraceCore()
+		{
+			string text = "";
+			List<BreaksCore.DebugInfoEntry> entries = BreaksCore.GetDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs);
+			foreach (var entry in entries)
+			{
+				text += entry.name + " = " + entry.value.ToString("X2") + "; ";
+			}
+			Console.WriteLine(text);
+		}
+
+		/// <summary>
+		/// Exec INIT.
+		/// </summary>
+		private void executeINITToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (nsf_loaded)
+			{
+				var head = nsf.GetHead();
+				byte? x = (head.PalNtscBits & 2) != 0 ? (byte)(head.PalNtscBits & 1) : null;
+				nsf.ExecuteUntilRTS(head.InitAddress, current_song, x, 0);
+			}
+		}
+
+		/// <summary>
+		/// Exec PLAY
+		/// </summary>
+		private void executePLAYToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (nsf_loaded)
+			{
+				var head = nsf.GetHead();
+				nsf.ExecuteUntilRTS(head.PlayAddress, null, null, null);
 			}
 		}
 
@@ -547,8 +575,8 @@ namespace NSFPlayer
 			}
 		}
 
-		#endregion "What's that for?"
 
+		#endregion "What's that for?"
 
 	}
 }
