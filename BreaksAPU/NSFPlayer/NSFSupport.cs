@@ -51,6 +51,8 @@ namespace NSFPlayer
 		private const byte rts = 0x60;
 		private bool RDY2_Shadow = true;
 
+		private const bool trace = true;
+
 		public NSFHeader GetHead()
 		{
 			return head;
@@ -157,8 +159,8 @@ namespace NSFPlayer
 		/// <param name="reset_apu_also">Also /RES=0 whole APU chip</param>
 		public void ExecuteUntilRTS (UInt16 address, byte? a, byte? x, byte? y, bool reset_apu_also)
 		{
-			//if (IsCoreReady())
-			//	return;
+			if (IsCoreReady())
+				return;
 
 			NSFPlayerInterop.ResetAPU(address, reset_apu_also);
 			// Set the A register for the desired song.
@@ -177,7 +179,9 @@ namespace NSFPlayer
 				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "Y", (byte)y);
 			}
 			CoreReady(true);
-			Console.WriteLine("Exec: 0x" + address.ToString("X4"));
+
+			if (trace)
+				Console.WriteLine("Exec: 0x" + address.ToString("X4"));
 		}
 
 		/// <summary>
@@ -189,7 +193,8 @@ namespace NSFPlayer
 			byte ir = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Core, BreaksCore.CORE_WIRES_CATEGORY, "IR");
 			if (sync && (ir == rts) && RDY2_Shadow)
 			{
-				Console.WriteLine("Synced to RTS");
+				if (trace)
+					Console.WriteLine("Synced to RTS");
 				CoreReady(false);
 			}
 		}
