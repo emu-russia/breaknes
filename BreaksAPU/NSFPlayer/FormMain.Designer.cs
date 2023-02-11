@@ -36,7 +36,8 @@
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.loadSaveLogisimHexAsBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.executeINITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.executePLAYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.playToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,9 +88,6 @@
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.hexBox1 = new Be.Windows.Forms.HexBox();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-			this.executeINITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.executePLAYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -167,20 +165,25 @@
 			// debugToolStripMenuItem
 			// 
 			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadSaveLogisimHexAsBinToolStripMenuItem,
-            this.toolStripSeparator5,
             this.executeINITToolStripMenuItem,
             this.executePLAYToolStripMenuItem});
 			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
 			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
 			this.debugToolStripMenuItem.Text = "Debug";
 			// 
-			// loadSaveLogisimHexAsBinToolStripMenuItem
+			// executeINITToolStripMenuItem
 			// 
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Name = "loadSaveLogisimHexAsBinToolStripMenuItem";
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Text = "Load->Save Logisim hex as bin";
-			this.loadSaveLogisimHexAsBinToolStripMenuItem.Click += new System.EventHandler(this.loadSaveLogisimHexAsBinToolStripMenuItem_Click);
+			this.executeINITToolStripMenuItem.Name = "executeINITToolStripMenuItem";
+			this.executeINITToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.executeINITToolStripMenuItem.Text = "Execute INIT";
+			this.executeINITToolStripMenuItem.Click += new System.EventHandler(this.executeINITToolStripMenuItem_Click);
+			// 
+			// executePLAYToolStripMenuItem
+			// 
+			this.executePLAYToolStripMenuItem.Name = "executePLAYToolStripMenuItem";
+			this.executePLAYToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.executePLAYToolStripMenuItem.Text = "Execute PLAY";
+			this.executePLAYToolStripMenuItem.Click += new System.EventHandler(this.executePLAYToolStripMenuItem_Click);
 			// 
 			// controlsToolStripMenuItem
 			// 
@@ -661,25 +664,6 @@
 			this.backgroundWorker1.WorkerSupportsCancellation = true;
 			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
 			// 
-			// toolStripSeparator5
-			// 
-			this.toolStripSeparator5.Name = "toolStripSeparator5";
-			this.toolStripSeparator5.Size = new System.Drawing.Size(235, 6);
-			// 
-			// executeINITToolStripMenuItem
-			// 
-			this.executeINITToolStripMenuItem.Name = "executeINITToolStripMenuItem";
-			this.executeINITToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
-			this.executeINITToolStripMenuItem.Text = "Execute INIT";
-			this.executeINITToolStripMenuItem.Click += new System.EventHandler(this.executeINITToolStripMenuItem_Click);
-			// 
-			// executePLAYToolStripMenuItem
-			// 
-			this.executePLAYToolStripMenuItem.Name = "executePLAYToolStripMenuItem";
-			this.executePLAYToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
-			this.executePLAYToolStripMenuItem.Text = "Execute PLAY";
-			this.executePLAYToolStripMenuItem.Click += new System.EventHandler(this.executePLAYToolStripMenuItem_Click);
-			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -745,7 +729,6 @@
 		private ToolStripMenuItem nSFInfoToolStripMenuItem;
 		private OpenFileDialog openFileDialog1;
 		private ToolStripMenuItem debugToolStripMenuItem;
-		private ToolStripMenuItem loadSaveLogisimHexAsBinToolStripMenuItem;
 		private OpenFileDialog openFileDialogHEX;
 		private SaveFileDialog saveFileDialogBin;
 		private ToolStrip toolStrip1;
@@ -783,7 +766,6 @@
 		private ToolStripSeparator toolStripSeparator4;
 		private ToolStripButton toolStripButton1;
 		private Button button3;
-		private ToolStripSeparator toolStripSeparator5;
 		private ToolStripMenuItem executeINITToolStripMenuItem;
 		private ToolStripMenuItem executePLAYToolStripMenuItem;
 	}
