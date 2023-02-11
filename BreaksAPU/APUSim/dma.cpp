@@ -75,7 +75,7 @@ namespace APUSim
 
 		TriState NOSPR = nospr_latch.nget();
 
-		StartDMA.set(NOR(W4014, NOR3(NOT(NOSPR), RES, StartDMA.get())));
+		StartDMA.set(NOR3(NOT(NOSPR), RES, NOR(W4014, StartDMA.get())));
 		dospr_latch.set(StartDMA.get(), n_ACLK2);
 		TriState DOSPR = NOR(dospr_latch.get(), NAND(NOT(PHI1), RnW));
 
@@ -83,7 +83,8 @@ namespace APUSim
 		StopDMA.set(NOR3(AND(SPRS, spre_latch.get()), RES, NOR(DOSPR, StopDMA.get())));
 		nospr_latch.set(StopDMA.get(), n_ACLK);
 
-		apu->wire.RDY = NOT(NAND(NOR(NOT(NOSPR), NOT(StartDMA.get())), DMCRDY));
+		TriState sprdma_rdy = NOR(NOT(NOSPR), StartDMA.get());
+		apu->wire.RDY = AND(sprdma_rdy, DMCRDY);
 		apu->wire.SPR_PPU = NOR3(NOSPR, RUNDMC, NOT(DMADirToggle.get()));
 		apu->wire.SPR_CPU = NOR3(NOSPR, RUNDMC, DMADirToggle.get());
 	}
