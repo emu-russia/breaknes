@@ -76,7 +76,7 @@ namespace APUSim
 		TriState NOSPR = nospr_latch.nget();
 
 		StartDMA.set(NOR3(NOT(NOSPR), RES, NOR(W4014, StartDMA.get())));
-		dospr_latch.set(StartDMA.get(), n_ACLK2);
+		dospr_latch.set(StartDMA.nget(), n_ACLK2);
 		TriState DOSPR = NOR(dospr_latch.get(), NAND(NOT(PHI1), RnW));
 
 		SPRS = NOR3(NOSPR, RUNDMC, NOT(n_ACLK2));
