@@ -56,35 +56,41 @@ namespace APUSim
 
 		// Core & stuff
 
-		clkgen->sim();
 		core_int->sim();
-		regs->sim();
-		dma->sim();
 
-		pads->sim_DataBusInput(data);
-		dma->sim_DMA_Buffer();
+		//if (wire.PHI0 != PrevPHI_Others)
+		{
+			clkgen->sim();
+			regs->sim();
+			dma->sim();
 
-		// Sound channels
+			pads->sim_DataBusInput(data);
+			dma->sim_DMA_Buffer();
 
-		wire.SQA_LC = square[0]->get_LC();
-		wire.SQB_LC = square[1]->get_LC();
-		wire.TRI_LC = tri->get_LC();
-		wire.RND_LC = noise->get_LC();
+			// Sound channels
 
-		lc[0]->sim(0, wire.W4003, wire.SQA_LC, wire.NOSQA);
-		lc[1]->sim(1, wire.W4007, wire.SQB_LC, wire.NOSQB);
-		lc[2]->sim(2, wire.W400B, wire.TRI_LC, wire.NOTRI);
-		lc[3]->sim(3, wire.W400F, wire.RND_LC, wire.NORND);
+			wire.SQA_LC = square[0]->get_LC();
+			wire.SQB_LC = square[1]->get_LC();
+			wire.TRI_LC = tri->get_LC();
+			wire.RND_LC = noise->get_LC();
 
-		square[0]->sim(wire.W4000, wire.W4001, wire.W4002, wire.W4003, wire.NOSQA, SQA_Out);
-		square[1]->sim(wire.W4004, wire.W4005, wire.W4006, wire.W4007, wire.NOSQB, SQB_Out);
-		tri->sim();
-		noise->sim();
-		dpcm->sim();
+			lc[0]->sim(0, wire.W4003, wire.SQA_LC, wire.NOSQA);
+			lc[1]->sim(1, wire.W4007, wire.SQB_LC, wire.NOSQB);
+			lc[2]->sim(2, wire.W400B, wire.TRI_LC, wire.NOTRI);
+			lc[3]->sim(3, wire.W400F, wire.RND_LC, wire.NORND);
 
-		regs->sim_DebugRegisters();
+			square[0]->sim(wire.W4000, wire.W4001, wire.W4002, wire.W4003, wire.NOSQA, SQA_Out);
+			square[1]->sim(wire.W4004, wire.W4005, wire.W4006, wire.W4007, wire.NOSQB, SQB_Out);
+			tri->sim();
+			noise->sim();
+			dpcm->sim();
 
-		dma->sim_AddressMux();
+			regs->sim_DebugRegisters();
+
+			dma->sim_AddressMux();
+
+			PrevPHI_Others = wire.PHI0;
+		}
 
 		pads->sim_OutputPads(outputs, addr);
 		pads->sim_DataBusOutput(data);

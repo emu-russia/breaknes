@@ -37,5 +37,8 @@ namespace APUSim
 
 		uint8_t Debug_GetCnt();
 		void Debug_SetCnt(uint8_t value);
+
+		bool Debug_GetEnable();
+		void Debug_SetEnable(bool enable);
 	};
 }

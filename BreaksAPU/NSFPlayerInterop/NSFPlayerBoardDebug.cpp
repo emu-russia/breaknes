@@ -270,6 +270,7 @@ namespace NSFPlayer
 		"DPCMOutput", offsetof(APUSim::APU_Registers, DPCMOutput), 7,
 		"DMABuffer", offsetof(APUSim::APU_Registers, DMABuffer), 8,
 		"DMAAddress", offsetof(APUSim::APU_Registers, DMAAddress), 16,
+		"Status", offsetof(APUSim::APU_Registers, Status), 8,
 	};
 
 	SignalOffsetPair board_signals[] = {

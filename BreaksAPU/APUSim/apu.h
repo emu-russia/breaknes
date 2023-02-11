@@ -247,6 +247,12 @@ namespace APUSim
 
 		size_t aclk_counter = 0;
 
+		BaseLogic::TriState PrevPHI_Core = BaseLogic::TriState::X;	// to optimize
+		BaseLogic::TriState PrevPHI_Others = BaseLogic::TriState::X;	// to optimize
+
+		uint8_t Dbg_GetStatus();
+		void Dbg_SetStatus(uint8_t val);
+
 	public:
 		APU(M6502Core::M6502 *core, Revision rev);
 		~APU();

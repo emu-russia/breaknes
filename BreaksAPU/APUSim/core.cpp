@@ -19,22 +19,27 @@ namespace APUSim
 	{
 		sim_DividerBeforeCore();
 
-		TriState inputs[(size_t)M6502Core::InputPad::Max]{};
-		TriState outputs[(size_t)M6502Core::OutputPad::Max];
+		if (apu->wire.PHI0 != apu->PrevPHI_Core)
+		{
+			TriState inputs[(size_t)M6502Core::InputPad::Max]{};
+			TriState outputs[(size_t)M6502Core::OutputPad::Max];
 
-		inputs[(size_t)M6502Core::InputPad::n_NMI] = apu->wire.n_NMI;
-		inputs[(size_t)M6502Core::InputPad::n_IRQ] = NOR(NOT(apu->wire.n_IRQ), apu->wire.INT);	// #IRQINT
-		inputs[(size_t)M6502Core::InputPad::n_RES] = NOT(apu->wire.RES);
-		inputs[(size_t)M6502Core::InputPad::PHI0] = apu->wire.PHI0;
-		inputs[(size_t)M6502Core::InputPad::RDY] = AND(apu->wire.RDY, apu->wire.RDY2);
-		inputs[(size_t)M6502Core::InputPad::SO] = TriState::One;
+			inputs[(size_t)M6502Core::InputPad::n_NMI] = apu->wire.n_NMI;
+			inputs[(size_t)M6502Core::InputPad::n_IRQ] = NOR(NOT(apu->wire.n_IRQ), apu->wire.INT);	// #IRQINT
+			inputs[(size_t)M6502Core::InputPad::n_RES] = NOT(apu->wire.RES);
+			inputs[(size_t)M6502Core::InputPad::PHI0] = apu->wire.PHI0;
+			inputs[(size_t)M6502Core::InputPad::RDY] = AND(apu->wire.RDY, apu->wire.RDY2);
+			inputs[(size_t)M6502Core::InputPad::SO] = TriState::One;
 
-		apu->core->sim(inputs, outputs, &apu->CPU_Addr, &apu->DB);
+			apu->core->sim(inputs, outputs, &apu->CPU_Addr, &apu->DB);
 
-		apu->wire.PHI1 = outputs[(size_t)M6502Core::OutputPad::PHI1];
-		apu->wire.PHI2 = outputs[(size_t)M6502Core::OutputPad::PHI2];
-		apu->wire.RnW = outputs[(size_t)M6502Core::OutputPad::RnW];
-		apu->wire.SYNC = outputs[(size_t)M6502Core::OutputPad::SYNC];
+			apu->wire.PHI1 = outputs[(size_t)M6502Core::OutputPad::PHI1];
+			apu->wire.PHI2 = outputs[(size_t)M6502Core::OutputPad::PHI2];
+			apu->wire.RnW = outputs[(size_t)M6502Core::OutputPad::RnW];
+			apu->wire.SYNC = outputs[(size_t)M6502Core::OutputPad::SYNC];
+
+			apu->PrevPHI_Core = apu->wire.PHI0;
+		}
 
 		sim_DividerAfterCore();
 	}

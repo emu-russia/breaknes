@@ -154,6 +154,8 @@ namespace NSFPlayer
 					BreaksCore.BOARD_CATEGORY, "Bank" + i.ToString(), head.Bankswitch[i]);
 			}
 
+			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_APURegs, BreaksCore.APU_REGS_CATEGORY, "Status", 0xf);
+
 			UpdateMemLayout();
 
 			// Autoplay

@@ -115,6 +115,7 @@ namespace APUSim
 		uint32_t DPCMOutput;		// 7, counter + lsb
 		uint32_t DMABuffer;			// 8
 		uint32_t DMAAddress;		// 16, counter + register
+		uint32_t Status;			// 8
 	};
 #pragma pack(pop)
 }

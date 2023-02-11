@@ -131,6 +131,8 @@ namespace APUSim
 
 		regs.DMABuffer = dma->Get_DMABuffer();
 		regs.DMAAddress = dma->Get_DMAAddress();
+
+		regs.Status = Dbg_GetStatus();
 	}
 
 	uint8_t APU::GetDebugInfo_Wire(int ofs)
@@ -333,6 +335,7 @@ namespace APUSim
 			case offsetof(APU_Registers, DPCMOutput): return dpcm->Get_Output();
 			case offsetof(APU_Registers, DMABuffer): return dma->Get_DMABuffer();
 			case offsetof(APU_Registers, DMAAddress): return dma->Get_DMAAddress();
+			case offsetof(APU_Registers, Status): return Dbg_GetStatus();
 
 			default:
 				break;
@@ -389,9 +392,32 @@ namespace APUSim
 			case offsetof(APU_Registers, DPCMOutput): dpcm->Set_Output(val); break;
 			case offsetof(APU_Registers, DMABuffer): dma->Set_DMABuffer(val); break;
 			case offsetof(APU_Registers, DMAAddress): dma->Set_DMAAddress(val); break;
+			case offsetof(APU_Registers, Status): Dbg_SetStatus((uint8_t)val); break;
 
 			default:
 				break;
 		}
+	}
+
+	uint8_t APU::Dbg_GetStatus()
+	{
+		uint8_t val = 0;
+
+		val |= (lc[0]->Debug_GetEnable() << 0);
+		val |= (lc[1]->Debug_GetEnable() << 1);
+		val |= (lc[2]->Debug_GetEnable() << 2);
+		val |= (lc[3]->Debug_GetEnable() << 3);
+		val |= (dpcm->GetDpcmEnable() << 4);
+
+		return val;
+	}
+
+	void APU::Dbg_SetStatus(uint8_t val)
+	{
+		lc[0]->Debug_SetEnable(((val >> 0) & 1) != 0);
+		lc[1]->Debug_SetEnable(((val >> 1) & 1) != 0);
+		lc[2]->Debug_SetEnable(((val >> 2) & 1) != 0);
+		lc[3]->Debug_SetEnable(((val >> 3) & 1) != 0);
+		dpcm->SetDpcmEnable(((val >> 4) & 1) != 0);
 	}
 }

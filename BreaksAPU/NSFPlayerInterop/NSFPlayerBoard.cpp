@@ -153,7 +153,7 @@ namespace NSFPlayer
 		resetHalfClkCounter = 32;
 
 		fakingReset = true;
-		fakeResetHalfClkCounter = 64;
+		fakeResetHalfClkCounter = 256;
 
 		sram->EnableFakeResetVector(true);
 		sram->SetFakeResetVector(addr);

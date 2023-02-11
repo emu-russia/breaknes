@@ -608,5 +608,15 @@ namespace APUSim
 		}
 	}
 
+	bool DpcmChan::GetDpcmEnable()
+	{
+		return ena_ff.get() == TriState::One;
+	}
+
+	void DpcmChan::SetDpcmEnable(bool enable)
+	{
+		ena_ff.set(enable ? TriState::One : TriState::Zero);
+	}
+
 #pragma endregion "Debug"
 }
