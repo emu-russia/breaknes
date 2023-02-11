@@ -74,7 +74,7 @@ namespace NSFPlayer
 
 		inputs[(size_t)APUSim::APU_Input::n_NMI] = TriState::One;
 		inputs[(size_t)APUSim::APU_Input::n_IRQ] = TriState::One;
-		inputs[(size_t)APUSim::APU_Input::n_RES] = TriState::One;
+		inputs[(size_t)APUSim::APU_Input::n_RES] = (pendingReset && reset_apu_also) ? TriState::Zero : TriState::One;
 		inputs[(size_t)APUSim::APU_Input::DBG] = TriState::Zero;
 
 		apu->sim(inputs, outputs, &data_bus, &addr_bus, aux);
@@ -112,16 +112,6 @@ namespace NSFPlayer
 				apu->ResetCore(false);
 			}
 		}
-
-		if (fakingReset)
-		{
-			fakeResetHalfClkCounter--;
-			if (fakeResetHalfClkCounter == 0)
-			{
-				fakingReset = false;
-				sram->EnableFakeResetVector(false);
-			}
-		}
 	}
 
 	/// <summary>
@@ -148,17 +138,13 @@ namespace NSFPlayer
 	/// <summary>
 	/// Make the APU /RES pin = 0 for a few CLK half cycles so that the APU resets all of its internal circuits.
 	/// </summary>
-	void Board::ResetAPU(uint16_t addr)
+	void Board::ResetAPU(uint16_t addr, bool reset_apu_also)
 	{
 		pendingReset = true;
 		resetHalfClkCounter = 32;
+		this->reset_apu_also = reset_apu_also;
 
 		apu->ResetCore(true);
-
-		fakingReset = true;
-		fakeResetHalfClkCounter = 256;
-
-		sram->EnableFakeResetVector(true);
 		sram->SetFakeResetVector(addr);
 	}
 

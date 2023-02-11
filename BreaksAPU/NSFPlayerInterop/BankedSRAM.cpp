@@ -27,16 +27,22 @@ namespace NSFPlayer
 
 		//printf("NSF Data access: 0x%04X, read: %d\n", addr, RnW == TriState::One ? 1 : 0);
 
-		if (faking_reset)
+		if (faking_reset_fc)
 		{
 			if (addr == 0xfffc && RnW == TriState::One)
 			{
 				*data = (uint8_t)fake_reset;
+				faking_reset_fc = false;
 				return;
 			}
-			else if (addr == 0xfffd && RnW == TriState::One)
+		}
+
+		if (faking_reset_fd)
+		{
+			if (addr == 0xfffd && RnW == TriState::One)
 			{
 				*data = (uint8_t)(fake_reset >> 8);
+				faking_reset_fd = false;
 				return;
 			}
 		}
@@ -162,13 +168,10 @@ namespace NSFPlayer
 		return ((((size_t)(size)) + page_size - 1) & (~(page_size - 1)));
 	}
 
-	void BankedSRAM::EnableFakeResetVector(bool enable)
-	{
-		faking_reset = enable;
-	}
-
 	void BankedSRAM::SetFakeResetVector(uint16_t addr)
 	{
 		fake_reset = addr;
+		faking_reset_fc = true;
+		faking_reset_fd = true;
 	}
 }

@@ -145,5 +145,6 @@ namespace APUSim
 		size_t div = 12;
 
 		features.SampleRate = clk / div;
+		features.AclkPerSecond = features.SampleRate / 2;		// ACLK = PHI / 2. Specific ACLK duty cycle does not play a significant role in sample playback
 	}
 }

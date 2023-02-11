@@ -20,7 +20,7 @@ namespace NSFPlayer
 		public static extern void Step();
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void ResetAPU(UInt16 addr);
+		public static extern void ResetAPU(UInt16 addr, bool reset_apu_also);
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern bool APUInResetState();
@@ -43,12 +43,14 @@ namespace NSFPlayer
 			[FieldOffset(0)]
 			public int SampleRate;      // The sampling frequency of the audio signal (samples per "virtual" second). The audio is actually sampled every PHI (core clock) cycle.
 			[FieldOffset(4)]
-			public float AUXA_LowLevel;		// Lower signal level for AUX_A (mV)
+			public int AclkPerSecond;   // Number of ACLKs per virtual second. Can be used by NSFPlayer to get frequency of PLAY = AclkPerSecond / period
 			[FieldOffset(8)]
-			public float AUXA_HighLevel;	// Upper signal level for AUX_A (mV)
+			public float AUXA_LowLevel;		// Lower signal level for AUX_A (mV)
 			[FieldOffset(12)]
-			public float AUXB_LowLevel;		// Lower signal level for AUX_B (mV)
+			public float AUXA_HighLevel;	// Upper signal level for AUX_A (mV)
 			[FieldOffset(16)]
+			public float AUXB_LowLevel;		// Lower signal level for AUX_B (mV)
+			[FieldOffset(20)]
 			public float AUXB_HighLevel;    // Upper signal level for AUX_B (mV)
 		}
 

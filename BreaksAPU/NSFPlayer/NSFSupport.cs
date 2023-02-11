@@ -129,15 +129,38 @@ namespace NSFPlayer
 		}
 
 		/// <summary>
+		/// Return the period for calling the PLAY procedure.
+		/// </summary>
+		/// <param name="PreferPal">If the NSF header specifies that you can use hybrid PAL/NTSC - specify explicitly that we want PAL</param>
+		/// <returns></returns>
+		public int GetPeriod(bool PreferPal)
+		{
+			bool pal;
+			if ((head.PalNtscBits & 2) != 0)
+			{
+				pal = PreferPal;
+			}
+			else
+			{
+				pal = (head.PalNtscBits & 1) != 0;
+			}
+			return (pal ? head.PlaySpeedPal : head.PlaySpeedNtsc) / 100;
+		}
+
+		/// <summary>
 		/// Start the 6502 core to execute from the specified address, prior to RTS instruction.
 		/// </summary>
 		/// <param name="address">PC address</param>
 		/// <param name="a">A register value (optional)</param>
 		/// <param name="x">X register value (optional)</param>
 		/// <param name="y">Y register value (optional)</param>
-		public void ExecuteUntilRTS (UInt16 address, byte? a, byte? x, byte? y)
+		/// <param name="reset_apu_also">Also /RES=0 whole APU chip</param>
+		public void ExecuteUntilRTS (UInt16 address, byte? a, byte? x, byte? y, bool reset_apu_also)
 		{
-			NSFPlayerInterop.ResetAPU(address);
+			//if (IsCoreReady())
+			//	return;
+
+			NSFPlayerInterop.ResetAPU(address, reset_apu_also);
 			// Set the A register for the desired song.
 			if (a != null)
 			{

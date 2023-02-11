@@ -34,6 +34,8 @@ namespace NSFPlayer
 		private NSFPlayerInterop.AudioSignalFeatures aux_features;
 		private int DecimateEach = 1;
 		private int DecimateCounter = 0;
+		private int AclkToPlay = 0;
+		private bool PreferPal = false;
 
 		public FormMain()
 		{
@@ -56,7 +58,7 @@ namespace NSFPlayer
 
 			backgroundWorker1.RunWorkerAsync();
 
-			signalPlot1.ForceMinMax(true, -0.5f, +1.2f);
+			signalPlot1.ForceMinMax(true, -0.2f, +1.0f);
 		}
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -71,6 +73,7 @@ namespace NSFPlayer
 			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
 			SourceSampleRate = settings.OutputSampleRate;
 			FurryIntensity = settings.FurryIntensity;
+			PreferPal = settings.PreferPal;
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -118,6 +121,13 @@ namespace NSFPlayer
 					InitRequired = false;
 				}
 
+				int aclk = NSFPlayerInterop.GetACLKCounter();
+				if (aclk >= AclkToPlay)
+				{
+					ExecPLAY();
+					AclkToPlay = aclk + aux_features.AclkPerSecond / nsf.GetPeriod(PreferPal);
+				}
+
 				// Show statistics that are updated once every 1 second.
 
 				StepsCounter++;
@@ -152,6 +162,7 @@ namespace NSFPlayer
 			NSFPlayerInterop.CreateBoard("NSFPlayer", settings.APU_Revision, "None", "None");
 
 			FurryIntensity = settings.FurryIntensity;
+			PreferPal = settings.PreferPal;
 
 			// Setup NSF
 
@@ -301,8 +312,8 @@ namespace NSFPlayer
 			if (nsf_loaded)
 			{
 				var head = nsf.GetHead();
-				byte? x = (head.PalNtscBits & 2) != 0 ? (byte)(head.PalNtscBits & 1) : null;
-				nsf.ExecuteUntilRTS(head.InitAddress, current_song, x, 0);
+				byte? x = (head.PalNtscBits & 2) == 0 ? (byte)(head.PalNtscBits & 1) : null;
+				nsf.ExecuteUntilRTS(head.InitAddress, current_song, x, 0, true);
 			}
 		}
 
@@ -311,7 +322,7 @@ namespace NSFPlayer
 			if (nsf_loaded)
 			{
 				var head = nsf.GetHead();
-				nsf.ExecuteUntilRTS(head.PlayAddress, null, null, null);
+				nsf.ExecuteUntilRTS(head.PlayAddress, null, null, null, false);
 			}
 		}
 
