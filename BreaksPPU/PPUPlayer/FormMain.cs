@@ -346,6 +346,9 @@ namespace PPUPlayer
 			public byte value;
 		}
 
+		private int StepsToStat = 32;
+		private int StepsCounter = 0;
+
 		private void backgroundWorker1_DoWork_1(object sender, DoWorkEventArgs e)
 		{
 			while (!backgroundWorker1.CancellationPending)
@@ -457,19 +460,24 @@ namespace PPUPlayer
 
 				// Show statistics that are updated once every 1 second.
 
-				long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-				if (now > (timeStamp + 1000))
+				StepsCounter++;
+				if (StepsCounter >= StepsToStat)
 				{
-					timeStamp = now;
+					long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+					if (now > (timeStamp + 1000))
+					{
+						timeStamp = now;
 
-					UpdatePpuStats(PPUStats.PCLK_Sec, PPUPlayerInterop.GetPCLKCounter() - pclkCounter);
-					UpdatePpuStats(PPUStats.FPS, fieldCounter);
+						UpdatePpuStats(PPUStats.PCLK_Sec, PPUPlayerInterop.GetPCLKCounter() - pclkCounter);
+						UpdatePpuStats(PPUStats.FPS, fieldCounter);
 
-					UpdatePpuStats(PPUStats.Scans, scanCounter);
-					UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
+						UpdatePpuStats(PPUStats.Scans, scanCounter);
+						UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
 
-					pclkCounter = PPUPlayerInterop.GetPCLKCounter();
-					fieldCounter = 0;
+						pclkCounter = PPUPlayerInterop.GetPCLKCounter();
+						fieldCounter = 0;
+					}
+					StepsCounter = 0;
 				}
 			}
 

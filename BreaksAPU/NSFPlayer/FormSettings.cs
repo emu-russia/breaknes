@@ -62,6 +62,7 @@ namespace NSFPlayer
 			settings.APU_Revision = "RP2A03G";
 			settings.OutputSampleRate = 48000;
 			settings.AutoPlay = true;
+			settings.FurryIntensity = 500.0f;
 
 			SaveSettings(settings);
 
@@ -105,6 +106,11 @@ namespace NSFPlayer
 			[Category("Host Features")]
 			[Description("Automatically start the simulation after loading the NSF")]
 			public bool AutoPlay { get; set; }
+			
+			[XmlElement]
+			[Category("Host Features")]
+			[Description("Amplification for FFT")]
+			public float FurryIntensity { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid

@@ -138,14 +138,17 @@ namespace NSFPlayer
 		public void ExecuteUntilRTS (UInt16 address, byte? a, byte? x, byte? y)
 		{
 			NSFPlayerInterop.ResetAPU(address);
+			// Set the A register for the desired song.
 			if (a != null)
 			{
 				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "A", (byte)a);
 			}
+			// Set the X register for PAL(1) or NTSC(0).
 			if (x != null)
 			{
 				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "X", (byte)x);
 			}
+			// While the NSF1 specification never guaranteed anything for Y on entry to INIT, for better forward compatibility with NSF2's non-returning INIT feature, it is recommended that the player set Y to 0
 			if (y != null)
 			{
 				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "Y", (byte)y);
@@ -176,6 +179,15 @@ namespace NSFPlayer
 		{
 			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_APU, BreaksCore.APU_WIRES_CATEGORY, "RDY2", (UInt32)(ready ? 1 : 0));
 			RDY2_Shadow = ready;
+		}
+
+		/// <summary>
+		/// Used to check that the NSF procedure has finished its execution and the 6502 core is resting.
+		/// </summary>
+		/// <returns></returns>
+		public bool IsCoreReady()
+		{
+			return RDY2_Shadow;
 		}
 	}
 }
