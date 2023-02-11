@@ -21,7 +21,7 @@ namespace NSFPlayer
 
 		// Stats
 		private long timeStamp;
-		private int aclkCounter = 0;
+		private long aclkCounter = 0;
 
 		private int SourceSampleRate = 48000;
 		private List<float> SampleBuf = new();
@@ -34,7 +34,7 @@ namespace NSFPlayer
 		private NSFPlayerInterop.AudioSignalFeatures aux_features;
 		private int DecimateEach = 1;
 		private int DecimateCounter = 0;
-		private int AclkToPlay = 0;
+		private long AclkToPlay = 0;
 		private bool PreferPal = false;
 
 		public FormMain()
@@ -115,17 +115,20 @@ namespace NSFPlayer
 
 				// NSF Runtime logic
 
-				if (InitRequired)
+				if (false)
 				{
-					ExecINIT();
-					InitRequired = false;
-				}
+					var aclk = NSFPlayerInterop.GetACLKCounter();
+					if (aclk >= AclkToPlay)
+					{
+						ExecPLAY();
+						AclkToPlay = aclk + aux_features.AclkPerSecond / nsf.GetPeriod(PreferPal);
+					}
 
-				int aclk = NSFPlayerInterop.GetACLKCounter();
-				if (aclk >= AclkToPlay)
-				{
-					ExecPLAY();
-					AclkToPlay = aclk + aux_features.AclkPerSecond / nsf.GetPeriod(PreferPal);
+					if (InitRequired)
+					{
+						ExecINIT();
+						InitRequired = false;
+					}
 				}
 
 				// Show statistics that are updated once every 1 second.
@@ -141,7 +144,7 @@ namespace NSFPlayer
 						UpdateSampleBufStats();
 						UpdateSignalPlot();
 
-						int aclk_per_sec = NSFPlayerInterop.GetACLKCounter() - aclkCounter;
+						var aclk_per_sec = NSFPlayerInterop.GetACLKCounter() - aclkCounter;
 						toolStripStatusLabelACLK.Text = aclk_per_sec.ToString();
 
 						aclkCounter = NSFPlayerInterop.GetACLKCounter();

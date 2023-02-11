@@ -26,7 +26,7 @@ namespace NSFPlayer
 		public static extern bool APUInResetState();
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int GetACLKCounter();
+		public static extern long GetACLKCounter();
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SampleAudioSignal(out float sample);

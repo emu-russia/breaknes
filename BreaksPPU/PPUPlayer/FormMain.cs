@@ -38,7 +38,7 @@ namespace PPUPlayer
 		bool PromptWhenFinished = true;
 
 		long timeStamp;
-		int pclkCounter;
+		long pclkCounter;
 		int scanCounter;
 		int fieldCounter;
 		int fieldCounterPersistent;
@@ -340,7 +340,7 @@ namespace PPUPlayer
 
 		public class PPULogEntry
 		{
-			public int pclk;
+			public long pclk;
 			public bool write;
 			public byte reg;
 			public byte value;
@@ -468,7 +468,7 @@ namespace PPUPlayer
 					{
 						timeStamp = now;
 
-						UpdatePpuStats(PPUStats.PCLK_Sec, PPUPlayerInterop.GetPCLKCounter() - pclkCounter);
+						UpdatePpuStats(PPUStats.PCLK_Sec, (int)(PPUPlayerInterop.GetPCLKCounter() - pclkCounter));
 						UpdatePpuStats(PPUStats.FPS, fieldCounter);
 
 						UpdatePpuStats(PPUStats.Scans, scanCounter);

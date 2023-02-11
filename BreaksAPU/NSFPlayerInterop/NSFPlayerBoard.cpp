@@ -141,7 +141,7 @@ namespace NSFPlayer
 	void Board::ResetAPU(uint16_t addr, bool reset_apu_also)
 	{
 		pendingReset = true;
-		resetHalfClkCounter = 32;
+		resetHalfClkCounter = 16;
 		this->reset_apu_also = reset_apu_also;
 
 		apu->ResetCore(true);
