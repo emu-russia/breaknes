@@ -160,6 +160,8 @@ namespace M6502Core
 		uint8_t N_OUT;
 		uint8_t PCH;
 		uint8_t PCL;
+		uint8_t PCHS;
+		uint8_t PCLS;
 	};
 #pragma pack(pop)
 }

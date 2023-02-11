@@ -17,7 +17,7 @@ Builds for Linux will be available as soon as everything settles down.
 - 6502 Core: 100%
 - APU: 100%
 - PPU: 100%
-- Boards: 3/5
+- Boards: 3/6
 - Mappers: 0.5 (Only NROM partially)
 
 The values reflect mostly a subjective feeling about reaching a critical mass of code. Bugs and improvements can be made ad infinitum.

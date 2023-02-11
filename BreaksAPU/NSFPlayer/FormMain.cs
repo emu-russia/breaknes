@@ -88,6 +88,7 @@ namespace NSFPlayer
 				// Simulate APU
 
 				NSFPlayerInterop.Step();
+				nsf.SyncExec();
 
 				// Add audio sample
 
@@ -146,7 +147,7 @@ namespace NSFPlayer
 			{
 				BreaksCore.SetDebugInfoByName(
 					BreaksCore.DebugInfoType.DebugInfoType_Board, 
-					"NSFPlayer Board", "Bank" + i.ToString(), head.Bankswitch[i]);
+					BreaksCore.BOARD_CATEGORY, "Bank" + i.ToString(), head.Bankswitch[i]);
 			}
 
 			UpdateMemLayout();
@@ -477,7 +478,27 @@ namespace NSFPlayer
 			if (Paused && nsf_loaded)
 			{
 				NSFPlayerInterop.Step();
+				nsf.SyncExec();
 				Button2Click();
+			}
+		}
+
+		private void executeINITToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (nsf_loaded)
+			{
+				var head = nsf.GetHead();
+				byte? x = (head.PalNtscBits & 2) != 0 ? (byte)(head.PalNtscBits & 1) : null;
+				nsf.ExecuteUntilRTS(head.InitAddress, current_song, x, 0);
+			}
+		}
+
+		private void executePLAYToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (nsf_loaded)
+			{
+				var head = nsf.GetHead();
+				nsf.ExecuteUntilRTS(head.PlayAddress, null, null, null);
 			}
 		}
 
@@ -547,8 +568,8 @@ namespace NSFPlayer
 			}
 		}
 
-		#endregion "What's that for?"
 
+		#endregion "What's that for?"
 
 	}
 }

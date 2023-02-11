@@ -25,6 +25,8 @@ namespace APUSim
 		dma = new DMA(this);
 		pads = new Pads(this);
 		dac = new DAC(this);
+
+		wire.RDY2 = TriState::One;
 	}
 
 	APU::~APU()

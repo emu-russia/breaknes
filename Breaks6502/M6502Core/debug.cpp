@@ -154,6 +154,8 @@ namespace M6502Core
 		userRegs->A = alu->getAC();
 		userRegs->PCL = pc->getPCL();
 		userRegs->PCH = pc->getPCH();
+		userRegs->PCLS = pc->getPCLS();
+		userRegs->PCHS = pc->getPCHS();
 
 		userRegs->C_OUT = ToByte(NOT(random->flags->getn_C_OUT()));
 		userRegs->Z_OUT = ToByte(NOT(random->flags->getn_Z_OUT()));
@@ -439,6 +441,8 @@ namespace M6502Core
 			case offsetof(UserRegs, A): return alu->getAC();
 			case offsetof(UserRegs, PCL): return pc->getPCL();
 			case offsetof(UserRegs, PCH): return pc->getPCH();
+			case offsetof(UserRegs, PCLS): return pc->getPCLS();
+			case offsetof(UserRegs, PCHS): return pc->getPCHS();
 
 			case offsetof(UserRegs, C_OUT): return ToByte(NOT(random->flags->getn_C_OUT()));
 			case offsetof(UserRegs, Z_OUT): return ToByte(NOT(random->flags->getn_Z_OUT()));
@@ -462,6 +466,8 @@ namespace M6502Core
 			case offsetof(UserRegs, A): alu->setAC(val); break;
 			case offsetof(UserRegs, PCL): pc->setPCL(val); break;
 			case offsetof(UserRegs, PCH): pc->setPCH(val); break;
+			case offsetof(UserRegs, PCLS): pc->setPCLS(val); break;
+			case offsetof(UserRegs, PCHS): pc->setPCHS(val); break;
 
 			case offsetof(UserRegs, C_OUT): random->flags->set_C_OUT(FromByte(val)); break;
 			case offsetof(UserRegs, Z_OUT): random->flags->set_Z_OUT(FromByte(val)); break;

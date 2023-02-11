@@ -26,7 +26,7 @@ namespace APUSim
 		inputs[(size_t)M6502Core::InputPad::n_IRQ] = NOR(NOT(apu->wire.n_IRQ), apu->wire.INT);	// #IRQINT
 		inputs[(size_t)M6502Core::InputPad::n_RES] = NOT(apu->wire.RES);
 		inputs[(size_t)M6502Core::InputPad::PHI0] = apu->wire.PHI0;
-		inputs[(size_t)M6502Core::InputPad::RDY] = apu->wire.RDY;
+		inputs[(size_t)M6502Core::InputPad::RDY] = AND(apu->wire.RDY, apu->wire.RDY2);
 		inputs[(size_t)M6502Core::InputPad::SO] = TriState::One;
 
 		apu->core->sim(inputs, outputs, &apu->CPU_Addr, &apu->DB);
@@ -34,6 +34,7 @@ namespace APUSim
 		apu->wire.PHI1 = outputs[(size_t)M6502Core::OutputPad::PHI1];
 		apu->wire.PHI2 = outputs[(size_t)M6502Core::OutputPad::PHI2];
 		apu->wire.RnW = outputs[(size_t)M6502Core::OutputPad::RnW];
+		apu->wire.SYNC = outputs[(size_t)M6502Core::OutputPad::SYNC];
 
 		sim_DividerAfterCore();
 	}

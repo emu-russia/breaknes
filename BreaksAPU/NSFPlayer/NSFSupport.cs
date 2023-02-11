@@ -48,6 +48,9 @@ namespace NSFPlayer
 		private byte[] nsf_data = Array.Empty<byte>();
 		private const int data_offset = 0x80;       // The music program/data follows
 
+		private const byte rts = 0x60;
+		private bool RDY2_Shadow = true;
+
 		public NSFHeader GetHead()
 		{
 			return head;
@@ -124,6 +127,53 @@ namespace NSFPlayer
 			}
 		}
 
+		/// <summary>
+		/// Start the 6502 core to execute from the specified address, prior to RTS instruction.
+		/// </summary>
+		/// <param name="address">PC address</param>
+		/// <param name="a">A register value (optional)</param>
+		/// <param name="x">X register value (optional)</param>
+		/// <param name="y">Y register value (optional)</param>
+		public void ExecuteUntilRTS (UInt16 address, byte? a, byte? x, byte? y)
+		{
+			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "PCHS", (byte)(address >> 8));
+			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "PCLS", (byte)address);
+			if (a != null)
+			{
+				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "A", (byte)a);
+			}
+			if (x != null)
+			{
+				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "X", (byte)x);
+			}
+			if (y != null)
+			{
+				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "Y", (byte)y);
+			}
+			CoreReady(true);
+		}
 
+		/// <summary>
+		/// Check that 6502 is executed prior to the RTS instruction.
+		/// </summary>
+		public void SyncExec ()
+		{
+			bool sync = BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "SYNC") != 0;
+			byte ir = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Core, BreaksCore.CORE_WIRES_CATEGORY, "IR");
+			if (sync && (ir == rts) && RDY2_Shadow)
+			{
+				CoreReady(false);
+			}
+		}
+
+		/// <summary>
+		/// The debug signal `RDY2`, which is present in all APU revisions, is used to start and stop.
+		/// </summary>
+		/// <param name="ready"></param>
+		private void CoreReady (bool ready)
+		{
+			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_APU, BreaksCore.APU_WIRES_CATEGORY, "RDY2", (UInt32)(ready ? 1 : 0));
+			RDY2_Shadow = ready;
+		}
 	}
 }

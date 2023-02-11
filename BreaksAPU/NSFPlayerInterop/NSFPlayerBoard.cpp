@@ -74,6 +74,8 @@ namespace NSFPlayer
 
 		apu->sim(inputs, outputs, &data_bus, &addr_bus, aux);
 
+		SYNC = outputs[(size_t)APUSim::APU_Output::SYNC];
+
 		TriState RnW = outputs[(size_t)APUSim::APU_Output::RnW];
 		TriState M2 = outputs[(size_t)APUSim::APU_Output::M2];		// There doesn't seem to be any use for it...
 
@@ -144,7 +146,7 @@ namespace NSFPlayer
 	}
 
 	/// <summary>
-	/// The parent application can check that the APU is in the reset process and ignore the video signal for that time.
+	/// The parent application can check that the APU is in the reset process and ignore the audio signal for that time.
 	/// </summary>
 	/// <returns></returns>
 	bool Board::APUInResetState()
