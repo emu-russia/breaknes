@@ -146,7 +146,7 @@ namespace NSFPlayer
 			{
 				pal = (head.PalNtscBits & 1) != 0;
 			}
-			return (pal ? head.PlaySpeedPal : head.PlaySpeedNtsc) / 100;
+			return pal ? head.PlaySpeedPal : head.PlaySpeedNtsc;
 		}
 
 		/// <summary>
@@ -159,9 +159,6 @@ namespace NSFPlayer
 		/// <param name="reset_apu_also">Also /RES=0 whole APU chip</param>
 		public void ExecuteUntilRTS (UInt16 address, byte? a, byte? x, byte? y, bool reset_apu_also)
 		{
-			if (IsCoreReady())
-				return;
-
 			NSFPlayerInterop.ResetAPU(address, reset_apu_also);
 			// Set the A register for the desired song.
 			if (a != null)

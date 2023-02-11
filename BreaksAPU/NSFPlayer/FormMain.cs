@@ -115,13 +115,13 @@ namespace NSFPlayer
 
 				// NSF Runtime logic
 
-				if (false)
+				if (true)
 				{
 					var aclk = NSFPlayerInterop.GetACLKCounter();
 					if (aclk >= AclkToPlay)
 					{
 						ExecPLAY();
-						AclkToPlay = aclk + aux_features.AclkPerSecond / nsf.GetPeriod(PreferPal);
+						AclkToPlay = aclk + (aux_features.AclkPerSecond * nsf.GetPeriod(PreferPal)) / 1000000;
 					}
 
 					if (InitRequired)
@@ -156,6 +156,8 @@ namespace NSFPlayer
 
 		private void InitBoard(string nsf_filename)
 		{
+			AclkToPlay = 0;
+
 			byte[] data = File.ReadAllBytes(nsf_filename);
 			nsf.LoadNSF(data);
 			nsf_loaded = true;
@@ -316,7 +318,7 @@ namespace NSFPlayer
 			{
 				var head = nsf.GetHead();
 				byte? x = (head.PalNtscBits & 2) == 0 ? (byte)(head.PalNtscBits & 1) : null;
-				nsf.ExecuteUntilRTS(head.InitAddress, current_song, x, 0, true);
+				nsf.ExecuteUntilRTS(head.InitAddress, current_song, x, 0, false);
 			}
 		}
 
@@ -325,6 +327,8 @@ namespace NSFPlayer
 			if (nsf_loaded)
 			{
 				var head = nsf.GetHead();
+				if (nsf.IsCoreReady())
+					return;
 				nsf.ExecuteUntilRTS(head.PlayAddress, null, null, null, false);
 			}
 		}

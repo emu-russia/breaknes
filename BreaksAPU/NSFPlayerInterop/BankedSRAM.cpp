@@ -32,7 +32,7 @@ namespace NSFPlayer
 			if (addr == 0xfffc && RnW == TriState::One)
 			{
 				*data = (uint8_t)fake_reset;
-				faking_reset_fc = false;
+				//faking_reset_fc = false;
 				return;
 			}
 		}
@@ -42,7 +42,7 @@ namespace NSFPlayer
 			if (addr == 0xfffd && RnW == TriState::One)
 			{
 				*data = (uint8_t)(fake_reset >> 8);
-				faking_reset_fd = false;
+				//faking_reset_fd = false;
 				return;
 			}
 		}
