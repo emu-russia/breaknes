@@ -16,6 +16,7 @@ namespace APUSim
 		uint8_t ACLK;
 		uint8_t n_ACLK;
 		uint8_t RES;
+		uint8_t RESCore;
 		uint8_t n_M2;
 		uint8_t n_NMI;
 		uint8_t n_IRQ;
@@ -115,6 +116,7 @@ namespace APUSim
 		uint32_t DPCMOutput;		// 7, counter + lsb
 		uint32_t DMABuffer;			// 8
 		uint32_t DMAAddress;		// 16, counter + register
+		uint32_t Status;			// 8
 	};
 #pragma pack(pop)
 }

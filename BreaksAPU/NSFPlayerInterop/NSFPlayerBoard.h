@@ -8,8 +8,10 @@ namespace NSFPlayer
 	{
 		uint32_t CLK;
 		uint32_t bank_reg[8];
-		uint32_t load_addr;
 		uint32_t sync;			// Core SYNC
+		uint32_t ABus;		// Board address bus
+		uint32_t DBus;		// Board data bus
+		uint32_t ResetPending;
 	};
 
 	class Board
@@ -17,7 +19,6 @@ namespace NSFPlayer
 		APUSim::APU* apu = nullptr;
 		M6502Core::M6502* core = nullptr;
 		BankedSRAM* sram = nullptr;
-		uint16_t sram_load_addr = 0;
 		BaseBoard::SRAM* wram = nullptr;
 		const size_t wram_bits = 11;
 		const size_t wram_size = 1ULL << wram_bits;
@@ -29,7 +30,9 @@ namespace NSFPlayer
 		uint16_t addr_bus = 0;
 
 		bool pendingReset = false;
+		bool fakingReset = false;
 		int resetHalfClkCounter = 0;
+		int fakeResetHalfClkCounter = 0;
 
 		static uint8_t DumpSRAM(void* opaque, size_t addr);
 		static void WriteSRAM(void* opaque, size_t addr, uint8_t data);
@@ -77,5 +80,7 @@ namespace NSFPlayer
 		void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address);
 
 		void EnableNSFBanking(bool enable);
+
+		void GetSignalFeatures(APUSim::AudioSignalFeatures* features);
 	};
 }

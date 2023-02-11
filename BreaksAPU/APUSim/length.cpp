@@ -184,5 +184,15 @@ namespace APUSim
 		}
 	}
 
+	bool LengthCounter::Debug_GetEnable()
+	{
+		return reg_enable_latch.get() == TriState::One;
+	}
+
+	void LengthCounter::Debug_SetEnable(bool enable)
+	{
+		reg_enable_latch.set(enable ? TriState::One : TriState::Zero, TriState::One);
+	}
+
 #pragma endregion "Debug"
 }

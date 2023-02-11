@@ -17,6 +17,7 @@ namespace APUSim
 		wires.ACLK = ToByte(wire.ACLK);
 		wires.n_ACLK = ToByte(wire.n_ACLK);
 		wires.RES = ToByte(wire.RES);
+		wires.RESCore = ToByte(wire.RESCore);
 		wires.n_M2 = ToByte(wire.n_M2);
 		wires.n_NMI = ToByte(wire.n_NMI);
 		wires.n_IRQ = ToByte(wire.n_IRQ);
@@ -131,6 +132,8 @@ namespace APUSim
 
 		regs.DMABuffer = dma->Get_DMABuffer();
 		regs.DMAAddress = dma->Get_DMAAddress();
+
+		regs.Status = Dbg_GetStatus();
 	}
 
 	uint8_t APU::GetDebugInfo_Wire(int ofs)
@@ -146,6 +149,7 @@ namespace APUSim
 			case offsetof(APU_Interconnects, ACLK): return ToByte(wire.ACLK);
 			case offsetof(APU_Interconnects, n_ACLK): return ToByte(wire.n_ACLK);
 			case offsetof(APU_Interconnects, RES): return ToByte(wire.RES);
+			case offsetof(APU_Interconnects, RESCore): return ToByte(wire.RESCore);
 			case offsetof(APU_Interconnects, n_M2): return ToByte(wire.n_M2);
 			case offsetof(APU_Interconnects, n_NMI): return ToByte(wire.n_NMI);
 			case offsetof(APU_Interconnects, n_IRQ): return ToByte(wire.n_IRQ);
@@ -222,6 +226,7 @@ namespace APUSim
 			case offsetof(APU_Interconnects, ACLK): wire.ACLK = FromByte(val); break;
 			case offsetof(APU_Interconnects, n_ACLK): wire.n_ACLK = FromByte(val); break;
 			case offsetof(APU_Interconnects, RES): wire.RES = FromByte(val); break;
+			case offsetof(APU_Interconnects, RESCore): wire.RESCore = FromByte(val); break;
 			case offsetof(APU_Interconnects, n_M2): wire.n_M2 = FromByte(val); break;
 			case offsetof(APU_Interconnects, n_NMI): wire.n_NMI = FromByte(val); break;
 			case offsetof(APU_Interconnects, n_IRQ): wire.n_IRQ = FromByte(val); break;
@@ -333,6 +338,7 @@ namespace APUSim
 			case offsetof(APU_Registers, DPCMOutput): return dpcm->Get_Output();
 			case offsetof(APU_Registers, DMABuffer): return dma->Get_DMABuffer();
 			case offsetof(APU_Registers, DMAAddress): return dma->Get_DMAAddress();
+			case offsetof(APU_Registers, Status): return Dbg_GetStatus();
 
 			default:
 				break;
@@ -389,9 +395,32 @@ namespace APUSim
 			case offsetof(APU_Registers, DPCMOutput): dpcm->Set_Output(val); break;
 			case offsetof(APU_Registers, DMABuffer): dma->Set_DMABuffer(val); break;
 			case offsetof(APU_Registers, DMAAddress): dma->Set_DMAAddress(val); break;
+			case offsetof(APU_Registers, Status): Dbg_SetStatus((uint8_t)val); break;
 
 			default:
 				break;
 		}
+	}
+
+	uint8_t APU::Dbg_GetStatus()
+	{
+		uint8_t val = 0;
+
+		val |= (lc[0]->Debug_GetEnable() << 0);
+		val |= (lc[1]->Debug_GetEnable() << 1);
+		val |= (lc[2]->Debug_GetEnable() << 2);
+		val |= (lc[3]->Debug_GetEnable() << 3);
+		val |= (dpcm->GetDpcmEnable() << 4);
+
+		return val;
+	}
+
+	void APU::Dbg_SetStatus(uint8_t val)
+	{
+		lc[0]->Debug_SetEnable(((val >> 0) & 1) != 0);
+		lc[1]->Debug_SetEnable(((val >> 1) & 1) != 0);
+		lc[2]->Debug_SetEnable(((val >> 2) & 1) != 0);
+		lc[3]->Debug_SetEnable(((val >> 3) & 1) != 0);
+		dpcm->SetDpcmEnable(((val >> 4) & 1) != 0);
 	}
 }

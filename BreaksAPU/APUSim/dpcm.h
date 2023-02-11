@@ -138,5 +138,8 @@ namespace APUSim
 		void Set_AddressReg(uint32_t value);
 		void Set_AddressCounter(uint32_t value);
 		void Set_Output(uint32_t value);
+
+		bool GetDpcmEnable();
+		void SetDpcmEnable(bool enable);
 	};
 }

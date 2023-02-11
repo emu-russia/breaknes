@@ -25,15 +25,19 @@ namespace NSFPlayer
 		if (CS == TriState::Zero)
 			return;
 
+		//printf("NSF Data access: 0x%04X, read: %d\n", addr, RnW == TriState::One ? 1 : 0);
+
 		if (faking_reset)
 		{
 			if (addr == 0xfffc && RnW == TriState::One)
 			{
 				*data = (uint8_t)fake_reset;
+				return;
 			}
 			else if (addr == 0xfffd && RnW == TriState::One)
 			{
 				*data = (uint8_t)(fake_reset >> 8);
+				return;
 			}
 		}
 
@@ -148,7 +152,6 @@ namespace NSFPlayer
 
 		if (RnW == TriState::One)
 		{
-			printf("NSF read: 0x%04x, bank: %d, mapped: %d, offs: 0x%x\n", addr, bank, mapped, 0x80 + ofs);
 			*data = ram[ofs];
 		}
 	}

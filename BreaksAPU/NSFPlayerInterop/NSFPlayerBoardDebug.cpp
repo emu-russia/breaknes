@@ -166,6 +166,7 @@ namespace NSFPlayer
 		"ACLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::ACLK), 1,
 		"/ACLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_ACLK), 1,
 		"RES", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RES), 1,
+		"RESCore", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RESCore), 1,
 		"/M2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_M2), 1,
 		"/NMI", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_NMI), 1,
 		"/IRQ", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_IRQ), 1,
@@ -270,6 +271,7 @@ namespace NSFPlayer
 		"DPCMOutput", offsetof(APUSim::APU_Registers, DPCMOutput), 7,
 		"DMABuffer", offsetof(APUSim::APU_Registers, DMABuffer), 8,
 		"DMAAddress", offsetof(APUSim::APU_Registers, DMAAddress), 16,
+		"Status", offsetof(APUSim::APU_Registers, Status), 8,
 	};
 
 	SignalOffsetPair board_signals[] = {
@@ -283,7 +285,9 @@ namespace NSFPlayer
 		"Bank5", offsetof(BoardDebugInfo, bank_reg[5]), 8,
 		"Bank6", offsetof(BoardDebugInfo, bank_reg[6]), 8,
 		"Bank7", offsetof(BoardDebugInfo, bank_reg[7]), 8,
-		"LoadAddress", offsetof(BoardDebugInfo, load_addr), 16,		// NSF Load address
+		"ABus", offsetof(BoardDebugInfo, ABus), 16,
+		"DBus", offsetof(BoardDebugInfo, DBus), 8,
+		"Reset", offsetof(BoardDebugInfo, ResetPending), 1,
 	};
 
 	void Board::AddDebugInfoProviders()
@@ -492,8 +496,10 @@ namespace NSFPlayer
 		{
 			info.bank_reg[i] = sram->GetBankReg(i);
 		}
-		info.load_addr = sram_load_addr;
 		info.sync = ToByte(SYNC);
+		info.ABus = addr_bus;
+		info.DBus = data_bus;
+		info.ResetPending = pendingReset;
 	}
 
 	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
