@@ -38,7 +38,7 @@ namespace PPUPlayer
 		bool PromptWhenFinished = true;
 
 		long timeStamp;
-		int pclkCounter;
+		long pclkCounter;
 		int scanCounter;
 		int fieldCounter;
 		int fieldCounterPersistent;
@@ -340,11 +340,14 @@ namespace PPUPlayer
 
 		public class PPULogEntry
 		{
-			public int pclk;
+			public long pclk;
 			public bool write;
 			public byte reg;
 			public byte value;
 		}
+
+		private int StepsToStat = 32;
+		private int StepsCounter = 0;
 
 		private void backgroundWorker1_DoWork_1(object sender, DoWorkEventArgs e)
 		{
@@ -457,19 +460,24 @@ namespace PPUPlayer
 
 				// Show statistics that are updated once every 1 second.
 
-				long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-				if (now > (timeStamp + 1000))
+				StepsCounter++;
+				if (StepsCounter >= StepsToStat)
 				{
-					timeStamp = now;
+					long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+					if (now > (timeStamp + 1000))
+					{
+						timeStamp = now;
 
-					UpdatePpuStats(PPUStats.PCLK_Sec, PPUPlayerInterop.GetPCLKCounter() - pclkCounter);
-					UpdatePpuStats(PPUStats.FPS, fieldCounter);
+						UpdatePpuStats(PPUStats.PCLK_Sec, (int)(PPUPlayerInterop.GetPCLKCounter() - pclkCounter));
+						UpdatePpuStats(PPUStats.FPS, fieldCounter);
 
-					UpdatePpuStats(PPUStats.Scans, scanCounter);
-					UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
+						UpdatePpuStats(PPUStats.Scans, scanCounter);
+						UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
 
-					pclkCounter = PPUPlayerInterop.GetPCLKCounter();
-					fieldCounter = 0;
+						pclkCounter = PPUPlayerInterop.GetPCLKCounter();
+						fieldCounter = 0;
+					}
+					StepsCounter = 0;
 				}
 			}
 

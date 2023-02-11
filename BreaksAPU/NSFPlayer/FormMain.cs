@@ -16,11 +16,12 @@ namespace NSFPlayer
 		private bool nsf_loaded = false;
 		private byte current_song = 0;
 		private bool Paused = true;         // atomic
-		private bool Dma = false;		// atomic
+		private bool Dma = false;       // atomic
+		private bool InitRequired = false;	// atmoic
 
 		// Stats
 		private long timeStamp;
-		private int aclkCounter = 0;
+		private long aclkCounter = 0;
 
 		private int SourceSampleRate = 48000;
 		private List<float> SampleBuf = new();
@@ -28,10 +29,13 @@ namespace NSFPlayer
 		private string DefaultTitle = "";
 
 		private bool fft = false;
+		private float FurryIntensity = 1.0f;
 
 		private NSFPlayerInterop.AudioSignalFeatures aux_features;
 		private int DecimateEach = 1;
 		private int DecimateCounter = 0;
+		private long AclkToPlay = 0;
+		private bool PreferPal = false;
 
 		public FormMain()
 		{
@@ -54,7 +58,7 @@ namespace NSFPlayer
 
 			backgroundWorker1.RunWorkerAsync();
 
-			signalPlot1.ForceMinMax(true, -0.5f, +2.0f);
+			signalPlot1.ForceMinMax(true, -0.2f, +1.0f);
 		}
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -68,6 +72,8 @@ namespace NSFPlayer
 		{
 			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
 			SourceSampleRate = settings.OutputSampleRate;
+			FurryIntensity = settings.FurryIntensity;
+			PreferPal = settings.PreferPal;
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -84,6 +90,9 @@ namespace NSFPlayer
 
 		#region "NSF Controls"
 
+		private int StepsToStat = 32;
+		private int StepsCounter = 0;
+
 		private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
 			while (!backgroundWorker1.CancellationPending)
@@ -96,45 +105,69 @@ namespace NSFPlayer
 
 				// Simulate APU
 
-				NSFPlayerInterop.Step();
-				nsf.SyncExec();
+				NSFPlayerInterop.Step();		// = 0.5 XTAL CLK
+				if (nsf.IsCoreReady())
+					nsf.SyncExec();
 
 				// Add audio sample
 
-				float next_sample;
-				NSFPlayerInterop.SampleAudioSignal(out next_sample);
-				FeedSample(next_sample);
-				if (fft)
-					furryPlot1.AddSample(next_sample);
+				FeedSample();
+
+				// NSF Runtime logic
+
+				if (true)
+				{
+					var aclk = NSFPlayerInterop.GetACLKCounter();
+					if (aclk >= AclkToPlay)
+					{
+						ExecPLAY();
+						AclkToPlay = aclk + (aux_features.AclkPerSecond * nsf.GetPeriod(PreferPal)) / 1000000;
+					}
+
+					if (InitRequired)
+					{
+						ExecINIT();
+						InitRequired = false;
+					}
+				}
 
 				// Show statistics that are updated once every 1 second.
 
-				long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-				if (now > (timeStamp + 1000))
+				StepsCounter++;
+				if (StepsCounter >= StepsToStat)
 				{
-					timeStamp = now;
+					long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+					if (now > (timeStamp + 1000))
+					{
+						timeStamp = now;
 
-					UpdateSampleBufStats();
-					UpdateSignalPlot();
+						UpdateSampleBufStats();
+						UpdateSignalPlot();
 
-					int aclk_per_sec = NSFPlayerInterop.GetACLKCounter() - aclkCounter;
-					toolStripStatusLabelACLK.Text = aclk_per_sec.ToString();
+						var aclk_per_sec = NSFPlayerInterop.GetACLKCounter() - aclkCounter;
+						toolStripStatusLabelACLK.Text = aclk_per_sec.ToString();
 
-					aclkCounter = NSFPlayerInterop.GetACLKCounter();
+						aclkCounter = NSFPlayerInterop.GetACLKCounter();
+					}
+					StepsCounter = 0;
 				}
 			}
 		}
 
 		private void InitBoard(string nsf_filename)
 		{
+			AclkToPlay = 0;
+
 			byte[] data = File.ReadAllBytes(nsf_filename);
 			nsf.LoadNSF(data);
 			nsf_loaded = true;
-			SetSong(nsf.GetHead().StartingSong);
 			this.Text = DefaultTitle + " - " + nsf_filename;
 
 			var settings = FormSettings.LoadSettings();
 			NSFPlayerInterop.CreateBoard("NSFPlayer", settings.APU_Revision, "None", "None");
+
+			FurryIntensity = settings.FurryIntensity;
+			PreferPal = settings.PreferPal;
 
 			// Setup NSF
 
@@ -171,6 +204,7 @@ namespace NSFPlayer
 			Console.WriteLine("APUSim sample rate: {0}, DSound sample rate: {1}, decimate factor: {2}", aux_features.SampleRate, SourceSampleRate, DecimateEach);
 
 			// Autoplay
+			SetSong(nsf.GetHead().StartingSong);
 			SetPaused(!settings.AutoPlay);
 		}
 
@@ -229,6 +263,7 @@ namespace NSFPlayer
 		private void SetSong(byte n)
 		{
 			current_song = n;
+			InitRequired = true;
 			UpdateTrackStat();
 		}
 
@@ -236,11 +271,10 @@ namespace NSFPlayer
 		{
 			if (!nsf_loaded)
 				return;
-			byte total = nsf.GetHead().TotalSongs;
 			if (current_song <= 1)
 				return;
 			current_song--;
-			UpdateTrackStat();
+			SetSong(current_song);
 		}
 
 		private void NextSong()
@@ -251,7 +285,7 @@ namespace NSFPlayer
 			if (current_song >= total)
 				return;
 			current_song++;
-			UpdateTrackStat();
+			SetSong(current_song);
 		}
 
 		private void UpdateTrackStat()
@@ -275,6 +309,27 @@ namespace NSFPlayer
 			{
 				playToolStripMenuItem.Checked = true;
 				pauseToolStripMenuItem.Checked = false;
+			}
+		}
+
+		private void ExecINIT()
+		{
+			if (nsf_loaded)
+			{
+				var head = nsf.GetHead();
+				byte? x = (head.PalNtscBits & 2) == 0 ? (byte)(head.PalNtscBits & 1) : null;
+				nsf.ExecuteUntilRTS(head.InitAddress, current_song, x, 0, false);
+			}
+		}
+
+		private void ExecPLAY()
+		{
+			if (nsf_loaded)
+			{
+				var head = nsf.GetHead();
+				if (nsf.IsCoreReady())
+					return;
+				nsf.ExecuteUntilRTS(head.PlayAddress, null, null, null, false);
 			}
 		}
 
@@ -333,13 +388,16 @@ namespace NSFPlayer
 		/// The AUX output is sampled at a high frequency, which cannot be played by a ordinary sound card.
 		/// Therefore, some of the samples are skipped to match the DSound playback frequency (SourceSampleRate variable).
 		/// </summary>
-		/// <param name="sample"></param>
-		private void FeedSample (float sample)
+		private void FeedSample ()
 		{
 			DecimateCounter++;
 			if (DecimateCounter >= DecimateEach)
 			{
+				float sample;
+				NSFPlayerInterop.SampleAudioSignal(out sample);
 				SampleBuf.Add(sample);
+				if (fft)
+					furryPlot1.AddSample(sample * FurryIntensity);
 				DecimateCounter = 0;
 			}
 		}
@@ -506,12 +564,7 @@ namespace NSFPlayer
 		/// </summary>
 		private void executeINITToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (nsf_loaded)
-			{
-				var head = nsf.GetHead();
-				byte? x = (head.PalNtscBits & 2) != 0 ? (byte)(head.PalNtscBits & 1) : null;
-				nsf.ExecuteUntilRTS(head.InitAddress, current_song, x, 0);
-			}
+			ExecINIT();
 		}
 
 		/// <summary>
@@ -519,11 +572,7 @@ namespace NSFPlayer
 		/// </summary>
 		private void executePLAYToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (nsf_loaded)
-			{
-				var head = nsf.GetHead();
-				nsf.ExecuteUntilRTS(head.PlayAddress, null, null, null);
-			}
+			ExecPLAY();
 		}
 
 		#endregion "APU Debug"

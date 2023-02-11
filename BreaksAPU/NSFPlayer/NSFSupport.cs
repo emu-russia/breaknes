@@ -51,6 +51,8 @@ namespace NSFPlayer
 		private const byte rts = 0x60;
 		private bool RDY2_Shadow = true;
 
+		private const bool trace = true;
+
 		public NSFHeader GetHead()
 		{
 			return head;
@@ -129,29 +131,54 @@ namespace NSFPlayer
 		}
 
 		/// <summary>
+		/// Return the period for calling the PLAY procedure.
+		/// </summary>
+		/// <param name="PreferPal">If the NSF header specifies that you can use hybrid PAL/NTSC - specify explicitly that we want PAL</param>
+		/// <returns></returns>
+		public int GetPeriod(bool PreferPal)
+		{
+			bool pal;
+			if ((head.PalNtscBits & 2) != 0)
+			{
+				pal = PreferPal;
+			}
+			else
+			{
+				pal = (head.PalNtscBits & 1) != 0;
+			}
+			return pal ? head.PlaySpeedPal : head.PlaySpeedNtsc;
+		}
+
+		/// <summary>
 		/// Start the 6502 core to execute from the specified address, prior to RTS instruction.
 		/// </summary>
 		/// <param name="address">PC address</param>
 		/// <param name="a">A register value (optional)</param>
 		/// <param name="x">X register value (optional)</param>
 		/// <param name="y">Y register value (optional)</param>
-		public void ExecuteUntilRTS (UInt16 address, byte? a, byte? x, byte? y)
+		/// <param name="reset_apu_also">Also /RES=0 whole APU chip</param>
+		public void ExecuteUntilRTS (UInt16 address, byte? a, byte? x, byte? y, bool reset_apu_also)
 		{
-			NSFPlayerInterop.ResetAPU(address);
+			NSFPlayerInterop.ResetAPU(address, reset_apu_also);
+			// Set the A register for the desired song.
 			if (a != null)
 			{
 				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "A", (byte)a);
 			}
+			// Set the X register for PAL(1) or NTSC(0).
 			if (x != null)
 			{
 				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "X", (byte)x);
 			}
+			// While the NSF1 specification never guaranteed anything for Y on entry to INIT, for better forward compatibility with NSF2's non-returning INIT feature, it is recommended that the player set Y to 0
 			if (y != null)
 			{
 				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "Y", (byte)y);
 			}
 			CoreReady(true);
-			Console.WriteLine("Exec: 0x" + address.ToString("X4"));
+
+			if (trace)
+				Console.WriteLine("Exec: 0x" + address.ToString("X4"));
 		}
 
 		/// <summary>
@@ -163,7 +190,8 @@ namespace NSFPlayer
 			byte ir = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Core, BreaksCore.CORE_WIRES_CATEGORY, "IR");
 			if (sync && (ir == rts) && RDY2_Shadow)
 			{
-				Console.WriteLine("Synced to RTS");
+				if (trace)
+					Console.WriteLine("Synced to RTS");
 				CoreReady(false);
 			}
 		}
@@ -176,6 +204,15 @@ namespace NSFPlayer
 		{
 			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_APU, BreaksCore.APU_WIRES_CATEGORY, "RDY2", (UInt32)(ready ? 1 : 0));
 			RDY2_Shadow = ready;
+		}
+
+		/// <summary>
+		/// Used to check that the NSF procedure has finished its execution and the 6502 core is resting.
+		/// </summary>
+		/// <returns></returns>
+		public bool IsCoreReady()
+		{
+			return RDY2_Shadow;
 		}
 	}
 }

@@ -30,9 +30,8 @@ namespace NSFPlayer
 		uint16_t addr_bus = 0;
 
 		bool pendingReset = false;
-		bool fakingReset = false;
 		int resetHalfClkCounter = 0;
-		int fakeResetHalfClkCounter = 0;
+		bool reset_apu_also = false;
 
 		static uint8_t DumpSRAM(void* opaque, size_t addr);
 		static void WriteSRAM(void* opaque, size_t addr, uint8_t data);
@@ -69,7 +68,7 @@ namespace NSFPlayer
 
 		void EjectCartridge();
 
-		void ResetAPU(uint16_t addr);
+		void ResetAPU(uint16_t addr, bool reset_apu_also);
 
 		bool APUInResetState();
 

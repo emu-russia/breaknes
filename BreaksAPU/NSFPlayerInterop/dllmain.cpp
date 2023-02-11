@@ -53,11 +53,11 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void ResetAPU(uint16_t addr)
+	__declspec(dllexport) void ResetAPU(uint16_t addr, bool reset_apu_also)
 	{
 		if (board != nullptr)
 		{
-			board->ResetAPU(addr);
+			board->ResetAPU(addr, reset_apu_also);
 		}
 	}
 

@@ -22,7 +22,8 @@ namespace NSFPlayer
 
 		size_t RoundUpPage(size_t size);
 
-		bool faking_reset = false;
+		bool faking_reset_fc = false;
+		bool faking_reset_fd = false;
 		uint16_t fake_reset = 0;
 
 	public:
@@ -42,7 +43,6 @@ namespace NSFPlayer
 
 		void EnableNSFBanking(bool enable);
 
-		void EnableFakeResetVector(bool enable);
 		void SetFakeResetVector(uint16_t addr);
 	};
 }
