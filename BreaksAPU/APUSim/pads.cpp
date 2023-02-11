@@ -38,7 +38,7 @@ namespace APUSim
 			*addr = apu->Ax;
 		}
 
-		outputs[(size_t)APU_Output::RnW] = NOT(apu->wire.RES) == TriState::One ? NOR(apu->wire.RW, apu->wire.RES) : TriState::Z;
+		outputs[(size_t)APU_Output::RnW] = NOT(apu->wire.RES) == TriState::One ? NOT(NOR(apu->wire.RW, apu->wire.RES)) : TriState::Z;
 
 		// I/O
 

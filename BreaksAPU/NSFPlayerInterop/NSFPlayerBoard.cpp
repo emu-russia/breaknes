@@ -109,6 +109,15 @@ namespace NSFPlayer
 			if (resetHalfClkCounter == 0)
 			{
 				pendingReset = false;
+			}
+		}
+
+		if (fakingReset)
+		{
+			fakeResetHalfClkCounter--;
+			if (fakeResetHalfClkCounter == 0)
+			{
+				fakingReset = false;
 				sram->EnableFakeResetVector(false);
 			}
 		}
@@ -142,6 +151,9 @@ namespace NSFPlayer
 	{
 		pendingReset = true;
 		resetHalfClkCounter = 32;
+
+		fakingReset = true;
+		fakeResetHalfClkCounter = 64;
 
 		sram->EnableFakeResetVector(true);
 		sram->SetFakeResetVector(addr);

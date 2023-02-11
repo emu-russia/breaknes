@@ -25,7 +25,7 @@ namespace NSFPlayer
 		if (CS == TriState::Zero)
 			return;
 
-		printf("NSF Data access: 0x%04X, read: %d\n", addr, RnW == TriState::One ? 1 : 0);
+		//printf("NSF Data access: 0x%04X, read: %d\n", addr, RnW == TriState::One ? 1 : 0);
 
 		if (faking_reset)
 		{

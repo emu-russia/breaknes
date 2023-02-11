@@ -30,7 +30,9 @@ namespace NSFPlayer
 		uint16_t addr_bus = 0;
 
 		bool pendingReset = false;
+		bool fakingReset = false;
 		int resetHalfClkCounter = 0;
+		int fakeResetHalfClkCounter = 0;
 
 		static uint8_t DumpSRAM(void* opaque, size_t addr);
 		static void WriteSRAM(void* opaque, size_t addr, uint8_t data);

@@ -106,9 +106,14 @@ namespace APUSim
 		start_ff.set(NOR4(NOR(start_ff.get(), start_set), nDMCEnableDelay, RES, NOT(nDMAStop)));
 		rdy_ff.set(NOR(NOR(rdy_ff.get(), AND(run_latch1.get(), n_ACLK)), n_ACLK2));
 
-		apu->wire.RUNDMC = run_latch2.nget();
-		apu->wire.n_DMC_AB = rdy_ff.nget();
-		apu->wire.DMCRDY = NOR(start_ff.get(), rdy_ff.get());
+		//apu->wire.RUNDMC = run_latch2.nget();
+		//apu->wire.n_DMC_AB = rdy_ff.nget();
+		//apu->wire.DMCRDY = NOR(start_ff.get(), rdy_ff.get());
+
+		// DEBUG: Disable DPCM for now..
+		apu->wire.RUNDMC = TriState::Zero;
+		apu->wire.n_DMC_AB = TriState::One;
+		apu->wire.DMCRDY = TriState::One;
 	}
 
 	void DpcmChan::sim_SampleCounterControl()
