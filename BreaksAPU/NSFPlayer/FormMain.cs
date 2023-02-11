@@ -7,6 +7,9 @@ namespace NSFPlayer
 {
 	public partial class FormMain : Form
 	{
+		[DllImport("kernel32")]
+		static extern bool AllocConsole();
+
 		private DSound? audio_backend;
 		private NSFSupport nsf = new();
 		private bool nsf_loaded = false;
@@ -28,6 +31,7 @@ namespace NSFPlayer
 		public FormMain()
 		{
 			InitializeComponent();
+			AllocConsole();
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
@@ -463,11 +467,26 @@ namespace NSFPlayer
 			if (Paused && nsf_loaded)
 			{
 				NSFPlayerInterop.Step();
+				TraceCore();
 				nsf.SyncExec();
 				Button2Click();
 			}
 		}
 
+		private void TraceCore()
+		{
+			string text = "";
+			List<BreaksCore.DebugInfoEntry> entries = BreaksCore.GetDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs);
+			foreach (var entry in entries)
+			{
+				text += entry.name + " = " + entry.value.ToString("X2") + "; ";
+			}
+			Console.WriteLine(text);
+		}
+
+		/// <summary>
+		/// Exec INIT.
+		/// </summary>
 		private void executeINITToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (nsf_loaded)
@@ -478,6 +497,9 @@ namespace NSFPlayer
 			}
 		}
 
+		/// <summary>
+		/// Exec PLAY
+		/// </summary>
 		private void executePLAYToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (nsf_loaded)

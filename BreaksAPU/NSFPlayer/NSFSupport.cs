@@ -136,8 +136,7 @@ namespace NSFPlayer
 		/// <param name="y">Y register value (optional)</param>
 		public void ExecuteUntilRTS (UInt16 address, byte? a, byte? x, byte? y)
 		{
-			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "PCHS", (byte)(address >> 8));
-			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "PCLS", (byte)address);
+			NSFPlayerInterop.ResetAPU(address);
 			if (a != null)
 			{
 				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "A", (byte)a);
@@ -151,6 +150,7 @@ namespace NSFPlayer
 				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs, BreaksCore.CORE_REGS_CATEGORY, "Y", (byte)y);
 			}
 			CoreReady(true);
+			Console.WriteLine("Exec: 0x" + address.ToString("X4"));
 		}
 
 		/// <summary>
@@ -162,6 +162,7 @@ namespace NSFPlayer
 			byte ir = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Core, BreaksCore.CORE_WIRES_CATEGORY, "IR");
 			if (sync && (ir == rts) && RDY2_Shadow)
 			{
+				Console.WriteLine("Synced to RTS");
 				CoreReady(false);
 			}
 		}

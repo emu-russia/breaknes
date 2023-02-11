@@ -274,13 +274,10 @@ namespace M6502Core
 
 		// These variables are used to mark the "dirty" bits of the internal buses. This is used to resolve conflicts, according to the "Ground wins" rule.
 
-		for (size_t n = 0; n < 8; n++)
-		{
-			SB_Dirty = false;
-			DB_Dirty = false;
-			ADL_Dirty = false;
-			ADH_Dirty = false;
-		}
+		SB_Dirty = false;
+		DB_Dirty = false;
+		ADL_Dirty = false;
+		ADH_Dirty = false;
 
 		// To stabilize latches, both parts are simulated twice.
 

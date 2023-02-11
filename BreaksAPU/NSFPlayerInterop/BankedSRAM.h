@@ -22,6 +22,9 @@ namespace NSFPlayer
 
 		size_t RoundUpPage(size_t size);
 
+		bool faking_reset = false;
+		uint16_t fake_reset = 0;
+
 	public:
 		BankedSRAM();
 		~BankedSRAM();
@@ -38,5 +41,8 @@ namespace NSFPlayer
 		void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address);
 
 		void EnableNSFBanking(bool enable);
+
+		void EnableFakeResetVector(bool enable);
+		void SetFakeResetVector(uint16_t addr);
 	};
 }

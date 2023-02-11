@@ -30,7 +30,6 @@ extern "C"
 			printf("CreateBoard\n");
 			CreateDebugHub();
 			board = new NSFPlayer::Board(boardName, apu, ppu, p1);
-			board->ResetAPU();
 		}
 	}
 
@@ -51,6 +50,26 @@ extern "C"
 		{
 			//printf("Step\n");
 			board->Step();
+		}
+	}
+
+	__declspec(dllexport) void ResetAPU(uint16_t addr)
+	{
+		if (board != nullptr)
+		{
+			board->ResetAPU(addr);
+		}
+	}
+
+	__declspec(dllexport) bool APUInResetState()
+	{
+		if (board != nullptr)
+		{
+			return board->APUInResetState();
+		}
+		else
+		{
+			return false;
 		}
 	}
 

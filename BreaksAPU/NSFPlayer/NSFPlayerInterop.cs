@@ -20,6 +20,12 @@ namespace NSFPlayer
 		public static extern void Step();
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void ResetAPU(UInt16 addr);
+
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern bool APUInResetState();
+
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int GetACLKCounter();
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]

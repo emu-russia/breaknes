@@ -104,6 +104,7 @@ namespace NSFPlayer
 			if (resetHalfClkCounter == 0)
 			{
 				pendingReset = false;
+				sram->EnableFakeResetVector(false);
 			}
 		}
 	}
@@ -132,7 +133,7 @@ namespace NSFPlayer
 	/// <summary>
 	/// Make the APU /RES pin = 0 for a few CLK half cycles so that the APU resets all of its internal circuits.
 	/// </summary>
-	void Board::ResetAPU()
+	void Board::ResetAPU(uint16_t addr)
 	{
 		apu->ResetACLKCounter();
 
@@ -143,6 +144,9 @@ namespace NSFPlayer
 
 		pendingReset = true;
 		resetHalfClkCounter = 4;
+
+		sram->EnableFakeResetVector(true);
+		sram->SetFakeResetVector(addr);
 	}
 
 	/// <summary>

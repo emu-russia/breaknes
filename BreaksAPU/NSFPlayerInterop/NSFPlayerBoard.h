@@ -66,7 +66,7 @@ namespace NSFPlayer
 
 		void EjectCartridge();
 
-		void ResetAPU();
+		void ResetAPU(uint16_t addr);
 
 		bool APUInResetState();
 
