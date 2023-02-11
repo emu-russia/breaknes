@@ -41,6 +41,11 @@ namespace NSFPlayer
 		sram = new BankedSRAM();
 		wram = new BaseBoard::SRAM(wram_bits);
 
+		for (int i = 0; i < wram->Dbg_GetSize(); i++)
+		{
+			wram->Dbg_WriteByte(i, 0);
+		}
+
 		apu->SetNormalizedOutput(true);
 
 		AddBoardMemDescriptors();
@@ -135,15 +140,8 @@ namespace NSFPlayer
 	/// </summary>
 	void Board::ResetAPU(uint16_t addr)
 	{
-		apu->ResetACLKCounter();
-
-		for (int i = 0; i < wram->Dbg_GetSize(); i++)
-		{
-			wram->Dbg_WriteByte(i, 0);
-		}
-
 		pendingReset = true;
-		resetHalfClkCounter = 4;
+		resetHalfClkCounter = 32;
 
 		sram->EnableFakeResetVector(true);
 		sram->SetFakeResetVector(addr);
@@ -181,7 +179,6 @@ namespace NSFPlayer
 	{
 		if (sram != nullptr)
 		{
-			sram_load_addr = load_address;
 			sram->LoadNSFData(data, data_size, load_address);
 
 			dbg_hub->DisposeMemMap();

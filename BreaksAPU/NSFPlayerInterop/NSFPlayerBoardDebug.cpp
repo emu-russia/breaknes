@@ -283,7 +283,9 @@ namespace NSFPlayer
 		"Bank5", offsetof(BoardDebugInfo, bank_reg[5]), 8,
 		"Bank6", offsetof(BoardDebugInfo, bank_reg[6]), 8,
 		"Bank7", offsetof(BoardDebugInfo, bank_reg[7]), 8,
-		"LoadAddress", offsetof(BoardDebugInfo, load_addr), 16,		// NSF Load address
+		"ABus", offsetof(BoardDebugInfo, ABus), 16,
+		"DBus", offsetof(BoardDebugInfo, DBus), 8,
+		"Reset", offsetof(BoardDebugInfo, ResetPending), 1,
 	};
 
 	void Board::AddDebugInfoProviders()
@@ -492,8 +494,10 @@ namespace NSFPlayer
 		{
 			info.bank_reg[i] = sram->GetBankReg(i);
 		}
-		info.load_addr = sram_load_addr;
 		info.sync = ToByte(SYNC);
+		info.ABus = addr_bus;
+		info.DBus = data_bus;
+		info.ResetPending = pendingReset;
 	}
 
 	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
