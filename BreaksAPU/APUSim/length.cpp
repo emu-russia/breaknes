@@ -186,12 +186,12 @@ namespace APUSim
 
 	bool LengthCounter::Debug_GetEnable()
 	{
-		return stat_ff.get() == TriState::One;
+		return reg_enable_latch.get() == TriState::One;
 	}
 
 	void LengthCounter::Debug_SetEnable(bool enable)
 	{
-		stat_ff.set(enable ? TriState::One : TriState::Zero);
+		reg_enable_latch.set(enable ? TriState::One : TriState::Zero, TriState::One);
 	}
 
 #pragma endregion "Debug"

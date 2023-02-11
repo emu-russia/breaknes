@@ -41,7 +41,7 @@ namespace APUSim
 	/// </summary>
 	struct AudioSignalFeatures
 	{
-		int32_t SampleRate;		// The sampling frequency of the audio signal (samples per "virtual" second). The audio is actually sampled every PHI (core clock) halfcycle.
+		int32_t SampleRate;		// The sampling frequency of the audio signal (samples per "virtual" second). The audio is actually sampled every PHI (core clock) cycle.
 		float AUXA_LowLevel;		// Lower signal level for AUX_A (mV)
 		float AUXA_HighLevel;		// Upper signal level for AUX_A (mV)
 		float AUXB_LowLevel;		// Lower signal level for AUX_B (mV)
@@ -142,6 +142,7 @@ namespace APUSim
 			BaseLogic::TriState ACLK;
 			BaseLogic::TriState n_ACLK;
 			BaseLogic::TriState RES;
+			BaseLogic::TriState RESCore;		// Artificial signal (not in real chip). Used to reset the core only (NSFPlayer)
 			BaseLogic::TriState n_M2;
 			BaseLogic::TriState n_NMI;
 			BaseLogic::TriState n_IRQ;
@@ -283,5 +284,13 @@ namespace APUSim
 		size_t GetACLKCounter();
 
 		void ResetACLKCounter();
+
+		void ResetCore(bool enable);
+
+		/// <summary>
+		/// Get the audio signal properties of the current APU revision.
+		/// </summary>
+		/// <param name="features"></param>
+		void GetSignalFeatures(AudioSignalFeatures& features);
 	};
 }

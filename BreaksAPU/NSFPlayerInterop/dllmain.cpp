@@ -108,4 +108,12 @@ extern "C"
 			board->EnableNSFBanking(enable);
 		}
 	}
+
+	__declspec(dllexport) void GetSignalFeatures(APUSim::AudioSignalFeatures* features)
+	{
+		if (board != nullptr)
+		{
+			board->GetSignalFeatures(features);
+		}
+	}
 }

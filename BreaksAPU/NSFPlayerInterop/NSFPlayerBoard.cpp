@@ -74,7 +74,7 @@ namespace NSFPlayer
 
 		inputs[(size_t)APUSim::APU_Input::n_NMI] = TriState::One;
 		inputs[(size_t)APUSim::APU_Input::n_IRQ] = TriState::One;
-		inputs[(size_t)APUSim::APU_Input::n_RES] = pendingReset ? TriState::Zero : TriState::One;
+		inputs[(size_t)APUSim::APU_Input::n_RES] = TriState::One;
 		inputs[(size_t)APUSim::APU_Input::DBG] = TriState::Zero;
 
 		apu->sim(inputs, outputs, &data_bus, &addr_bus, aux);
@@ -109,6 +109,7 @@ namespace NSFPlayer
 			if (resetHalfClkCounter == 0)
 			{
 				pendingReset = false;
+				apu->ResetCore(false);
 			}
 		}
 
@@ -151,6 +152,8 @@ namespace NSFPlayer
 	{
 		pendingReset = true;
 		resetHalfClkCounter = 32;
+
+		apu->ResetCore(true);
 
 		fakingReset = true;
 		fakeResetHalfClkCounter = 256;
@@ -208,5 +211,16 @@ namespace NSFPlayer
 		{
 			sram->EnableNSFBanking(enable);
 		}
+	}
+
+	/// <summary>
+	/// Get audio signal settings that help with its rendering on the consumer side.
+	/// </summary>
+	/// <param name="features"></param>
+	void Board::GetSignalFeatures(APUSim::AudioSignalFeatures* features)
+	{
+		APUSim::AudioSignalFeatures feat{};
+		apu->GetSignalFeatures(feat);
+		*features = feat;
 	}
 }

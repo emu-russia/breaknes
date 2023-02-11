@@ -27,6 +27,7 @@ namespace APUSim
 		dac = new DAC(this);
 
 		wire.RDY2 = TriState::One;
+		wire.RESCore = TriState::Zero;
 	}
 
 	APU::~APU()
@@ -131,5 +132,18 @@ namespace APUSim
 	void APU::ResetACLKCounter()
 	{
 		aclk_counter = 0;
+	}
+
+	void APU::ResetCore(bool enable)
+	{
+		wire.RESCore = enable ? TriState::One : TriState::Zero;
+	}
+
+	void APU::GetSignalFeatures(AudioSignalFeatures& features)
+	{
+		size_t clk = 21477272;	// Hz
+		size_t div = 12;
+
+		features.SampleRate = clk / div;
 	}
 }

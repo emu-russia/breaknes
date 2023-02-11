@@ -1,6 +1,7 @@
 using Be.Windows.Forms;
 using NSFPlayerCustomClass;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Windows.Forms;
 
 namespace NSFPlayer
@@ -27,6 +28,10 @@ namespace NSFPlayer
 		private string DefaultTitle = "";
 
 		private bool fft = false;
+
+		private NSFPlayerInterop.AudioSignalFeatures aux_features;
+		private int DecimateEach = 1;
+		private int DecimateCounter = 0;
 
 		public FormMain()
 		{
@@ -157,6 +162,13 @@ namespace NSFPlayer
 			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_APURegs, BreaksCore.APU_REGS_CATEGORY, "Status", 0xf);
 
 			UpdateMemLayout();
+
+			// SRC
+			
+			NSFPlayerInterop.GetSignalFeatures(out aux_features);
+			DecimateEach = aux_features.SampleRate / SourceSampleRate;
+			DecimateCounter = 0;
+			Console.WriteLine("APUSim sample rate: {0}, DSound sample rate: {1}, decimate factor: {2}", aux_features.SampleRate, SourceSampleRate, DecimateEach);
 
 			// Autoplay
 			SetPaused(!settings.AutoPlay);
@@ -324,9 +336,12 @@ namespace NSFPlayer
 		/// <param name="sample"></param>
 		private void FeedSample (float sample)
 		{
-			// TODO: Skip some samples :)
-
-			SampleBuf.Add(sample);
+			DecimateCounter++;
+			if (DecimateCounter >= DecimateEach)
+			{
+				SampleBuf.Add(sample);
+				DecimateCounter = 0;
+			}
 		}
 
 		#endregion "Sample Buffer Playback Controls"

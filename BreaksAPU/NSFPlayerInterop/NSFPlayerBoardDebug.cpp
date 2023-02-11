@@ -166,6 +166,7 @@ namespace NSFPlayer
 		"ACLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::ACLK), 1,
 		"/ACLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_ACLK), 1,
 		"RES", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RES), 1,
+		"RESCore", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RESCore), 1,
 		"/M2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_M2), 1,
 		"/NMI", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_NMI), 1,
 		"/IRQ", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_IRQ), 1,

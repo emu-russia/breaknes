@@ -66,6 +66,7 @@ namespace NSFPlayer
 			LoadHeader(data);
 			nsf_data = new byte[head.DataLength];
 			Array.Copy(data, data_offset, nsf_data, 0, head.DataLength);
+			CoreReady(false);
 		}
 
 		private void LoadHeader(byte[] data)
