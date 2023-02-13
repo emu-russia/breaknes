@@ -205,6 +205,16 @@ namespace NSFPlayer
 	}
 
 	/// <summary>
+	/// Load APU registers dump
+	/// </summary>
+	/// <param name="data">APULogEntry records</param>
+	/// <param name="data_size">Dump size (bytes)</param>
+	void Board::LoadRegDump(uint8_t* data, size_t data_size)
+	{
+		// NSFPlayerBoard is not designed for this.
+	}
+
+	/// <summary>
 	/// Get audio signal settings that help with its rendering on the consumer side.
 	/// </summary>
 	/// <param name="features"></param>

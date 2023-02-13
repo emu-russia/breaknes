@@ -121,6 +121,14 @@ extern "C"
 		}
 	}
 
+	__declspec(dllexport) void LoadRegDump(uint8_t* data, size_t data_size)
+	{
+		if (board != nullptr)
+		{
+			board->LoadRegDump(data, data_size);
+		}
+	}
+
 	__declspec(dllexport) void GetSignalFeatures(APUSim::AudioSignalFeatures* features)
 	{
 		if (board != nullptr)

@@ -82,6 +82,8 @@ namespace NSFPlayer
 
 		void EnableNSFBanking(bool enable);
 
+		void LoadRegDump(uint8_t* data, size_t data_size);
+
 		void GetSignalFeatures(APUSim::AudioSignalFeatures* features);
 	};
 }
