@@ -85,6 +85,18 @@ extern "C"
 		}
 	}
 
+	__declspec(dllexport) size_t GetPHICounter()
+	{
+		if (board != nullptr)
+		{
+			return board->GetPHICounter();
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
 	__declspec(dllexport) void SampleAudioSignal(float* sample)
 	{
 		if (board != nullptr)

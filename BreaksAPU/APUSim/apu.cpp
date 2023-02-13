@@ -134,6 +134,16 @@ namespace APUSim
 		aclk_counter = 0;
 	}
 
+	size_t APU::GetPHICounter()
+	{
+		return phi_counter;
+	}
+
+	void APU::ResetPHICounter()
+	{
+		phi_counter = 0;
+	}
+
 	void APU::ResetCore(bool enable)
 	{
 		wire.RESCore = enable ? TriState::One : TriState::Zero;
@@ -144,7 +154,9 @@ namespace APUSim
 		size_t clk = 21477272;	// Hz
 		size_t div = 12;
 
-		features.SampleRate = clk / div;
+		features.SampleRate = (int32_t)(clk / div);
 		features.AclkPerSecond = features.SampleRate / 2;		// ACLK = PHI / 2. Specific ACLK duty cycle does not play a significant role in sample playback
+
+		// TBD: Add other APU
 	}
 }

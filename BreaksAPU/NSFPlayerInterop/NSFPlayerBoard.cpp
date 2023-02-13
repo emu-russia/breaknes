@@ -162,6 +162,11 @@ namespace NSFPlayer
 		return apu->GetACLKCounter();
 	}
 
+	size_t Board::GetPHICounter()
+	{
+		return apu->GetPHICounter();
+	}
+
 	void Board::SampleAudioSignal(float* sample)
 	{
 		if (sample != nullptr)

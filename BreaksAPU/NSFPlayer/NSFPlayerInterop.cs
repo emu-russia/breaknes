@@ -27,6 +27,9 @@ namespace NSFPlayer
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern long GetACLKCounter();
+		
+		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern long GetPHICounter();
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SampleAudioSignal(out float sample);

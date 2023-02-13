@@ -74,6 +74,8 @@ namespace NSFPlayer
 
 		size_t GetACLKCounter();
 
+		size_t GetPHICounter();
+
 		void SampleAudioSignal(float* sample);
 
 		void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address);
