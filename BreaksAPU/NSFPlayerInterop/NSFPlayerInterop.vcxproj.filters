@@ -30,7 +30,10 @@
     <ClInclude Include="APUPlayerBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mock6502.h">
+    <ClInclude Include="Fake6502.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoardFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,7 +59,10 @@
     <ClCompile Include="APUPlayerBoardDebug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mock6502.cpp">
+    <ClCompile Include="Fake6502.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoardFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

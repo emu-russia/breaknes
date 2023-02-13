@@ -4,7 +4,7 @@
 
 namespace NSFPlayer
 {
-	struct BoardDebugInfo
+	struct NSFBoardDebugInfo
 	{
 		uint32_t CLK;
 		uint32_t bank_reg[8];
@@ -14,20 +14,14 @@ namespace NSFPlayer
 		uint32_t ResetPending;
 	};
 
-	class Board
+	class NSFPlayerBoard : public Board
 	{
-		APUSim::APU* apu = nullptr;
-		M6502Core::M6502* core = nullptr;
 		BankedSRAM* sram = nullptr;
 		BaseBoard::SRAM* wram = nullptr;
 		const size_t wram_bits = 11;
 		const size_t wram_size = 1ULL << wram_bits;
 
-		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
 		BaseLogic::TriState SYNC = BaseLogic::TriState::X;
-
-		uint8_t data_bus = 0;
-		uint16_t addr_bus = 0;
 
 		bool pendingReset = false;
 		int resetHalfClkCounter = 0;
@@ -54,36 +48,34 @@ namespace NSFPlayer
 		void AddBoardMemDescriptors();
 		void AddDebugInfoProviders();
 
-		void GetDebugInfo(BoardDebugInfo& info);
-
-		APUSim::AudioOutSignal aux{};
+		void GetDebugInfo(NSFBoardDebugInfo& info);
 
 	public:
-		Board(char* boardName, char* apu, char* ppu, char* p1);
-		~Board();
+		NSFPlayerBoard(char* boardName, char* apu, char* ppu, char* p1);
+		virtual ~NSFPlayerBoard();
 
-		void Step();
+		void Step() override;
 
-		int InsertCartridge(uint8_t* nesImage, size_t nesImageSize);
+		int InsertCartridge(uint8_t* nesImage, size_t nesImageSize) override;
 
-		void EjectCartridge();
+		void EjectCartridge() override;
 
-		void ResetAPU(uint16_t addr, bool reset_apu_also);
+		void ResetAPU(uint16_t addr, bool reset_apu_also) override;
 
-		bool APUInResetState();
+		bool APUInResetState() override;
 
-		size_t GetACLKCounter();
+		size_t GetACLKCounter() override;
 
-		size_t GetPHICounter();
+		size_t GetPHICounter() override;
 
-		void SampleAudioSignal(float* sample);
+		void SampleAudioSignal(float* sample) override;
 
-		void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address);
+		void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address) override;
 
-		void EnableNSFBanking(bool enable);
+		void EnableNSFBanking(bool enable) override;
 
-		void LoadRegDump(uint8_t* data, size_t data_size);
+		void LoadRegDump(uint8_t* data, size_t data_size) override;
 
-		void GetSignalFeatures(APUSim::AudioSignalFeatures* features);
+		void GetSignalFeatures(APUSim::AudioSignalFeatures* features) override;
 	};
 }

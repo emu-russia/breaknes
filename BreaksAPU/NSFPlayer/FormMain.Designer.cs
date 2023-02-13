@@ -131,9 +131,9 @@
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadNSFToolStripMenuItem,
             this.loadAPURegisterDumpToolStripMenuItem,
             this.loadAUXDumpToolStripMenuItem,
-            this.loadNSFToolStripMenuItem,
             this.toolStripSeparator1,
             this.settingsToolStripMenuItem,
             this.exitToolStripMenuItem});

@@ -6,7 +6,7 @@ using namespace BaseLogic;
 
 namespace NSFPlayer
 {
-	Board::Board(char* boardName, char* apuRev, char* ppuRev, char* p1)
+	NSFPlayerBoard::NSFPlayerBoard(char* boardName, char* apuRev, char* ppuRev, char* p1) : Board(boardName, apuRev, ppuRev, p1)
 	{
 		APUSim::Revision rev;
 
@@ -52,7 +52,7 @@ namespace NSFPlayer
 		AddDebugInfoProviders();
 	}
 
-	Board::~Board()
+	NSFPlayerBoard::~NSFPlayerBoard()
 	{
 		delete apu;
 		delete core;
@@ -60,10 +60,7 @@ namespace NSFPlayer
 		delete wram;
 	}
 
-	/// <summary>
-	/// Simulate 1 half cycle of the test board with NSFPlayer. The simulation of the signal edge is not supported, this is overkill.
-	/// </summary>
-	void Board::Step()
+	void NSFPlayerBoard::Step()
 	{
 		// Simulate APU
 
@@ -114,31 +111,19 @@ namespace NSFPlayer
 		}
 	}
 
-	/// <summary>
-	/// "Insert" the cartridge as a .nes ROM. In this implementation we are simply trying to instantiate an NROM, but in a more advanced emulation, Cartridge Factory will take care of "inserting" the cartridge.
-	/// </summary>
-	/// <param name="nesImage">A pointer to the ROM image in memory.</param>
-	/// <param name="nesImageSize">ROM image size in bytes.</param>
-	/// <returns></returns>
-	int Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
+	int NSFPlayerBoard::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
 	{
 		// The NSF board does not have a cartridge connector.
 
 		return 0;
 	}
 
-	/// <summary>
-	/// Remove the cartridge. Logically this means that all terminals associated with the cartridge take the value of `z`.
-	/// </summary>
-	void Board::EjectCartridge()
+	void NSFPlayerBoard::EjectCartridge()
 	{
 		// The NSF board does not have a cartridge connector.
 	}
 
-	/// <summary>
-	/// Make the APU /RES pin = 0 for a few CLK half cycles so that the APU resets all of its internal circuits.
-	/// </summary>
-	void Board::ResetAPU(uint16_t addr, bool reset_apu_also)
+	void NSFPlayerBoard::ResetAPU(uint16_t addr, bool reset_apu_also)
 	{
 		pendingReset = true;
 		resetHalfClkCounter = 24;
@@ -148,26 +133,22 @@ namespace NSFPlayer
 		sram->SetFakeResetVector(addr);
 	}
 
-	/// <summary>
-	/// The parent application can check that the APU is in the reset process and ignore the audio signal for that time.
-	/// </summary>
-	/// <returns></returns>
-	bool Board::APUInResetState()
+	bool NSFPlayerBoard::APUInResetState()
 	{
 		return pendingReset;
 	}
 
-	size_t Board::GetACLKCounter()
+	size_t NSFPlayerBoard::GetACLKCounter()
 	{
 		return apu->GetACLKCounter();
 	}
 
-	size_t Board::GetPHICounter()
+	size_t NSFPlayerBoard::GetPHICounter()
 	{
 		return apu->GetPHICounter();
 	}
 
-	void Board::SampleAudioSignal(float* sample)
+	void NSFPlayerBoard::SampleAudioSignal(float* sample)
 	{
 		if (sample != nullptr)
 		{
@@ -175,13 +156,7 @@ namespace NSFPlayer
 		}
 	}
 
-	/// <summary>
-	/// Load the whole NSF data image to the BankedSRAM device.
-	/// </summary>
-	/// <param name="data">nsf data offset +0x80</param>
-	/// <param name="data_size">nsf data size</param>
-	/// <param name="load_address">nsf load address (from header)</param>
-	void Board::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
+	void NSFPlayerBoard::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
 	{
 		if (sram != nullptr)
 		{
@@ -192,11 +167,7 @@ namespace NSFPlayer
 		}
 	}
 
-	/// <summary>
-	/// Enable the bank switching circuit for the BankedSRAM device.
-	/// </summary>
-	/// <param name="enable"></param>
-	void Board::EnableNSFBanking(bool enable)
+	void NSFPlayerBoard::EnableNSFBanking(bool enable)
 	{
 		if (sram != nullptr)
 		{
@@ -204,21 +175,12 @@ namespace NSFPlayer
 		}
 	}
 
-	/// <summary>
-	/// Load APU registers dump
-	/// </summary>
-	/// <param name="data">APULogEntry records</param>
-	/// <param name="data_size">Dump size (bytes)</param>
-	void Board::LoadRegDump(uint8_t* data, size_t data_size)
+	void NSFPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
 	{
 		// NSFPlayerBoard is not designed for this.
 	}
 
-	/// <summary>
-	/// Get audio signal settings that help with its rendering on the consumer side.
-	/// </summary>
-	/// <param name="features"></param>
-	void Board::GetSignalFeatures(APUSim::AudioSignalFeatures* features)
+	void NSFPlayerBoard::GetSignalFeatures(APUSim::AudioSignalFeatures* features)
 	{
 		APUSim::AudioSignalFeatures feat{};
 		apu->GetSignalFeatures(feat);

@@ -251,6 +251,7 @@ namespace M6502Core
 		} cmd{};
 
 	public:
+		M6502() {}
 		M6502(bool HLE, bool BCD_Hack);
 		~M6502();
 
