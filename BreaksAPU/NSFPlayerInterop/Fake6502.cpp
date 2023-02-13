@@ -78,6 +78,7 @@ namespace M6502Core
 		outputs[(size_t)M6502Core::OutputPad::PHI1] = PHI1;
 		outputs[(size_t)M6502Core::OutputPad::PHI2] = PHI2;
 		outputs[(size_t)M6502Core::OutputPad::RnW] = RnW;
+		outputs[(size_t)M6502Core::OutputPad::SYNC] = TriState::Zero;
 	}
 
 	void FakeM6502::SetRegDump(void* ptr, size_t size)
