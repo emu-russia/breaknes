@@ -6,7 +6,7 @@ using namespace BaseLogic;
 
 namespace M6502Core
 {
-	FakeM6502::FakeM6502()
+	FakeM6502::FakeM6502() : M6502()
 	{
 	}
 

@@ -532,11 +532,12 @@ namespace NSFPlayer
 		/// <param name="e"></param>
 		private void button3_Click(object sender, EventArgs e)
 		{
-			if (Paused && nsf_loaded)
+			if (Paused && (nsf_loaded || regdump_loaded))
 			{
 				NSFPlayerInterop.Step();
 				TraceCore();
-				nsf.SyncExec();
+				if (nsf_loaded)
+					nsf.SyncExec();
 				Button2Click();
 			}
 		}

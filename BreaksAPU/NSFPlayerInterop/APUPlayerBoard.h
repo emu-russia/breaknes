@@ -13,6 +13,7 @@ namespace NSFPlayer
 
 	class APUPlayerBoard : public Board
 	{
+		M6502Core::FakeM6502* core = nullptr;
 		BaseBoard::SRAM* wram = nullptr;
 		const size_t wram_bits = 11;
 		const size_t wram_size = 1ULL << wram_bits;

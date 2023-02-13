@@ -146,8 +146,7 @@ namespace NSFPlayer
 
 	void APUPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
 	{
-		M6502Core::FakeM6502* fake_core = (M6502Core::FakeM6502*)core;
-		fake_core->SetRegDump(data, data_size);
+		core->SetRegDump(data, data_size);
 	}
 
 	void APUPlayerBoard::GetSignalFeatures(APUSim::AudioSignalFeatures* features)

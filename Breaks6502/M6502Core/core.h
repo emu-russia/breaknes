@@ -255,7 +255,7 @@ namespace M6502Core
 		M6502(bool HLE, bool BCD_Hack);
 		~M6502();
 
-		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint16_t *addr_bus, uint8_t* data_bus);
+		virtual void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint16_t *addr_bus, uint8_t* data_bus);
 
 		void getDebug(DebugInfo* info);
 
