@@ -160,7 +160,7 @@ namespace APUSim
 		// DEBUG
 
 		features.SampleRate = 21477272 * 2;// (int32_t)(clk / div);			// Every Half-CLK
-		features.AclkPerSecond = features.SampleRate / 2;		// ACLK = PHI / 2. Specific ACLK duty cycle does not play a significant role in sample playback
+		features.AclkPerSecond = clk / div / 2;		// ACLK = PHI / 2. Specific ACLK duty cycle does not play a significant role in sample playback
 
 		// TBD: Add other APU
 	}
