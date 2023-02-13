@@ -256,6 +256,9 @@ namespace APUSim
 		uint8_t Dbg_GetStatus();
 		void Dbg_SetStatus(uint8_t val);
 
+		void sim_CoreIntegration();
+		void sim_SoundGenerators();
+
 	public:
 		APU(M6502Core::M6502 *core, Revision rev);
 		~APU();

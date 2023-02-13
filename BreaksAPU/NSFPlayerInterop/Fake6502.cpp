@@ -41,7 +41,7 @@ namespace M6502Core
 
 		if (regdump != nullptr)
 		{
-			if (phi_counter >= next_phi)
+			if (phi_counter >= next_phi && PHI2 == TriState::One)
 			{
 				APULogEntry* current = GetCurrentEntry();
 
