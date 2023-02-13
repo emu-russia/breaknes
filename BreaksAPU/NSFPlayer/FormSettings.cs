@@ -40,6 +40,11 @@ namespace NSFPlayer
 				}
 			}
 
+			if (settings.FurryIntensity == 0)
+				settings.FurryIntensity = 500.0f;
+			if (settings.OutputSampleRate == 0)
+				settings.OutputSampleRate = 48000;
+
 			return settings;
 		}
 

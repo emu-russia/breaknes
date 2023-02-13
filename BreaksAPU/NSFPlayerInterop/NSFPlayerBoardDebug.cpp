@@ -14,7 +14,7 @@ using namespace BaseLogic;
 
 namespace NSFPlayer
 {
-	void Board::AddBoardMemDescriptors()
+	void NSFPlayerBoard::AddBoardMemDescriptors()
 	{
 		// Banked SRAM
 
@@ -40,7 +40,7 @@ namespace NSFPlayer
 		const uint8_t bits;
 	};
 
-	SignalOffsetPair core_wires[] = {
+	static SignalOffsetPair core_wires[] = {
 		"IR", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::IR), 8,
 		"/PRDY", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_PRDY), 1,
 		"/NMIP", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_NMIP), 1,
@@ -139,7 +139,7 @@ namespace NSFPlayer
 		"n_1PC", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_1PC), 1,
 	};
 
-	SignalOffsetPair core_regs[] = {
+	static SignalOffsetPair core_regs[] = {
 		"PCH", offsetof(M6502Core::UserRegs, PCH), 8,
 		"PCL", offsetof(M6502Core::UserRegs, PCL), 8,
 		"PCHS", offsetof(M6502Core::UserRegs, PCHS), 8,
@@ -156,7 +156,7 @@ namespace NSFPlayer
 		"N_OUT", offsetof(M6502Core::UserRegs, N_OUT), 8,
 	};
 
-	SignalOffsetPair apu_wires[] = {
+	static SignalOffsetPair apu_wires[] = {
 		"/CLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_CLK), 1,
 		"PHI0", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI0), 1,
 		"PHI1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI1), 1,
@@ -226,7 +226,7 @@ namespace NSFPlayer
 		"LOCK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::LOCK), 1,
 	};
 
-	SignalOffsetPair apu_regs[] = {
+	static SignalOffsetPair apu_regs[] = {
 		"DBOutputLatch", offsetof(APUSim::APU_Registers, DBOutputLatch), 8,
 		"DBInputLatch", offsetof(APUSim::APU_Registers, DBInputLatch), 8,
 		"OutReg", offsetof(APUSim::APU_Registers, OutReg), 3,
@@ -274,23 +274,23 @@ namespace NSFPlayer
 		"Status", offsetof(APUSim::APU_Registers, Status), 8,
 	};
 
-	SignalOffsetPair board_signals[] = {
-		"SYNC", offsetof(BoardDebugInfo, sync), 1,				// 6502 Core SYNC terminal
-		"BoardCLK", offsetof(BoardDebugInfo, CLK), 1,
-		"Bank0", offsetof(BoardDebugInfo, bank_reg[0]), 8,		// Bank switch registers
-		"Bank1", offsetof(BoardDebugInfo, bank_reg[1]), 8,
-		"Bank2", offsetof(BoardDebugInfo, bank_reg[2]), 8,
-		"Bank3", offsetof(BoardDebugInfo, bank_reg[3]), 8,
-		"Bank4", offsetof(BoardDebugInfo, bank_reg[4]), 8,
-		"Bank5", offsetof(BoardDebugInfo, bank_reg[5]), 8,
-		"Bank6", offsetof(BoardDebugInfo, bank_reg[6]), 8,
-		"Bank7", offsetof(BoardDebugInfo, bank_reg[7]), 8,
-		"ABus", offsetof(BoardDebugInfo, ABus), 16,
-		"DBus", offsetof(BoardDebugInfo, DBus), 8,
-		"Reset", offsetof(BoardDebugInfo, ResetPending), 1,
+	static SignalOffsetPair board_signals[] = {
+		"SYNC", offsetof(NSFBoardDebugInfo, sync), 1,				// 6502 Core SYNC terminal
+		"BoardCLK", offsetof(NSFBoardDebugInfo, CLK), 1,
+		"Bank0", offsetof(NSFBoardDebugInfo, bank_reg[0]), 8,		// Bank switch registers
+		"Bank1", offsetof(NSFBoardDebugInfo, bank_reg[1]), 8,
+		"Bank2", offsetof(NSFBoardDebugInfo, bank_reg[2]), 8,
+		"Bank3", offsetof(NSFBoardDebugInfo, bank_reg[3]), 8,
+		"Bank4", offsetof(NSFBoardDebugInfo, bank_reg[4]), 8,
+		"Bank5", offsetof(NSFBoardDebugInfo, bank_reg[5]), 8,
+		"Bank6", offsetof(NSFBoardDebugInfo, bank_reg[6]), 8,
+		"Bank7", offsetof(NSFBoardDebugInfo, bank_reg[7]), 8,
+		"ABus", offsetof(NSFBoardDebugInfo, ABus), 16,
+		"DBus", offsetof(NSFBoardDebugInfo, DBus), 8,
+		"Reset", offsetof(NSFBoardDebugInfo, ResetPending), 1,
 	};
 
-	void Board::AddDebugInfoProviders()
+	void NSFPlayerBoard::AddDebugInfoProviders()
 	{
 		for (size_t n = 0; n < _countof(core_wires); n++)
 		{
@@ -353,33 +353,33 @@ namespace NSFPlayer
 		}
 	}
 
-	uint8_t Board::DumpSRAM(void* opaque, size_t addr)
+	uint8_t NSFPlayerBoard::DumpSRAM(void* opaque, size_t addr)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 		return board->sram->Dbg_ReadByte(addr);
 	}
 
-	void Board::WriteSRAM(void* opaque, size_t addr, uint8_t data)
+	void NSFPlayerBoard::WriteSRAM(void* opaque, size_t addr, uint8_t data)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 		board->sram->Dbg_WriteByte(addr, data);
 	}
 
-	uint8_t Board::DumpWRAM(void* opaque, size_t addr)
+	uint8_t NSFPlayerBoard::DumpWRAM(void* opaque, size_t addr)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 		return board->wram->Dbg_ReadByte(addr);
 	}
 
-	void Board::WriteWRAM(void* opaque, size_t addr, uint8_t data)
+	void NSFPlayerBoard::WriteWRAM(void* opaque, size_t addr, uint8_t data)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 		board->wram->Dbg_WriteByte(addr, data);
 	}
 
-	uint32_t Board::GetCoreDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t NSFPlayerBoard::GetCoreDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 
 		for (size_t n = 0; n < _countof(core_wires); n++)
 		{
@@ -394,9 +394,9 @@ namespace NSFPlayer
 		return 0;
 	}
 
-	uint32_t Board::GetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t NSFPlayerBoard::GetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 
 		for (size_t n = 0; n < _countof(core_regs); n++)
 		{
@@ -411,9 +411,9 @@ namespace NSFPlayer
 		return 0;
 	}
 
-	uint32_t Board::GetApuDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t NSFPlayerBoard::GetApuDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 
 		for (size_t n = 0; n < _countof(apu_wires); n++)
 		{
@@ -432,9 +432,9 @@ namespace NSFPlayer
 		return 0;
 	}
 
-	uint32_t Board::GetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t NSFPlayerBoard::GetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 
 		for (size_t n = 0; n < _countof(apu_regs); n++)
 		{
@@ -449,14 +449,14 @@ namespace NSFPlayer
 		return 0;
 	}
 
-	void Board::SetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	void NSFPlayerBoard::SetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
 		// not need
 	}
 
-	void Board::SetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	void NSFPlayerBoard::SetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 
 		for (size_t n = 0; n < _countof(core_regs); n++)
 		{
@@ -469,14 +469,14 @@ namespace NSFPlayer
 		}
 	}
 
-	void Board::SetApuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	void NSFPlayerBoard::SetApuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
 		// not need
 	}
 
-	void Board::SetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	void NSFPlayerBoard::SetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 
 		for (size_t n = 0; n < _countof(apu_regs); n++)
 		{
@@ -489,7 +489,7 @@ namespace NSFPlayer
 		}
 	}
 
-	void Board::GetDebugInfo(BoardDebugInfo& info)
+	void NSFPlayerBoard::GetDebugInfo(NSFBoardDebugInfo& info)
 	{
 		info.CLK = CLK;
 		for (int i = 0; i < _countof(info.bank_reg); i++)
@@ -502,9 +502,9 @@ namespace NSFPlayer
 		info.ResetPending = pendingReset;
 	}
 
-	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t NSFPlayerBoard::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 
 		for (size_t n = 0; n < _countof(board_signals); n++)
 		{
@@ -512,7 +512,7 @@ namespace NSFPlayer
 
 			if (!strcmp(sp->name, entry->name))
 			{
-				BoardDebugInfo info{};
+				NSFBoardDebugInfo info{};
 				board->GetDebugInfo(info);
 
 				uint8_t* ptr = (uint8_t*)&info + sp->offset;
@@ -523,9 +523,9 @@ namespace NSFPlayer
 		return 0;
 	}
 
-	void Board::SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	void NSFPlayerBoard::SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
-		Board* board = (Board*)opaque;
+		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 
 		// wow!
 		bool Bank = entry->name[0] == 'B' && entry->name[1] == 'a' && entry->name[2] == 'n' && entry->name[3] == 'k';

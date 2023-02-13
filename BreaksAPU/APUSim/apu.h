@@ -248,6 +248,7 @@ namespace APUSim
 		void SetDBBit(size_t n, BaseLogic::TriState bit_val);
 
 		size_t aclk_counter = 0;
+		size_t phi_counter = 0;
 
 		BaseLogic::TriState PrevPHI_Core = BaseLogic::TriState::X;	// to optimize
 		BaseLogic::TriState PrevPHI_Others = BaseLogic::TriState::X;	// to optimize
@@ -285,6 +286,10 @@ namespace APUSim
 		size_t GetACLKCounter();
 
 		void ResetACLKCounter();
+
+		size_t GetPHICounter();
+
+		void ResetPHICounter();
 
 		void ResetCore(bool enable);
 

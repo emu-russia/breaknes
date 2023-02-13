@@ -1,4 +1,4 @@
-// Module for maintaining a simulated APU environment.
+// A special version of the board, which contains a bare APU and Fake6502, which can only read/write APU registers from the dump.
 
 #include "pch.h"
 
@@ -6,7 +6,7 @@ using namespace BaseLogic;
 
 namespace NSFPlayer
 {
-	NSFPlayerBoard::NSFPlayerBoard(char* boardName, char* apuRev, char* ppuRev, char* p1) : Board(boardName, apuRev, ppuRev, p1)
+	APUPlayerBoard::APUPlayerBoard(char* boardName, char* apuRev, char* ppuRev, char* p1) : Board(boardName, apuRev, ppuRev, p1)
 	{
 		APUSim::Revision rev;
 
@@ -36,9 +36,8 @@ namespace NSFPlayer
 			rev = APUSim::Revision::RP2A03G;
 		}
 
-		core = new M6502Core::M6502(true, true);
+		core = new M6502Core::FakeM6502();
 		apu = new APUSim::APU(core, rev);
-		sram = new BankedSRAM();
 		wram = new BaseBoard::SRAM(wram_bits);
 
 		for (int i = 0; i < wram->Dbg_GetSize(); i++)
@@ -52,15 +51,14 @@ namespace NSFPlayer
 		AddDebugInfoProviders();
 	}
 
-	NSFPlayerBoard::~NSFPlayerBoard()
+	APUPlayerBoard::~APUPlayerBoard()
 	{
 		delete apu;
 		delete core;
-		delete sram;
 		delete wram;
 	}
 
-	void NSFPlayerBoard::Step()
+	void APUPlayerBoard::Step()
 	{
 		// Simulate APU
 
@@ -71,12 +69,10 @@ namespace NSFPlayer
 
 		inputs[(size_t)APUSim::APU_Input::n_NMI] = TriState::One;
 		inputs[(size_t)APUSim::APU_Input::n_IRQ] = TriState::One;
-		inputs[(size_t)APUSim::APU_Input::n_RES] = (pendingReset && reset_apu_also) ? TriState::Zero : TriState::One;
+		inputs[(size_t)APUSim::APU_Input::n_RES] = TriState::One;
 		inputs[(size_t)APUSim::APU_Input::DBG] = TriState::Zero;
 
 		apu->sim(inputs, outputs, &data_bus, &addr_bus, aux);
-
-		SYNC = outputs[(size_t)APUSim::APU_Output::SYNC];
 
 		TriState RnW = outputs[(size_t)APUSim::APU_Output::RnW];
 		TriState M2 = outputs[(size_t)APUSim::APU_Output::M2];		// There doesn't seem to be any use for it...
@@ -94,61 +90,43 @@ namespace NSFPlayer
 		bool dz = false;
 		wram->sim(NOT(wram_cs), n_WE, n_OE, &wram_addr, &data_bus, dz);
 
-		sram->sim(RnW, NOT(wram_cs), addr_bus, &data_bus);
-
 		// Tick
 
 		CLK = NOT(CLK);
-
-		if (pendingReset)
-		{
-			resetHalfClkCounter--;
-			if (resetHalfClkCounter == 0)
-			{
-				pendingReset = false;
-				apu->ResetCore(false);
-			}
-		}
 	}
 
-	int NSFPlayerBoard::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
+	int APUPlayerBoard::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
 	{
 		// The NSF board does not have a cartridge connector.
 
 		return 0;
 	}
 
-	void NSFPlayerBoard::EjectCartridge()
+	void APUPlayerBoard::EjectCartridge()
 	{
 		// The NSF board does not have a cartridge connector.
 	}
 
-	void NSFPlayerBoard::ResetAPU(uint16_t addr, bool reset_apu_also)
+	void APUPlayerBoard::ResetAPU(uint16_t addr, bool reset_apu_also)
 	{
-		pendingReset = true;
-		resetHalfClkCounter = 24;
-		this->reset_apu_also = reset_apu_also;
-
-		apu->ResetCore(true);
-		sram->SetFakeResetVector(addr);
 	}
 
-	bool NSFPlayerBoard::APUInResetState()
+	bool APUPlayerBoard::APUInResetState()
 	{
-		return pendingReset;
+		return false;
 	}
 
-	size_t NSFPlayerBoard::GetACLKCounter()
+	size_t APUPlayerBoard::GetACLKCounter()
 	{
 		return apu->GetACLKCounter();
 	}
 
-	size_t NSFPlayerBoard::GetPHICounter()
+	size_t APUPlayerBoard::GetPHICounter()
 	{
 		return apu->GetPHICounter();
 	}
 
-	void NSFPlayerBoard::SampleAudioSignal(float* sample)
+	void APUPlayerBoard::SampleAudioSignal(float* sample)
 	{
 		if (sample != nullptr)
 		{
@@ -156,31 +134,20 @@ namespace NSFPlayer
 		}
 	}
 
-	void NSFPlayerBoard::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
+	void APUPlayerBoard::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
 	{
-		if (sram != nullptr)
-		{
-			sram->LoadNSFData(data, data_size, load_address);
-
-			dbg_hub->DisposeMemMap();
-			AddBoardMemDescriptors();
-		}
 	}
 
-	void NSFPlayerBoard::EnableNSFBanking(bool enable)
+	void APUPlayerBoard::EnableNSFBanking(bool enable)
 	{
-		if (sram != nullptr)
-		{
-			sram->EnableNSFBanking(enable);
-		}
 	}
 
-	void NSFPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
+	void APUPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
 	{
-		// NSFPlayerBoard is not designed for this.
+		// TBD
 	}
 
-	void NSFPlayerBoard::GetSignalFeatures(APUSim::AudioSignalFeatures* features)
+	void APUPlayerBoard::GetSignalFeatures(APUSim::AudioSignalFeatures* features)
 	{
 		APUSim::AudioSignalFeatures feat{};
 		apu->GetSignalFeatures(feat);

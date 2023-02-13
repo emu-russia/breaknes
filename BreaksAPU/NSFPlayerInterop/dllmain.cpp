@@ -29,7 +29,7 @@ extern "C"
 		{
 			printf("CreateBoard\n");
 			CreateDebugHub();
-			board = new NSFPlayer::Board(boardName, apu, ppu, p1);
+			board = NSFPlayer::InstantiateBoard(boardName, apu, ppu, p1);
 		}
 	}
 
@@ -85,6 +85,18 @@ extern "C"
 		}
 	}
 
+	__declspec(dllexport) size_t GetPHICounter()
+	{
+		if (board != nullptr)
+		{
+			return board->GetPHICounter();
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
 	__declspec(dllexport) void SampleAudioSignal(float* sample)
 	{
 		if (board != nullptr)
@@ -106,6 +118,14 @@ extern "C"
 		if (board != nullptr)
 		{
 			board->EnableNSFBanking(enable);
+		}
+	}
+
+	__declspec(dllexport) void LoadRegDump(uint8_t* data, size_t data_size)
+	{
+		if (board != nullptr)
+		{
+			board->LoadRegDump(data, data_size);
 		}
 	}
 

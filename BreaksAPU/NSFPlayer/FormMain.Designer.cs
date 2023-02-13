@@ -31,9 +31,11 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadAPURegisterDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadAUXDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadNSFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.executeINITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,7 +64,7 @@
 			this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel7 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabelACLK = new System.Windows.Forms.ToolStripStatusLabel();
-			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			this.openFileDialogNSF = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			this.saveFileDialogBin = new System.Windows.Forms.SaveFileDialog();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -88,6 +90,7 @@
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.hexBox1 = new Be.Windows.Forms.HexBox();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -129,36 +132,52 @@
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadNSFToolStripMenuItem,
-            this.settingsToolStripMenuItem,
+            this.loadAPURegisterDumpToolStripMenuItem,
+            this.loadAUXDumpToolStripMenuItem,
             this.toolStripSeparator1,
+            this.settingsToolStripMenuItem,
             this.exitToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this.fileToolStripMenuItem.Text = "File";
 			// 
+			// loadAPURegisterDumpToolStripMenuItem
+			// 
+			this.loadAPURegisterDumpToolStripMenuItem.Name = "loadAPURegisterDumpToolStripMenuItem";
+			this.loadAPURegisterDumpToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+			this.loadAPURegisterDumpToolStripMenuItem.Text = "Load APU registers dump...";
+			this.loadAPURegisterDumpToolStripMenuItem.Click += new System.EventHandler(this.loadAPURegisterDumpToolStripMenuItem_Click);
+			// 
+			// loadAUXDumpToolStripMenuItem
+			// 
+			this.loadAUXDumpToolStripMenuItem.Name = "loadAUXDumpToolStripMenuItem";
+			this.loadAUXDumpToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+			this.loadAUXDumpToolStripMenuItem.Text = "Load AUX dump...";
+			this.loadAUXDumpToolStripMenuItem.Click += new System.EventHandler(this.loadAUXDumpToolStripMenuItem_Click);
+			// 
 			// loadNSFToolStripMenuItem
 			// 
 			this.loadNSFToolStripMenuItem.Name = "loadNSFToolStripMenuItem";
-			this.loadNSFToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+			this.loadNSFToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
 			this.loadNSFToolStripMenuItem.Text = "Load NSF...";
 			this.loadNSFToolStripMenuItem.Click += new System.EventHandler(this.loadNSFToolStripMenuItem_Click);
-			// 
-			// settingsToolStripMenuItem
-			// 
-			this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-			this.settingsToolStripMenuItem.Text = "Settings...";
-			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(130, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(214, 6);
+			// 
+			// settingsToolStripMenuItem
+			// 
+			this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+			this.settingsToolStripMenuItem.Text = "Settings...";
+			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -174,14 +193,14 @@
 			// executeINITToolStripMenuItem
 			// 
 			this.executeINITToolStripMenuItem.Name = "executeINITToolStripMenuItem";
-			this.executeINITToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.executeINITToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
 			this.executeINITToolStripMenuItem.Text = "Execute INIT";
 			this.executeINITToolStripMenuItem.Click += new System.EventHandler(this.executeINITToolStripMenuItem_Click);
 			// 
 			// executePLAYToolStripMenuItem
 			// 
 			this.executePLAYToolStripMenuItem.Name = "executePLAYToolStripMenuItem";
-			this.executePLAYToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.executePLAYToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
 			this.executePLAYToolStripMenuItem.Text = "Execute PLAY";
 			this.executePLAYToolStripMenuItem.Click += new System.EventHandler(this.executePLAYToolStripMenuItem_Click);
 			// 
@@ -366,10 +385,10 @@
 			this.toolStripStatusLabelACLK.Size = new System.Drawing.Size(13, 19);
 			this.toolStripStatusLabelACLK.Text = "0";
 			// 
-			// openFileDialog1
+			// openFileDialogNSF
 			// 
-			this.openFileDialog1.DefaultExt = "nsf";
-			this.openFileDialog1.Filter = "NSF files|*.nsf|All files|*.*";
+			this.openFileDialogNSF.DefaultExt = "nsf";
+			this.openFileDialogNSF.Filter = "NSF files|*.nsf|All files|*.*";
 			// 
 			// openFileDialogHEX
 			// 
@@ -664,6 +683,11 @@
 			this.backgroundWorker1.WorkerSupportsCancellation = true;
 			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
 			// 
+			// openFileDialog1
+			// 
+			this.openFileDialog1.DefaultExt = "bin";
+			this.openFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
+			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -727,7 +751,7 @@
 		private ToolStripMenuItem previousTrackToolStripMenuItem;
 		private ToolStripMenuItem nextTrackToolStripMenuItem;
 		private ToolStripMenuItem nSFInfoToolStripMenuItem;
-		private OpenFileDialog openFileDialog1;
+		private OpenFileDialog openFileDialogNSF;
 		private ToolStripMenuItem debugToolStripMenuItem;
 		private OpenFileDialog openFileDialogHEX;
 		private SaveFileDialog saveFileDialogBin;
@@ -768,5 +792,8 @@
 		private Button button3;
 		private ToolStripMenuItem executeINITToolStripMenuItem;
 		private ToolStripMenuItem executePLAYToolStripMenuItem;
+		private OpenFileDialog openFileDialog1;
+		private ToolStripMenuItem loadAPURegisterDumpToolStripMenuItem;
+		private ToolStripMenuItem loadAUXDumpToolStripMenuItem;
 	}
 }

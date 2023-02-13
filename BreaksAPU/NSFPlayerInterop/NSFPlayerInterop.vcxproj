@@ -159,13 +159,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AbstractBoard.h" />
+    <ClInclude Include="APUPlayerBoard.h" />
     <ClInclude Include="BankedSRAM.h" />
+    <ClInclude Include="BoardFactory.h" />
+    <ClInclude Include="Fake6502.h" />
     <ClInclude Include="NSFPlayerBoard.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="APUPlayerBoard.cpp" />
+    <ClCompile Include="APUPlayerBoardDebug.cpp" />
     <ClCompile Include="BankedSRAM.cpp" />
+    <ClCompile Include="BoardFactory.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Fake6502.cpp" />
     <ClCompile Include="NSFPlayerBoard.cpp" />
     <ClCompile Include="NSFPlayerBoardDebug.cpp" />
     <ClCompile Include="pch.cpp">

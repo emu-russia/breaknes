@@ -47,6 +47,7 @@ namespace APUSim
 	void CoreBinding::sim_DividerBeforeCore()
 	{
 		TriState n_CLK = apu->wire.n_CLK;
+		TriState prev_phi = apu->wire.PHI0;
 
 		// Phase splitter
 
@@ -59,7 +60,8 @@ namespace APUSim
 		div[5].sim(q, nq, TriState::Zero, div[4].get_sout(TriState::Zero));
 		div[4].sim(q, nq, TriState::Zero, div[3].get_sout(TriState::Zero));
 
-		apu->wire.PHI0 = NOT(div[5].get_sout(TriState::Zero));
+		TriState new_phi = NOT(div[5].get_sout(TriState::Zero));
+		apu->wire.PHI0 = new_phi;
 		TriState rst = NOR(apu->wire.PHI0, div[4].get_sout(TriState::Zero));
 
 		div[3].sim(q, nq, rst, div[2].get_sout(rst));
@@ -68,6 +70,14 @@ namespace APUSim
 		div[0].sim(q, nq, rst, apu->wire.PHI0);
 
 		// TBD: Other APU revisions
+
+		// The software PHI counter is triggered by the falling edge.
+		// This is purely a software design for convenience, and has nothing to do with APU hardware circuitry.
+
+		if (IsNegedge(prev_phi, new_phi))
+		{
+			apu->phi_counter++;
+		}
 	}
 
 	void CoreBinding::sim_DividerAfterCore()
