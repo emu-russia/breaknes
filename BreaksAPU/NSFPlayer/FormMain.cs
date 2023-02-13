@@ -221,9 +221,9 @@ namespace NSFPlayer
 
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (openFileDialog1.ShowDialog() == DialogResult.OK)
+			if (openFileDialogNSF.ShowDialog() == DialogResult.OK)
 			{
-				string nsf_filename = openFileDialog1.FileName;
+				string nsf_filename = openFileDialogNSF.FileName;
 				DisposeBoard();
 				InitBoard(nsf_filename);
 			}
@@ -334,6 +334,30 @@ namespace NSFPlayer
 		}
 
 		#endregion "NSF Controls"
+
+
+		#region "Regdump Controls"
+
+		// This section of code is intended to replace NSF -- reproducing operations on APU registers from their read/write history dump.
+
+		private void loadAPURegisterDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		#endregion "Regdump Controls"
+
+
+		#region "AUX Dump Controls"
+
+		// This section of code does not simulate the APU at all, but simply outputs samples that have been saved in Logisim (AUX Dumper). The format used is .hex UInt32 as float.
+
+		private void loadAUXDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		#endregion "AUX Dump Controls"
 
 
 		#region "Sample Buffer Playback Controls"
@@ -643,6 +667,7 @@ namespace NSFPlayer
 
 
 		#endregion "What's that for?"
+
 
 	}
 }
