@@ -9,7 +9,6 @@ namespace NSFPlayer
 	protected:
 
 		APUSim::APU* apu = nullptr;
-		M6502Core::M6502* core = nullptr;
 
 		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
 

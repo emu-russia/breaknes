@@ -14,6 +14,7 @@ namespace NSFPlayer
 		private DSound? audio_backend;
 		private NSFSupport nsf = new();
 		private bool nsf_loaded = false;
+		private bool regdump_loaded = false;
 		private byte current_song = 0;
 		private bool Paused = true;         // atomic
 		private bool Dma = false;       // atomic
@@ -90,70 +91,6 @@ namespace NSFPlayer
 
 		#region "NSF Controls"
 
-		private int StepsToStat = 32;
-		private int StepsCounter = 0;
-
-		private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-		{
-			while (!backgroundWorker1.CancellationPending)
-			{
-				if (Paused || !nsf_loaded || Dma)
-				{
-					Thread.Sleep(10);
-					continue;
-				}
-
-				// Simulate APU
-
-				NSFPlayerInterop.Step();		// = 0.5 XTAL CLK
-				if (nsf.IsCoreReady())
-					nsf.SyncExec();
-
-				// Add audio sample
-
-				FeedSample();
-
-				// NSF Runtime logic
-
-				if (true)
-				{
-					var aclk = NSFPlayerInterop.GetACLKCounter();
-					if (aclk >= AclkToPlay)
-					{
-						ExecPLAY();
-						AclkToPlay = aclk + (aux_features.AclkPerSecond * nsf.GetPeriod(PreferPal)) / 1000000;
-					}
-
-					if (InitRequired)
-					{
-						ExecINIT();
-						InitRequired = false;
-					}
-				}
-
-				// Show statistics that are updated once every 1 second.
-
-				StepsCounter++;
-				if (StepsCounter >= StepsToStat)
-				{
-					long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-					if (now > (timeStamp + 1000))
-					{
-						timeStamp = now;
-
-						UpdateSampleBufStats();
-						UpdateSignalPlot();
-
-						var aclk_per_sec = NSFPlayerInterop.GetACLKCounter() - aclkCounter;
-						toolStripStatusLabelACLK.Text = aclk_per_sec.ToString();
-
-						aclkCounter = NSFPlayerInterop.GetACLKCounter();
-					}
-					StepsCounter = 0;
-				}
-			}
-		}
-
 		private void InitBoard(string nsf_filename)
 		{
 			AclkToPlay = 0;
@@ -213,6 +150,7 @@ namespace NSFPlayer
 			SetPaused(true);
 			NSFPlayerInterop.DestroyBoard();
 			nsf_loaded = false;
+			regdump_loaded = false;
 			nsf = new();
 			this.Text = DefaultTitle;
 			UpdateTrackStat();
@@ -223,9 +161,8 @@ namespace NSFPlayer
 		{
 			if (openFileDialogNSF.ShowDialog() == DialogResult.OK)
 			{
-				string nsf_filename = openFileDialogNSF.FileName;
 				DisposeBoard();
-				InitBoard(nsf_filename);
+				InitBoard(openFileDialogNSF.FileName);
 			}
 		}
 
@@ -342,7 +279,39 @@ namespace NSFPlayer
 
 		private void loadAPURegisterDumpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			if (openFileDialogRegDump.ShowDialog() == DialogResult.OK)
+			{
+				DisposeBoard();
+				InitBoardForRegDump(openFileDialogRegDump.FileName);
+			}
+		}
 
+		private void InitBoardForRegDump(string regdump_filename)
+		{
+			byte[] regdump = File.ReadAllBytes(regdump_filename);
+			regdump_loaded = true;
+			this.Text = DefaultTitle + " - " + regdump_filename;
+
+			var settings = FormSettings.LoadSettings();
+			NSFPlayerInterop.CreateBoard("APUPlayer", settings.APU_Revision, "None", "None");
+
+			FurryIntensity = settings.FurryIntensity;
+
+			// Setup RegDump
+
+			NSFPlayerInterop.LoadRegDump(regdump, regdump.Length);
+
+			UpdateMemLayout();
+
+			// SRC
+
+			NSFPlayerInterop.GetSignalFeatures(out aux_features);
+			DecimateEach = aux_features.SampleRate / SourceSampleRate;
+			DecimateCounter = 0;
+			Console.WriteLine("APUSim sample rate: {0}, DSound sample rate: {1}, decimate factor: {2}", aux_features.SampleRate, SourceSampleRate, DecimateEach);
+
+			// Autoplay
+			SetPaused(!settings.AutoPlay);
 		}
 
 		#endregion "Regdump Controls"
@@ -354,7 +323,7 @@ namespace NSFPlayer
 
 		private void loadAUXDumpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			// TBD.
 		}
 
 		#endregion "AUX Dump Controls"
@@ -563,11 +532,12 @@ namespace NSFPlayer
 		/// <param name="e"></param>
 		private void button3_Click(object sender, EventArgs e)
 		{
-			if (Paused && nsf_loaded)
+			if (Paused && (nsf_loaded || regdump_loaded))
 			{
 				NSFPlayerInterop.Step();
 				TraceCore();
-				nsf.SyncExec();
+				if (nsf_loaded)
+					nsf.SyncExec();
 				Button2Click();
 			}
 		}

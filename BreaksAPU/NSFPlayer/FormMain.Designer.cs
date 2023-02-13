@@ -31,9 +31,9 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadNSFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadAPURegisterDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadAUXDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.loadNSFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,7 +90,7 @@
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.hexBox1 = new Be.Windows.Forms.HexBox();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			this.openFileDialogRegDump = new System.Windows.Forms.OpenFileDialog();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -141,6 +141,13 @@
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this.fileToolStripMenuItem.Text = "File";
 			// 
+			// loadNSFToolStripMenuItem
+			// 
+			this.loadNSFToolStripMenuItem.Name = "loadNSFToolStripMenuItem";
+			this.loadNSFToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+			this.loadNSFToolStripMenuItem.Text = "Load NSF...";
+			this.loadNSFToolStripMenuItem.Click += new System.EventHandler(this.loadNSFToolStripMenuItem_Click);
+			// 
 			// loadAPURegisterDumpToolStripMenuItem
 			// 
 			this.loadAPURegisterDumpToolStripMenuItem.Name = "loadAPURegisterDumpToolStripMenuItem";
@@ -154,13 +161,6 @@
 			this.loadAUXDumpToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
 			this.loadAUXDumpToolStripMenuItem.Text = "Load AUX dump...";
 			this.loadAUXDumpToolStripMenuItem.Click += new System.EventHandler(this.loadAUXDumpToolStripMenuItem_Click);
-			// 
-			// loadNSFToolStripMenuItem
-			// 
-			this.loadNSFToolStripMenuItem.Name = "loadNSFToolStripMenuItem";
-			this.loadNSFToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-			this.loadNSFToolStripMenuItem.Text = "Load NSF...";
-			this.loadNSFToolStripMenuItem.Click += new System.EventHandler(this.loadNSFToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
@@ -683,10 +683,10 @@
 			this.backgroundWorker1.WorkerSupportsCancellation = true;
 			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
 			// 
-			// openFileDialog1
+			// openFileDialogRegDump
 			// 
-			this.openFileDialog1.DefaultExt = "bin";
-			this.openFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
+			this.openFileDialogRegDump.DefaultExt = "bin";
+			this.openFileDialogRegDump.Filter = "Binary files|*.bin|All files|*.*";
 			// 
 			// FormMain
 			// 
@@ -792,7 +792,7 @@
 		private Button button3;
 		private ToolStripMenuItem executeINITToolStripMenuItem;
 		private ToolStripMenuItem executePLAYToolStripMenuItem;
-		private OpenFileDialog openFileDialog1;
+		private OpenFileDialog openFileDialogRegDump;
 		private ToolStripMenuItem loadAPURegisterDumpToolStripMenuItem;
 		private ToolStripMenuItem loadAUXDumpToolStripMenuItem;
 	}

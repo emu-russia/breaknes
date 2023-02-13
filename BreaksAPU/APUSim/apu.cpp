@@ -52,50 +52,53 @@ namespace APUSim
 	void APU::sim(TriState inputs[], TriState outputs[], uint8_t* data, uint16_t* addr, AudioOutSignal& AUX)
 	{
 		pads->sim_InputPads(inputs);
+		pads->sim_DataBusInput(data);
 
-		// TBD: For now it is preliminary, but it will be propagated as the individual modules are debugged and simulated
-
-		// Core & stuff
-
-		core_int->sim();
-
-		//if (wire.PHI0 != PrevPHI_Others)
-		{
-			clkgen->sim();
-			regs->sim();
-			dma->sim();
-
-			pads->sim_DataBusInput(data);
-			dma->sim_DMA_Buffer();
-
-			// Sound channels
-
-			wire.SQA_LC = square[0]->get_LC();
-			wire.SQB_LC = square[1]->get_LC();
-			wire.TRI_LC = tri->get_LC();
-			wire.RND_LC = noise->get_LC();
-
-			lc[0]->sim(0, wire.W4003, wire.SQA_LC, wire.NOSQA);
-			lc[1]->sim(1, wire.W4007, wire.SQB_LC, wire.NOSQB);
-			lc[2]->sim(2, wire.W400B, wire.TRI_LC, wire.NOTRI);
-			lc[3]->sim(3, wire.W400F, wire.RND_LC, wire.NORND);
-
-			square[0]->sim(wire.W4000, wire.W4001, wire.W4002, wire.W4003, wire.NOSQA, SQA_Out);
-			square[1]->sim(wire.W4004, wire.W4005, wire.W4006, wire.W4007, wire.NOSQB, SQB_Out);
-			tri->sim();
-			noise->sim();
-			dpcm->sim();
-
-			regs->sim_DebugRegisters();
-
-			dma->sim_AddressMux();
-
-			PrevPHI_Others = wire.PHI0;
-		}
+		sim_CoreIntegration();
+		sim_SoundGenerators();
 
 		pads->sim_OutputPads(outputs, addr);
 		pads->sim_DataBusOutput(data);
 		dac->sim(AUX);
+	}
+
+	void APU::sim_CoreIntegration()
+	{
+		// Core & stuff
+
+		core_int->sim();
+		clkgen->sim();
+		regs->sim();
+		regs->sim_DebugRegisters();
+	}
+
+	void APU::sim_SoundGenerators()
+	{
+		// Sound channels
+
+		wire.SQA_LC = square[0]->get_LC();
+		wire.SQB_LC = square[1]->get_LC();
+		wire.TRI_LC = tri->get_LC();
+		wire.RND_LC = noise->get_LC();
+
+		lc[0]->sim(0, wire.W4003, wire.SQA_LC, wire.NOSQA);
+		lc[1]->sim(1, wire.W4007, wire.SQB_LC, wire.NOSQB);
+		lc[2]->sim(2, wire.W400B, wire.TRI_LC, wire.NOTRI);
+		lc[3]->sim(3, wire.W400F, wire.RND_LC, wire.NORND);
+
+		square[0]->sim(wire.W4000, wire.W4001, wire.W4002, wire.W4003, wire.NOSQA, SQA_Out);
+		square[1]->sim(wire.W4004, wire.W4005, wire.W4006, wire.W4007, wire.NOSQB, SQB_Out);
+		tri->sim();
+		noise->sim();
+		
+		//dpcm->sim();
+		wire.RUNDMC = TriState::Zero;
+		wire.n_DMC_AB = TriState::One;
+		wire.DMCRDY = TriState::One;
+
+		dma->sim();
+		dma->sim_DMA_Buffer();
+		dma->sim_AddressMux();
 	}
 
 	TriState APU::GetDBBit(size_t n)
@@ -154,8 +157,10 @@ namespace APUSim
 		size_t clk = 21477272;	// Hz
 		size_t div = 12;
 
-		features.SampleRate = (int32_t)(clk / div);
-		features.AclkPerSecond = features.SampleRate / 2;		// ACLK = PHI / 2. Specific ACLK duty cycle does not play a significant role in sample playback
+		// DEBUG
+
+		features.SampleRate = 21477272 * 2;// (int32_t)(clk / div);			// Every Half-CLK
+		features.AclkPerSecond = clk / div / 2;		// ACLK = PHI / 2. Specific ACLK duty cycle does not play a significant role in sample playback
 
 		// TBD: Add other APU
 	}

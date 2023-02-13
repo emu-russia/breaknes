@@ -148,9 +148,9 @@ namespace NSFPlayer
 	};
 
 	static SignalOffsetPair board_signals[] = {
-		"BoardCLK", offsetof(NSFBoardDebugInfo, CLK), 1,
-		"ABus", offsetof(NSFBoardDebugInfo, ABus), 16,
-		"DBus", offsetof(NSFBoardDebugInfo, DBus), 8,
+		"BoardCLK", offsetof(APUBoardDebugInfo, CLK), 1,
+		"ABus", offsetof(APUBoardDebugInfo, ABus), 16,
+		"DBus", offsetof(APUBoardDebugInfo, DBus), 8,
 	};
 
 	void APUPlayerBoard::AddDebugInfoProviders()

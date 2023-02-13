@@ -125,6 +125,7 @@ namespace APUSim
 		}
 
 		FCO = carry;
+		fco_latch.set(FCO, n_ACLK);
 	}
 
 	void SquareChan::sim_Sweep(TriState WR1, TriState NOSQ)
@@ -172,7 +173,7 @@ namespace APUSim
 			duty_reg[n].sim(n_ACLK, WR0, apu->GetDBBit(n + 6));
 		}
 
-		TriState carry = TriState::One;
+		TriState carry = FCO;
 
 		for (size_t n = 0; n < 3; n++)
 		{
@@ -187,7 +188,7 @@ namespace APUSim
 		in[3] = NAND(duty_cnt[1].get(), duty_cnt[2].get());
 		in[0] = NOR(NOT(duty_cnt[0].get()), in[3]);
 		in[1] = NOT(in[3]);
-		in[2] = duty_cnt[3].get();
+		in[2] = duty_cnt[2].get();
 
 		DUTY = MUX2(sel, in);		
 	}

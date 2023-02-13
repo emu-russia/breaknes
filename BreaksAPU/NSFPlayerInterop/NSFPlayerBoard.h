@@ -16,6 +16,7 @@ namespace NSFPlayer
 
 	class NSFPlayerBoard : public Board
 	{
+		M6502Core::M6502* core = nullptr;
 		BankedSRAM* sram = nullptr;
 		BaseBoard::SRAM* wram = nullptr;
 		const size_t wram_bits = 11;

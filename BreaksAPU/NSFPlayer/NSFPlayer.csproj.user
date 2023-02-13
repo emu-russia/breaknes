@@ -7,6 +7,9 @@
     <Compile Update="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormMainWorker.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormNSFInfo.cs">
       <SubType>Form</SubType>
     </Compile>

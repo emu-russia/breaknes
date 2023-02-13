@@ -6,7 +6,7 @@ using namespace BaseLogic;
 
 namespace M6502Core
 {
-	FakeM6502::FakeM6502()
+	FakeM6502::FakeM6502() : M6502()
 	{
 	}
 
@@ -41,7 +41,7 @@ namespace M6502Core
 
 		if (regdump != nullptr)
 		{
-			if (phi_counter >= next_phi)
+			if (phi_counter >= next_phi && PHI2 == TriState::One)
 			{
 				APULogEntry* current = GetCurrentEntry();
 
