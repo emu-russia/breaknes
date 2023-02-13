@@ -39,7 +39,9 @@ namespace NSFPlayer
 					if (aclk >= AclkToPlay)
 					{
 						ExecPLAY();
-						AclkToPlay = aclk + (aux_features.AclkPerSecond * nsf.GetPeriod(PreferPal)) / 1000000;
+						var clk_per_second = aux_features.SampleRate / 2;
+						var aclk_per_second = (clk_per_second / 12) / 2;
+						AclkToPlay = aclk + (aclk_per_second * nsf.GetPeriod(PreferPal)) / 1000000;
 					}
 
 					if (InitRequired)
