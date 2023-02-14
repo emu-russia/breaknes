@@ -170,6 +170,7 @@
     <ClInclude Include="Fake6502.h" />
     <ClInclude Include="NSFPlayerBoard.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RegDumpProcessor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APUPlayerBoard.cpp" />
@@ -186,6 +187,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RegDumpProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Breaks6502\M6502Core\Scripts\VS2022\M6502Core.vcxproj">

@@ -146,7 +146,10 @@ namespace NSFPlayer
 
 	void APUPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
 	{
-		core->SetRegDump(data, data_size);
+		if (core && core->rp)
+		{
+			core->rp->SetRegDump(data, data_size);
+		}
 	}
 
 	void APUPlayerBoard::GetSignalFeatures(APUSim::AudioSignalFeatures* features)
