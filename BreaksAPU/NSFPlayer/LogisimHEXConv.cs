@@ -116,5 +116,42 @@ namespace NSFPlayer
 
 			return res.ToArray();
 		}
+
+		public static float[] HEXToFloatArray(string text)
+		{
+			List<float> res = new List<float>();
+
+			Regex regex = new Regex(@"^v2.0 raw[\r\n]+([\da-fA-F\*]+\s*)*");
+
+			var matches = regex.Matches(text);
+
+			foreach (Match match in matches)
+			{
+				foreach (var cap in match.Groups[1].Captures)
+				{
+					string entry = cap.ToString();
+
+					if (entry.Contains('*'))
+					{
+						string[] ab = entry.Trim().Split('*');
+						int counter = Convert.ToInt32(ab[0], 10);
+						UInt32 val = Convert.ToUInt32(ab[1], 16);
+						byte[] b = BitConverter.GetBytes(val);
+						for (int i = 0; i < counter; i++)
+						{
+							res.Add(BitConverter.ToSingle(b, 0));
+						}
+					}
+					else
+					{
+						UInt32 val = Convert.ToUInt32(entry.Trim(), 16);
+						byte[] b = BitConverter.GetBytes(val);
+						res.Add(BitConverter.ToSingle(b, 0));
+					}
+				}
+			}
+
+			return res.ToArray();
+		}
 	}
 }

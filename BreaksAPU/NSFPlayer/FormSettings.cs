@@ -110,7 +110,7 @@ namespace NSFPlayer
 
 			[XmlElement]
 			[Category("Host Features")]
-			[Description("Automatically start the simulation after loading the NSF")]
+			[Description("Automatically start the simulation after loading the NSF/Regdump")]
 			public bool AutoPlay { get; set; }
 			
 			[XmlElement]
