@@ -57,26 +57,14 @@ namespace NSFPlayer
 
 		void Step() override;
 
-		int InsertCartridge(uint8_t* nesImage, size_t nesImageSize) override;
-
-		void EjectCartridge() override;
-
 		void ResetAPU(uint16_t addr, bool reset_apu_also) override;
 
 		bool APUInResetState() override;
-
-		size_t GetACLKCounter() override;
-
-		size_t GetPHICounter() override;
-
-		void SampleAudioSignal(float* sample) override;
 
 		void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address) override;
 
 		void EnableNSFBanking(bool enable) override;
 
 		void LoadRegDump(uint8_t* data, size_t data_size) override;
-
-		void GetSignalFeatures(APUSim::AudioSignalFeatures* features) override;
 	};
 }
