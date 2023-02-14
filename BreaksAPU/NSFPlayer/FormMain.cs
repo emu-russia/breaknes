@@ -15,6 +15,7 @@ namespace NSFPlayer
 		private NSFSupport nsf = new();
 		private bool nsf_loaded = false;
 		private bool regdump_loaded = false;
+		private bool auxdump_loaded = false;
 		private byte current_song = 0;
 		private bool Paused = true;         // atomic
 		private bool Dma = false;       // atomic
@@ -38,10 +39,13 @@ namespace NSFPlayer
 		private long AclkToPlay = 0;
 		private bool PreferPal = false;
 
+		private float[] aux_dump = Array.Empty<float>();
+		private long aux_dump_pointer = 0;
+
 		public FormMain()
 		{
 			InitializeComponent();
-			AllocConsole();
+			//AllocConsole();
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
@@ -60,6 +64,9 @@ namespace NSFPlayer
 			backgroundWorker1.RunWorkerAsync();
 
 			signalPlot1.ForceMinMax(true, -0.2f, +1.0f);
+
+			nextTrackToolStripMenuItem.Enabled = false;
+			previousTrackToolStripMenuItem.Enabled = false;
 		}
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -143,6 +150,9 @@ namespace NSFPlayer
 			// Autoplay
 			SetSong(nsf.GetHead().StartingSong);
 			SetPaused(!settings.AutoPlay);
+
+			nextTrackToolStripMenuItem.Enabled = true;
+			previousTrackToolStripMenuItem.Enabled = true;
 		}
 
 		private void DisposeBoard()
@@ -151,10 +161,14 @@ namespace NSFPlayer
 			NSFPlayerInterop.DestroyBoard();
 			nsf_loaded = false;
 			regdump_loaded = false;
+			auxdump_loaded = false;
 			nsf = new();
 			this.Text = DefaultTitle;
 			UpdateTrackStat();
 			aclkCounter = 0;
+
+			nextTrackToolStripMenuItem.Enabled = false;
+			previousTrackToolStripMenuItem.Enabled = false;
 		}
 
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -323,7 +337,32 @@ namespace NSFPlayer
 
 		private void loadAUXDumpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			// TBD.
+			if (openFileDialogHEX.ShowDialog() == DialogResult.OK)
+			{
+				DisposeBoard();
+				InitBoardForAuxDump(openFileDialogHEX.FileName);
+			}
+		}
+
+		private void InitBoardForAuxDump(string hex_filename)
+		{
+			string text = File.ReadAllText(hex_filename);
+			aux_dump = LogisimHEXConv.HEXToFloatArray(text);
+			aux_dump_pointer = 0;
+			auxdump_loaded = true;
+			this.Text = DefaultTitle + " - " + hex_filename;
+
+			var settings = FormSettings.LoadSettings();
+
+			FurryIntensity = settings.FurryIntensity;
+
+			// SRC
+
+			DecimateEach = 0;
+			DecimateCounter = 0;
+
+			// Autoplay
+			SetPaused(!settings.AutoPlay);
 		}
 
 		#endregion "AUX Dump Controls"
@@ -387,10 +426,27 @@ namespace NSFPlayer
 			if (DecimateCounter >= DecimateEach)
 			{
 				float sample;
-				NSFPlayerInterop.SampleAudioSignal(out sample);
+
+				if (auxdump_loaded)
+				{
+					if (aux_dump_pointer < aux_dump.Length)
+					{
+						sample = aux_dump[aux_dump_pointer++];
+					}
+					else
+					{
+						return;
+					}
+				}
+				else
+				{
+					NSFPlayerInterop.SampleAudioSignal(out sample);
+				}
+				
 				SampleBuf.Add(sample);
 				if (fft)
 					furryPlot1.AddSample(sample * FurryIntensity);
+
 				DecimateCounter = 0;
 			}
 		}

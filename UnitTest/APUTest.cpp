@@ -514,11 +514,11 @@ namespace APUSimUnitTest
 
 			// We apply synthetic LFO2 control so that it triggers more often and the test finishes faster.
 
-			if (prev_aclk == TriState::One && apu->wire.ACLK == TriState::Zero)		// negedge ACLK
+			if (IsNegedge(prev_aclk, apu->wire.ACLK))		// negedge ACLK
 			{
 				apu->wire.n_LFO2 = TriState::Zero;
 			}
-			if (prev_clk == TriState::Zero && NOT(apu->wire.n_CLK) == TriState::One)	// posedge CLK
+			if (IsPosedge(prev_clk, NOT(apu->wire.n_CLK)))	// posedge CLK
 			{
 				apu->wire.n_LFO2 = TriState::One;
 			}

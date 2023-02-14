@@ -111,18 +111,6 @@ namespace NSFPlayer
 		}
 	}
 
-	int NSFPlayerBoard::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
-	{
-		// The NSF board does not have a cartridge connector.
-
-		return 0;
-	}
-
-	void NSFPlayerBoard::EjectCartridge()
-	{
-		// The NSF board does not have a cartridge connector.
-	}
-
 	void NSFPlayerBoard::ResetAPU(uint16_t addr, bool reset_apu_also)
 	{
 		pendingReset = true;
@@ -136,24 +124,6 @@ namespace NSFPlayer
 	bool NSFPlayerBoard::APUInResetState()
 	{
 		return pendingReset;
-	}
-
-	size_t NSFPlayerBoard::GetACLKCounter()
-	{
-		return apu->GetACLKCounter();
-	}
-
-	size_t NSFPlayerBoard::GetPHICounter()
-	{
-		return apu->GetPHICounter();
-	}
-
-	void NSFPlayerBoard::SampleAudioSignal(float* sample)
-	{
-		if (sample != nullptr)
-		{
-			*sample = (aux.normalized.a + aux.normalized.b) / 2.0f;
-		}
 	}
 
 	void NSFPlayerBoard::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
@@ -178,12 +148,5 @@ namespace NSFPlayer
 	void NSFPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
 	{
 		// NSFPlayerBoard is not designed for this.
-	}
-
-	void NSFPlayerBoard::GetSignalFeatures(APUSim::AudioSignalFeatures* features)
-	{
-		APUSim::AudioSignalFeatures feat{};
-		apu->GetSignalFeatures(feat);
-		*features = feat;
 	}
 }

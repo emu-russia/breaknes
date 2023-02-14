@@ -32,12 +32,12 @@ namespace NSFPlayer
 		/// <param name="nesImage">A pointer to the ROM image in memory.</param>
 		/// <param name="nesImageSize">ROM image size in bytes.</param>
 		/// <returns></returns>
-		virtual int InsertCartridge(uint8_t* nesImage, size_t nesImageSize) = 0;
+		virtual int InsertCartridge(uint8_t* nesImage, size_t nesImageSize);
 
 		/// <summary>
 		/// Remove the cartridge. Logically this means that all terminals associated with the cartridge take the value of `z`.
 		/// </summary>
-		virtual void EjectCartridge() = 0;
+		virtual void EjectCartridge();
 
 		/// <summary>
 		/// Make the APU /RES pin = 0 for a few CLK half cycles so that the APU resets all of its internal circuits.
@@ -50,11 +50,11 @@ namespace NSFPlayer
 		/// <returns></returns>
 		virtual bool APUInResetState() = 0;
 
-		virtual size_t GetACLKCounter() = 0;
+		virtual size_t GetACLKCounter();
 
-		virtual size_t GetPHICounter() = 0;
+		virtual size_t GetPHICounter();
 
-		virtual void SampleAudioSignal(float* sample) = 0;
+		virtual void SampleAudioSignal(float* sample);
 
 		/// <summary>
 		/// Load the whole NSF data image to the BankedSRAM device.
@@ -81,6 +81,6 @@ namespace NSFPlayer
 		/// Get audio signal settings that help with its rendering on the consumer side.
 		/// </summary>
 		/// <param name="features"></param>
-		virtual void GetSignalFeatures(APUSim::AudioSignalFeatures* features) = 0;
+		virtual void GetSignalFeatures(APUSim::AudioSignalFeatures* features);
 	};
 }

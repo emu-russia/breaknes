@@ -173,6 +173,7 @@
     <ClInclude Include="RegDumpProcessor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AbstractBoard.cpp" />
     <ClCompile Include="APUPlayerBoard.cpp" />
     <ClCompile Include="APUPlayerBoardDebug.cpp" />
     <ClCompile Include="BankedSRAM.cpp" />

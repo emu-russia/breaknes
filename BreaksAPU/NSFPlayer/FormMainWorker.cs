@@ -1,5 +1,7 @@
 // Worker is put in a separate module, because it is the main essence of all the processes of the application and it is convenient to study and store it in isolation.
 
+using System.DirectoryServices.ActiveDirectory;
+
 namespace NSFPlayer
 {
 	public partial class FormMain : Form
@@ -11,7 +13,7 @@ namespace NSFPlayer
 		{
 			while (!backgroundWorker1.CancellationPending)
 			{
-				if (Paused || !(nsf_loaded || regdump_loaded) || Dma)
+				if (Paused || !(nsf_loaded || regdump_loaded || auxdump_loaded) || Dma)
 				{
 					Thread.Sleep(10);
 					continue;
@@ -19,7 +21,14 @@ namespace NSFPlayer
 
 				// Simulate APU
 
-				NSFPlayerInterop.Step();        // = 0.5 XTAL CLK
+				if (auxdump_loaded)
+				{
+					Thread.SpinWait(10);
+				}
+				else
+				{
+					NSFPlayerInterop.Step();        // = 0.5 XTAL CLK
+				}
 
 				if (nsf_loaded)
 				{
