@@ -91,10 +91,7 @@ namespace APUSim
 		tri->sim();
 		noise->sim();
 		
-		//dpcm->sim();
-		wire.RUNDMC = TriState::Zero;
-		wire.n_DMC_AB = TriState::One;
-		wire.DMCRDY = TriState::One;
+		dpcm->sim();
 
 		dma->sim();
 		dma->sim_DMA_Buffer();
@@ -157,7 +154,7 @@ namespace APUSim
 		size_t clk = 21477272;	// Hz
 		size_t div = 12;
 
-		features.SampleRate = clk * 2;
+		features.SampleRate = (int32_t)(clk * 2);
 
 		// TBD: Add other APU
 	}
