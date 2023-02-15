@@ -823,5 +823,17 @@ namespace PPUPlayer
 				formComponentViewer.Show();
 			}
 		}
+
+		private void saveFieldAsImageToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (saveFileDialogImage.ShowDialog() == DialogResult.OK)
+			{
+				string bmp_name = saveFileDialogImage.FileName;
+				if (pictureBoxField.Image != null)
+				{
+					pictureBoxField.Image.Save (bmp_name, System.Drawing.Imaging.ImageFormat.Bmp);
+				}
+			}
+		}
 	}
 }
