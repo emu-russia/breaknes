@@ -48,7 +48,7 @@ namespace APUSim
 		{
 			freq_reg[n].sim(n_ACLK3, n_ACLK,
 				n < 8 ? WR2 : WR3,
-				n < 8 ? apu->GetDBBit(n) : apu->GetDBBit(n - 8), ADDOUT, n_sum[n]);
+				n < 8 ? apu->GetDBBit(n) : apu->GetDBBit(n - 8), DO_SWEEP, n_sum[n]);
 		}
 	}
 
@@ -69,7 +69,7 @@ namespace APUSim
 
 		for (size_t n = 0; n < 11; n++)
 		{
-			BS[n] = MUX(DEC, freq_reg[n].get_Fx(ADDOUT), freq_reg[n].get_nFx(ADDOUT));
+			BS[n] = MUX(DEC, freq_reg[n].get_Fx(DO_SWEEP), freq_reg[n].get_nFx(DO_SWEEP));
 		}
 		BS[11] = DEC;
 
@@ -97,15 +97,15 @@ namespace APUSim
 
 		for (size_t n = 0; n < 11; n++)
 		{
-			Fx[n] = freq_reg[n].get_Fx(ADDOUT);
-			adder[n].sim(Fx[n], freq_reg[n].get_nFx(ADDOUT),
+			Fx[n] = freq_reg[n].get_Fx(DO_SWEEP);
+			adder[n].sim(Fx[n], freq_reg[n].get_nFx(DO_SWEEP),
 				S[n], NOT(S[n]),
 				carry, n_carry,
 				carry, n_carry, n_sum[n]);
 		}
 
 		n_COUT = n_carry;
-		SWEEP = NOR9 (Fx[2], Fx[3], Fx[4], Fx[5], Fx[6], Fx[7], Fx[8], Fx[9], Fx[10]);
+		SW_UVF = NOR9 (Fx[2], Fx[3], Fx[4], Fx[5], Fx[6], Fx[7], Fx[8], Fx[9], Fx[10]);
 	}
 
 	void SquareChan::sim_FreqCounter()
@@ -121,7 +121,7 @@ namespace APUSim
 
 		for (size_t n = 0; n < 11; n++)
 		{
-			carry = freq_cnt[n].sim(carry, RES, FLOAD, FSTEP, n_ACLK, freq_reg[n].get_Fx(ADDOUT));
+			carry = freq_cnt[n].sim(carry, RES, FLOAD, FSTEP, n_ACLK, freq_reg[n].get_Fx(DO_SWEEP));
 		}
 
 		FCO = carry;
@@ -158,9 +158,9 @@ namespace APUSim
 
 		sco_latch.set(SCO, n_ACLK);
 
-		SWCTRL = NOR(DEC, n_COUT);
+		SW_OVF = NOR(DEC, n_COUT);
 		TriState SRZ = NOR3(SR[0], SR[1], SR[2]);
-		ADDOUT = NOR7(SRZ, SWDIS, NOSQ, SWCTRL, NOT(SCO), n_LFO2, SWEEP);
+		DO_SWEEP = NOR7(SRZ, SWDIS, NOSQ, SW_OVF, NOT(SCO), n_LFO2, SW_UVF);
 	}
 
 	void SquareChan::sim_Duty(TriState WR0, TriState WR3)
@@ -198,7 +198,7 @@ namespace APUSim
 		TriState n_ACLK = apu->wire.n_ACLK;
 		TriState LOCK = apu->wire.LOCK;
 
-		TriState d = NOR4(NOT(DUTY), SWEEP, NOSQ, SWCTRL);
+		TriState d = NOR4(NOT(DUTY), SW_UVF, NOSQ, SW_OVF);
 		sqo_latch.set(d, n_ACLK);
 		TriState sqv = NOR(sqo_latch.get(), LOCK);
 

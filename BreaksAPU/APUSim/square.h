@@ -51,11 +51,11 @@ namespace APUSim
 		BaseLogic::TriState DEC = BaseLogic::TriState::X;
 		BaseLogic::TriState INC = BaseLogic::TriState::X;
 		BaseLogic::TriState n_COUT = BaseLogic::TriState::X;
-		BaseLogic::TriState SWEEP = BaseLogic::TriState::X;
+		BaseLogic::TriState SW_UVF = BaseLogic::TriState::X;	// Sweep underflow
 		BaseLogic::TriState FCO = BaseLogic::TriState::X;
 		BaseLogic::TriState FLOAD = BaseLogic::TriState::X;
-		BaseLogic::TriState ADDOUT = BaseLogic::TriState::X;
-		BaseLogic::TriState SWCTRL = BaseLogic::TriState::X;
+		BaseLogic::TriState DO_SWEEP = BaseLogic::TriState::X;
+		BaseLogic::TriState SW_OVF = BaseLogic::TriState::X;	// Sweep overflow
 		BaseLogic::TriState DUTY = BaseLogic::TriState::X;
 		BaseLogic::TriState Vol[4]{};
 
