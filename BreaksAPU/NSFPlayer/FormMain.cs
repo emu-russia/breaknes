@@ -45,7 +45,7 @@ namespace NSFPlayer
 		public FormMain()
 		{
 			InitializeComponent();
-			//AllocConsole();
+			AllocConsole();
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
