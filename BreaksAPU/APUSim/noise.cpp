@@ -6,10 +6,12 @@ using namespace BaseLogic;
 
 namespace APUSim
 {
-	NoiseChan::NoiseChan(APU* parent)
+	NoiseChan::NoiseChan(APU* parent, bool opt)
 	{
 		apu = parent;
 		env_unit = new EnvelopeUnit(apu);
+		HLE = opt;
+		opt_NNF();
 	}
 
 	NoiseChan::~NoiseChan()
@@ -20,8 +22,22 @@ namespace APUSim
 	void NoiseChan::sim()
 	{
 		sim_FreqReg();
-		sim_Decoder1();
-		sim_Decoder2();
+		
+		if (HLE)
+		{
+			TriState F[4]{};
+			for (size_t n = 0; n < 4; n++)
+			{
+				F[n] = freq_reg[n].get();
+			}
+			F_PreCalc = PackNibble(F);
+		}
+		else
+		{
+			sim_Decoder1();
+			sim_Decoder2();
+		}
+
 		sim_FreqLFSR();
 		sim_RandomLFSR();
 		
@@ -55,6 +71,11 @@ namespace APUSim
 			nF[n] = NOT(freq_reg[n].get());
 		}
 
+		sim_Decoder1_Calc(F, nF);
+	}
+
+	void NoiseChan::sim_Decoder1_Calc(BaseLogic::TriState* F, BaseLogic::TriState* nF)
+	{
 		Dec1_out[0] = NOR4(F[0], F[1], F[2], F[3]);
 		Dec1_out[1] = NOR4(nF[0], F[1], F[2], F[3]);
 		Dec1_out[2] = NOR4(F[0], nF[1], F[2], F[3]);
@@ -91,6 +112,27 @@ namespace APUSim
 		NNF[10] = NOR15(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], d[11], d[13], d[14], d[15]);
 	}
 
+	void NoiseChan::opt_NNF()
+	{
+		for (uint8_t n = 0; n < 16; n++)
+		{
+			TriState F[4]{};
+			TriState nF[4]{};
+
+			UnpackNibble(n, F);
+			UnpackNibble(~n, nF);
+
+			sim_Decoder1_Calc(F, nF);
+			sim_Decoder2();
+
+			NNF_PreCalc[n] = 0;
+			for (size_t i = 0; i < 11; i++)
+			{
+				NNF_PreCalc[n] |= (NNF[i] == TriState::One ? 1 : 0) << i;
+			}
+		}
+	}
+
 	void NoiseChan::sim_FreqLFSR()
 	{
 		TriState ACLK = apu->wire.ACLK;
@@ -116,7 +158,8 @@ namespace APUSim
 
 		for (int n = 10; n >= 0; n--)
 		{
-			freq_lfsr[n].sim(n_ACLK, NFLOAD, NFSTEP, NNF[n], sin);
+			TriState nnf = HLE ? FromByte((NNF_PreCalc[F_PreCalc] >> n) & 1) : NNF[n];
+			freq_lfsr[n].sim(n_ACLK, NFLOAD, NFSTEP, nnf, sin);
 			sin = freq_lfsr[n].get_sout();
 		}
 	}
