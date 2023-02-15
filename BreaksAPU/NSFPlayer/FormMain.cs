@@ -25,7 +25,7 @@ namespace NSFPlayer
 		private long timeStamp;
 		private long aclkCounter = 0;
 
-		private int SourceSampleRate = 48000;
+		private int OutputSampleRate = 48000;
 		private List<float> SampleBuf = new();
 
 		private string DefaultTitle = "";
@@ -57,7 +57,7 @@ namespace NSFPlayer
 			comboBox2.SelectedIndex = 0;
 
 			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
-			SourceSampleRate = settings.OutputSampleRate;
+			OutputSampleRate = settings.OutputSampleRate;
 
 			SetPaused(true);
 
@@ -78,10 +78,15 @@ namespace NSFPlayer
 
 		private void FormSettings_FormClosed(object? sender, FormClosedEventArgs e)
 		{
-			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
-			SourceSampleRate = settings.OutputSampleRate;
-			FurryIntensity = settings.FurryIntensity;
-			PreferPal = settings.PreferPal;
+			FormSettings form = (FormSettings)sender;
+			if (form.UserAnswer == DialogResult.OK)
+			{
+				FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
+				OutputSampleRate = settings.OutputSampleRate;
+				Redecimate();
+				FurryIntensity = settings.FurryIntensity;
+				PreferPal = settings.PreferPal;
+			}
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -141,11 +146,7 @@ namespace NSFPlayer
 			UpdateMemLayout();
 
 			// SRC
-			
-			NSFPlayerInterop.GetSignalFeatures(out aux_features);
-			DecimateEach = aux_features.SampleRate / SourceSampleRate;
-			DecimateCounter = 0;
-			Console.WriteLine("APUSim sample rate: {0}, DSound sample rate: {1}, decimate factor: {2}", aux_features.SampleRate, SourceSampleRate, DecimateEach);
+			Redecimate();
 
 			// Autoplay
 			SetSong(nsf.GetHead().StartingSong);
@@ -318,11 +319,7 @@ namespace NSFPlayer
 			UpdateMemLayout();
 
 			// SRC
-
-			NSFPlayerInterop.GetSignalFeatures(out aux_features);
-			DecimateEach = aux_features.SampleRate / SourceSampleRate;
-			DecimateCounter = 0;
-			Console.WriteLine("APUSim sample rate: {0}, DSound sample rate: {1}, decimate factor: {2}", aux_features.SampleRate, SourceSampleRate, DecimateEach);
+			Redecimate();
 
 			// Autoplay
 			SetPaused(!settings.AutoPlay);
@@ -357,9 +354,7 @@ namespace NSFPlayer
 			FurryIntensity = settings.FurryIntensity;
 
 			// SRC
-
-			DecimateEach = 0;
-			DecimateCounter = 0;
+			Redecimate();
 
 			// Autoplay
 			SetPaused(!settings.AutoPlay);
@@ -375,7 +370,7 @@ namespace NSFPlayer
 			if (audio_backend != null)
 			{
 				Dma = true;
-				audio_backend.PlaySampleBuf(SourceSampleRate, SampleBuf);
+				audio_backend.PlaySampleBuf(OutputSampleRate, SampleBuf);
 				Dma = false;
 			}
 		}
@@ -398,7 +393,7 @@ namespace NSFPlayer
 		private void UpdateSampleBufStats()
 		{
 			toolStripStatusLabelSamples.Text = SampleBuf.Count.ToString();
-			long ms = SourceSampleRate != 0 ? (SampleBuf.Count * 1000) / (long)SourceSampleRate : 0;
+			long ms = OutputSampleRate != 0 ? (SampleBuf.Count * 1000) / (long)OutputSampleRate : 0;
 			toolStripStatusLabelMsec.Text = ms.ToString() + " ms";
 		}
 
@@ -449,6 +444,26 @@ namespace NSFPlayer
 
 				DecimateCounter = 0;
 			}
+		}
+
+		/// <summary>
+		/// If you change the sampling frequency of the sound source or output frequency, you must recalculate the decimation factor.
+		/// </summary>
+		private void Redecimate()
+		{
+			if (nsf_loaded || regdump_loaded)
+			{
+				NSFPlayerInterop.GetSignalFeatures(out aux_features);
+				DecimateEach = aux_features.SampleRate / OutputSampleRate;
+				Console.WriteLine("APUSim sample rate: {0}, DSound sample rate: {1}, decimate factor: {2}", aux_features.SampleRate, OutputSampleRate, DecimateEach);
+			}
+			else if (auxdump_loaded)
+			{
+				var settings = FormSettings.LoadSettings();
+				DecimateEach = settings.AuxSampleRate / OutputSampleRate;
+				Console.WriteLine("AUX sample rate: {0}, DSound sample rate: {1}, decimate factor: {2}", settings.AuxSampleRate, OutputSampleRate, DecimateEach);
+			}
+			DecimateCounter = 0;
 		}
 
 		#endregion "Sample Buffer Playback Controls"

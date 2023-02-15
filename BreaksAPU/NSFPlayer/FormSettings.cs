@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Tracing;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,8 @@ namespace NSFPlayer
 {
 	public partial class FormSettings : Form
 	{
+		public DialogResult UserAnswer = DialogResult.Cancel;
+
 		public FormSettings()
 		{
 			InitializeComponent();
@@ -44,6 +47,8 @@ namespace NSFPlayer
 				settings.FurryIntensity = 500.0f;
 			if (settings.OutputSampleRate == 0)
 				settings.OutputSampleRate = 48000;
+			if (settings.AuxSampleRate == 0)
+				settings.AuxSampleRate = 48000;
 
 			return settings;
 		}
@@ -69,6 +74,7 @@ namespace NSFPlayer
 			settings.AutoPlay = true;
 			settings.FurryIntensity = 500.0f;
 			settings.PreferPal = false;
+			settings.AuxSampleRate = 48000;		// 1:1
 
 			SaveSettings(settings);
 
@@ -91,6 +97,7 @@ namespace NSFPlayer
 		private void button1_Click(object sender, EventArgs e)
 		{
 			SaveSettings((APUPlayerSettings)propertyGrid1.SelectedObject);
+			UserAnswer = DialogResult.OK;
 			Close();
 		}
 
@@ -122,6 +129,12 @@ namespace NSFPlayer
 			[Category("Host Features")]
 			[Description("If the NSF header specifies that you can use hybrid PAL/NTSC - specify explicitly that we want PAL.")]
 			public bool PreferPal { get; set; }
+			
+			[XmlElement]
+			[Category("Host Features")]
+			[Description("If you run APUSim - it says the frequency, but if you stick the AUX dump - what frequency is not clear. This setting allows you to select the sampling frequency of the AUX dump.")]
+			[TypeConverter(typeof(FormatInt32ConverterConverter_AuxSampleRate))]
+			public int AuxSampleRate { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid
@@ -139,6 +152,22 @@ namespace NSFPlayer
 				list.Add("RP2A07");
 				list.Add("UA6527P");
 				list.Add("TA03NP1");
+
+				return new StandardValuesCollection(list);
+			}
+		}
+
+		public class FormatInt32ConverterConverter_AuxSampleRate : Int32Converter
+		{
+			public override Boolean GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
+			public override Boolean GetStandardValuesExclusive(ITypeDescriptorContext context) { return false; }
+			public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+			{
+				List<int> list = new List<int>();
+
+				list.Add(48000);        // Default 1:1, same as OutputSampleRate
+				list.Add(42954544);		// 0.5 CLK for 2A03
+				list.Add(3579545);      // 0.5 PHI for 2A03
 
 				return new StandardValuesCollection(list);
 			}
