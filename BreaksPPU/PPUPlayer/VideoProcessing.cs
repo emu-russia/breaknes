@@ -35,6 +35,9 @@ namespace PPUPlayer
 
 		Bitmap? field_pic = null;
 
+		bool DumpToFile = false;
+		Stream VideoStream;
+
 		void ResetVisualize(bool RAWMode)
 		{
 			PPUPlayerInterop.GetSignalFeatures(out ppu_features);
@@ -60,6 +63,34 @@ namespace PPUPlayer
 		void ProcessSample(PPUPlayerInterop.VideoOutSample sample)
 		{
 			ScanBuffer[WritePtr] = sample;
+
+			// Dump to file (slow)
+
+			if (DumpToFile)
+			{
+				if (RawMode)
+				{
+					byte[] buffer = BitConverter.GetBytes(sample.raw);
+					VideoStream.Write(buffer, 0, buffer.Length);
+				}
+				else
+				{
+					if (ppu_features.Composite != 0)
+					{
+						byte[] buffer = BitConverter.GetBytes(sample.composite);
+						VideoStream.Write(buffer, 0, buffer.Length);
+					}
+					else
+					{
+						byte[] buffer = new byte[4];
+						buffer[0] = sample.RED;
+						buffer[1] = sample.GREEN;
+						buffer[2] = sample.BLUE;
+						buffer[3] = (byte)(sample.nSYNC == 0 ? 1 : 0);
+						VideoStream.Write(buffer, 0, buffer.Length);
+					}
+				}
+			}
 
 			// Check that the sample is HSync.
 
@@ -402,6 +433,33 @@ namespace PPUPlayer
 
 			pictureBoxField.Image = field_pic;
 			gr.Dispose();
+		}
+
+		private void saveFieldAsImageToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (saveFileDialogImage.ShowDialog() == DialogResult.OK)
+			{
+				string bmp_name = saveFileDialogImage.FileName;
+				if (pictureBoxField.Image != null)
+				{
+					pictureBoxField.Image.Save(bmp_name, System.Drawing.Imaging.ImageFormat.Bmp);
+				}
+			}
+		}
+
+		private void startVideoSignalDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				VideoStream = File.Create(saveFileDialog1.FileName);
+				DumpToFile = true;
+			}
+		}
+
+		private void stopVideoSignalDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			DumpToFile = false;
+			VideoStream.Close();
 		}
 	}
 }
