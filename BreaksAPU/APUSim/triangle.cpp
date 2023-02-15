@@ -53,15 +53,11 @@ namespace APUSim
 		TriState W4008 = apu->wire.W4008;
 		TriState RES = apu->wire.RES;
 
-		for (size_t n = 0; n < 7; n++)
-		{
-			lin_reg[n].sim(n_ACLK, W4008, apu->GetDBBit(n));
-		}
-
 		TriState carry = TriState::One;
 
 		for (size_t n = 0; n < 7; n++)
 		{
+			lin_reg[n].sim(n_ACLK, W4008, apu->GetDBBit(n));
 			carry = lin_cnt[n].sim(carry, RES, LOAD, STEP, n_ACLK, lin_reg[n].get());
 		}
 
@@ -75,18 +71,13 @@ namespace APUSim
 		TriState W400B = apu->wire.W400B;
 		TriState RES = apu->wire.RES;
 
-		for (size_t n = 0; n < 11; n++)
-		{
-			freq_reg[n].sim(PHI1, n < 8 ? W400A : W400B, n < 8 ? apu->GetDBBit(n) : apu->GetDBBit(n - 8));
-		}
-
 		TriState carry = TriState::One;
-
 		TriState FLOAD = NOR(PHI1, n_FOUT);
 		TriState FSTEP = NOR(PHI1, NOT(n_FOUT));
 
 		for (size_t n = 0; n < 11; n++)
 		{
+			freq_reg[n].sim(PHI1, n < 8 ? W400A : W400B, n < 8 ? apu->GetDBBit(n) : apu->GetDBBit(n - 8));
 			carry = freq_cnt[n].sim(carry, RES, FLOAD, FSTEP, PHI1, freq_reg[n].get());
 		}
 

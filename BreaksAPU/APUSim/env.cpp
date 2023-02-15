@@ -35,20 +35,13 @@ namespace APUSim
 
 		envdis_reg.sim(n_ACLK, WR_Reg, apu->GetDBBit(4));
 		lc_reg.sim(n_ACLK, WR_Reg, apu->GetDBBit(5));
-		for (size_t n = 0; n < 4; n++)
-		{
-			vol_reg[n].sim(n_ACLK, WR_Reg, apu->GetDBBit(n));
-		}
 
 		TriState RCO = TriState::One;
-		for (size_t n = 0; n < 4; n++)
-		{
-			RCO = decay_cnt[n].sim(RCO, RES, RLOAD, RSTEP, n_ACLK, vol_reg[n].get());
-		}
-
 		TriState ECO = TriState::One;
 		for (size_t n = 0; n < 4; n++)
 		{
+			vol_reg[n].sim(n_ACLK, WR_Reg, apu->GetDBBit(n));
+			RCO = decay_cnt[n].sim(RCO, RES, RLOAD, RSTEP, n_ACLK, vol_reg[n].get());
 			ECO = env_cnt[n].sim(ECO, RES, ERES, ESTEP, n_ACLK, EIN);
 		}
 

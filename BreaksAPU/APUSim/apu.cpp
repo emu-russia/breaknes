@@ -10,6 +10,8 @@ namespace APUSim
 		core = _core;
 		rev = _rev;
 
+		bool HLE = true;
+
 		core_int = new CoreBinding(this);
 		clkgen = new CLKGen(this);
 		lc[0] = new LengthCounter(this);
@@ -17,7 +19,7 @@ namespace APUSim
 		lc[2] = new LengthCounter(this);
 		lc[3] = new LengthCounter(this);
 		dpcm = new DpcmChan(this);
-		noise = new NoiseChan(this);
+		noise = new NoiseChan(this, HLE);
 		square[0] = new SquareChan(this, SquareChanCarryIn::Vdd);
 		square[1] = new SquareChan(this, SquareChanCarryIn::Inc);
 		tri = new TriangleChan(this);
@@ -57,6 +59,10 @@ namespace APUSim
 		sim_CoreIntegration();
 		sim_SoundGenerators();
 
+		dma->sim();
+		dma->sim_DMA_Buffer();
+		dma->sim_AddressMux();
+
 		pads->sim_OutputPads(outputs, addr);
 		pads->sim_DataBusOutput(data);
 		dac->sim(AUX);
@@ -90,12 +96,8 @@ namespace APUSim
 		square[1]->sim(wire.W4004, wire.W4005, wire.W4006, wire.W4007, wire.NOSQB, SQB_Out);
 		tri->sim();
 		noise->sim();
-		
-		dpcm->sim();
 
-		dma->sim();
-		dma->sim_DMA_Buffer();
-		dma->sim_AddressMux();
+		dpcm->sim();
 	}
 
 	TriState APU::GetDBBit(size_t n)
