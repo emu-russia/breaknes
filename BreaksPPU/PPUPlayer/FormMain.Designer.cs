@@ -36,6 +36,7 @@
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.saveTraceInLogisimFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveTraceInVCDFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveFieldAsImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -114,6 +115,7 @@
 			this.saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
 			this.openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
+			this.saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -168,6 +170,7 @@
             this.toolStripSeparator3,
             this.saveTraceInLogisimFormatToolStripMenuItem,
             this.saveTraceInVCDFormatToolStripMenuItem,
+            this.saveFieldAsImageToolStripMenuItem,
             this.toolStripSeparator5,
             this.settingsToolStripMenuItem,
             this.toolStripSeparator4,
@@ -208,6 +211,13 @@
 			this.saveTraceInVCDFormatToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.saveTraceInVCDFormatToolStripMenuItem.Text = "Save Trace in VCD format...";
 			this.saveTraceInVCDFormatToolStripMenuItem.Click += new System.EventHandler(this.saveTraceInVCDFormatToolStripMenuItem_Click);
+			// 
+			// saveFieldAsImageToolStripMenuItem
+			// 
+			this.saveFieldAsImageToolStripMenuItem.Name = "saveFieldAsImageToolStripMenuItem";
+			this.saveFieldAsImageToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			this.saveFieldAsImageToolStripMenuItem.Text = "Save field as bitmap...";
+			this.saveFieldAsImageToolStripMenuItem.Click += new System.EventHandler(this.saveFieldAsImageToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator5
 			// 
@@ -923,6 +933,11 @@
 			this.openFileDialogHEX.DefaultExt = "hex";
 			this.openFileDialogHEX.Filter = "Logisim Hex files|*.hex|All files|*.*";
 			// 
+			// saveFileDialogImage
+			// 
+			this.saveFileDialogImage.DefaultExt = "bmp";
+			this.saveFileDialogImage.Filter = "Bitmap file|*.bmp|All files|*.*";
+			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1062,5 +1077,7 @@
 		private System.Windows.Forms.ToolStripMenuItem loadCompositeDumpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem loadRGBDumpToolStripMenuItem;
 		private System.Windows.Forms.SignalPlot signalPlotScan;
+		private System.Windows.Forms.ToolStripMenuItem saveFieldAsImageToolStripMenuItem;
+		private System.Windows.Forms.SaveFileDialog saveFileDialogImage;
 	}
 }
