@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.choosePPURegsDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -116,6 +116,9 @@
 			this.openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			this.saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
+			this.startVideoSignalDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.stopVideoSignalDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -246,6 +249,9 @@
 			// dumpsToolStripMenuItem
 			// 
 			this.dumpsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.startVideoSignalDumpToolStripMenuItem,
+            this.stopVideoSignalDumpToolStripMenuItem,
+            this.toolStripSeparator2,
             this.loadVRAMToolStripMenuItem,
             this.loadCHRToolStripMenuItem,
             this.loadOAMToolStripMenuItem,
@@ -877,14 +883,14 @@
 			// dataGridView1
 			// 
 			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
 			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.dataGridView1.Location = new System.Drawing.Point(0, 0);
 			this.dataGridView1.Name = "dataGridView1";
@@ -937,6 +943,25 @@
 			// 
 			this.saveFileDialogImage.DefaultExt = "bmp";
 			this.saveFileDialogImage.Filter = "Bitmap file|*.bmp|All files|*.*";
+			// 
+			// startVideoSignalDumpToolStripMenuItem
+			// 
+			this.startVideoSignalDumpToolStripMenuItem.Name = "startVideoSignalDumpToolStripMenuItem";
+			this.startVideoSignalDumpToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.startVideoSignalDumpToolStripMenuItem.Text = "Start video signal dump...";
+			this.startVideoSignalDumpToolStripMenuItem.Click += new System.EventHandler(this.startVideoSignalDumpToolStripMenuItem_Click);
+			// 
+			// stopVideoSignalDumpToolStripMenuItem
+			// 
+			this.stopVideoSignalDumpToolStripMenuItem.Name = "stopVideoSignalDumpToolStripMenuItem";
+			this.stopVideoSignalDumpToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.stopVideoSignalDumpToolStripMenuItem.Text = "Stop video signal dump";
+			this.stopVideoSignalDumpToolStripMenuItem.Click += new System.EventHandler(this.stopVideoSignalDumpToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator2
+			// 
+			this.toolStripSeparator2.Name = "toolStripSeparator2";
+			this.toolStripSeparator2.Size = new System.Drawing.Size(244, 6);
 			// 
 			// FormMain
 			// 
@@ -1079,5 +1104,8 @@
 		private System.Windows.Forms.SignalPlot signalPlotScan;
 		private System.Windows.Forms.ToolStripMenuItem saveFieldAsImageToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialogImage;
+		private System.Windows.Forms.ToolStripMenuItem startVideoSignalDumpToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem stopVideoSignalDumpToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 	}
 }
