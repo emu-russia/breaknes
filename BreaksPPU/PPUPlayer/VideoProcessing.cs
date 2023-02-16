@@ -440,9 +440,9 @@ namespace PPUPlayer
 			if (saveFileDialogImage.ShowDialog() == DialogResult.OK)
 			{
 				string bmp_name = saveFileDialogImage.FileName;
-				if (pictureBoxField.Image != null)
+				if (field_pic != null)
 				{
-					pictureBoxField.Image.Save(bmp_name, System.Drawing.Imaging.ImageFormat.Bmp);
+					field_pic.Save(bmp_name, System.Drawing.Imaging.ImageFormat.Bmp);
 				}
 			}
 		}
