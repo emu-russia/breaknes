@@ -200,7 +200,7 @@ namespace System.Windows.Forms
 		{
 			gr.Clear(FillColor);
 
-			if (data.Length <= 1 || Width == 0 || Height == 0)
+			if (data.Length <= 10 || Width == 0 || Height == 0)
 				return;
 
 			DrawGrid(gr);

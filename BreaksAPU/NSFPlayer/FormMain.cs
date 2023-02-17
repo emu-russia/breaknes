@@ -158,6 +158,9 @@ namespace NSFPlayer
 
 		private void DisposeBoard()
 		{
+			if (audio_backend != null)
+				audio_backend.StopSampleBuf();
+
 			SetPaused(true);
 			NSFPlayerInterop.DestroyBoard();
 			nsf_loaded = false;

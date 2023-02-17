@@ -167,7 +167,7 @@ namespace NSFPlayer
 
 				list.Add(48000);        // Default 1:1, same as OutputSampleRate
 				list.Add(42954544);		// 0.5 CLK for 2A03
-				list.Add(3579545);      // 0.5 PHI for 2A03
+				list.Add(3579544);      // 0.5 PHI for 2A03
 
 				return new StandardValuesCollection(list);
 			}
