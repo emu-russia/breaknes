@@ -3,6 +3,8 @@ using NSFPlayerCustomClass;
 using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Windows.Forms;
+using System.IO;
+using Microsoft.VisualBasic.Logging;
 
 namespace NSFPlayer
 {
@@ -45,7 +47,7 @@ namespace NSFPlayer
 		public FormMain()
 		{
 			InitializeComponent();
-			AllocConsole();
+			//AllocConsole();
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
@@ -158,6 +160,9 @@ namespace NSFPlayer
 
 		private void DisposeBoard()
 		{
+			if (audio_backend != null)
+				audio_backend.StopSampleBuf();
+
 			SetPaused(true);
 			NSFPlayerInterop.DestroyBoard();
 			nsf_loaded = false;
@@ -379,6 +384,10 @@ namespace NSFPlayer
 		{
 			if (audio_backend != null)
 				audio_backend.StopSampleBuf();
+
+			UpdateSampleBufStats();
+			UpdateSignalPlot();
+
 			Dma = true;
 			SampleBuf.Clear();
 			Dma = false;
@@ -417,7 +426,6 @@ namespace NSFPlayer
 		/// </summary>
 		private void FeedSample ()
 		{
-			DecimateCounter++;
 			if (DecimateCounter >= DecimateEach)
 			{
 				float sample;
@@ -430,6 +438,7 @@ namespace NSFPlayer
 					}
 					else
 					{
+						DecimateCounter = 0;
 						return;
 					}
 				}
@@ -443,6 +452,15 @@ namespace NSFPlayer
 					furryPlot1.AddSample(sample * FurryIntensity);
 
 				DecimateCounter = 0;
+			}
+			else
+			{
+				if (auxdump_loaded)
+				{
+					aux_dump_pointer++;
+				}
+
+				DecimateCounter++;
 			}
 		}
 
@@ -707,8 +725,59 @@ namespace NSFPlayer
 		}
 
 
+
 		#endregion "What's that for?"
 
 
+		private void loadSaveLogisimAUXDumpForAudacityToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (openFileDialogHEX.ShowDialog() == DialogResult.OK)
+			{
+				string hex_filename = openFileDialogHEX.FileName;
+				float[] dump = LogisimHEXConv.HEXToFloatArray(File.ReadAllText(hex_filename));
+
+				// Decimation
+
+				List<float> decimated_dump = new();
+
+				var settings = FormSettings.LoadSettings();
+
+				int audacity_sample_rate = settings.OutputSampleRate;
+				int decimate_each = settings.AuxSampleRate / audacity_sample_rate;
+				int decimate_counter = 0;
+
+				for (int i = 0; i < dump.Length; i++)
+				{
+					// Renormalize to the [-1.0; +1.0] range that Audacity uses
+
+					float sample = dump[i];
+					sample = (sample - 0.5f) * 2;
+
+					if (decimate_counter >= decimate_each)
+					{
+						decimated_dump.Add(sample);
+						decimate_counter = 0;
+					}
+					else
+					{
+						decimate_counter++;
+					}
+				}
+
+				float[] ddump = decimated_dump.ToArray();
+
+				if (saveFileDialogBin.ShowDialog() == DialogResult.OK)
+				{
+					string bin_filename = saveFileDialogBin.FileName;
+
+					var byteArray = new byte[ddump.Length * 4];
+					Buffer.BlockCopy(ddump, 0, byteArray, 0, byteArray.Length);
+
+					File.WriteAllBytes(bin_filename, byteArray);
+				}
+
+				MessageBox.Show("Done.", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			}
+		}
 	}
 }

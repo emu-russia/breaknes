@@ -91,6 +91,7 @@
 			this.hexBox1 = new Be.Windows.Forms.HexBox();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.openFileDialogRegDump = new System.Windows.Forms.OpenFileDialog();
+			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -185,7 +186,8 @@
 			// 
 			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.executeINITToolStripMenuItem,
-            this.executePLAYToolStripMenuItem});
+            this.executePLAYToolStripMenuItem,
+            this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem});
 			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
 			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
 			this.debugToolStripMenuItem.Text = "Debug";
@@ -193,14 +195,14 @@
 			// executeINITToolStripMenuItem
 			// 
 			this.executeINITToolStripMenuItem.Name = "executeINITToolStripMenuItem";
-			this.executeINITToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+			this.executeINITToolStripMenuItem.Size = new System.Drawing.Size(313, 22);
 			this.executeINITToolStripMenuItem.Text = "Execute INIT";
 			this.executeINITToolStripMenuItem.Click += new System.EventHandler(this.executeINITToolStripMenuItem_Click);
 			// 
 			// executePLAYToolStripMenuItem
 			// 
 			this.executePLAYToolStripMenuItem.Name = "executePLAYToolStripMenuItem";
-			this.executePLAYToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+			this.executePLAYToolStripMenuItem.Size = new System.Drawing.Size(313, 22);
 			this.executePLAYToolStripMenuItem.Text = "Execute PLAY";
 			this.executePLAYToolStripMenuItem.Click += new System.EventHandler(this.executePLAYToolStripMenuItem_Click);
 			// 
@@ -220,40 +222,40 @@
 			// playToolStripMenuItem
 			// 
 			this.playToolStripMenuItem.Name = "playToolStripMenuItem";
-			this.playToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.playToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.playToolStripMenuItem.Text = "Run";
 			this.playToolStripMenuItem.Click += new System.EventHandler(this.playToolStripMenuItem_Click);
 			// 
 			// pauseToolStripMenuItem
 			// 
 			this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
-			this.pauseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.pauseToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.pauseToolStripMenuItem.Text = "Pause";
 			this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseToolStripMenuItem_Click);
 			// 
 			// stopToolStripMenuItem
 			// 
 			this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-			this.stopToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.stopToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.stopToolStripMenuItem.Text = "Stop";
 			this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
 			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+			this.toolStripSeparator2.Size = new System.Drawing.Size(146, 6);
 			// 
 			// nextTrackToolStripMenuItem
 			// 
 			this.nextTrackToolStripMenuItem.Name = "nextTrackToolStripMenuItem";
-			this.nextTrackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.nextTrackToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.nextTrackToolStripMenuItem.Text = "Next Track";
 			this.nextTrackToolStripMenuItem.Click += new System.EventHandler(this.nextTrackToolStripMenuItem_Click);
 			// 
 			// previousTrackToolStripMenuItem
 			// 
 			this.previousTrackToolStripMenuItem.Name = "previousTrackToolStripMenuItem";
-			this.previousTrackToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.previousTrackToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.previousTrackToolStripMenuItem.Text = "Previous Track";
 			this.previousTrackToolStripMenuItem.Click += new System.EventHandler(this.previousTrackToolStripMenuItem_Click);
 			// 
@@ -688,6 +690,13 @@
 			this.openFileDialogRegDump.DefaultExt = "bin";
 			this.openFileDialogRegDump.Filter = "Binary files|*.bin;*.regdump|All files|*.*";
 			// 
+			// loadSaveLogisimAUXDumpForAudacityToolStripMenuItem
+			// 
+			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Name = "loadSaveLogisimAUXDumpForAudacityToolStripMenuItem";
+			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Size = new System.Drawing.Size(313, 22);
+			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Text = "Load/Save Logisim AUX Dump for Audacity...";
+			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Click += new System.EventHandler(this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem_Click);
+			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -795,5 +804,6 @@
 		private OpenFileDialog openFileDialogRegDump;
 		private ToolStripMenuItem loadAPURegisterDumpToolStripMenuItem;
 		private ToolStripMenuItem loadAUXDumpToolStripMenuItem;
+		private ToolStripMenuItem loadSaveLogisimAUXDumpForAudacityToolStripMenuItem;
 	}
 }
