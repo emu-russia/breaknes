@@ -74,7 +74,7 @@ namespace NSFPlayer
 			settings.AutoPlay = true;
 			settings.FurryIntensity = 500.0f;
 			settings.PreferPal = false;
-			settings.AuxSampleRate = 48000;		// 1:1
+			settings.AuxSampleRate = 3579544;       // 0.5 PHI for 2A03
 
 			SaveSettings(settings);
 
