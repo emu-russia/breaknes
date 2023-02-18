@@ -66,7 +66,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(177, 50);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "NSFPlayer, 1.3\r\n© emu-russia, 2023";
+			this.label1.Text = "NSFPlayer, 1.4\r\n© emu-russia, 2023";
 			// 
 			// backgroundWorker1
 			// 
