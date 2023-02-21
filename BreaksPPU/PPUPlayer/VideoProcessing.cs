@@ -55,6 +55,7 @@ namespace PPUPlayer
 
 			composite_samples = new float[SamplesPerScan];
 			signalPlotScan.ForceMinMax(true, -0.5f, ppu_features.WhiteLevel * 2);
+			signalPlotScan.EnabledDottedEveryNth(ppu_features.SamplesPerPCLK, !RAWMode);
 
 			field_pic = null;
 			GC.Collect();

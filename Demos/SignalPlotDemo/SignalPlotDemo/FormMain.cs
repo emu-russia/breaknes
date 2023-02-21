@@ -5,6 +5,8 @@ namespace SignalPlotDemo
 		public FormMain()
 		{
 			InitializeComponent();
+
+			signalPlot1.EnabledDottedEveryNth(5, true);
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)

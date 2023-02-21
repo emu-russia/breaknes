@@ -22,6 +22,8 @@ namespace System.Windows.Forms
 		private Pen? signal_pen;
 		private Brush? label_brush;
 		private Pen? zero_pen;
+		private Pen? selection_pen;
+		private Pen? dotted_pen;
 
 		private bool gdi_init = false;
 
@@ -79,10 +81,13 @@ namespace System.Windows.Forms
 
 			if (!gdi_init)
 			{
-				grid_pen = new Pen(new SolidBrush(GridColor));
+				grid_pen = new Pen(Color.FromArgb(GridOpacity, GridColor));
 				signal_pen = new Pen(new SolidBrush(SignalColor));
 				label_brush = new SolidBrush(LabelsColor);
 				zero_pen = new Pen(new SolidBrush(ZeroColor));
+				selection_pen = new Pen(SelectionColor, 2);
+				dotted_pen = new Pen(new SolidBrush(DottedColor));
+				dotted_pen.DashPattern = new float[] { 1, 4 };
 				gdi_init = true;
 			}
 
@@ -175,6 +180,11 @@ namespace System.Windows.Forms
 			return tp;
 		}
 
+		private long InvTransform (int x)
+		{
+			return Math.Max(Math.Min((x * data.Length) / Width, data.Length-1), 0);
+		}
+
 		private void DrawLabels (Graphics gr)
 		{
 			long horizontalStepping = data.Length / 10;
@@ -203,9 +213,11 @@ namespace System.Windows.Forms
 			if (data.Length <= 10 || Width == 0 || Height == 0)
 				return;
 
+			DrawDotted(gr);
 			DrawGrid(gr);
 			DrawLabels(gr);
 			DrawSignal(gr);
+			DrawSelection(gr);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -234,6 +246,172 @@ namespace System.Windows.Forms
 			base.OnSizeChanged(e);
 		}
 
+
+		#region "Selection/Snatch support"
+
+		private bool selection_enabled = false;
+		private int SelectStartMouseX;
+		private int SelectStartMouseY;
+		private int LastMouseX;
+		private int LastMouseY;
+		private bool selection_box_active = false;
+		private int min_selection_square = 64;
+		private bool selection_in_progress = false;
+		private Point last_mouse_pos = new();
+
+		public void EnableSelection (bool enable)
+		{
+			selection_enabled = enable;
+			ClearSelection();
+		}
+
+		public void ClearSelection()
+		{
+			selection_box_active = false;
+			selection_in_progress = false;
+			Invalidate();
+		}
+
+		public bool IsSelectedSomething()
+		{
+			if (data.Length <= 10 || Width == 0 || Height == 0)
+				return false;
+
+			return selection_enabled && selection_box_active;
+		}
+
+		public float[] SnatchSelection ()
+		{
+			if (!IsSelectedSomething())
+				return Array.Empty<float>();
+
+			List<float> res = new();
+
+			int dist = Math.Abs(SelectStartMouseX - LastMouseX);
+			int start_x = Math.Min(SelectStartMouseX, LastMouseX);
+			long sp = InvTransform(start_x);
+			long ep = InvTransform(start_x + dist);
+
+			for (long i=sp; i<ep; i++)
+			{
+				res.Add(data[i]);
+			}
+
+			return res.ToArray();
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left && selection_enabled && !selection_in_progress)
+			{
+				Point pos = GetMousePos(e);
+				LastMouseX = SelectStartMouseX = pos.X;
+				LastMouseY = SelectStartMouseY = pos.Y;
+				selection_box_active = true;
+				selection_in_progress = true;
+			}
+
+			base.OnMouseDown(e);
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			if (selection_enabled && selection_in_progress)
+			{
+				int square = Math.Abs(SelectStartMouseX - LastMouseX) * Math.Abs(SelectStartMouseY - LastMouseY);
+
+				selection_box_active = (square > min_selection_square);
+				selection_in_progress = false;
+
+				Invalidate();
+			}
+
+			base.OnMouseUp(e);
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			if (selection_enabled && selection_in_progress)
+			{
+				Point pos = GetMousePos(e);
+				LastMouseX = Math.Max(Math.Min(pos.X, Width-1), 0);
+				LastMouseY = Math.Max(Math.Min(pos.Y, Height-1), 0);
+				Invalidate();
+			}
+
+			base.OnMouseMove(e);
+		}
+
+		/// <summary>
+		/// Snap to every nth grid if dotted mapping is enabled.
+		/// </summary>
+		/// <param name="e"></param>
+		/// <returns></returns>
+		private Point GetMousePos (MouseEventArgs e)
+		{
+			if (dotted_enabled)
+			{
+				var sample_num = InvTransform(e.X);
+				sample_num = (long)Math.Round((double)sample_num / dotted_every_nth) * dotted_every_nth;	// Snap to grid
+				var mp = TransformCoord(sample_num, 0);
+				last_mouse_pos.X = (int)mp.X;
+				last_mouse_pos.Y = e.Y;
+			}
+			else
+			{
+				last_mouse_pos.X = e.X;
+				last_mouse_pos.Y = e.Y;
+			}
+
+			return last_mouse_pos;
+		}
+
+		private void DrawSelection(Graphics gr)
+		{
+			if (selection_enabled && selection_box_active && selection_pen != null)
+			{
+				Point[] points = new Point[5];
+
+				points[0] = new Point(SelectStartMouseX, SelectStartMouseY);
+				points[1] = new Point(SelectStartMouseX, LastMouseY);
+				points[2] = new Point(LastMouseX, LastMouseY);
+				points[3] = new Point(LastMouseX, SelectStartMouseY);
+				points[4] = new Point(SelectStartMouseX, SelectStartMouseY);
+
+				gr.DrawLines(selection_pen, points);
+			}
+		}
+
+		#endregion "Selection/Snatch support"
+
+
+		#region "Dotted Every Nth support"
+
+		private int dotted_every_nth = 0;
+		private bool dotted_enabled = false;
+
+		public void EnabledDottedEveryNth (int every_nth_sample, bool enable)
+		{
+			dotted_every_nth = every_nth_sample;
+			dotted_enabled = enable;
+			Invalidate();
+		}
+
+		private void DrawDotted(Graphics gr)
+		{
+			if (dotted_enabled && dotted_pen != null)
+			{
+				for (long i = 0; i < data.Length; i+=dotted_every_nth)
+				{
+					PointF pos = TransformCoord(i, 0);
+					gr.DrawLine(dotted_pen, pos.X, 0, pos.X, Height);
+				}
+			}
+		}
+
+		#endregion "Dotted Every Nth support"
+
+
 		[Category("Plot Appearance")]
 		public Color FillColor { get; set; }
 
@@ -248,5 +426,14 @@ namespace System.Windows.Forms
 
 		[Category("Plot Appearance")]
 		public Color LabelsColor { get; set; }
+
+		[Category("Plot Appearance")]
+		public Color SelectionColor { get; set; }
+
+		[Category("Plot Appearance")]
+		public Color DottedColor { get; set; }
+
+		[Category("Plot Appearance")]
+		public int GridOpacity { get; set; }
 	}
 }

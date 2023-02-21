@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +13,17 @@ namespace PPUPlayer
 {
 	public partial class FormSnatch : Form
 	{
+		private PPUPlayerInterop.VideoSignalFeatures ppu_features;
+
 		public FormSnatch(float[] data)
 		{
 			InitializeComponent();
 
+			PPUPlayerInterop.GetSignalFeatures(out ppu_features);
+
 			signalPlot1.PlotSignal(data);
 			signalPlot1.EnableSelection(true);
+			signalPlot1.EnabledDottedEveryNth(ppu_features.SamplesPerPCLK, true);
 		}
 
 		private void toolStripButton1_Click(object sender, EventArgs e)

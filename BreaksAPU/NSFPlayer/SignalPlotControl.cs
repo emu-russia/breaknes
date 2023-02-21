@@ -5,7 +5,6 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace System.Windows.Forms
 {
@@ -24,6 +23,7 @@ namespace System.Windows.Forms
 		private Brush? label_brush;
 		private Pen? zero_pen;
 		private Pen? selection_pen;
+		private Pen? dotted_pen;
 
 		private bool gdi_init = false;
 
@@ -81,11 +81,13 @@ namespace System.Windows.Forms
 
 			if (!gdi_init)
 			{
-				grid_pen = new Pen(new SolidBrush(GridColor));
+				grid_pen = new Pen(Color.FromArgb(GridOpacity, GridColor));
 				signal_pen = new Pen(new SolidBrush(SignalColor));
 				label_brush = new SolidBrush(LabelsColor);
 				zero_pen = new Pen(new SolidBrush(ZeroColor));
 				selection_pen = new Pen(SelectionColor, 2);
+				dotted_pen = new Pen(new SolidBrush(DottedColor));
+				dotted_pen.DashPattern = new float[] { 1, 4 };
 				gdi_init = true;
 			}
 
@@ -211,6 +213,7 @@ namespace System.Windows.Forms
 			if (data.Length <= 10 || Width == 0 || Height == 0)
 				return;
 
+			DrawDotted(gr);
 			DrawGrid(gr);
 			DrawLabels(gr);
 			DrawSignal(gr);
@@ -243,6 +246,7 @@ namespace System.Windows.Forms
 			base.OnSizeChanged(e);
 		}
 
+
 		#region "Selection/Snatch support"
 
 		private bool selection_enabled = false;
@@ -253,6 +257,7 @@ namespace System.Windows.Forms
 		private bool selection_box_active = false;
 		private int min_selection_square = 64;
 		private bool selection_in_progress = false;
+		private Point last_mouse_pos = new();
 
 		public void EnableSelection (bool enable)
 		{
@@ -299,8 +304,9 @@ namespace System.Windows.Forms
 		{
 			if (e.Button == MouseButtons.Left && selection_enabled && !selection_in_progress)
 			{
-				LastMouseX = SelectStartMouseX = e.X;
-				LastMouseY = SelectStartMouseY = e.Y;
+				Point pos = GetMousePos(e);
+				LastMouseX = SelectStartMouseX = pos.X;
+				LastMouseY = SelectStartMouseY = pos.Y;
 				selection_box_active = true;
 				selection_in_progress = true;
 			}
@@ -327,12 +333,37 @@ namespace System.Windows.Forms
 		{
 			if (selection_enabled && selection_in_progress)
 			{
-				LastMouseX = Math.Max(Math.Min(e.X, Width-1), 0);
-				LastMouseY = Math.Max(Math.Min(e.Y, Height-1), 0);
+				Point pos = GetMousePos(e);
+				LastMouseX = Math.Max(Math.Min(pos.X, Width-1), 0);
+				LastMouseY = Math.Max(Math.Min(pos.Y, Height-1), 0);
 				Invalidate();
 			}
 
 			base.OnMouseMove(e);
+		}
+
+		/// <summary>
+		/// Snap to every nth grid if dotted mapping is enabled.
+		/// </summary>
+		/// <param name="e"></param>
+		/// <returns></returns>
+		private Point GetMousePos (MouseEventArgs e)
+		{
+			if (dotted_enabled)
+			{
+				var sample_num = InvTransform(e.X);
+				sample_num = (long)Math.Round((double)sample_num / dotted_every_nth) * dotted_every_nth;	// Snap to grid
+				var mp = TransformCoord(sample_num, 0);
+				last_mouse_pos.X = (int)mp.X;
+				last_mouse_pos.Y = e.Y;
+			}
+			else
+			{
+				last_mouse_pos.X = e.X;
+				last_mouse_pos.Y = e.Y;
+			}
+
+			return last_mouse_pos;
 		}
 
 		private void DrawSelection(Graphics gr)
@@ -354,6 +385,33 @@ namespace System.Windows.Forms
 		#endregion "Selection/Snatch support"
 
 
+		#region "Dotted Every Nth support"
+
+		private int dotted_every_nth = 0;
+		private bool dotted_enabled = false;
+
+		public void EnabledDottedEveryNth (int every_nth_sample, bool enable)
+		{
+			dotted_every_nth = every_nth_sample;
+			dotted_enabled = enable;
+			Invalidate();
+		}
+
+		private void DrawDotted(Graphics gr)
+		{
+			if (dotted_enabled && dotted_pen != null)
+			{
+				for (long i = 0; i < data.Length; i+=dotted_every_nth)
+				{
+					PointF pos = TransformCoord(i, 0);
+					gr.DrawLine(dotted_pen, pos.X, 0, pos.X, Height);
+				}
+			}
+		}
+
+		#endregion "Dotted Every Nth support"
+
+
 		[Category("Plot Appearance")]
 		public Color FillColor { get; set; }
 
@@ -371,5 +429,11 @@ namespace System.Windows.Forms
 
 		[Category("Plot Appearance")]
 		public Color SelectionColor { get; set; }
+
+		[Category("Plot Appearance")]
+		public Color DottedColor { get; set; }
+
+		[Category("Plot Appearance")]
+		public int GridOpacity { get; set; }
 	}
 }
