@@ -43,6 +43,7 @@
 			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -146,7 +147,8 @@
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripButton2,
-            this.toolStripButton3});
+            this.toolStripButton3,
+            this.toolStripButton4});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -182,6 +184,17 @@
 			this.toolStripButton3.Size = new System.Drawing.Size(35, 22);
 			this.toolStripButton3.Text = "Stop";
 			this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
+			// 
+			// toolStripButton4
+			// 
+			this.toolStripButton4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
+			this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton4.Name = "toolStripButton4";
+			this.toolStripButton4.Size = new System.Drawing.Size(47, 22);
+			this.toolStripButton4.Text = "Snatch";
+			this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click_1);
 			// 
 			// statusStrip1
 			// 
@@ -278,6 +291,7 @@
 			this.signalPlot1.LabelsColor = System.Drawing.Color.White;
 			this.signalPlot1.Location = new System.Drawing.Point(0, 0);
 			this.signalPlot1.Name = "signalPlot1";
+			this.signalPlot1.SelectionColor = System.Drawing.Color.GhostWhite;
 			this.signalPlot1.SignalColor = System.Drawing.Color.SpringGreen;
 			this.signalPlot1.Size = new System.Drawing.Size(800, 181);
 			this.signalPlot1.TabIndex = 0;
@@ -355,5 +369,6 @@
 		private ToolStripStatusLabel toolStripStatusLabel6;
 		private ToolStripStatusLabel toolStripStatusLabel7;
 		private ToolStripStatusLabel toolStripStatusLabel8;
+		private ToolStripButton toolStripButton4;
 	}
 }

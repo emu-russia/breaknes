@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.choosePPURegsDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -42,6 +43,9 @@
 			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.dumpsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.startVideoSignalDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.stopVideoSignalDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.loadVRAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadCHRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadOAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,6 +90,8 @@
 			this.pictureBoxField = new System.Windows.Forms.PictureBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.signalPlotScan = new System.Windows.Forms.SignalPlot();
+			this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+			this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -116,9 +122,6 @@
 			this.openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
 			this.openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			this.saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
-			this.startVideoSignalDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.stopVideoSignalDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -126,6 +129,7 @@
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxField)).BeginInit();
 			this.tabPage2.SuspendLayout();
+			this.toolStrip2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -266,6 +270,25 @@
 			this.dumpsToolStripMenuItem.Name = "dumpsToolStripMenuItem";
 			this.dumpsToolStripMenuItem.Size = new System.Drawing.Size(82, 20);
 			this.dumpsToolStripMenuItem.Text = "PPU Dumps";
+			// 
+			// startVideoSignalDumpToolStripMenuItem
+			// 
+			this.startVideoSignalDumpToolStripMenuItem.Name = "startVideoSignalDumpToolStripMenuItem";
+			this.startVideoSignalDumpToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.startVideoSignalDumpToolStripMenuItem.Text = "Start video signal dump...";
+			this.startVideoSignalDumpToolStripMenuItem.Click += new System.EventHandler(this.startVideoSignalDumpToolStripMenuItem_Click);
+			// 
+			// stopVideoSignalDumpToolStripMenuItem
+			// 
+			this.stopVideoSignalDumpToolStripMenuItem.Name = "stopVideoSignalDumpToolStripMenuItem";
+			this.stopVideoSignalDumpToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
+			this.stopVideoSignalDumpToolStripMenuItem.Text = "Stop video signal dump";
+			this.stopVideoSignalDumpToolStripMenuItem.Click += new System.EventHandler(this.stopVideoSignalDumpToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator2
+			// 
+			this.toolStripSeparator2.Name = "toolStripSeparator2";
+			this.toolStripSeparator2.Size = new System.Drawing.Size(244, 6);
 			// 
 			// loadVRAMToolStripMenuItem
 			// 
@@ -601,6 +624,7 @@
 			// tabPage2
 			// 
 			this.tabPage2.Controls.Add(this.signalPlotScan);
+			this.tabPage2.Controls.Add(this.toolStrip2);
 			this.tabPage2.Location = new System.Drawing.Point(4, 24);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Size = new System.Drawing.Size(850, 436);
@@ -615,13 +639,35 @@
 			this.signalPlotScan.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.signalPlotScan.GridColor = System.Drawing.Color.Green;
 			this.signalPlotScan.LabelsColor = System.Drawing.Color.White;
-			this.signalPlotScan.Location = new System.Drawing.Point(0, 0);
+			this.signalPlotScan.Location = new System.Drawing.Point(0, 25);
 			this.signalPlotScan.Name = "signalPlotScan";
+			this.signalPlotScan.SelectionColor = System.Drawing.Color.GhostWhite;
 			this.signalPlotScan.SignalColor = System.Drawing.Color.LightGreen;
-			this.signalPlotScan.Size = new System.Drawing.Size(850, 436);
-			this.signalPlotScan.TabIndex = 0;
+			this.signalPlotScan.Size = new System.Drawing.Size(850, 411);
+			this.signalPlotScan.TabIndex = 2;
 			this.signalPlotScan.Text = "signalPlot1";
 			this.signalPlotScan.ZeroColor = System.Drawing.Color.Red;
+			// 
+			// toolStrip2
+			// 
+			this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton4});
+			this.toolStrip2.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip2.Name = "toolStrip2";
+			this.toolStrip2.Size = new System.Drawing.Size(850, 25);
+			this.toolStrip2.TabIndex = 1;
+			this.toolStrip2.Text = "toolStrip2";
+			// 
+			// toolStripButton4
+			// 
+			this.toolStripButton4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
+			this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton4.Name = "toolStripButton4";
+			this.toolStripButton4.Size = new System.Drawing.Size(47, 22);
+			this.toolStripButton4.Text = "Snatch";
+			this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
 			// 
 			// tabPage3
 			// 
@@ -883,14 +929,14 @@
 			// dataGridView1
 			// 
 			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
 			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.dataGridView1.Location = new System.Drawing.Point(0, 0);
 			this.dataGridView1.Name = "dataGridView1";
@@ -944,25 +990,6 @@
 			this.saveFileDialogImage.DefaultExt = "bmp";
 			this.saveFileDialogImage.Filter = "Bitmap file|*.bmp|All files|*.*";
 			// 
-			// startVideoSignalDumpToolStripMenuItem
-			// 
-			this.startVideoSignalDumpToolStripMenuItem.Name = "startVideoSignalDumpToolStripMenuItem";
-			this.startVideoSignalDumpToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
-			this.startVideoSignalDumpToolStripMenuItem.Text = "Start video signal dump...";
-			this.startVideoSignalDumpToolStripMenuItem.Click += new System.EventHandler(this.startVideoSignalDumpToolStripMenuItem_Click);
-			// 
-			// stopVideoSignalDumpToolStripMenuItem
-			// 
-			this.stopVideoSignalDumpToolStripMenuItem.Name = "stopVideoSignalDumpToolStripMenuItem";
-			this.stopVideoSignalDumpToolStripMenuItem.Size = new System.Drawing.Size(247, 22);
-			this.stopVideoSignalDumpToolStripMenuItem.Text = "Stop video signal dump";
-			this.stopVideoSignalDumpToolStripMenuItem.Click += new System.EventHandler(this.stopVideoSignalDumpToolStripMenuItem_Click);
-			// 
-			// toolStripSeparator2
-			// 
-			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(244, 6);
-			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -986,6 +1013,9 @@
 			this.tabPage1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxField)).EndInit();
 			this.tabPage2.ResumeLayout(false);
+			this.tabPage2.PerformLayout();
+			this.toolStrip2.ResumeLayout(false);
+			this.toolStrip2.PerformLayout();
 			this.tabPage3.ResumeLayout(false);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
@@ -1101,11 +1131,13 @@
 		private System.Windows.Forms.OpenFileDialog openFileDialogHEX;
 		private System.Windows.Forms.ToolStripMenuItem loadCompositeDumpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem loadRGBDumpToolStripMenuItem;
-		private System.Windows.Forms.SignalPlot signalPlotScan;
 		private System.Windows.Forms.ToolStripMenuItem saveFieldAsImageToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialogImage;
 		private System.Windows.Forms.ToolStripMenuItem startVideoSignalDumpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem stopVideoSignalDumpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+		private System.Windows.Forms.SignalPlot signalPlotScan;
+		private System.Windows.Forms.ToolStrip toolStrip2;
+		private System.Windows.Forms.ToolStripButton toolStripButton4;
 	}
 }

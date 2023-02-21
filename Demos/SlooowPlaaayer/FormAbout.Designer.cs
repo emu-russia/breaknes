@@ -52,7 +52,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(174, 40);
 			this.label1.TabIndex = 1;
-			this.label1.Text = "Slooow Plaaayer, v. 1.1\r\n© 2023, emu-russia";
+			this.label1.Text = "Slooow Plaaayer, v. 1.2\r\n© 2023, emu-russia";
 			// 
 			// button1
 			// 
