@@ -461,5 +461,34 @@ namespace PPUPlayer
 			DumpToFile = false;
 			VideoStream.Close();
 		}
+
+		private void toolStripButton4_Click(object sender, EventArgs e)
+		{
+			if (Paused && SimulationStarted)
+			{
+				if (signalPlotScan.IsSelectedSomething())
+				{
+					float[] data = signalPlotScan.SnatchSelection();
+					signalPlotScan.ClearSelection();
+					FormSnatch snatch = new FormSnatch(data);
+					snatch.Show();
+				}
+				else
+				{
+					MessageBox.Show("Select something first with the left mouse button. A box will appear, then click on Snatch.", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
+			}
+			else
+			{
+				if (backgroundWorker1.IsBusy)
+				{
+					MessageBox.Show("I can't while the worker is running. Pause it first", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
+				else
+				{
+					MessageBox.Show("Simulation not started", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
+			}
+		}
 	}
 }

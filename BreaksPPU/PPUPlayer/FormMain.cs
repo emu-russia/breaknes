@@ -308,6 +308,8 @@ namespace PPUPlayer
 			this.Text = DefaultTitle;
 
 			SimulationStarted = false;
+
+			signalPlotScan.EnableSelection(false);
 		}
 
 		PPULogEntry? NextLogEntry()
@@ -550,6 +552,7 @@ namespace PPUPlayer
 					Paused = false;
 					toolStripButton3.Checked = false;
 				}
+				signalPlotScan.EnableSelection(Paused);
 			}
 		}
 
