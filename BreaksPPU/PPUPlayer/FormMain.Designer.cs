@@ -635,9 +635,11 @@
 			// signalPlotScan
 			// 
 			this.signalPlotScan.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.signalPlotScan.DottedColor = System.Drawing.Color.Silver;
 			this.signalPlotScan.FillColor = System.Drawing.Color.Black;
 			this.signalPlotScan.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.signalPlotScan.GridColor = System.Drawing.Color.Green;
+			this.signalPlotScan.GridOpacity = 95;
 			this.signalPlotScan.LabelsColor = System.Drawing.Color.White;
 			this.signalPlotScan.Location = new System.Drawing.Point(0, 25);
 			this.signalPlotScan.Name = "signalPlotScan";

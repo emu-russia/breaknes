@@ -61,8 +61,10 @@ namespace PPUPlayer
 			// signalPlot1
 			// 
 			this.signalPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.signalPlot1.FillColor = System.Drawing.Color.Empty;
+			this.signalPlot1.DottedColor = System.Drawing.Color.Silver;
+			this.signalPlot1.FillColor = System.Drawing.Color.Black;
 			this.signalPlot1.GridColor = System.Drawing.Color.Green;
+			this.signalPlot1.GridOpacity = 95;
 			this.signalPlot1.LabelsColor = System.Drawing.Color.White;
 			this.signalPlot1.Location = new System.Drawing.Point(0, 25);
 			this.signalPlot1.Name = "signalPlot1";

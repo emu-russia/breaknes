@@ -75,6 +75,7 @@
 			this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -94,7 +95,6 @@
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.openFileDialogRegDump = new System.Windows.Forms.OpenFileDialog();
 			this.saveFileDialogWAV = new System.Windows.Forms.SaveFileDialog();
-			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -481,6 +481,17 @@
 			this.toolStripButton1.ToolTipText = "Enable FFT";
 			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
 			// 
+			// toolStripButton2
+			// 
+			this.toolStripButton2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton2.Name = "toolStripButton2";
+			this.toolStripButton2.Size = new System.Drawing.Size(47, 22);
+			this.toolStripButton2.Text = "Snatch";
+			this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+			// 
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
@@ -524,9 +535,11 @@
 			// signalPlot1
 			// 
 			this.signalPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.signalPlot1.DottedColor = System.Drawing.Color.Silver;
 			this.signalPlot1.FillColor = System.Drawing.Color.Black;
 			this.signalPlot1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.signalPlot1.GridColor = System.Drawing.Color.Green;
+			this.signalPlot1.GridOpacity = 100;
 			this.signalPlot1.LabelsColor = System.Drawing.Color.White;
 			this.signalPlot1.Location = new System.Drawing.Point(0, 0);
 			this.signalPlot1.Name = "signalPlot1";
@@ -714,17 +727,6 @@
 			// 
 			this.saveFileDialogWAV.DefaultExt = "wav";
 			this.saveFileDialogWAV.Filter = "Wave files|*.wav|All files|*.*";
-			// 
-			// toolStripButton2
-			// 
-			this.toolStripButton2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton2.Name = "toolStripButton2";
-			this.toolStripButton2.Size = new System.Drawing.Size(47, 22);
-			this.toolStripButton2.Text = "Snatch";
-			this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
 			// 
 			// FormMain
 			// 

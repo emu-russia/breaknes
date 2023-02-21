@@ -15,6 +15,21 @@ namespace PPUSim
 			case Revision::RP2C02G:
 			case Revision::RP2C02H:
 			case Revision::RP2C07_0:
+				LToV[0] = 0.781f;		// Synch
+				LToV[1] = 1.000f;		// Colorburst L
+				LToV[2] = 1.131f;		// Color 0D
+				LToV[3] = 1.300f;		// Color 1D (black)
+				LToV[4] = 1.712f;		// Colorburst H
+				LToV[5] = 1.743f;		// Color 2D
+				LToV[6] = 1.875f;		// Color 00
+				LToV[7] = 2.287f;		// Color 10
+				LToV[8] = 2.331f;		// Color 3D
+				LToV[9] = 2.743f;		// Color 20 / 30
+				LToV[10] = 0.746f;		// Emphasis attenuation factor
+				composite = true;
+				break;
+
+			// TBD: The DAC is significantly redesigned, so the 6538 signal levels are different (a little brighter/more saturated).
 			case Revision::UMC_UA6538:
 				LToV[0] = 0.781f;		// Synch
 				LToV[1] = 1.000f;		// Colorburst L
@@ -538,8 +553,7 @@ namespace PPUSim
 				features.PhaseAlteration = true;
 				break;
 
-			// TBD: Technically the DAC should not differ from the PAL PPU, but there are reports that the colors are brighter.
-			// Apparently this is due to the slight difference in the crystal area.
+			// TBD: The DAC is significantly redesigned, so the 6538 signal levels are different (a little brighter/more saturated).
 
 			case Revision::UMC_UA6538:
 				features.SamplesPerPCLK = 10;

@@ -127,12 +127,15 @@
 			// signalPlot1
 			// 
 			this.signalPlot1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.signalPlot1.DottedColor = System.Drawing.Color.Silver;
 			this.signalPlot1.FillColor = System.Drawing.Color.Black;
 			this.signalPlot1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.signalPlot1.GridColor = System.Drawing.Color.Green;
+			this.signalPlot1.GridOpacity = 95;
 			this.signalPlot1.LabelsColor = System.Drawing.Color.White;
 			this.signalPlot1.Location = new System.Drawing.Point(0, 24);
 			this.signalPlot1.Name = "signalPlot1";
+			this.signalPlot1.SelectionColor = System.Drawing.Color.GhostWhite;
 			this.signalPlot1.SignalColor = System.Drawing.Color.LightGreen;
 			this.signalPlot1.Size = new System.Drawing.Size(593, 284);
 			this.signalPlot1.TabIndex = 2;
