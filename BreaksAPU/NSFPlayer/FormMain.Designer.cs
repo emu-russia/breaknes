@@ -34,12 +34,14 @@
 			this.loadNSFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadAPURegisterDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadAUXDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveSampleBufferAsWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.executeINITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.executePLAYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.controlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.playToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,7 +93,7 @@
 			this.hexBox1 = new Be.Windows.Forms.HexBox();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.openFileDialogRegDump = new System.Windows.Forms.OpenFileDialog();
-			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveFileDialogWAV = new System.Windows.Forms.SaveFileDialog();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -135,6 +137,7 @@
             this.loadNSFToolStripMenuItem,
             this.loadAPURegisterDumpToolStripMenuItem,
             this.loadAUXDumpToolStripMenuItem,
+            this.saveSampleBufferAsWAVToolStripMenuItem,
             this.toolStripSeparator1,
             this.settingsToolStripMenuItem,
             this.exitToolStripMenuItem});
@@ -145,40 +148,47 @@
 			// loadNSFToolStripMenuItem
 			// 
 			this.loadNSFToolStripMenuItem.Name = "loadNSFToolStripMenuItem";
-			this.loadNSFToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+			this.loadNSFToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
 			this.loadNSFToolStripMenuItem.Text = "Load NSF...";
 			this.loadNSFToolStripMenuItem.Click += new System.EventHandler(this.loadNSFToolStripMenuItem_Click);
 			// 
 			// loadAPURegisterDumpToolStripMenuItem
 			// 
 			this.loadAPURegisterDumpToolStripMenuItem.Name = "loadAPURegisterDumpToolStripMenuItem";
-			this.loadAPURegisterDumpToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+			this.loadAPURegisterDumpToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
 			this.loadAPURegisterDumpToolStripMenuItem.Text = "Load APU registers dump...";
 			this.loadAPURegisterDumpToolStripMenuItem.Click += new System.EventHandler(this.loadAPURegisterDumpToolStripMenuItem_Click);
 			// 
 			// loadAUXDumpToolStripMenuItem
 			// 
 			this.loadAUXDumpToolStripMenuItem.Name = "loadAUXDumpToolStripMenuItem";
-			this.loadAUXDumpToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+			this.loadAUXDumpToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
 			this.loadAUXDumpToolStripMenuItem.Text = "Load AUX dump...";
 			this.loadAUXDumpToolStripMenuItem.Click += new System.EventHandler(this.loadAUXDumpToolStripMenuItem_Click);
+			// 
+			// saveSampleBufferAsWAVToolStripMenuItem
+			// 
+			this.saveSampleBufferAsWAVToolStripMenuItem.Name = "saveSampleBufferAsWAVToolStripMenuItem";
+			this.saveSampleBufferAsWAVToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+			this.saveSampleBufferAsWAVToolStripMenuItem.Text = "Save sample buffer as WAV...";
+			this.saveSampleBufferAsWAVToolStripMenuItem.Click += new System.EventHandler(this.saveSampleBufferAsWAVToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(214, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(222, 6);
 			// 
 			// settingsToolStripMenuItem
 			// 
 			this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
 			this.settingsToolStripMenuItem.Text = "Settings...";
 			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -205,6 +215,13 @@
 			this.executePLAYToolStripMenuItem.Size = new System.Drawing.Size(313, 22);
 			this.executePLAYToolStripMenuItem.Text = "Execute PLAY";
 			this.executePLAYToolStripMenuItem.Click += new System.EventHandler(this.executePLAYToolStripMenuItem_Click);
+			// 
+			// loadSaveLogisimAUXDumpForAudacityToolStripMenuItem
+			// 
+			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Name = "loadSaveLogisimAUXDumpForAudacityToolStripMenuItem";
+			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Size = new System.Drawing.Size(313, 22);
+			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Text = "Load/Save Logisim AUX Dump for Audacity...";
+			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Click += new System.EventHandler(this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem_Click);
 			// 
 			// controlsToolStripMenuItem
 			// 
@@ -690,12 +707,10 @@
 			this.openFileDialogRegDump.DefaultExt = "bin";
 			this.openFileDialogRegDump.Filter = "Binary files|*.bin;*.regdump|All files|*.*";
 			// 
-			// loadSaveLogisimAUXDumpForAudacityToolStripMenuItem
+			// saveFileDialogWAV
 			// 
-			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Name = "loadSaveLogisimAUXDumpForAudacityToolStripMenuItem";
-			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Size = new System.Drawing.Size(313, 22);
-			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Text = "Load/Save Logisim AUX Dump for Audacity...";
-			this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem.Click += new System.EventHandler(this.loadSaveLogisimAUXDumpForAudacityToolStripMenuItem_Click);
+			this.saveFileDialogWAV.DefaultExt = "wav";
+			this.saveFileDialogWAV.Filter = "Wave files|*.wav|All files|*.*";
 			// 
 			// FormMain
 			// 
@@ -805,5 +820,7 @@
 		private ToolStripMenuItem loadAPURegisterDumpToolStripMenuItem;
 		private ToolStripMenuItem loadAUXDumpToolStripMenuItem;
 		private ToolStripMenuItem loadSaveLogisimAUXDumpForAudacityToolStripMenuItem;
+		private ToolStripMenuItem saveSampleBufferAsWAVToolStripMenuItem;
+		private SaveFileDialog saveFileDialogWAV;
 	}
 }

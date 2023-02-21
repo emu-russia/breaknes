@@ -5,6 +5,8 @@ using System.Security.Policy;
 using System.Windows.Forms;
 using System.IO;
 using Microsoft.VisualBasic.Logging;
+using SharpDX.Multimedia;
+using System.Text;
 
 namespace NSFPlayer
 {
@@ -779,6 +781,55 @@ namespace NSFPlayer
 
 				MessageBox.Show("Done.", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
+		}
+
+		private void saveSampleBufferAsWAVToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (saveFileDialogWAV.ShowDialog() == DialogResult.OK)
+			{
+				var settings = FormSettings.LoadSettings();
+				Dma = true;
+				SaveWav(saveFileDialogWAV.FileName, SampleBuf, settings.OutputSampleRate);
+				Dma = false;
+			}
+		}
+
+		// https://stackoverflow.com/questions/14659684/creating-a-wav-file-in-c-sharp
+
+		private void SaveWav (string filename, List<float> samples, int samplerate)
+		{
+			var settings = FormSettings.LoadSettings();
+
+			int numsamples = samples.Count;
+			ushort numchannels = 1;
+			ushort samplelength = 2; // in bytes
+
+			FileStream f = new FileStream(filename, FileMode.Create);
+			BinaryWriter wr = new BinaryWriter(f);
+
+			int data_blob_size = numsamples * numchannels * samplelength;
+
+			wr.Write(Encoding.ASCII.GetBytes("RIFF"));
+			wr.Write(0x2c + data_blob_size);
+			wr.Write(Encoding.ASCII.GetBytes("WAVE"));
+			wr.Write(Encoding.ASCII.GetBytes("fmt "));
+			wr.Write(16);
+			wr.Write((short)1); // Encoding (1: PCM)
+			wr.Write((short)numchannels); // Channels
+			wr.Write((int)(samplerate)); // Sample rate
+			wr.Write((int)(samplerate * samplelength * numchannels) / 8); // Average bytes per second
+			wr.Write((short)(samplelength * numchannels)); // block align
+			wr.Write((short)(8 * samplelength)); // bits per sample
+			wr.Write(Encoding.ASCII.GetBytes("data"));
+			wr.Write((int)(data_blob_size));
+
+			foreach (var sample in samples)
+			{
+				short value = (short)((sample - 0.5f) * Int16.MaxValue);
+				wr.Write(value);
+			}
+
+			f.Close();
 		}
 	}
 }
