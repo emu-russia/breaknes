@@ -2,13 +2,18 @@ using Microsoft.VisualBasic;
 using SharpDX;
 using SharpDX.DirectSound;
 using SharpDX.Multimedia;
+using SlooowPlaaayer;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace DSoundDemo
 {
 	public partial class FormMain : Form
 	{
+		[DllImport("kernel32")]
+		static extern bool AllocConsole();
+
 		DirectSound? directSound;
 		PrimarySoundBuffer? primarySoundBuffer;
 		SecondarySoundBuffer? secondarySoundBuffer;
@@ -32,6 +37,7 @@ namespace DSoundDemo
 		public FormMain()
 		{
 			InitializeComponent();
+			AllocConsole();
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
@@ -272,6 +278,29 @@ namespace DSoundDemo
 		{
 			Paused = pause;
 			toolStripStatusLabel6.Text = pause ? "Paused" : "Running";
+			signalPlot1.EnableSelection(Paused);
+		}
+
+		private void toolStripButton4_Click_1(object sender, EventArgs e)
+		{
+			if (Paused)
+			{
+				if (signalPlot1.IsSelectedSomething())
+				{
+					float[] data = signalPlot1.SnatchSelection();
+					signalPlot1.ClearSelection();
+					FormSnatch snatch = new FormSnatch(data);
+					snatch.Show();
+				}
+				else
+				{
+					MessageBox.Show("Select something first with the left mouse button. A box will appear, then click on Snatch.", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
+			}
+			else
+			{
+				MessageBox.Show("I can't while the worker is running. Stop it first", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			}
 		}
 	}
 }

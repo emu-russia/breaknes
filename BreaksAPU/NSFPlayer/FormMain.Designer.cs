@@ -94,6 +94,7 @@
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.openFileDialogRegDump = new System.Windows.Forms.OpenFileDialog();
 			this.saveFileDialogWAV = new System.Windows.Forms.SaveFileDialog();
+			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -426,7 +427,8 @@
             this.toolStripButtonDiscard,
             this.toolStripButtonStop,
             this.toolStripSeparator4,
-            this.toolStripButton1});
+            this.toolStripButton1,
+            this.toolStripButton2});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(1018, 25);
@@ -528,6 +530,7 @@
 			this.signalPlot1.LabelsColor = System.Drawing.Color.White;
 			this.signalPlot1.Location = new System.Drawing.Point(0, 0);
 			this.signalPlot1.Name = "signalPlot1";
+			this.signalPlot1.SelectionColor = System.Drawing.Color.GhostWhite;
 			this.signalPlot1.SignalColor = System.Drawing.Color.LightGreen;
 			this.signalPlot1.Size = new System.Drawing.Size(1004, 261);
 			this.signalPlot1.TabIndex = 0;
@@ -712,6 +715,17 @@
 			this.saveFileDialogWAV.DefaultExt = "wav";
 			this.saveFileDialogWAV.Filter = "Wave files|*.wav|All files|*.*";
 			// 
+			// toolStripButton2
+			// 
+			this.toolStripButton2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton2.Name = "toolStripButton2";
+			this.toolStripButton2.Size = new System.Drawing.Size(47, 22);
+			this.toolStripButton2.Text = "Snatch";
+			this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -822,5 +836,6 @@
 		private ToolStripMenuItem loadSaveLogisimAUXDumpForAudacityToolStripMenuItem;
 		private ToolStripMenuItem saveSampleBufferAsWAVToolStripMenuItem;
 		private SaveFileDialog saveFileDialogWAV;
+		private ToolStripButton toolStripButton2;
 	}
 }

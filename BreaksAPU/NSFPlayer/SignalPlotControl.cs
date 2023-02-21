@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace System.Windows.Forms
 {
@@ -22,6 +23,7 @@ namespace System.Windows.Forms
 		private Pen? signal_pen;
 		private Brush? label_brush;
 		private Pen? zero_pen;
+		private Pen? selection_pen;
 
 		private bool gdi_init = false;
 
@@ -83,6 +85,7 @@ namespace System.Windows.Forms
 				signal_pen = new Pen(new SolidBrush(SignalColor));
 				label_brush = new SolidBrush(LabelsColor);
 				zero_pen = new Pen(new SolidBrush(ZeroColor));
+				selection_pen = new Pen(SelectionColor, 2);
 				gdi_init = true;
 			}
 
@@ -175,6 +178,11 @@ namespace System.Windows.Forms
 			return tp;
 		}
 
+		private long InvTransform (int x)
+		{
+			return Math.Max(Math.Min((x * data.Length) / Width, data.Length-1), 0);
+		}
+
 		private void DrawLabels (Graphics gr)
 		{
 			long horizontalStepping = data.Length / 10;
@@ -206,6 +214,7 @@ namespace System.Windows.Forms
 			DrawGrid(gr);
 			DrawLabels(gr);
 			DrawSignal(gr);
+			DrawSelection(gr);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -234,6 +243,117 @@ namespace System.Windows.Forms
 			base.OnSizeChanged(e);
 		}
 
+		#region "Selection/Snatch support"
+
+		private bool selection_enabled = false;
+		private int SelectStartMouseX;
+		private int SelectStartMouseY;
+		private int LastMouseX;
+		private int LastMouseY;
+		private bool selection_box_active = false;
+		private int min_selection_square = 64;
+		private bool selection_in_progress = false;
+
+		public void EnableSelection (bool enable)
+		{
+			selection_enabled = enable;
+			ClearSelection();
+		}
+
+		public void ClearSelection()
+		{
+			selection_box_active = false;
+			selection_in_progress = false;
+			Invalidate();
+		}
+
+		public bool IsSelectedSomething()
+		{
+			if (data.Length <= 10 || Width == 0 || Height == 0)
+				return false;
+
+			return selection_enabled && selection_box_active;
+		}
+
+		public float[] SnatchSelection ()
+		{
+			if (!IsSelectedSomething())
+				return Array.Empty<float>();
+
+			List<float> res = new();
+
+			int dist = Math.Abs(SelectStartMouseX - LastMouseX);
+			int start_x = Math.Min(SelectStartMouseX, LastMouseX);
+			long sp = InvTransform(start_x);
+			long ep = InvTransform(start_x + dist);
+
+			for (long i=sp; i<ep; i++)
+			{
+				res.Add(data[i]);
+			}
+
+			return res.ToArray();
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left && selection_enabled && !selection_in_progress)
+			{
+				LastMouseX = SelectStartMouseX = e.X;
+				LastMouseY = SelectStartMouseY = e.Y;
+				selection_box_active = true;
+				selection_in_progress = true;
+			}
+
+			base.OnMouseDown(e);
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			if (selection_enabled && selection_in_progress)
+			{
+				int square = Math.Abs(SelectStartMouseX - LastMouseX) * Math.Abs(SelectStartMouseY - LastMouseY);
+
+				selection_box_active = (square > min_selection_square);
+				selection_in_progress = false;
+
+				Invalidate();
+			}
+
+			base.OnMouseUp(e);
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			if (selection_enabled && selection_in_progress)
+			{
+				LastMouseX = Math.Max(Math.Min(e.X, Width-1), 0);
+				LastMouseY = Math.Max(Math.Min(e.Y, Height-1), 0);
+				Invalidate();
+			}
+
+			base.OnMouseMove(e);
+		}
+
+		private void DrawSelection(Graphics gr)
+		{
+			if (selection_enabled && selection_box_active && selection_pen != null)
+			{
+				Point[] points = new Point[5];
+
+				points[0] = new Point(SelectStartMouseX, SelectStartMouseY);
+				points[1] = new Point(SelectStartMouseX, LastMouseY);
+				points[2] = new Point(LastMouseX, LastMouseY);
+				points[3] = new Point(LastMouseX, SelectStartMouseY);
+				points[4] = new Point(SelectStartMouseX, SelectStartMouseY);
+
+				gr.DrawLines(selection_pen, points);
+			}
+		}
+
+		#endregion "Selection/Snatch support"
+
+
 		[Category("Plot Appearance")]
 		public Color FillColor { get; set; }
 
@@ -248,5 +368,8 @@ namespace System.Windows.Forms
 
 		[Category("Plot Appearance")]
 		public Color LabelsColor { get; set; }
+
+		[Category("Plot Appearance")]
+		public Color SelectionColor { get; set; }
 	}
 }

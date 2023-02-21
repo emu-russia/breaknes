@@ -158,6 +158,8 @@ namespace NSFPlayer
 
 			nextTrackToolStripMenuItem.Enabled = true;
 			previousTrackToolStripMenuItem.Enabled = true;
+
+			signalPlot1.EnableSelection(true);
 		}
 
 		private void DisposeBoard()
@@ -177,6 +179,8 @@ namespace NSFPlayer
 
 			nextTrackToolStripMenuItem.Enabled = false;
 			previousTrackToolStripMenuItem.Enabled = false;
+
+			signalPlot1.PlotSignal(Array.Empty<float>());
 		}
 
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -269,6 +273,7 @@ namespace NSFPlayer
 				playToolStripMenuItem.Checked = true;
 				pauseToolStripMenuItem.Checked = false;
 			}
+			signalPlot1.EnableSelection(paused);
 		}
 
 		private void ExecINIT()
@@ -441,6 +446,7 @@ namespace NSFPlayer
 					}
 					else
 					{
+						SetPaused(true);
 						DecimateCounter = 0;
 						return;
 					}
@@ -798,8 +804,6 @@ namespace NSFPlayer
 
 		private void SaveWav (string filename, List<float> samples, int samplerate)
 		{
-			var settings = FormSettings.LoadSettings();
-
 			int numsamples = samples.Count;
 			ushort numchannels = 1;
 			ushort samplelength = 2; // in bytes
@@ -830,6 +834,37 @@ namespace NSFPlayer
 			}
 
 			f.Close();
+		}
+
+		private void toolStripButton2_Click(object sender, EventArgs e)
+		{
+			bool loaded_smth = (nsf_loaded || regdump_loaded || auxdump_loaded);
+
+			if (Paused && loaded_smth)
+			{
+				if (signalPlot1.IsSelectedSomething())
+				{
+					float[] data = signalPlot1.SnatchSelection();
+					signalPlot1.ClearSelection();
+					FormSnatch snatch = new FormSnatch(data);
+					snatch.Show();
+				}
+				else
+				{
+					MessageBox.Show("Select something first with the left mouse button. A box will appear, then click on Snatch.", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
+			}
+			else
+			{
+				if (!loaded_smth)
+				{
+					MessageBox.Show("Nothing loaded", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
+				else
+				{
+					MessageBox.Show("I can't while the worker is running. Stop it first", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
+			}
 		}
 	}
 }
