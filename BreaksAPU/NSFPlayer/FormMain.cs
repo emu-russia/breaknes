@@ -408,12 +408,13 @@ namespace NSFPlayer
 
 		private void UpdateSignalPlot()
 		{
-			int numberOfSamples = SampleBuf.Count;
+			long numberOfSamples = SampleBuf.Count;
 			float[] plot_samples = new float[numberOfSamples];
 
-			for (int i = 0; i < numberOfSamples; i++)
+			long i = 0;
+			foreach (var sample in SampleBuf)
 			{
-				plot_samples[i] = SampleBuf[i];
+				plot_samples[i++] = sample;
 			}
 
 			signalPlot1.PlotSignal(plot_samples);
@@ -746,7 +747,7 @@ namespace NSFPlayer
 				int decimate_each = settings.AuxSampleRate / audacity_sample_rate;
 				int decimate_counter = 0;
 
-				for (int i = 0; i < dump.Length; i++)
+				for (long i = 0; i < dump.Length; i++)
 				{
 					// Renormalize to the [-1.0; +1.0] range that Audacity uses
 

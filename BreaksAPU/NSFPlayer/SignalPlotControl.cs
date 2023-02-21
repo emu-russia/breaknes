@@ -66,7 +66,7 @@ namespace System.Windows.Forms
 				minVal = float.MaxValue;
 				maxVal = float.MinValue;
 
-				for (int i = 0; i < data.Length; i++)
+				for (long i = 0; i < data.Length; i++)
 				{
 					if (data[i] < minVal)
 						minVal = data[i];
@@ -110,12 +110,12 @@ namespace System.Windows.Forms
 
 		private void DrawGrid (Graphics gr)
 		{
-			int horizontalStepping = data.Length / 10;
+			long horizontalStepping = data.Length / 10;
 			float verticalStepping = (maxVal - minVal) / 20;
 
 			if (grid_pen != null)
 			{
-				for (int i = 0; i < data.Length; i += horizontalStepping)
+				for (long i = 0; i < data.Length; i += horizontalStepping)
 				{
 					PointF pt = TransformCoord(i, 0.0f);
 					p1.X = pt.X;
@@ -154,7 +154,7 @@ namespace System.Windows.Forms
 
 			if (signal_pen != null)
 			{
-				for (int i = 1; i < data.Length; i++)
+				for (long i = 1; i < data.Length; i++)
 				{
 					PointF pos = TransformCoord(i, data[i]);
 					gr.DrawLine(signal_pen, prev, pos);
@@ -163,7 +163,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private PointF TransformCoord (int i, float val)
+		private PointF TransformCoord (long i, float val)
 		{
 			float x = (float)(i * Width) / data.Length;
 			float delta = maxVal - minVal;
@@ -177,12 +177,12 @@ namespace System.Windows.Forms
 
 		private void DrawLabels (Graphics gr)
 		{
-			int horizontalStepping = data.Length / 10;
+			long horizontalStepping = data.Length / 10;
 			float verticalStepping = (maxVal - minVal) / 20;
 
 			if (label_brush != null)
 			{
-				for (int i = horizontalStepping; i < data.Length; i += horizontalStepping)
+				for (long i = horizontalStepping; i < data.Length; i += horizontalStepping)
 				{
 					PointF pt = TransformCoord(i, 0.0f);
 					gr.DrawString(i.ToString(), Font, label_brush, pt);
