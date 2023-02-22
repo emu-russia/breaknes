@@ -32,7 +32,7 @@ namespace NSFPlayer
 
 		if (sample != nullptr)
 		{
-			*sample = (aux.normalized.a + aux.normalized.b) / 2.0f;
+			*sample = (aux.normalized.a * 0.4 /* 20k resistor */ + aux.normalized.b /* 12k resistor */) / 2.0f;
 		}
 	}
 
