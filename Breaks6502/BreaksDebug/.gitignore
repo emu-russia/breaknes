@@ -3,3 +3,4 @@ Build/*
 !Build/*.json
 packages
 Build/res.json
+obj
