@@ -75,6 +75,7 @@ namespace NSFPlayer
 			settings.FurryIntensity = 500.0f;
 			settings.PreferPal = false;
 			settings.AuxSampleRate = 3579544;       // 0.5 PHI for 2A03
+			settings.DC = 0.0f;
 
 			SaveSettings(settings);
 
@@ -135,6 +136,11 @@ namespace NSFPlayer
 			[Description("If you run APUSim - it says the frequency, but if you stick the AUX dump - what frequency is not clear. This setting allows you to select the sampling frequency of the AUX dump.")]
 			[TypeConverter(typeof(FormatInt32ConverterConverter_AuxSampleRate))]
 			public int AuxSampleRate { get; set; }
+
+			[XmlElement]
+			[Category("Host Features")]
+			[Description("A constant offset that is added when converting a normalized sample received from APUSim to 16-bit PCM format for the DSound buffer.")]
+			public float DC { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid
