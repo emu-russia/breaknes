@@ -50,10 +50,22 @@ namespace NSFPlayer
 		/// <returns></returns>
 		virtual bool APUInResetState() = 0;
 
+		/// <summary>
+		/// Get the values of the ACLK cycle counter.
+		/// </summary>
+		/// <returns></returns>
 		virtual size_t GetACLKCounter();
 
+		/// <summary>
+		/// Get the value of the 6502 core cycle counter (PHI Counter)
+		/// </summary>
+		/// <returns></returns>
 		virtual size_t GetPHICounter();
 
+		/// <summary>
+		/// Get the current resulting AUX value in normalized [0.0; 1.0] format.
+		/// </summary>
+		/// <returns></returns>
 		virtual void SampleAudioSignal(float* sample);
 
 		/// <summary>

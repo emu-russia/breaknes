@@ -68,7 +68,7 @@ namespace NSFPlayer
 
 			for (int i = 0; i < numberOfSamples; i++)
 			{
-				short value = (short)((SampleBuf[i] - 0.5f) * Int16.MaxValue);
+				short value = (short)(SampleBuf[i] * Int16.MaxValue);
 				dataPart1.Write(value);
 			}
 
