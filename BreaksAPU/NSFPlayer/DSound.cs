@@ -35,7 +35,7 @@ namespace NSFPlayer
 			primarySoundBuffer.Play(0, PlayFlags.Looping);
 		}
 
-		public void PlaySampleBuf(int SourceSampleRate, List<float> SampleBuf)
+		public void PlaySampleBuf(int SourceSampleRate, List<float> SampleBuf, float DC)
 		{
 			if (SampleBuf.Count == 0)
 				return;
@@ -68,7 +68,7 @@ namespace NSFPlayer
 
 			for (int i = 0; i < numberOfSamples; i++)
 			{
-				short value = (short)(SampleBuf[i] * Int16.MaxValue);
+				short value = (short)((SampleBuf[i] + DC) * Int16.MaxValue);
 				dataPart1.Write(value);
 			}
 

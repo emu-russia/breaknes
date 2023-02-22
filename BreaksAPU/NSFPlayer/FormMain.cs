@@ -30,6 +30,7 @@ namespace NSFPlayer
 		private long aclkCounter = 0;
 
 		private int OutputSampleRate = 48000;
+		private float OutputDC = 0.0f;
 		private List<float> SampleBuf = new();
 
 		private string DefaultTitle = "";
@@ -62,6 +63,7 @@ namespace NSFPlayer
 
 			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
 			OutputSampleRate = settings.OutputSampleRate;
+			OutputDC = settings.DC;
 
 			SetPaused(true);
 
@@ -90,6 +92,7 @@ namespace NSFPlayer
 				Redecimate();
 				FurryIntensity = settings.FurryIntensity;
 				PreferPal = settings.PreferPal;
+				OutputDC = settings.DC;
 			}
 		}
 
@@ -382,7 +385,7 @@ namespace NSFPlayer
 			if (audio_backend != null)
 			{
 				Dma = true;
-				audio_backend.PlaySampleBuf(OutputSampleRate, SampleBuf);
+				audio_backend.PlaySampleBuf(OutputSampleRate, SampleBuf, OutputDC);
 				Dma = false;
 			}
 		}
