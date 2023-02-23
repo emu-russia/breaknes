@@ -82,7 +82,7 @@ namespace NSFPlayer
 			RnW = TriState::One;
 		}
 
-		TriState wram_cs = (addr_bus >> wram_bits) == 0 ? TriState::One : TriState::Zero;
+		TriState wram_cs = (addr_bus < 0x800 || addr_bus >= 0x8000) == 0 ? TriState::One : TriState::Zero;
 
 		TriState n_WE = RnW;
 		TriState n_OE = NOT(RnW);

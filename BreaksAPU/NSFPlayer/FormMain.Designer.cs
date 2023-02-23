@@ -95,6 +95,8 @@
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.openFileDialogRegDump = new System.Windows.Forms.OpenFileDialog();
 			this.saveFileDialogWAV = new System.Windows.Forms.SaveFileDialog();
+			this.loadCPUMemoryDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.openFileDialogCpumem = new System.Windows.Forms.OpenFileDialog();
 			this.menuStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -138,6 +140,7 @@
             this.loadNSFToolStripMenuItem,
             this.loadAPURegisterDumpToolStripMenuItem,
             this.loadAUXDumpToolStripMenuItem,
+            this.loadCPUMemoryDumpToolStripMenuItem,
             this.saveSampleBufferAsWAVToolStripMenuItem,
             this.toolStripSeparator1,
             this.settingsToolStripMenuItem,
@@ -728,6 +731,18 @@
 			this.saveFileDialogWAV.DefaultExt = "wav";
 			this.saveFileDialogWAV.Filter = "Wave files|*.wav|All files|*.*";
 			// 
+			// loadCPUMemoryDumpToolStripMenuItem
+			// 
+			this.loadCPUMemoryDumpToolStripMenuItem.Name = "loadCPUMemoryDumpToolStripMenuItem";
+			this.loadCPUMemoryDumpToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+			this.loadCPUMemoryDumpToolStripMenuItem.Text = "Load CPU Memory dump...";
+			this.loadCPUMemoryDumpToolStripMenuItem.Click += new System.EventHandler(this.loadCPUMemoryDumpToolStripMenuItem_Click);
+			// 
+			// openFileDialogCpumem
+			// 
+			this.openFileDialogCpumem.DefaultExt = "cpumem";
+			this.openFileDialogCpumem.Filter = "Nintendulator CPU Memory dumps|*.cpumem|All files|*.*";
+			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -839,5 +854,7 @@
 		private ToolStripMenuItem saveSampleBufferAsWAVToolStripMenuItem;
 		private SaveFileDialog saveFileDialogWAV;
 		private ToolStripButton toolStripButton2;
+		private ToolStripMenuItem loadCPUMemoryDumpToolStripMenuItem;
+		private OpenFileDialog openFileDialogCpumem;
 	}
 }

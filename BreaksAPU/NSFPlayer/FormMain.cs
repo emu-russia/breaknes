@@ -672,6 +672,30 @@ namespace NSFPlayer
 			ExecPLAY();
 		}
 
+		private void loadCPUMemoryDumpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (openFileDialogCpumem.ShowDialog() == DialogResult.OK)
+			{
+				byte[] cpumem = File.ReadAllBytes(openFileDialogCpumem.FileName);
+
+				int descrID = -1;
+
+				for (int i=0; i<mem.Count; i++)
+				{
+					if (mem[i].name == "WRAM")
+					{
+						descrID = i;
+						break;
+					}
+				}
+
+				if (descrID >= 0)
+				{
+					BreaksCore.WriteMem(descrID, cpumem);
+				}
+			}
+		}
+
 		#endregion "APU Debug"
 
 
