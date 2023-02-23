@@ -450,6 +450,8 @@ namespace NSFPlayer
 					else
 					{
 						SetPaused(true);
+						UpdateSampleBufStats();
+						UpdateSignalPlot();
 						DecimateCounter = 0;
 						return;
 					}
