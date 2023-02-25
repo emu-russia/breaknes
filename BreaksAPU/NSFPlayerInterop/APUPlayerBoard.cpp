@@ -36,7 +36,7 @@ namespace NSFPlayer
 			rev = APUSim::Revision::RP2A03G;
 		}
 
-		core = new M6502Core::FakeM6502();
+		core = new M6502Core::FakeM6502(0x4000, 0x1f);
 		apu = new APUSim::APU(core, rev);
 		wram = new BaseBoard::SRAM(wram_bits);
 

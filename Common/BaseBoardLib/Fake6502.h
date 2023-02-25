@@ -11,7 +11,7 @@ namespace M6502Core
 		BaseBoard::RegDumpProcessor* rp = nullptr;
 
 	public:
-		FakeM6502();
+		FakeM6502(uint16_t regs_base, uint8_t regs_mask);
 		~FakeM6502();
 
 		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint16_t* addr_bus, uint8_t* data_bus);
