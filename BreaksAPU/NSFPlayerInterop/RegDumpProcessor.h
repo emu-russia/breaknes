@@ -29,7 +29,7 @@ namespace NSFPlayer
 		RegDumpProcessor();
 		~RegDumpProcessor();
 
-		void sim(BaseLogic::TriState PHI0, BaseLogic::TriState& RnW, uint16_t* addr_bus, uint8_t* data_bus);
+		void sim(BaseLogic::TriState PHI0, BaseLogic::TriState n_RES, BaseLogic::TriState& RnW, uint16_t* addr_bus, uint8_t* data_bus);
 		
 		void SetRegDump(void* ptr, size_t size);
 	};

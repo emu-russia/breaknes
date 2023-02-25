@@ -19,6 +19,7 @@ namespace M6502Core
 	void FakeM6502::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint16_t* addr_bus, uint8_t* data_bus)
 	{
 		TriState PHI0 = inputs[(size_t)M6502Core::InputPad::PHI0];
+		TriState n_RES = inputs[(size_t)M6502Core::InputPad::n_RES];
 
 		TriState PHI1 = NOT(PHI0);
 		TriState PHI2 = PHI0;
@@ -28,7 +29,7 @@ namespace M6502Core
 		TriState RnW = TriState::One;
 		*addr_bus = 0;
 
-		rp->sim(PHI0, RnW, addr_bus, data_bus);
+		rp->sim(PHI0, n_RES, RnW, addr_bus, data_bus);
 
 		// Return values of the terminals
 

@@ -16,8 +16,13 @@ namespace NSFPlayer
 		}
 	}
 
-	void RegDumpProcessor::sim(TriState PHI0, TriState& RnW, uint16_t* addr_bus, uint8_t* data_bus)
+	void RegDumpProcessor::sim(TriState PHI0, TriState n_RES, TriState& RnW, uint16_t* addr_bus, uint8_t* data_bus)
 	{
+		if (n_RES == TriState::Zero)
+		{
+			return;
+		}
+
 		// Increase the cycle counter
 
 		if (IsNegedge(PrevPHI0, PHI0))

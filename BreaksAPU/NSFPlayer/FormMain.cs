@@ -324,6 +324,7 @@ namespace NSFPlayer
 
 			var settings = FormSettings.LoadSettings();
 			NSFPlayerInterop.CreateBoard("APUPlayer", settings.APU_Revision, "None", "None");
+			NSFPlayerInterop.ResetAPU(0, true);
 
 			FurryIntensity = settings.FurryIntensity;
 

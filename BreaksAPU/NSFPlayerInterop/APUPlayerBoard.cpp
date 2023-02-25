@@ -69,7 +69,7 @@ namespace NSFPlayer
 
 		inputs[(size_t)APUSim::APU_Input::n_NMI] = TriState::One;
 		inputs[(size_t)APUSim::APU_Input::n_IRQ] = TriState::One;
-		inputs[(size_t)APUSim::APU_Input::n_RES] = TriState::One;
+		inputs[(size_t)APUSim::APU_Input::n_RES] = in_reset ? TriState::Zero : TriState::One;
 		inputs[(size_t)APUSim::APU_Input::DBG] = TriState::Zero;
 
 		apu->sim(inputs, outputs, &data_bus, &addr_bus, aux);
@@ -97,6 +97,12 @@ namespace NSFPlayer
 
 	void APUPlayerBoard::ResetAPU(uint16_t addr, bool reset_apu_also)
 	{
+		// Execute 1 cycle (not a core cycle, just a cycle). This is enough to reset APU circuits.
+
+		in_reset = true;
+		Step();
+		Step();
+		in_reset = false;
 	}
 
 	bool APUPlayerBoard::APUInResetState()

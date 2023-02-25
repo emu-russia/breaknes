@@ -18,6 +18,8 @@ namespace NSFPlayer
 		const size_t wram_bits = 16;
 		const size_t wram_size = 1ULL << wram_bits;
 
+		bool in_reset = false;
+
 		static uint8_t DumpWRAM(void* opaque, size_t addr);
 		static void WriteWRAM(void* opaque, size_t addr, uint8_t data);
 
