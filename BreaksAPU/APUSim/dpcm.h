@@ -30,30 +30,30 @@ namespace APUSim
 
 		APU* apu = nullptr;
 
-		BaseLogic::TriState LOOPMode = BaseLogic::TriState::X;
-		BaseLogic::TriState n_IRQEN = BaseLogic::TriState::X;
-		BaseLogic::TriState DSLOAD = BaseLogic::TriState::X;
-		BaseLogic::TriState DSSTEP = BaseLogic::TriState::X;
-		BaseLogic::TriState BLOAD = BaseLogic::TriState::X;
-		BaseLogic::TriState BSTEP = BaseLogic::TriState::X;
-		BaseLogic::TriState NSTEP = BaseLogic::TriState::X;
-		BaseLogic::TriState DSTEP = BaseLogic::TriState::X;
-		BaseLogic::TriState PCM = BaseLogic::TriState::X;
-		BaseLogic::TriState DOUT = BaseLogic::TriState::X;
-		BaseLogic::TriState n_NOUT = BaseLogic::TriState::X;
-		BaseLogic::TriState SOUT = BaseLogic::TriState::X;
-		BaseLogic::TriState DFLOAD = BaseLogic::TriState::X;
-		BaseLogic::TriState n_BOUT = BaseLogic::TriState::X;
+		BaseLogic::TriState LOOPMode = BaseLogic::TriState::X;	// 1: DPCM looped playback
+		BaseLogic::TriState n_IRQEN = BaseLogic::TriState::X;	// 0: Enable interrupt from DPCM
+		BaseLogic::TriState DSLOAD = BaseLogic::TriState::X;	// Load value into Sample Counter and simultaneously into DPCM Address Counter
+		BaseLogic::TriState DSSTEP = BaseLogic::TriState::X;	// Perform Sample Counter decrement and DPCM Address Counter increment simultaneously
+		BaseLogic::TriState BLOAD = BaseLogic::TriState::X;		// Load value into Sample Buffer
+		BaseLogic::TriState BSTEP = BaseLogic::TriState::X;		// Perform a Sample Buffer bit shift
+		BaseLogic::TriState NSTEP = BaseLogic::TriState::X;		// Perform Sample Bit Counter increment
+		BaseLogic::TriState DSTEP = BaseLogic::TriState::X;		// Increment/decrement the DPCM Output counter
+		BaseLogic::TriState PCM = BaseLogic::TriState::X;		// Load new sample value into Sample Buffer. The signal is active when PHI1 = 0 and the address bus is captured (imitating CPU reading)
+		BaseLogic::TriState DOUT = BaseLogic::TriState::X;		// DPCM Out counter has finished counting
+		BaseLogic::TriState n_NOUT = BaseLogic::TriState::X;	// 0: Sample Bit Counter has finished counting
+		BaseLogic::TriState SOUT = BaseLogic::TriState::X;		// Sample Counter has finished counting
+		BaseLogic::TriState DFLOAD = BaseLogic::TriState::X;	// Frequency LFSR finished counting and reloaded itself
+		BaseLogic::TriState n_BOUT = BaseLogic::TriState::X;	// The next bit value pushed out of the Sample Buffer shift register (inverted value)
 		BaseLogic::TriState Fx[4]{};
 		BaseLogic::TriState FR[9]{};
 		BaseLogic::TriState Dec1_out[16]{};
 
-		BaseLogic::TriState ED1 = BaseLogic::TriState::X;
-		BaseLogic::TriState ED2 = BaseLogic::TriState::X;
-		BaseLogic::TriState DMC1 = BaseLogic::TriState::X;
-		BaseLogic::TriState DMC2 = BaseLogic::TriState::X;
-		BaseLogic::TriState CTRL1 = BaseLogic::TriState::X;
-		BaseLogic::TriState CTRL2 = BaseLogic::TriState::X;
+		BaseLogic::TriState ED1 = BaseLogic::TriState::X;		// 1: Assert interrupt
+		BaseLogic::TriState ED2 = BaseLogic::TriState::X;		// 1: DMC enable ($4015[4])
+		BaseLogic::TriState DMC1 = BaseLogic::TriState::X;		// 1: PCM (DMA fetch) done
+		BaseLogic::TriState DMC2 = BaseLogic::TriState::X;		// 1: DMC finish
+		BaseLogic::TriState CTRL1 = BaseLogic::TriState::X;		// 0: Stop DMA
+		BaseLogic::TriState CTRL2 = BaseLogic::TriState::X;		// 0: DMC enable delay
 
 		BaseLogic::TriState n_ACLK2 = BaseLogic::TriState::X;
 
