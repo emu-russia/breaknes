@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Fake6502.cpp" />
     <ClCompile Include="..\..\LS139.cpp" />
     <ClCompile Include="..\..\LS368.cpp" />
     <ClCompile Include="..\..\LS373.cpp" />
@@ -28,13 +29,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\RegDumpProcessor.cpp" />
     <ClCompile Include="..\..\SRAM.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Fake6502.h" />
     <ClInclude Include="..\..\LS139.h" />
     <ClInclude Include="..\..\LS368.h" />
     <ClInclude Include="..\..\LS373.h" />
     <ClInclude Include="..\..\pch.h" />
+    <ClInclude Include="..\..\RegDumpProcessor.h" />
     <ClInclude Include="..\..\SRAM.h" />
   </ItemGroup>
   <ItemGroup>

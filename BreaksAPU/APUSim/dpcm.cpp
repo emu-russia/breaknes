@@ -9,6 +9,8 @@ namespace APUSim
 	DpcmChan::DpcmChan(APU* parent)
 	{
 		apu = parent;
+		// msb is not used. This is done for the convenience of packing the value in byte.
+		apu->DMC_Out[7] = TriState::Zero;
 	}
 
 	DpcmChan::~DpcmChan()

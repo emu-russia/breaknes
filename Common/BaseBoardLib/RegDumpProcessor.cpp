@@ -2,10 +2,12 @@
 
 using namespace BaseLogic;
 
-namespace NSFPlayer
+namespace BaseBoard
 {
-	RegDumpProcessor::RegDumpProcessor()
+	RegDumpProcessor::RegDumpProcessor(uint16_t regs_base, uint8_t regs_mask)
 	{
+		regbase = regs_base;
+		regmask = regs_mask;
 	}
 
 	RegDumpProcessor::~RegDumpProcessor()
@@ -16,29 +18,34 @@ namespace NSFPlayer
 		}
 	}
 
-	void RegDumpProcessor::sim(TriState PHI0, TriState& RnW, uint16_t* addr_bus, uint8_t* data_bus)
+	void RegDumpProcessor::sim(TriState CLK, TriState n_RES, TriState& RnW, uint16_t* addr_bus, uint8_t* data_bus)
 	{
+		if (n_RES == TriState::Zero)
+		{
+			return;
+		}
+
 		// Increase the cycle counter
 
-		if (IsNegedge(PrevPHI0, PHI0))
+		if (IsNegedge(PrevCLK, CLK))
 		{
-			phi_counter++;
+			clk_counter++;
 		}
 
 		// If regdump is loaded and the cycle counter has reached the value for the next RegOp - execute
 
 		if (regdump != nullptr)
 		{
-			if (phi_counter >= next_phi && PHI0 == TriState::One)
+			if (clk_counter >= next_clk && CLK == TriState::One)
 			{
-				APULogEntry* current = GetCurrentEntry();
+				RegDumpEntry* current = GetCurrentEntry();
 
 				RnW = (current->reg & 0x80) ? TriState::One : TriState::Zero;
 				if (RnW == TriState::Zero)
 				{
 					*data_bus = current->value;
 				}
-				*addr_bus = 0x4000 | (current->reg & 0x1f);
+				*addr_bus = regbase | (current->reg & regmask);
 
 				// If the record is the last one - delete regdump
 
@@ -53,18 +60,18 @@ namespace NSFPlayer
 				else
 				{
 					regdump_entry++;
-					APULogEntry* next = GetCurrentEntry();
-					next_phi = phi_counter + next->phiDelta;
+					RegDumpEntry* next = GetCurrentEntry();
+					next_clk = clk_counter + next->clkDelta;
 				}
 			}
 		}
 
-		PrevPHI0 = PHI0;
+		PrevCLK = CLK;
 	}
 
 	void RegDumpProcessor::SetRegDump(void* ptr, size_t size)
 	{
-		if (size < sizeof(APULogEntry))
+		if (size < sizeof(RegDumpEntry))
 			return;
 
 		// Delete the old regdump
@@ -84,17 +91,17 @@ namespace NSFPlayer
 		// Set the initial values of the state logic
 
 		regdump_entry = 0;
-		regdump_entry_max = regdump_size / sizeof(APULogEntry);
+		regdump_entry_max = regdump_size / sizeof(RegDumpEntry);
 
-		APULogEntry* first_entry = (APULogEntry*)ptr;
-		next_phi = first_entry->phiDelta;
+		RegDumpEntry* first_entry = (RegDumpEntry*)ptr;
+		next_clk = first_entry->clkDelta;
 
-		phi_counter = 0;
-		PrevPHI0 = TriState::X;
+		clk_counter = 0;
+		PrevCLK = TriState::X;
 	}
 
-	APULogEntry* RegDumpProcessor::GetCurrentEntry()
+	RegDumpEntry* RegDumpProcessor::GetCurrentEntry()
 	{
-		return (APULogEntry*)(regdump + regdump_entry * sizeof(APULogEntry));
+		return (RegDumpEntry*)(regdump + regdump_entry * sizeof(RegDumpEntry));
 	}
 }
