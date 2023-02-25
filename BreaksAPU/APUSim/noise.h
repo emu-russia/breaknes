@@ -30,11 +30,8 @@ namespace APUSim
 		friend APU;
 
 		APU* apu = nullptr;
-		bool HLE = false;
 
 		BaseLogic::TriState NNF[11]{};
-		uint16_t NNF_PreCalc[16]{};
-		size_t F_PreCalc = 0;
 		BaseLogic::TriState RSTEP = BaseLogic::TriState::X;
 		BaseLogic::TriState RNDOUT = BaseLogic::TriState::X;
 		BaseLogic::TriState Vol[4]{};
@@ -53,10 +50,8 @@ namespace APUSim
 		void sim_FreqLFSR();
 		void sim_RandomLFSR();
 
-		void opt_NNF();
-
 	public:
-		NoiseChan(APU* parent, bool opt);
+		NoiseChan(APU* parent);
 		~NoiseChan();
 
 		void sim();

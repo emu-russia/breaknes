@@ -10,8 +10,6 @@ namespace APUSim
 		core = _core;
 		rev = _rev;
 
-		bool HLE = true;
-
 		core_int = new CoreBinding(this);
 		clkgen = new CLKGen(this);
 		lc[0] = new LengthCounter(this);
@@ -19,7 +17,7 @@ namespace APUSim
 		lc[2] = new LengthCounter(this);
 		lc[3] = new LengthCounter(this);
 		dpcm = new DpcmChan(this);
-		noise = new NoiseChan(this, HLE);
+		noise = new NoiseChan(this);
 		square[0] = new SquareChan(this, SquareChanCarryIn::Vdd);
 		square[1] = new SquareChan(this, SquareChanCarryIn::Inc);
 		tri = new TriangleChan(this);
