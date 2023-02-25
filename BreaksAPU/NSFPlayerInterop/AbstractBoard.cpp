@@ -32,7 +32,13 @@ namespace NSFPlayer
 
 		if (sample != nullptr)
 		{
-			*sample = (aux.normalized.a * 0.4 /* 20k resistor */ + aux.normalized.b /* 12k resistor */) / 2.0f;
+			// There are 2 resistors (12k and 20k) on the motherboard that equalize the AUX A/B levels and then mix.
+			// Although the internal resistance of the AUX A/B terminals inside the APU we counted with the 100 ohm pull-ups -- the above 2 resistors are part of the "Board", so they count here.
+
+			*sample = (aux.normalized.a * 0.4f /* 20k resistor */ + aux.normalized.b /* 12k resistor */) / 2.0f;
+
+			// This is essentially "muting" AUX A, because the level of AUX A at its peak is about 300 mV, and the level of AUX B at its peak is about 1100 mV.
+			// Accordingly, if you do just (A+B)/2, the square channels will be "overshoot".
 		}
 	}
 
