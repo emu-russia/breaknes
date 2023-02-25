@@ -8,7 +8,7 @@ namespace M6502Core
 {
 	FakeM6502::FakeM6502() : M6502()
 	{
-		rp = new NSFPlayer::RegDumpProcessor();
+		rp = new BaseBoard::RegDumpProcessor();
 	}
 
 	FakeM6502::~FakeM6502()
@@ -37,5 +37,10 @@ namespace M6502Core
 		outputs[(size_t)M6502Core::OutputPad::PHI2] = PHI2;
 		outputs[(size_t)M6502Core::OutputPad::RnW] = RnW;
 		outputs[(size_t)M6502Core::OutputPad::SYNC] = TriState::Zero;
+	}
+
+	void FakeM6502::SetRegDump(void* ptr, size_t size)
+	{
+		rp->SetRegDump(ptr, size);
 	}
 }

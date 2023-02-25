@@ -14,10 +14,9 @@
 #include "../APUSim/apu.h"
 #include "../../Common/DebugHub/DebugHub.h"
 #include "../../Common/BaseBoardLib/SRAM.h"
+#include "../../Common/BaseBoardLib/Fake6502.h"
 
 #include "BankedSRAM.h"
-#include "RegDumpProcessor.h"
-#include "Fake6502.h"
 #include "AbstractBoard.h"
 #include "NSFPlayerBoard.h"
 #include "APUPlayerBoard.h"

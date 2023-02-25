@@ -1,6 +1,6 @@
 #pragma once
 
-namespace NSFPlayer
+namespace BaseBoard
 {
 #pragma pack(push, 1)
 	struct APULogEntry
@@ -10,10 +10,20 @@ namespace NSFPlayer
 		uint8_t 	value;		// Written value. Not used for reading.
 		uint16_t	padding;	// Not used (yet?)
 	};
+
+	struct PPULogEntry
+	{
+		uint32_t    pclkDelta;  // Delta of previous PCLK counter value at the time of accessing to the register
+		uint8_t     reg;        // PPU register index (0-7) + Flag (msb - 0: write, 1: read)
+		uint8_t     value;      // Written value. Not used for reading.
+		uint16_t    padding;    // Not used (yet?)
+	};
 #pragma pack(pop)
 
 	class RegDumpProcessor
 	{
+		uint16_t regbase = 0x4000;
+		uint8_t regmask = 0x1f;
 		uint8_t* regdump = nullptr;
 		size_t regdump_size = 0;
 		size_t regdump_entry = 0;

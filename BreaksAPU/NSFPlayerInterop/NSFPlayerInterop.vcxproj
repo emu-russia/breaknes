@@ -167,10 +167,8 @@
     <ClInclude Include="APUPlayerBoard.h" />
     <ClInclude Include="BankedSRAM.h" />
     <ClInclude Include="BoardFactory.h" />
-    <ClInclude Include="Fake6502.h" />
     <ClInclude Include="NSFPlayerBoard.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="RegDumpProcessor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AbstractBoard.cpp" />
@@ -179,7 +177,6 @@
     <ClCompile Include="BankedSRAM.cpp" />
     <ClCompile Include="BoardFactory.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Fake6502.cpp" />
     <ClCompile Include="NSFPlayerBoard.cpp" />
     <ClCompile Include="NSFPlayerBoardDebug.cpp" />
     <ClCompile Include="pch.cpp">
@@ -188,7 +185,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="RegDumpProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Breaks6502\M6502Core\Scripts\VS2022\M6502Core.vcxproj">

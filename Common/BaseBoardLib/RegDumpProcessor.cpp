@@ -2,7 +2,7 @@
 
 using namespace BaseLogic;
 
-namespace NSFPlayer
+namespace BaseBoard
 {
 	RegDumpProcessor::RegDumpProcessor()
 	{
@@ -43,7 +43,7 @@ namespace NSFPlayer
 				{
 					*data_bus = current->value;
 				}
-				*addr_bus = 0x4000 | (current->reg & 0x1f);
+				*addr_bus = regbase | (current->reg & regmask);
 
 				// If the record is the last one - delete regdump
 
