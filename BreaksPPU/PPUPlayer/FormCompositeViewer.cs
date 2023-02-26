@@ -123,6 +123,8 @@ namespace PPUPlayer
 
 		void ProcessScanComposite()
 		{
+			// TBD: Make phasing per scanline, not the semi-conservative way (PLL at the beginning of Field, then interpolate)
+
 			int ReadPtr = SyncPos;
 			int num_phases = 12;
 			float normalize_factor = 1.1f / ppu_features.WhiteLevel;

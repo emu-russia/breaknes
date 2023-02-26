@@ -260,6 +260,8 @@ namespace PPUPlayer
 			float normalize_factor = 1.1f / ppu_features.WhiteLevel;
 			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[num_phases];
 
+			// TBD: Make phasing per scanline, not the semi-conservative way (PLL at the beginning of Field, then interpolate)
+
 			// Skip HSync
 
 			while (ScanBuffer[ReadPtr].composite <= ppu_features.SyncLevel && ReadPtr < (ScanBuffer.Length - 1))
