@@ -11,7 +11,7 @@ using System.Collections;
 
 // TBD: Add support for sections (categories).
 
-namespace NSFPlayerCustomClass
+namespace SharpToolsCustomClass
 {
 	// Based on:
 	// https://www.codeproject.com/Articles/9280/Add-Remove-Items-to-from-PropertyGrid-at-Runtime
@@ -19,7 +19,7 @@ namespace NSFPlayerCustomClass
 	/// <summary>
 	/// CustomClass (Which is binding to property grid)
 	/// </summary>
-	internal class CustomClass : CollectionBase, ICustomTypeDescriptor
+	public class CustomClass : CollectionBase, ICustomTypeDescriptor
 	{
 		public AttributeCollection GetAttributes()
 		{

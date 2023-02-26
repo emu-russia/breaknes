@@ -1,4 +1,4 @@
-﻿// Converts Logisim .hex dump to byte/UInt16/UInt32 array.
+﻿// Converts Logisim .hex dump to byte/UInt16/UInt32/float array.
 
 using System;
 using System.Collections.Generic;
@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 using System.Text.RegularExpressions;
 
-namespace NSFPlayer
+namespace SharpTools
 {
-	internal class LogisimHEXConv
+	public class LogisimHEXConv
 	{
 		public static byte[] HEXToByteArray(string text)
 		{

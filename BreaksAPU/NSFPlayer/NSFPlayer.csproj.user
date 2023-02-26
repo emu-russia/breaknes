@@ -19,11 +19,5 @@
     <Compile Update="FormSnatch.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FurryPlotControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="SignalPlotControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
   </ItemGroup>
 </Project>

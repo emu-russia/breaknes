@@ -7,7 +7,7 @@ using System.Reflection.Metadata;
 
 // https://github.com/sharpdx/SharpDX-Samples/blob/master/Desktop/DirectSound/PlaySound/Program.cs
 
-namespace NSFPlayer
+namespace SharpTools
 {
 	public class DSound
 	{

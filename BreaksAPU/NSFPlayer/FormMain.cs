@@ -1,5 +1,5 @@
 using Be.Windows.Forms;
-using NSFPlayerCustomClass;
+using SharpToolsCustomClass;
 using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Windows.Forms;
@@ -7,6 +7,7 @@ using System.IO;
 using Microsoft.VisualBasic.Logging;
 using SharpDX.Multimedia;
 using System.Text;
+using SharpTools;
 
 namespace NSFPlayer
 {
