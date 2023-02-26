@@ -432,14 +432,14 @@ namespace PPUSim
 		TriState tmp = TriState::Zero;
 		float v = LumaLevel[3][1];		// White level
 
-		// Synch Level
+		// Synch Low Level
 
 		if (sync_latch.nget() == TriState::One)
 		{
 			v = std::min(v, SyncLevel[0]);
 		}
 
-		// Black Level
+		// Synch High Level
 
 		if (black_latch.nget() == TriState::One)
 		{
@@ -448,7 +448,7 @@ namespace PPUSim
 
 		// Colorburst phase level
 
-		v = PhaseSwing(v, cb_latch.nget(), 1, 4);
+		v = PhaseSwing(v, cb_latch.nget(), BurstLevel[0], BurstLevel[1]);
 
 		// Luminance phase levels
 
