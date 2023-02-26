@@ -123,9 +123,11 @@ namespace PPUPlayer
 
 		void ProcessScanComposite()
 		{
+			// TBD: Make phasing per scanline, not the semi-conservative way (PLL at the beginning of Field, then interpolate)
+
 			int ReadPtr = SyncPos;
 			int num_phases = 12;
-			float normalize_factor = 1.0f / ppu_features.WhiteLevel;
+			float normalize_factor = 1.1f / ppu_features.WhiteLevel;
 			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[num_phases];
 
 			// Skip HSync
@@ -168,7 +170,7 @@ namespace PPUPlayer
 
 					for (int n = 0; n < num_phases; n++)
 					{
-						float level = ((batch[n].composite - ppu_features.BurstLevel) * normalize_factor) / num_phases;
+						float level = ((batch[n].composite - ppu_features.BlackLevel) * normalize_factor) / num_phases;
 						Y += level;
 						I += level * (float)Math.Cos((cb_phase + n + ofs) * (2 * Math.PI / num_phases) + hue_adj);
 						Q += level * (float)Math.Sin((cb_phase + n + ofs) * (2 * Math.PI / num_phases) + hue_adj) * (odd ? -1.0f : +1.0f);
@@ -219,7 +221,7 @@ namespace PPUPlayer
 
 			// Lock phase of color burst
 
-			while (ScanBuffer[ReadPtr++].composite == ppu_features.BurstLevel && samples != 0)
+			while (ScanBuffer[ReadPtr++].composite == ppu_features.BlackLevel && samples != 0)
 			{
 				samples--;
 			}
@@ -228,9 +230,9 @@ namespace PPUPlayer
 
 			int cb_shift = cb;
 
-			if (ScanBuffer[ReadPtr].composite < ppu_features.BurstLevel)
+			if (ScanBuffer[ReadPtr].composite < ppu_features.BlackLevel)
 			{
-				while (ScanBuffer[ReadPtr].composite < ppu_features.BurstLevel && samples != 0)
+				while (ScanBuffer[ReadPtr].composite < ppu_features.BlackLevel && samples != 0)
 				{
 					samples--;
 					cb_shift--;
@@ -239,7 +241,7 @@ namespace PPUPlayer
 			}
 			else
 			{
-				while (ScanBuffer[ReadPtr].composite > ppu_features.BurstLevel && samples != 0)
+				while (ScanBuffer[ReadPtr].composite > ppu_features.BlackLevel && samples != 0)
 				{
 					samples--;
 					cb_shift++;

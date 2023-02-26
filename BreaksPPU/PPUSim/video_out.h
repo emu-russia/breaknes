@@ -36,7 +36,10 @@ namespace PPUSim
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
-		float LToV[16]{};
+		float SyncLevel[2]{};
+		float BurstLevel[2]{};
+		float LumaLevel[4][2]{};
+		float EmphasizedLumaLevel[4][2]{};
 
 		BaseLogic::DLatch cc_latch1[4]{};
 		BaseLogic::DLatch cc_latch2[4]{};
@@ -98,7 +101,7 @@ namespace PPUSim
 		void sim_ColorMatrix();
 		void sim_Select12To3();
 
-		float PhaseSwing(float v, BaseLogic::TriState sel, size_t level_from, size_t level_to);
+		float PhaseSwing(float v, BaseLogic::TriState sel, float level_from, float level_to);
 
 		bool composite = false;
 		bool raw = false;

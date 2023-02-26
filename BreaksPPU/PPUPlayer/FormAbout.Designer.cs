@@ -1,100 +1,99 @@
 ﻿namespace PPUPlayer
 {
-    partial class FormAbout
-    {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+	partial class FormAbout
+	{
+		/// <summary>
+		/// Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        #region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-			this.pictureBox1 = new System.Windows.Forms.PictureBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.button1 = new System.Windows.Forms.Button();
-			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-			this.SuspendLayout();
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			pictureBox1 = new System.Windows.Forms.PictureBox();
+			label1 = new System.Windows.Forms.Label();
+			button1 = new System.Windows.Forms.Button();
+			backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+			SuspendLayout();
 			// 
 			// pictureBox1
 			// 
-			this.pictureBox1.Image = global::PPUPlayer.Properties.Resources.ppu_player_logo;
-			this.pictureBox1.Location = new System.Drawing.Point(8, 11);
-			this.pictureBox1.Name = "pictureBox1";
-			this.pictureBox1.Size = new System.Drawing.Size(413, 178);
-			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this.pictureBox1.TabIndex = 0;
-			this.pictureBox1.TabStop = false;
-			this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+			pictureBox1.Image = Properties.Resources.ppu_player_logo;
+			pictureBox1.Location = new System.Drawing.Point(8, 11);
+			pictureBox1.Name = "pictureBox1";
+			pictureBox1.Size = new System.Drawing.Size(413, 178);
+			pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+			pictureBox1.TabIndex = 0;
+			pictureBox1.TabStop = false;
+			pictureBox1.Click += pictureBox1_Click;
 			// 
 			// label1
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
-			this.label1.Location = new System.Drawing.Point(11, 205);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(149, 42);
-			this.label1.TabIndex = 1;
-			this.label1.Text = "PPU Player, v. 2.3\r\n© 2023, emu-russia";
+			label1.AutoSize = true;
+			label1.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
+			label1.Location = new System.Drawing.Point(11, 205);
+			label1.Name = "label1";
+			label1.Size = new System.Drawing.Size(149, 42);
+			label1.TabIndex = 1;
+			label1.Text = "PPU Player, v. 2.4\r\n© 2023, emu-russia";
 			// 
 			// button1
 			// 
-			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.button1.Location = new System.Drawing.Point(483, 215);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(97, 33);
-			this.button1.TabIndex = 2;
-			this.button1.Text = "Close";
-			this.button1.UseVisualStyleBackColor = true;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
+			button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			button1.Location = new System.Drawing.Point(483, 215);
+			button1.Name = "button1";
+			button1.Size = new System.Drawing.Size(97, 33);
+			button1.TabIndex = 2;
+			button1.Text = "Close";
+			button1.UseVisualStyleBackColor = true;
+			button1.Click += button1_Click;
 			// 
 			// backgroundWorker1
 			// 
-			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+			backgroundWorker1.DoWork += backgroundWorker1_DoWork;
 			// 
 			// FormAbout
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(592, 260);
-			this.Controls.Add(this.button1);
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.pictureBox1);
-			this.KeyPreview = true;
-			this.Name = "FormAbout";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "About PPU Player";
-			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FormAbout_KeyUp);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			ClientSize = new System.Drawing.Size(592, 260);
+			Controls.Add(button1);
+			Controls.Add(label1);
+			Controls.Add(pictureBox1);
+			KeyPreview = true;
+			Name = "FormAbout";
+			StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			Text = "About PPU Player";
+			KeyUp += FormAbout_KeyUp;
+			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+			ResumeLayout(false);
+			PerformLayout();
+		}
 
-        }
+		#endregion
 
-        #endregion
-
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
-    }
+		private System.Windows.Forms.PictureBox pictureBox1;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Button button1;
+		private System.ComponentModel.BackgroundWorker backgroundWorker1;
+	}
 }
