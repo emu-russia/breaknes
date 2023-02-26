@@ -176,7 +176,7 @@ namespace PPUPlayer
 
 			if (ppu_dump != null)
 			{
-				if (Path.GetExtension (ppu_dump).ToLower() == ".hex")
+				if (Path.GetExtension(ppu_dump).ToLower() == ".hex")
 				{
 					logData = LogisimHEXConv.HEXToByteArray(File.ReadAllText(ppu_dump));
 				}
