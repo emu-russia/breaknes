@@ -14,8 +14,8 @@ namespace BaseBoard
 
 	class RegDumpProcessor
 	{
-		uint16_t regbase = 0x1000;
-		uint8_t regmask = 0x7f;
+		uint16_t regbase = 0x1000;	// e.g. 0x4000 - APU, 0x2000 - PPU
+		uint8_t regmask = 0x7f;			// e.g. 0x1f - APU, 0x7 - PPU
 		uint8_t* regdump = nullptr;
 		size_t regdump_size = 0;
 		size_t regdump_entry = 0;

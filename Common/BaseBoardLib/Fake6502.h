@@ -1,4 +1,4 @@
-// 6502, which can only simulate reading and writing APU registers from the dump history
+// 6502, which can only simulate reading and writing APU/PPU registers from the dump history
 
 #pragma once
 

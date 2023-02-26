@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mappers", "..\..\Mappers\Sc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DebugHub", "..\..\Common\DebugHub\Scripts\VS2022\DebugHub.vcxproj", "{27B4EF20-6DF4-4A3B-9436-9C07AD24EF98}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpTools", "..\..\Common\SharpTools\SharpTools.csproj", "{B2D084E3-1957-4FBC-A4D7-729420E77C01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,18 @@ Global
 		{27B4EF20-6DF4-4A3B-9436-9C07AD24EF98}.Release|x64.Build.0 = Release|x64
 		{27B4EF20-6DF4-4A3B-9436-9C07AD24EF98}.Release|x86.ActiveCfg = Release|Win32
 		{27B4EF20-6DF4-4A3B-9436-9C07AD24EF98}.Release|x86.Build.0 = Release|Win32
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Debug|x64.Build.0 = Debug|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Debug|x86.Build.0 = Debug|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Release|x64.ActiveCfg = Release|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Release|x64.Build.0 = Release|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Release|x86.ActiveCfg = Release|Any CPU
+		{B2D084E3-1957-4FBC-A4D7-729420E77C01}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

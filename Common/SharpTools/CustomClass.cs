@@ -11,7 +11,7 @@ using System.Collections;
 
 // TBD: Add support for sections (categories).
 
-namespace PPUPlayerCustomClass
+namespace SharpToolsCustomClass
 {
 	// Based on:
 	// https://www.codeproject.com/Articles/9280/Add-Remove-Items-to-from-PropertyGrid-at-Runtime
@@ -19,7 +19,7 @@ namespace PPUPlayerCustomClass
 	/// <summary>
 	/// CustomClass (Which is binding to property grid)
 	/// </summary>
-	internal class CustomClass : CollectionBase, ICustomTypeDescriptor
+	public class CustomClass : CollectionBase, ICustomTypeDescriptor
 	{
 		public AttributeCollection GetAttributes()
 		{
@@ -146,7 +146,18 @@ namespace PPUPlayerCustomClass
 
 		public override void SetValue(object? component, object? value)
 		{
-			m_Property.Value = value;
+			if (value != null)
+			{
+				//if (value is UInt32)
+				//{
+				//	UInt32 int_val = (UInt32)value;
+				//	m_Property.Value = int_val > 1 ? int_val.ToString("X") : int_val;
+				//}
+				//else
+				{
+					m_Property.Value = value;
+				}
+			}
 		}
 
 		public override bool ShouldSerializeValue(object component)

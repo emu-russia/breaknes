@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using System.Runtime.InteropServices;
 
-namespace NSFPlayer
+namespace SharpTools
 {
 	public class NSFPlayerInterop
 	{
@@ -63,7 +63,7 @@ namespace NSFPlayer
 	}
 
 
-	internal class BreaksCore
+	public class BreaksCore
 	{
 		public enum DebugInfoType : int
 		{

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlooowPlaaayer", "SlooowPlaaayer.csproj", "{7D7107DC-21E9-4572-A9BB-D3BE0C7EFF8D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpTools", "..\..\Common\SharpTools\SharpTools.csproj", "{CFA869C7-2B9B-43C8-A4F0-9B0F32A39626}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7D7107DC-21E9-4572-A9BB-D3BE0C7EFF8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D7107DC-21E9-4572-A9BB-D3BE0C7EFF8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D7107DC-21E9-4572-A9BB-D3BE0C7EFF8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFA869C7-2B9B-43C8-A4F0-9B0F32A39626}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFA869C7-2B9B-43C8-A4F0-9B0F32A39626}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFA869C7-2B9B-43C8-A4F0-9B0F32A39626}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFA869C7-2B9B-43C8-A4F0-9B0F32A39626}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,6 +13,8 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Numerics;
 
+using SharpTools;
+
 // Samples are stored in ScanBuffer in raw form. After processing, the Scan enters the Field in a ready for output form (RGB).
 
 namespace PPUPlayer

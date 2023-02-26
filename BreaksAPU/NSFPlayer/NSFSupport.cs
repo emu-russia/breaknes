@@ -1,6 +1,7 @@
 // https://www.nesdev.org/wiki/NSF
 
 using System.ComponentModel;
+using SharpTools;
 
 namespace NSFPlayer
 {

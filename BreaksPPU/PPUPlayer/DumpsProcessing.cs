@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Collections;
 
 using System.IO;
+using SharpTools;
 
 // I don't think any maniac would want to load and save Temp OAM. But if we have to, we will.
 
