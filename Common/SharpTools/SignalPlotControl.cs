@@ -86,7 +86,7 @@ namespace System.Windows.Forms
 				label_brush = new SolidBrush(LabelsColor);
 				zero_pen = new Pen(new SolidBrush(ZeroColor));
 				selection_pen = new Pen(SelectionColor, 2);
-				dotted_pen = new Pen(new SolidBrush(DottedColor));
+				dotted_pen = new Pen(Color.FromArgb(DottedOpacity, DottedColor));
 				dotted_pen.DashPattern = new float[] { 1, 4 };
 				gdi_init = true;
 			}
@@ -435,5 +435,8 @@ namespace System.Windows.Forms
 
 		[Category("Plot Appearance")]
 		public int GridOpacity { get; set; }
+
+		[Category("Plot Appearance")]
+		public int DottedOpacity { get; set; }
 	}
 }

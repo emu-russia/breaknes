@@ -122,7 +122,7 @@ namespace PPUPlayer
 	}
 
 
-	internal class BreaksCore
+	public class BreaksCore
 	{
 		public enum DebugInfoType : int
 		{

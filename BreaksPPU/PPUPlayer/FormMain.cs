@@ -14,7 +14,8 @@ using System.Threading;
 using Be.Windows.Forms;
 using System.Drawing.Drawing2D;
 
-using PPUPlayerCustomClass;
+using SharpToolsCustomClass;
+using SharpTools;
 
 namespace PPUPlayer
 {
