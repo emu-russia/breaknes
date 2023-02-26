@@ -60,9 +60,9 @@ namespace PPUSim
 		int32_t ScansPerField;
 		int32_t BackPorchSize;		// BackPorch size in pixels.
 		int32_t Composite;			// 1: Composite, 0: RGB
-		float BlackLevel;		// IRE = 0
-		float WhiteLevel;		// IRE = 110
-		float SyncLevel;
+		float BlackLevel;			// IRE = 0
+		float WhiteLevel;			// IRE = 110
+		float SyncLevel;			// SYNC low level
 		int32_t PhaseAlteration;	// 1: PAL
 	};
 

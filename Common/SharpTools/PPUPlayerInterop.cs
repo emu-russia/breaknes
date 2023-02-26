@@ -88,7 +88,7 @@ namespace PPUPlayer
 			[FieldOffset(24)]
 			public float WhiteLevel;        // IRE = 110
 			[FieldOffset(28)]
-			public float SyncLevel;
+			public float SyncLevel;         // SYNC low level
 			[FieldOffset(32)]
 			public int PhaseAlteration;		// 1: PAL
 		}

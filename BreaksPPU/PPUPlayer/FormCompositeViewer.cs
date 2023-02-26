@@ -125,7 +125,7 @@ namespace PPUPlayer
 		{
 			int ReadPtr = SyncPos;
 			int num_phases = 12;
-			float normalize_factor = 1.0f / ppu_features.WhiteLevel;
+			float normalize_factor = 1.1f / ppu_features.WhiteLevel;
 			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[num_phases];
 
 			// Skip HSync
