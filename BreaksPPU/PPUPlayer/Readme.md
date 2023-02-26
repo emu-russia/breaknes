@@ -8,7 +8,9 @@ Workflow:
 
 ## How to get PPU register dumps
 
-Use the special version of Nintendulator + PPU Recorder to dump CPU accesses to the PPU registers: https://github.com/ogamespec/nintendulator/releases/tag/ppu-recorder3
+Use the special version of Nintendulator + PPU Recorder to dump CPU accesses to the PPU registers: https://github.com/ogamespec/nintendulator/releases/  (get latest)
+
+Run the PPU Recorder BEFORE starting the ROM, otherwise some of the PPU register operations will "slip past" the register dump file.
 
 Note that you have to run the simulation in the PPU Player with the same .nes as when writing the dump in the Nintendulator. Or not :smiley:
 

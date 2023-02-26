@@ -90,9 +90,9 @@ namespace PPUPlayer
 
 		private void choosePPURegsDumpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (openFileDialog1.ShowDialog() == DialogResult.OK)
+			if (openFileDialogRegdump.ShowDialog() == DialogResult.OK)
 			{
-				ppu_dump = openFileDialog1.FileName;
+				ppu_dump = openFileDialogRegdump.FileName;
 
 				Console.WriteLine("The PPU registers dump is selected: " + ppu_dump);
 

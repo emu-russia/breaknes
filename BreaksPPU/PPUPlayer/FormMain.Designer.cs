@@ -122,6 +122,7 @@
 			openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
 			openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
+			openFileDialogRegdump = new System.Windows.Forms.OpenFileDialog();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
@@ -936,6 +937,11 @@
 			saveFileDialogImage.DefaultExt = "bmp";
 			saveFileDialogImage.Filter = "Bitmap file|*.bmp|All files|*.*";
 			// 
+			// openFileDialogRegdump
+			// 
+			openFileDialogRegdump.DefaultExt = "bin";
+			openFileDialogRegdump.Filter = "Register Dump files|*.bin;*.regdump|All files|*.*";
+			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1084,5 +1090,6 @@
 		private System.Windows.Forms.SignalPlot signalPlotScan;
 		private System.Windows.Forms.ToolStrip toolStrip2;
 		private System.Windows.Forms.ToolStripButton toolStripButton4;
+		private System.Windows.Forms.OpenFileDialog openFileDialogRegdump;
 	}
 }
