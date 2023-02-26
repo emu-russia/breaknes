@@ -2,7 +2,7 @@
 
 #pragma once
 
-namespace NSFPlayer
+namespace Breaknes
 {
 	struct NSFBoardDebugInfo
 	{
@@ -52,14 +52,14 @@ namespace NSFPlayer
 		void GetDebugInfo(NSFBoardDebugInfo& info);
 
 	public:
-		NSFPlayerBoard(char* boardName, char* apu, char* ppu, char* p1);
+		NSFPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
 		virtual ~NSFPlayerBoard();
 
 		void Step() override;
 
-		void ResetAPU(uint16_t addr, bool reset_apu_also) override;
+		void Reset() override;
 
-		bool APUInResetState() override;
+		bool InResetState() override;
 
 		void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address) override;
 

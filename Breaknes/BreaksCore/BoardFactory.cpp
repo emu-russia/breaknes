@@ -99,6 +99,10 @@ namespace Breaknes
 		{
 			ppu_rev = PPUSim::Revision::RP2C07_0;
 		}
+		else if (ppu == "UMC UA6538")
+		{
+			ppu_rev = PPUSim::Revision::UMC_UA6538;
+		}
 		else
 		{
 			board_name = "Bogus";
@@ -124,7 +128,7 @@ namespace Breaknes
 	{
 	}
 
-	Board* BoardFactory::CreateInstance(Core *core)
+	Board* BoardFactory::CreateInstance()
 	{
 		Board* inst = nullptr;
 
@@ -136,9 +140,17 @@ namespace Breaknes
 		{
 			// TBD
 		}
+		else if (board_name == "NSFPlayer")
+		{
+			inst = new NSFPlayerBoard(apu_rev, ppu_rev);
+		}
+		else if (board_name == "APUPlayer")
+		{
+			inst = new APUPlayerBoard(apu_rev, ppu_rev);
+		}
 		else
 		{
-			inst = new BogusBoard(core, apu_rev, ppu_rev);
+			inst = new BogusBoard(apu_rev, ppu_rev);
 		}
 
 		return inst;

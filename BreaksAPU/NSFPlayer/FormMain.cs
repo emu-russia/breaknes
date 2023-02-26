@@ -39,7 +39,7 @@ namespace NSFPlayer
 		private bool fft = false;
 		private float FurryIntensity = 1.0f;
 
-		private NSFPlayerInterop.AudioSignalFeatures aux_features;
+		private BreaksCoreInterop.AudioSignalFeatures aux_features;
 		private int DecimateEach = 1;
 		private int DecimateCounter = 0;
 		private long AclkToPlay = 0;
@@ -121,7 +121,7 @@ namespace NSFPlayer
 			this.Text = DefaultTitle + " - " + nsf_filename;
 
 			var settings = FormSettings.LoadSettings();
-			NSFPlayerInterop.CreateBoard("NSFPlayer", settings.APU_Revision, "None", "None");
+			BreaksCoreInterop.CreateBoard("NSFPlayer", settings.APU_Revision, "RP2C02G", "Fami");
 
 			FurryIntensity = settings.FurryIntensity;
 			PreferPal = settings.PreferPal;
@@ -138,8 +138,8 @@ namespace NSFPlayer
 				}
 			}
 
-			NSFPlayerInterop.LoadNSFData(nsf.GetData(), nsf.GetData().Length, nsf.GetHead().LoadAddress);
-			NSFPlayerInterop.EnableNSFBanking(bank_switching);
+			BreaksCoreInterop.LoadNSFData(nsf.GetData(), nsf.GetData().Length, nsf.GetHead().LoadAddress);
+			BreaksCoreInterop.EnableNSFBanking(bank_switching);
 
 			var head = nsf.GetHead();
 			for (int i = 0; i < 8; i++)
@@ -172,7 +172,7 @@ namespace NSFPlayer
 				audio_backend.StopSampleBuf();
 
 			SetPaused(true);
-			NSFPlayerInterop.DestroyBoard();
+			BreaksCoreInterop.DestroyBoard();
 			nsf_loaded = false;
 			regdump_loaded = false;
 			auxdump_loaded = false;
@@ -324,14 +324,14 @@ namespace NSFPlayer
 			this.Text = DefaultTitle + " - " + regdump_filename;
 
 			var settings = FormSettings.LoadSettings();
-			NSFPlayerInterop.CreateBoard("APUPlayer", settings.APU_Revision, "None", "None");
-			NSFPlayerInterop.ResetAPU(0, true);
+			BreaksCoreInterop.CreateBoard("APUPlayer", settings.APU_Revision, "RP2C02G", "Fami");
+			BreaksCoreInterop.Reset();
 
 			FurryIntensity = settings.FurryIntensity;
 
 			// Setup RegDump
 
-			NSFPlayerInterop.LoadRegDump(regdump, regdump.Length);
+			BreaksCoreInterop.LoadRegDump(regdump, regdump.Length);
 
 			UpdateMemLayout();
 
@@ -460,7 +460,7 @@ namespace NSFPlayer
 				}
 				else
 				{
-					NSFPlayerInterop.SampleAudioSignal(out sample);
+					BreaksCoreInterop.SampleAudioSignal(out sample);
 				}
 				
 				SampleBuf.Add(sample);
@@ -487,7 +487,7 @@ namespace NSFPlayer
 		{
 			if (nsf_loaded || regdump_loaded)
 			{
-				NSFPlayerInterop.GetApuSignalFeatures(out aux_features);
+				BreaksCoreInterop.GetApuSignalFeatures(out aux_features);
 				DecimateEach = aux_features.SampleRate / OutputSampleRate;
 				Console.WriteLine("APUSim sample rate: {0}, DSound sample rate: {1}, decimate factor: {2}", aux_features.SampleRate, OutputSampleRate, DecimateEach);
 			}
@@ -639,7 +639,7 @@ namespace NSFPlayer
 		{
 			if (Paused && (nsf_loaded || regdump_loaded))
 			{
-				NSFPlayerInterop.Step();
+				BreaksCoreInterop.Step();
 				TraceCore();
 				if (nsf_loaded)
 					nsf.SyncExec();

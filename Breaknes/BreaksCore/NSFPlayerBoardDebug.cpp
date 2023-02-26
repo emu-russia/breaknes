@@ -12,7 +12,7 @@ using namespace BaseLogic;
 #define APU_REGS_CATEGORY "APU Regs"
 #define BOARD_CATEGORY "NSFPlayer Board"
 
-namespace NSFPlayer
+namespace Breaknes
 {
 	void NSFPlayerBoard::AddBoardMemDescriptors()
 	{

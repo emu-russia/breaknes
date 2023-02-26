@@ -6,7 +6,7 @@
 
 using namespace BaseLogic;
 
-namespace NSFPlayer
+namespace Breaknes
 {
 	NSFMapper::NSFMapper()
 	{

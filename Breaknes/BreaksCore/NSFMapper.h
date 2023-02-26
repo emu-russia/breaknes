@@ -2,7 +2,7 @@
 
 #pragma once
 
-namespace NSFPlayer
+namespace Breaknes
 {
 	class NSFMapper
 	{

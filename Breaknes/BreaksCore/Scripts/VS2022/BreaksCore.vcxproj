@@ -21,14 +21,18 @@
   <ItemGroup>
     <ClCompile Include="..\..\AbstractBoard.cpp" />
     <ClCompile Include="..\..\AbstractCartridge.cpp" />
+    <ClCompile Include="..\..\APUPlayerBoard.cpp" />
+    <ClCompile Include="..\..\APUPlayerBoardDebug.cpp" />
     <ClCompile Include="..\..\BoardFactory.cpp" />
     <ClCompile Include="..\..\BogusBoard.cpp" />
-    <ClCompile Include="..\..\Core.cpp" />
     <ClCompile Include="..\..\CartridgeFactory.cpp" />
     <ClCompile Include="..\..\CoreApi.cpp" />
     <ClCompile Include="..\..\dllmain.cpp" />
-    <ClCompile Include="..\..\Famicom.cpp" />
-    <ClCompile Include="..\..\NES.cpp" />
+    <ClCompile Include="..\..\FamicomBoard.cpp" />
+    <ClCompile Include="..\..\NESBoard.cpp" />
+    <ClCompile Include="..\..\NSFMapper.cpp" />
+    <ClCompile Include="..\..\NSFPlayerBoard.cpp" />
+    <ClCompile Include="..\..\NSFPlayerBoardDebug.cpp" />
     <ClCompile Include="..\..\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -39,13 +43,15 @@
   <ItemGroup>
     <ClInclude Include="..\..\AbstractBoard.h" />
     <ClInclude Include="..\..\AbstractCartridge.h" />
+    <ClInclude Include="..\..\APUPlayerBoard.h" />
     <ClInclude Include="..\..\BoardFactory.h" />
     <ClInclude Include="..\..\BogusBoard.h" />
     <ClInclude Include="..\..\CartridgeFactory.h" />
-    <ClInclude Include="..\..\Core.h" />
     <ClInclude Include="..\..\CoreApi.h" />
-    <ClInclude Include="..\..\Famicom.h" />
-    <ClInclude Include="..\..\NES.h" />
+    <ClInclude Include="..\..\FamicomBoard.h" />
+    <ClInclude Include="..\..\NESBoard.h" />
+    <ClInclude Include="..\..\NSFMapper.h" />
+    <ClInclude Include="..\..\NSFPlayerBoard.h" />
     <ClInclude Include="..\..\pch.h" />
   </ItemGroup>
   <ItemGroup>

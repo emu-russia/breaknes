@@ -8,39 +8,39 @@ using System.Runtime.InteropServices;
 
 namespace SharpTools
 {
-	public class NSFPlayerInterop
+	public class BreaksCoreInterop
 	{
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void CreateBoard(string boardName, string apu, string ppu, string p1);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void DestroyBoard();
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void Step();
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void ResetAPU(UInt16 addr, bool reset_apu_also);
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void Reset();
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern bool APUInResetState();
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern bool InResetState();
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern long GetACLKCounter();
 		
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern long GetPHICounter();
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SampleAudioSignal(out float sample);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void LoadNSFData([In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] data, int data_size, UInt16 load_address);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void EnableNSFBanking(bool enable);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void LoadRegDump([In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] data, int data_size);
 
 		[StructLayout(LayoutKind.Explicit)]
@@ -58,7 +58,7 @@ namespace SharpTools
 			public float AUXB_HighLevel;    // Upper signal level for AUX_B (mV)
 		}
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void GetApuSignalFeatures(out AudioSignalFeatures features);
 	}
 
