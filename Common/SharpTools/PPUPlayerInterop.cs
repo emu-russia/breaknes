@@ -62,10 +62,10 @@ namespace PPUPlayer
 		public static extern int GetVCounter();
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void ResetPPU();
+		public static extern void Reset();
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int PPUInResetState();
+		public static extern int InResetState();
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void RenderAlwaysEnabled(bool enable);

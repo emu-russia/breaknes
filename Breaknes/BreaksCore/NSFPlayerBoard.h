@@ -1,32 +1,47 @@
-// A special version of the board, which contains a bare APU and Fake6502, which can only read/write APU registers from the dump.
+// Module for maintaining a simulated APU environment.
 
 #pragma once
 
-namespace NSFPlayer
+namespace Breaknes
 {
-	struct APUBoardDebugInfo
+	struct NSFBoardDebugInfo
 	{
 		uint32_t CLK;
+		uint32_t bank_reg[8];
+		uint32_t sync;			// Core SYNC
 		uint32_t ABus;		// Board address bus
 		uint32_t DBus;		// Board data bus
+		uint32_t ResetPending;
 	};
 
-	class APUPlayerBoard : public Board
+	class NSFPlayerBoard : public Board
 	{
-		M6502Core::FakeM6502* core = nullptr;
+		M6502Core::M6502* core = nullptr;
+		NSFMapper* sram = nullptr;
 		BaseBoard::SRAM* wram = nullptr;
-		const size_t wram_bits = 16;
+		const size_t wram_bits = 11;
 		const size_t wram_size = 1ULL << wram_bits;
 
-		bool in_reset = false;
+		BaseLogic::TriState SYNC = BaseLogic::TriState::X;
+
+		bool pendingReset = false;
+		int resetHalfClkCounter = 0;
+		bool reset_apu_also = false;
+
+		static uint8_t DumpSRAM(void* opaque, size_t addr);
+		static void WriteSRAM(void* opaque, size_t addr, uint8_t data);
 
 		static uint8_t DumpWRAM(void* opaque, size_t addr);
 		static void WriteWRAM(void* opaque, size_t addr, uint8_t data);
 
+		static uint32_t GetCoreDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
 		static uint32_t GetApuDebugInfo(void* opaque, DebugInfoEntry* entry);
 		static uint32_t GetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
 		static uint32_t GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry);
 
+		static void SetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 		static void SetApuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 		static void SetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 		static void SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
@@ -34,17 +49,17 @@ namespace NSFPlayer
 		void AddBoardMemDescriptors();
 		void AddDebugInfoProviders();
 
-		void GetDebugInfo(APUBoardDebugInfo& info);
+		void GetDebugInfo(NSFBoardDebugInfo& info);
 
 	public:
-		APUPlayerBoard(char* boardName, char* apu, char* ppu, char* p1);
-		virtual ~APUPlayerBoard();
+		NSFPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
+		virtual ~NSFPlayerBoard();
 
 		void Step() override;
 
-		void ResetAPU(uint16_t addr, bool reset_apu_also) override;
+		void Reset() override;
 
-		bool APUInResetState() override;
+		bool InResetState() override;
 
 		void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address) override;
 

@@ -1,18 +1,18 @@
 // A special type of memory with bank switching logic inside.
 
-// "SRAM" means that the memory can be read and written from the simulator side. But in essence it is a "smart" ROM with a loaded NSF Data image.
+// In essence it is a "smart" ROM with a loaded NSF Data image.
 
 #include "pch.h"
 
 using namespace BaseLogic;
 
-namespace NSFPlayer
+namespace Breaknes
 {
-	BankedSRAM::BankedSRAM()
+	NSFMapper::NSFMapper()
 	{
 	}
 
-	BankedSRAM::~BankedSRAM()
+	NSFMapper::~NSFMapper()
 	{
 		if (ram != nullptr)
 		{
@@ -20,7 +20,7 @@ namespace NSFPlayer
 		}
 	}
 
-	void BankedSRAM::sim(TriState RnW, TriState CS, uint16_t addr, uint8_t* data)
+	void NSFMapper::sim(TriState RnW, TriState CS, uint16_t addr, uint8_t* data)
 	{
 		if (CS == TriState::Zero)
 			return;
@@ -64,12 +64,12 @@ namespace NSFPlayer
 		}
 	}
 
-	size_t BankedSRAM::Dbg_GetSize()
+	size_t NSFMapper::Dbg_GetSize()
 	{
 		return ram_size;
 	}
 
-	uint8_t BankedSRAM::Dbg_ReadByte(size_t addr)
+	uint8_t NSFMapper::Dbg_ReadByte(size_t addr)
 	{
 		if (addr < ram_size)
 		{
@@ -81,7 +81,7 @@ namespace NSFPlayer
 		}
 	}
 
-	void BankedSRAM::Dbg_WriteByte(size_t addr, uint8_t data)
+	void NSFMapper::Dbg_WriteByte(size_t addr, uint8_t data)
 	{
 		if (addr < ram_size)
 		{
@@ -89,17 +89,17 @@ namespace NSFPlayer
 		}
 	}
 
-	uint8_t BankedSRAM::GetBankReg(int n)
+	uint8_t NSFMapper::GetBankReg(int n)
 	{
 		return bank_regs[n & 7];
 	}
 
-	void BankedSRAM::SetBankReg(int n, uint8_t val)
+	void NSFMapper::SetBankReg(int n, uint8_t val)
 	{
 		bank_regs[n & 7] = val;
 	}
 
-	void BankedSRAM::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
+	void NSFMapper::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
 	{
 		if (ram)
 		{
@@ -114,7 +114,7 @@ namespace NSFPlayer
 		load_addr = load_address;
 	}
 
-	void BankedSRAM::sim_BankRegs(TriState RnW, int reg_id, uint8_t* data)
+	void NSFMapper::sim_BankRegs(TriState RnW, int reg_id, uint8_t* data)
 	{
 		if (RnW == TriState::One)
 		{
@@ -126,12 +126,12 @@ namespace NSFPlayer
 		}
 	}
 
-	void BankedSRAM::EnableNSFBanking(bool enable)
+	void NSFMapper::EnableNSFBanking(bool enable)
 	{
 		bank_switch_enabled = enable;
 	}
 
-	void BankedSRAM::sim_AccessNotBanked(TriState RnW, uint16_t addr, uint8_t* data)
+	void NSFMapper::sim_AccessNotBanked(TriState RnW, uint16_t addr, uint8_t* data)
 	{
 		if (addr < load_addr)
 			return;
@@ -144,7 +144,7 @@ namespace NSFPlayer
 		}
 	}
 
-	void BankedSRAM::sim_AccessBanked(TriState RnW, uint16_t addr, uint8_t* data)
+	void NSFMapper::sim_AccessBanked(TriState RnW, uint16_t addr, uint8_t* data)
 	{
 		if (addr < 0x8000)
 			return;
@@ -162,13 +162,13 @@ namespace NSFPlayer
 		}
 	}
 
-	size_t BankedSRAM::RoundUpPage(size_t size)
+	size_t NSFMapper::RoundUpPage(size_t size)
 	{
 		const size_t page_size = 0x1000;
 		return ((((size_t)(size)) + page_size - 1) & (~(page_size - 1)));
 	}
 
-	void BankedSRAM::SetFakeResetVector(uint16_t addr)
+	void NSFMapper::SetFakeResetVector(uint16_t addr)
 	{
 		fake_reset = addr;
 		faking_reset_fc = true;

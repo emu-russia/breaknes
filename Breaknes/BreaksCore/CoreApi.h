@@ -23,6 +23,8 @@ extern "C"
 	__declspec(dllexport)
 	void DestroyBoard();
 
+	// hmmm cartridge api...
+
 	/// <summary>
 	/// Insert the cartridge. Cartridge Factory will try to fit .nes ROM into the form factor of the current motherboard's cartridge connector. In addition, a mapper instance will be created if it is supported.
 	/// </summary>
@@ -37,11 +39,7 @@ extern "C"
 	__declspec(dllexport)
 	void EjectCartridge();
 
-	/// <summary>
-	/// Simulate the specified number of half-cycles.
-	/// </summary>
-	/// <param name="numHalfCycles"></param>
 	__declspec(dllexport)
-	void Sim(size_t numHalfCycles);
+	void Step();
 
 };

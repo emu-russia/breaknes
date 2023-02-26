@@ -37,6 +37,6 @@ namespace Breaknes
 
 		core->sim(core_inputs, core_outputs, &addr_bus, &data_bus);
 
-		CLK = CLK == TriState::Zero ? TriState::One : TriState::Zero;
+		CLK = NOT(CLK);
 	}
 }

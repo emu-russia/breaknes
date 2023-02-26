@@ -15,16 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Core.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Famicom.cpp">
+    <ClCompile Include="..\..\FamicomBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\NES.cpp">
+    <ClCompile Include="..\..\NESBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\pch.cpp">
@@ -48,12 +45,27 @@
     <ClCompile Include="..\..\BogusBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\APUPlayerBoard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\APUPlayerBoardDebug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\NSFMapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\NSFPlayerBoard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\NSFPlayerBoardDebug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Famicom.h">
+    <ClInclude Include="..\..\FamicomBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\NES.h">
+    <ClInclude Include="..\..\NESBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\pch.h">
@@ -74,10 +86,16 @@
     <ClInclude Include="..\..\CoreApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Core.h">
+    <ClInclude Include="..\..\BogusBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\BogusBoard.h">
+    <ClInclude Include="..\..\APUPlayerBoard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\NSFMapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\NSFPlayerBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

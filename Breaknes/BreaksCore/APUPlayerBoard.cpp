@@ -4,40 +4,12 @@
 
 using namespace BaseLogic;
 
-namespace NSFPlayer
+namespace Breaknes
 {
-	APUPlayerBoard::APUPlayerBoard(char* boardName, char* apuRev, char* ppuRev, char* p1) : Board(boardName, apuRev, ppuRev, p1)
+	APUPlayerBoard::APUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev) : Board(apu_rev, ppu_rev)
 	{
-		APUSim::Revision rev;
-
-		if (!strcmp(apuRev, "RP2A03G"))
-		{
-			rev = APUSim::Revision::RP2A03G;
-		}
-		else if (!strcmp(apuRev, "RP2A03H"))
-		{
-			rev = APUSim::Revision::RP2A03H;
-		}
-		else if (!strcmp(apuRev, "RP2A07"))
-		{
-			rev = APUSim::Revision::RP2A07;
-		}
-		else if (!strcmp(apuRev, "UA6527P"))
-		{
-			rev = APUSim::Revision::UA6527P;
-		}
-		else if (!strcmp(apuRev, "TA03NP1"))
-		{
-			rev = APUSim::Revision::TA03NP1;
-		}
-		else
-		{
-			// If someone passed on an obscure APU revision, stay with the default reference RP2A03G, as the most studied.
-			rev = APUSim::Revision::RP2A03G;
-		}
-
 		core = new M6502Core::FakeM6502(0x4000, 0x1f);
-		apu = new APUSim::APU(core, rev);
+		apu = new APUSim::APU(core, apu_rev);
 		wram = new BaseBoard::SRAM(wram_bits);
 
 		for (int i = 0; i < wram->Dbg_GetSize(); i++)
@@ -95,7 +67,7 @@ namespace NSFPlayer
 		CLK = NOT(CLK);
 	}
 
-	void APUPlayerBoard::ResetAPU(uint16_t addr, bool reset_apu_also)
+	void APUPlayerBoard::Reset()
 	{
 		// Execute 1 cycle (not a core cycle, just a cycle). This is enough to reset APU circuits.
 
@@ -105,7 +77,7 @@ namespace NSFPlayer
 		in_reset = false;
 	}
 
-	bool APUPlayerBoard::APUInResetState()
+	bool APUPlayerBoard::InResetState()
 	{
 		return false;
 	}

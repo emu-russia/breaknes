@@ -6,34 +6,42 @@
 #include <cassert>
 #include <Windows.h>
 
+// Very basic
+
 #include "../../Common/BaseLogicLib/BaseLogic.h"
 #include "../../Common/JsonLib/Json.h"
+
+// Big chips
 
 #include "../../Breaks6502/M6502Core/core.h"
 #include "../../BreaksAPU/APUSim/apu.h"
 #include "../../BreaksPPU/PPUSim/ppu.h"
 
-namespace Breaknes
-{
-	class Core;
-}
+// Board logic
 
 #include "../../Common/BaseBoardLib/LS139.h"
 #include "../../Common/BaseBoardLib/LS368.h"
 #include "../../Common/BaseBoardLib/LS373.h"
 #include "../../Common/BaseBoardLib/SRAM.h"
+#include "../../Common/BaseBoardLib/Fake6502.h"
 #include "../../Common/DebugHub/DebugHub.h"
+
+// Cartridge Slot
 
 #include "AbstractCartridge.h"
 #include "CartridgeFactory.h"
 
+// Boards
+
 #include "AbstractBoard.h"
 #include "BogusBoard.h"
-#include "NES.h"
-#include "Famicom.h"
+#include "NESBoard.h"
+#include "FamicomBoard.h"
 #include "BoardFactory.h"
+#include "APUPlayerBoard.h"
+#include "NSFMapper.h"
+#include "NSFPlayerBoard.h"
+
+// To C#
 
 #include "CoreApi.h"
-#include "Core.h"
-
-extern Breaknes::Core core;
