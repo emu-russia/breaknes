@@ -24,4 +24,5 @@ So we will make the assumption that the CPU I/F (signal `/DBE` and others) will 
 
 If this does not work, we will do some more research on how to do it better.
 
-EDIT: The assumption is correct, it is a working model, you can safely use it.
+EDIT: It doesn't seem to be working after all. See https://github.com/emu-russia/breaknes/issues/196
+Bummer.
