@@ -127,7 +127,7 @@ namespace PPUPlayer
 
 		void RenderAlwaysEnabled(bool enable);
 
-		void GetSignalFeatures(PPUSim::VideoSignalFeatures* features);
+		void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features);
 
 		void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b);
 

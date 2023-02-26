@@ -69,7 +69,7 @@ namespace PPUPlayer
 
 		void ResetVisualize()
 		{
-			PPUPlayerInterop.GetSignalFeatures(out ppu_features);
+			PPUPlayerInterop.GetPpuSignalFeatures(out ppu_features);
 
 			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
 			ScanBuffer = new PPUPlayerInterop.VideoOutSample[2 * SamplesPerScan];
