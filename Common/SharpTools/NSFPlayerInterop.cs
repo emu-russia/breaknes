@@ -59,7 +59,7 @@ namespace SharpTools
 		}
 
 		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void GetSignalFeatures(out AudioSignalFeatures features);
+		public static extern void GetApuSignalFeatures(out AudioSignalFeatures features);
 	}
 
 

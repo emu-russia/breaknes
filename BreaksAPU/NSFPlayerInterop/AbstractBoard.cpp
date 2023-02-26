@@ -42,7 +42,7 @@ namespace NSFPlayer
 		}
 	}
 
-	void Board::GetSignalFeatures(APUSim::AudioSignalFeatures* features)
+	void Board::GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)
 	{
 		APUSim::AudioSignalFeatures feat{};
 		apu->GetSignalFeatures(feat);

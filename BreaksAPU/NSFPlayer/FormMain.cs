@@ -487,7 +487,7 @@ namespace NSFPlayer
 		{
 			if (nsf_loaded || regdump_loaded)
 			{
-				NSFPlayerInterop.GetSignalFeatures(out aux_features);
+				NSFPlayerInterop.GetApuSignalFeatures(out aux_features);
 				DecimateEach = aux_features.SampleRate / OutputSampleRate;
 				Console.WriteLine("APUSim sample rate: {0}, DSound sample rate: {1}, decimate factor: {2}", aux_features.SampleRate, OutputSampleRate, DecimateEach);
 			}
