@@ -30,6 +30,16 @@ Contains only the APU and a special type of memory, inside which is the NSF bank
 
 Additional sound chips are not supported yet, since the primary goal is to check the functionality of the coupling of the APU and the 6502 embedded core.
 
+## APUPlayer Board
+
+Another debug board for "playing" the APU register dump.
+
+![APUPlayer](/UserManual/imgstore/APUPlayer.jpg)
+
+It is roughly the same as PPUPlayer, but simpler in that the APU does not require a cartridge connector and additional bindings associated with it.
+
+The DPCM samples are loaded into the extended up to 64 Kbytes memory (WRAM).
+
 ## Famicom
 
 The plan is to simulate the Generic Famicom board as follows:
