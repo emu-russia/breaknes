@@ -94,7 +94,7 @@ namespace PPUPlayer
 		}
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void GetSignalFeatures(out VideoSignalFeatures features);
+		public static extern void GetPpuSignalFeatures(out VideoSignalFeatures features);
 
 		[DllImport("PPUPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void ConvertRAWToRGB(UInt16 raw, out byte r, out byte g, out byte b);

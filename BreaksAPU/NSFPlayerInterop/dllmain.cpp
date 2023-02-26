@@ -129,11 +129,11 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void GetSignalFeatures(APUSim::AudioSignalFeatures* features)
+	__declspec(dllexport) void GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)
 	{
 		if (board != nullptr)
 		{
-			board->GetSignalFeatures(features);
+			board->GetApuSignalFeatures(features);
 		}
 	}
 }

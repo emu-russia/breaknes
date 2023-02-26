@@ -170,11 +170,11 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void GetSignalFeatures(PPUSim::VideoSignalFeatures* features)
+	__declspec(dllexport) void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features)
 	{
 		if (board != nullptr)
 		{
-			board->GetSignalFeatures(features);
+			board->GetPpuSignalFeatures(features);
 		}
 		else
 		{

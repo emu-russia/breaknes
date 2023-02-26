@@ -19,7 +19,7 @@ namespace PPUPlayer
 		{
 			InitializeComponent();
 
-			PPUPlayerInterop.GetSignalFeatures(out ppu_features);
+			PPUPlayerInterop.GetPpuSignalFeatures(out ppu_features);
 
 			signalPlot1.PlotSignal(data);
 			signalPlot1.EnableSelection(true);

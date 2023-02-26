@@ -93,6 +93,6 @@ namespace NSFPlayer
 		/// Get audio signal settings that help with its rendering on the consumer side.
 		/// </summary>
 		/// <param name="features"></param>
-		virtual void GetSignalFeatures(APUSim::AudioSignalFeatures* features);
+		virtual void GetApuSignalFeatures(APUSim::AudioSignalFeatures* features);
 	};
 }

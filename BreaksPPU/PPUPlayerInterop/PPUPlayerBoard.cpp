@@ -297,7 +297,7 @@ namespace PPUPlayer
 	/// Get video signal settings that help with its rendering on the consumer side.
 	/// </summary>
 	/// <param name="features"></param>
-	void Board::GetSignalFeatures(PPUSim::VideoSignalFeatures* features)
+	void Board::GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features)
 	{
 		PPUSim::VideoSignalFeatures feat{};
 		ppu->GetSignalFeatures(feat);
