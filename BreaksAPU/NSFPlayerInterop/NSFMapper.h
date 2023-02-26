@@ -4,7 +4,7 @@
 
 namespace NSFPlayer
 {
-	class BankedSRAM
+	class NSFMapper
 	{
 		uint8_t bank_regs[8]{};
 
@@ -27,8 +27,8 @@ namespace NSFPlayer
 		uint16_t fake_reset = 0;
 
 	public:
-		BankedSRAM();
-		~BankedSRAM();
+		NSFMapper();
+		~NSFMapper();
 
 		void sim(BaseLogic::TriState RnW, BaseLogic::TriState CS, uint16_t addr, uint8_t* data);
 

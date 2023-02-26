@@ -16,7 +16,7 @@
 #include "../../Common/BaseBoardLib/SRAM.h"
 #include "../../Common/BaseBoardLib/Fake6502.h"
 
-#include "BankedSRAM.h"
+#include "NSFMapper.h"
 #include "AbstractBoard.h"
 #include "NSFPlayerBoard.h"
 #include "APUPlayerBoard.h"

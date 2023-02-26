@@ -38,7 +38,7 @@ namespace NSFPlayer
 
 		core = new M6502Core::M6502(true, true);
 		apu = new APUSim::APU(core, rev);
-		sram = new BankedSRAM();
+		sram = new NSFMapper();
 		wram = new BaseBoard::SRAM(wram_bits);
 
 		for (int i = 0; i < wram->Dbg_GetSize(); i++)

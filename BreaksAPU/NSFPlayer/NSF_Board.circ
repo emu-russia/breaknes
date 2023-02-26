@@ -116,11 +116,11 @@
     <comp lib="8" loc="(1180,430)" name="Text">
       <a name="text" val="C# App"/>
     </comp>
-    <comp lib="8" loc="(1212,360)" name="Text">
+    <comp lib="8" loc="(1210,360)" name="Text">
       <a name="text" val="&lt;--- NSF Data here"/>
     </comp>
     <comp loc="(1100,180)" name="WRAM"/>
-    <comp loc="(1100,310)" name="Banked_SRAM"/>
+    <comp loc="(1100,310)" name="NSFMapper"/>
     <comp loc="(1100,440)" name="AUX_Dumper"/>
     <comp loc="(390,130)" name="APU"/>
     <wire from="(110,100)" to="(140,100)"/>
@@ -174,9 +174,9 @@
     <wire from="(820,60)" to="(820,190)"/>
     <wire from="(870,180)" to="(880,180)"/>
   </circuit>
-  <circuit name="Banked_SRAM">
+  <circuit name="NSFMapper">
     <a name="appearance" val="logisim_evolution"/>
-    <a name="circuit" val="Banked_SRAM"/>
+    <a name="circuit" val="NSFMapper"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
     <a name="simulationFrequency" val="256.0"/>
     <comp lib="0" loc="(220,250)" name="Pin">

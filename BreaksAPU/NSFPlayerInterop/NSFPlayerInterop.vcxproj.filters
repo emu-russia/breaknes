@@ -21,7 +21,7 @@
     <ClInclude Include="NSFPlayerBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BankedSRAM.h">
+    <ClInclude Include="NSFMapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AbstractBoard.h">
@@ -47,7 +47,7 @@
     <ClCompile Include="NSFPlayerBoardDebug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BankedSRAM.cpp">
+    <ClCompile Include="NSFMapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="APUPlayerBoard.cpp">
