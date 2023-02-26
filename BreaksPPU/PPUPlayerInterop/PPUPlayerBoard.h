@@ -121,9 +121,9 @@ namespace PPUPlayer
 
 		size_t GetVCounter();
 
-		void ResetPPU();
+		void Reset();
 
-		bool PPUInResetState();
+		bool InResetState();
 
 		void RenderAlwaysEnabled(bool enable);
 

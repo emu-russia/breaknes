@@ -14,6 +14,9 @@
 #include "../../Common/BaseBoardLib/SRAM.h"
 #include "../../Common/BaseBoardLib/LS373.h"
 
+#include "../../Breaks6502/M6502Core/core.h"
+#include "../../Common/BaseBoardLib/Fake6502.h"
+
 #include "../../Mappers/NES_Header.h"
 #include "../../Mappers/NROM.h"
 

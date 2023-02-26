@@ -267,7 +267,7 @@ namespace PPUPlayer
 	/// <summary>
 	/// Make the PPU /RES pin = 0 for a few CLK half cycles so that the PPU resets all of its internal circuits.
 	/// </summary>
-	void Board::ResetPPU()
+	void Board::Reset()
 	{
 		pendingReset = true;
 		resetHalfClkCounter = 4;
@@ -277,7 +277,7 @@ namespace PPUPlayer
 	/// The parent application can check that the PPU is in the reset process and ignore the video signal for that time.
 	/// </summary>
 	/// <returns></returns>
-	bool Board::PPUInResetState()
+	bool Board::InResetState()
 	{
 		return pendingReset;
 	}
