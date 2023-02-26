@@ -84,9 +84,9 @@ namespace PPUPlayer
 			[FieldOffset(16)]
 			public int Composite;           // 1: Composite, 0: RGB
 			[FieldOffset(20)]
-			public float BurstLevel;		// IRE = 0
+			public float BlackLevel;		// IRE = 0
 			[FieldOffset(24)]
-			public float WhiteLevel;        // IRE = 100
+			public float WhiteLevel;        // IRE = 110
 			[FieldOffset(28)]
 			public float SyncLevel;
 			[FieldOffset(32)]

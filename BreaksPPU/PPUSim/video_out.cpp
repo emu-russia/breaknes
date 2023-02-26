@@ -13,35 +13,77 @@ namespace PPUSim
 		switch (ppu->rev)
 		{
 			case Revision::RP2C02G:
-			case Revision::RP2C02H:
-			case Revision::RP2C07_0:
-				LToV[0] = 0.781f;		// Synch
-				LToV[1] = 1.000f;		// Colorburst L
-				LToV[2] = 1.131f;		// Color 0D
-				LToV[3] = 1.300f;		// Color 1D (black)
-				LToV[4] = 1.712f;		// Colorburst H
-				LToV[5] = 1.743f;		// Color 2D
-				LToV[6] = 1.875f;		// Color 00
-				LToV[7] = 2.287f;		// Color 10
-				LToV[8] = 2.331f;		// Color 3D
-				LToV[9] = 2.743f;		// Color 20 / 30
-				LToV[10] = 0.746f;		// Emphasis attenuation factor
+			case Revision::RP2C02H:			// TBD
+				SyncLevel[0] = 0.f;
+				SyncLevel[1] = 0.525f;
+				BurstLevel[0] = 0.300f;
+				BurstLevel[1] = 0.841f;
+				LumaLevel[0][0] = 0.366f;
+				LumaLevel[0][1] = 1.091f;
+				LumaLevel[1][0] = 0.525f;
+				LumaLevel[1][1] = 1.500f;
+				LumaLevel[2][0] = 0.966f;
+				LumaLevel[2][1] = 1.941f;
+				LumaLevel[3][0] = 1.558f;
+				LumaLevel[3][1] = 1.941f;
+				EmphasizedLumaLevel[0][0] = 0.266f;
+				EmphasizedLumaLevel[0][1] = 0.825f;
+				EmphasizedLumaLevel[1][0] = 0.391f;
+				EmphasizedLumaLevel[1][1] = 1.133f;
+				EmphasizedLumaLevel[2][0] = 0.733f;
+				EmphasizedLumaLevel[2][1] = 1.466f;
+				EmphasizedLumaLevel[3][0] = 1.166f;
+				EmphasizedLumaLevel[3][1] = 1.466f;
 				composite = true;
 				break;
 
-			// TBD: The DAC is significantly redesigned, so the 6538 signal levels are different (a little brighter/more saturated).
+			case Revision::RP2C07_0:
+				SyncLevel[0] = 0.f;
+				SyncLevel[1] = 0.566f;
+				BurstLevel[0] = 0.300f;
+				BurstLevel[1] = 0.900f;
+				LumaLevel[0][0] = 0.391f;
+				LumaLevel[0][1] = 1.175f;
+				LumaLevel[1][0] = 0.566f;
+				LumaLevel[1][1] = 1.566f;
+				LumaLevel[2][0] = 1.041f;
+				LumaLevel[2][1] = 2.033f;
+				LumaLevel[3][0] = 1.633f;
+				LumaLevel[3][1] = 2.033f;
+				EmphasizedLumaLevel[0][0] = 0.300f;
+				EmphasizedLumaLevel[0][1] = 0.900f;
+				EmphasizedLumaLevel[1][0] = 0.433f;
+				EmphasizedLumaLevel[1][1] = 1.208f;
+				EmphasizedLumaLevel[2][0] = 0.791f;
+				EmphasizedLumaLevel[2][1] = 1.566f;
+				EmphasizedLumaLevel[3][0] = 1.266f;
+				EmphasizedLumaLevel[3][1] = 1.566f;
+				composite = true;
+				break;
+
+			// The DAC is significantly redesigned, so the 6538 signal levels are different (a little brighter/more saturated).
+
 			case Revision::UMC_UA6538:
-				LToV[0] = 0.781f;		// Synch
-				LToV[1] = 1.000f;		// Colorburst L
-				LToV[2] = 1.131f;		// Color 0D
-				LToV[3] = 1.300f;		// Color 1D (black)
-				LToV[4] = 1.712f;		// Colorburst H
-				LToV[5] = 1.743f;		// Color 2D
-				LToV[6] = 1.875f;		// Color 00
-				LToV[7] = 2.287f;		// Color 10
-				LToV[8] = 2.331f;		// Color 3D
-				LToV[9] = 2.743f;		// Color 20 / 30
-				LToV[10] = 0.746f;		// Emphasis attenuation factor
+				SyncLevel[0] = 0.f;
+				SyncLevel[1] = 0.458f;
+				BurstLevel[0] = 0.300f;
+				BurstLevel[1] = 0.700f;
+				LumaLevel[0][0] = 0.341f;
+				LumaLevel[0][1] = 0.916f;
+				LumaLevel[1][0] = 0.466f;
+				LumaLevel[1][1] = 1.400f;
+				LumaLevel[2][0] = 0.816f;
+				LumaLevel[2][1] = 1.916f;
+				LumaLevel[3][0] = 1.441f;
+				LumaLevel[3][1] = 1.916f;
+				EmphasizedLumaLevel[0][0] = 0.258f;
+				EmphasizedLumaLevel[0][1] = 0.700f;
+				EmphasizedLumaLevel[1][0] = 0.350f;
+				EmphasizedLumaLevel[1][1] = 1.066f;
+				EmphasizedLumaLevel[2][0] = 0.625f;
+				EmphasizedLumaLevel[2][1] = 1.475f;
+				EmphasizedLumaLevel[3][0] = 1.100f;
+				EmphasizedLumaLevel[3][1] = 1.475f;
 				composite = true;
 				break;
 
@@ -54,7 +96,6 @@ namespace PPUSim
 		}
 
 		// For PAL-like composite PPUs, the Chroma decoder simulation is done using PLA, since the decoder there is big enough (so you don't have to bother with it).
-		// TBD: Check the PPU clones.
 
 		switch (ppu->rev)
 		{
@@ -389,20 +430,20 @@ namespace PPUSim
 	void VideoOut::sim_CompositeDAC(VideoOutSignal& vout)
 	{
 		TriState tmp = TriState::Zero;
-		float v = 3.0f;		// White level
+		float v = LumaLevel[3][1];		// White level
 
 		// Synch Level
 
 		if (sync_latch.nget() == TriState::One)
 		{
-			v = std::min(v, LToV[0]);
+			v = std::min(v, SyncLevel[0]);
 		}
 
 		// Black Level
 
 		if (black_latch.nget() == TriState::One)
 		{
-			v = std::min(v, LToV[3]);
+			v = std::min(v, SyncLevel[1]);
 		}
 
 		// Colorburst phase level
@@ -411,16 +452,19 @@ namespace PPUSim
 
 		// Luminance phase levels
 
-		v = PhaseSwing(v, n_LU[0], 2, 6);
-		v = PhaseSwing(v, n_LU[1], 3, 7);
-		v = PhaseSwing(v, n_LU[2], 5, 9);
-		v = PhaseSwing(v, n_LU[3], 8, 9);
-
-		// Emphasis is calculated by scaling voltage with additional resistance.
-
 		if (TINT == TriState::One)
 		{
-			v *= LToV[10];
+			v = PhaseSwing(v, n_LU[0], EmphasizedLumaLevel[0][0], EmphasizedLumaLevel[0][1]);
+			v = PhaseSwing(v, n_LU[1], EmphasizedLumaLevel[1][0], EmphasizedLumaLevel[1][1]);
+			v = PhaseSwing(v, n_LU[2], EmphasizedLumaLevel[2][0], EmphasizedLumaLevel[2][1]);
+			v = PhaseSwing(v, n_LU[3], EmphasizedLumaLevel[3][0], EmphasizedLumaLevel[3][1]);
+		}
+		else
+		{
+			v = PhaseSwing(v, n_LU[0], LumaLevel[0][0], LumaLevel[0][1]);
+			v = PhaseSwing(v, n_LU[1], LumaLevel[1][0], LumaLevel[1][1]);
+			v = PhaseSwing(v, n_LU[2], LumaLevel[2][0], LumaLevel[2][1]);
+			v = PhaseSwing(v, n_LU[3], LumaLevel[3][0], LumaLevel[3][1]);
 		}
 
 		// In order not to torture the video decoder too much we will mix the noise only in the visible part of the line.
@@ -433,18 +477,18 @@ namespace PPUSim
 		vout.composite = v;
 	}
 
-	float VideoOut::PhaseSwing(float v, TriState sel, size_t level_from, size_t level_to)
+	float VideoOut::PhaseSwing(float v, TriState sel, float level_from, float level_to)
 	{
 		auto tmp = NOR(sel, n_PZ);
 		if (tmp == TriState::One)
 		{
-			v = std::min(v, LToV[level_to]);
+			v = std::min(v, level_to);
 		}
 
 		tmp = NOR(sel, tmp);
 		if (tmp == TriState::One)
 		{
-			v = std::min(v, LToV[level_from]);
+			v = std::min(v, level_from);
 		}
 		return v;
 	}
@@ -531,14 +575,14 @@ namespace PPUSim
 		switch (ppu->rev)
 		{
 			case Revision::RP2C02G:
-			case Revision::RP2C02H:
+			case Revision::RP2C02H:			// TBD
 				features.SamplesPerPCLK = 8;
 				features.PixelsPerScan = 341;
 				features.ScansPerField = 262;
 				features.BackPorchSize = 40;
-				features.BurstLevel = 1.3f;
-				features.WhiteLevel = 1.6f;
-				features.SyncLevel = 0.781f;
+				features.BlackLevel = 0.525f;
+				features.WhiteLevel = 1.941f;
+				features.SyncLevel = 0.f;
 				features.PhaseAlteration = false;
 				break;
 
@@ -547,22 +591,22 @@ namespace PPUSim
 				features.PixelsPerScan = 341;
 				features.ScansPerField = 312;
 				features.BackPorchSize = 42;
-				features.BurstLevel = 1.3f;
-				features.WhiteLevel = 1.6f;
-				features.SyncLevel = 0.781f;
+				features.BlackLevel = 0.566f;
+				features.WhiteLevel = 2.033f;
+				features.SyncLevel = 0.f;
 				features.PhaseAlteration = true;
 				break;
 
-			// TBD: The DAC is significantly redesigned, so the 6538 signal levels are different (a little brighter/more saturated).
+			// The DAC is significantly redesigned, so the 6538 signal levels are different (a little brighter/more saturated).
 
 			case Revision::UMC_UA6538:
 				features.SamplesPerPCLK = 10;
 				features.PixelsPerScan = 341;
 				features.ScansPerField = 312;
 				features.BackPorchSize = 42;
-				features.BurstLevel = 1.3f;
-				features.WhiteLevel = 1.6f;
-				features.SyncLevel = 0.781f;
+				features.BlackLevel = 0.458f;
+				features.WhiteLevel = 1.916f;
+				features.SyncLevel = 0.f;
 				features.PhaseAlteration = true;
 				break;
 
@@ -660,13 +704,13 @@ namespace PPUSim
 		// Process the batch
 
 		const float π = 3.14159265358979323846f;
-		float normalize_factor = 1.f / features.WhiteLevel;
+		float normalize_factor = 1.1f / features.WhiteLevel;	// 110 IRE
 		float Y = 0, I = 0, Q = 0;
 		size_t cb_phase = 9;
 
 		for (size_t n = 0; n < num_phases; n++)
 		{
-			float level = ((batch[n].composite - features.BurstLevel) * normalize_factor) / num_phases;
+			float level = ((batch[n].composite - features.BlackLevel) * normalize_factor) / num_phases;
 			Y += level;
 			I += level * cos((cb_phase + n) * (2 * π / num_phases));
 			Q += level * sin((cb_phase + n) * (2 * π / num_phases)) * +1.0f;

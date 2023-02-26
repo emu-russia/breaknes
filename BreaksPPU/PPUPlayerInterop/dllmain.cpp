@@ -185,7 +185,7 @@ extern "C"
 			features->ScansPerField = 262;
 			features->BackPorchSize = 40;
 			features->Composite = true;
-			features->BurstLevel = 1.3f;
+			features->BlackLevel = 1.3f;
 			features->WhiteLevel = 1.6f;
 			features->SyncLevel = 0.781f;
 		}
