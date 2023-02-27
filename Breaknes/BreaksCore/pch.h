@@ -6,6 +6,9 @@
 #include <cassert>
 #include <Windows.h>
 
+#include "../../Breaks6502/Breakasm/ASM.h"
+#include "../../Breaks6502/Breakasm/ASMOPS.h"
+
 // Very basic
 
 #include "../../Common/BaseLogicLib/BaseLogic.h"

@@ -447,7 +447,7 @@ namespace BreaksDebug
 
 			byte[] buffer = new byte[mem.Length];
 
-			int num_err = Assemble(richTextBox1.Text, buffer);
+			int num_err = BreaksCoreInterop.Assemble(richTextBox1.Text, buffer);
 			if (num_err != 0)
 			{
 				MessageBox.Show(
@@ -463,9 +463,6 @@ namespace BreaksDebug
 
 			hexBox1.Refresh();
 		}
-
-		[DllImport("BreakasmInterop.dll", CallingConvention = CallingConvention.Cdecl)]
-		static extern int Assemble(string text, byte[] buffer);
 
 		void ButtonsToPads()
 		{

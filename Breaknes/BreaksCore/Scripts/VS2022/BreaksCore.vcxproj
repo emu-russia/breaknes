@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\Breaks6502\Breakasm\ASM.cpp" />
+    <ClCompile Include="..\..\..\..\Breaks6502\Breakasm\ASMOPS.cpp" />
     <ClCompile Include="..\..\AbstractBoard.cpp" />
     <ClCompile Include="..\..\AbstractCartridge.cpp" />
     <ClCompile Include="..\..\APUPlayerBoard.cpp" />
@@ -41,6 +43,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Breaks6502\Breakasm\ASM.h" />
+    <ClInclude Include="..\..\..\..\Breaks6502\Breakasm\ASMOPS.h" />
     <ClInclude Include="..\..\AbstractBoard.h" />
     <ClInclude Include="..\..\AbstractCartridge.h" />
     <ClInclude Include="..\..\APUPlayerBoard.h" />

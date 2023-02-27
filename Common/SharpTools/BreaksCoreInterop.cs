@@ -11,6 +11,9 @@ namespace SharpTools
 	public class BreaksCoreInterop
 	{
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int Assemble(string text, byte[] buffer);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void CreateBoard(string boardName, string apu, string ppu, string p1);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
