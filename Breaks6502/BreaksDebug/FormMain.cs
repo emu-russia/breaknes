@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using Be.Windows.Forms;
 using System.IO;
 using Newtonsoft.Json;
+using SharpTools;
 
 namespace BreaksDebug
 {
@@ -20,7 +21,7 @@ namespace BreaksDebug
         [DllImport("kernel32")]
         static extern bool AllocConsole();
 
-        BogusSystem sys = new BogusSystem();
+        CoreDebug sys = new CoreDebug();
         byte[] mem = new byte[0x10000];
         IByteProvider memProvider;
         string testAsmName = "Test.asm";
@@ -29,7 +30,9 @@ namespace BreaksDebug
         string WikiRoot = "/BreakingNESWiki/";
         bool MarkdownOutput = false;
 
-        class UnitTestParam
+		long Cycle = 0;
+
+		class UnitTestParam
         {
             public bool CompileFromSource = true;
             public string MemDumpInput = "mem.bin";
@@ -40,7 +43,7 @@ namespace BreaksDebug
             public string RomSize = "0x4000";
             public bool RunUntilBrk = true;
             public bool RunCycleAmount = true;
-            public int CycleMax = 10000;
+            public long CycleMax = 10000;
             public bool RunUntilPC = false;
             public string PC = "0x0";
             public bool TraceMemOps = true;
@@ -94,7 +97,7 @@ namespace BreaksDebug
 
             memProvider = new DynamicByteProvider(mem);
             hexBox1.ByteProvider = memProvider;
-            sys.AttatchMemory(memProvider);
+            //sys.AttatchMemory(memProvider);
             UpdateAll();
 
             // Select the operating mode - manual or automatic unit test.
@@ -150,7 +153,7 @@ namespace BreaksDebug
             map.RomStart = Strtol(testParam.RomStart);
             map.RomSize = Strtol(testParam.RomSize);
 
-            sys.SetMemoryMapping(map);
+            //sys.SetMemoryMapping(map);
 
             if (testParam.CompileFromSource)
             {
@@ -214,7 +217,7 @@ namespace BreaksDebug
                     UnitTestPhiTraceCounter = 0;
                 }
 
-                if (sys.Cycle >= testParam.CycleMax && testParam.RunCycleAmount)
+                if (Cycle >= testParam.CycleMax && testParam.RunCycleAmount)
                 {
                     break;
                 }
@@ -294,7 +297,7 @@ namespace BreaksDebug
                 trace = testParam.TraceMemOps;
             }
 
-            sys.Step(trace);
+            //sys.Step(trace);
             if (!UnitTestMode)
             {
                 UpdateAll();
@@ -303,7 +306,7 @@ namespace BreaksDebug
 
         void UpdateCycleStats()
         {
-            toolStripStatusLabel1.Text = "Cycle: " + sys.Cycle.ToString();
+            toolStripStatusLabel1.Text = "Cycle: " + Cycle.ToString();
         }
 
         void UpdateMemoryDump()
