@@ -12,24 +12,24 @@ using System.Runtime.InteropServices;
 
 namespace Breaknes
 {
-    public partial class FormAbout : Form
-    {
-        public FormAbout()
-        {
-            InitializeComponent();
-        }
+	public partial class FormAbout : Form
+	{
+		public FormAbout()
+		{
+			InitializeComponent();
+		}
 
-        private void FormAbout_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Escape)
-            {
-                Close();
-            }
-        }
+		private void FormAbout_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				Close();
+			}
+		}
 
 		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			OpenUrl ("https://github.com/emu-russia/breaknes");
+			OpenUrl("https://github.com/emu-russia/breaknes");
 		}
 
 		private void OpenUrl(string url)

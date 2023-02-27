@@ -17,8 +17,11 @@
 
   <ItemGroup>
     <PackageReference Include="Be.Windows.Forms.HexBox.Net5" Version="1.8.0" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1150.38" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\SharpTools\SharpTools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

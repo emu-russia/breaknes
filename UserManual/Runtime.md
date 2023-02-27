@@ -49,10 +49,3 @@ The user terminates the application.
 If the simulation was running, it stops.
 
 CoreApi::DestroyBoard is called.
-
-## Special handling for the debugger
-
-During the state change (board selection, loading the .nes image) - the debugger will contain the old information. Therefore, when executing the events of changing the motherboard (SaveSettings), LoadROM and Step, it is necessary to
-notify the debugger of this event so that it updates the GUI.
-
-The `DebugEvents` module is used for this purpose.
