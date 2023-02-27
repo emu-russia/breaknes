@@ -297,7 +297,7 @@ namespace BreaksDebug
 			// 
 			splitContainer1.Panel2.Controls.Add(tabControl1);
 			splitContainer1.Size = new Size(1172, 528);
-			splitContainer1.SplitterDistance = 361;
+			splitContainer1.SplitterDistance = 360;
 			splitContainer1.SplitterWidth = 5;
 			splitContainer1.TabIndex = 3;
 			// 
@@ -311,7 +311,7 @@ namespace BreaksDebug
 			tabControl2.Margin = new Padding(4, 3, 4, 3);
 			tabControl2.Name = "tabControl2";
 			tabControl2.SelectedIndex = 0;
-			tabControl2.Size = new Size(1172, 361);
+			tabControl2.Size = new Size(1172, 360);
 			tabControl2.TabIndex = 0;
 			// 
 			// tabPage3
@@ -321,7 +321,7 @@ namespace BreaksDebug
 			tabPage3.Margin = new Padding(4, 3, 4, 3);
 			tabPage3.Name = "tabPage3";
 			tabPage3.Padding = new Padding(4, 3, 4, 3);
-			tabPage3.Size = new Size(1164, 333);
+			tabPage3.Size = new Size(1164, 332);
 			tabPage3.TabIndex = 0;
 			tabPage3.Text = "6502 Core";
 			tabPage3.UseVisualStyleBackColor = true;
@@ -355,7 +355,7 @@ namespace BreaksDebug
 			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 23F));
 			tableLayoutPanel1.RowStyles.Add(new RowStyle());
 			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 23F));
-			tableLayoutPanel1.Size = new Size(1156, 327);
+			tableLayoutPanel1.Size = new Size(1156, 326);
 			tableLayoutPanel1.TabIndex = 12;
 			// 
 			// splitContainer4
@@ -552,7 +552,7 @@ namespace BreaksDebug
 			tabPage4.Margin = new Padding(4, 3, 4, 3);
 			tabPage4.Name = "tabPage4";
 			tabPage4.Padding = new Padding(4, 3, 4, 3);
-			tabPage4.Size = new Size(1164, 295);
+			tabPage4.Size = new Size(1164, 333);
 			tabPage4.TabIndex = 1;
 			tabPage4.Text = "Assembler";
 			tabPage4.UseVisualStyleBackColor = true;
@@ -573,8 +573,8 @@ namespace BreaksDebug
 			// splitContainer3.Panel2
 			// 
 			splitContainer3.Panel2.Controls.Add(button2);
-			splitContainer3.Size = new Size(1156, 289);
-			splitContainer3.SplitterDistance = 236;
+			splitContainer3.Size = new Size(1156, 327);
+			splitContainer3.SplitterDistance = 273;
 			splitContainer3.SplitterWidth = 5;
 			splitContainer3.TabIndex = 0;
 			// 
@@ -586,7 +586,7 @@ namespace BreaksDebug
 			richTextBox1.Location = new Point(0, 0);
 			richTextBox1.Margin = new Padding(4, 3, 4, 3);
 			richTextBox1.Name = "richTextBox1";
-			richTextBox1.Size = new Size(1156, 236);
+			richTextBox1.Size = new Size(1156, 273);
 			richTextBox1.TabIndex = 0;
 			richTextBox1.Text = "";
 			// 
@@ -607,7 +607,7 @@ namespace BreaksDebug
 			tabPage2.Location = new Point(4, 24);
 			tabPage2.Margin = new Padding(4, 3, 4, 3);
 			tabPage2.Name = "tabPage2";
-			tabPage2.Size = new Size(1164, 295);
+			tabPage2.Size = new Size(1164, 332);
 			tabPage2.TabIndex = 2;
 			tabPage2.Text = "Core Data Path";
 			tabPage2.UseVisualStyleBackColor = true;
@@ -619,7 +619,7 @@ namespace BreaksDebug
 			dataPathView1.Location = new Point(0, 0);
 			dataPathView1.Margin = new Padding(4, 3, 4, 3);
 			dataPathView1.Name = "dataPathView1";
-			dataPathView1.Size = new Size(1164, 295);
+			dataPathView1.Size = new Size(1164, 332);
 			dataPathView1.TabIndex = 0;
 			dataPathView1.Text = "dataPathView1";
 			// 
@@ -631,7 +631,7 @@ namespace BreaksDebug
 			tabControl1.Margin = new Padding(4, 3, 4, 3);
 			tabControl1.Name = "tabControl1";
 			tabControl1.SelectedIndex = 0;
-			tabControl1.Size = new Size(1172, 162);
+			tabControl1.Size = new Size(1172, 163);
 			tabControl1.TabIndex = 0;
 			// 
 			// tabPage1
@@ -641,7 +641,7 @@ namespace BreaksDebug
 			tabPage1.Margin = new Padding(4, 3, 4, 3);
 			tabPage1.Name = "tabPage1";
 			tabPage1.Padding = new Padding(4, 3, 4, 3);
-			tabPage1.Size = new Size(1164, 134);
+			tabPage1.Size = new Size(1164, 135);
 			tabPage1.TabIndex = 0;
 			tabPage1.Text = "CPU Memory";
 			tabPage1.UseVisualStyleBackColor = true;
@@ -657,7 +657,7 @@ namespace BreaksDebug
 			hexBox1.Name = "hexBox1";
 			hexBox1.ReadOnly = true;
 			hexBox1.ShadowSelectionColor = Color.FromArgb(100, 60, 188, 255);
-			hexBox1.Size = new Size(1156, 128);
+			hexBox1.Size = new Size(1156, 129);
 			hexBox1.StringViewVisible = true;
 			hexBox1.TabIndex = 1;
 			hexBox1.UseFixedBytesPerLine = true;

@@ -12,9 +12,6 @@
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Update="DataPathControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Update="FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
