@@ -38,27 +38,8 @@ namespace SharpTools
 			public byte SYNC { get; set; }
 			[Category("Address Bus")]
 			public UInt16 A { get; set; }
-			[Category("Address Bus")]
-			public string Addr { get; set; }
 			[Category("Data Bus")]
 			public byte D { get; set; }
-		}
-
-		[StructLayout(LayoutKind.Sequential, Pack = 1)]
-		unsafe struct CpuPadsRaw
-		{
-			public byte n_NMI;
-			public byte n_IRQ;
-			public byte n_RES;
-			public byte PHI0;
-			public byte RDY;
-			public byte SO;
-			public byte PHI1;
-			public byte PHI2;
-			public byte RnW;
-			public byte SYNC;
-			public UInt16 A;
-			public byte D;
 		}
 
 		public class CpuDebugInfo_RegsBuses
@@ -371,48 +352,6 @@ namespace SharpTools
 			public byte n_DAA;
 			public byte n_DSA;
 			public byte n_1PC;          // From Dispatcher
-		}
-
-		CpuPadsRaw SerializePads(CpuPads pads)
-		{
-			CpuPadsRaw pads_raw = new CpuPadsRaw();
-
-			pads_raw.n_NMI = pads.n_NMI;
-			pads_raw.n_IRQ = pads.n_IRQ;
-			pads_raw.n_RES = pads.n_RES;
-			pads_raw.PHI0 = pads.PHI0;
-			pads_raw.RDY = pads.RDY;
-			pads_raw.SO = pads.SO;
-			pads_raw.PHI1 = pads.PHI1;
-			pads_raw.PHI2 = pads.PHI2;
-			pads_raw.RnW = pads.RnW;
-			pads_raw.SYNC = pads.SYNC;
-			pads_raw.A = pads.A;
-			pads_raw.D = pads.D;
-
-			return pads_raw;
-		}
-
-		CpuPads DeserializePads(CpuPadsRaw pads_raw)
-		{
-			CpuPads pads = new CpuPads();
-
-			pads.n_NMI = pads_raw.n_NMI;
-			pads.n_IRQ = pads_raw.n_IRQ;
-			pads.n_RES = pads_raw.n_RES;
-			pads.PHI0 = pads_raw.PHI0;
-			pads.RDY = pads_raw.RDY;
-			pads.SO = pads_raw.SO;
-			pads.PHI1 = pads_raw.PHI1;
-			pads.PHI2 = pads_raw.PHI2;
-			pads.RnW = pads_raw.RnW;
-			pads.SYNC = pads_raw.SYNC;
-
-			pads.A = pads_raw.A;
-			pads.Addr = "0x" + pads.A.ToString("X4");
-			pads.D = pads_raw.D;
-
-			return pads;
 		}
 
 		public CpuDebugInfo_RegsBuses GetRegsBuses()

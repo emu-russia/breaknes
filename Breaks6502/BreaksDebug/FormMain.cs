@@ -82,6 +82,12 @@ namespace BreaksDebug
 			Close();
 		}
 
+		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FormAbout dlg = new FormAbout();
+			dlg.ShowDialog();
+		}
+
 		private void toolStripButton1_Click(object sender, EventArgs e)
 		{
 			if (!UnitTestMode)
@@ -127,6 +133,19 @@ namespace BreaksDebug
 
 		void UpdateCpuPads()
 		{
+			sys.cpu_pads.n_NMI = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "/NMI");
+			sys.cpu_pads.n_IRQ = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "/IRQ");
+			sys.cpu_pads.n_RES = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "/RES");
+			sys.cpu_pads.PHI0 = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "PHI0");
+			sys.cpu_pads.RDY = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "RDY");
+			sys.cpu_pads.SO = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "SO");
+			sys.cpu_pads.PHI1 = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "PHI1");
+			sys.cpu_pads.PHI2 = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "PHI2");
+			sys.cpu_pads.RnW = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "R/W");
+			sys.cpu_pads.SYNC = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "SYNC");
+			sys.cpu_pads.A = (UInt16)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "A");
+			sys.cpu_pads.D = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "D");
+
 			propertyGrid1.SelectedObject = sys.cpu_pads;
 		}
 
@@ -301,11 +320,11 @@ namespace BreaksDebug
 
 		void ButtonsToPads()
 		{
-			sys.cpu_pads.n_NMI = (byte)(toolStripButton4.Checked ? 1 : 0);
-			sys.cpu_pads.n_IRQ = (byte)(toolStripButton5.Checked ? 1 : 0);
-			sys.cpu_pads.n_RES = (byte)(toolStripButton6.Checked ? 1 : 0);
-			sys.cpu_pads.SO = (byte)(toolStripButton3.Checked ? 1 : 0);
-			sys.cpu_pads.RDY = (byte)(toolStripButton2.Checked ? 1 : 0);
+			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "/NMI", (UInt32)(toolStripButton4.Checked ? 1 : 0));
+			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "/IRQ", (UInt32)(toolStripButton5.Checked ? 1 : 0));
+			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "/RES", (UInt32)(toolStripButton6.Checked ? 1 : 0));
+			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "SO", (UInt32)(toolStripButton3.Checked ? 1 : 0));
+			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "RDY", (UInt32)(toolStripButton2.Checked ? 1 : 0));
 		}
 
 		private void toolStripButton4_CheckedChanged(object sender, EventArgs e)
@@ -341,12 +360,6 @@ namespace BreaksDebug
 			Console.WriteLine("RDY changed");
 			ButtonsToPads();
 			UpdateCpuPads();
-		}
-
-		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			FormAbout dlg = new FormAbout();
-			dlg.ShowDialog();
 		}
 	}
 }
