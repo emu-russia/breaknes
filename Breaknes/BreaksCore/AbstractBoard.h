@@ -31,6 +31,8 @@ namespace Breaknes
 
 		AbstractCartridge* cart = nullptr;
 
+		// Pre-calculated PPU palette
+
 		RGB_Triplet* pal = nullptr;
 		bool pal_cached = false;
 
