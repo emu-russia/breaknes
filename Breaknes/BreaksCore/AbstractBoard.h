@@ -179,19 +179,5 @@ namespace Breaknes
 		/// </summary>
 		/// <param name="volts"></param>
 		virtual void SetNoiseLevel(float volts);
-
-		// TBD: For PPUPlayer. Replace by Fake6502+RegDumpProcessor
-
-		/// <summary>
-		/// Queue to write a value to the PPU register.
-		/// The PPU pins will be exposed until PCLK is changed.
-		/// </summary>
-		virtual void CPUWrite(size_t ppuReg, uint8_t val);
-
-		/// <summary>
-		/// Queue to read a value from the PPU register.
-		/// The PPU pins will be exposed until PCLK is changed.
-		/// </summary>
-		virtual void CPURead(size_t ppuReg);
 	};
 }

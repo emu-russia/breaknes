@@ -8,6 +8,7 @@ namespace Breaknes
 {
 	PPUPlayerBoard::PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev) : Board(apu_rev, ppu_rev)
 	{
+		core = new M6502Core::FakeM6502(0x2000, 0x7);
 		ppu = new PPUSim::PPU(ppu_rev);
 		vram = new BaseBoard::SRAM(11);
 
@@ -19,6 +20,48 @@ namespace Breaknes
 	{
 		delete ppu;
 		delete vram;
+		delete core;
+	}
+
+	void PPUPlayerBoard::SimCoreDivider()
+	{
+		TriState n_CLK = NOT(CLK);
+
+		// Phase splitter
+
+		CLK_FF.set(NOR(NOR(NOT(n_CLK), CLK_FF.get()), NOT(NOT(n_CLK))));
+		TriState q = CLK_FF.get();
+		TriState nq = CLK_FF.nget();
+
+		// Jhonson counter (back propagate)
+
+		div[5].sim(q, nq, TriState::Zero, div[4].get_sout(TriState::Zero));
+		div[4].sim(q, nq, TriState::Zero, div[3].get_sout(TriState::Zero));
+
+		TriState new_phi = NOT(div[5].get_sout(TriState::Zero));
+		PHI0 = new_phi;
+		TriState rst = NOR(PHI0, div[4].get_sout(TriState::Zero));
+
+		div[3].sim(q, nq, rst, div[2].get_sout(rst));
+		div[2].sim(q, nq, rst, div[1].get_sout(rst));
+		div[1].sim(q, nq, rst, div[0].get_sout(rst));
+		div[0].sim(q, nq, rst, PHI0);
+	}
+
+	void DIV_SRBit::sim(TriState q, TriState nq, TriState rst, TriState sin)
+	{
+		in_latch.set(sin, q);
+		out_latch.set(in_latch.nget(), nq);
+	}
+
+	TriState DIV_SRBit::get_sout(TriState rst)
+	{
+		return NOR(out_latch.get(), rst);
+	}
+
+	TriState DIV_SRBit::get_nval()
+	{
+		return in_latch.nget();
 	}
 
 	/// <summary>
@@ -28,31 +71,62 @@ namespace Breaknes
 	{
 		ADDirty = false;
 		ext_bus = 0;
+		addr_bus = 0;
+
+		// Simulate Divider for Core
+
+		SimCoreDivider();
+
+		// Simulate Core
+
+		TriState core_inputs[(size_t)M6502Core::InputPad::Max]{};
+		TriState core_outputs[(size_t)M6502Core::OutputPad::Max];
+
+		core_inputs[(size_t)M6502Core::InputPad::n_NMI] = TriState::One;
+		core_inputs[(size_t)M6502Core::InputPad::n_IRQ] = TriState::One;
+		core_inputs[(size_t)M6502Core::InputPad::n_RES] = pendingReset ? TriState::Zero : TriState::One;
+		core_inputs[(size_t)M6502Core::InputPad::PHI0] = PHI0;
+		core_inputs[(size_t)M6502Core::InputPad::RDY] = TriState::One;
+		core_inputs[(size_t)M6502Core::InputPad::SO] = TriState::One;
+
+		core->sim(core_inputs, core_outputs, &addr_bus, &data_bus);
+
+		TriState Core_PHI1 = core_outputs[(size_t)M6502Core::OutputPad::PHI1];
+		TriState Core_PHI2 = core_outputs[(size_t)M6502Core::OutputPad::PHI2];
+		TriState Core_RnW = core_outputs[(size_t)M6502Core::OutputPad::RnW];
+		TriState Core_SYNC = core_outputs[(size_t)M6502Core::OutputPad::SYNC];
+
+		bool pendingWrite = Core_RnW == TriState::Zero;
+		bool pendingCpuOperation = (addr_bus & ~7) == 0x2000;
+		size_t ppuRegId = addr_bus & 7;
+
+		// CPU I/F operations counter (negedge)
+
+		if (!pendingCpuOperation && prev_pendingCpuOperation)
+		{
+			CPUOpsProcessed++;
+		}
+		prev_pendingCpuOperation = pendingCpuOperation;
 
 		// Simulate PPU
 
-		TriState inputs[(size_t)PPUSim::InputPad::Max]{};
-		TriState outputs[(size_t)PPUSim::OutputPad::Max]{};
+		TriState ppu_inputs[(size_t)PPUSim::InputPad::Max]{};
+		TriState ppu_outputs[(size_t)PPUSim::OutputPad::Max]{};
 
-		inputs[(size_t)PPUSim::InputPad::CLK] = CLK;
-		inputs[(size_t)PPUSim::InputPad::n_RES] = pendingReset ? TriState::Zero : TriState::One;
-		inputs[(size_t)PPUSim::InputPad::RnW] = pendingWrite ? TriState::Zero : TriState::One;
-		inputs[(size_t)PPUSim::InputPad::RS0] = pendingCpuOperation ? ((ppuRegId & 1) ? TriState::One : TriState::Zero) : TriState::Zero;
-		inputs[(size_t)PPUSim::InputPad::RS1] = pendingCpuOperation ? ((ppuRegId & 2) ? TriState::One : TriState::Zero) : TriState::Zero;
-		inputs[(size_t)PPUSim::InputPad::RS2] = pendingCpuOperation ? ((ppuRegId & 4) ? TriState::One : TriState::Zero) : TriState::Zero;
-		inputs[(size_t)PPUSim::InputPad::n_DBE] = pendingCpuOperation ? TriState::Zero : TriState::One;
+		ppu_inputs[(size_t)PPUSim::InputPad::CLK] = CLK;
+		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = pendingReset ? TriState::Zero : TriState::One;
+		ppu_inputs[(size_t)PPUSim::InputPad::RnW] = pendingWrite ? TriState::Zero : TriState::One;
+		ppu_inputs[(size_t)PPUSim::InputPad::RS0] = pendingCpuOperation ? ((ppuRegId & 1) ? TriState::One : TriState::Zero) : TriState::Zero;
+		ppu_inputs[(size_t)PPUSim::InputPad::RS1] = pendingCpuOperation ? ((ppuRegId & 2) ? TriState::One : TriState::Zero) : TriState::Zero;
+		ppu_inputs[(size_t)PPUSim::InputPad::RS2] = pendingCpuOperation ? ((ppuRegId & 4) ? TriState::One : TriState::Zero) : TriState::Zero;
+		ppu_inputs[(size_t)PPUSim::InputPad::n_DBE] = pendingCpuOperation ? TriState::Zero : TriState::One;
 
-		if (pendingCpuOperation && pendingWrite)
-		{
-			data_bus = writeValue;
-		}
+		ppu->sim(ppu_inputs, ppu_outputs, &ext_bus, &data_bus, &ad_bus, &pa8_13, vidSample);
 
-		ppu->sim(inputs, outputs, &ext_bus, &data_bus, &ad_bus, &pa8_13, vidSample);
-
-		ALE = outputs[(size_t)PPUSim::OutputPad::ALE];
-		n_RD = outputs[(size_t)PPUSim::OutputPad::n_RD];
-		n_WR = outputs[(size_t)PPUSim::OutputPad::n_WR];
-		n_INT = outputs[(size_t)PPUSim::OutputPad::n_INT];
+		ALE = ppu_outputs[(size_t)PPUSim::OutputPad::ALE];
+		n_RD = ppu_outputs[(size_t)PPUSim::OutputPad::n_RD];
+		n_WR = ppu_outputs[(size_t)PPUSim::OutputPad::n_WR];
+		n_INT = ppu_outputs[(size_t)PPUSim::OutputPad::n_INT];
 
 		if (n_INT == TriState::Z)
 		{
@@ -99,24 +173,6 @@ namespace Breaknes
 
 		CLK = NOT(CLK);
 
-		if (pendingCpuOperation && ppu->GetPCLKCounter() != savedPclk)
-		{
-			pendingCpuOperation = false;
-		}
-
-		// Another scenario for canceling a CPU operation.
-		// If the operation is started at the PCLK boundary, the PCLK Counter can change quite quickly.
-		// To be sure, we will artificially delay the execution of the CPU operation to make it look natural.
-
-		if (pendingCpuOperation && faithDelayCounter != 0)
-		{
-			faithDelayCounter--;
-			if (faithDelayCounter == 0)
-			{
-				pendingCpuOperation = false;
-			}
-		}
-
 		if (pendingReset)
 		{
 			resetHalfClkCounter--;
@@ -124,39 +180,6 @@ namespace Breaknes
 			{
 				pendingReset = false;
 			}
-		}
-	}
-
-	/// <summary>
-	/// Queue to write a value to the PPU register.
-	/// The PPU pins will be exposed until PCLK is changed.
-	/// </summary>
-	void PPUPlayerBoard::CPUWrite(size_t ppuReg, uint8_t val)
-	{
-		if (!pendingCpuOperation)
-		{
-			ppuRegId = ppuReg;
-			writeValue = val;
-			pendingCpuOperation = true;
-			pendingWrite = true;
-			savedPclk = ppu->GetPCLKCounter();
-			faithDelayCounter = faithDelay;
-		}
-	}
-
-	/// <summary>
-	/// Queue to read a value from the PPU register.
-	/// The PPU pins will be exposed until PCLK is changed.
-	/// </summary>
-	void PPUPlayerBoard::CPURead(size_t ppuReg)
-	{
-		if (!pendingCpuOperation)
-		{
-			ppuRegId = ppuReg;
-			pendingCpuOperation = true;
-			pendingWrite = false;
-			savedPclk = ppu->GetPCLKCounter();
-			faithDelayCounter = faithDelay;
 		}
 	}
 
@@ -218,13 +241,21 @@ namespace Breaknes
 
 	void PPUPlayerBoard::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
 	{
+		// PPUPlayerBoard is not designed for this.
 	}
 
 	void PPUPlayerBoard::EnableNSFBanking(bool enable)
 	{
+		// PPUPlayerBoard is not designed for this.
 	}
 
 	void PPUPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
 	{
+		if (core != nullptr)
+		{
+			CPUOpsProcessed = 0;
+			prev_pendingCpuOperation = false;
+			core->SetRegDump(data, data_size);
+		}
 	}
 }

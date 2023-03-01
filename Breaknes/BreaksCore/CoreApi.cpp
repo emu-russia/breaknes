@@ -255,25 +255,4 @@ extern "C"
 			board->SetNoiseLevel(volts);
 		}
 	}
-
-	// TBD: For PPUPlayer. Replace by Fake6502+RegDumpProcessor
-
-	__declspec(dllexport) void CPUWrite(size_t ppuReg, uint8_t val)
-	{
-		if (board != nullptr)
-		{
-			printf("CPUWrite: %d 0x%02X; H/V = %zd/%zd, PCLK = %zd\n",
-				(uint8_t)ppuReg, val, board->GetHCounter(), board->GetVCounter(), board->GetPCLKCounter());
-			board->CPUWrite(ppuReg, val);
-		}
-	}
-
-	__declspec(dllexport) void CPURead(size_t ppuReg)
-	{
-		if (board != nullptr)
-		{
-			//printf("CPURead: %d\n", (uint8_t)ppuReg);
-			board->CPURead(ppuReg);
-		}
-	}
 };

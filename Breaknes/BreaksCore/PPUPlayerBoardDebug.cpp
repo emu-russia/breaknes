@@ -301,6 +301,7 @@ namespace Breaknes
 		"#WR", offsetof(PPUBoardDebugInfo, n_WR), 1,
 		"#INT", offsetof(PPUBoardDebugInfo, n_INT), 1,
 		"PDBus", offsetof(PPUBoardDebugInfo, PD), 8,
+		"CPUOpsProcessed", offsetof(PPUBoardDebugInfo, CPUOpsProcessed), 32,
 	};
 
 	SignalOffsetPair nrom_signals[] = {
@@ -591,6 +592,7 @@ namespace Breaknes
 		info.n_WR = n_WR;
 		info.n_INT = n_INT;
 		info.PD = ad_bus;
+		info.CPUOpsProcessed = CPUOpsProcessed;
 	}
 
 	uint32_t PPUPlayerBoard::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)

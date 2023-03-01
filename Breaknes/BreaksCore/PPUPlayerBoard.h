@@ -18,10 +18,25 @@ namespace Breaknes
 		uint32_t n_WR;
 		uint32_t n_INT;
 		uint32_t PD;
+		uint32_t CPUOpsProcessed;
+	};
+
+	class DIV_SRBit
+	{
+		BaseLogic::DLatch in_latch{};
+		BaseLogic::DLatch out_latch{};
+
+	public:
+		void sim(BaseLogic::TriState q, BaseLogic::TriState nq, BaseLogic::TriState rst, BaseLogic::TriState sin);
+
+		BaseLogic::TriState get_sout(BaseLogic::TriState rst);
+		BaseLogic::TriState get_nval();
 	};
 
 	class PPUPlayerBoard : public Board
 	{
+		M6502Core::FakeM6502* core = nullptr;
+
 		BaseBoard::LS373 latch;
 		BaseBoard::SRAM *vram = nullptr;
 
@@ -29,14 +44,6 @@ namespace Breaknes
 		uint8_t ad_bus = 0;
 		bool ADDirty = false;
 		uint8_t pa8_13 = 0;
-
-		bool pendingCpuOperation = false;
-		bool pendingWrite = false;
-		size_t ppuRegId = 0;
-		uint8_t writeValue = 0;
-		size_t savedPclk = 0;
-		size_t faithDelayCounter = 0;
-		const size_t faithDelay = 8;	// Pending CPU operation can cancel at the PCLK boundary and be executed in one CLK. Not good, it should last longer.
 
 		bool pendingReset = false;
 		int resetHalfClkCounter = 0;
@@ -82,15 +89,20 @@ namespace Breaknes
 
 		void GetDebugInfo(PPUBoardDebugInfo& info);
 
+		void SimCoreDivider();
+		BaseLogic::FF CLK_FF{};
+		DIV_SRBit div[6]{};
+
+		BaseLogic::TriState PHI0 = BaseLogic::TriState::X;
+
+		bool prev_pendingCpuOperation = false;
+		uint32_t CPUOpsProcessed = 0;
+
 	public:
 		PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
 		virtual ~PPUPlayerBoard();
 
 		void Step() override;
-
-		void CPUWrite(size_t ppuReg, uint8_t val) override;
-
-		void CPURead(size_t ppuReg) override;
 
 		int InsertCartridge(uint8_t* nesImage, size_t nesImageSize) override;
 

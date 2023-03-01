@@ -151,14 +151,6 @@ namespace SharpTools
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetNoiseLevel(float volts);
-
-		// TBD: For PPUPlayer. Replace by Fake6502+RegDumpProcessor
-
-		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void CPUWrite(int ppuReg, byte val);
-
-		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void CPURead(int ppuReg);
 	}
 
 

@@ -10,6 +10,9 @@ namespace PPUPlayer
 {
 	public partial class FormMain : Form
 	{
+		private int StepsToStat = 32;
+		private int StepsCounter = 0;
+
 		private void backgroundWorker1_DoWork_1(object sender, DoWorkEventArgs e)
 		{
 			while (!backgroundWorker1.CancellationPending)
@@ -22,7 +25,7 @@ namespace PPUPlayer
 
 				// Check that the PPU Dump records have run out
 
-				if (currentEntry == null)
+				if (CPUOpsProcessed >= TotalOps)
 				{
 					Console.WriteLine("PPU Dump records are out.");
 
@@ -40,30 +43,6 @@ namespace PPUPlayer
 					}
 
 					return;
-				}
-
-				// Check that it is time to perform a CPU operation
-
-				if (BreaksCoreInterop.GetPCLKCounter() == currentEntry.pclk)
-				{
-					if (currentEntry.write)
-					{
-						BreaksCoreInterop.CPUWrite(currentEntry.reg, currentEntry.value);
-					}
-					else
-					{
-						BreaksCoreInterop.CPURead(currentEntry.reg);
-					}
-
-					currentEntry = NextLogEntry();
-
-					CPUOpsProcessed++;
-					recordCounter++;
-					if (recordCounter > 1000)
-					{
-						recordCounter = 0;
-						UpdatePpuStats(PPUStats.CPU_IF_Ops, CPUOpsProcessed);
-					}
 				}
 
 				// Perform one half-cycle of the PPU

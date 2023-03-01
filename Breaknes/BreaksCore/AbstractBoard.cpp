@@ -152,12 +152,4 @@ namespace Breaknes
 	{
 		ppu->SetCompositeNoise(volts);
 	}
-
-	void Board::CPUWrite(size_t ppuReg, uint8_t val)
-	{
-	}
-
-	void Board::CPURead(size_t ppuReg)
-	{
-	}
 }
