@@ -23,6 +23,9 @@ namespace BaseBoard
 		size_t clk_counter = 0;
 		size_t next_clk = 0;
 
+		bool hold = false;				// Hold the register operation for the rest of the cycle
+		RegDumpEntry hold_entry{};
+
 		BaseLogic::TriState PrevCLK = BaseLogic::TriState::X;
 
 		RegDumpEntry* GetCurrentEntry();
