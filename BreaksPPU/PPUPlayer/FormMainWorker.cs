@@ -47,7 +47,7 @@ namespace PPUPlayer
 
 				// Perform one half-cycle of the PPU
 
-				BreaksCoreInterop.Step();
+				BreaksCore.Step();
 
 				if (TraceEnabled)
 				{
@@ -56,8 +56,8 @@ namespace PPUPlayer
 
 				// Logic related to the processing of H/V values
 
-				int h = BreaksCoreInterop.GetHCounter();
-				int v = BreaksCoreInterop.GetVCounter();
+				int h = BreaksCore.GetHCounter();
+				int v = BreaksCore.GetVCounter();
 
 				if (h != PrevH)
 				{
@@ -91,10 +91,10 @@ namespace PPUPlayer
 
 				// Get a single sample of the video signal. If the PPU is in the process of resetting - do not count samples at that moment.
 
-				if (!BreaksCoreInterop.InResetState())
+				if (!BreaksCore.InResetState())
 				{
-					BreaksCoreInterop.VideoOutSample sample;
-					BreaksCoreInterop.SampleVideoSignal(out sample);
+					BreaksCore.VideoOutSample sample;
+					BreaksCore.SampleVideoSignal(out sample);
 					ProcessSample(sample);
 				}
 
@@ -111,13 +111,13 @@ namespace PPUPlayer
 						CPUOpsProcessed = (int)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "CPUOpsProcessed");
 						UpdatePpuStats(PPUStats.CPU_IF_Ops, CPUOpsProcessed);
 
-						UpdatePpuStats(PPUStats.PCLK_Sec, (int)(BreaksCoreInterop.GetPCLKCounter() - pclkCounter));
+						UpdatePpuStats(PPUStats.PCLK_Sec, (int)(BreaksCore.GetPCLKCounter() - pclkCounter));
 						UpdatePpuStats(PPUStats.FPS, fieldCounter);
 
 						UpdatePpuStats(PPUStats.Scans, scanCounter);
 						UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
 
-						pclkCounter = BreaksCoreInterop.GetPCLKCounter();
+						pclkCounter = BreaksCore.GetPCLKCounter();
 						fieldCounter = 0;
 					}
 					StepsCounter = 0;

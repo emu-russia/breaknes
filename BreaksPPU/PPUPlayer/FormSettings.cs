@@ -67,7 +67,7 @@ namespace PPUPlayer
 			settings.ColorDebug = true;
 			settings.PpuRAWMode = false;
 			settings.FreeModeVMirroring = true;
-			settings.OAMDecay = BreaksCoreInterop.OAMDecayBehavior.Keep;
+			settings.OAMDecay = BreaksCore.OAMDecayBehavior.Keep;
 			settings.PpuNoise = 0.0f;
 
 			SaveSettings(settings);
@@ -148,7 +148,7 @@ namespace PPUPlayer
 			[XmlElement]
 			[Category("Board Features")]
 			[Description("Set one of the ways to decay OAM cells.")]
-			public BreaksCoreInterop.OAMDecayBehavior OAMDecay { get; set; }
+			public BreaksCore.OAMDecayBehavior OAMDecay { get; set; }
 
 			[XmlElement]
 			[Category("Board Features")]

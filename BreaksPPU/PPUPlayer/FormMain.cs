@@ -199,11 +199,11 @@ namespace PPUPlayer
 
 			string ppu_rev = settings.PPU_Revision == null ? "RP2C02G" : settings.PPU_Revision;
 
-			BreaksCoreInterop.CreateBoard("PPUPlayer", "RP2A03G", ppu_rev, "Fami");
-			int res = BreaksCoreInterop.InsertCartridge(nes, nes.Length);
+			BreaksCore.CreateBoard("PPUPlayer", "RP2A03G", ppu_rev, "Fami");
+			int res = BreaksCore.InsertCartridge(nes, nes.Length);
 			if (res != 0)
 			{
-				BreaksCoreInterop.DestroyBoard();
+				BreaksCore.DestroyBoard();
 				MessageBox.Show(
 					"The cartridge didn't want to plug into the slot. Check that the .nes is intact and has a Mapper supported by the PPU Player.",
 					"Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -211,11 +211,11 @@ namespace PPUPlayer
 			}
 			if (settings.ResetPPU)
 			{
-				BreaksCoreInterop.Reset();
+				BreaksCore.Reset();
 			}
-			BreaksCoreInterop.SetOamDecayBehavior(settings.OAMDecay);
-			BreaksCoreInterop.SetNoiseLevel(settings.PpuNoise);
-			BreaksCoreInterop.LoadRegDump(reg_dump, reg_dump.Length);
+			BreaksCore.SetOamDecayBehavior(settings.OAMDecay);
+			BreaksCore.SetNoiseLevel(settings.PpuNoise);
+			BreaksCore.LoadRegDump(reg_dump, reg_dump.Length);
 			UpdateMemLayout();
 
 			ResetVisualize(settings.PpuRAWMode);
@@ -224,11 +224,11 @@ namespace PPUPlayer
 			{
 				// In free mode there is no one to enable PPU rendering, so we do it forcibly.
 
-				BreaksCoreInterop.RenderAlwaysEnabled(true);
+				BreaksCore.RenderAlwaysEnabled(true);
 			}
 			else
 			{
-				BreaksCoreInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
+				BreaksCore.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
 			}
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
@@ -282,8 +282,8 @@ namespace PPUPlayer
 
 		void DisposeBoard()
 		{
-			BreaksCoreInterop.EjectCartridge();
-			BreaksCoreInterop.DestroyBoard();
+			BreaksCore.EjectCartridge();
+			BreaksCore.DestroyBoard();
 			ppu_dump = null;
 			nes_file = null;
 
@@ -514,7 +514,7 @@ namespace PPUPlayer
 			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
-			BreaksCoreInterop.SetOamDecayBehavior(settings.OAMDecay);
+			BreaksCore.SetOamDecayBehavior(settings.OAMDecay);
 			if (SimulationStarted)
 			{
 				// TBD: Works unstable, sometimes loses phase (need to make a neater PLL)

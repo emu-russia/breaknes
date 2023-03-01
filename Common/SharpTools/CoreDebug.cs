@@ -12,7 +12,7 @@ namespace SharpTools
 	public class CoreDebug
 	{
 		public CpuPads cpu_pads = new CpuPads();
-		public BreaksCoreInterop.CpuDebugInfoRaw info = new BreaksCoreInterop.CpuDebugInfoRaw();
+		public BreaksCore.CpuDebugInfoRaw info = new BreaksCore.CpuDebugInfoRaw();
 
 		public class CpuPads
 		{

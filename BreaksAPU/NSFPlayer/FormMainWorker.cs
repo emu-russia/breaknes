@@ -28,7 +28,7 @@ namespace NSFPlayer
 				}
 				else
 				{
-					BreaksCoreInterop.Step();        // = 0.5 XTAL CLK
+					BreaksCore.Step();        // = 0.5 XTAL CLK
 				}
 
 				if (nsf_loaded)
@@ -45,7 +45,7 @@ namespace NSFPlayer
 
 				if (nsf_loaded)
 				{
-					var aclk = BreaksCoreInterop.GetACLKCounter();
+					var aclk = BreaksCore.GetACLKCounter();
 					if (aclk >= AclkToPlay)
 					{
 						ExecPLAY();
@@ -74,10 +74,10 @@ namespace NSFPlayer
 						UpdateSampleBufStats();
 						UpdateSignalPlot();
 
-						var aclk_per_sec = BreaksCoreInterop.GetACLKCounter() - aclkCounter;
+						var aclk_per_sec = BreaksCore.GetACLKCounter() - aclkCounter;
 						toolStripStatusLabelACLK.Text = aclk_per_sec.ToString();
 
-						aclkCounter = BreaksCoreInterop.GetACLKCounter();
+						aclkCounter = BreaksCore.GetACLKCounter();
 					}
 					StepsCounter = 0;
 				}

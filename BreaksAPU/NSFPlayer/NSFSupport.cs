@@ -160,7 +160,7 @@ namespace NSFPlayer
 		/// <param name="reset_apu_also">Also /RES=0 whole APU chip</param>
 		public void ExecuteUntilRTS (UInt16 address, byte? a, byte? x, byte? y, bool reset_apu_also)
 		{
-			BreaksCoreInterop.Reset();
+			BreaksCore.Reset();
 			// Set the A register for the desired song.
 			if (a != null)
 			{
