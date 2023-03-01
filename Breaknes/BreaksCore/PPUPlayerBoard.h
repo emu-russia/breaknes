@@ -22,15 +22,10 @@ namespace Breaknes
 
 	class PPUPlayerBoard : public Board
 	{
-		PPUSim::PPU* ppu = nullptr;
-
 		BaseBoard::LS373 latch;
 		BaseBoard::SRAM *vram = nullptr;
 
-		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
-
 		uint8_t ext_bus = 0;
-		uint8_t data_bus = 0;
 		uint8_t ad_bus = 0;
 		bool ADDirty = false;
 		uint8_t pa8_13 = 0;
@@ -104,5 +99,11 @@ namespace Breaknes
 		void Reset() override;
 
 		bool InResetState() override;
+
+		void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address) override;
+
+		void EnableNSFBanking(bool enable) override;
+
+		void LoadRegDump(uint8_t* data, size_t data_size) override;
 	};
 }

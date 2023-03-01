@@ -35,8 +35,8 @@ namespace Breaknes
 		bool pal_cached = false;
 
 	public:
-		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev) {}
-		virtual ~Board() {}
+		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
+		virtual ~Board();
 
 		// hmm...
 		void InsertCartridge(AbstractCartridge* cart);

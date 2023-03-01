@@ -211,7 +211,7 @@ namespace PPUPlayer
 
 			string ppu_rev = settings.PPU_Revision == null ? "RP2C02G" : settings.PPU_Revision;
 
-			BreaksCoreInterop.CreateBoard("PPUPlayer", "None", ppu_rev, "Fami");
+			BreaksCoreInterop.CreateBoard("PPUPlayer", "RP2A03G", ppu_rev, "Fami");
 			int res = BreaksCoreInterop.InsertCartridge(nes, nes.Length);
 			if (res != 0)
 			{

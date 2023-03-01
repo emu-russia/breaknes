@@ -3,6 +3,16 @@
 
 namespace Breaknes
 {
+	Board::Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev)
+	{
+		pal = new RGB_Triplet[8 * 64];
+	}
+
+	Board::~Board()
+	{
+		delete pal;
+	}
+
 	// cartridge api hmmm...
 
 	void Board::InsertCartridge(AbstractCartridge* _cart)

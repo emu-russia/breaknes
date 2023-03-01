@@ -148,6 +148,10 @@ namespace Breaknes
 		{
 			inst = new APUPlayerBoard(apu_rev, ppu_rev);
 		}
+		else if (board_name == "PPUPlayer")
+		{
+			inst = new PPUPlayerBoard(apu_rev, ppu_rev);
+		}
 		else
 		{
 			inst = new BogusBoard(apu_rev, ppu_rev);

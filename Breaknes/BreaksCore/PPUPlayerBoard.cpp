@@ -11,8 +11,6 @@ namespace Breaknes
 		ppu = new PPUSim::PPU(ppu_rev);
 		vram = new BaseBoard::SRAM(11);
 
-		pal = new RGB_Triplet[8 * 64];
-
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
 	}
@@ -21,7 +19,6 @@ namespace Breaknes
 	{
 		delete ppu;
 		delete vram;
-		delete pal;
 	}
 
 	/// <summary>
@@ -217,5 +214,17 @@ namespace Breaknes
 	bool PPUPlayerBoard::InResetState()
 	{
 		return pendingReset;
+	}
+
+	void PPUPlayerBoard::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
+	{
+	}
+
+	void PPUPlayerBoard::EnableNSFBanking(bool enable)
+	{
+	}
+
+	void PPUPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
+	{
 	}
 }
