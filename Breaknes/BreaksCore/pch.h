@@ -34,6 +34,11 @@
 #include "AbstractCartridge.h"
 #include "CartridgeFactory.h"
 
+// Mappers
+
+#include "../../Mappers/NES_Header.h"
+#include "../../Mappers/NROM.h"
+
 // Boards
 
 #include "AbstractBoard.h"
@@ -44,6 +49,7 @@
 #include "APUPlayerBoard.h"
 #include "NSFMapper.h"
 #include "NSFPlayerBoard.h"
+#include "PPUPlayerBoard.h"
 
 // To C#
 

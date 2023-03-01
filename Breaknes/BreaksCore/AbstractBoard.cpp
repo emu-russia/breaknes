@@ -65,4 +65,81 @@ namespace Breaknes
 		apu->GetSignalFeatures(feat);
 		*features = feat;
 	}
+
+	size_t Board::GetPCLKCounter()
+	{
+		return ppu->GetPCLKCounter();
+	}
+
+	void Board::SampleVideoSignal(PPUSim::VideoOutSignal* sample)
+	{
+		if (sample != nullptr)
+		{
+			*sample = vidSample;
+		}
+	}
+
+	size_t Board::GetHCounter()
+	{
+		return ppu->GetHCounter();
+	}
+
+	size_t Board::GetVCounter()
+	{
+		return ppu->GetVCounter();
+	}
+
+	void Board::RenderAlwaysEnabled(bool enable)
+	{
+		ppu->Dbg_RenderAlwaysEnabled(enable);
+	}
+
+	void Board::GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features)
+	{
+		PPUSim::VideoSignalFeatures feat{};
+		ppu->GetSignalFeatures(feat);
+		*features = feat;
+	}
+
+	void Board::ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	{
+		if (!pal_cached)
+		{
+			PPUSim::VideoOutSignal rawIn{}, rgbOut{};
+
+			// 8 Emphasis bands, each with 64 colors.
+
+			for (size_t n = 0; n < (8 * 64); n++)
+			{
+				rawIn.RAW.raw = (uint16_t)n;
+				ppu->ConvertRAWToRGB(rawIn, rgbOut);
+				pal[n].r = rgbOut.RGB.RED;
+				pal[n].g = rgbOut.RGB.GREEN;
+				pal[n].b = rgbOut.RGB.BLUE;
+			}
+
+			pal_cached = true;
+		}
+
+		size_t n = raw & 0b111'11'1111;
+
+		*r = pal[n].r;
+		*g = pal[n].g;
+		*b = pal[n].b;
+	}
+
+	void Board::SetRAWColorMode(bool enable)
+	{
+		ppu->SetRAWOutput(enable);
+	}
+
+	void Board::SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior)
+	{
+		ppu->SetOamDecayBehavior(behavior);
+	}
+
+	void Board::SetNoiseLevel(float volts)
+	{
+		ppu->SetCompositeNoise(volts);
+	}
 }

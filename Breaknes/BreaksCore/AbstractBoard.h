@@ -2,6 +2,13 @@
 
 namespace Breaknes
 {
+	struct RGB_Triplet
+	{
+		uint8_t r;
+		uint8_t g;
+		uint8_t b;
+	};
+
 	class Board
 	{
 	protected:
@@ -18,10 +25,14 @@ namespace Breaknes
 		uint16_t addr_bus = 0;
 
 		APUSim::AudioOutSignal aux{};
+		PPUSim::VideoOutSignal vidSample{};
 
 		// The cartridge slot supports hotplugging during simulation.
 
 		AbstractCartridge* cart = nullptr;
+
+		RGB_Triplet* pal = nullptr;
+		bool pal_cached = false;
 
 	public:
 		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev) {}
@@ -104,5 +115,67 @@ namespace Breaknes
 		/// </summary>
 		/// <param name="features"></param>
 		virtual void GetApuSignalFeatures(APUSim::AudioSignalFeatures* features);
+
+		/// <summary>
+		/// Get the "pixel" counter. Keep in mind that pixels refers to an abstract entity representing the visible or invisible part of the video signal.
+		/// </summary>
+		/// <returns></returns>
+		virtual size_t GetPCLKCounter();
+
+		/// <summary>
+		/// Get 1 sample of the video signal.
+		/// </summary>
+		/// <param name="sample"></param>
+		virtual void SampleVideoSignal(PPUSim::VideoOutSignal* sample);
+
+		/// <summary>
+		/// Get the direct value from the PPU H counter.
+		/// </summary>
+		/// <returns></returns>
+		virtual size_t GetHCounter();
+
+		/// <summary>
+		/// Get the direct value from the PPU V counter.
+		/// </summary>
+		/// <returns></returns>
+		virtual size_t GetVCounter();
+
+		/// <summary>
+		/// Forcibly enable rendering ($2001[3] = $2001[4] always equals 1). 
+		/// Used for debugging PPU signals, when the CPU I/F register dump is limited, or when you want to get faster simulation results. 
+		/// Keep in mind that with permanently enabled rendering the PPU becomes unstable and this hack should be applied when you know what you're doing.
+		/// </summary>
+		/// <param name="enable"></param>
+		virtual void RenderAlwaysEnabled(bool enable);
+
+		/// <summary>
+		/// Get video signal settings that help with its rendering on the consumer side.
+		/// </summary>
+		/// <param name="features"></param>
+		virtual void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features);
+
+		/// <summary>
+		/// Convert the raw color to RGB. Can be used for palette generation or PPU video output in RAW mode.
+		/// The SYNC level (RAW.Sync) check must be done from the outside.
+		/// </summary>
+		virtual void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b);
+
+		/// <summary>
+		/// Use RAW color output. 
+		/// RAW color refers to the Chroma/Luma combination that comes to the video generator and the Emphasis bit combination.
+		/// </summary>
+		/// <param name="enable"></param>
+		virtual void SetRAWColorMode(bool enable);
+
+		/// <summary>
+		/// Set one of the ways to decay OAM cells.
+		/// </summary>
+		virtual void SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior);
+
+		/// <summary>
+		/// Set the noise for the composite video signal (in volts).
+		/// </summary>
+		/// <param name="volts"></param>
+		virtual void SetNoiseLevel(float volts);
 	};
 }

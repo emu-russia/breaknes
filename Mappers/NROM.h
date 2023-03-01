@@ -2,7 +2,7 @@
 
 #pragma once
 
-namespace PPUPlayer
+namespace Mappers
 {
 	struct NROM_DebugInfo
 	{
