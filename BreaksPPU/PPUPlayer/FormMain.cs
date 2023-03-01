@@ -515,6 +515,11 @@ namespace PPUPlayer
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
 			BreaksCoreInterop.SetOamDecayBehavior(settings.OAMDecay);
+			if (SimulationStarted)
+			{
+				// TBD: Works unstable, sometimes loses phase (need to make a neater PLL)
+				ResetVisualize(settings.PpuRAWMode);
+			}
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)

@@ -893,7 +893,7 @@ namespace NSFPlayer
 				}
 				else
 				{
-					MessageBox.Show("I can't while the worker is running. Stop it first", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					MessageBox.Show("I can't while the worker is running. Pause it first", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
 			}
 		}

@@ -30,6 +30,8 @@ namespace PPUPlayer
 		bool DumpToFile = false;
 		Stream VideoStream;
 
+		int prev_cb_shift = 0;
+
 		void ResetVisualize(bool RAWMode)
 		{
 			BreaksCoreInterop.GetPpuSignalFeatures(out ppu_features);
@@ -44,6 +46,7 @@ namespace PPUPlayer
 			SyncFound = false;
 			SyncPos = -1;
 			CurrentScan = 0;
+			prev_cb_shift = 0;
 
 			composite_samples = new float[SamplesPerScan];
 			signalPlotScan.ForceMinMax(true, -0.5f, ppu_features.WhiteLevel * 2);
@@ -322,8 +325,6 @@ namespace PPUPlayer
 				CurrentScan = 0;
 			}
 		}
-
-		int prev_cb_shift = 0;
 
 		int PLL(bool odd, int cb)
 		{

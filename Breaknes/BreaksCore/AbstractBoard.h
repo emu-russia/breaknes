@@ -15,7 +15,7 @@ namespace Breaknes
 
 		// These basic chips are on all variations of motherboards, so we make them available to all inherited classes.
 
-		M6502Core::M6502* cpu = nullptr;
+		M6502Core::M6502* core = nullptr;
 		APUSim::APU* apu = nullptr;
 		PPUSim::PPU* ppu = nullptr;
 
@@ -40,7 +40,7 @@ namespace Breaknes
 		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
 		virtual ~Board();
 
-		// hmm...
+		// TBD: hmm...
 		void InsertCartridge(AbstractCartridge* cart);
 		void DestroyCartridge();
 
@@ -48,6 +48,8 @@ namespace Breaknes
 		/// Simulate 1 half cycle of the test board with NSFPlayer. The simulation of the signal edge is not supported, this is overkill.
 		/// </summary>
 		virtual void Step() = 0;
+
+		// TBD: hmmm.. cartridge stuff
 
 		/// <summary>
 		/// "Insert" the cartridge as a .nes ROM. In this implementation we are simply trying to instantiate an NROM, but in a more advanced emulation, Cartridge Factory will take care of "inserting" the cartridge.
@@ -65,13 +67,13 @@ namespace Breaknes
 		/// <summary>
 		/// Make the board /RES pins = 0 for a few CLK half cycles so that the APU/PPU resets all of its internal circuits.
 		/// </summary>
-		virtual void Reset() = 0;
+		virtual void Reset();
 
 		/// <summary>
 		/// The parent application can check that the board is in the reset process and ignore the audio/video signal for that time.
 		/// </summary>
 		/// <returns></returns>
-		virtual bool InResetState() = 0;
+		virtual bool InResetState();
 
 		/// <summary>
 		/// Get the values of the ACLK cycle counter.
@@ -97,20 +99,20 @@ namespace Breaknes
 		/// <param name="data">nsf data offset +0x80</param>
 		/// <param name="data_size">nsf data size</param>
 		/// <param name="load_address">nsf load address (from header)</param>
-		virtual void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address) = 0;
+		virtual void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address);
 
 		/// <summary>
 		/// Enable the bank switching circuit for the BankedSRAM device.
 		/// </summary>
 		/// <param name="enable"></param>
-		virtual void EnableNSFBanking(bool enable) = 0;
+		virtual void EnableNSFBanking(bool enable);
 
 		/// <summary>
 		/// Load APU/PPU registers dump
 		/// </summary>
 		/// <param name="data">RegDumpEntry records</param>
 		/// <param name="data_size">Dump size (bytes)</param>
-		virtual void LoadRegDump(uint8_t* data, size_t data_size) = 0;
+		virtual void LoadRegDump(uint8_t* data, size_t data_size);
 
 		/// <summary>
 		/// Get audio signal settings that help with its rendering on the consumer side.

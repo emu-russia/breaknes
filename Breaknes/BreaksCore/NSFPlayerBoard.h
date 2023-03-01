@@ -16,7 +16,6 @@ namespace Breaknes
 
 	class NSFPlayerBoard : public Board
 	{
-		M6502Core::M6502* core = nullptr;
 		NSFMapper* sram = nullptr;
 		BaseBoard::SRAM* wram = nullptr;
 		const size_t wram_bits = 11;
@@ -64,7 +63,5 @@ namespace Breaknes
 		void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address) override;
 
 		void EnableNSFBanking(bool enable) override;
-
-		void LoadRegDump(uint8_t* data, size_t data_size) override;
 	};
 }

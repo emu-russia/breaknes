@@ -27,6 +27,7 @@
     <ClCompile Include="..\..\APUPlayerBoardDebug.cpp" />
     <ClCompile Include="..\..\BoardFactory.cpp" />
     <ClCompile Include="..\..\BogusBoard.cpp" />
+    <ClCompile Include="..\..\BogusBoardDebug.cpp" />
     <ClCompile Include="..\..\CartridgeFactory.cpp" />
     <ClCompile Include="..\..\CoreApi.cpp" />
     <ClCompile Include="..\..\dllmain.cpp" />

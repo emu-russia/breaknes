@@ -82,16 +82,6 @@ namespace Breaknes
 		return false;
 	}
 
-	void APUPlayerBoard::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
-	{
-		// APUPlayerBoard is not designed for this.
-	}
-
-	void APUPlayerBoard::EnableNSFBanking(bool enable)
-	{
-		// APUPlayerBoard is not designed for this.
-	}
-
 	void APUPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
 	{
 		if (core != nullptr)

@@ -72,6 +72,9 @@
     <ClCompile Include="..\..\PPUPlayerBoardDebug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\BogusBoardDebug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\FamicomBoard.h">

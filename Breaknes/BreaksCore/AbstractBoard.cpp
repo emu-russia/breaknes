@@ -42,6 +42,15 @@ namespace Breaknes
 		// The board does not have a cartridge connector.
 	}
 
+	void Board::Reset()
+	{
+	}
+
+	bool Board::InResetState()
+	{
+		return false;
+	}
+
 	size_t Board::GetACLKCounter()
 	{
 		return apu->GetACLKCounter();
@@ -67,6 +76,18 @@ namespace Breaknes
 			// This is essentially "muting" AUX A, because the level of AUX A at its peak is about 300 mV, and the level of AUX B at its peak is about 1100 mV.
 			// Accordingly, if you do just (A+B)/2, the square channels will be "overshoot".
 		}
+	}
+
+	void Board::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
+	{
+	}
+
+	void Board::EnableNSFBanking(bool enable)
+	{
+	}
+
+	void Board::LoadRegDump(uint8_t* data, size_t data_size)
+	{
 	}
 
 	void Board::GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)

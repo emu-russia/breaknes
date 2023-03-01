@@ -239,16 +239,6 @@ namespace Breaknes
 		return pendingReset;
 	}
 
-	void PPUPlayerBoard::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
-	{
-		// PPUPlayerBoard is not designed for this.
-	}
-
-	void PPUPlayerBoard::EnableNSFBanking(bool enable)
-	{
-		// PPUPlayerBoard is not designed for this.
-	}
-
 	void PPUPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
 	{
 		if (core != nullptr)
