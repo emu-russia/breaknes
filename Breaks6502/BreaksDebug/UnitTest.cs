@@ -119,7 +119,7 @@ namespace BreaksDebug
 					UnitTestPhiTraceCounter = 0;
 				}
 
-				if (BreaksCoreInterop.GetPHICounter() >= testParam.CycleMax && testParam.RunCycleAmount)
+				if (BreaksCore.GetPHICounter() >= testParam.CycleMax && testParam.RunCycleAmount)
 				{
 					break;
 				}

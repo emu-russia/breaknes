@@ -16,10 +16,10 @@ namespace PPUPlayer
 {
 	public partial class FormCompositeViewer : Form
 	{
-		BreaksCoreInterop.VideoSignalFeatures ppu_features;
+		BreaksCore.VideoSignalFeatures ppu_features;
 		int SamplesPerScan;
 
-		BreaksCoreInterop.VideoOutSample[]? ScanBuffer;
+		BreaksCore.VideoOutSample[]? ScanBuffer;
 		int WritePtr = 0;
 		bool SyncFound = false;
 		int SyncPos = -1;
@@ -55,7 +55,7 @@ namespace PPUPlayer
 
 			for (int i = 0; i < dump.Length; i++)
 			{
-				BreaksCoreInterop.VideoOutSample sample = new();
+				BreaksCore.VideoOutSample sample = new();
 
 				Uifl uifl = new Uifl();
 				uifl.ui = dump[i];
@@ -78,10 +78,10 @@ namespace PPUPlayer
 
 		void ResetVisualize()
 		{
-			BreaksCoreInterop.GetPpuSignalFeatures(out ppu_features);
+			BreaksCore.GetPpuSignalFeatures(out ppu_features);
 
 			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
-			ScanBuffer = new BreaksCoreInterop.VideoOutSample[2 * SamplesPerScan];
+			ScanBuffer = new BreaksCore.VideoOutSample[2 * SamplesPerScan];
 			WritePtr = 0;
 
 			SyncFound = false;
@@ -89,7 +89,7 @@ namespace PPUPlayer
 			CurrentScan = 0;
 		}
 
-		void ProcessSample(BreaksCoreInterop.VideoOutSample sample)
+		void ProcessSample(BreaksCore.VideoOutSample sample)
 		{
 			ScanBuffer[WritePtr] = sample;
 
@@ -128,7 +128,7 @@ namespace PPUPlayer
 			int ReadPtr = SyncPos;
 			int num_phases = 12;
 			float normalize_factor = 1.1f / ppu_features.WhiteLevel;
-			BreaksCoreInterop.VideoOutSample[] batch = new BreaksCoreInterop.VideoOutSample[num_phases];
+			BreaksCore.VideoOutSample[] batch = new BreaksCore.VideoOutSample[num_phases];
 
 			// Skip HSync
 

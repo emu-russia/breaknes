@@ -51,7 +51,7 @@ namespace PPUPlayer
 						UInt16 raw = (UInt16)((band << 6) | chroma_luma);
 						byte r, g, b;
 
-						BreaksCoreInterop.ConvertRAWToRGB(raw, out r, out g, out b);
+						BreaksCore.ConvertRAWToRGB(raw, out r, out g, out b);
 
 						Color p = Color.FromArgb (r, g, b);
 

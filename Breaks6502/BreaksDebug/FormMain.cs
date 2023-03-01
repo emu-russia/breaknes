@@ -29,7 +29,7 @@ namespace BreaksDebug
 			AllocConsole();
 #endif
 
-			BreaksCoreInterop.CreateBoard("Bogus", "None", "None", "None");
+			BreaksCore.CreateBoard("Bogus", "None", "None", "None");
 
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 
@@ -113,9 +113,9 @@ namespace BreaksDebug
 				trace = testParam.TraceMemOps;
 			}
 
-			BreaksCoreInterop.Step();
+			BreaksCore.Step();
 
-			BreaksCoreInterop.GetAllCoreDebugInfo(out sys.info);	// <-- Epic
+			BreaksCore.GetAllCoreDebugInfo(out sys.info);	// <-- Epic
 
 			if (!UnitTestMode)
 			{
@@ -125,7 +125,7 @@ namespace BreaksDebug
 
 		void UpdateCycleStats()
 		{
-			toolStripStatusLabel1.Text = "Cycle: " + BreaksCoreInterop.GetPHICounter().ToString();
+			toolStripStatusLabel1.Text = "Cycle: " + BreaksCore.GetPHICounter().ToString();
 		}
 
 		void UpdateMemoryDump()
@@ -310,7 +310,7 @@ namespace BreaksDebug
 
 			byte[] buffer = new byte[0x10000];
 
-			int num_err = BreaksCoreInterop.Assemble(richTextBox1.Text, buffer);
+			int num_err = BreaksCore.Assemble(richTextBox1.Text, buffer);
 			if (num_err != 0)
 			{
 				MessageBox.Show(

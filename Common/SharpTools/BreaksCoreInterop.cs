@@ -9,7 +9,7 @@ using static SharpTools.CoreDebug;
 
 namespace SharpTools
 {
-	public class BreaksCoreInterop
+	public class BreaksCore
 	{
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int Assemble(string text, byte[] buffer);
@@ -241,11 +241,9 @@ namespace SharpTools
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void GetAllCoreDebugInfo(out CpuDebugInfoRaw info);
-	}
 
+		// Here goes DebugHub
 
-	public class BreaksCore
-	{
 		public enum DebugInfoType : int
 		{
 			DebugInfoType_Unknown = 0,
