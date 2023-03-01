@@ -184,7 +184,17 @@ namespace SharpTools
 		public const string CORE_REGS_CATEGORY = "Core Regs";
 		public const string APU_WIRES_CATEGORY = "APU Wires";
 		public const string APU_REGS_CATEGORY = "APU Regs";
-		public const string BOARD_CATEGORY = "NSFPlayer Board";
+		public const string BOARD_CATEGORY = "Board";
+		public const string VRAM_NAME = "VRAM";
+		public const string CRAM_NAME = "Color RAM";
+		public const string OAM_NAME = "OAM";
+		public const string OAM2_NAME = "Temp OAM";
+		public const string CHR_ROM_NAME = "CHR-ROM";
+		public const string PPU_WIRES_CATEGORY = "PPU Wires";
+		public const string PPU_FSM_CATEGORY = "PPU FSM";
+		public const string PPU_EVAL_CATEGORY = "PPU Eval";
+		public const string PPU_REGS_CATEGORY = "PPU Regs";
+		public const string NROM_CATEGORY = "NROM";
 
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		unsafe struct DebugInfoEntryRaw
@@ -217,28 +227,28 @@ namespace SharpTools
 		}
 
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetDebugInfoEntryCount(DebugInfoType type);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern void GetDebugInfo(DebugInfoType type, IntPtr entries);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetDebugInfoByName(DebugInfoType type, ref DebugInfoEntryRaw entry);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int SetDebugInfoByName(DebugInfoType type, ref DebugInfoEntryRaw entry);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetMemLayout();
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern void GetMemDescriptor(int descrID, IntPtr descr);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void DumpMem(int descrID, [In, Out] [MarshalAs(UnmanagedType.LPArray)] byte[] ptr);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void WriteMem(int descrID, [In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] ptr);
 
 

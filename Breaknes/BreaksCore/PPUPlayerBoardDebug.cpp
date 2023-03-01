@@ -13,7 +13,7 @@ using namespace BaseLogic;
 #define PPU_FSM_CATEGORY "PPU FSM"
 #define PPU_EVAL_CATEGORY "PPU Eval"
 #define PPU_REGS_CATEGORY "PPU Regs"
-#define BOARD_CATEGORY "PPUPlayer Board"
+#define BOARD_CATEGORY "Board"
 #define NROM_CATEGORY "NROM"
 
 #define CRAM_SIZE (16+16)

@@ -18,12 +18,6 @@ namespace PPUPlayer
 {
 	public class DataHumanizer
 	{
-		const string VRAM_NAME = "VRAM";
-		const string CRAM_NAME = "Color RAM";
-		const string OAM_NAME = "OAM";
-		const string OAM2_NAME = "Temp OAM";
-		const string CHR_ROM_NAME = "CHR-ROM";
-
 		bool color_output = true;
 
 		public Bitmap ConvertHexToImage(string descrName)
@@ -32,13 +26,13 @@ namespace PPUPlayer
 
 			// CHR-ROM (Pattern Table)
 
-			if (descrName == CHR_ROM_NAME)
+			if (descrName == BreaksCore.CHR_ROM_NAME)
 			{
 				int descrID = 0;
 
 				foreach (var descr in mem)
 				{
-					if (descr.name == CHR_ROM_NAME)
+					if (descr.name == BreaksCore.CHR_ROM_NAME)
 					{
 						byte[] data = new byte[descr.size];
 						BreaksCore.DumpMem(descrID, data);
@@ -51,7 +45,7 @@ namespace PPUPlayer
 
 			// VRAM (Name Table + Pattern Table + CRAM)
 
-			if (descrName == VRAM_NAME)
+			if (descrName == BreaksCore.VRAM_NAME)
 			{
 				int descrVRAM = -1;
 				int VRAMSize = 0;
@@ -63,17 +57,17 @@ namespace PPUPlayer
 
 				foreach (var descr in mem)
 				{
-					if (descr.name == VRAM_NAME)
+					if (descr.name == BreaksCore.VRAM_NAME)
 					{
 						descrVRAM = descrID;
 						VRAMSize = descr.size;
 					}
-					if (descr.name == CHR_ROM_NAME)
+					if (descr.name == BreaksCore.CHR_ROM_NAME)
 					{
 						descrCHR = descrID;
 						CHRSize = descr.size;
 					}
-					if (descr.name == CRAM_NAME)
+					if (descr.name == BreaksCore.CRAM_NAME)
 					{
 						descrCRAM = descrID;
 						CRAMSize = descr.size;
@@ -98,7 +92,7 @@ namespace PPUPlayer
 
 			// OAM (OAM + Pattern Table + CRAM)
 
-			if (descrName == OAM_NAME)
+			if (descrName == BreaksCore.OAM_NAME)
 			{
 				int descrOAM = -1;
 				int OAMSize = 0;
@@ -110,17 +104,17 @@ namespace PPUPlayer
 
 				foreach (var descr in mem)
 				{
-					if (descr.name == OAM_NAME)
+					if (descr.name == BreaksCore.OAM_NAME)
 					{
 						descrOAM = descrID;
 						OAMSize = descr.size;
 					}
-					if (descr.name == CHR_ROM_NAME)
+					if (descr.name == BreaksCore.CHR_ROM_NAME)
 					{
 						descrCHR = descrID;
 						CHRSize = descr.size;
 					}
-					if (descr.name == CRAM_NAME)
+					if (descr.name == BreaksCore.CRAM_NAME)
 					{
 						descrCRAM = descrID;
 						CRAMSize = descr.size;
@@ -145,7 +139,7 @@ namespace PPUPlayer
 
 			// Temp OAM (Temp OAM + Pattern Table + CRAM)
 
-			if (descrName == OAM2_NAME)
+			if (descrName == BreaksCore.OAM2_NAME)
 			{
 				int descrOAM2 = -1;
 				int OAM2Size = 0;
@@ -157,17 +151,17 @@ namespace PPUPlayer
 
 				foreach (var descr in mem)
 				{
-					if (descr.name == OAM2_NAME)
+					if (descr.name == BreaksCore.OAM2_NAME)
 					{
 						descrOAM2 = descrID;
 						OAM2Size = descr.size;
 					}
-					if (descr.name == CHR_ROM_NAME)
+					if (descr.name == BreaksCore.CHR_ROM_NAME)
 					{
 						descrCHR = descrID;
 						CHRSize = descr.size;
 					}
-					if (descr.name == CRAM_NAME)
+					if (descr.name == BreaksCore.CRAM_NAME)
 					{
 						descrCRAM = descrID;
 						CRAMSize = descr.size;
@@ -192,13 +186,13 @@ namespace PPUPlayer
 
 			// Color RAM (CRAM)
 
-			if (descrName == CRAM_NAME)
+			if (descrName == BreaksCore.CRAM_NAME)
 			{
 				int descrID = 0;
 
 				foreach (var descr in mem)
 				{
-					if (descr.name == CRAM_NAME)
+					if (descr.name == BreaksCore.CRAM_NAME)
 					{
 						byte[] data = new byte[descr.size];
 						BreaksCore.DumpMem(descrID, data);
