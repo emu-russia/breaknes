@@ -11,10 +11,6 @@ namespace BreaksDebug
 			public bool CompileFromSource = true;
 			public string MemDumpInput = "mem.bin";
 			public string AsmSource = "Test.asm";
-			public string RamStart = "0";
-			public string RamSize = "0x800";
-			public string RomStart = "0xc000";
-			public string RomSize = "0x4000";
 			public bool RunUntilBrk = true;
 			public bool RunCycleAmount = true;
 			public long CycleMax = 10000;

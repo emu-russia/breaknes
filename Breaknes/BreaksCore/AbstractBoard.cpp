@@ -173,4 +173,9 @@ namespace Breaknes
 	{
 		ppu->SetCompositeNoise(volts);
 	}
+
+	void Board::GetAllCoreDebugInfo(M6502Core::DebugInfo* info)
+	{
+		core->getDebug(info);
+	}
 }

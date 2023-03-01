@@ -56,4 +56,5 @@ extern "C"
 	__declspec(dllexport) void SetRAWColorMode(bool enable);
 	__declspec(dllexport) void SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior);
 	__declspec(dllexport) void SetNoiseLevel(float volts);
+	__declspec(dllexport) void GetAllCoreDebugInfo(M6502Core::DebugInfo* info);
 };

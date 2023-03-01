@@ -181,5 +181,11 @@ namespace Breaknes
 		/// </summary>
 		/// <param name="volts"></param>
 		virtual void SetNoiseLevel(float volts);
+
+		/// <summary>
+		/// Return all core debugging information for BreaksDebug.
+		/// </summary>
+		/// <param name="info"></param>
+		virtual void GetAllCoreDebugInfo(M6502Core::DebugInfo* info);
 	};
 }

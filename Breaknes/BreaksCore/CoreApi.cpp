@@ -255,4 +255,12 @@ extern "C"
 			board->SetNoiseLevel(volts);
 		}
 	}
+
+	__declspec(dllexport) void GetAllCoreDebugInfo(M6502Core::DebugInfo* info)
+	{
+		if (board != nullptr)
+		{
+			board->GetAllCoreDebugInfo(info);
+		}
+	}
 };

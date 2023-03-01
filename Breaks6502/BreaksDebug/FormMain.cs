@@ -115,7 +115,7 @@ namespace BreaksDebug
 
 			BreaksCoreInterop.Step();
 
-			sys.GetAllCoreDebugInfo();
+			BreaksCoreInterop.GetAllCoreDebugInfo(out sys.info);	// <-- Epic
 
 			if (!UnitTestMode)
 			{
@@ -147,7 +147,7 @@ namespace BreaksDebug
 			sys.cpu_pads.PHI2 = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "PHI2");
 			sys.cpu_pads.RnW = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "R/W");
 			sys.cpu_pads.SYNC = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "SYNC");
-			sys.cpu_pads.A = (UInt16)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "A");
+			sys.cpu_pads.A = "0x" + BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "A").ToString("X4");
 			sys.cpu_pads.D = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "D");
 
 			propertyGrid1.SelectedObject = sys.cpu_pads;

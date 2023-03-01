@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.Runtime.InteropServices;
+using static SharpTools.CoreDebug;
 
 namespace SharpTools
 {
@@ -151,6 +152,95 @@ namespace SharpTools
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetNoiseLevel(float volts);
+
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		unsafe public struct CpuDebugInfoRaw
+		{
+			// Regs & Buses
+
+			public byte SB;
+			public byte DB;
+			public byte ADL;
+			public byte ADH;
+
+			public byte IR;
+			public byte PD;
+			public byte Y;
+			public byte X;
+			public byte S;
+			public byte AI;
+			public byte BI;
+			public byte ADD;
+			public byte AC;
+			public byte PCL;
+			public byte PCH;
+			public byte PCLS;
+			public byte PCHS;
+			public byte ABL;
+			public byte ABH;
+			public byte DL;
+			public byte DOR;
+
+			public byte C_OUT;
+			public byte Z_OUT;
+			public byte I_OUT;
+			public byte D_OUT;
+			public byte B_OUT;
+			public byte V_OUT;
+			public byte N_OUT;
+
+			// Internals
+
+			public byte n_PRDY;
+			public byte n_NMIP;
+			public byte n_IRQP;
+			public byte RESP;
+			public byte BRK6E;
+			public byte BRK7;
+			public byte DORES;
+			public byte n_DONMI;
+			public byte n_T2;
+			public byte n_T3;
+			public byte n_T4;
+			public byte n_T5;
+			public byte T0;
+			public byte n_T0;
+			public byte n_T1X;
+			public byte Z_IR;
+			public byte FETCH;
+			public byte n_ready;
+			public byte WR;
+			public byte TRES2;
+			public byte ACRL1;
+			public byte ACRL2;
+			public byte T1;
+			public byte RMW_T6;
+			public byte RMW_T7;
+			public byte ENDS;
+			public byte ENDX;
+			public byte TRES1;
+			public byte n_TRESX;
+			public byte BRFW;
+			public byte n_BRTAKEN;
+			public byte ACR;
+			public byte AVR;
+
+			// Decoder
+
+			public fixed byte decoder_out[130];
+
+			// Control commands
+
+			public fixed byte cmd[(int)ControlCommand.Max];
+			public byte n_ACIN;
+			public byte n_DAA;
+			public byte n_DSA;
+			public byte n_1PC;          // From Dispatcher
+		}
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void GetAllCoreDebugInfo(out CpuDebugInfoRaw info);
 	}
 
 
