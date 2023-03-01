@@ -108,6 +108,9 @@ namespace PPUPlayer
 					{
 						timeStamp = now;
 
+						CPUOpsProcessed = (int)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "CPUOpsProcessed");
+						UpdatePpuStats(PPUStats.CPU_IF_Ops, CPUOpsProcessed);
+
 						UpdatePpuStats(PPUStats.PCLK_Sec, (int)(BreaksCoreInterop.GetPCLKCounter() - pclkCounter));
 						UpdatePpuStats(PPUStats.FPS, fieldCounter);
 
