@@ -6,6 +6,10 @@ Workflow:
 
 ![PPU_Player](PPU_Player.png)
 
+## Visual Studio Designer vs .NET6
+
+Be very careful. The new hindu employees at Microsoft broke again something in the designer and from time to time the whole FormMain turns into a "pumpkin".
+
 ## How to get PPU register dumps
 
 Use the special version of Nintendulator + PPU Recorder to dump CPU accesses to the PPU registers: https://github.com/ogamespec/nintendulator/releases/  (get latest)
