@@ -4,10 +4,10 @@ Breaknes::Board* board = nullptr;
 
 extern "C"
 {
-    __declspec(dllexport) int Assemble(char* str, uint8_t* buffer)
-    {
-        return assemble(str, buffer);
-    }
+	__declspec(dllexport) int Assemble(char* str, uint8_t* buffer)
+	{
+		return assemble(str, buffer);
+	}
 
 	__declspec(dllexport) void CreateBoard(char* boardName, char* apu, char* ppu, char* p1)
 	{
@@ -31,7 +31,7 @@ extern "C"
 		}
 	}
 
-    // hmmm cartridge api...
+	// hmmm cartridge api...
 
 	__declspec(dllexport) int InsertCartridge(uint8_t* nesImage, size_t size)
 	{
@@ -63,89 +63,89 @@ extern "C"
 		}
 	}
 
-    __declspec(dllexport) void Reset()
-    {
-        if (board != nullptr)
-        {
-            board->Reset();
-        }
-    }
+	__declspec(dllexport) void Reset()
+	{
+		if (board != nullptr)
+		{
+			board->Reset();
+		}
+	}
 
-    __declspec(dllexport) bool InResetState()
-    {
-        if (board != nullptr)
-        {
-            return board->InResetState();
-        }
-        else
-        {
-            return false;
-        }
-    }
+	__declspec(dllexport) bool InResetState()
+	{
+		if (board != nullptr)
+		{
+			return board->InResetState();
+		}
+		else
+		{
+			return false;
+		}
+	}
 
-    __declspec(dllexport) size_t GetACLKCounter()
-    {
-        if (board != nullptr)
-        {
-            return board->GetACLKCounter();
-        }
-        else
-        {
-            return 0;
-        }
-    }
+	__declspec(dllexport) size_t GetACLKCounter()
+	{
+		if (board != nullptr)
+		{
+			return board->GetACLKCounter();
+		}
+		else
+		{
+			return 0;
+		}
+	}
 
-    __declspec(dllexport) size_t GetPHICounter()
-    {
-        if (board != nullptr)
-        {
-            return board->GetPHICounter();
-        }
-        else
-        {
-            return 0;
-        }
-    }
+	__declspec(dllexport) size_t GetPHICounter()
+	{
+		if (board != nullptr)
+		{
+			return board->GetPHICounter();
+		}
+		else
+		{
+			return 0;
+		}
+	}
 
-    __declspec(dllexport) void SampleAudioSignal(float* sample)
-    {
-        if (board != nullptr)
-        {
-            board->SampleAudioSignal(sample);
-        }
-    }
+	__declspec(dllexport) void SampleAudioSignal(float* sample)
+	{
+		if (board != nullptr)
+		{
+			board->SampleAudioSignal(sample);
+		}
+	}
 
-    __declspec(dllexport) void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
-    {
-        if (board != nullptr)
-        {
-            board->LoadNSFData(data, data_size, load_address);
-        }
-    }
+	__declspec(dllexport) void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
+	{
+		if (board != nullptr)
+		{
+			board->LoadNSFData(data, data_size, load_address);
+		}
+	}
 
-    __declspec(dllexport) void EnableNSFBanking(bool enable)
-    {
-        if (board != nullptr)
-        {
-            board->EnableNSFBanking(enable);
-        }
-    }
+	__declspec(dllexport) void EnableNSFBanking(bool enable)
+	{
+		if (board != nullptr)
+		{
+			board->EnableNSFBanking(enable);
+		}
+	}
 
-    __declspec(dllexport) void LoadRegDump(uint8_t* data, size_t data_size)
-    {
-        if (board != nullptr)
-        {
-            board->LoadRegDump(data, data_size);
-        }
-    }
+	__declspec(dllexport) void LoadRegDump(uint8_t* data, size_t data_size)
+	{
+		if (board != nullptr)
+		{
+			board->LoadRegDump(data, data_size);
+		}
+	}
 
-    __declspec(dllexport) void GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)
-    {
-        if (board != nullptr)
-        {
-            board->GetApuSignalFeatures(features);
-        }
-    }
+	__declspec(dllexport) void GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)
+	{
+		if (board != nullptr)
+		{
+			board->GetApuSignalFeatures(features);
+		}
+	}
 
 	__declspec(dllexport) size_t GetPCLKCounter()
 	{
