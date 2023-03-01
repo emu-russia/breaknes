@@ -115,6 +115,8 @@ namespace BreaksDebug
 
 			BreaksCoreInterop.Step();
 
+			sys.GetAllCoreDebugInfo();
+
 			if (!UnitTestMode)
 			{
 				UpdateAll();
@@ -128,6 +130,8 @@ namespace BreaksDebug
 
 		void UpdateMemoryDump()
 		{
+			byte[] dump = SaveMemDump(); 
+			hexBox1.ByteProvider = new DynamicByteProvider(dump);
 			hexBox1.Refresh();
 		}
 

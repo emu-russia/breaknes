@@ -354,6 +354,11 @@ namespace SharpTools
 			public byte n_1PC;          // From Dispatcher
 		}
 
+		public void GetAllCoreDebugInfo()
+		{
+
+		}
+
 		public CpuDebugInfo_RegsBuses GetRegsBuses()
 		{
 			CpuDebugInfo_RegsBuses res = new CpuDebugInfo_RegsBuses();
