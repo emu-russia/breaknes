@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Breaknes.Properties {
+namespace SharpTools.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Breaknes.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Breaknes.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SharpTools.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,12 +61,12 @@ namespace Breaknes.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static byte[] BoardDescription {
+        internal static System.Drawing.Bitmap datapath {
             get {
-                object obj = ResourceManager.GetObject("BoardDescription", resourceCulture);
-                return ((byte[])(obj));
+                object obj = ResourceManager.GetObject("datapath", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

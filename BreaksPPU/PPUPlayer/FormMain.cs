@@ -1,19 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
-using Be.Windows.Forms;
-using System.Drawing.Drawing2D;
 
+using Be.Windows.Forms;
 using SharpToolsCustomClass;
 using SharpTools;
 
@@ -27,10 +19,6 @@ namespace PPUPlayer
 		string? ppu_dump;
 		string? nes_file;
 
-		int logPointer = 0;
-		byte[] logData = new byte[0];
-		PPULogEntry? currentEntry;
-		int recordCounter = 0;
 		int CPUOpsProcessed = 0;
 		int TotalOps = 0;
 
@@ -174,26 +162,26 @@ namespace PPUPlayer
 
 			// If the user has specified RegDump - use it. Otherwise, create a dummy RegDump with an `infinite` wait to read register $2002.
 
+			byte[] reg_dump;
+
 			if (ppu_dump != null)
 			{
 				if (Path.GetExtension(ppu_dump).ToLower() == ".hex")
 				{
-					logData = LogisimHEXConv.HEXToByteArray(File.ReadAllText(ppu_dump));
+					reg_dump = LogisimHEXConv.HEXToByteArray(File.ReadAllText(ppu_dump));
 				}
 				else
 				{
-					logData = File.ReadAllBytes(ppu_dump);
+					reg_dump = File.ReadAllBytes(ppu_dump);
 				}
-				logPointer = 0;
-				TotalOps = logData.Length / 8;
-				Console.WriteLine("Number of PPU Dump records: " + TotalOps.ToString());
+				TotalOps = reg_dump.Length / 8;
+				Console.WriteLine("Number of RegDump records: " + TotalOps.ToString());
 			}
 			else
 			{
-				logData = new byte[] { 0xff, 0xff, 0xff, 0x7f, 0x82, 0x00, 0x00, 0x00 };
-				logPointer = 0;
+				reg_dump = new byte[] { 0xff, 0xff, 0xff, 0x7f, 0x82, 0x00, 0x00, 0x00 };
 				TotalOps = 1;
-				Console.WriteLine("Created one dummy read of register $2002 through an `infinite` number of PCLKs.");
+				Console.WriteLine("Created one dummy read of register $2002 through an `infinite` number of cycles.");
 			}
 
 			// If the user specified a .nes file - use it. Otherwise, use Dummy NROM.
@@ -211,11 +199,11 @@ namespace PPUPlayer
 
 			string ppu_rev = settings.PPU_Revision == null ? "RP2C02G" : settings.PPU_Revision;
 
-			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", ppu_rev, "Fami");
-			int res = PPUPlayerInterop.InsertCartridge(nes, nes.Length);
+			BreaksCoreInterop.CreateBoard("PPUPlayer", "RP2A03G", ppu_rev, "Fami");
+			int res = BreaksCoreInterop.InsertCartridge(nes, nes.Length);
 			if (res != 0)
 			{
-				PPUPlayerInterop.DestroyBoard();
+				BreaksCoreInterop.DestroyBoard();
 				MessageBox.Show(
 					"The cartridge didn't want to plug into the slot. Check that the .nes is intact and has a Mapper supported by the PPU Player.",
 					"Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -223,10 +211,11 @@ namespace PPUPlayer
 			}
 			if (settings.ResetPPU)
 			{
-				PPUPlayerInterop.Reset();
+				BreaksCoreInterop.Reset();
 			}
-			PPUPlayerInterop.SetOamDecayBehavior(settings.OAMDecay);
-			PPUPlayerInterop.SetNoiseLevel(settings.PpuNoise);
+			BreaksCoreInterop.SetOamDecayBehavior(settings.OAMDecay);
+			BreaksCoreInterop.SetNoiseLevel(settings.PpuNoise);
+			BreaksCoreInterop.LoadRegDump(reg_dump, reg_dump.Length);
 			UpdateMemLayout();
 
 			ResetVisualize(settings.PpuRAWMode);
@@ -235,11 +224,11 @@ namespace PPUPlayer
 			{
 				// In free mode there is no one to enable PPU rendering, so we do it forcibly.
 
-				PPUPlayerInterop.RenderAlwaysEnabled(true);
+				BreaksCoreInterop.RenderAlwaysEnabled(true);
 			}
 			else
 			{
-				PPUPlayerInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
+				BreaksCoreInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
 			}
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
@@ -262,9 +251,7 @@ namespace PPUPlayer
 
 			// Set the next CPU operation and start the simulation.
 
-			currentEntry = NextLogEntry();
-
-			if (currentEntry != null)
+			if (TotalOps != 0)
 			{
 				ResetPpuStats();
 				toolStripButton3.Enabled = true;
@@ -295,8 +282,8 @@ namespace PPUPlayer
 
 		void DisposeBoard()
 		{
-			PPUPlayerInterop.EjectCartridge();
-			PPUPlayerInterop.DestroyBoard();
+			BreaksCoreInterop.EjectCartridge();
+			BreaksCoreInterop.DestroyBoard();
 			ppu_dump = null;
 			nes_file = null;
 
@@ -313,46 +300,6 @@ namespace PPUPlayer
 			signalPlotScan.EnableSelection(false);
 		}
 
-		PPULogEntry? NextLogEntry()
-		{
-			PPULogEntry entry = new PPULogEntry();
-
-			var bytesLeft = logData.Length - logPointer;
-			if (bytesLeft < 8)
-			{
-				return null;
-			}
-
-			UInt32 pclkDelta = logData[logPointer + 3];
-			pclkDelta <<= 8;
-			pclkDelta |= logData[logPointer + 2];
-			pclkDelta <<= 8;
-			pclkDelta |= logData[logPointer + 1];
-			pclkDelta <<= 8;
-			pclkDelta |= logData[logPointer + 0];
-
-			entry.pclk = PPUPlayerInterop.GetPCLKCounter() + (int)pclkDelta;
-			entry.write = (logData[logPointer + 4] & 0x80) == 0 ? true : false;
-			entry.reg = (byte)(logData[logPointer + 4] & 0x7);
-			entry.value = logData[logPointer + 5];
-
-			logPointer += 8;
-
-			return entry;
-		}
-
-		public class PPULogEntry
-		{
-			public long pclk;
-			public bool write;
-			public byte reg;
-			public byte value;
-		}
-
-		private int StepsToStat = 32;
-		private int StepsCounter = 0;
-
-
 
 		enum PPUStats
 		{
@@ -365,7 +312,6 @@ namespace PPUPlayer
 
 		void ResetPpuStats()
 		{
-			recordCounter = 0;
 			CPUOpsProcessed = 0;
 
 			timeStamp = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
@@ -568,7 +514,12 @@ namespace PPUPlayer
 			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
-			PPUPlayerInterop.SetOamDecayBehavior(settings.OAMDecay);
+			BreaksCoreInterop.SetOamDecayBehavior(settings.OAMDecay);
+			if (SimulationStarted)
+			{
+				// TBD: Works unstable, sometimes loses phase (need to make a neater PLL)
+				ResetVisualize(settings.PpuRAWMode);
+			}
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)

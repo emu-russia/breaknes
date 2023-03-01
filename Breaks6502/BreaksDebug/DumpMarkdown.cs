@@ -1,15 +1,16 @@
 // A utility to dump the state of the CPU on each half-cycle directly to our wiki.
 
 using System.IO;
+using SharpTools;
 
 namespace BreaksDebug
 {
     public class MarkdownDump
     {
-        public static void ExportStepMarkdown(BogusSystem.CpuDebugInfo_RegsBuses regsBuses,
-            BogusSystem.CpuDebugInfo_Internals internals,
-            BogusSystem.CpuDebugInfo_Decoder decoderOut,
-            BogusSystem.CpuDebugInfo_Commands commands,
+        public static void ExportStepMarkdown(CoreDebug.CpuDebugInfo_RegsBuses regsBuses,
+			CoreDebug.CpuDebugInfo_Internals internals,
+			CoreDebug.CpuDebugInfo_Decoder decoderOut,
+			CoreDebug.CpuDebugInfo_Commands commands,
             byte PHI1, byte PHI2, 
             DataPathView dataPathView,
             string MarkdownDir, string MarkdownImgDir, string WikiRoot)

@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Collections;
-
-using System.Drawing.Drawing2D;
 using System.IO;
-using System.Numerics;
 
 using SharpTools;
 
@@ -21,11 +11,11 @@ namespace PPUPlayer
 {
 	public partial class FormMain : Form
 	{
-		PPUPlayerInterop.VideoSignalFeatures ppu_features;
+		BreaksCoreInterop.VideoSignalFeatures ppu_features;
 		int SamplesPerScan;
 		bool RawMode = false;
 
-		PPUPlayerInterop.VideoOutSample[] ScanBuffer;
+		BreaksCoreInterop.VideoOutSample[] ScanBuffer;
 		int WritePtr = 0;
 		bool SyncFound = false;
 		int SyncPos = -1;
@@ -40,20 +30,23 @@ namespace PPUPlayer
 		bool DumpToFile = false;
 		Stream VideoStream;
 
+		int prev_cb_shift = 0;
+
 		void ResetVisualize(bool RAWMode)
 		{
-			PPUPlayerInterop.GetPpuSignalFeatures(out ppu_features);
+			BreaksCoreInterop.GetPpuSignalFeatures(out ppu_features);
 
 			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
-			ScanBuffer = new PPUPlayerInterop.VideoOutSample[2 * SamplesPerScan];
+			ScanBuffer = new BreaksCoreInterop.VideoOutSample[2 * SamplesPerScan];
 			WritePtr = 0;
 
 			RawMode = RAWMode;
-			PPUPlayerInterop.SetRAWColorMode(RAWMode);
+			BreaksCoreInterop.SetRAWColorMode(RAWMode);
 
 			SyncFound = false;
 			SyncPos = -1;
 			CurrentScan = 0;
+			prev_cb_shift = 0;
 
 			composite_samples = new float[SamplesPerScan];
 			signalPlotScan.ForceMinMax(true, -0.5f, ppu_features.WhiteLevel * 2);
@@ -63,7 +56,7 @@ namespace PPUPlayer
 			GC.Collect();
 		}
 
-		void ProcessSample(PPUPlayerInterop.VideoOutSample sample)
+		void ProcessSample(BreaksCoreInterop.VideoOutSample sample)
 		{
 			ScanBuffer[WritePtr] = sample;
 
@@ -183,7 +176,7 @@ namespace PPUPlayer
 				if (CurrentScan < 240)
 				{
 					byte r, g, b;
-					PPUPlayerInterop.ConvertRAWToRGB(ScanBuffer[ReadPtr].raw, out r, out g, out b);
+					BreaksCoreInterop.ConvertRAWToRGB(ScanBuffer[ReadPtr].raw, out r, out g, out b);
 
 					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
 				}
@@ -258,7 +251,7 @@ namespace PPUPlayer
 			int ReadPtr = SyncPos;
 			int num_phases = 12;
 			float normalize_factor = 1.1f / ppu_features.WhiteLevel;
-			PPUPlayerInterop.VideoOutSample[] batch = new PPUPlayerInterop.VideoOutSample[num_phases];
+			BreaksCoreInterop.VideoOutSample[] batch = new BreaksCoreInterop.VideoOutSample[num_phases];
 
 			// TBD: Make phasing per scanline, not the semi-conservative way (PLL at the beginning of Field, then interpolate)
 
@@ -332,8 +325,6 @@ namespace PPUPlayer
 				CurrentScan = 0;
 			}
 		}
-
-		int prev_cb_shift = 0;
 
 		int PLL(bool odd, int cb)
 		{

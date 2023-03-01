@@ -9,18 +9,19 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 
 using System.IO;
+using SharpTools;
 
-namespace Breaknes
+namespace System.Windows.Forms
 {
     public partial class DataPathView : Control
     {
-        private BufferedGraphics? gfx = null;
-        private BufferedGraphicsContext? context = null;
-        GraphicsPath [] mapping = new GraphicsPath[(int)ControlCommand.Max];
+        private BufferedGraphics gfx = null;
+        private BufferedGraphicsContext context;
+        GraphicsPath [] mapping = new GraphicsPath[(int)CoreDebug.ControlCommand.Max];
         GraphicsPath cpu_write = new GraphicsPath();
         GraphicsPath cpu_read = new GraphicsPath();
         GraphicsPath alu_add = new GraphicsPath();
-        CpuDebugInfo_Commands? cur_info = null;
+		CoreDebug.CpuDebugInfo_Commands cur_info = null;
         bool SavedPHI1 = false;
         Pen path_pen = new Pen(new SolidBrush(Color.OrangeRed), 5);
         Font labelFont = new Font("Segoe UI", 10.0f, FontStyle.Bold);
@@ -43,7 +44,7 @@ namespace Breaknes
                 new Point(127, 210),
                 new Point(119, 216)
             });
-            mapping[(int)ControlCommand.Y_SB] = ysb;
+            mapping[(int)CoreDebug.ControlCommand.Y_SB] = ysb;
 
             GraphicsPath sby = new GraphicsPath();
             sby.AddLines(new Point[] {
@@ -53,7 +54,7 @@ namespace Breaknes
                 new Point(112, 159),
                 new Point(120, 152)
             });
-            mapping[(int)ControlCommand.SB_Y] = sby;
+            mapping[(int)CoreDebug.ControlCommand.SB_Y] = sby;
 
             GraphicsPath xsb = new GraphicsPath();
             xsb.AddLines(new Point[] {
@@ -63,7 +64,7 @@ namespace Breaknes
                 new Point(164, 210),
                 new Point(157, 217)
             });
-            mapping[(int)ControlCommand.X_SB] = xsb;
+            mapping[(int)CoreDebug.ControlCommand.X_SB] = xsb;
 
             GraphicsPath sbx = new GraphicsPath();
             sbx.AddLines(new Point[] {
@@ -73,7 +74,7 @@ namespace Breaknes
                 new Point(165, 158),
                 new Point(157, 152)
             });
-            mapping[(int)ControlCommand.SB_X] = sbx;
+            mapping[(int)CoreDebug.ControlCommand.SB_X] = sbx;
 
             GraphicsPath sadl = new GraphicsPath();
             sadl.AddLines(new Point[] {
@@ -83,7 +84,7 @@ namespace Breaknes
                 new Point(202, 52),
                 new Point(194, 45)
             });
-            mapping[(int)ControlCommand.S_ADL] = sadl;
+            mapping[(int)CoreDebug.ControlCommand.S_ADL] = sadl;
 
             GraphicsPath ssb = new GraphicsPath();
             ssb.AddLines(new Point[] {
@@ -93,7 +94,7 @@ namespace Breaknes
                 new Point(202, 210),
                 new Point(195, 217)
             });
-            mapping[(int)ControlCommand.S_SB] = ssb;
+            mapping[(int)CoreDebug.ControlCommand.S_SB] = ssb;
 
             GraphicsPath sbs = new GraphicsPath();
             sbs.AddLines(new Point[] {
@@ -103,7 +104,7 @@ namespace Breaknes
                 new Point(202, 158),
                 new Point(194, 151)
             });
-            mapping[(int)ControlCommand.SB_S] = sbs;
+            mapping[(int)CoreDebug.ControlCommand.SB_S] = sbs;
 
             GraphicsPath ss = new GraphicsPath();
             ss.AddLines(new Point[] {
@@ -112,7 +113,7 @@ namespace Breaknes
                 new Point(216, 132),
                 new Point(210, 132)
             });
-            mapping[(int)ControlCommand.S_S] = ss;
+            mapping[(int)CoreDebug.ControlCommand.S_S] = ss;
 
             // ALU
 
@@ -122,7 +123,7 @@ namespace Breaknes
                 new Point(240, 137),
                 new Point(261, 137)
             });
-            mapping[(int)ControlCommand.NDB_ADD] = ndbadd;
+            mapping[(int)CoreDebug.ControlCommand.NDB_ADD] = ndbadd;
 
             GraphicsPath dbadd = new GraphicsPath();
             dbadd.AddLines(new Point[] {
@@ -130,14 +131,14 @@ namespace Breaknes
                 new Point(247, 148),
                 new Point(261, 148)
             });
-            mapping[(int)ControlCommand.DB_ADD] = dbadd;
+            mapping[(int)CoreDebug.ControlCommand.DB_ADD] = dbadd;
 
             GraphicsPath zadd = new GraphicsPath();
             zadd.AddLines(new Point[] {
                 new Point(247, 94),
                 new Point(261, 94)
             });
-            mapping[(int)ControlCommand.Z_ADD] = zadd;
+            mapping[(int)CoreDebug.ControlCommand.Z_ADD] = zadd;
 
             GraphicsPath sbadd = new GraphicsPath();
             sbadd.AddLines(new Point[] {
@@ -145,7 +146,7 @@ namespace Breaknes
                 new Point(232, 83),
                 new Point(261, 83)
             });
-            mapping[(int)ControlCommand.SB_ADD] = sbadd;
+            mapping[(int)CoreDebug.ControlCommand.SB_ADD] = sbadd;
 
             GraphicsPath adladd = new GraphicsPath();
             adladd.AddLines(new Point[] {
@@ -153,22 +154,22 @@ namespace Breaknes
                 new Point(222, 127),
                 new Point(261, 127)
             });
-            mapping[(int)ControlCommand.ADL_ADD] = adladd;
+            mapping[(int)CoreDebug.ControlCommand.ADL_ADD] = adladd;
 
             GraphicsPath ands = new GraphicsPath();
-            mapping[(int)ControlCommand.ANDS] = ands;
+            mapping[(int)CoreDebug.ControlCommand.ANDS] = ands;
 
             GraphicsPath eors = new GraphicsPath();
-            mapping[(int)ControlCommand.EORS] = eors;
+            mapping[(int)CoreDebug.ControlCommand.EORS] = eors;
 
             GraphicsPath ors = new GraphicsPath();
-            mapping[(int)ControlCommand.ORS] = ors;
+            mapping[(int)CoreDebug.ControlCommand.ORS] = ors;
 
             GraphicsPath srs = new GraphicsPath();
-            mapping[(int)ControlCommand.SRS] = srs;
+            mapping[(int)CoreDebug.ControlCommand.SRS] = srs;
 
             GraphicsPath sums = new GraphicsPath();
-            mapping[(int)ControlCommand.SUMS] = sums;
+            mapping[(int)CoreDebug.ControlCommand.SUMS] = sums;
 
             GraphicsPath addsb7 = new GraphicsPath();
             addsb7.AddLines(new Point[] {
@@ -178,7 +179,7 @@ namespace Breaknes
                 new Point(354, 210),
                 new Point(347, 218)
             });
-            mapping[(int)ControlCommand.ADD_SB7] = addsb7;
+            mapping[(int)CoreDebug.ControlCommand.ADD_SB7] = addsb7;
 
             GraphicsPath addsb06 = new GraphicsPath();
             addsb06.AddLines(new Point[] {
@@ -188,7 +189,7 @@ namespace Breaknes
                 new Point(335, 210),
                 new Point(327, 217)
             });
-            mapping[(int)ControlCommand.ADD_SB06] = addsb06;
+            mapping[(int)CoreDebug.ControlCommand.ADD_SB06] = addsb06;
 
             GraphicsPath addadl = new GraphicsPath();
             addadl.AddLines(new Point[] {
@@ -198,7 +199,7 @@ namespace Breaknes
                 new Point(343, 52),
                 new Point(335, 45)
             });
-            mapping[(int)ControlCommand.ADD_ADL] = addadl;
+            mapping[(int)CoreDebug.ControlCommand.ADD_ADL] = addadl;
 
             GraphicsPath sbac = new GraphicsPath();
             sbac.AddLines(new Point[] {
@@ -209,7 +210,7 @@ namespace Breaknes
                 new Point(404, 120),
                 new Point(412, 113)
             });
-            mapping[(int)ControlCommand.SB_AC] = sbac;
+            mapping[(int)CoreDebug.ControlCommand.SB_AC] = sbac;
 
             GraphicsPath acsb = new GraphicsPath();
             acsb.AddLines(new Point[] {
@@ -219,7 +220,7 @@ namespace Breaknes
                 new Point(427, 211),
                 new Point(419, 218)
             });
-            mapping[(int)ControlCommand.AC_SB] = acsb;
+            mapping[(int)CoreDebug.ControlCommand.AC_SB] = acsb;
 
             GraphicsPath acdb = new GraphicsPath();
             acdb.AddLines(new Point[] {
@@ -229,7 +230,7 @@ namespace Breaknes
                 new Point(442, 180),
                 new Point(434, 188)
             });
-            mapping[(int)ControlCommand.AC_DB] = acdb;
+            mapping[(int)CoreDebug.ControlCommand.AC_DB] = acdb;
 
             // PC
 
@@ -241,7 +242,7 @@ namespace Breaknes
                 new Point(621, 158),
                 new Point(614, 151)
             });
-            mapping[(int)ControlCommand.ADH_PCH] = adhpch;
+            mapping[(int)CoreDebug.ControlCommand.ADH_PCH] = adhpch;
 
             GraphicsPath pchpch = new GraphicsPath();
             pchpch.AddLines(new Point[] {
@@ -250,7 +251,7 @@ namespace Breaknes
                 new Point(600, 130),
                 new Point(606, 130)
             });
-            mapping[(int)ControlCommand.PCH_PCH] = pchpch;
+            mapping[(int)CoreDebug.ControlCommand.PCH_PCH] = pchpch;
 
             GraphicsPath pchadh = new GraphicsPath();
             pchadh.AddLines(new Point[] {
@@ -260,7 +261,7 @@ namespace Breaknes
                 new Point(620, 210),
                 new Point(614, 217)
             });
-            mapping[(int)ControlCommand.PCH_ADH] = pchadh;
+            mapping[(int)CoreDebug.ControlCommand.PCH_ADH] = pchadh;
 
             GraphicsPath pchdb = new GraphicsPath();
             pchdb.AddLines(new Point[] {
@@ -270,7 +271,7 @@ namespace Breaknes
                 new Point(644, 180),
                 new Point(636, 188)
             });
-            mapping[(int)ControlCommand.PCH_DB] = pchdb;
+            mapping[(int)CoreDebug.ControlCommand.PCH_DB] = pchdb;
 
             GraphicsPath adlpcl = new GraphicsPath();
             adlpcl.AddLines(new Point[] {
@@ -280,7 +281,7 @@ namespace Breaknes
                 new Point(677, 75),
                 new Point(670, 82)
             });
-            mapping[(int)ControlCommand.ADL_PCL] = adlpcl;
+            mapping[(int)CoreDebug.ControlCommand.ADL_PCL] = adlpcl;
 
             GraphicsPath pclpcl = new GraphicsPath();
             pclpcl.AddLines(new Point[] {
@@ -289,7 +290,7 @@ namespace Breaknes
                 new Point(695, 131),
                 new Point(689, 131)
             });
-            mapping[(int)ControlCommand.PCL_PCL] = pclpcl;
+            mapping[(int)CoreDebug.ControlCommand.PCL_PCL] = pclpcl;
 
             GraphicsPath pcladl = new GraphicsPath();
             pcladl.AddLines(new Point[] {
@@ -299,7 +300,7 @@ namespace Breaknes
                 new Point(677, 52),
                 new Point(670, 45)
             });
-            mapping[(int)ControlCommand.PCL_ADL] = pcladl;
+            mapping[(int)CoreDebug.ControlCommand.PCL_ADL] = pcladl;
 
             GraphicsPath pcldb = new GraphicsPath();
             pcldb.AddLines(new Point[] {
@@ -309,7 +310,7 @@ namespace Breaknes
                 new Point(678, 180),
                 new Point(670, 187)
             });
-            mapping[(int)ControlCommand.PCL_DB] = pcldb;
+            mapping[(int)CoreDebug.ControlCommand.PCL_DB] = pcldb;
 
             // Buses
 
@@ -321,7 +322,7 @@ namespace Breaknes
                 new Point(592, 241),
                 new Point(585, 247)
             });
-            mapping[(int)ControlCommand.ADH_ABH] = adhabh;
+            mapping[(int)CoreDebug.ControlCommand.ADH_ABH] = adhabh;
 
             GraphicsPath adlabl = new GraphicsPath();
             adlabl.AddLines(new Point[] {
@@ -331,7 +332,7 @@ namespace Breaknes
                 new Point(90, 50),
                 new Point(84, 41)
             });
-            mapping[(int)ControlCommand.ADL_ABL] = adlabl;
+            mapping[(int)CoreDebug.ControlCommand.ADL_ABL] = adlabl;
 
             GraphicsPath zadl0 = new GraphicsPath();
             zadl0.AddLines(new Point[] {
@@ -342,7 +343,7 @@ namespace Breaknes
                 new Point(591, 52),
                 new Point(583, 45)
             });
-            mapping[(int)ControlCommand.Z_ADL0] = zadl0;
+            mapping[(int)CoreDebug.ControlCommand.Z_ADL0] = zadl0;
 
             GraphicsPath zadl1 = new GraphicsPath();
             zadl1.AddLines(new Point[] {
@@ -353,7 +354,7 @@ namespace Breaknes
                 new Point(591, 52),
                 new Point(583, 45)
             });
-            mapping[(int)ControlCommand.Z_ADL1] = zadl1;
+            mapping[(int)CoreDebug.ControlCommand.Z_ADL1] = zadl1;
 
             GraphicsPath zadl2 = new GraphicsPath();
             zadl2.AddLines(new Point[] {
@@ -364,7 +365,7 @@ namespace Breaknes
                 new Point(591, 52),
                 new Point(583, 45)
             });
-            mapping[(int)ControlCommand.Z_ADL2] = zadl2;
+            mapping[(int)CoreDebug.ControlCommand.Z_ADL2] = zadl2;
 
             GraphicsPath zadh0 = new GraphicsPath();
             zadh0.AddLines(new Point[] {
@@ -375,7 +376,7 @@ namespace Breaknes
                 new Point(591, 210),
                 new Point(583, 217)
             });
-            mapping[(int)ControlCommand.Z_ADH0] = zadh0;
+            mapping[(int)CoreDebug.ControlCommand.Z_ADH0] = zadh0;
 
             GraphicsPath zadh17 = new GraphicsPath();
             zadh17.AddLines(new Point[] {
@@ -386,7 +387,7 @@ namespace Breaknes
                 new Point(591, 210),
                 new Point(583, 217)
             });
-            mapping[(int)ControlCommand.Z_ADH17] = zadh17;
+            mapping[(int)CoreDebug.ControlCommand.Z_ADH17] = zadh17;
 
             GraphicsPath sbdb = new GraphicsPath();
             sbdb.AddLines(new Point[] {
@@ -395,14 +396,14 @@ namespace Breaknes
                 new Point(570, 162),
                 new Point(570, 187)
             });
-            mapping[(int)ControlCommand.SB_DB] = sbdb;
+            mapping[(int)CoreDebug.ControlCommand.SB_DB] = sbdb;
 
             GraphicsPath sbadh = new GraphicsPath();
             sbadh.AddLines(new Point[] {
                 new Point(467, 222),
                 new Point(562, 222)
             });
-            mapping[(int)ControlCommand.SB_ADH] = sbadh;
+            mapping[(int)CoreDebug.ControlCommand.SB_ADH] = sbadh;
 
             GraphicsPath dladl = new GraphicsPath();
             dladl.AddLines(new Point[] {
@@ -412,7 +413,7 @@ namespace Breaknes
                 new Point(775, 53),
                 new Point(767, 45)
             });
-            mapping[(int)ControlCommand.DL_ADL] = dladl;
+            mapping[(int)CoreDebug.ControlCommand.DL_ADL] = dladl;
 
             GraphicsPath dladh = new GraphicsPath();
             dladh.AddLines(new Point[] {
@@ -422,14 +423,14 @@ namespace Breaknes
                 new Point(764, 210),
                 new Point(756, 217)
             });
-            mapping[(int)ControlCommand.DL_ADH] = dladh;
+            mapping[(int)CoreDebug.ControlCommand.DL_ADH] = dladh;
 
             GraphicsPath dldb = new GraphicsPath();
             dldb.AddLines(new Point[] {
                 new Point(777, 151),
                 new Point(777, 188)
             });
-            mapping[(int)ControlCommand.DL_DB] = dldb;
+            mapping[(int)CoreDebug.ControlCommand.DL_DB] = dldb;
 
             // Flags
 
@@ -441,7 +442,7 @@ namespace Breaknes
                 new Point(726, 180),
                 new Point(719, 188)
             });
-            mapping[(int)ControlCommand.P_DB] = pdb;
+            mapping[(int)CoreDebug.ControlCommand.P_DB] = pdb;
 
             GraphicsPath dbp = new GraphicsPath();
             dbp.AddLines(new Point[] {
@@ -451,37 +452,37 @@ namespace Breaknes
                 new Point(726, 158),
                 new Point(719, 152)
             });
-            mapping[(int)ControlCommand.DB_P] = dbp;
+            mapping[(int)CoreDebug.ControlCommand.DB_P] = dbp;
 
             GraphicsPath dbzz = new GraphicsPath();
-            mapping[(int)ControlCommand.DBZ_Z] = dbzz;
+            mapping[(int)CoreDebug.ControlCommand.DBZ_Z] = dbzz;
 
             GraphicsPath dbn = new GraphicsPath();
-            mapping[(int)ControlCommand.DB_N] = dbn;
+            mapping[(int)CoreDebug.ControlCommand.DB_N] = dbn;
 
             GraphicsPath ir5c = new GraphicsPath();
-            mapping[(int)ControlCommand.IR5_C] = ir5c;
+            mapping[(int)CoreDebug.ControlCommand.IR5_C] = ir5c;
 
             GraphicsPath dbc = new GraphicsPath();
-            mapping[(int)ControlCommand.DB_C] = dbc;
+            mapping[(int)CoreDebug.ControlCommand.DB_C] = dbc;
 
             GraphicsPath acrc = new GraphicsPath();
-            mapping[(int)ControlCommand.ACR_C] = acrc;
+            mapping[(int)CoreDebug.ControlCommand.ACR_C] = acrc;
 
             GraphicsPath ir5d = new GraphicsPath();
-            mapping[(int)ControlCommand.IR5_D] = ir5d;
+            mapping[(int)CoreDebug.ControlCommand.IR5_D] = ir5d;
 
             GraphicsPath ir5i = new GraphicsPath();
-            mapping[(int)ControlCommand.IR5_I] = ir5i;
+            mapping[(int)CoreDebug.ControlCommand.IR5_I] = ir5i;
 
             GraphicsPath dbv = new GraphicsPath();
-            mapping[(int)ControlCommand.DB_V] = dbv;
+            mapping[(int)CoreDebug.ControlCommand.DB_V] = dbv;
 
             GraphicsPath avrv = new GraphicsPath();
-            mapping[(int)ControlCommand.AVR_V] = avrv;
+            mapping[(int)CoreDebug.ControlCommand.AVR_V] = avrv;
 
             GraphicsPath zv = new GraphicsPath();
-            mapping[(int)ControlCommand.Z_V] = zv;
+            mapping[(int)CoreDebug.ControlCommand.Z_V] = zv;
 
             // CPU R/W
 
@@ -538,9 +539,7 @@ namespace Breaknes
 
             long beginTime = DateTime.Now.Ticks;
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             DrawScene(gfx.Graphics, Width, Height);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             gfx.Render(e.Graphics);
 
@@ -574,13 +573,13 @@ namespace Breaknes
             if (cur_info == null)
                 return;
 
-            for (int i=0; i< (int)ControlCommand.Max; i++)
+            for (int i=0; i< (int)CoreDebug.ControlCommand.Max; i++)
             {
                 if (cur_info.cmd[i] != 0)
                 {
                     // ABH/ABL are only set during PHI1, even if commands are active, they are blocked.
 
-                    if ((i == (int)ControlCommand.ADL_ABL || i == (int)ControlCommand.ADH_ABH) && !SavedPHI1)
+                    if ((i == (int)CoreDebug.ControlCommand.ADL_ABL || i == (int)CoreDebug.ControlCommand.ADH_ABH) && !SavedPHI1)
                     {
                         continue;
                     }
@@ -589,7 +588,7 @@ namespace Breaknes
                 }
             }
 
-            if (cur_info.cmd[(int)ControlCommand.DL_DB] != 0)
+            if (cur_info.cmd[(int)CoreDebug.ControlCommand.DL_DB] != 0)
             {
                 if (cur_info.WR)
                 {
@@ -615,31 +614,31 @@ namespace Breaknes
             {
                 bool anyOp = false;
 
-                if (cur_info.cmd[(int)ControlCommand.ANDS] != 0)
+                if (cur_info.cmd[(int)CoreDebug.ControlCommand.ANDS] != 0)
                 {
                     gr.DrawString("ANDS", labelFont, labelBrush, point);
                     anyOp = true;
                 }
 
-                if (cur_info.cmd[(int)ControlCommand.EORS] != 0)
+                if (cur_info.cmd[(int)CoreDebug.ControlCommand.EORS] != 0)
                 {
                     gr.DrawString("EORS", labelFont, labelBrush, point);
                     anyOp = true;
                 }
 
-                if (cur_info.cmd[(int)ControlCommand.ORS] != 0)
+                if (cur_info.cmd[(int)CoreDebug.ControlCommand.ORS] != 0)
                 {
                     gr.DrawString("ORS", labelFont, labelBrush, point);
                     anyOp = true;
                 }
 
-                if (cur_info.cmd[(int)ControlCommand.SRS] != 0)
+                if (cur_info.cmd[(int)CoreDebug.ControlCommand.SRS] != 0)
                 {
                     gr.DrawString("SRS", labelFont, labelBrush, point);
                     anyOp = true;
                 }
 
-                if (cur_info.cmd[(int)ControlCommand.SUMS] != 0)
+                if (cur_info.cmd[(int)CoreDebug.ControlCommand.SUMS] != 0)
                 {
                     gr.DrawString("SUMS", labelFont, labelBrush, point);
                     anyOp = true;
@@ -671,7 +670,7 @@ namespace Breaknes
             }
         }
 
-        public void ShowCpuCommands(CpuDebugInfo_Commands info, bool PHI1)
+        public void ShowCpuCommands(CoreDebug.CpuDebugInfo_Commands info, bool PHI1)
         {
             cur_info = info;
             SavedPHI1 = PHI1;

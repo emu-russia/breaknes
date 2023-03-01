@@ -25,7 +25,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JsonLib", "..\..\Common\Jso
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mappers", "..\..\Mappers\Scripts\VS2022\Mappers.vcxproj", "{1CE1EFD6-4DBF-4D93-AD3A-94C808EA70AB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BreaksCore Libs", "BreaksCore Libs", "{19CBF7A9-A823-49FB-94AE-AE1EE4BF4423}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Breaks Core", "Breaks Core", "{19CBF7A9-A823-49FB-94AE-AE1EE4BF4423}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

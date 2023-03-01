@@ -6,7 +6,7 @@
 
 using namespace BaseLogic;
 
-namespace PPUPlayer
+namespace Mappers
 {
 	NROM::NROM(uint8_t* nesImage, size_t nesImageSize)
 	{

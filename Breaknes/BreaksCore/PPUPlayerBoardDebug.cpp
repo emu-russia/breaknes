@@ -13,16 +13,16 @@ using namespace BaseLogic;
 #define PPU_FSM_CATEGORY "PPU FSM"
 #define PPU_EVAL_CATEGORY "PPU Eval"
 #define PPU_REGS_CATEGORY "PPU Regs"
-#define BOARD_CATEGORY "PPUPlayer Board"
+#define BOARD_CATEGORY "Board"
 #define NROM_CATEGORY "NROM"
 
 #define CRAM_SIZE (16+16)
 #define OAM_SIZE 0x100
 #define OAM2_SIZE 32
 
-namespace PPUPlayer
+namespace Breaknes
 {
-	void Board::AddBoardMemDescriptors()
+	void PPUPlayerBoard::AddBoardMemDescriptors()
 	{
 		// VRAM
 
@@ -57,7 +57,7 @@ namespace PPUPlayer
 		dbg_hub->AddMemRegion(oam2Region, DumpTempOAM, WriteTempOAM, this, false);
 	}
 
-	void Board::AddCartMemDescriptors()
+	void PPUPlayerBoard::AddCartMemDescriptors()
 	{
 		MemDesciptor* chrRegion = new MemDesciptor;
 		memset(chrRegion, 0, sizeof(MemDesciptor));
@@ -289,27 +289,28 @@ namespace PPUPlayer
 	};
 
 	SignalOffsetPair board_signals[] = {
-		"BoardCLK", offsetof(BoardDebugInfo, CLK), 1,
-		"ALE", offsetof(BoardDebugInfo, ALE), 1,
-		"LS373 Latch", offsetof(BoardDebugInfo, LS373_Latch), 8,
-		"VRAM Address", offsetof(BoardDebugInfo, VRAM_Addr), 16,
-		"#VRAM_CS", offsetof(BoardDebugInfo, n_VRAM_CS), 1,
-		"VRAM_A10", offsetof(BoardDebugInfo, VRAM_A10), 1,
-		"PA", offsetof(BoardDebugInfo, PA), 16,
-		"#PA13", offsetof(BoardDebugInfo, n_PA13), 1,
-		"#RD", offsetof(BoardDebugInfo, n_RD), 1,
-		"#WR", offsetof(BoardDebugInfo, n_WR), 1,
-		"#INT", offsetof(BoardDebugInfo, n_INT), 1,
-		"PDBus", offsetof(BoardDebugInfo, PD), 8,
+		"BoardCLK", offsetof(PPUBoardDebugInfo, CLK), 1,
+		"ALE", offsetof(PPUBoardDebugInfo, ALE), 1,
+		"LS373 Latch", offsetof(PPUBoardDebugInfo, LS373_Latch), 8,
+		"VRAM Address", offsetof(PPUBoardDebugInfo, VRAM_Addr), 16,
+		"#VRAM_CS", offsetof(PPUBoardDebugInfo, n_VRAM_CS), 1,
+		"VRAM_A10", offsetof(PPUBoardDebugInfo, VRAM_A10), 1,
+		"PA", offsetof(PPUBoardDebugInfo, PA), 16,
+		"#PA13", offsetof(PPUBoardDebugInfo, n_PA13), 1,
+		"#RD", offsetof(PPUBoardDebugInfo, n_RD), 1,
+		"#WR", offsetof(PPUBoardDebugInfo, n_WR), 1,
+		"#INT", offsetof(PPUBoardDebugInfo, n_INT), 1,
+		"PDBus", offsetof(PPUBoardDebugInfo, PD), 8,
+		"CPUOpsProcessed", offsetof(PPUBoardDebugInfo, CPUOpsProcessed), 32,
 	};
 
 	SignalOffsetPair nrom_signals[] = {
-		"Last PA", offsetof(NROM_DebugInfo, last_PA), 16,
-		"Last /RD", offsetof(NROM_DebugInfo, last_nRD), 1,
-		"Last /WR", offsetof(NROM_DebugInfo, last_nWR), 1,
+		"Last PA", offsetof(Mappers::NROM_DebugInfo, last_PA), 16,
+		"Last /RD", offsetof(Mappers::NROM_DebugInfo, last_nRD), 1,
+		"Last /WR", offsetof(Mappers::NROM_DebugInfo, last_nWR), 1,
 	};
 
-	void Board::AddDebugInfoProviders()
+	void PPUPlayerBoard::AddDebugInfoProviders()
 	{
 		for (size_t n = 0; n < _countof(ppu_wires); n++)
 		{
@@ -372,7 +373,7 @@ namespace PPUPlayer
 		}
 	}
 
-	void Board::AddCartDebugInfoProviders()
+	void PPUPlayerBoard::AddCartDebugInfoProviders()
 	{
 		for (size_t n = 0; n < _countof(nrom_signals); n++)
 		{
@@ -387,69 +388,69 @@ namespace PPUPlayer
 		}
 	}
 
-	uint8_t Board::DumpVRAM(void* opaque, size_t addr)
+	uint8_t PPUPlayerBoard::DumpVRAM(void* opaque, size_t addr)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		return board->vram->Dbg_ReadByte(addr);
 	}
 
-	uint8_t Board::DumpCHR(void* opaque, size_t addr)
+	uint8_t PPUPlayerBoard::DumpCHR(void* opaque, size_t addr)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		return board->cart->Dbg_ReadCHRByte(addr);
 	}
 
-	uint8_t Board::DumpCRAM(void* opaque, size_t addr)
+	uint8_t PPUPlayerBoard::DumpCRAM(void* opaque, size_t addr)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		return board->ppu->Dbg_CRAMReadByte(addr);
 	}
 
-	uint8_t Board::DumpOAM(void* opaque, size_t addr)
+	uint8_t PPUPlayerBoard::DumpOAM(void* opaque, size_t addr)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		return board->ppu->Dbg_OAMReadByte(addr);
 	}
 
-	uint8_t Board::DumpTempOAM(void* opaque, size_t addr)
+	uint8_t PPUPlayerBoard::DumpTempOAM(void* opaque, size_t addr)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		return board->ppu->Dbg_TempOAMReadByte(addr);
 	}
 
-	void Board::WriteVRAM(void* opaque, size_t addr, uint8_t data)
+	void PPUPlayerBoard::WriteVRAM(void* opaque, size_t addr, uint8_t data)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		board->vram->Dbg_WriteByte(addr, data);
 	}
 
-	void Board::WriteCHR(void* opaque, size_t addr, uint8_t data)
+	void PPUPlayerBoard::WriteCHR(void* opaque, size_t addr, uint8_t data)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		board->cart->Dbg_WriteCHRByte(addr, data);
 	}
 
-	void Board::WriteCRAM(void* opaque, size_t addr, uint8_t data)
+	void PPUPlayerBoard::WriteCRAM(void* opaque, size_t addr, uint8_t data)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		board->ppu->Dbg_CRAMWriteByte(addr, data);
 	}
 
-	void Board::WriteOAM(void* opaque, size_t addr, uint8_t data)
+	void PPUPlayerBoard::WriteOAM(void* opaque, size_t addr, uint8_t data)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		board->ppu->Dbg_OAMWriteByte(addr, data);
 	}
 
-	void Board::WriteTempOAM(void* opaque, size_t addr, uint8_t data)
+	void PPUPlayerBoard::WriteTempOAM(void* opaque, size_t addr, uint8_t data)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		board->ppu->Dbg_TempOAMWriteByte(addr, data);
 	}
 
-	uint32_t Board::GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t PPUPlayerBoard::GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 
 		if (!strcmp(entry->category, PPU_WIRES_CATEGORY))
 		{
@@ -505,14 +506,14 @@ namespace PPUPlayer
 		return 0;
 	}
 
-	void Board::SetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	void PPUPlayerBoard::SetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
 
 	}
 
-	uint32_t Board::GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t PPUPlayerBoard::GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 
 		for (size_t n = 0; n < _countof(ppu_regs); n++)
 		{
@@ -527,9 +528,9 @@ namespace PPUPlayer
 		return 0;
 	}
 
-	void Board::SetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	void PPUPlayerBoard::SetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 
 		for (size_t n = 0; n < _countof(ppu_regs); n++)
 		{
@@ -542,9 +543,9 @@ namespace PPUPlayer
 		}
 	}
 
-	uint32_t Board::GetCartDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t PPUPlayerBoard::GetCartDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 
 		if (!board->cart)
 			return 0;
@@ -555,7 +556,7 @@ namespace PPUPlayer
 
 			if (!strcmp(sp->name, entry->name))
 			{
-				NROM_DebugInfo nrom_info{};
+				Mappers::NROM_DebugInfo nrom_info{};
 				board->cart->GetDebugInfo(nrom_info);
 
 				uint8_t* ptr = (uint8_t*)&nrom_info + sp->offset;
@@ -566,12 +567,12 @@ namespace PPUPlayer
 		return 0;
 	}
 
-	void Board::SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	void PPUPlayerBoard::SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
 		// not need
 	}
 
-	void Board::GetDebugInfo(BoardDebugInfo& info)
+	void PPUPlayerBoard::GetDebugInfo(PPUBoardDebugInfo& info)
 	{
 		info.CLK = CLK;
 		info.ALE = ALE;
@@ -591,11 +592,12 @@ namespace PPUPlayer
 		info.n_WR = n_WR;
 		info.n_INT = n_INT;
 		info.PD = ad_bus;
+		info.CPUOpsProcessed = CPUOpsProcessed;
 	}
 
-	uint32_t Board::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
+	uint32_t PPUPlayerBoard::GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry)
 	{
-		Board* board = (Board*)opaque;
+		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 
 		for (size_t n = 0; n < _countof(board_signals); n++)
 		{
@@ -603,7 +605,7 @@ namespace PPUPlayer
 
 			if (!strcmp(sp->name, entry->name))
 			{
-				BoardDebugInfo info{};
+				PPUBoardDebugInfo info{};
 				board->GetDebugInfo(info);
 
 				uint8_t* ptr = (uint8_t*)&info + sp->offset;
@@ -614,7 +616,7 @@ namespace PPUPlayer
 		return 0;
 	}
 
-	void Board::SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	void PPUPlayerBoard::SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
 		// not need
 	}

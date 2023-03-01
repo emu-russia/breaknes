@@ -7,7 +7,7 @@ using namespace BaseLogic;
 #define WRAM_NAME "WRAM"
 #define APU_WIRES_CATEGORY "APU Wires"
 #define APU_REGS_CATEGORY "APU Regs"
-#define BOARD_CATEGORY "APUPlayer Board"
+#define BOARD_CATEGORY "Board"
 
 namespace Breaknes
 {

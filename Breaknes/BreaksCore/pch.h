@@ -6,6 +6,9 @@
 #include <cassert>
 #include <Windows.h>
 
+#include "../../Breaks6502/Breakasm/ASM.h"
+#include "../../Breaks6502/Breakasm/ASMOPS.h"
+
 // Very basic
 
 #include "../../Common/BaseLogicLib/BaseLogic.h"
@@ -31,6 +34,11 @@
 #include "AbstractCartridge.h"
 #include "CartridgeFactory.h"
 
+// Mappers
+
+#include "../../Mappers/NES_Header.h"
+#include "../../Mappers/NROM.h"
+
 // Boards
 
 #include "AbstractBoard.h"
@@ -41,6 +49,7 @@
 #include "APUPlayerBoard.h"
 #include "NSFMapper.h"
 #include "NSFPlayerBoard.h"
+#include "PPUPlayerBoard.h"
 
 // To C#
 

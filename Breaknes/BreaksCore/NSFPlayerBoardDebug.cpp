@@ -10,7 +10,7 @@ using namespace BaseLogic;
 #define CORE_REGS_CATEGORY "Core Regs"
 #define APU_WIRES_CATEGORY "APU Wires"
 #define APU_REGS_CATEGORY "APU Regs"
-#define BOARD_CATEGORY "NSFPlayer Board"
+#define BOARD_CATEGORY "Board"
 
 namespace Breaknes
 {

@@ -3,6 +3,16 @@
 
 namespace Breaknes
 {
+	Board::Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev)
+	{
+		pal = new RGB_Triplet[8 * 64];
+	}
+
+	Board::~Board()
+	{
+		delete pal;
+	}
+
 	// cartridge api hmmm...
 
 	void Board::InsertCartridge(AbstractCartridge* _cart)
@@ -32,6 +42,15 @@ namespace Breaknes
 		// The board does not have a cartridge connector.
 	}
 
+	void Board::Reset()
+	{
+	}
+
+	bool Board::InResetState()
+	{
+		return false;
+	}
+
 	size_t Board::GetACLKCounter()
 	{
 		return apu->GetACLKCounter();
@@ -59,10 +78,104 @@ namespace Breaknes
 		}
 	}
 
+	void Board::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
+	{
+	}
+
+	void Board::EnableNSFBanking(bool enable)
+	{
+	}
+
+	void Board::LoadRegDump(uint8_t* data, size_t data_size)
+	{
+	}
+
 	void Board::GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)
 	{
 		APUSim::AudioSignalFeatures feat{};
 		apu->GetSignalFeatures(feat);
 		*features = feat;
+	}
+
+	size_t Board::GetPCLKCounter()
+	{
+		return ppu->GetPCLKCounter();
+	}
+
+	void Board::SampleVideoSignal(PPUSim::VideoOutSignal* sample)
+	{
+		if (sample != nullptr)
+		{
+			*sample = vidSample;
+		}
+	}
+
+	size_t Board::GetHCounter()
+	{
+		return ppu->GetHCounter();
+	}
+
+	size_t Board::GetVCounter()
+	{
+		return ppu->GetVCounter();
+	}
+
+	void Board::RenderAlwaysEnabled(bool enable)
+	{
+		ppu->Dbg_RenderAlwaysEnabled(enable);
+	}
+
+	void Board::GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features)
+	{
+		PPUSim::VideoSignalFeatures feat{};
+		ppu->GetSignalFeatures(feat);
+		*features = feat;
+	}
+
+	void Board::ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	{
+		if (!pal_cached)
+		{
+			PPUSim::VideoOutSignal rawIn{}, rgbOut{};
+
+			// 8 Emphasis bands, each with 64 colors.
+
+			for (size_t n = 0; n < (8 * 64); n++)
+			{
+				rawIn.RAW.raw = (uint16_t)n;
+				ppu->ConvertRAWToRGB(rawIn, rgbOut);
+				pal[n].r = rgbOut.RGB.RED;
+				pal[n].g = rgbOut.RGB.GREEN;
+				pal[n].b = rgbOut.RGB.BLUE;
+			}
+
+			pal_cached = true;
+		}
+
+		size_t n = raw & 0b111'11'1111;
+
+		*r = pal[n].r;
+		*g = pal[n].g;
+		*b = pal[n].b;
+	}
+
+	void Board::SetRAWColorMode(bool enable)
+	{
+		ppu->SetRAWOutput(enable);
+	}
+
+	void Board::SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior)
+	{
+		ppu->SetOamDecayBehavior(behavior);
+	}
+
+	void Board::SetNoiseLevel(float volts)
+	{
+		ppu->SetCompositeNoise(volts);
+	}
+
+	void Board::GetAllCoreDebugInfo(M6502Core::DebugInfo* info)
+	{
+		core->getDebug(info);
 	}
 }

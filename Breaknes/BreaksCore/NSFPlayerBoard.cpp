@@ -116,9 +116,4 @@ namespace Breaknes
 			sram->EnableNSFBanking(enable);
 		}
 	}
-
-	void NSFPlayerBoard::LoadRegDump(uint8_t* data, size_t data_size)
-	{
-		// NSFPlayerBoard is not designed for this.
-	}
 }

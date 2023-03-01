@@ -2,9 +2,9 @@
 
 #pragma once
 
-namespace PPUPlayer
+namespace Breaknes
 {
-	struct BoardDebugInfo
+	struct PPUBoardDebugInfo
 	{
 		uint32_t CLK;
 		uint32_t ALE;
@@ -18,42 +18,37 @@ namespace PPUPlayer
 		uint32_t n_WR;
 		uint32_t n_INT;
 		uint32_t PD;
+		uint32_t CPUOpsProcessed;
 	};
 
-	struct RGB_Triplet
+	class DIV_SRBit
 	{
-		uint8_t r;
-		uint8_t g;
-		uint8_t b;
+		BaseLogic::DLatch in_latch{};
+		BaseLogic::DLatch out_latch{};
+
+	public:
+		void sim(BaseLogic::TriState q, BaseLogic::TriState nq, BaseLogic::TriState rst, BaseLogic::TriState sin);
+
+		BaseLogic::TriState get_sout(BaseLogic::TriState rst);
+		BaseLogic::TriState get_nval();
 	};
 
-	class Board
+	class PPUPlayerBoard : public Board
 	{
-		PPUSim::PPU* ppu = nullptr;
+		M6502Core::FakeM6502* core = nullptr;
 
 		BaseBoard::LS373 latch;
 		BaseBoard::SRAM *vram = nullptr;
 
-		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
-
 		uint8_t ext_bus = 0;
-		uint8_t data_bus = 0;
 		uint8_t ad_bus = 0;
 		bool ADDirty = false;
 		uint8_t pa8_13 = 0;
 
-		bool pendingCpuOperation = false;
-		bool pendingWrite = false;
-		size_t ppuRegId = 0;
-		uint8_t writeValue = 0;
-		size_t savedPclk = 0;
-		size_t faithDelayCounter = 0;
-		const size_t faithDelay = 8;	// Pending CPU operation can cancel at the PCLK boundary and be executed in one CLK. Not good, it should last longer.
-
 		bool pendingReset = false;
 		int resetHalfClkCounter = 0;
 
-		NROM* cart = nullptr;
+		Mappers::NROM* cart = nullptr;
 		BaseLogic::TriState n_INT = BaseLogic::TriState::X;
 		BaseLogic::TriState n_VRAM_CS = BaseLogic::TriState::X;
 		BaseLogic::TriState VRAM_A10 = BaseLogic::TriState::X;
@@ -64,8 +59,6 @@ namespace PPUPlayer
 		BaseLogic::TriState n_PA13 = BaseLogic::TriState::X;
 		uint8_t LatchedAddress = 0;
 		uint32_t VRAM_Addr = 0;
-
-		PPUSim::VideoOutSignal vidSample;
 
 		static uint8_t DumpVRAM(void* opaque, size_t addr);
 		static uint8_t DumpCHR(void* opaque, size_t addr);
@@ -94,47 +87,31 @@ namespace PPUPlayer
 		void AddDebugInfoProviders();
 		void AddCartDebugInfoProviders();
 
-		void GetDebugInfo(BoardDebugInfo& info);
+		void GetDebugInfo(PPUBoardDebugInfo& info);
 
-		RGB_Triplet* pal = nullptr;
-		bool pal_cached = false;
+		void SimCoreDivider();
+		BaseLogic::FF CLK_FF{};
+		DIV_SRBit div[6]{};
+
+		BaseLogic::TriState PHI0 = BaseLogic::TriState::X;
+
+		bool prev_pendingCpuOperation = false;
+		uint32_t CPUOpsProcessed = 0;
 
 	public:
-		Board(char* boardName, char* apu, char* ppu, char* p1);
-		~Board();
+		PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
+		virtual ~PPUPlayerBoard();
 
-		void Step();
+		void Step() override;
 
-		void CPUWrite(size_t ppuReg, uint8_t val);
+		int InsertCartridge(uint8_t* nesImage, size_t nesImageSize) override;
 
-		void CPURead(size_t ppuReg);
+		void EjectCartridge() override;
 
-		size_t GetPCLKCounter();
+		void Reset() override;
 
-		int InsertCartridge(uint8_t* nesImage, size_t nesImageSize);
+		bool InResetState() override;
 
-		void EjectCartridge();
-
-		void SampleVideoSignal(PPUSim::VideoOutSignal* sample);
-
-		size_t GetHCounter();
-
-		size_t GetVCounter();
-
-		void Reset();
-
-		bool InResetState();
-
-		void RenderAlwaysEnabled(bool enable);
-
-		void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features);
-
-		void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b);
-
-		void SetRAWColorMode(bool enable);
-
-		void SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior);
-
-		void SetNoiseLevel(float volts);
+		void LoadRegDump(uint8_t* data, size_t data_size) override;
 	};
 }

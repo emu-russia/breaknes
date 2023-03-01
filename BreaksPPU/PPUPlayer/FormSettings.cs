@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using System.Xml.Serialization;
 using System.IO;
-using static PPUPlayer.FormSettings;
+using SharpTools;
 
 namespace PPUPlayer
 {
@@ -72,7 +67,7 @@ namespace PPUPlayer
 			settings.ColorDebug = true;
 			settings.PpuRAWMode = false;
 			settings.FreeModeVMirroring = true;
-			settings.OAMDecay = PPUPlayerInterop.OAMDecayBehavior.Keep;
+			settings.OAMDecay = BreaksCoreInterop.OAMDecayBehavior.Keep;
 			settings.PpuNoise = 0.0f;
 
 			SaveSettings(settings);
@@ -153,7 +148,7 @@ namespace PPUPlayer
 			[XmlElement]
 			[Category("Board Features")]
 			[Description("Set one of the ways to decay OAM cells.")]
-			public PPUPlayerInterop.OAMDecayBehavior OAMDecay { get; set; }
+			public BreaksCoreInterop.OAMDecayBehavior OAMDecay { get; set; }
 
 			[XmlElement]
 			[Category("Board Features")]

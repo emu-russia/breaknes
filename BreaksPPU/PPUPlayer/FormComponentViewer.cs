@@ -16,10 +16,10 @@ namespace PPUPlayer
 {
 	public partial class FormComponentViewer : Form
 	{
-		PPUPlayerInterop.VideoSignalFeatures ppu_features;
+		BreaksCoreInterop.VideoSignalFeatures ppu_features;
 		int SamplesPerScan;
 
-		PPUPlayerInterop.VideoOutSample[]? ScanBuffer;
+		BreaksCoreInterop.VideoOutSample[]? ScanBuffer;
 		int WritePtr = 0;
 		bool SyncFound = false;
 		int SyncPos = -1;
@@ -45,7 +45,7 @@ namespace PPUPlayer
 
 			for (int i = 0; i < dump.Length; i++)
 			{
-				PPUPlayerInterop.VideoOutSample sample = new();
+				BreaksCoreInterop.VideoOutSample sample = new();
 
 				sample.RED = (byte)(dump[i] & 0xff);
 				sample.GREEN = (byte)((dump[i] >> 8) & 0xff);
@@ -69,10 +69,10 @@ namespace PPUPlayer
 
 		void ResetVisualize()
 		{
-			PPUPlayerInterop.GetPpuSignalFeatures(out ppu_features);
+			BreaksCoreInterop.GetPpuSignalFeatures(out ppu_features);
 
 			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
-			ScanBuffer = new PPUPlayerInterop.VideoOutSample[2 * SamplesPerScan];
+			ScanBuffer = new BreaksCoreInterop.VideoOutSample[2 * SamplesPerScan];
 			WritePtr = 0;
 
 			SyncFound = false;
@@ -80,7 +80,7 @@ namespace PPUPlayer
 			CurrentScan = 0;
 		}
 
-		void ProcessSample(PPUPlayerInterop.VideoOutSample sample)
+		void ProcessSample(BreaksCoreInterop.VideoOutSample sample)
 		{
 			ScanBuffer[WritePtr] = sample;
 

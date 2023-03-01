@@ -5,16 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.Runtime.InteropServices;
+using static SharpTools.CoreDebug;
 
 namespace SharpTools
 {
 	public class BreaksCoreInterop
 	{
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int Assemble(string text, byte[] buffer);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void CreateBoard(string boardName, string apu, string ppu, string p1);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void DestroyBoard();
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int InsertCartridge(byte[] nesImage, int nesImageSize);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void EjectCartridge();
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void Step();
@@ -60,6 +70,177 @@ namespace SharpTools
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void GetApuSignalFeatures(out AudioSignalFeatures features);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern long GetPCLKCounter();
+
+		[StructLayout(LayoutKind.Explicit)]
+		public struct VideoOutSample
+		{
+			[FieldOffset(0)]
+			public float composite;
+			[FieldOffset(0)]
+			public byte RED;
+			[FieldOffset(1)]
+			public byte GREEN;
+			[FieldOffset(2)]
+			public byte BLUE;
+			[FieldOffset(3)]
+			public byte nSYNC;
+			[FieldOffset(0)]
+			public UInt16 raw;      // sBGRLLCCCC (Sync || Tint Blue || Tint Green || Tint Red || Luma[2] || Chroma[4])
+		}
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SampleVideoSignal(out VideoOutSample sample);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetHCounter();
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetVCounter();
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void RenderAlwaysEnabled(bool enable);
+
+		[StructLayout(LayoutKind.Explicit)]
+		public struct VideoSignalFeatures
+		{
+			[FieldOffset(0)]
+			public int SamplesPerPCLK;
+			[FieldOffset(4)]
+			public int PixelsPerScan;       // Excluding Dot Crawl
+			[FieldOffset(8)]
+			public int ScansPerField;
+			[FieldOffset(12)]
+			public int BackPorchSize;       // BackPorch size in pixels.
+			[FieldOffset(16)]
+			public int Composite;           // 1: Composite, 0: RGB
+			[FieldOffset(20)]
+			public float BlackLevel;        // IRE = 0
+			[FieldOffset(24)]
+			public float WhiteLevel;        // IRE = 110
+			[FieldOffset(28)]
+			public float SyncLevel;         // SYNC low level
+			[FieldOffset(32)]
+			public int PhaseAlteration;     // 1: PAL
+		}
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void GetPpuSignalFeatures(out VideoSignalFeatures features);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void ConvertRAWToRGB(UInt16 raw, out byte r, out byte g, out byte b);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetRAWColorMode(bool enable);
+
+		/// <summary>
+		/// How to handle the OAM Corruption effect.
+		/// </summary>
+		public enum OAMDecayBehavior
+		{
+			Keep = 0,
+			Evaporate,
+			ToZero,
+			ToOne,
+			Randomize,
+		};
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetOamDecayBehavior(OAMDecayBehavior behavior);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetNoiseLevel(float volts);
+
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		unsafe public struct CpuDebugInfoRaw
+		{
+			// Regs & Buses
+
+			public byte SB;
+			public byte DB;
+			public byte ADL;
+			public byte ADH;
+
+			public byte IR;
+			public byte PD;
+			public byte Y;
+			public byte X;
+			public byte S;
+			public byte AI;
+			public byte BI;
+			public byte ADD;
+			public byte AC;
+			public byte PCL;
+			public byte PCH;
+			public byte PCLS;
+			public byte PCHS;
+			public byte ABL;
+			public byte ABH;
+			public byte DL;
+			public byte DOR;
+
+			public byte C_OUT;
+			public byte Z_OUT;
+			public byte I_OUT;
+			public byte D_OUT;
+			public byte B_OUT;
+			public byte V_OUT;
+			public byte N_OUT;
+
+			// Internals
+
+			public byte n_PRDY;
+			public byte n_NMIP;
+			public byte n_IRQP;
+			public byte RESP;
+			public byte BRK6E;
+			public byte BRK7;
+			public byte DORES;
+			public byte n_DONMI;
+			public byte n_T2;
+			public byte n_T3;
+			public byte n_T4;
+			public byte n_T5;
+			public byte T0;
+			public byte n_T0;
+			public byte n_T1X;
+			public byte Z_IR;
+			public byte FETCH;
+			public byte n_ready;
+			public byte WR;
+			public byte TRES2;
+			public byte ACRL1;
+			public byte ACRL2;
+			public byte T1;
+			public byte RMW_T6;
+			public byte RMW_T7;
+			public byte ENDS;
+			public byte ENDX;
+			public byte TRES1;
+			public byte n_TRESX;
+			public byte BRFW;
+			public byte n_BRTAKEN;
+			public byte ACR;
+			public byte AVR;
+
+			// Decoder
+
+			public fixed byte decoder_out[130];
+
+			// Control commands
+
+			public fixed byte cmd[(int)ControlCommand.Max];
+			public byte n_ACIN;
+			public byte n_DAA;
+			public byte n_DSA;
+			public byte n_1PC;          // From Dispatcher
+		}
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void GetAllCoreDebugInfo(out CpuDebugInfoRaw info);
 	}
 
 
@@ -85,7 +266,17 @@ namespace SharpTools
 		public const string CORE_REGS_CATEGORY = "Core Regs";
 		public const string APU_WIRES_CATEGORY = "APU Wires";
 		public const string APU_REGS_CATEGORY = "APU Regs";
-		public const string BOARD_CATEGORY = "NSFPlayer Board";
+		public const string BOARD_CATEGORY = "Board";
+		public const string VRAM_NAME = "VRAM";
+		public const string CRAM_NAME = "Color RAM";
+		public const string OAM_NAME = "OAM";
+		public const string OAM2_NAME = "Temp OAM";
+		public const string CHR_ROM_NAME = "CHR-ROM";
+		public const string PPU_WIRES_CATEGORY = "PPU Wires";
+		public const string PPU_FSM_CATEGORY = "PPU FSM";
+		public const string PPU_EVAL_CATEGORY = "PPU Eval";
+		public const string PPU_REGS_CATEGORY = "PPU Regs";
+		public const string NROM_CATEGORY = "NROM";
 
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		unsafe struct DebugInfoEntryRaw
@@ -118,28 +309,28 @@ namespace SharpTools
 		}
 
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetDebugInfoEntryCount(DebugInfoType type);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern void GetDebugInfo(DebugInfoType type, IntPtr entries);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetDebugInfoByName(DebugInfoType type, ref DebugInfoEntryRaw entry);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int SetDebugInfoByName(DebugInfoType type, ref DebugInfoEntryRaw entry);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int GetMemLayout();
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern void GetMemDescriptor(int descrID, IntPtr descr);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void DumpMem(int descrID, [In, Out] [MarshalAs(UnmanagedType.LPArray)] byte[] ptr);
 
-		[DllImport("NSFPlayerInterop.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void WriteMem(int descrID, [In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] ptr);
 
 

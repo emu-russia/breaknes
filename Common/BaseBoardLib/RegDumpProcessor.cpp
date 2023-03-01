@@ -30,6 +30,19 @@ namespace BaseBoard
 		if (IsNegedge(PrevCLK, CLK))
 		{
 			clk_counter++;
+			hold = false;
+		}
+
+		// It is necessary to repeat the register operation during the whole current cycle, no matter how many times the simulation was called
+
+		if (hold)
+		{
+			RnW = (hold_entry.reg & 0x80) ? TriState::One : TriState::Zero;
+			if (RnW == TriState::Zero)
+			{
+				*data_bus = hold_entry.value;
+			}
+			*addr_bus = regbase | (hold_entry.reg & regmask);
 		}
 
 		// If regdump is loaded and the cycle counter has reached the value for the next RegOp - execute
@@ -46,6 +59,9 @@ namespace BaseBoard
 					*data_bus = current->value;
 				}
 				*addr_bus = regbase | (current->reg & regmask);
+
+				hold_entry = *current;
+				hold = true;
 
 				// If the record is the last one - delete regdump
 
