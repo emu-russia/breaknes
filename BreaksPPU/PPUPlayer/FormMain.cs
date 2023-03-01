@@ -211,11 +211,11 @@ namespace PPUPlayer
 
 			string ppu_rev = settings.PPU_Revision == null ? "RP2C02G" : settings.PPU_Revision;
 
-			PPUPlayerInterop.CreateBoard("PPUPlayer", "None", ppu_rev, "Fami");
-			int res = PPUPlayerInterop.InsertCartridge(nes, nes.Length);
+			BreaksCoreInterop.CreateBoard("PPUPlayer", "None", ppu_rev, "Fami");
+			int res = BreaksCoreInterop.InsertCartridge(nes, nes.Length);
 			if (res != 0)
 			{
-				PPUPlayerInterop.DestroyBoard();
+				BreaksCoreInterop.DestroyBoard();
 				MessageBox.Show(
 					"The cartridge didn't want to plug into the slot. Check that the .nes is intact and has a Mapper supported by the PPU Player.",
 					"Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -223,10 +223,10 @@ namespace PPUPlayer
 			}
 			if (settings.ResetPPU)
 			{
-				PPUPlayerInterop.Reset();
+				BreaksCoreInterop.Reset();
 			}
-			PPUPlayerInterop.SetOamDecayBehavior(settings.OAMDecay);
-			PPUPlayerInterop.SetNoiseLevel(settings.PpuNoise);
+			BreaksCoreInterop.SetOamDecayBehavior(settings.OAMDecay);
+			BreaksCoreInterop.SetNoiseLevel(settings.PpuNoise);
 			UpdateMemLayout();
 
 			ResetVisualize(settings.PpuRAWMode);
@@ -235,11 +235,11 @@ namespace PPUPlayer
 			{
 				// In free mode there is no one to enable PPU rendering, so we do it forcibly.
 
-				PPUPlayerInterop.RenderAlwaysEnabled(true);
+				BreaksCoreInterop.RenderAlwaysEnabled(true);
 			}
 			else
 			{
-				PPUPlayerInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
+				BreaksCoreInterop.RenderAlwaysEnabled(settings.RenderAlwaysEnabled);
 			}
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
@@ -295,8 +295,8 @@ namespace PPUPlayer
 
 		void DisposeBoard()
 		{
-			PPUPlayerInterop.EjectCartridge();
-			PPUPlayerInterop.DestroyBoard();
+			BreaksCoreInterop.EjectCartridge();
+			BreaksCoreInterop.DestroyBoard();
 			ppu_dump = null;
 			nes_file = null;
 
@@ -331,7 +331,7 @@ namespace PPUPlayer
 			pclkDelta <<= 8;
 			pclkDelta |= logData[logPointer + 0];
 
-			entry.pclk = PPUPlayerInterop.GetPCLKCounter() + (int)pclkDelta;
+			entry.pclk = BreaksCoreInterop.GetPCLKCounter() + (int)pclkDelta;
 			entry.write = (logData[logPointer + 4] & 0x80) == 0 ? true : false;
 			entry.reg = (byte)(logData[logPointer + 4] & 0x7);
 			entry.value = logData[logPointer + 5];
@@ -568,7 +568,7 @@ namespace PPUPlayer
 			FormSettings.PPUPlayerSettings settings = FormSettings.LoadSettings();
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
-			PPUPlayerInterop.SetOamDecayBehavior(settings.OAMDecay);
+			BreaksCoreInterop.SetOamDecayBehavior(settings.OAMDecay);
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)

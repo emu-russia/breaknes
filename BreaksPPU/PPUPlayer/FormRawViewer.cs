@@ -15,10 +15,10 @@ namespace PPUPlayer
 {
 	public partial class FormRawViewer : Form
 	{
-		PPUPlayerInterop.VideoSignalFeatures ppu_features;
+		BreaksCoreInterop.VideoSignalFeatures ppu_features;
 		int SamplesPerScan;
 
-		PPUPlayerInterop.VideoOutSample[]? ScanBuffer;
+		BreaksCoreInterop.VideoOutSample[]? ScanBuffer;
 		int WritePtr = 0;
 		bool SyncFound = false;
 		int SyncPos = -1;
@@ -44,7 +44,7 @@ namespace PPUPlayer
 
 			for (int i = 0; i < dump.Length; i++)
 			{
-				PPUPlayerInterop.VideoOutSample sample = new();
+				BreaksCoreInterop.VideoOutSample sample = new();
 				sample.raw = dump[i];
 				ProcessSample(sample);
 			}
@@ -71,10 +71,10 @@ namespace PPUPlayer
 
 		void ResetVisualize()
 		{
-			PPUPlayerInterop.GetPpuSignalFeatures(out ppu_features);
+			BreaksCoreInterop.GetPpuSignalFeatures(out ppu_features);
 
 			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
-			ScanBuffer = new PPUPlayerInterop.VideoOutSample[2 * SamplesPerScan];
+			ScanBuffer = new BreaksCoreInterop.VideoOutSample[2 * SamplesPerScan];
 			WritePtr = 0;
 
 			SyncFound = false;
@@ -82,7 +82,7 @@ namespace PPUPlayer
 			CurrentScan = 0;
 		}
 
-		void ProcessSample(PPUPlayerInterop.VideoOutSample sample)
+		void ProcessSample(BreaksCoreInterop.VideoOutSample sample)
 		{
 			ScanBuffer[WritePtr] = sample;
 
@@ -134,7 +134,7 @@ namespace PPUPlayer
 				if (CurrentScan < 240)
 				{
 					byte r, g, b;
-					PPUPlayerInterop.ConvertRAWToRGB(ScanBuffer[ReadPtr].raw, out r, out g, out b);
+					BreaksCoreInterop.ConvertRAWToRGB(ScanBuffer[ReadPtr].raw, out r, out g, out b);
 
 					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
 				}

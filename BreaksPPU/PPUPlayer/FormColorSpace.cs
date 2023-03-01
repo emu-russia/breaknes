@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpTools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -56,7 +57,7 @@ namespace PPUPlayer
 						UInt16 raw = (UInt16)((band << 6) | chroma_luma);
 						byte r, g, b;
 
-						PPUPlayerInterop.ConvertRAWToRGB(raw, out r, out g, out b);
+						BreaksCoreInterop.ConvertRAWToRGB(raw, out r, out g, out b);
 
 						Color p = Color.FromArgb (r, g, b);
 

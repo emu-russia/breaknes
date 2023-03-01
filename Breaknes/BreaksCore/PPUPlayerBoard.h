@@ -93,13 +93,13 @@ namespace Breaknes
 
 		void Step() override;
 
-		void CPUWrite(size_t ppuReg, uint8_t val);
+		void CPUWrite(size_t ppuReg, uint8_t val) override;
 
-		void CPURead(size_t ppuReg);
+		void CPURead(size_t ppuReg) override;
 
-		int InsertCartridge(uint8_t* nesImage, size_t nesImageSize);
+		int InsertCartridge(uint8_t* nesImage, size_t nesImageSize) override;
 
-		void EjectCartridge();
+		void EjectCartridge() override;
 
 		void Reset() override;
 

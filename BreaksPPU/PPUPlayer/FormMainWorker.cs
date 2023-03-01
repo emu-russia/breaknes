@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Threading;
+using SharpTools;
 
 namespace PPUPlayer
 {
@@ -43,15 +44,15 @@ namespace PPUPlayer
 
 				// Check that it is time to perform a CPU operation
 
-				if (PPUPlayerInterop.GetPCLKCounter() == currentEntry.pclk)
+				if (BreaksCoreInterop.GetPCLKCounter() == currentEntry.pclk)
 				{
 					if (currentEntry.write)
 					{
-						PPUPlayerInterop.CPUWrite(currentEntry.reg, currentEntry.value);
+						BreaksCoreInterop.CPUWrite(currentEntry.reg, currentEntry.value);
 					}
 					else
 					{
-						PPUPlayerInterop.CPURead(currentEntry.reg);
+						BreaksCoreInterop.CPURead(currentEntry.reg);
 					}
 
 					currentEntry = NextLogEntry();
@@ -67,7 +68,7 @@ namespace PPUPlayer
 
 				// Perform one half-cycle of the PPU
 
-				PPUPlayerInterop.Step();
+				BreaksCoreInterop.Step();
 
 				if (TraceEnabled)
 				{
@@ -76,8 +77,8 @@ namespace PPUPlayer
 
 				// Logic related to the processing of H/V values
 
-				int h = PPUPlayerInterop.GetHCounter();
-				int v = PPUPlayerInterop.GetVCounter();
+				int h = BreaksCoreInterop.GetHCounter();
+				int v = BreaksCoreInterop.GetVCounter();
 
 				if (h != PrevH)
 				{
@@ -111,10 +112,10 @@ namespace PPUPlayer
 
 				// Get a single sample of the video signal. If the PPU is in the process of resetting - do not count samples at that moment.
 
-				if (PPUPlayerInterop.InResetState() == 0)
+				if (!BreaksCoreInterop.InResetState())
 				{
-					PPUPlayerInterop.VideoOutSample sample;
-					PPUPlayerInterop.SampleVideoSignal(out sample);
+					BreaksCoreInterop.VideoOutSample sample;
+					BreaksCoreInterop.SampleVideoSignal(out sample);
 					ProcessSample(sample);
 				}
 
@@ -128,13 +129,13 @@ namespace PPUPlayer
 					{
 						timeStamp = now;
 
-						UpdatePpuStats(PPUStats.PCLK_Sec, (int)(PPUPlayerInterop.GetPCLKCounter() - pclkCounter));
+						UpdatePpuStats(PPUStats.PCLK_Sec, (int)(BreaksCoreInterop.GetPCLKCounter() - pclkCounter));
 						UpdatePpuStats(PPUStats.FPS, fieldCounter);
 
 						UpdatePpuStats(PPUStats.Scans, scanCounter);
 						UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
 
-						pclkCounter = PPUPlayerInterop.GetPCLKCounter();
+						pclkCounter = BreaksCoreInterop.GetPCLKCounter();
 						fieldCounter = 0;
 					}
 					StepsCounter = 0;

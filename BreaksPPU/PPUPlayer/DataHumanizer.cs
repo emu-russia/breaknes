@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Collections;
 
 using System.Drawing.Drawing2D;
+using SharpTools;
 
 namespace PPUPlayer
 {
@@ -471,7 +472,7 @@ namespace PPUPlayer
 			for (UInt16 raw=0; raw<64; raw++)
 			{
 				byte r, g, b;
-				PPUPlayerInterop.ConvertRAWToRGB(raw, out r, out g, out b);
+				BreaksCoreInterop.ConvertRAWToRGB(raw, out r, out g, out b);
 				pal[raw, 0] = r;
 				pal[raw, 1] = g;
 				pal[raw, 2] = b;

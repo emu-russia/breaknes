@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpTools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,13 +14,13 @@ namespace PPUPlayer
 {
 	public partial class FormSnatch : Form
 	{
-		private PPUPlayerInterop.VideoSignalFeatures ppu_features;
+		private BreaksCoreInterop.VideoSignalFeatures ppu_features;
 
 		public FormSnatch(float[] data)
 		{
 			InitializeComponent();
 
-			PPUPlayerInterop.GetPpuSignalFeatures(out ppu_features);
+			BreaksCoreInterop.GetPpuSignalFeatures(out ppu_features);
 
 			signalPlot1.PlotSignal(data);
 			signalPlot1.EnableSelection(true);

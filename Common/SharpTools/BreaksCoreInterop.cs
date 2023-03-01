@@ -20,6 +20,12 @@ namespace SharpTools
 		public static extern void DestroyBoard();
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int InsertCartridge(byte[] nesImage, int nesImageSize);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void EjectCartridge();
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void Step();
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -63,6 +69,96 @@ namespace SharpTools
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void GetApuSignalFeatures(out AudioSignalFeatures features);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern long GetPCLKCounter();
+
+		[StructLayout(LayoutKind.Explicit)]
+		public struct VideoOutSample
+		{
+			[FieldOffset(0)]
+			public float composite;
+			[FieldOffset(0)]
+			public byte RED;
+			[FieldOffset(1)]
+			public byte GREEN;
+			[FieldOffset(2)]
+			public byte BLUE;
+			[FieldOffset(3)]
+			public byte nSYNC;
+			[FieldOffset(0)]
+			public UInt16 raw;      // sBGRLLCCCC (Sync || Tint Blue || Tint Green || Tint Red || Luma[2] || Chroma[4])
+		}
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SampleVideoSignal(out VideoOutSample sample);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetHCounter();
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetVCounter();
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void RenderAlwaysEnabled(bool enable);
+
+		[StructLayout(LayoutKind.Explicit)]
+		public struct VideoSignalFeatures
+		{
+			[FieldOffset(0)]
+			public int SamplesPerPCLK;
+			[FieldOffset(4)]
+			public int PixelsPerScan;       // Excluding Dot Crawl
+			[FieldOffset(8)]
+			public int ScansPerField;
+			[FieldOffset(12)]
+			public int BackPorchSize;       // BackPorch size in pixels.
+			[FieldOffset(16)]
+			public int Composite;           // 1: Composite, 0: RGB
+			[FieldOffset(20)]
+			public float BlackLevel;        // IRE = 0
+			[FieldOffset(24)]
+			public float WhiteLevel;        // IRE = 110
+			[FieldOffset(28)]
+			public float SyncLevel;         // SYNC low level
+			[FieldOffset(32)]
+			public int PhaseAlteration;     // 1: PAL
+		}
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void GetPpuSignalFeatures(out VideoSignalFeatures features);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void ConvertRAWToRGB(UInt16 raw, out byte r, out byte g, out byte b);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetRAWColorMode(bool enable);
+
+		/// <summary>
+		/// How to handle the OAM Corruption effect.
+		/// </summary>
+		public enum OAMDecayBehavior
+		{
+			Keep = 0,
+			Evaporate,
+			ToZero,
+			ToOne,
+			Randomize,
+		};
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetOamDecayBehavior(OAMDecayBehavior behavior);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetNoiseLevel(float volts);
+
+		// TBD: For PPUPlayer. Replace by Fake6502+RegDumpProcessor
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void CPUWrite(int ppuReg, byte val);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void CPURead(int ppuReg);
 	}
 
 

@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Collections;
 
 using System.IO;
+using SharpTools;
 
 // The data model is straightforward.
 // There is a Field list. Each Field contains a list of Scans. Each Scan contains a list of PPU signal values obtained after each half-step of the simulation.
