@@ -29,6 +29,17 @@ namespace Breaknes
 
 	void BogusBoard::Step()
 	{
+        uint32_t wram_addr;
+        bool dz = false;
+
+        // Memory (Read)
+
+        if (RnW == TriState::One)
+        {
+            wram_addr = addr_bus;
+            wram->sim(TriState::Zero, RnW, NOT(RnW), &wram_addr, &data_bus, dz);
+        }
+
         // Core
 
         TriState inputs[(size_t)M6502Core::InputPad::Max]{};
@@ -48,14 +59,25 @@ namespace Breaknes
         RnW = outputs[(size_t)M6502Core::OutputPad::RnW];
         SYNC = outputs[(size_t)M6502Core::OutputPad::SYNC];
 
-        // Memory
+        // Memory (Write)
 
-        TriState n_WE = RnW;
-        TriState n_OE = NOT(RnW);
-        uint32_t wram_addr = addr_bus;
-        bool dz = false;
-        wram->sim(TriState::Zero, n_WE, n_OE, &wram_addr, &data_bus, dz);
+        if (RnW == TriState::Zero)
+        {
+            wram_addr = addr_bus;
+            wram->sim(TriState::Zero, RnW, NOT(RnW), &wram_addr, &data_bus, dz);
+        }
 
         CLK = NOT(CLK);
+
+        if (IsNegedge(PrevCLK, CLK))
+        {
+            phi_counter++;
+        }
+        PrevCLK = CLK;
 	}
+
+    size_t BogusBoard::GetPHICounter()
+    {
+        return phi_counter;
+    }
 }

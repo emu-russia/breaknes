@@ -18,5 +18,8 @@
     <Compile Update="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="UnitTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

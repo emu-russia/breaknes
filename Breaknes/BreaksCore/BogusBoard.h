@@ -53,10 +53,15 @@ namespace Breaknes
 		BaseLogic::TriState RnW;
 		BaseLogic::TriState SYNC;
 
+		BaseLogic::TriState PrevCLK = BaseLogic::TriState::X;
+		size_t phi_counter = 0;
+
 	public:
 		BogusBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
 		virtual ~BogusBoard();
 
 		void Step() override;
+		
+		size_t GetPHICounter() override;
 	};
 }
