@@ -37,5 +37,11 @@ namespace M6502CoreUnitTest
 		/// </summary>
 		/// <returns></returns>
 		bool ALU_UnitTest();
+
+		/// <summary>
+		/// Go through all 6502 decoder values and output them to CSV.
+		/// </summary>
+		/// <returns></returns>
+		bool DumpDecoder();
 	};
 }
