@@ -76,6 +76,12 @@ namespace UnitTest
 			M6502CoreUnitTest::UnitTest ut;
 			Assert::IsTrue(ut.ALU_UnitTest());
 		}
+
+		TEST_METHOD(DumpDecoder)
+		{
+			M6502CoreUnitTest::UnitTest ut;
+			Assert::IsTrue(ut.DumpDecoder());
+		}
 	};
 
 	TEST_CLASS(ApuUnitTest)

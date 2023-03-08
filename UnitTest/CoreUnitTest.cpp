@@ -406,5 +406,78 @@ namespace M6502CoreUnitTest
 		return true;
 	}
 
+	bool UnitTest::DumpDecoder()
+	{
+		auto decoder = new M6502Core::Decoder;
+
+		TriState* outputs;
+
+		FILE* f;
+		fopen_s(&f, "decoder_sim.csv", "wt");
+		fprintf(f, "inputs,outputs\n");
+
+		for (size_t inputs=0; inputs<(size_t)(1 << 14); inputs++)
+		{
+			DecoderInput decoder_in{};
+
+			// The lower six bits represent the Tx. The remaining high bits are IR.
+
+			TriState IR[8]{};
+
+			for (int n = 0; n < 8; n++)
+			{
+				IR[n] = FromByte((inputs >> (6 + n)) & 1);
+			}
+
+			decoder_in.n_IR0 = NOT(IR[0]);
+			decoder_in.n_IR1 = NOT(IR[1]);
+			decoder_in.IR01 = OR(IR[0], IR[1]);
+			decoder_in.n_IR2 = NOT(IR[2]);
+			decoder_in.IR2 = IR[2];
+			decoder_in.n_IR3 = NOT(IR[3]);
+			decoder_in.IR3 = IR[3];
+			decoder_in.n_IR4 = NOT(IR[4]);
+			decoder_in.IR4 = IR[4];
+			decoder_in.n_IR5 = NOT(IR[5]);
+			decoder_in.IR5 = IR[5];
+			decoder_in.n_IR6 = NOT(IR[6]);
+			decoder_in.IR6 = IR[6];
+			decoder_in.n_IR7 = NOT(IR[7]);
+			decoder_in.IR7 = IR[7];
+
+			decoder_in.n_T0 = NOT(FromByte((inputs >> 0) & 1));
+			decoder_in.n_T1X = NOT(FromByte((inputs >> 1) & 1));
+			decoder_in.n_T2 = NOT(FromByte((inputs >> 2) & 1));
+			decoder_in.n_T3 = NOT(FromByte((inputs >> 3) & 1));
+			decoder_in.n_T4 = NOT(FromByte((inputs >> 4) & 1));
+			decoder_in.n_T5 = NOT(FromByte((inputs >> 5) & 1));
+
+			decoder->sim(decoder_in.packed_bits, &outputs);
+
+			// inputs, msb first
+
+			for (int n = 13; n >= 0; n--)
+			{
+				size_t bit_val = (inputs >> n) & 1;
+				fprintf(f, "%d", bit_val);
+			}
+			fprintf(f, ",");
+
+			// outputs, msb first
+
+			for (int n = 129; n >= 0; n--)
+			{
+				uint8_t bit_val = ToByte(outputs[n]);
+				fprintf(f, "%d", bit_val);
+			}
+
+			fprintf(f, "\n");
+		}
+
+		delete decoder;
+		fclose(f);
+
+		return true;
+	}
 
 }
