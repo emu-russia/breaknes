@@ -8,7 +8,7 @@ The abstract motherboard is used as a base class for all other NES/Famicom/Dendy
 
 The Board Factory is used to instantiate the motherboard:
 - The parent application tells the factory what board to create (by name).
-- This creates a class for the corresponding motherboard (NES.cpp, Famicom.cpp).
+- This creates a class for the corresponding motherboard (NESBoard.cpp, FamicomBoard.cpp).
 
 So far it's a bit abstract, but later we will make the links between classes.
 
@@ -62,7 +62,9 @@ The plan is to simulate the Generic Famicom board as follows:
 
 ### NES
 
-TBD.
+The plan is to simulate the Generic NES board as follows:
+
+![nes](/UserManual/imgstore/nes.png)
 
 ### Dendy/Subor/Phantom/Whatever
 
