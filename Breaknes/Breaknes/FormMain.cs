@@ -7,6 +7,8 @@ namespace Breaknes
 		[DllImport("kernel32")]
 		static extern bool AllocConsole();
 
+		BoardControl board = new();
+
 		public FormMain()
 		{
 			InitializeComponent();
@@ -29,12 +31,6 @@ namespace Breaknes
 
 		private void FormMain_Load(object sender, EventArgs e)
 		{
-
-		}
-
-		void LoadRom(string filename)
-		{
-
 		}
 
 		private void loadROMDumpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -42,21 +38,16 @@ namespace Breaknes
 			if (openFileDialog1.ShowDialog() == DialogResult.OK)
 			{
 				string filename = openFileDialog1.FileName;
-				LoadRom(filename);
+				board.DisposeBoard();
+				var settings = FormSettings.LoadSettings();
+				board.CreateBoardAndStickCartridge( BoardDescriptionLoader.Load(), settings.MainBoard, filename);
 			}
 		}
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			FormSettings settings = new FormSettings();
-			settings.FormClosed += Settings_FormClosed;
 			settings.ShowDialog();
-		}
-
-		private void Settings_FormClosed(object? sender, FormClosedEventArgs e)
-		{
-			FormSettings settings = (FormSettings)sender;
-
 		}
 	}
 }

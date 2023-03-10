@@ -1,8 +1,5 @@
 using System.Text;
-using System.Globalization;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Collections;
+using Newtonsoft.Json;
 
 namespace Breaknes
 {
@@ -18,4 +15,13 @@ namespace Breaknes
         public string ppu = "";
         public string p1 = "";
     }
+
+    public class BoardDescriptionLoader
+    {
+		static public BoardDescription Load ()
+        {
+			string json = File.ReadAllText ("BoardDescription.json", Encoding.UTF8);
+            return JsonConvert.DeserializeObject<BoardDescription>(json);
+		}
+	}
 }
