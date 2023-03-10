@@ -1,73 +1,114 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-using Newtonsoft.Json;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace Breaknes
 {
-    public partial class FormSettings : Form
-    {
-        public FormSettings()
-        {
-            InitializeComponent();
-        }
+	public partial class FormSettings : Form
+	{
+		public FormSettings()
+		{
+			InitializeComponent();
+		}
 
-        private void FormSettings_Load(object sender, EventArgs e)
-        {
-            BreaknesSettings settings = new BreaknesSettings();
+		public static BreaknesSettings LoadSettings()
+		{
+			BreaknesSettings settings = new();
 
-            propertyGrid1.SelectedObject = settings;
-        }
+			string text = Properties.Settings.Default.BreaknesSettings;
+			if (text == "")
+			{
+				return SetDefaultSettings();
+			}
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            // TBD: Save the settings in the depths of the application.
+			var ser = new XmlSerializer(typeof(BreaknesSettings));
 
-            Close();
-        }
-    }
+			using (TextReader reader = new StringReader(text))
+			{
+				var res = ser.Deserialize(reader);
+				if (res != null)
+				{
+					settings = (BreaknesSettings)res;
+				}
+			}
 
-    public class BreaknesSettings
-    {
-        [Category("Settings")]
-        [Description("Select one of the supported motherboards. After starting the emulation, BreaksCore will automatically try to \"fit\" the specified .nes file into the selected motherboard. The APU/PPU is selected based on the motherboard, and the description of all the boards can be found in the BoardDescription.json, which is stored in the resources.")]
-        [DefaultValue("")]
-        [TypeConverter(typeof(FormatStringConverter))]
-        public string? MainBoard {  get; set; }
-    }
+			return settings;
+		}
 
-    // https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid
+		public static void SaveSettings(BreaknesSettings settings)
+		{
+			XmlSerializer ser = new XmlSerializer(typeof(BreaknesSettings));
+			using (StringWriter textWriter = new StringWriter())
+			{
+				ser.Serialize(textWriter, settings);
+				string text = textWriter.ToString();
+				Properties.Settings.Default.BreaknesSettings = text;
+				Properties.Settings.Default.Save();
+			}
+		}
 
-    public class FormatStringConverter : StringConverter
-    {
-        public override Boolean GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
-        public override Boolean GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
-        public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-        {
-            List<String> list = new List<String>();
+		static BreaknesSettings SetDefaultSettings()
+		{
+			BreaknesSettings settings = new();
 
-            list.Add("");
+			settings.MainBoard = "HVC-CPU-01";
 
-            string json = Encoding.UTF8.GetString(Properties.Resources.BoardDescription);
+			SaveSettings(settings);
 
-            var descr = JsonConvert.DeserializeObject<BoardDescription>(json);
+			return settings;
+		}
 
-            if (descr != null)
-            {
-                foreach (var board in descr.boards)
-                {
-                    list.Add(board.name);
-                }
-            }
+		private void FormSettings_Load(object sender, EventArgs e)
+		{
+			propertyGrid1.SelectedObject = LoadSettings();
+		}
 
-            return new StandardValuesCollection(list);
-        }
-    }
+		private void button1_Click(object sender, EventArgs e)
+		{
+			SaveSettings((BreaknesSettings)propertyGrid1.SelectedObject);
+			Close();
+		}
+
+		private void FormSettings_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				Close();
+			}
+		}
+
+		public class BreaknesSettings
+		{
+			[Category("Settings")]
+			[Description("Select one of the supported motherboards. After starting the emulation, BreaksCore will automatically try to \"fit\" the specified .nes file into the selected motherboard. The APU/PPU is selected based on the motherboard, and the description of all the boards can be found in the BoardDescription.json, which is stored in the resources.")]
+			[DefaultValue("")]
+			[TypeConverter(typeof(FormatStringConverter_MainBoard))]
+			public string? MainBoard { get; set; }
+		}
+
+		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid
+
+		public class FormatStringConverter_MainBoard : StringConverter
+		{
+			public override Boolean GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
+			public override Boolean GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
+			public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+			{
+				List<String> list = new List<String>();
+
+				list.Add("BogusBoard");
+
+				var descr = BoardDescriptionLoader.Load();
+
+				if (descr != null)
+				{
+					foreach (var board in descr.boards)
+					{
+						list.Add(board.name);
+					}
+				}
+
+				return new StandardValuesCollection(list);
+			}
+		}
+	}
 }

@@ -2,6 +2,7 @@
   "profiles": {
     "Breaknes": {
       "commandName": "Project",
+      "workingDirectory": "$(SolutionDir)/Build",
       "nativeDebugging": true
     }
   }
