@@ -4,7 +4,7 @@
 
 NES/Famicom/Dendy emulator at the gate level.
 
-<img src="https://github.com/emu-russia/breaknes/raw/master/UserManual/imgstore/art-bomberman.gif" width="200px">
+<img src="https://raw.githubusercontent.com/emu-russia/breaknes/main/UserManual/imgstore/art-bomberman.gif" width="200px">
 
 Ready to countdown!
 
