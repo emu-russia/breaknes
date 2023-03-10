@@ -81,10 +81,12 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(623, 389);
 			this.Controls.Add(this.splitContainer1);
+			this.KeyPreview = true;
 			this.Name = "FormSettings";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Settings";
 			this.Load += new System.EventHandler(this.FormSettings_Load);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormSettings_KeyDown);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
