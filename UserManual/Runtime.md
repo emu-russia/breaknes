@@ -34,13 +34,11 @@ The user selects the .nes dump to run:
 
 This does not recreate the board, but simulates pressing the `RESET` button on the console.
 
-The simulation starts automatically if no debugger is running.
+The simulation starts automatically.
 
 ## Step
 
-When running without a debugger, CoreApi::Step is called in a loop until the user exits the application or selects another .nes image
-
-When working with the debugger, CoreApi::Step is called by pressing the corresponding button. In time more advanced debugging methods (breakpoints, frame-by-frame simulation, etc.) may appear.
+CoreApi::Step is called in a loop until the user exits the application or selects another .nes image
 
 ## Exit
 
