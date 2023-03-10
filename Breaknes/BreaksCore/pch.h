@@ -27,7 +27,7 @@
 #include "../../Common/BaseBoardLib/LS373.h"
 #include "../../Common/BaseBoardLib/SRAM.h"
 #include "../../Common/BaseBoardLib/Fake6502.h"
-#include "../../Common/DebugHub/DebugHub.h"
+#include "DebugHub.h"
 
 // Cartridge Slot
 
