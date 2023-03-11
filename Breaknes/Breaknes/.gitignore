@@ -1,4 +1,7 @@
 obj
-Build/*
+Build/*.bin
+Build/*.pdb
+Build/*.exe
+Build/*.dll
 packages
 *.bin
