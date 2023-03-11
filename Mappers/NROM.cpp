@@ -163,7 +163,11 @@ namespace Mappers
 			}
 		}
 
-		cart_out[(size_t)Breaknes::CartOutput::nIRQ] = TriState::Z;
+		TriState nIRQ = cart_out[(size_t)Breaknes::CartOutput::nIRQ];
+		if (!(nIRQ == TriState::Zero || nIRQ == TriState::One))
+		{
+			cart_out[(size_t)Breaknes::CartOutput::nIRQ] = TriState::Z;
+		}
 	}
 
 	struct SignalOffsetPair

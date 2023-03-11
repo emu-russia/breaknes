@@ -41,9 +41,9 @@ namespace Breaknes
 		BaseLogic::TriState PPU_nRD = BaseLogic::TriState::X;
 		BaseLogic::TriState PPU_nWR = BaseLogic::TriState::X;
 		BaseLogic::TriState PPU_ALE = BaseLogic::TriState::X;
-		BaseLogic::TriState nRST = BaseLogic::TriState::X;
-		BaseLogic::TriState nIRQ = BaseLogic::TriState::X;
-		BaseLogic::TriState nNMI = BaseLogic::TriState::X;
+		BaseLogic::TriState nRST = BaseLogic::TriState::Z;
+		BaseLogic::TriState nIRQ = BaseLogic::TriState::Z;
+		BaseLogic::TriState nNMI = BaseLogic::TriState::Z;
 		BaseLogic::TriState M2 = BaseLogic::TriState::X; 			// from cpu
 		BaseLogic::TriState WRAM_nCE = BaseLogic::TriState::X;
 		BaseLogic::TriState PPU_nCE = BaseLogic::TriState::X; 		// 0: Enable CPU/PPU I/F	

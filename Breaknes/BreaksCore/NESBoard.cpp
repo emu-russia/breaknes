@@ -62,10 +62,14 @@ namespace Breaknes
 
 		// pullup (PPU_A[13]); -- wtf?
 		// no pullup on R/W -- wtf?
+		Pullup(CPU_RnW);
 
 		// DMX
 
 		TriState gnd = TriState::Zero;
+
+		// In real CPU in reset mode M2 goes to state `Z`, it does not suit us
+		Pullup(M2);			// HACK
 
 		DMX.sim(
 			gnd,
@@ -149,6 +153,7 @@ namespace Breaknes
 
 			VRAM_nCE = TriState::One;		// VRAM closed
 			VRAM_A10 = TriState::Zero;
+			nIRQ = TriState::Z;
 		}
 
 		Pullup(nIRQ);
@@ -163,7 +168,7 @@ namespace Breaknes
 		bool dz = (PPU_nRD == TriState::One && PPU_nWR == TriState::One);
 		vram->sim(VRAM_nCE, PPU_nWR, PPU_nRD, &VRAM_Addr, &ad_bus, dz);
 
-		WRAM_Addr = addr_bus & ((1 << wram_size) - 1);
+		WRAM_Addr = addr_bus & (wram_size - 1);
 		wram->sim(WRAM_nCE, CPU_RnW, TriState::Zero, &WRAM_Addr, &data_bus, data_bus_dirty);
 
 		// Tick
