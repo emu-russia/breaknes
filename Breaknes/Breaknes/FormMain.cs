@@ -15,7 +15,7 @@ namespace Breaknes
 		public FormMain()
 		{
 			InitializeComponent();
-			AllocConsole();
+			//AllocConsole();
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

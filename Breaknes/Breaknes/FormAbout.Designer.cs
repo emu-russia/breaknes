@@ -33,6 +33,7 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.label2 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -82,11 +83,24 @@
 			this.label2.TabIndex = 3;
 			this.label2.Text = "Посвящается ёбаным индусам,\r\nкоторые постоянно ломают Visual Studio";
 			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
+			this.label3.ForeColor = System.Drawing.Color.Crimson;
+			this.label3.Location = new System.Drawing.Point(272, 155);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(283, 95);
+			this.label3.TabIndex = 4;
+			this.label3.Text = "WARNING!!!11 WIP Version:\r\n- OAM DMA Disabled (Buggy)\r\n- DMC Disabled (RUNDMC=0; " +
+    "DMCRDY=1)\r\n- Something else is buggy\r\n- NROM Only";
+			// 
 			// FormAbout
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(582, 275);
+			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.linkLabel1);
 			this.Controls.Add(this.label1);
@@ -109,5 +123,6 @@
 		private Label label1;
 		private LinkLabel linkLabel1;
 		private Label label2;
+		private Label label3;
 	}
 }

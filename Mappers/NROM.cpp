@@ -150,7 +150,7 @@ namespace Mappers
 
 		if (nROMSEL == TriState::Zero)
 		{
-			uint8_t val = PRG[cpu_addr & 0x3fff];		// A13 not used
+			uint8_t val = PRG[cpu_addr & (PRGSize - 1)];
 
 			if (!cpu_data_dirty)
 			{
