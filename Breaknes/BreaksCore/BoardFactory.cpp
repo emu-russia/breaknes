@@ -138,7 +138,7 @@ namespace Breaknes
 		}
 		else if ( std::string(board_name).find("NES") != std::string::npos )
 		{
-			// TBD
+			inst = new NESBoard(apu_rev, ppu_rev, p1_type);
 		}
 		else if (board_name == "NSFPlayer")
 		{

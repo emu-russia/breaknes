@@ -29,63 +29,64 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAbout));
-			pictureBox1 = new PictureBox();
-			label1 = new Label();
-			linkLabel1 = new LinkLabel();
-			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-			SuspendLayout();
+			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+			this.SuspendLayout();
 			// 
 			// pictureBox1
 			// 
-			pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-			pictureBox1.Location = new Point(12, 12);
-			pictureBox1.Name = "pictureBox1";
-			pictureBox1.Size = new Size(254, 246);
-			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-			pictureBox1.TabIndex = 0;
-			pictureBox1.TabStop = false;
+			this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+			this.pictureBox1.Location = new System.Drawing.Point(12, 12);
+			this.pictureBox1.Name = "pictureBox1";
+			this.pictureBox1.Size = new System.Drawing.Size(254, 246);
+			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+			this.pictureBox1.TabIndex = 0;
+			this.pictureBox1.TabStop = false;
 			// 
 			// label1
 			// 
-			label1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			label1.AutoSize = true;
-			label1.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
-			label1.Location = new Point(272, 12);
-			label1.Name = "label1";
-			label1.Size = new Size(141, 40);
-			label1.TabIndex = 1;
-			label1.Text = "Breaknes, v. 1.3\r\n© emu-russia, 2023";
+			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.label1.AutoSize = true;
+			this.label1.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+			this.label1.Location = new System.Drawing.Point(272, 12);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(141, 40);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "Breaknes, v. 1.4\r\n© emu-russia, 2023";
 			// 
 			// linkLabel1
 			// 
-			linkLabel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			linkLabel1.AutoSize = true;
-			linkLabel1.Location = new Point(272, 74);
-			linkLabel1.Name = "linkLabel1";
-			linkLabel1.Size = new Size(225, 15);
-			linkLabel1.TabIndex = 2;
-			linkLabel1.TabStop = true;
-			linkLabel1.Text = "https://github.com/emu-russia/breaknes";
-			linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+			this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.linkLabel1.AutoSize = true;
+			this.linkLabel1.Location = new System.Drawing.Point(272, 74);
+			this.linkLabel1.Name = "linkLabel1";
+			this.linkLabel1.Size = new System.Drawing.Size(225, 15);
+			this.linkLabel1.TabIndex = 2;
+			this.linkLabel1.TabStop = true;
+			this.linkLabel1.Text = "https://github.com/emu-russia/breaknes";
 			// 
 			// FormAbout
 			// 
-			AutoScaleDimensions = new SizeF(7F, 15F);
-			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(582, 275);
-			Controls.Add(linkLabel1);
-			Controls.Add(label1);
-			Controls.Add(pictureBox1);
-			KeyPreview = true;
-			MinimumSize = new Size(450, 240);
-			Name = "FormAbout";
-			StartPosition = FormStartPosition.CenterParent;
-			Text = "About";
-			KeyDown += FormAbout_KeyDown;
-			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-			ResumeLayout(false);
-			PerformLayout();
+			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(582, 275);
+			this.Controls.Add(this.linkLabel1);
+			this.Controls.Add(this.label1);
+			this.Controls.Add(this.pictureBox1);
+			this.KeyPreview = true;
+			this.MinimumSize = new System.Drawing.Size(450, 240);
+			this.Name = "FormAbout";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "About";
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+			this.ResumeLayout(false);
+			this.PerformLayout();
+
 		}
 
 		#endregion

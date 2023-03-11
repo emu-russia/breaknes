@@ -27,6 +27,9 @@ namespace Breaknes
 
 	void NESBoard::Step()
 	{
+		data_bus_dirty = false;
+		ADDirty = false;
+
 		// Throw in all the parts and see what's moving there. Don't forget pullups
 
 		nRST = pendingReset ? TriState::Zero : TriState::One;
@@ -127,7 +130,7 @@ namespace Breaknes
 			cart->sim(
 				cart_in,
 				cart_out,
-				addr_bus,
+				addr_bus & 0x7fff,			// A15 not connected
 				&data_bus, data_bus_dirty,
 				ppu_addr,
 				&ad_bus, ADDirty,

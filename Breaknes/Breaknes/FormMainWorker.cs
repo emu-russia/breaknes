@@ -18,6 +18,14 @@ namespace Breaknes
 				}
 
 				BreaksCore.Step();
+
+				if (!BreaksCore.InResetState())
+				{
+					BreaksCore.VideoOutSample sample;
+					BreaksCore.SampleVideoSignal(out sample);
+					vid_out.ProcessSample(sample);
+				}
+
 			}
 		}
 	}

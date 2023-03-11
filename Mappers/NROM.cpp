@@ -1,8 +1,6 @@
 // Simple Mapper Simulator (0) - NROM.
 // I'm not very knowledgeable about the zoo of their implementations, so this module will gradually be improved as new knowledge becomes available.
 
-// TBD: We limit the simulation to the CHR part only, because the PPUPlayer does not require a PRG.
-
 #include "pch.h"
 
 using namespace BaseLogic;
@@ -58,6 +56,14 @@ namespace Mappers
 			uint8_t* chrPtr = nesImage + sizeof(NESHeader) + (trainer ? 512 : 0) + head->PRGSize * 0x4000;
 			memcpy(CHR, chrPtr, CHRSize);
 
+			// Load PRG ROM
+
+			PRGSize = head->PRGSize * 0x4000;
+			PRG = new uint8_t[PRGSize];
+
+			uint8_t* prgPtr = nesImage + sizeof(NESHeader) + (trainer ? 512 : 0);
+			memcpy(PRG, prgPtr, PRGSize);
+
 			valid = true;
 
 			AddCartMemDescriptors();
@@ -102,6 +108,8 @@ namespace Mappers
 		if (!valid)
 			return;
 
+		// PPU Part
+
 		TriState nRD = cart_in[(size_t)Breaknes::CartInput::nRD];
 		TriState nWR = cart_in[(size_t)Breaknes::CartInput::nWR];
 
@@ -109,15 +117,12 @@ namespace Mappers
 		nrom_debug.last_nWR = nWR == TriState::One ? 1 : 0;
 
 		// H/V Mirroring
-
 		cart_out[(size_t)Breaknes::CartOutput::VRAM_A10] = V_Mirroring ? FromByte((ppu_addr >> 10) & 1) : FromByte((ppu_addr >> 11) & 1);
 
 		// NROM contains a jumper between `/PA13` and `/VRAM_CS`
-
 		cart_out[(size_t)Breaknes::CartOutput::VRAM_nCS] = cart_in[(size_t)Breaknes::CartInput::nPA13];
 
 		// CHR_A13 is actually `/CS` for CHR-ROM
-
 		TriState nCHR_CS = FromByte((ppu_addr >> 13) & 1);
 
 		if (NOR(nRD, nCHR_CS) == TriState::One)
@@ -136,6 +141,25 @@ namespace Mappers
 			else
 			{
 				*ppu_data = *ppu_data & val;
+			}
+		}
+
+		// CPU Part
+
+		TriState nROMSEL = cart_in[(size_t)Breaknes::CartInput::nROMSEL];
+
+		if (nROMSEL == TriState::Zero)
+		{
+			uint8_t val = PRG[cpu_addr & 0x3fff];		// A13 not used
+
+			if (!cpu_data_dirty)
+			{
+				*cpu_data = val;
+				cpu_data_dirty = true;
+			}
+			else
+			{
+				*cpu_data = *cpu_data & val;
 			}
 		}
 

@@ -8,6 +8,7 @@ namespace Breaknes
 		static extern bool AllocConsole();
 
 		BoardControl board = new();
+		VideoRender vid_out = new();
 
 		public FormMain()
 		{
@@ -37,6 +38,7 @@ namespace Breaknes
 			var settings = FormSettings.LoadSettings();
 			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
 			backgroundWorker1.RunWorkerAsync();
+			vid_out.SetOutputPictureBox(pictureBox1);
 		}
 
 		private void loadROMDumpToolStripMenuItem_Click(object sender, EventArgs e)
