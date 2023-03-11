@@ -21,11 +21,16 @@ namespace APUSim
 		apu->wire.DBG = inputs[(size_t)APU_Input::DBG];
 		apu->wire.RES = NOT(inputs[(size_t)APU_Input::n_RES]);
 		
-		n_nmi.sim(inputs[(size_t)APU_Input::n_NMI], TriState::One,
-			apu->wire.n_NMI, unused, TriState::One, TriState::Zero);
+		// In the original #NMI and #IRQ terminals overuse the BIDIR terminal circuit.
+		// In order to avoid all sorts of gimmicks, let's just do a pass-through.
 
-		n_irq.sim(inputs[(size_t)APU_Input::n_IRQ], TriState::One,
-			apu->wire.n_IRQ, unused, TriState::One, TriState::Zero);
+		apu->wire.n_NMI = inputs[(size_t)APU_Input::n_NMI];
+		//n_nmi.sim(inputs[(size_t)APU_Input::n_NMI], TriState::One,
+		//	apu->wire.n_NMI, unused, TriState::One, TriState::Zero);
+
+		apu->wire.n_IRQ = inputs[(size_t)APU_Input::n_IRQ];
+		//n_irq.sim(inputs[(size_t)APU_Input::n_IRQ], TriState::One,
+		//	apu->wire.n_IRQ, unused, TriState::One, TriState::Zero);
 	}
 
 	void Pads::sim_OutputPads(TriState outputs[], uint16_t* addr)
