@@ -37,6 +37,9 @@ namespace Breaknes
 
 		nRST = pendingReset ? TriState::Zero : TriState::One;
 
+		Pullup(nIRQ);
+		Pullup(nNMI);
+
 		// APU (aka CPU)
 
 		TriState inputs[(size_t)APUSim::APU_Input::Max]{};
@@ -107,8 +110,6 @@ namespace Breaknes
 		PPU_nWR = ppu_outputs[(size_t)PPUSim::OutputPad::n_WR];
 		nNMI = ppu_outputs[(size_t)PPUSim::OutputPad::n_INT];
 
-		Pullup(nNMI);
-
 		// Cartrdige In
 
 		bool LatchOutZ = false;
@@ -158,8 +159,6 @@ namespace Breaknes
 			VRAM_A10 = TriState::Zero;
 			nIRQ = TriState::Z;
 		}
-
-		Pullup(nIRQ);
 
 		// Memory
 
