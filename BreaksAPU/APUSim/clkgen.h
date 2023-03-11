@@ -57,5 +57,7 @@ namespace APUSim
 		~CLKGen();
 
 		void sim();
+
+		BaseLogic::TriState GetINTFF();
 	};
 }

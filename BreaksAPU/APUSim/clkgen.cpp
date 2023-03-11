@@ -153,4 +153,9 @@ namespace APUSim
 	{
 		return out_latch.get();
 	}
+
+	TriState CLKGen::GetINTFF()
+	{
+		return int_ff.get();
+	}
 }
