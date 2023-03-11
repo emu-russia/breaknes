@@ -1,0 +1,58 @@
+{
+	"info":
+	{
+		"descr": "There is a description of the components of the various NES/Famicom models and clones. Very preliminary version."
+	},
+
+	"boards":
+	[
+		{
+			"name": "HVC-CPU-01",
+			"apu": "RP2A03G",
+			"ppu": "RP2C02G",
+			"p1": "Fami"
+		},
+
+		{
+			"name": "NES-001 (PCB rev. -01 to -04) (1985-1986)",
+			"apu": "RP2A03G",
+			"ppu": "RP2C02G",
+			"p1": "NES"
+		},
+
+		{
+			"name": "NES-001 (PCB rev. -05 to -09) (1986-1989?/??)",
+			"apu": "RP2A03G",
+			"ppu": "RP2C02G",
+			"p1": "NES"
+		},
+
+		{
+			"name": "NES-001 (PCB rev. -10 and -11) (1987-1993)",
+			"apu": "RP2A03G",
+			"ppu": "RP2C02G",
+			"p1": "NES"
+		},
+
+		{
+			"name": "NES-101 (NESN-101 PCB) (1993-1995)",
+			"apu": "RP2A03G",
+			"ppu": "RP2C02G",
+			"p1": "NES"
+		},
+
+		{
+			"name": "NES-101 (NESN-CPU-JIO-01 PCB) (1993?-1995?)",
+			"apu": "RP2A03G",
+			"ppu": "RP2C02G",
+			"p1": "NES"
+		},
+
+		{
+			"name": "NES-101 (NESN-CPU-AV-01 PCB) (1993?-1995?)",
+			"apu": "RP2A03G",
+			"ppu": "RP2C02G",
+			"p1": "NES"
+		}
+	]
+}
