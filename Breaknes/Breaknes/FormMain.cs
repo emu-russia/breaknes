@@ -1,3 +1,4 @@
+using SharpTools;
 using System.Runtime.InteropServices;
 
 namespace Breaknes
@@ -38,7 +39,6 @@ namespace Breaknes
 			var settings = FormSettings.LoadSettings();
 			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
 			backgroundWorker1.RunWorkerAsync();
-			vid_out.SetOutputPictureBox(pictureBox1);
 		}
 
 		private void loadROMDumpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -48,7 +48,10 @@ namespace Breaknes
 				string filename = openFileDialog1.FileName;
 				board.EjectCartridge();
 				board.InsertCartridge(filename);
+				BreaksCore.Reset();
 				Text = original_title + " - " + filename;
+				vid_out = new();
+				vid_out.SetOutputPictureBox(pictureBox1);
 				board.Paused = debug_instances != 0;
 			}
 		}

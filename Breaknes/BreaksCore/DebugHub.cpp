@@ -176,7 +176,7 @@ void CreateDebugHub()
 	if (dbg_hub == nullptr)
 	{
 		dbg_hub = new DebugHub();
-		freopen("CONOUT$", "w", stdout);
+		//freopen("CONOUT$", "w", stdout);
 	}
 }
 
