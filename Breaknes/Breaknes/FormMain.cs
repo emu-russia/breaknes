@@ -14,10 +14,7 @@ namespace Breaknes
 		public FormMain()
 		{
 			InitializeComponent();
-
-#if DEBUG
-			AllocConsole();
-#endif
+			//AllocConsole();
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -28,7 +25,7 @@ namespace Breaknes
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Paused = true;
+			board.Paused = true;
 			board.EjectCartridge();
 			board.DisposeBoard();
 			Close();
@@ -49,7 +46,7 @@ namespace Breaknes
 				string filename = openFileDialog1.FileName;
 				board.EjectCartridge();
 				board.InsertCartridge(filename);
-				Paused = debug_instances != 0;
+				board.Paused = debug_instances != 0;
 			}
 		}
 
@@ -62,7 +59,7 @@ namespace Breaknes
 
 		private void Settings_FormClosed(object? sender, FormClosedEventArgs e)
 		{
-			Paused = true;
+			board.Paused = true;
 			board.EjectCartridge();
 			board.DisposeBoard();
 			var settings = FormSettings.LoadSettings();
@@ -71,7 +68,7 @@ namespace Breaknes
 
 		private void openDebuggerToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			FormDebugger debugger = new();
+			FormDebugger debugger = new(board);
 			debugger.FormClosed += Debugger_FormClosed;
 			debugger.Show();
 			debug_instances++;
