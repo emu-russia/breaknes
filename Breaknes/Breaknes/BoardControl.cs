@@ -13,6 +13,7 @@ namespace Breaknes
 				if (board.name == name)
 				{
 					BreaksCore.CreateBoard(board.name, board.apu, board.ppu, board.p1);
+					BreaksCore.Reset();
 					break;
 				}
 			}

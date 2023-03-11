@@ -73,6 +73,10 @@ namespace Breaknes
 			FromByte((addr_bus >> 14) & 1),
 			nY1, nY2 );
 
+		nROMSEL = nY1[3];
+		WRAM_nCE = nY2[0];
+		PPU_nCE = nY2[1];
+
 		// PPU
 
 		TriState ppu_inputs[(size_t)PPUSim::InputPad::Max]{};

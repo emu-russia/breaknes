@@ -15,8 +15,8 @@ namespace Breaknes
 		uint32_t VRAM_Addr = 0;		// board -> sram
 
 		BaseBoard::LS139 DMX;
-		TriState nY1[4]{};			// DMX Stage1 output
-		TriState nY2[4]{};			// DMX Stage2 output
+		BaseLogic::TriState nY1[4]{};			// DMX Stage1 output
+		BaseLogic::TriState nY2[4]{};			// DMX Stage2 output
 
 		BaseBoard::LS373 PPUAddrLatch;
 		uint8_t LatchedAddr = 0;

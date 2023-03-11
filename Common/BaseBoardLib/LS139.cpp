@@ -9,7 +9,7 @@ using namespace BaseLogic;
 
 namespace BaseBoard
 {
-	static void sim(
+	void LS139::sim(
 		TriState& n_EN1,
 		TriState& n_EN2,
 		TriState A1_0,
