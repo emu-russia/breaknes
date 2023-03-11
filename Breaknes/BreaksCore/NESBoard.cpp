@@ -51,7 +51,7 @@ namespace Breaknes
 		M2 = outputs[(size_t)APUSim::APU_Output::M2];
 
 		nOE1 = outputs[(size_t)APUSim::APU_Output::n_IN0];		// #RDP0 official
-		nOE2 = outputs[(size_t)APUSim::APU_Output::n_IN1];		// $RDP1 official
+		nOE2 = outputs[(size_t)APUSim::APU_Output::n_IN1];		// #RDP1 official
 		OUT_0 = outputs[(size_t)APUSim::APU_Output::OUT_0];
 		OUT_1 = outputs[(size_t)APUSim::APU_Output::OUT_1];
 		OUT_2 = outputs[(size_t)APUSim::APU_Output::OUT_0];
