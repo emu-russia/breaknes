@@ -125,8 +125,8 @@ namespace APUSim
 
 		// Feedback
 
-		TriState C13 = lfsr[13].get_nsout();
-		TriState C14 = lfsr[14].get_nsout();
+		TriState C13 = lfsr[13].get_sout();
+		TriState C14 = lfsr[14].get_sout();
 		sin = NOR(AND(C13, C14), NOR3(C13, C14, pla[5]));
 
 		// SR15
@@ -152,5 +152,10 @@ namespace APUSim
 	TriState SoftCLK_SRBit::get_nsout()
 	{
 		return out_latch.get();
+	}
+
+	TriState CLKGen::GetINTFF()
+	{
+		return int_ff.get();
 	}
 }

@@ -459,7 +459,7 @@ namespace M6502CoreUnitTest
 			for (int n = 13; n >= 0; n--)
 			{
 				size_t bit_val = (inputs >> n) & 1;
-				fprintf(f, "%d", bit_val);
+				fprintf(f, "%zd", bit_val);
 			}
 			fprintf(f, ",");
 
@@ -468,7 +468,7 @@ namespace M6502CoreUnitTest
 			for (int n = 129; n >= 0; n--)
 			{
 				uint8_t bit_val = ToByte(outputs[n]);
-				fprintf(f, "%d", bit_val);
+				fprintf(f, "%zd", bit_val);
 			}
 
 			fprintf(f, "\n");

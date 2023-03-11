@@ -2,6 +2,9 @@
 
 using namespace BaseLogic;
 
+//#define BOARD_LOG(...) printf(__VA_ARGS__)
+#define BOARD_LOG(...)
+
 namespace Breaknes
 {
 	NESBoard::NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1) : Board (apu_rev, ppu_rev, p1)
@@ -14,6 +17,9 @@ namespace Breaknes
 		// Memory
 		wram = new BaseBoard::SRAM(wram_bits);
 		vram = new BaseBoard::SRAM(vram_bits);
+
+		AddBoardMemDescriptors();
+		AddDebugInfoProviders();
 	}
 	
 	NESBoard::~NESBoard()
@@ -27,12 +33,22 @@ namespace Breaknes
 
 	void NESBoard::Step()
 	{
+		if (pendingReset)
+		{
+			BOARD_LOG("NESBoard still in reset state\n");
+		}
+
+		// TBD: See if the bus is dirty and deal with it. In the NES/Famicom a dirty bus is a common thing.
+
 		data_bus_dirty = false;
 		ADDirty = false;
 
 		// Throw in all the parts and see what's moving there. Don't forget pullups
 
 		nRST = pendingReset ? TriState::Zero : TriState::One;
+
+		Pullup(nIRQ);
+		Pullup(nNMI);
 
 		// APU (aka CPU)
 
@@ -51,7 +67,7 @@ namespace Breaknes
 		M2 = outputs[(size_t)APUSim::APU_Output::M2];
 
 		nOE1 = outputs[(size_t)APUSim::APU_Output::n_IN0];		// #RDP0 official
-		nOE2 = outputs[(size_t)APUSim::APU_Output::n_IN1];		// $RDP1 official
+		nOE2 = outputs[(size_t)APUSim::APU_Output::n_IN1];		// #RDP1 official
 		OUT_0 = outputs[(size_t)APUSim::APU_Output::OUT_0];
 		OUT_1 = outputs[(size_t)APUSim::APU_Output::OUT_1];
 		OUT_2 = outputs[(size_t)APUSim::APU_Output::OUT_0];
@@ -62,10 +78,12 @@ namespace Breaknes
 
 		// pullup (PPU_A[13]); -- wtf?
 		// no pullup on R/W -- wtf?
+		Pullup(CPU_RnW);
 
-		// DMX
+		// DMX (Bus Master)
 
-		TriState gnd = TriState::Zero;
+		// In real CPU in reset mode M2 goes to `Z` state, it does not suit us
+		Pullup(M2);			// HACK
 
 		DMX.sim(
 			gnd,
@@ -79,6 +97,19 @@ namespace Breaknes
 		nROMSEL = nY1[3];
 		WRAM_nCE = nY2[0];
 		PPU_nCE = nY2[1];
+
+		if (nROMSEL == TriState::Zero && CPU_RnW == TriState::One)
+		{
+			BOARD_LOG("NESBoard: want cartucco. CPU addr: %x\n", addr_bus);
+		}
+		else if (WRAM_nCE == TriState::Zero && CPU_RnW == TriState::One)
+		{
+			BOARD_LOG("NESBoard: want wram. CPU addr: %x\n", addr_bus);
+		}
+		else if (PPU_nCE == TriState::Zero)
+		{
+			BOARD_LOG("NESBoard: want ppu (%c). CPU addr: %x\n", CPU_RnW == TriState::One ? 'r' : 'w', addr_bus);
+		}
 
 		// PPU
 
@@ -100,9 +131,7 @@ namespace Breaknes
 		PPU_nWR = ppu_outputs[(size_t)PPUSim::OutputPad::n_WR];
 		nNMI = ppu_outputs[(size_t)PPUSim::OutputPad::n_INT];
 
-		Pullup(nNMI);
-
-		// Cartrdige In
+		// Cartridge In
 
 		bool LatchOutZ = false;
 		PPUAddrLatch.sim(PPU_ALE, TriState::Zero, ad_bus, &LatchedAddr, LatchOutZ);
@@ -149,9 +178,8 @@ namespace Breaknes
 
 			VRAM_nCE = TriState::One;		// VRAM closed
 			VRAM_A10 = TriState::Zero;
+			nIRQ = TriState::Z;
 		}
-
-		Pullup(nIRQ);
 
 		// Memory
 
@@ -163,7 +191,7 @@ namespace Breaknes
 		bool dz = (PPU_nRD == TriState::One && PPU_nWR == TriState::One);
 		vram->sim(VRAM_nCE, PPU_nWR, PPU_nRD, &VRAM_Addr, &ad_bus, dz);
 
-		WRAM_Addr = addr_bus & ((1 << wram_size) - 1);
+		WRAM_Addr = addr_bus & (wram_size - 1);
 		wram->sim(WRAM_nCE, CPU_RnW, TriState::Zero, &WRAM_Addr, &data_bus, data_bus_dirty);
 
 		// Tick
@@ -178,6 +206,8 @@ namespace Breaknes
 				pendingReset = false;
 			}
 		}
+
+		BOARD_LOG("\n");
 	}
 
 	void NESBoard::Reset()
@@ -187,7 +217,9 @@ namespace Breaknes
 		// By setting the reset time you can adjust the "CPU/PPU Alignment" phenomenon.
 		// The real board has a capacitor that controls the reset and also the CIC interferes with it, but we simplify all this.
 
-		resetHalfClkCounter = 24;
+		// Do not make the value too small, otherwise the Core will skip /RES=0. To be sure, it is better to hold the reset for several Core cycles
+
+		resetHalfClkCounter = 64;
 	}
 
 	bool NESBoard::InResetState()

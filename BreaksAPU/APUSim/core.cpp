@@ -24,8 +24,10 @@ namespace APUSim
 			TriState inputs[(size_t)M6502Core::InputPad::Max]{};
 			TriState outputs[(size_t)M6502Core::OutputPad::Max];
 
+			TriState nIRQINT = NOR(NOT(apu->wire.n_IRQ), apu->wire.INT);
+
 			inputs[(size_t)M6502Core::InputPad::n_NMI] = apu->wire.n_NMI;
-			inputs[(size_t)M6502Core::InputPad::n_IRQ] = NOR(NOT(apu->wire.n_IRQ), apu->wire.INT);	// #IRQINT
+			inputs[(size_t)M6502Core::InputPad::n_IRQ] = nIRQINT;
 			inputs[(size_t)M6502Core::InputPad::n_RES] = NOT(OR(apu->wire.RES, apu->wire.RESCore));
 			inputs[(size_t)M6502Core::InputPad::PHI0] = apu->wire.PHI0;
 			inputs[(size_t)M6502Core::InputPad::RDY] = AND(apu->wire.RDY, apu->wire.RDY2);

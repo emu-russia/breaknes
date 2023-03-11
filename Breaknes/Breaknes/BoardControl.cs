@@ -6,6 +6,8 @@ namespace Breaknes
 {
 	public class BoardControl
 	{
+		public bool Paused = true;			// atomic
+
 		public void CreateBoard(BoardDescription db, string name)
 		{
 			foreach (var board in db.boards)

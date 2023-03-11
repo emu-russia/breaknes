@@ -238,10 +238,10 @@ namespace APUSimUnitTest
 		sprintf_s(text, sizeof(text), "Executed %f ns. CLK: %f ns\n", t, hcycle_len * 2.f);
 		Logger::WriteMessage(text);
 
-		sprintf_s(text, sizeof(text), "LFO1 freq: %zd Hz\n", lfo1_counter);
+		sprintf_s(text, sizeof(text), "LFO1 freq: ~%zd Hz\n", lfo1_counter);
 		Logger::WriteMessage(text);
 
-		sprintf_s(text, sizeof(text), "LFO2 freq: %zd Hz\n\n", lfo2_counter);
+		sprintf_s(text, sizeof(text), "LFO2 freq: ~%zd Hz\n\n", lfo2_counter);
 		Logger::WriteMessage(text);
 
 		return true;

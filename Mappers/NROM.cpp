@@ -150,7 +150,7 @@ namespace Mappers
 
 		if (nROMSEL == TriState::Zero)
 		{
-			uint8_t val = PRG[cpu_addr & 0x3fff];		// A13 not used
+			uint8_t val = PRG[cpu_addr & (PRGSize - 1)];
 
 			if (!cpu_data_dirty)
 			{
@@ -163,7 +163,11 @@ namespace Mappers
 			}
 		}
 
-		cart_out[(size_t)Breaknes::CartOutput::nIRQ] = TriState::Z;
+		TriState nIRQ = cart_out[(size_t)Breaknes::CartOutput::nIRQ];
+		if (!(nIRQ == TriState::Zero || nIRQ == TriState::One))
+		{
+			cart_out[(size_t)Breaknes::CartOutput::nIRQ] = TriState::Z;
+		}
 	}
 
 	struct SignalOffsetPair

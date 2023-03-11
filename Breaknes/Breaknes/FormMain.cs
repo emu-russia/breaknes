@@ -1,3 +1,4 @@
+using SharpTools;
 using System.Runtime.InteropServices;
 
 namespace Breaknes
@@ -7,16 +8,15 @@ namespace Breaknes
 		[DllImport("kernel32")]
 		static extern bool AllocConsole();
 
-		BoardControl board = new();
-		VideoRender vid_out = new();
+		private BoardControl board = new();
+		private VideoRender vid_out = new();
+		private int debug_instances = 0;
+		private string original_title;
 
 		public FormMain()
 		{
 			InitializeComponent();
-
-#if DEBUG
-			AllocConsole();
-#endif
+			//AllocConsole();
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -27,7 +27,7 @@ namespace Breaknes
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Paused = true;
+			board.Paused = true;
 			board.EjectCartridge();
 			board.DisposeBoard();
 			Close();
@@ -35,10 +35,10 @@ namespace Breaknes
 
 		private void FormMain_Load(object sender, EventArgs e)
 		{
+			original_title = Text;
 			var settings = FormSettings.LoadSettings();
 			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
 			backgroundWorker1.RunWorkerAsync();
-			vid_out.SetOutputPictureBox(pictureBox1);
 		}
 
 		private void loadROMDumpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -48,7 +48,11 @@ namespace Breaknes
 				string filename = openFileDialog1.FileName;
 				board.EjectCartridge();
 				board.InsertCartridge(filename);
-				Paused = false;
+				BreaksCore.Reset();
+				Text = original_title + " - " + filename;
+				vid_out = new();
+				vid_out.SetOutputPictureBox(pictureBox1);
+				board.Paused = debug_instances != 0;
 			}
 		}
 
@@ -61,11 +65,25 @@ namespace Breaknes
 
 		private void Settings_FormClosed(object? sender, FormClosedEventArgs e)
 		{
-			Paused = true;
+			board.Paused = true;
 			board.EjectCartridge();
 			board.DisposeBoard();
 			var settings = FormSettings.LoadSettings();
 			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
+			Text = original_title;
+		}
+
+		private void openDebuggerToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FormDebugger debugger = new(board);
+			debugger.FormClosed += Debugger_FormClosed;
+			debugger.Show();
+			debug_instances++;
+		}
+
+		private void Debugger_FormClosed(object? sender, FormClosedEventArgs e)
+		{
+			debug_instances--;
 		}
 	}
 }

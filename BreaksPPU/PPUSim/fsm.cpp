@@ -210,7 +210,7 @@ namespace PPUSim
 		INT_FF.set(NOR3(NOR(setFF, INT_FF.get()), RESCL, R2_Enable));
 
 		ppu->fsm.INT = NOR(NOT(VBL), NOT(INT_FF.get()));
-		db_latch.set(NOT(R2_Enable), INT_FF.get());
+		db_latch.set(INT_FF.get(), NOT(R2_Enable));
 		TriState DB7 = MUX(R2_Enable, TriState::Z, db_latch.nget());
 		ppu->SetDBBit(7, DB7);
 	}

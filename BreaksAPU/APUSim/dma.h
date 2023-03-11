@@ -24,11 +24,17 @@ namespace APUSim
 
 		BaseLogic::DLatch spr_buf[8]{};
 
-		BaseLogic::TriState SPRE = BaseLogic::TriState::X;
-		BaseLogic::TriState SPRS = BaseLogic::TriState::X;
+		BaseLogic::TriState SPRE = BaseLogic::TriState::X;		// OAM counter overflow signal. Used to determine if an OAM DMA is complete.
+		BaseLogic::TriState SPRS = BaseLogic::TriState::X;		// A signal that enables OAM counter (low 8 bits of the address). The signal is silenced by RUNDMC.
+
+		BaseLogic::TriState NOSPR = BaseLogic::TriState::X;		// When NOSPR is 0 - the OAM DMA circuitry performs its activities to provide the OAM DMA process.
+		BaseLogic::TriState DOSPR = BaseLogic::TriState::X;		// Latches the OAM DMA start event
+		BaseLogic::TriState sprdma_rdy = BaseLogic::TriState::X;	// aka oamdma_rdy
 
 		void sim_DMA_Address();
 		void sim_DMA_Control();
+
+		void DumpDMAState();
 
 	public:
 		DMA(APU* parent);

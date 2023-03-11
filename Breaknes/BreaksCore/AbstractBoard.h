@@ -39,6 +39,9 @@ namespace Breaknes
 		RGB_Triplet* pal = nullptr;
 		bool pal_cached = false;
 
+		BaseLogic::TriState gnd = BaseLogic::TriState::Zero;
+		BaseLogic::TriState vdd = BaseLogic::TriState::One;
+
 	public:
 		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1);
 		virtual ~Board();
