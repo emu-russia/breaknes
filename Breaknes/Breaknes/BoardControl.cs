@@ -6,7 +6,7 @@ namespace Breaknes
 {
 	public class BoardControl
 	{
-		public bool Paused = false;			// atomic
+		public bool Paused = true;			// atomic
 
 		public void CreateBoard(BoardDescription db, string name)
 		{
