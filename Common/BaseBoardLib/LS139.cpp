@@ -9,15 +9,18 @@ using namespace BaseLogic;
 
 namespace BaseBoard
 {
-	void LS139::sim(TriState inputs[], TriState n_Y1[4], TriState n_Y2[4])
+	static void sim(
+		TriState& n_EN1,
+		TriState& n_EN2,
+		TriState A1_0,
+		TriState A1_1,
+		TriState A2_0,
+		TriState A2_1,
+		TriState n_Y1[4],
+		TriState n_Y2[4])
 	{
-		TriState EN1 = NOT(inputs[(size_t)LS139_Input::n_EN1]);
-		TriState EN2 = NOT(inputs[(size_t)LS139_Input::n_EN2]);
-
-		TriState A1_0 = inputs[(size_t)LS139_Input::A1_0];
-		TriState A1_1 = inputs[(size_t)LS139_Input::A1_1];
-		TriState A2_0 = inputs[(size_t)LS139_Input::A2_0];
-		TriState A2_1 = inputs[(size_t)LS139_Input::A2_1];
+		TriState EN1 = NOT(n_EN1);
+		TriState EN2 = NOT(n_EN2);
 
 		n_Y1[0] = NAND3(NOT(A1_0), NOT(A1_1), EN1);
 		n_Y1[1] = NAND3(A1_0, NOT(A1_1), EN1);

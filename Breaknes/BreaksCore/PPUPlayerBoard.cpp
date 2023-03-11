@@ -128,10 +128,7 @@ namespace Breaknes
 		n_WR = ppu_outputs[(size_t)PPUSim::OutputPad::n_WR];
 		n_INT = ppu_outputs[(size_t)PPUSim::OutputPad::n_INT];
 
-		if (n_INT == TriState::Z)
-		{
-			n_INT = TriState::One;		// pullup
-		}
+		Pullup(n_INT);
 
 		// Simulate all other surrounding logic and cartridge
 

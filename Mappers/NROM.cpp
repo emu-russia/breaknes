@@ -138,6 +138,8 @@ namespace Mappers
 				*ppu_data = *ppu_data & val;
 			}
 		}
+
+		cart_out[(size_t)Breaknes::CartOutput::nIRQ] = TriState::Z;
 	}
 
 	struct SignalOffsetPair

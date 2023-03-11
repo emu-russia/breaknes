@@ -30,6 +30,7 @@ namespace Breaknes
 	{
 		VRAM_A10,
 		VRAM_nCS,
+		nIRQ,
 		CIC_RST,			// NES only
 		CIC_TO_MB,			// NES only
 		Max,

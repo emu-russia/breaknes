@@ -132,11 +132,11 @@ namespace Breaknes
 	{
 		Board* inst = nullptr;
 
-		if (board_name == "Famicom")
+		if (std::string(board_name).find("HVC") != std::string::npos)
 		{
 			// TBD
 		}
-		else if (board_name == "NES")
+		else if ( std::string(board_name).find("NES") != std::string::npos )
 		{
 			// TBD
 		}
