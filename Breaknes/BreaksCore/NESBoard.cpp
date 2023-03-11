@@ -108,11 +108,7 @@ namespace Breaknes
 		}
 		else if (PPU_nCE == TriState::Zero)
 		{
-			//BOARD_LOG("NESBoard: want ppu (%c). CPU addr: %x\n", CPU_RnW == TriState::One ? 'r' : 'w', addr_bus);
-			if (addr_bus != 0x2002)
-			{
-				printf("NESBoard: want ppu (%c). CPU addr: %x\n", CPU_RnW == TriState::One ? 'r' : 'w', addr_bus);
-			}
+			BOARD_LOG("NESBoard: want ppu (%c). CPU addr: %x\n", CPU_RnW == TriState::One ? 'r' : 'w', addr_bus);
 		}
 
 		// PPU
@@ -135,7 +131,7 @@ namespace Breaknes
 		PPU_nWR = ppu_outputs[(size_t)PPUSim::OutputPad::n_WR];
 		nNMI = ppu_outputs[(size_t)PPUSim::OutputPad::n_INT];
 
-		// Cartrdige In
+		// Cartridge In
 
 		bool LatchOutZ = false;
 		PPUAddrLatch.sim(PPU_ALE, TriState::Zero, ad_bus, &LatchedAddr, LatchOutZ);
