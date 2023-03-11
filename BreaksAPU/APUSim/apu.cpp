@@ -57,7 +57,10 @@ namespace APUSim
 		sim_CoreIntegration();
 		sim_SoundGenerators();
 
-		dma->sim();
+		//dma->sim();
+		wire.SPR_CPU = TriState::Zero;	// HACK
+		wire.SPR_PPU = TriState::Zero;	// HACK
+		wire.RDY = TriState::One;	// HACK
 		dma->sim_DMA_Buffer();
 		dma->sim_AddressMux();
 
@@ -95,7 +98,12 @@ namespace APUSim
 		tri->sim();
 		noise->sim();
 
-		dpcm->sim();
+		//dpcm->sim();
+		// HACK
+		wire.DMCRDY = TriState::One;
+		wire.n_DMC_AB = TriState::One;
+		wire.DMCINT = TriState::Zero;
+		wire.RUNDMC = TriState::Zero;
 	}
 
 	TriState APU::GetDBBit(size_t n)

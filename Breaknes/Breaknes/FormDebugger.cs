@@ -38,6 +38,14 @@ namespace Breaknes
 			{
 				Close();
 			}
+			else if (e.KeyCode == Keys.F11)
+			{
+				Step();
+			}
+			else if (e.KeyCode == Keys.F5)
+			{
+				board_ctrl.Paused = false;
+			}
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -179,9 +187,14 @@ namespace Breaknes
 		{
 			string text = "";
 			List<BreaksCore.DebugInfoEntry> entries = BreaksCore.GetDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs);
+			int max = 4;
+			int cnt = 0;
 			foreach (var entry in entries)
 			{
 				text += entry.name + " = " + entry.value.ToString("X2") + "; ";
+				cnt++;
+				if (cnt > max)
+					break;
 			}
 			Console.WriteLine(text);
 		}
@@ -194,14 +207,33 @@ namespace Breaknes
 
 		/// A tool for short-range debugging.
 		/// Step-by-step execution of the simulation. Available only if the worker is stopped.
-		private void toolStripButton2_Click(object sender, EventArgs e)
+		private void Step()
 		{
 			if (board_ctrl.Paused)
 			{
-				BreaksCore.Step();
+				if (BreaksCore.InResetState())
+				{
+					// Skip the reset condition by following all steps until it resets
+
+					while (BreaksCore.InResetState())
+					{
+						BreaksCore.Step();
+					}
+				}
+				else
+				{
+					BreaksCore.Step();
+				}
+
 				TraceCore();
 				Button2Click();
 			}
+		}
+
+
+		private void toolStripButton2_Click(object sender, EventArgs e)
+		{
+			Step();
 		}
 
 		// Click

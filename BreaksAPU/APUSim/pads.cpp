@@ -4,6 +4,9 @@
 
 using namespace BaseLogic;
 
+#define PAD_LOG(...) printf(__VA_ARGS__)
+//#define PAD_LOG(...)
+
 namespace APUSim
 {
 	Pads::Pads(APU* parent)
@@ -71,6 +74,7 @@ namespace APUSim
 
 		if (apu->wire.RD != TriState::One)
 		{
+			PAD_LOG("DMABuffer in WriteMode. Skipping sim_DataBusInput\n");
 			apu->DB_Dirty = false;
 			return;
 		}
@@ -83,6 +87,7 @@ namespace APUSim
 
 		apu->DB = Pack(val);
 		apu->DB_Dirty = true;
+		PAD_LOG("External databus: %02X => Internal DB: %02X\n", *data, apu->DB);
 	}
 
 	/// <summary>
@@ -95,6 +100,7 @@ namespace APUSim
 
 		if (apu->wire.WR != TriState::One)
 		{
+			PAD_LOG("DMABuffer in ReadMode. Skipping sim_DataBusOutput\n");
 			return;
 		}
 
@@ -104,6 +110,7 @@ namespace APUSim
 ;		}
 
 		*data = Pack(val);
+		PAD_LOG("Internal DB: %02X => External databus: %02X\n", apu->DB, *data);
 	}
 
 	void Pads::sim_OutReg()

@@ -10,6 +10,7 @@ namespace Breaknes
 		private BoardControl board = new();
 		private VideoRender vid_out = new();
 		private int debug_instances = 0;
+		private string original_title;
 
 		public FormMain()
 		{
@@ -33,6 +34,7 @@ namespace Breaknes
 
 		private void FormMain_Load(object sender, EventArgs e)
 		{
+			original_title = Text;
 			var settings = FormSettings.LoadSettings();
 			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
 			backgroundWorker1.RunWorkerAsync();
@@ -46,6 +48,7 @@ namespace Breaknes
 				string filename = openFileDialog1.FileName;
 				board.EjectCartridge();
 				board.InsertCartridge(filename);
+				Text = original_title + " - " + filename;
 				board.Paused = debug_instances != 0;
 			}
 		}
@@ -64,6 +67,7 @@ namespace Breaknes
 			board.DisposeBoard();
 			var settings = FormSettings.LoadSettings();
 			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
+			Text = original_title;
 		}
 
 		private void openDebuggerToolStripMenuItem_Click(object sender, EventArgs e)

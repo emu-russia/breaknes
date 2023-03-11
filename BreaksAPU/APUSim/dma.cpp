@@ -73,18 +73,32 @@ namespace APUSim
 
 		DMADirToggle.set(NOR(n_ACLK, NOR(n_ACLK2, DMADirToggle.get())));
 
-		TriState NOSPR = nospr_latch.nget();
+		NOSPR = nospr_latch.nget();
 
 		StartDMA.set(NOR3(NOT(NOSPR), RES, NOR(W4014, StartDMA.get())));
 		dospr_latch.set(StartDMA.nget(), n_ACLK2);
-		TriState DOSPR = NOR(dospr_latch.get(), NAND(NOT(PHI1), RnW));
+		DOSPR = NOR(dospr_latch.get(), NAND(NOT(PHI1), RnW));
 
 		SPRS = NOR3(NOSPR, RUNDMC, NOT(n_ACLK2));
 		StopDMA.set(NOR3(AND(SPRS, spre_latch.get()), RES, NOR(DOSPR, StopDMA.get())));
 		nospr_latch.set(StopDMA.get(), n_ACLK);
 
-		TriState sprdma_rdy = NOR(NOT(NOSPR), StartDMA.get());
+		sprdma_rdy = NOR(NOT(NOSPR), StartDMA.get());
 		apu->wire.RDY = AND(sprdma_rdy, DMCRDY);
+
+#if 0
+		if (sprdma_rdy == TriState::Zero)
+		{
+			printf("!sprdma_rdy\n");
+			DumpDMAState();
+		}
+		if (DMCRDY == TriState::Zero)
+		{
+			printf("!DMCRDY\n");
+			DumpDMAState();
+		}
+#endif
+
 		apu->wire.SPR_PPU = NOR3(NOSPR, RUNDMC, NOT(DMADirToggle.get()));
 		apu->wire.SPR_CPU = NOR3(NOSPR, RUNDMC, DMADirToggle.get());
 	}
@@ -94,6 +108,8 @@ namespace APUSim
 		apu->wire.RW = NOR(apu->wire.SPR_PPU, NOT(apu->wire.RnW));
 		apu->wire.RD = apu->wire.RW;
 		apu->wire.WR = NAND3(apu->wire.n_R4015, apu->wire.n_DBGRD, apu->wire.RW);
+
+		//printf("DMABuffer RW: %d\n", apu->wire.RW);
 
 		for (size_t n = 0; n < 8; n++)
 		{
@@ -119,18 +135,22 @@ namespace APUSim
 		if (DMC_AB == TriState::One)
 		{
 			apu->Ax = apu->DMC_Addr;
+			printf("DMC papa: %x\n", apu->Ax);
 		}
 		if (apu->wire.SPR_CPU == TriState::One)
 		{
 			apu->Ax = apu->SPR_Addr;
+			printf("OAM DMA papa: %x\n", apu->Ax);
 		}
 		if (apu->wire.SPR_PPU == TriState::One)
 		{
 			apu->Ax = PPU_Addr;
+			printf("OAM DMA papa: %x\n", apu->Ax);
 		}
 		if (CPU_AB == TriState::One)
 		{
 			apu->Ax = apu->CPU_Addr;
+			printf("Core papa: %x\n", apu->Ax);
 		}
 	}
 
@@ -179,6 +199,19 @@ namespace APUSim
 			spr_lo[n].set(val_lo[n]);
 			spr_hi[n].set(val_hi[n]);
 		}
+	}
+
+	void DMA::DumpDMAState()
+	{
+		printf("RUNDMC: %d, SPRS: %d, SPRE: %d, NOSPR: %d, DOSPR: %d, StartDMA: %d, StopDMA: %d, OAM Addr: 0x%x\n",
+			FromByte(apu->wire.RUNDMC),
+			FromByte(SPRS),
+			FromByte(SPRE),
+			FromByte(NOSPR),
+			FromByte(DOSPR),
+			FromByte(StartDMA.get()),
+			FromByte(StopDMA.get()),
+			Get_DMAAddress() );
 	}
 
 #pragma endregion "Debug"
