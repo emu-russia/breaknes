@@ -11,7 +11,7 @@ namespace Mappers
 		uint32_t last_nWR;
 	};
 
-	class NROM
+	class NROM : public Breaknes::AbstractCartridge
 	{
 		bool valid = false;
 
@@ -26,22 +26,34 @@ namespace Mappers
 		// Connect to PPU A10 for vertical mirroring or PPU A11 for horizontal mirroring.
 		bool V_Mirroring = false;
 
-	public:
-		NROM(uint8_t* nesImage, size_t nesImageSize);
-		~NROM();
-
-		bool Valid();
-
-		void sim(BaseLogic::TriState PA[14], BaseLogic::TriState n_PA13, BaseLogic::TriState n_RD, BaseLogic::TriState n_WR, 
-			uint8_t *PD, bool &PDDirty,
-			BaseLogic::TriState& n_VRAM_CS, BaseLogic::TriState& VRAM_A10);
-
 		size_t Dbg_GetCHRSize();
+		static uint8_t Dbg_ReadCHRByte(void* opaque, size_t addr);
+		static void Dbg_WriteCHRByte(void* opaque, size_t addr, uint8_t data);
+		void GetDebugInfo(NROM_DebugInfo& info);
+		
+		static uint32_t GetCartDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static void SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 
-		uint8_t Dbg_ReadCHRByte(size_t addr);
+		void AddCartMemDescriptors();
+		void AddCartDebugInfoProviders();
 
-		void Dbg_WriteCHRByte(size_t addr, uint8_t data);
+	public:
+		NROM(Breaknes::ConnectorType p1, uint8_t* nesImage, size_t nesImageSize);
+		virtual ~NROM();
 
-		void GetDebugInfo(NROM_DebugInfo & info);
+		bool Valid() override;
+
+		void sim(
+			BaseLogic::TriState cart_in[(size_t)Breaknes::CartInput::Max],
+			BaseLogic::TriState cart_out[(size_t)Breaknes::CartOutput::Max],
+			uint16_t cpu_addr,
+			uint8_t* cpu_data, bool& cpu_data_dirty,
+			uint16_t ppu_addr,
+			uint8_t* ppu_data, bool& ppu_data_dirty,
+			// Famicom only
+			APUSim::AudioOutSignal* snd_in,
+			Breaknes::CartAudioOutSignal* snd_out,
+			// NES only
+			uint16_t* exp, bool& exp_dirty);
 	};
 }

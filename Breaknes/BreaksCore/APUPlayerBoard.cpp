@@ -6,7 +6,7 @@ using namespace BaseLogic;
 
 namespace Breaknes
 {
-	APUPlayerBoard::APUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev) : Board(apu_rev, ppu_rev)
+	APUPlayerBoard::APUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
 	{
 		core = new M6502Core::FakeM6502(0x4000, 0x1f);
 		apu = new APUSim::APU(core, apu_rev);

@@ -449,4 +449,14 @@ namespace BaseLogic
 	/// <param name="CLK">Current CLK level</param>
 	/// <returns></returns>
 	bool IsNegedge(TriState prev_CLK, TriState CLK);
+
+	/// <summary>
+	/// Pullup signal
+	/// </summary>
+	void Pullup(TriState& val);
+
+	/// <summary>
+	/// Pulldown signal
+	/// </summary>
+	void Pulldown(TriState& val);
 }

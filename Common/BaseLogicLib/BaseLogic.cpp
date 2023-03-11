@@ -581,4 +581,20 @@ namespace BaseLogic
 	{
 		return (prev_CLK == TriState::One && CLK == TriState::Zero);
 	}
+
+	void Pullup(TriState& val)
+	{
+		if (val == TriState::Z)
+		{
+			val = TriState::One;
+		}
+	}
+
+	void Pulldown(TriState& val)
+	{
+		if (val == TriState::Z)
+		{
+			val = TriState::Zero;
+		}
+	}
 }

@@ -48,44 +48,37 @@ namespace Breaknes
 		bool pendingReset = false;
 		int resetHalfClkCounter = 0;
 
-		Mappers::NROM* cart = nullptr;
 		BaseLogic::TriState n_INT = BaseLogic::TriState::X;
 		BaseLogic::TriState n_VRAM_CS = BaseLogic::TriState::X;
 		BaseLogic::TriState VRAM_A10 = BaseLogic::TriState::X;
 		BaseLogic::TriState ALE = BaseLogic::TriState::X;
 		BaseLogic::TriState n_RD = BaseLogic::TriState::X;
 		BaseLogic::TriState n_WR = BaseLogic::TriState::X;
-		BaseLogic::TriState PA[14]{};
+		uint16_t ppu_addr = 0;
 		BaseLogic::TriState n_PA13 = BaseLogic::TriState::X;
 		uint8_t LatchedAddress = 0;
 		uint32_t VRAM_Addr = 0;
 
 		static uint8_t DumpVRAM(void* opaque, size_t addr);
-		static uint8_t DumpCHR(void* opaque, size_t addr);
 		static uint8_t DumpCRAM(void* opaque, size_t addr);
 		static uint8_t DumpOAM(void* opaque, size_t addr);
 		static uint8_t DumpTempOAM(void* opaque, size_t addr);
 
 		static void WriteVRAM(void* opaque, size_t addr, uint8_t data);
-		static void WriteCHR(void* opaque, size_t addr, uint8_t data);
 		static void WriteCRAM(void* opaque, size_t addr, uint8_t data);
 		static void WriteOAM(void* opaque, size_t addr, uint8_t data);
 		static void WriteTempOAM(void* opaque, size_t addr, uint8_t data);
 
 		static uint32_t GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry);
 		static uint32_t GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
-		static uint32_t GetCartDebugInfo(void* opaque, DebugInfoEntry* entry);
 		static uint32_t GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry);
 
 		static void SetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 		static void SetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
-		static void SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 		static void SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 
 		void AddBoardMemDescriptors();
-		void AddCartMemDescriptors();
 		void AddDebugInfoProviders();
-		void AddCartDebugInfoProviders();
 
 		void GetDebugInfo(PPUBoardDebugInfo& info);
 
@@ -99,14 +92,10 @@ namespace Breaknes
 		uint32_t CPUOpsProcessed = 0;
 
 	public:
-		PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
+		PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1);
 		virtual ~PPUPlayerBoard();
 
 		void Step() override;
-
-		int InsertCartridge(uint8_t* nesImage, size_t nesImageSize) override;
-
-		void EjectCartridge() override;
 
 		void Reset() override;
 

@@ -3,8 +3,9 @@
 
 namespace Breaknes
 {
-	Board::Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev)
+	Board::Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1)
 	{
+		p1_type = p1;
 		pal = new RGB_Triplet[8 * 64];
 	}
 
@@ -13,33 +14,35 @@ namespace Breaknes
 		delete pal;
 	}
 
-	// cartridge api hmmm...
-
-	void Board::InsertCartridge(AbstractCartridge* _cart)
+	int Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
 	{
-		assert(cart == nullptr);
-		cart = _cart;
-	}
+		CartridgeFactory cf(p1_type, nesImage, nesImageSize);
+		cart = cf.GetInstance();
 
-	void Board::DestroyCartridge()
-	{
-		if (cart)
+		if (!cart->Valid())
 		{
 			delete cart;
 			cart = nullptr;
-		}
-	}
 
-	int Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
-	{
-		// The board does not have a cartridge connector.
+			dbg_hub->DisposeCartDebugInfo();
+			dbg_hub->DisposeCartMemMap();
+
+			return -1;
+		}
 
 		return 0;
 	}
 
 	void Board::EjectCartridge()
 	{
-		// The board does not have a cartridge connector.
+		if (cart)
+		{
+			delete cart;
+			cart = nullptr;
+
+			dbg_hub->DisposeCartDebugInfo();
+			dbg_hub->DisposeCartMemMap();
+		}
 	}
 
 	void Board::Reset()

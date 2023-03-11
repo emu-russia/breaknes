@@ -31,8 +31,6 @@ extern "C"
 		}
 	}
 
-	// hmmm cartridge api...
-
 	__declspec(dllexport) int InsertCartridge(uint8_t* nesImage, size_t size)
 	{
 		if (board != nullptr)

@@ -4,7 +4,7 @@ using SharpTools;
 
 namespace Breaknes
 {
-	class BoardControl
+	public class BoardControl
 	{
 		public void CreateBoard(BoardDescription db, string name)
 		{
@@ -13,6 +13,13 @@ namespace Breaknes
 				if (board.name == name)
 				{
 					BreaksCore.CreateBoard(board.name, board.apu, board.ppu, board.p1);
+					BreaksCore.Reset();
+
+					// Make additional settings for emulation in the Breaknes casual environment
+
+					BreaksCore.SetOamDecayBehavior(BreaksCore.OAMDecayBehavior.Keep);
+					BreaksCore.SetRAWColorMode(true);
+
 					break;
 				}
 			}

@@ -6,7 +6,7 @@ using namespace BaseLogic;
 
 namespace Breaknes
 {
-	PPUPlayerBoard::PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev) : Board(apu_rev, ppu_rev)
+	PPUPlayerBoard::PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
 	{
 		core = new M6502Core::FakeM6502(0x2000, 0x7);
 		ppu = new PPUSim::PPU(ppu_rev);
@@ -128,29 +128,39 @@ namespace Breaknes
 		n_WR = ppu_outputs[(size_t)PPUSim::OutputPad::n_WR];
 		n_INT = ppu_outputs[(size_t)PPUSim::OutputPad::n_INT];
 
-		if (n_INT == TriState::Z)
-		{
-			n_INT = TriState::One;		// pullup
-		}
+		Pullup(n_INT);
 
 		// Simulate all other surrounding logic and cartridge
 
 		bool LatchOutZ = false;
 		latch.sim(ALE, TriState::Zero, ad_bus, &LatchedAddress, LatchOutZ);
 
-		for (size_t n = 0; n < 8; n++)
-		{
-			PA[n] = ((LatchedAddress >> n) & 1) ? TriState::One : TriState::Zero;
-		}
-		for (size_t n = 0; n < 6; n++)
-		{
-			PA[8 + n] = ((pa8_13 >> n) & 1) ? TriState::One : TriState::Zero;
-		}
-		n_PA13 = NOT(PA[13]);
+		ppu_addr = ((uint16_t)pa8_13 << 8) | LatchedAddress;
+		n_PA13 = NOT(FromByte((ppu_addr >> 13) & 1));
 
 		if (cart != nullptr)
 		{
-			cart->sim(PA, n_PA13, n_RD, n_WR, &ad_bus, ADDirty, n_VRAM_CS, VRAM_A10);
+			TriState cart_in[(size_t)CartInput::Max]{};
+			TriState cart_out[(size_t)CartOutput::Max];
+
+			bool unused;
+
+			cart_in[(size_t)CartInput::nRD] = n_RD;
+			cart_in[(size_t)CartInput::nWR] = n_WR;
+			cart_in[(size_t)CartInput::nPA13] = n_PA13;
+
+			cart->sim (
+				cart_in,
+				cart_out,
+				0,
+				nullptr, unused,
+				ppu_addr,
+				&ad_bus, ADDirty,
+				nullptr, nullptr,
+				nullptr, unused );
+
+			n_VRAM_CS = cart_out[(size_t)CartOutput::VRAM_nCS];
+			VRAM_A10 = cart_out[(size_t)CartOutput::VRAM_A10];
 		}
 		else
 		{
@@ -162,8 +172,8 @@ namespace Breaknes
 		}
 
 		VRAM_Addr = LatchedAddress;
-		VRAM_Addr |= ((PA[8] == TriState::One) ? 1 : 0) << 8;
-		VRAM_Addr |= ((PA[9] == TriState::One) ? 1 : 0) << 9;
+		VRAM_Addr |= ((ppu_addr >> 8) & 1) << 8;
+		VRAM_Addr |= ((ppu_addr >> 9) & 1) << 9;
 		VRAM_Addr |= ((VRAM_A10 == TriState::One) ? 1 : 0) << 10;
 
 		bool dz = (n_RD == TriState::One && n_WR == TriState::One);
@@ -180,44 +190,6 @@ namespace Breaknes
 			{
 				pendingReset = false;
 			}
-		}
-	}
-
-	/// <summary>
-	/// "Insert" the cartridge as a .nes ROM. In this implementation we are simply trying to instantiate an NROM, but in a more advanced emulation, Cartridge Factory will take care of "inserting" the cartridge.
-	/// </summary>
-	/// <param name="nesImage">A pointer to the ROM image in memory.</param>
-	/// <param name="nesImageSize">ROM image size in bytes.</param>
-	/// <returns></returns>
-	int PPUPlayerBoard::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
-	{
-		if (cart == nullptr)
-		{
-			cart = new Mappers::NROM(nesImage, nesImageSize);
-
-			if (!cart->Valid())
-			{
-				delete cart;
-				cart = nullptr;
-
-				return -1;
-			}
-
-			AddCartMemDescriptors();
-			AddCartDebugInfoProviders();
-		}
-		return 0;
-	}
-
-	/// <summary>
-	/// Remove the cartridge. Logically this means that all terminals associated with the cartridge take the value of `z`.
-	/// </summary>
-	void PPUPlayerBoard::EjectCartridge()
-	{
-		if (cart != nullptr)
-		{
-			delete cart;
-			cart = nullptr;
 		}
 	}
 

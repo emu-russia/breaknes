@@ -21,7 +21,9 @@ namespace Breaknes
 
 		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
 
+		// CPU Bus
 		uint8_t data_bus = 0;
+		bool data_bus_dirty = false;
 		uint16_t addr_bus = 0;
 
 		APUSim::AudioOutSignal aux{};
@@ -30,6 +32,7 @@ namespace Breaknes
 		// The cartridge slot supports hotplugging during simulation.
 
 		AbstractCartridge* cart = nullptr;
+		ConnectorType p1_type = ConnectorType::None;
 
 		// Pre-calculated PPU palette
 
@@ -37,19 +40,13 @@ namespace Breaknes
 		bool pal_cached = false;
 
 	public:
-		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
+		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1);
 		virtual ~Board();
-
-		// TBD: hmm...
-		void InsertCartridge(AbstractCartridge* cart);
-		void DestroyCartridge();
 
 		/// <summary>
 		/// Simulate 1 half cycle of the test board with NSFPlayer. The simulation of the signal edge is not supported, this is overkill.
 		/// </summary>
 		virtual void Step() = 0;
-
-		// TBD: hmmm.. cartridge stuff
 
 		/// <summary>
 		/// "Insert" the cartridge as a .nes ROM. In this implementation we are simply trying to instantiate an NROM, but in a more advanced emulation, Cartridge Factory will take care of "inserting" the cartridge.

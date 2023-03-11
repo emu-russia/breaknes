@@ -132,29 +132,29 @@ namespace Breaknes
 	{
 		Board* inst = nullptr;
 
-		if (board_name == "Famicom")
+		if (std::string(board_name).find("HVC") != std::string::npos)
 		{
 			// TBD
 		}
-		else if (board_name == "NES")
+		else if ( std::string(board_name).find("NES") != std::string::npos )
 		{
-			// TBD
+			inst = new NESBoard(apu_rev, ppu_rev, p1_type);
 		}
 		else if (board_name == "NSFPlayer")
 		{
-			inst = new NSFPlayerBoard(apu_rev, ppu_rev);
+			inst = new NSFPlayerBoard(apu_rev, ppu_rev, p1_type);
 		}
 		else if (board_name == "APUPlayer")
 		{
-			inst = new APUPlayerBoard(apu_rev, ppu_rev);
+			inst = new APUPlayerBoard(apu_rev, ppu_rev, p1_type);
 		}
 		else if (board_name == "PPUPlayer")
 		{
-			inst = new PPUPlayerBoard(apu_rev, ppu_rev);
+			inst = new PPUPlayerBoard(apu_rev, ppu_rev, p1_type);
 		}
 		else
 		{
-			inst = new BogusBoard(apu_rev, ppu_rev);
+			inst = new BogusBoard(apu_rev, ppu_rev, p1_type);
 		}
 
 		return inst;

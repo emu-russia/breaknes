@@ -37,7 +37,7 @@ namespace Breaknes
 		void GetDebugInfo(APUBoardDebugInfo& info);
 
 	public:
-		APUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev);
+		APUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1);
 		virtual ~APUPlayerBoard();
 
 		void Step() override;
