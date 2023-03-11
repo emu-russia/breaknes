@@ -39,6 +39,8 @@
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.openDebuggerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
@@ -47,6 +49,7 @@
 			// 
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.debugToolStripMenuItem,
             this.helpToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
@@ -124,6 +127,21 @@
 			this.pictureBox1.TabIndex = 1;
 			this.pictureBox1.TabStop = false;
 			// 
+			// debugToolStripMenuItem
+			// 
+			this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openDebuggerToolStripMenuItem});
+			this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
+			this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+			this.debugToolStripMenuItem.Text = "Debug";
+			// 
+			// openDebuggerToolStripMenuItem
+			// 
+			this.openDebuggerToolStripMenuItem.Name = "openDebuggerToolStripMenuItem";
+			this.openDebuggerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.openDebuggerToolStripMenuItem.Text = "Open Debugger";
+			this.openDebuggerToolStripMenuItem.Click += new System.EventHandler(this.openDebuggerToolStripMenuItem_Click);
+			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -157,5 +175,7 @@
 		private OpenFileDialog openFileDialog1;
 		private System.ComponentModel.BackgroundWorker backgroundWorker1;
 		private PictureBox pictureBox1;
+		private ToolStripMenuItem debugToolStripMenuItem;
+		private ToolStripMenuItem openDebuggerToolStripMenuItem;
 	}
 }

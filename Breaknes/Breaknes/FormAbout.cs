@@ -17,11 +17,6 @@ namespace Breaknes
 			}
 		}
 
-		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-			OpenUrl("https://github.com/emu-russia/breaknes");
-		}
-
 		private void OpenUrl(string url)
 		{
 			// https://stackoverflow.com/questions/4580263/how-to-open-in-default-browser-in-c-sharp
@@ -51,6 +46,11 @@ namespace Breaknes
 					throw;
 				}
 			}
+		}
+
+		private void linkLabel1_LinkClicked(object sender, EventArgs e)
+		{
+			OpenUrl("https://github.com/emu-russia/breaknes");
 		}
 	}
 }

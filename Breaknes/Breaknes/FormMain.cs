@@ -67,5 +67,10 @@ namespace Breaknes
 			var settings = FormSettings.LoadSettings();
 			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
 		}
+
+		private void openDebuggerToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+
+		}
 	}
 }
