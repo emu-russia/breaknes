@@ -7,8 +7,9 @@ namespace Breaknes
 		[DllImport("kernel32")]
 		static extern bool AllocConsole();
 
-		BoardControl board = new();
-		VideoRender vid_out = new();
+		private BoardControl board = new();
+		private VideoRender vid_out = new();
+		private int debug_instances = 0;
 
 		public FormMain()
 		{
@@ -48,7 +49,7 @@ namespace Breaknes
 				string filename = openFileDialog1.FileName;
 				board.EjectCartridge();
 				board.InsertCartridge(filename);
-				Paused = false;
+				Paused = debug_instances != 0;
 			}
 		}
 
@@ -70,7 +71,15 @@ namespace Breaknes
 
 		private void openDebuggerToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			FormDebugger debugger = new();
+			debugger.FormClosed += Debugger_FormClosed;
+			debugger.Show();
+			debug_instances++;
+		}
 
+		private void Debugger_FormClosed(object? sender, FormClosedEventArgs e)
+		{
+			debug_instances--;
 		}
 	}
 }
