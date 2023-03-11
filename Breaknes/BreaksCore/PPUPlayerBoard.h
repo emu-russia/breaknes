@@ -48,7 +48,6 @@ namespace Breaknes
 		bool pendingReset = false;
 		int resetHalfClkCounter = 0;
 
-		Mappers::NROM* cart = nullptr;
 		BaseLogic::TriState n_INT = BaseLogic::TriState::X;
 		BaseLogic::TriState n_VRAM_CS = BaseLogic::TriState::X;
 		BaseLogic::TriState VRAM_A10 = BaseLogic::TriState::X;

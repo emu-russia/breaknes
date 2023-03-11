@@ -211,6 +211,9 @@ namespace PPUPlayer
 			int w = 8 * 16 * 2;
 			int h = 8 * 16;
 
+			if (chr_data.Length == 0)
+				return new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
 			// chr2bmp - CHR ROM convertor. v.1.0
 			// Created (C) org /2002/ kvzorganic@mail.ru
 			// :-P
@@ -339,6 +342,9 @@ namespace PPUPlayer
 			int w = 32 * tile_size;
 			int h = 30 * tile_size;
 
+			if (patternTab.Length == 0)
+				return new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
 			Bitmap pic = new Bitmap(w * 2, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
 			RenderNameTab(0, nameTab, patternTab, pic, 0, 0, cram);
@@ -349,6 +355,11 @@ namespace PPUPlayer
 
 		void RenderObject(byte[] patternTab, Bitmap pic, int delta_x, int delta_y, byte tile_id, int bank, byte attr, bool visible, byte[] cram)
 		{
+			bool use_colors = color_output;
+
+			if (cram.Length == 0)
+				use_colors = false;
+
 			int tile_size = 8;
 
 			bool flip_v = (attr & 0x80) != 0;
@@ -377,7 +388,7 @@ namespace PPUPlayer
 					c |= ((pal & 3) << 2);
 					c &= 0xf;
 					Color p;
-					if (color_output)
+					if (use_colors)
 					{
 						int n = cram[0x10 + c];
 						p = Color.FromArgb(visible ? 0xff : 0x80, nes_pal[n, 0], nes_pal[n, 1], nes_pal[n, 2]);
@@ -396,6 +407,9 @@ namespace PPUPlayer
 			int tile_size = 8;
 			int w = 8 * tile_size;
 			int h = 8 * tile_size;
+
+			if (patternTab.Length == 0)
+				return new Bitmap(1, 1);
 
 			Bitmap pic = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
@@ -428,6 +442,9 @@ namespace PPUPlayer
 			int tile_size = 8;
 			int w = 8 * tile_size;
 			int h = 1 * tile_size;
+
+			if (patternTab.Length == 0)
+				return new Bitmap(1, 1);
 
 			Bitmap pic = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 

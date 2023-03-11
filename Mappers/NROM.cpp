@@ -58,10 +58,10 @@ namespace Mappers
 			uint8_t* chrPtr = nesImage + sizeof(NESHeader) + (trainer ? 512 : 0) + head->PRGSize * 0x4000;
 			memcpy(CHR, chrPtr, CHRSize);
 
+			valid = true;
+
 			AddCartMemDescriptors();
 			AddCartDebugInfoProviders();
-
-			valid = true;
 		}
 	}
 
@@ -124,7 +124,7 @@ namespace Mappers
 		{
 			nrom_debug.last_PA = (uint32_t)ppu_addr;
 
-			assert(addr < CHRSize);
+			assert(ppu_addr < CHRSize);
 
 			uint8_t val = CHR[ppu_addr];
 
