@@ -22,131 +22,6 @@ namespace Breaknes
 		dbg_hub->AddMemRegion(wramRegion, DumpWRAM, WriteWRAM, this, false);
 	}
 
-	struct SignalOffsetPair
-	{
-		const char* name;
-		const size_t offset;
-		const uint8_t bits;
-	};
-
-	static SignalOffsetPair apu_wires[] = {
-		"/CLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_CLK), 1,
-		"PHI0", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI0), 1,
-		"PHI1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI1), 1,
-		"PHI2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI2), 1,
-		"RDY", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RDY), 1,
-		"RDY2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RDY2), 1,
-		"ACLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::ACLK), 1,
-		"/ACLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_ACLK), 1,
-		"RES", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RES), 1,
-		"RESCore", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RESCore), 1,
-		"/M2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_M2), 1,
-		"/NMI", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_NMI), 1,
-		"/IRQ", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_IRQ), 1,
-		"INT", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::INT), 1,
-		"/LFO1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_LFO1), 1,
-		"/LFO2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_LFO2), 1,
-		"R/W", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RnW), 1,
-		"SPR/CPU", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SPR_CPU), 1,
-		"SPR/PPU", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SPR_PPU), 1,
-		"RW", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RW), 1,
-		"RD", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RD), 1,
-		"WR", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::WR), 1,
-		"SYNC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SYNC), 1,
-		"#DMC/AB", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_DMC_AB), 1,
-		"RUNDMC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RUNDMC), 1,
-		"DMCINT", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::DMCINT), 1,
-		"DMCRDY", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::DMCRDY), 1,
-		"/R4015", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4015), 1,
-		"/R4016", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4016), 1,
-		"/R4017", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4017), 1,
-		"/R4018", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4018), 1,
-		"/R4019", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4019), 1,
-		"/R401A", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R401A), 1,
-		"W4000", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4000), 1,
-		"W4001", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4001), 1,
-		"W4002", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4002), 1,
-		"W4003", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4003), 1,
-		"W4004", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4004), 1,
-		"W4005", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4005), 1,
-		"W4006", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4006), 1,
-		"W4007", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4007), 1,
-		"W4008", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4008), 1,
-		"W400A", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W400A), 1,
-		"W400B", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W400B), 1,
-		"W400C", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W400C), 1,
-		"W400E", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W400E), 1,
-		"W400F", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W400F), 1,
-		"W4010", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4010), 1,
-		"W4011", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4011), 1,
-		"W4012", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4012), 1,
-		"W4013", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4013), 1,
-		"W4014", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4014), 1,
-		"W4015", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4015), 1,
-		"W4016", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4016), 1,
-		"W4017", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4017), 1,
-		"W401A", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W401A), 1,
-		"SQA/LC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SQA_LC), 1,
-		"SQB/LC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SQB_LC), 1,
-		"TRI/LC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::TRI_LC), 1,
-		"RND/LC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RND_LC), 1,
-		"NOSQA", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::NOSQA), 1,
-		"NOSQB", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::NOSQB), 1,
-		"NOTRI", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::NOTRI), 1,
-		"NORND", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::NORND), 1,
-		"DBG", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::DBG), 1,
-		"/DBGRD", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_DBGRD), 1,
-		"LOCK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::LOCK), 1,
-	};
-
-	static SignalOffsetPair apu_regs[] = {
-		"DBOutputLatch", offsetof(APUSim::APU_Registers, DBOutputLatch), 8,
-		"DBInputLatch", offsetof(APUSim::APU_Registers, DBInputLatch), 8,
-		"OutReg", offsetof(APUSim::APU_Registers, OutReg), 3,
-		"LengthCounterSQA", offsetof(APUSim::APU_Registers, LengthCounterSQA), 8,
-		"LengthCounterSQB", offsetof(APUSim::APU_Registers, LengthCounterSQB), 8,
-		"LengthCounterTRI", offsetof(APUSim::APU_Registers, LengthCounterTRI), 8,
-		"LengthCounterRND", offsetof(APUSim::APU_Registers, LengthCounterRND), 8,
-		"SQFreqReg0", offsetof(APUSim::APU_Registers, SQFreqReg[0]), 11,
-		"SQFreqReg1", offsetof(APUSim::APU_Registers, SQFreqReg[1]), 11,
-		"SQShiftReg0", offsetof(APUSim::APU_Registers, SQShiftReg[0]), 3,
-		"SQShiftReg1", offsetof(APUSim::APU_Registers, SQShiftReg[1]), 3,
-		"SQFreqCounter0", offsetof(APUSim::APU_Registers, SQFreqCounter[0]), 11,
-		"SQFreqCounter1", offsetof(APUSim::APU_Registers, SQFreqCounter[1]), 11,
-		"SQVolumeReg0", offsetof(APUSim::APU_Registers, SQVolumeReg[0]), 4,
-		"SQVolumeReg1", offsetof(APUSim::APU_Registers, SQVolumeReg[1]), 4,
-		"SQDecayCounter0", offsetof(APUSim::APU_Registers, SQDecayCounter[0]), 4,
-		"SQDecayCounter1", offsetof(APUSim::APU_Registers, SQDecayCounter[1]), 4,
-		"SQEnvelopeCounter0", offsetof(APUSim::APU_Registers, SQEnvelopeCounter[0]), 4,
-		"SQEnvelopeCounter1", offsetof(APUSim::APU_Registers, SQEnvelopeCounter[1]), 4,
-		"SQSweepReg0", offsetof(APUSim::APU_Registers, SQSweepReg[0]), 3,
-		"SQSweepReg1", offsetof(APUSim::APU_Registers, SQSweepReg[1]), 3,
-		"SQSweepCounter0", offsetof(APUSim::APU_Registers, SQSweepCounter[0]), 3,
-		"SQSweepCounter1", offsetof(APUSim::APU_Registers, SQSweepCounter[1]), 3,
-		"SQDutyCounter0", offsetof(APUSim::APU_Registers, SQDutyCounter[0]), 3,
-		"SQDutyCounter1", offsetof(APUSim::APU_Registers, SQDutyCounter[1]), 3,
-		"TRILinearReg", offsetof(APUSim::APU_Registers, TRILinearReg), 7,
-		"TRILinearCounter", offsetof(APUSim::APU_Registers, TRILinearCounter), 7,
-		"TRIFreqReg", offsetof(APUSim::APU_Registers, TRIFreqReg), 11,
-		"TRIFreqCounter", offsetof(APUSim::APU_Registers, TRIFreqCounter), 11,
-		"TRIOutputCounter", offsetof(APUSim::APU_Registers, TRIOutputCounter), 5,
-		"RNDFreqReg", offsetof(APUSim::APU_Registers, RNDFreqReg), 4,
-		"RNDVolumeReg", offsetof(APUSim::APU_Registers, RNDVolumeReg), 4,
-		"RNDDecayCounter", offsetof(APUSim::APU_Registers, RNDDecayCounter), 4,
-		"RNDEnvelopeCounter", offsetof(APUSim::APU_Registers, RNDEnvelopeCounter), 4,
-		"DPCMFreqReg", offsetof(APUSim::APU_Registers, DPCMFreqReg), 4,
-		"DPCMSampleReg", offsetof(APUSim::APU_Registers, DPCMSampleReg), 8,
-		"DPCMSampleCounter", offsetof(APUSim::APU_Registers, DPCMSampleCounter), 12,
-		"DPCMSampleBuffer", offsetof(APUSim::APU_Registers, DPCMSampleBuffer), 8,
-		"DPCMSampleBitCounter", offsetof(APUSim::APU_Registers, DPCMSampleBitCounter), 3,
-		"DPCMAddressReg", offsetof(APUSim::APU_Registers, DPCMAddressReg), 8,
-		"DPCMAddressCounter", offsetof(APUSim::APU_Registers, DPCMAddressCounter), 15,
-		"DPCMOutput", offsetof(APUSim::APU_Registers, DPCMOutput), 7,
-		"DMABuffer", offsetof(APUSim::APU_Registers, DMABuffer), 8,
-		"DMAAddress", offsetof(APUSim::APU_Registers, DMAAddress), 16,
-		"Status", offsetof(APUSim::APU_Registers, Status), 8,
-	};
-
 	static SignalOffsetPair board_signals[] = {
 		"BoardCLK", offsetof(APUBoardDebugInfo, CLK), 1,
 		"ABus", offsetof(APUBoardDebugInfo, ABus), 16,
@@ -155,7 +30,7 @@ namespace Breaknes
 
 	void APUPlayerBoard::AddDebugInfoProviders()
 	{
-		for (size_t n = 0; n < _countof(apu_wires); n++)
+		for (size_t n = 0; n < apu_wires_count; n++)
 		{
 			SignalOffsetPair* sp = &apu_wires[n];
 
@@ -167,7 +42,7 @@ namespace Breaknes
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APU, entry, GetApuDebugInfo, SetApuDebugInfo, this);
 		}
 
-		for (size_t n = 0; n < _countof(apu_regs); n++)
+		for (size_t n = 0; n < apu_regs_count; n++)
 		{
 			SignalOffsetPair* sp = &apu_regs[n];
 
@@ -208,7 +83,7 @@ namespace Breaknes
 	{
 		APUPlayerBoard* board = (APUPlayerBoard*)opaque;
 
-		for (size_t n = 0; n < _countof(apu_wires); n++)
+		for (size_t n = 0; n < apu_wires_count; n++)
 		{
 			SignalOffsetPair* sp = &apu_wires[n];
 
@@ -229,7 +104,7 @@ namespace Breaknes
 	{
 		APUPlayerBoard* board = (APUPlayerBoard*)opaque;
 
-		for (size_t n = 0; n < _countof(apu_regs); n++)
+		for (size_t n = 0; n < apu_regs_count; n++)
 		{
 			SignalOffsetPair* sp = &apu_regs[n];
 
@@ -251,7 +126,7 @@ namespace Breaknes
 	{
 		APUPlayerBoard* board = (APUPlayerBoard*)opaque;
 
-		for (size_t n = 0; n < _countof(apu_regs); n++)
+		for (size_t n = 0; n < apu_regs_count; n++)
 		{
 			SignalOffsetPair* sp = &apu_regs[n];
 

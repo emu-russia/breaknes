@@ -2,6 +2,13 @@
 
 namespace Breaknes
 {
+	struct NESBoardDebugInfo
+	{
+		uint32_t CLK;
+		uint32_t ABus;		// Board address bus
+		uint32_t DBus;		// Board data bus
+	};
+
 	class NESBoard : public Board
 	{
 		BaseBoard::SRAM* wram = nullptr;
@@ -65,6 +72,43 @@ namespace Breaknes
 
 		bool pendingReset = false;
 		int resetHalfClkCounter = 0;
+
+#pragma region "Debug, look away"
+
+		static uint8_t DumpWRAM(void* opaque, size_t addr);
+		static uint8_t DumpVRAM(void* opaque, size_t addr);
+		static uint8_t DumpCRAM(void* opaque, size_t addr);
+		static uint8_t DumpOAM(void* opaque, size_t addr);
+		static uint8_t DumpTempOAM(void* opaque, size_t addr);
+
+		static void WriteWRAM(void* opaque, size_t addr, uint8_t data);
+		static void WriteVRAM(void* opaque, size_t addr, uint8_t data);
+		static void WriteCRAM(void* opaque, size_t addr, uint8_t data);
+		static void WriteOAM(void* opaque, size_t addr, uint8_t data);
+		static void WriteTempOAM(void* opaque, size_t addr, uint8_t data);
+
+		static uint32_t GetCoreDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetApuDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetPpuDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry);
+		static uint32_t GetBoardDebugInfo(void* opaque, DebugInfoEntry* entry);
+
+		static void SetCoreDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetCoreRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetApuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetApuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetPpuDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetPpuRegsDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+		static void SetBoardDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
+
+		void AddBoardMemDescriptors();
+		void AddDebugInfoProviders();
+
+		void GetDebugInfo(NESBoardDebugInfo& info);
+
+#pragma endregion "Debug, look away"
 
 	public:
 		NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1);

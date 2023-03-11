@@ -34,6 +34,7 @@
     <ClCompile Include="..\..\dllmain.cpp" />
     <ClCompile Include="..\..\FamicomBoard.cpp" />
     <ClCompile Include="..\..\NESBoard.cpp" />
+    <ClCompile Include="..\..\NESBoardDebug.cpp" />
     <ClCompile Include="..\..\NSFMapper.cpp" />
     <ClCompile Include="..\..\NSFPlayerBoard.cpp" />
     <ClCompile Include="..\..\NSFPlayerBoardDebug.cpp" />
@@ -45,6 +46,7 @@
     </ClCompile>
     <ClCompile Include="..\..\PPUPlayerBoard.cpp" />
     <ClCompile Include="..\..\PPUPlayerBoardDebug.cpp" />
+    <ClCompile Include="..\..\SignalDefs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Breaks6502\Breakasm\ASM.h" />
@@ -63,6 +65,7 @@
     <ClInclude Include="..\..\NSFPlayerBoard.h" />
     <ClInclude Include="..\..\pch.h" />
     <ClInclude Include="..\..\PPUPlayerBoard.h" />
+    <ClInclude Include="..\..\SignalDefs.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Readme.md" />

@@ -14,6 +14,9 @@ namespace Breaknes
 		// Memory
 		wram = new BaseBoard::SRAM(wram_bits);
 		vram = new BaseBoard::SRAM(vram_bits);
+
+		AddBoardMemDescriptors();
+		AddDebugInfoProviders();
 	}
 	
 	NESBoard::~NESBoard()

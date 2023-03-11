@@ -41,6 +41,7 @@
 
 // Boards
 
+#include "SignalDefs.h"
 #include "AbstractBoard.h"
 #include "BogusBoard.h"
 #include "NESBoard.h"
