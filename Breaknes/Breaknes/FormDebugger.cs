@@ -15,6 +15,7 @@ namespace Breaknes
 {
 	public partial class FormDebugger : Form
 	{
+		private DataHumanizer humanizer = new();
 		private List<BreaksCore.MemDesciptor> mem = new();
 		private bool UpdateMemLayoutInProgress = false;
 		private BoardControl board_ctrl;
@@ -28,6 +29,7 @@ namespace Breaknes
 		private void FormDebugger_Load(object sender, EventArgs e)
 		{
 			UpdateMemLayout();
+			humanizer.SetColorDebugOutput(true);
 		}
 
 		private void FormDebugger_KeyDown(object sender, KeyEventArgs e)
@@ -131,6 +133,15 @@ namespace Breaknes
 
 			int descrID = comboBox1.SelectedIndex;
 
+			if (pictureBoxForHuman.Visible)
+			{
+				string descrName = mem[descrID].name;
+
+				Bitmap bitmap = humanizer.ConvertHexToImage(descrName);
+				pictureBoxForHuman.Image = bitmap;
+				pictureBoxForHuman.Invalidate();
+			}
+			else
 			{
 				byte[] buf = new byte[mem[descrID].size];
 
