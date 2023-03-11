@@ -4,6 +4,9 @@
 
 using namespace BaseLogic;
 
+//#define DMA_LOG(...) printf(__VA_ARGS__)
+#define DMA_LOG(...)
+
 namespace APUSim
 {
 	DMA::DMA(APU* parent)
@@ -135,22 +138,22 @@ namespace APUSim
 		if (DMC_AB == TriState::One)
 		{
 			apu->Ax = apu->DMC_Addr;
-			printf("DMC papa: %x\n", apu->Ax);
+			DMA_LOG("DMC papa. Read %x\n", apu->Ax);
 		}
 		if (apu->wire.SPR_CPU == TriState::One)
 		{
 			apu->Ax = apu->SPR_Addr;
-			printf("OAM DMA papa: %x\n", apu->Ax);
+			DMA_LOG("OAM DMA papa. Read %x\n", apu->Ax);
 		}
 		if (apu->wire.SPR_PPU == TriState::One)
 		{
 			apu->Ax = PPU_Addr;
-			printf("OAM DMA papa: %x\n", apu->Ax);
+			DMA_LOG("OAM DMA papa. Write %x\n", apu->Ax);
 		}
 		if (CPU_AB == TriState::One)
 		{
 			apu->Ax = apu->CPU_Addr;
-			printf("Core papa: %x\n", apu->Ax);
+			DMA_LOG("Core papa: %x\n", apu->Ax);
 		}
 	}
 

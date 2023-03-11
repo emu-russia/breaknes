@@ -2,6 +2,9 @@
 
 using namespace BaseLogic;
 
+//#define BOARD_LOG(...) printf(__VA_ARGS__)
+#define BOARD_LOG(...)
+
 namespace Breaknes
 {
 	NESBoard::NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1) : Board (apu_rev, ppu_rev, p1)
@@ -32,8 +35,10 @@ namespace Breaknes
 	{
 		if (pendingReset)
 		{
-			printf("NESBoard still in reset state\n");
+			BOARD_LOG("NESBoard still in reset state\n");
 		}
+
+		// TBD: See if the bus is dirty and deal with it. In the NES/Famicom a dirty bus is a common thing.
 
 		data_bus_dirty = false;
 		ADDirty = false;
@@ -75,11 +80,9 @@ namespace Breaknes
 		// no pullup on R/W -- wtf?
 		Pullup(CPU_RnW);
 
-		// DMX
+		// DMX (Bus Master)
 
-		TriState gnd = TriState::Zero;
-
-		// In real CPU in reset mode M2 goes to state `Z`, it does not suit us
+		// In real CPU in reset mode M2 goes to `Z` state, it does not suit us
 		Pullup(M2);			// HACK
 
 		DMX.sim(
@@ -97,19 +100,19 @@ namespace Breaknes
 
 		if (nROMSEL == TriState::Zero && CPU_RnW == TriState::One)
 		{
-			printf("NESBoard: want cartucco. CPU addr: %x\n", addr_bus);
+			BOARD_LOG("NESBoard: want cartucco. CPU addr: %x\n", addr_bus);
 		}
 		else if (WRAM_nCE == TriState::Zero && CPU_RnW == TriState::One)
 		{
-			printf("NESBoard: want wram. CPU addr: %x\n", addr_bus);
+			BOARD_LOG("NESBoard: want wram. CPU addr: %x\n", addr_bus);
 		}
 		else if (PPU_nCE == TriState::Zero)
 		{
-			printf("NESBoard: want ppu (%c). CPU addr: %x\n", CPU_RnW == TriState::One ? 'r' : 'w', addr_bus);
-		}
-		else
-		{
-			printf("NESBoard: want weird! CPU addr: %x\n", addr_bus);
+			//BOARD_LOG("NESBoard: want ppu (%c). CPU addr: %x\n", CPU_RnW == TriState::One ? 'r' : 'w', addr_bus);
+			if (addr_bus != 0x2002)
+			{
+				printf("NESBoard: want ppu (%c). CPU addr: %x\n", CPU_RnW == TriState::One ? 'r' : 'w', addr_bus);
+			}
 		}
 
 		// PPU
@@ -208,7 +211,7 @@ namespace Breaknes
 			}
 		}
 
-		printf("\n");
+		BOARD_LOG("\n");
 	}
 
 	void NESBoard::Reset()
@@ -220,7 +223,7 @@ namespace Breaknes
 
 		// Do not make the value too small, otherwise the Core will skip /RES=0. To be sure, it is better to hold the reset for several Core cycles
 
-		resetHalfClkCounter = 24;
+		resetHalfClkCounter = 64;
 	}
 
 	bool NESBoard::InResetState()

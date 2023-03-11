@@ -4,8 +4,8 @@
 
 using namespace BaseLogic;
 
-#define PAD_LOG(...) printf(__VA_ARGS__)
-//#define PAD_LOG(...)
+//#define PAD_LOG(...) printf(__VA_ARGS__)
+#define PAD_LOG(...)
 
 namespace APUSim
 {
