@@ -2,8 +2,11 @@
 
 namespace Breaknes
 {
-	CartridgeFactory::CartridgeFactory(uint8_t* nesImage, size_t size)
+	CartridgeFactory::CartridgeFactory(ConnectorType p1, uint8_t* nesImage, size_t size)
 	{
+		p1_type = p1;
+		data = nesImage;
+		data_size = size;
 	}
 		
 	CartridgeFactory::~CartridgeFactory()
@@ -12,6 +15,6 @@ namespace Breaknes
 
 	AbstractCartridge* CartridgeFactory::GetInstance()
 	{
-		return nullptr;
+		return new Mappers::NROM(p1_type, data, data_size);
 	}
 }

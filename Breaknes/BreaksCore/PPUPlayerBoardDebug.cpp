@@ -8,13 +8,11 @@ using namespace BaseLogic;
 #define CRAM_NAME "Color RAM"
 #define OAM_NAME "OAM"
 #define OAM2_NAME "Temp OAM"
-#define CHR_ROM_NAME "CHR-ROM"
 #define PPU_WIRES_CATEGORY "PPU Wires"
 #define PPU_FSM_CATEGORY "PPU FSM"
 #define PPU_EVAL_CATEGORY "PPU Eval"
 #define PPU_REGS_CATEGORY "PPU Regs"
 #define BOARD_CATEGORY "Board"
-#define NROM_CATEGORY "NROM"
 
 #define CRAM_SIZE (16+16)
 #define OAM_SIZE 0x100
@@ -55,15 +53,6 @@ namespace Breaknes
 		strcpy_s(oam2Region->name, sizeof(oam2Region->name), OAM2_NAME);
 		oam2Region->size = OAM2_SIZE;
 		dbg_hub->AddMemRegion(oam2Region, DumpTempOAM, WriteTempOAM, this, false);
-	}
-
-	void PPUPlayerBoard::AddCartMemDescriptors()
-	{
-		MemDesciptor* chrRegion = new MemDesciptor;
-		memset(chrRegion, 0, sizeof(MemDesciptor));
-		strcpy_s(chrRegion->name, sizeof(chrRegion->name), CHR_ROM_NAME);
-		chrRegion->size = (int32_t)cart->Dbg_GetCHRSize();
-		dbg_hub->AddMemRegion(chrRegion, DumpCHR, WriteCHR, this, true);
 	}
 
 	struct SignalOffsetPair
@@ -304,12 +293,6 @@ namespace Breaknes
 		"CPUOpsProcessed", offsetof(PPUBoardDebugInfo, CPUOpsProcessed), 32,
 	};
 
-	SignalOffsetPair nrom_signals[] = {
-		"Last PA", offsetof(Mappers::NROM_DebugInfo, last_PA), 16,
-		"Last /RD", offsetof(Mappers::NROM_DebugInfo, last_nRD), 1,
-		"Last /WR", offsetof(Mappers::NROM_DebugInfo, last_nWR), 1,
-	};
-
 	void PPUPlayerBoard::AddDebugInfoProviders()
 	{
 		for (size_t n = 0; n < _countof(ppu_wires); n++)
@@ -373,31 +356,10 @@ namespace Breaknes
 		}
 	}
 
-	void PPUPlayerBoard::AddCartDebugInfoProviders()
-	{
-		for (size_t n = 0; n < _countof(nrom_signals); n++)
-		{
-			SignalOffsetPair* sp = &nrom_signals[n];
-
-			DebugInfoEntry* entry = new DebugInfoEntry;
-			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), NROM_CATEGORY);
-			strcpy_s(entry->name, sizeof(entry->name), sp->name);
-			entry->bits = sp->bits;
-			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Cart, entry, GetCartDebugInfo, SetCartDebugInfo, this);
-		}
-	}
-
 	uint8_t PPUPlayerBoard::DumpVRAM(void* opaque, size_t addr)
 	{
 		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		return board->vram->Dbg_ReadByte(addr);
-	}
-
-	uint8_t PPUPlayerBoard::DumpCHR(void* opaque, size_t addr)
-	{
-		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
-		return board->cart->Dbg_ReadCHRByte(addr);
 	}
 
 	uint8_t PPUPlayerBoard::DumpCRAM(void* opaque, size_t addr)
@@ -422,12 +384,6 @@ namespace Breaknes
 	{
 		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 		board->vram->Dbg_WriteByte(addr, data);
-	}
-
-	void PPUPlayerBoard::WriteCHR(void* opaque, size_t addr, uint8_t data)
-	{
-		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
-		board->cart->Dbg_WriteCHRByte(addr, data);
 	}
 
 	void PPUPlayerBoard::WriteCRAM(void* opaque, size_t addr, uint8_t data)
@@ -543,35 +499,6 @@ namespace Breaknes
 		}
 	}
 
-	uint32_t PPUPlayerBoard::GetCartDebugInfo(void* opaque, DebugInfoEntry* entry)
-	{
-		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
-
-		if (!board->cart)
-			return 0;
-
-		for (size_t n = 0; n < _countof(nrom_signals); n++)
-		{
-			SignalOffsetPair* sp = &nrom_signals[n];
-
-			if (!strcmp(sp->name, entry->name))
-			{
-				Mappers::NROM_DebugInfo nrom_info{};
-				board->cart->GetDebugInfo(nrom_info);
-
-				uint8_t* ptr = (uint8_t*)&nrom_info + sp->offset;
-				return *(uint32_t *)ptr;
-			}
-		}
-
-		return 0;
-	}
-
-	void PPUPlayerBoard::SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
-	{
-		// not need
-	}
-
 	void PPUPlayerBoard::GetDebugInfo(PPUBoardDebugInfo& info)
 	{
 		info.CLK = CLK;
@@ -580,13 +507,7 @@ namespace Breaknes
 		info.VRAM_Addr = VRAM_Addr;
 		info.n_VRAM_CS = n_VRAM_CS;
 		info.VRAM_A10 = VRAM_A10;
-
-		info.PA = 0;
-		for (size_t n = 0; n < _countof(PA); n++)
-		{
-			info.PA |= (PA[n] == TriState::One ? 1ULL : 0) << n;
-		}
-
+		info.PA = ppu_addr;
 		info.n_PA13 = n_PA13;
 		info.n_RD = n_RD;
 		info.n_WR = n_WR;

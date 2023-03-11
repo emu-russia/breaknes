@@ -6,7 +6,7 @@ using namespace BaseLogic;
 
 namespace Breaknes
 {
-	NSFPlayerBoard::NSFPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev) : Board(apu_rev, ppu_rev)
+	NSFPlayerBoard::NSFPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
 	{
 		core = new M6502Core::M6502(true, true);
 		apu = new APUSim::APU(core, apu_rev);

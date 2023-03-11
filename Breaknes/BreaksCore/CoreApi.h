@@ -20,8 +20,6 @@ extern "C"
 	/// </summary>
 	__declspec(dllexport) void DestroyBoard();
 
-	// TBD: hmmm cartridge api...
-
 	/// <summary>
 	/// Insert the cartridge. Cartridge Factory will try to fit .nes ROM into the form factor of the current motherboard's cartridge connector. In addition, a mapper instance will be created if it is supported.
 	/// </summary>

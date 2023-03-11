@@ -1,14 +1,18 @@
 // Simple Mapper Simulator (0) - NROM.
 // I'm not very knowledgeable about the zoo of their implementations, so this module will gradually be improved as new knowledge becomes available.
-// Also: We limit the simulation to the CHR part only, because the PPUPlayer does not require a PRG.
+
+// TBD: We limit the simulation to the CHR part only, because the PPUPlayer does not require a PRG.
 
 #include "pch.h"
 
 using namespace BaseLogic;
 
+#define NROM_CATEGORY "NROM"
+#define CHR_ROM_NAME "CHR-ROM"
+
 namespace Mappers
 {
-	NROM::NROM(uint8_t* nesImage, size_t nesImageSize)
+	NROM::NROM(Breaknes::ConnectorType p1, uint8_t* nesImage, size_t nesImageSize) : AbstractCartridge (p1, nesImage, nesImageSize)
 	{
 		printf("NROM::NROM()\n");
 
@@ -54,6 +58,9 @@ namespace Mappers
 			uint8_t* chrPtr = nesImage + sizeof(NESHeader) + (trainer ? 512 : 0) + head->PRGSize * 0x4000;
 			memcpy(CHR, chrPtr, CHRSize);
 
+			AddCartMemDescriptors();
+			AddCartDebugInfoProviders();
+
 			valid = true;
 		}
 	}
@@ -74,53 +81,126 @@ namespace Mappers
 		return valid;
 	}
 
-	void NROM::sim(TriState PA[14], TriState n_PA13, TriState n_RD, TriState n_WR,
-		uint8_t* PD, bool& PDDirty,
-		TriState& n_VRAM_CS, TriState& VRAM_A10)
+	void NROM::sim(
+		TriState cart_in[(size_t)Breaknes::CartInput::Max],
+		TriState cart_out[(size_t)Breaknes::CartOutput::Max],
+		uint16_t cpu_addr,
+		uint8_t* cpu_data, bool& cpu_data_dirty,
+		uint16_t ppu_addr,
+		uint8_t* ppu_data, bool& ppu_data_dirty,
+		// Famicom only
+		APUSim::AudioOutSignal* snd_in,
+		Breaknes::CartAudioOutSignal* snd_out,
+		// NES only
+		uint16_t* exp, bool& exp_dirty)
 	{
+		UNREFERENCED_PARAMETER(snd_in);
+		UNREFERENCED_PARAMETER(snd_out);
+		UNREFERENCED_PARAMETER(exp);
+		UNREFERENCED_PARAMETER(exp_dirty);
+
 		if (!valid)
 			return;
 
-		nrom_debug.last_nRD = n_RD == TriState::One ? 1 : 0;
-		nrom_debug.last_nWR = n_WR == TriState::One ? 1 : 0;
+		TriState nRD = cart_in[(size_t)Breaknes::CartInput::nRD];
+		TriState nWR = cart_in[(size_t)Breaknes::CartInput::nWR];
+
+		nrom_debug.last_nRD = nRD == TriState::One ? 1 : 0;
+		nrom_debug.last_nWR = nWR == TriState::One ? 1 : 0;
 
 		// H/V Mirroring
 
-		VRAM_A10 = V_Mirroring ? PA[10] : PA[11];
+		cart_out[(size_t)Breaknes::CartOutput::VRAM_A10] = V_Mirroring ? FromByte((ppu_addr >> 10) & 1) : FromByte((ppu_addr >> 11) & 1);
 
 		// NROM contains a jumper between `/PA13` and `/VRAM_CS`
 
-		n_VRAM_CS = n_PA13;
+		cart_out[(size_t)Breaknes::CartOutput::VRAM_nCS] = cart_in[(size_t)Breaknes::CartInput::nPA13];
 
 		// CHR_A13 is actually `/CS` for CHR-ROM
 
-		TriState nCHR_CS = PA[13];
+		TriState nCHR_CS = FromByte((ppu_addr >> 13) & 1);
 
-		if (NOR(n_RD, nCHR_CS) == TriState::One)
+		if (NOR(nRD, nCHR_CS) == TriState::One)
 		{
-			size_t addr = 0;
-
-			for (size_t n = 0; n < 13; n++)
-			{
-				addr |= (PA[n] == TriState::One ? 1ULL : 0) << n;
-			}
-
-			nrom_debug.last_PA = (uint32_t)addr;
+			nrom_debug.last_PA = (uint32_t)ppu_addr;
 
 			assert(addr < CHRSize);
 
-			uint8_t val = CHR[addr];
+			uint8_t val = CHR[ppu_addr];
 
-			if (!PDDirty)
+			if (!ppu_data_dirty)
 			{
-				*PD = val;
-				PDDirty = true;
+				*ppu_data = val;
+				ppu_data_dirty = true;
 			}
 			else
 			{
-				*PD = *PD & val;
+				*ppu_data = *ppu_data & val;
 			}
 		}
+	}
+
+	struct SignalOffsetPair
+	{
+		const char* name;
+		const size_t offset;
+		const uint8_t bits;
+	};
+
+	SignalOffsetPair nrom_signals[] = {
+		"Last PA", offsetof(NROM_DebugInfo, last_PA), 16,
+		"Last /RD", offsetof(NROM_DebugInfo, last_nRD), 1,
+		"Last /WR", offsetof(NROM_DebugInfo, last_nWR), 1,
+	};
+
+	void NROM::AddCartMemDescriptors()
+	{
+		MemDesciptor* chrRegion = new MemDesciptor;
+		memset(chrRegion, 0, sizeof(MemDesciptor));
+		strcpy_s(chrRegion->name, sizeof(chrRegion->name), CHR_ROM_NAME);
+		chrRegion->size = (int32_t)Dbg_GetCHRSize();
+		dbg_hub->AddMemRegion(chrRegion, Dbg_ReadCHRByte, Dbg_WriteCHRByte, this, true);
+	}
+
+	void NROM::AddCartDebugInfoProviders()
+	{
+		for (size_t n = 0; n < _countof(nrom_signals); n++)
+		{
+			SignalOffsetPair* sp = &nrom_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy_s(entry->category, sizeof(entry->category), NROM_CATEGORY);
+			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Cart, entry, GetCartDebugInfo, SetCartDebugInfo, this);
+		}
+	}
+
+	uint32_t NROM::GetCartDebugInfo(void* opaque, DebugInfoEntry* entry)
+	{
+		NROM* nrom = (NROM*)opaque;
+
+		for (size_t n = 0; n < _countof(nrom_signals); n++)
+		{
+			SignalOffsetPair* sp = &nrom_signals[n];
+
+			if (!strcmp(sp->name, entry->name))
+			{
+				Mappers::NROM_DebugInfo nrom_info{};
+				nrom->GetDebugInfo(nrom_info);
+
+				uint8_t* ptr = (uint8_t*)&nrom_info + sp->offset;
+				return *(uint32_t*)ptr;
+			}
+		}
+
+		return 0;
+	}
+
+	void NROM::SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
+	{
+		// not need
 	}
 
 	size_t NROM::Dbg_GetCHRSize()
@@ -131,14 +211,16 @@ namespace Mappers
 		return CHRSize;
 	}
 
-	uint8_t NROM::Dbg_ReadCHRByte(size_t addr)
+	uint8_t NROM::Dbg_ReadCHRByte(void* opaque, size_t addr)
 	{
-		if (!valid)
+		NROM* nrom = (NROM*)opaque;
+
+		if (!nrom->valid)
 			return 0;
 
-		if (addr < CHRSize)
+		if (addr < nrom->CHRSize)
 		{
-			return CHR[addr];
+			return nrom->CHR[addr];
 		}
 		else
 		{
@@ -149,14 +231,16 @@ namespace Mappers
 	/// <summary>
 	/// Generally speaking, the NROM contains CHR-ROM, but who cares.
 	/// </summary>
-	void NROM::Dbg_WriteCHRByte(size_t addr, uint8_t data)
+	void NROM::Dbg_WriteCHRByte(void* opaque, size_t addr, uint8_t data)
 	{
-		if (!valid)
+		NROM* nrom = (NROM*)opaque;
+
+		if (!nrom->valid)
 			return;
 
-		if (addr < CHRSize)
+		if (addr < nrom->CHRSize)
 		{
-			CHR[addr] = data;
+			nrom->CHR[addr] = data;
 		}
 	}
 

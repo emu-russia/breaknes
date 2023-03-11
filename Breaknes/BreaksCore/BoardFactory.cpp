@@ -142,19 +142,19 @@ namespace Breaknes
 		}
 		else if (board_name == "NSFPlayer")
 		{
-			inst = new NSFPlayerBoard(apu_rev, ppu_rev);
+			inst = new NSFPlayerBoard(apu_rev, ppu_rev, p1_type);
 		}
 		else if (board_name == "APUPlayer")
 		{
-			inst = new APUPlayerBoard(apu_rev, ppu_rev);
+			inst = new APUPlayerBoard(apu_rev, ppu_rev, p1_type);
 		}
 		else if (board_name == "PPUPlayer")
 		{
-			inst = new PPUPlayerBoard(apu_rev, ppu_rev);
+			inst = new PPUPlayerBoard(apu_rev, ppu_rev, p1_type);
 		}
 		else
 		{
-			inst = new BogusBoard(apu_rev, ppu_rev);
+			inst = new BogusBoard(apu_rev, ppu_rev, p1_type);
 		}
 
 		return inst;
