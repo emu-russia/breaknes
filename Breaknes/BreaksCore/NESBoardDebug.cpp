@@ -69,9 +69,9 @@ namespace Breaknes
 	}
 
 	static SignalOffsetPair board_signals[] = {
-		"BoardCLK", offsetof(APUBoardDebugInfo, CLK), 1,
-		"ABus", offsetof(APUBoardDebugInfo, ABus), 16,
-		"DBus", offsetof(APUBoardDebugInfo, DBus), 8,
+		"BoardCLK", offsetof(NESBoardDebugInfo, CLK), 1,
+		"ABus", offsetof(NESBoardDebugInfo, ABus), 16,
+		"DBus", offsetof(NESBoardDebugInfo, DBus), 8,
 	};
 
 	void NESBoard::AddDebugInfoProviders()
