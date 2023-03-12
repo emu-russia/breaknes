@@ -17,7 +17,7 @@ namespace Breaknes
 		public FormMain()
 		{
 			InitializeComponent();
-			//AllocConsole();
+			AllocConsole();
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -48,7 +48,11 @@ namespace Breaknes
 			{
 				string filename = openFileDialog1.FileName;
 				board.EjectCartridge();
-				board.InsertCartridge(filename);
+				if (board.InsertCartridge(filename) < 0)
+				{
+					MessageBox.Show ("Unsupported or corrupted NES ROM image format.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;
+				}
 				BreaksCore.Reset();
 				Text = original_title + " - " + filename;
 				vid_out = new();

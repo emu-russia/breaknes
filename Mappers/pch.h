@@ -13,5 +13,10 @@
 #include "../BreaksAPU/APUSim/apu.h"
 #include "../Breaknes/BreaksCore/AbstractCartridge.h"
 
+#include "../Common/BaseBoardLib/LS32.h"
+#include "../Common/BaseBoardLib/LS161.h"
+
 #include "NES_Header.h"
 #include "NROM.h"
+#include "UNROM.h"
+#include "AOROM.h"

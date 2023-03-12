@@ -1,17 +1,10 @@
-// Simple Mapper Simulator (0) - NROM.
+// Simple Mapper Simulator (2) - UNROM.
 
 #pragma once
 
 namespace Mappers
 {
-	struct NROM_DebugInfo
-	{
-		uint32_t last_PA;
-		uint32_t last_nRD;
-		uint32_t last_nWR;
-	};
-
-	class NROM : public Breaknes::AbstractCartridge
+	class UNROM : public Breaknes::AbstractCartridge
 	{
 		bool valid = false;
 
@@ -21,26 +14,20 @@ namespace Mappers
 		uint8_t* CHR = nullptr;
 		size_t CHRSize = 0;
 
-		bool chr_ram = false;
-
-		NROM_DebugInfo nrom_debug{};
-
 		// Connect to PPU A10 for vertical mirroring or PPU A11 for horizontal mirroring.
 		bool V_Mirroring = false;
 
 		static uint8_t Dbg_ReadCHRByte(void* opaque, size_t addr);
 		static void Dbg_WriteCHRByte(void* opaque, size_t addr, uint8_t data);
-		void GetDebugInfo(NROM_DebugInfo& info);
-		
-		static uint32_t GetCartDebugInfo(void* opaque, DebugInfoEntry* entry);
-		static void SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value);
 
 		void AddCartMemDescriptors();
-		void AddCartDebugInfoProviders();
+
+		BaseBoard::LS32 quad_or{};
+		BaseBoard::LS161 counter{};
 
 	public:
-		NROM(Breaknes::ConnectorType p1, uint8_t* nesImage, size_t nesImageSize);
-		virtual ~NROM();
+		UNROM(Breaknes::ConnectorType p1, uint8_t* nesImage, size_t nesImageSize);
+		virtual ~UNROM();
 
 		bool Valid() override;
 

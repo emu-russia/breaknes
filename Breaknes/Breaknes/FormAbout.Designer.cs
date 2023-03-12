@@ -84,7 +84,7 @@
 			this.label3.Size = new System.Drawing.Size(283, 76);
 			this.label3.TabIndex = 4;
 			this.label3.Text = "WARNING!!!11 WIP Version:\r\n- DMC Disabled (RUNDMC=0; DMCRDY=1)\r\n- Something else " +
-    "is buggy\r\n- NROM Only";
+    "is buggy\r\n- NROM, UNROM, AOROM Only";
 			// 
 			// backgroundWorker1
 			// 
