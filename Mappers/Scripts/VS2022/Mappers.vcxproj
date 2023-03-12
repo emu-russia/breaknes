@@ -22,6 +22,7 @@
     <ClInclude Include="..\..\NES_Header.h" />
     <ClInclude Include="..\..\NROM.h" />
     <ClInclude Include="..\..\pch.h" />
+    <ClInclude Include="..\..\UNROM.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\NROM.cpp" />
@@ -31,6 +32,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\UNROM.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Readme.md" />

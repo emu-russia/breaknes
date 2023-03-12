@@ -27,6 +27,11 @@
 #include "../../Common/BaseBoardLib/LS373.h"
 #include "../../Common/BaseBoardLib/SRAM.h"
 #include "../../Common/BaseBoardLib/Fake6502.h"
+#include "../../Common/BaseBoardLib/LS32.h"
+#include "../../Common/BaseBoardLib/LS161.h"
+
+// DebugHub to all
+
 #include "DebugHub.h"
 
 // Cartridge Slot
@@ -38,6 +43,7 @@
 
 #include "../../Mappers/NES_Header.h"
 #include "../../Mappers/NROM.h"
+#include "../../Mappers/UNROM.h"
 
 // Boards
 

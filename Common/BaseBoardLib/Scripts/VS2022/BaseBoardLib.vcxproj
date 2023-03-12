@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\Fake6502.cpp" />
     <ClCompile Include="..\..\LS139.cpp" />
+    <ClCompile Include="..\..\LS161.cpp" />
+    <ClCompile Include="..\..\LS32.cpp" />
     <ClCompile Include="..\..\LS368.cpp" />
     <ClCompile Include="..\..\LS373.cpp" />
     <ClCompile Include="..\..\pch.cpp">
@@ -35,6 +37,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\Fake6502.h" />
     <ClInclude Include="..\..\LS139.h" />
+    <ClInclude Include="..\..\LS161.h" />
+    <ClInclude Include="..\..\LS32.h" />
     <ClInclude Include="..\..\LS368.h" />
     <ClInclude Include="..\..\LS373.h" />
     <ClInclude Include="..\..\pch.h" />

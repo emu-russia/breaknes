@@ -13,3 +13,5 @@
 #include "LS373.h"
 #include "SRAM.h"
 #include "Fake6502.h"
+#include "LS32.h"
+#include "LS161.h"

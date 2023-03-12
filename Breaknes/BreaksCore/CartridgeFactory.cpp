@@ -15,7 +15,7 @@ namespace Breaknes
 
 	AbstractCartridge* CartridgeFactory::GetInstance()
 	{
-		if (data_size > 16 * 1024 * 1024 || data_size < sizeof(NESHeader))
+		if (!data || data_size > 16 * 1024 * 1024 || data_size < sizeof(NESHeader))
 		{
 			printf("Doesn't look like any adequate NES ROM at all.\n");
 			return nullptr;
@@ -51,6 +51,9 @@ namespace Breaknes
 		{
 			case 0:
 				return new Mappers::NROM(p1_type, data, data_size);
+
+			case 2:
+				return new Mappers::UNROM(p1_type, data, data_size);
 
 			default:
 				break;
