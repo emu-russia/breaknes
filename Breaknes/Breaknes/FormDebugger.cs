@@ -241,5 +241,17 @@ namespace Breaknes
 		{
 			board_ctrl.Paused = false;
 		}
+
+		/// <summary>
+		/// Used to change the value of PPU registers on the fly. Use for Free Mode.
+		/// </summary>
+		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+		{
+			if (e.ChangedItem != null)
+			{
+				BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_PPURegs,
+					"PPU Regs", e.ChangedItem.Label, (UInt32)e.ChangedItem.Value);
+			}
+		}
 	}
 }

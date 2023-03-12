@@ -18,7 +18,7 @@ Builds for Linux will be available as soon as everything settles down.
 - APU: 100%
 - PPU: 100%
 - Boards: 6/6
-- Mappers: 1 (Only NROM)
+- Mappers: 3 (NROM, UNROM, AOROM)
 
 The values reflect mostly a subjective feeling about reaching a critical mass of code. Bugs and improvements can be made ad infinitum.
 
