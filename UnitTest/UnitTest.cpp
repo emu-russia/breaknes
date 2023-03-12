@@ -130,6 +130,12 @@ namespace UnitTest
 			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
 			Assert::IsTrue(ut.TestLengthCounter());
 		}
+
+		TEST_METHOD(TestOAM_DMA)
+		{
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
+			Assert::IsTrue(ut.TestOAM_DMA());
+		}
 	};
 
 	TEST_CLASS(PpuUnitTest)

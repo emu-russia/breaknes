@@ -4,10 +4,6 @@
 
 NES/Famicom/Dendy emulator at the gate level.
 
-<img src="https://raw.githubusercontent.com/emu-russia/breaknes/main/UserManual/imgstore/art-bomberman.gif" width="200px">
-
-Ready to countdown!
-
 ## Build
 
 Use Windows and VS2022. Dotnet 6.0 **Desktop** Runtime is also required.
@@ -17,11 +13,11 @@ Builds for Linux will be available as soon as everything settles down.
 ## Procrastination Chart
 
 - Breaknes GUI (managed part): 90%
-- BreaksCore (native part): 95%
+- BreaksCore (native part): 96%
 - 6502 Core: 100%
 - APU: 100%
 - PPU: 100%
-- Boards: 5/6
+- Boards: 6/6
 - Mappers: 1 (Only NROM)
 
 The values reflect mostly a subjective feeling about reaching a critical mass of code. Bugs and improvements can be made ad infinitum.

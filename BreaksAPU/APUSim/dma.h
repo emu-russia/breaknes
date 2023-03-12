@@ -34,8 +34,6 @@ namespace APUSim
 		void sim_DMA_Address();
 		void sim_DMA_Control();
 
-		void DumpDMAState();
-
 	public:
 		DMA(APU* parent);
 		~DMA();

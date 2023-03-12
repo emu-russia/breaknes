@@ -4,9 +4,6 @@
 
 using namespace BaseLogic;
 
-//#define BOARD_LOG(...) printf(__VA_ARGS__)
-#define BOARD_LOG(...)
-
 namespace Breaknes
 {
 	NESBoard::NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1) : Board (apu_rev, ppu_rev, p1)
@@ -19,6 +16,8 @@ namespace Breaknes
 		// Memory
 		wram = new BaseBoard::SRAM(wram_bits);
 		vram = new BaseBoard::SRAM(vram_bits);
+
+		apu->SetNormalizedOutput(true);
 
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
@@ -35,11 +34,6 @@ namespace Breaknes
 
 	void NESBoard::Step()
 	{
-		if (pendingReset)
-		{
-			BOARD_LOG("NESBoard still in reset state\n");
-		}
-
 		// TBD: See if the bus is dirty and deal with it. In the NES/Famicom a dirty bus is a common thing.
 
 		data_bus_dirty = false;
@@ -100,26 +94,13 @@ namespace Breaknes
 		WRAM_nCE = nY2[0];
 		PPU_nCE = nY2[1];
 
-		if (nROMSEL == TriState::Zero && CPU_RnW == TriState::One)
-		{
-			BOARD_LOG("NESBoard: want cartucco. CPU addr: %x\n", addr_bus);
-		}
-		else if (WRAM_nCE == TriState::Zero && CPU_RnW == TriState::One)
-		{
-			BOARD_LOG("NESBoard: want wram. CPU addr: %x\n", addr_bus);
-		}
-		else if (PPU_nCE == TriState::Zero)
-		{
-			BOARD_LOG("NESBoard: want ppu (%c). CPU addr: %x\n", CPU_RnW == TriState::One ? 'r' : 'w', addr_bus);
-		}
-
 		// PPU
 
 		TriState ppu_inputs[(size_t)PPUSim::InputPad::Max]{};
 		TriState ppu_outputs[(size_t)PPUSim::OutputPad::Max]{};
 
 		ppu_inputs[(size_t)PPUSim::InputPad::CLK] = CLK;
-		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = nRST;
+		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = nRST;		// NES Board specific ⚠️
 		ppu_inputs[(size_t)PPUSim::InputPad::RnW] = CPU_RnW;
 		ppu_inputs[(size_t)PPUSim::InputPad::RS0] = FromByte ((addr_bus >> 0) & 1);
 		ppu_inputs[(size_t)PPUSim::InputPad::RS1] = FromByte((addr_bus >> 1) & 1);
@@ -166,6 +147,7 @@ namespace Breaknes
 				ppu_addr,
 				&ad_bus, ADDirty,
 				nullptr, nullptr,
+				// NES Board specific ⚠️
 				&exp_bus, unused);
 
 			// And here you can add some dirt on the contacts
@@ -208,8 +190,6 @@ namespace Breaknes
 				pendingReset = false;
 			}
 		}
-
-		BOARD_LOG("\n");
 	}
 
 	void NESBoard::Reset()

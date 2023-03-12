@@ -57,10 +57,7 @@ namespace APUSim
 		sim_CoreIntegration();
 		sim_SoundGenerators();
 
-		//dma->sim();
-		wire.SPR_CPU = TriState::Zero;	// HACK
-		wire.SPR_PPU = TriState::Zero;	// HACK
-		wire.RDY = TriState::One;	// HACK
+		dma->sim();
 		dma->sim_DMA_Buffer();
 		dma->sim_AddressMux();
 

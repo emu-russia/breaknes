@@ -10,6 +10,7 @@ namespace Breaknes
 
 		private BoardControl board = new();
 		private VideoRender vid_out = new();
+		private AudioRender snd_out = null;
 		private int debug_instances = 0;
 		private string original_title;
 
@@ -52,6 +53,7 @@ namespace Breaknes
 				Text = original_title + " - " + filename;
 				vid_out = new();
 				vid_out.SetOutputPictureBox(pictureBox1);
+				snd_out = new(Handle);
 				board.Paused = debug_instances != 0;
 			}
 		}

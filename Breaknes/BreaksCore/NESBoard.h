@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 namespace Breaknes
 {
@@ -28,8 +28,10 @@ namespace Breaknes
 		BaseBoard::LS373 PPUAddrLatch;
 		uint8_t LatchedAddr = 0;
 
+		// NES Board specific ⚠️
 		// TBD: CIC :=P
 
+		// NES Board specific ⚠️
 		// TBD: Expansion port
 		
 		uint16_t exp_bus = 0;
@@ -59,6 +61,7 @@ namespace Breaknes
 		BaseLogic::TriState VRAM_nCE = BaseLogic::TriState::X;
 		BaseLogic::TriState PPU_nA13 = BaseLogic::TriState::X;		// To save millions of inverters inside the cartridges
 
+		// NES Board specific ⚠️
 		// I/O -- TBD :(
 
 		BaseBoard::LS368 P4_IO;

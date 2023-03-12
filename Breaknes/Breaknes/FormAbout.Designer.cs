@@ -32,8 +32,8 @@
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
+			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -49,6 +49,7 @@
 			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.pictureBox1.TabIndex = 0;
 			this.pictureBox1.TabStop = false;
+			this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
 			// 
 			// label1
 			// 
@@ -59,7 +60,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(141, 40);
 			this.label1.TabIndex = 1;
-			this.label1.Text = "Breaknes, v. 1.4\r\n© emu-russia, 2023";
+			this.label1.Text = "Breaknes, v. 1.5\r\n© emu-russia, 2023";
 			// 
 			// linkLabel1
 			// 
@@ -73,16 +74,6 @@
 			this.linkLabel1.Text = "https://github.com/emu-russia/breaknes";
 			this.linkLabel1.Click += new System.EventHandler(this.linkLabel1_LinkClicked);
 			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
-			this.label2.Location = new System.Drawing.Point(272, 107);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(253, 30);
-			this.label2.TabIndex = 3;
-			this.label2.Text = "Посвящается ёбаным индусам,\r\nкоторые постоянно ломают Visual Studio";
-			// 
 			// label3
 			// 
 			this.label3.AutoSize = true;
@@ -90,10 +81,14 @@
 			this.label3.ForeColor = System.Drawing.Color.Crimson;
 			this.label3.Location = new System.Drawing.Point(272, 155);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(283, 95);
+			this.label3.Size = new System.Drawing.Size(283, 76);
 			this.label3.TabIndex = 4;
-			this.label3.Text = "WARNING!!!11 WIP Version:\r\n- OAM DMA Disabled (Buggy)\r\n- DMC Disabled (RUNDMC=0; " +
-    "DMCRDY=1)\r\n- Something else is buggy\r\n- NROM Only";
+			this.label3.Text = "WARNING!!!11 WIP Version:\r\n- DMC Disabled (RUNDMC=0; DMCRDY=1)\r\n- Something else " +
+    "is buggy\r\n- NROM Only";
+			// 
+			// backgroundWorker1
+			// 
+			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
 			// 
 			// FormAbout
 			// 
@@ -101,7 +96,6 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(582, 275);
 			this.Controls.Add(this.label3);
-			this.Controls.Add(this.label2);
 			this.Controls.Add(this.linkLabel1);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.pictureBox1);
@@ -122,7 +116,7 @@
 		private PictureBox pictureBox1;
 		private Label label1;
 		private LinkLabel linkLabel1;
-		private Label label2;
 		private Label label3;
+		private System.ComponentModel.BackgroundWorker backgroundWorker1;
 	}
 }

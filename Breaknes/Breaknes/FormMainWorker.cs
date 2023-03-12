@@ -1,3 +1,4 @@
+// The worker is simple. Call `Step' on the motherboard and render the audio/video signal from it
 
 using SharpTools;
 
@@ -14,6 +15,11 @@ namespace Breaknes
 					Thread.Sleep(10);
 					continue;
 				}
+				if (snd_out.Dma)
+				{
+					Thread.Sleep(1);
+					continue;
+				}
 
 				BreaksCore.Step();
 
@@ -22,8 +28,10 @@ namespace Breaknes
 					BreaksCore.VideoOutSample sample;
 					BreaksCore.SampleVideoSignal(out sample);
 					vid_out.ProcessSample(sample);
-				}
 
+					if (snd_out != null)
+						snd_out.FeedSample();
+				}
 			}
 		}
 	}
