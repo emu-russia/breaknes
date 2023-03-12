@@ -44,6 +44,7 @@
 #include "../../Mappers/NES_Header.h"
 #include "../../Mappers/NROM.h"
 #include "../../Mappers/UNROM.h"
+#include "../../Mappers/AOROM.h"
 
 // Boards
 

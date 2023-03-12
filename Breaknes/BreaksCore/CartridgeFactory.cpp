@@ -55,6 +55,9 @@ namespace Breaknes
 			case 2:
 				return new Mappers::UNROM(p1_type, data, data_size);
 
+			case 7:
+				return new Mappers::AOROM(p1_type, data, data_size);
+
 			default:
 				break;
 		}

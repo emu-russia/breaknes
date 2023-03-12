@@ -19,3 +19,4 @@
 #include "NES_Header.h"
 #include "NROM.h"
 #include "UNROM.h"
+#include "AOROM.h"
