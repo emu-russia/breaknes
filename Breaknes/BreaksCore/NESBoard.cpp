@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 
+// TBD: Very preliminary implementation, we sketched out all the components, and now we're trying to figure out how viable this model is.
+
 using namespace BaseLogic;
 
 //#define BOARD_LOG(...) printf(__VA_ARGS__)
@@ -218,6 +220,9 @@ namespace Breaknes
 		// The real board has a capacitor that controls the reset and also the CIC interferes with it, but we simplify all this.
 
 		// Do not make the value too small, otherwise the Core will skip /RES=0. To be sure, it is better to hold the reset for several Core cycles
+
+		// TBD: I am getting signals that Donkey Kong is showing garbage due to insufficient latency of the PPU Warmup. Looks like a few cycles is not enough :-) Maybe a few thousand cycles is better to wait for a reset?
+		// Discussion here: https://forums.nesdev.org/viewtopic.php?t=19792   (nice phenomenon btw)
 
 		resetHalfClkCounter = 64;
 	}
