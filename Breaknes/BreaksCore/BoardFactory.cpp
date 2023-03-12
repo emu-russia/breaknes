@@ -132,9 +132,12 @@ namespace Breaknes
 	{
 		Board* inst = nullptr;
 
+		// At this time, we don't pay much attention to the differences between the NES/Famicom models and consider them to be `Generic'.
+		// As more information about significant differences appears, we will add it.
+
 		if (std::string(board_name).find("HVC") != std::string::npos)
 		{
-			// TBD
+			inst = new FamicomBoard(apu_rev, ppu_rev, p1_type);
 		}
 		else if ( std::string(board_name).find("NES") != std::string::npos )
 		{
