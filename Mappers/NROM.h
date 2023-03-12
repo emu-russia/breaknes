@@ -21,6 +21,8 @@ namespace Mappers
 		uint8_t* CHR = nullptr;
 		size_t CHRSize = 0;
 
+		bool chr_ram = false;
+
 		NROM_DebugInfo nrom_debug{};
 
 		// Connect to PPU A10 for vertical mirroring or PPU A11 for horizontal mirroring.

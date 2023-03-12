@@ -22,7 +22,7 @@ namespace Mappers
 		bool trainer = (head->Flags_6 & 0b100) != 0;
 		V_Mirroring = (head->Flags_6 & 1) != 0;
 
-		// Load CHR ROM
+		// Load CHR
 
 		if (head->CHRSize != 0)
 		{
@@ -37,6 +37,7 @@ namespace Mappers
 			CHRSize = 0x2000;
 			CHR = new uint8_t[CHRSize];
 			memset(CHR, 0, CHRSize);
+			chr_ram = true;
 		}
 
 		// Load PRG ROM
@@ -101,10 +102,10 @@ namespace Mappers
 		// H/V Mirroring
 		cart_out[(size_t)Breaknes::CartOutput::VRAM_A10] = V_Mirroring ? FromByte((ppu_addr >> 10) & 1) : FromByte((ppu_addr >> 11) & 1);
 
-		// NROM contains a jumper between `/PA13` and `/VRAM_CS`
+		// Contains a jumper between `/PA13` and `/VRAM_CS`
 		cart_out[(size_t)Breaknes::CartOutput::VRAM_nCS] = cart_in[(size_t)Breaknes::CartInput::nPA13];
 
-		// CHR_A13 is actually `/CS` for CHR-ROM
+		// CHR_A13 is actually `/CS`
 		TriState nCHR_CS = FromByte((ppu_addr >> 13) & 1);
 
 		if (NOR(nRD, nCHR_CS) == TriState::One)
@@ -124,6 +125,12 @@ namespace Mappers
 			{
 				*ppu_data = *ppu_data & val;
 			}
+		}
+
+		if (NOR(nWR, nCHR_CS) == TriState::One && chr_ram)
+		{
+			assert(ppu_addr < CHRSize);
+			CHR[ppu_addr] = *ppu_data;
 		}
 
 		// CPU Part

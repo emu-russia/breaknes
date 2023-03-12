@@ -96,26 +96,34 @@ namespace Mappers
 		// H/V Mirroring
 		cart_out[(size_t)Breaknes::CartOutput::VRAM_A10] = V_Mirroring ? FromByte((ppu_addr >> 10) & 1) : FromByte((ppu_addr >> 11) & 1);
 
-		// NROM contains a jumper between `/PA13` and `/VRAM_CS`
+		// Contains a jumper between `/PA13` and `/VRAM_CS`
 		cart_out[(size_t)Breaknes::CartOutput::VRAM_nCS] = cart_in[(size_t)Breaknes::CartInput::nPA13];
 
-		// CHR_A13 is actually `/CS` for CHR-ROM
+		// CHR_A13 is actually `/CS` for CHR
 		TriState nCHR_CS = FromByte((ppu_addr >> 13) & 1);
 
-		if (NOR(nRD, nCHR_CS) == TriState::One)
+		if (nCHR_CS == TriState::Zero)
 		{
 			assert(ppu_addr < CHRSize);
 
-			uint8_t val = CHR[ppu_addr];
+			if (nRD == TriState::Zero)
+			{
+				uint8_t val = CHR[ppu_addr];
 
-			if (!ppu_data_dirty)
-			{
-				*ppu_data = val;
-				ppu_data_dirty = true;
+				if (!ppu_data_dirty)
+				{
+					*ppu_data = val;
+					ppu_data_dirty = true;
+				}
+				else
+				{
+					*ppu_data = *ppu_data & val;
+				}
 			}
-			else
+
+			if (nWR == TriState::Zero)
 			{
-				*ppu_data = *ppu_data & val;
+				CHR[ppu_addr] = *ppu_data;
 			}
 		}
 
