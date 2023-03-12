@@ -253,5 +253,18 @@ namespace Breaknes
 					"PPU Regs", e.ChangedItem.Label, (UInt32)e.ChangedItem.Value);
 			}
 		}
+
+		public void UpdateOnRomLoad()
+		{
+			UpdateMemLayout();
+			UpdateOnRenderField();
+		}
+
+		public void UpdateOnRenderField()
+		{
+			// TBD: Something is wrong
+			//Button1Click();
+			//Button2Click();
+		}
 	}
 }

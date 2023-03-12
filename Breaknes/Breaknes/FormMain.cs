@@ -1,4 +1,5 @@
 using SharpTools;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Breaknes
@@ -9,10 +10,10 @@ namespace Breaknes
 		static extern bool AllocConsole();
 
 		private BoardControl board = new();
-		private VideoRender vid_out = new();
+		private VideoRender vid_out = null;
 		private AudioRender snd_out = null;
-		private int debug_instances = 0;
 		private string original_title;
+		private List<FormDebugger> debuggers = new();
 
 		public FormMain()
 		{
@@ -55,10 +56,15 @@ namespace Breaknes
 				}
 				BreaksCore.Reset();
 				Text = original_title + " - " + filename;
-				vid_out = new();
+				vid_out = new(OnRenderField);
 				vid_out.SetOutputPictureBox(pictureBox1);
 				snd_out = new(Handle);
-				board.Paused = debug_instances != 0;
+				board.Paused = debuggers.Count != 0;
+				
+				foreach (var inst in debuggers)
+				{
+					inst.UpdateOnRomLoad();
+				}
 			}
 		}
 
@@ -84,12 +90,20 @@ namespace Breaknes
 			FormDebugger debugger = new(board);
 			debugger.FormClosed += Debugger_FormClosed;
 			debugger.Show();
-			debug_instances++;
+			debuggers.Add(debugger);
 		}
 
 		private void Debugger_FormClosed(object? sender, FormClosedEventArgs e)
 		{
-			debug_instances--;
+			debuggers.Remove((FormDebugger)sender);
+		}
+
+		private void OnRenderField()
+		{
+			foreach (var inst in debuggers)
+			{
+				inst.UpdateOnRenderField();
+			}
 		}
 	}
 }
