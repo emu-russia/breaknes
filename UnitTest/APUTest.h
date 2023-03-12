@@ -20,5 +20,6 @@ namespace APUSimUnitTest
 		bool TestRegOps();
 		bool TestLengthDecoder();
 		bool TestLengthCounter();
+		bool TestOAM_DMA();
 	};
 }

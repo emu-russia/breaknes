@@ -547,4 +547,360 @@ namespace APUSimUnitTest
 
 		return true;
 	}
+
+	/// <summary>
+	/// Check the OAM DMA:
+	/// - First check the DMA Unit in "quiet" mode - immediately after a reset. The OAM DMA Unit should be "silent" (NOSPR=1)
+	/// - Then we simulate a write to register $4014 and check that the OAM DMA does its job (NOSPR=0; SPR_CPU and SPR_PPU are executed alternately).
+	/// RUNDMC is always 0 during the test (DMC does not interfere with the process).
+	/// WARNING: We are NOT simulating anything outside the OAM DMA unit (CPU, memory, etc.). The purpose of the test is to verify that the OAM DMA Unit generates adequate signals
+	/// </summary>
+	/// <returns></returns>
+	bool UnitTest::TestOAM_DMA()
+	{
+		char text[0x100]{};
+
+		// Pretend DMC is sleeping
+
+		apu->wire.RUNDMC = TriState::Zero;
+		apu->wire.DMCRDY = TriState::One;
+
+		// Spare parts are needed to implement the ACLK phase pattern. OAM DMA does not really depend on anything else
+
+		// Idle Mode during Reset
+		// -----------------------
+
+		Logger::WriteMessage("--- Idle Mode during Reset ---\n");
+
+		size_t idle_hcycles = 256;			// Number of cycles for Idle mode
+
+		apu->wire.n_CLK = TriState::One;	// CLK = 0  (instead of the global CLK pad we use the output from it in the inverse polarity)
+		apu->wire.RES = TriState::One;			// Global reset
+		apu->wire.W4014 = TriState::Zero;
+		apu->wire.RnW = TriState::Zero;
+
+		TriState prev_phi = TriState::X;
+		TriState prev_aclk = TriState::X;
+
+		size_t aclk_counter = 0;
+		size_t phi_counter = 0;
+
+		for (size_t n = 0; n < idle_hcycles; n++)
+		{
+			apu->core_int->sim();
+			apu->clkgen->sim();
+
+			// Clock stats
+
+			if (IsNegedge(prev_aclk, apu->wire.ACLK))
+			{
+				// TBD: For what?
+				aclk_counter++;
+			}
+			if (IsPosedge(prev_phi, apu->wire.PHI0))
+			{
+				// CPU cycles are displayed so that you can understand at which cycle something went wrong
+
+				sprintf_s(text, sizeof(text), "Core cycle: %zd\n", phi_counter);
+				Logger::WriteMessage(text);
+				phi_counter++;
+			}
+
+			apu->dma->sim();
+
+			// Check
+			// NOSPR should be equal to 1.
+			// SPRS should be equal to 0 (always).
+			// SPR_CPU and SPR_PPU signals should be "silent"
+			// RDY should be 1
+
+			if (apu->dma->NOSPR != TriState::One)
+				return false;
+			if (apu->dma->SPRS != TriState::Zero)
+				return false;
+			if (apu->wire.SPR_CPU != TriState::Zero)
+				return false;
+			if (apu->wire.SPR_PPU != TriState::Zero)
+				return false;
+			if (apu->wire.RDY != TriState::One)
+				return false;
+
+			// Tick
+
+			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
+			prev_aclk = apu->wire.ACLK;
+			prev_phi = apu->wire.PHI0;
+		}
+
+		// OAM DMA Idle after reset
+		// -----------------------
+
+		Logger::WriteMessage("--- OAM DMA Idle after reset ---\n");
+
+		apu->wire.RES = TriState::Zero;
+
+		prev_phi = TriState::X;
+		prev_aclk = TriState::X;
+
+		aclk_counter = 0;
+		phi_counter = 0;
+
+		for (size_t n = 0; n < idle_hcycles; n++)
+		{
+			apu->core_int->sim();
+			apu->clkgen->sim();
+
+			// Clock stats
+
+			if (IsNegedge(prev_aclk, apu->wire.ACLK))
+			{
+				// TBD: For what?
+				aclk_counter++;
+			}
+			if (IsPosedge(prev_phi, apu->wire.PHI0))
+			{
+				// CPU cycles are displayed so that you can understand at which cycle something went wrong
+
+				sprintf_s(text, sizeof(text), "Core cycle: %zd\n", phi_counter);
+				Logger::WriteMessage(text);
+				phi_counter++;
+			}
+
+			apu->dma->sim();
+
+			// Check
+			// NOSPR should be equal to 1.
+			// SPRS should be equal to 0 (always).
+			// SPR_CPU and SPR_PPU signals should be "silent"
+			// RDY should be 1
+
+			if (apu->dma->NOSPR != TriState::One)
+				return false;
+			if (apu->dma->SPRS != TriState::Zero)
+				return false;
+			if (apu->wire.SPR_CPU != TriState::Zero)
+				return false;
+			if (apu->wire.SPR_PPU != TriState::Zero)
+				return false;
+			if (apu->wire.RDY != TriState::One)
+				return false;
+
+			// Tick
+
+			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
+			prev_aclk = apu->wire.ACLK;
+			prev_phi = apu->wire.PHI0;
+		}
+
+		// OAM DMA Active
+		// -----------------------
+
+		Logger::WriteMessage("--- OAM DMA Active (some cycles) ---\n");
+
+		size_t dma_hcycles = 256;			// Number of cycles to simulate the OAM DMA process (there is no point in doing a full OAM DMA, only the first few iterations are enough)
+
+		apu->wire.RES = TriState::Zero;
+		prev_phi = TriState::X;
+		prev_aclk = TriState::X;
+
+		size_t clk_counter = 0;			// CLK half-cycle counter inside a single CPU cycle
+
+		int dma_step = -2;			// A special counter that counts the OAM DMA Unit step. Each step of the OAM DMA has its own special magic
+
+		// Simulate writing to register $4014 and skip the various alignment tricks.
+		// At the beginning of the work cycle OAM DMA must be in the "Read Memory" state
+
+		bool Write_4014_notyet = true;
+		bool Hold_4014_Write = false;		// Hold W4014 until the end of the CPU cycle
+
+		for (size_t n = 0; n < dma_hcycles; n++)
+		{
+			apu->core_int->sim();
+			apu->clkgen->sim();
+
+			// Clock stats
+
+			if (IsNegedge(prev_aclk, apu->wire.ACLK))
+			{
+				Hold_4014_Write = false;
+				aclk_counter++;
+			}
+			if (IsNegedge(prev_phi, apu->wire.PHI0))
+			{
+				Logger::WriteMessage("\nNew CPU Cycle!\n");
+				phi_counter++;
+				dma_step++;
+				if (dma_step >= 2)
+				{
+					dma_step = 0;
+				}
+				clk_counter = 0;
+				Hold_4014_Write = false;
+			}
+
+			// For simplicity, we will simulate an aligned write in $4014 (ACLK=1 at the start of the write cycle in $4014)
+
+			if ((Hold_4014_Write && apu->wire.PHI2 == TriState::One) || (Write_4014_notyet && apu->wire.PHI2 == TriState::One && prev_aclk == TriState::One))
+			{
+				apu->wire.W4014 = TriState::One;
+				apu->wire.RnW = TriState::Zero;
+				Write_4014_notyet = false;
+				Hold_4014_Write = true;
+			}
+			else
+			{
+				apu->wire.W4014 = TriState::Zero;
+				apu->wire.RnW = TriState::One;
+			}
+
+			apu->dma->sim();
+
+			// Dump OAM DMA State
+
+			sprintf_s(text, sizeof(text), 
+				"ACLK: %d, PHI1: %d, W4014: %d, SPRS: %d, SPRE: %d, NOSPR: %d, DOSPR: %d, StartDMA: %d, StopDMA: %d, SPR_CPU: %d, SPR_PPU: %d, OAM Addr: 0x%x\n",
+				FromByte(apu->wire.ACLK),
+				FromByte(apu->wire.PHI1),
+				FromByte(apu->wire.W4014),
+				FromByte(apu->dma->SPRS),
+				FromByte(apu->dma->SPRE),
+				FromByte(apu->dma->NOSPR),
+				FromByte(apu->dma->DOSPR),
+				FromByte(apu->dma->StartDMA.get()),
+				FromByte(apu->dma->StopDMA.get()),
+				FromByte(apu->wire.SPR_CPU),
+				FromByte(apu->wire.SPR_PPU),
+				apu->dma->Get_DMAAddress());
+			Logger::WriteMessage(text);
+
+			// Check DMA in progress
+
+			if (!(Hold_4014_Write && apu->wire.PHI2 == TriState::One) && !Write_4014_notyet)
+			{
+				switch (dma_step)
+				{
+					// OAM DMA "Think" cycle:
+					case -1:
+						if (apu->dma->SPRS != TriState::Zero) {
+							Logger::WriteMessage("1\n");
+							return false;
+						}
+						if (apu->dma->SPRE != TriState::Zero) {
+							Logger::WriteMessage("2\n");
+							return false;
+						}
+						if (apu->dma->DOSPR != TriState::Zero && apu->wire.PHI1 == TriState::One) {
+							Logger::WriteMessage("3\n");
+							return false;
+						}
+						if (apu->dma->DOSPR != TriState::One && apu->wire.PHI1 == TriState::Zero && clk_counter != 0) {
+							Logger::WriteMessage("4\n");
+							return false;
+						}
+						if (apu->dma->NOSPR != TriState::One) {
+							Logger::WriteMessage("5\n");
+							return false;
+						}
+						if (apu->dma->StartDMA.get() != TriState::One) {
+							Logger::WriteMessage("6\n");
+							return false;
+						}
+						if (apu->dma->StopDMA.get() != TriState::Zero && apu->wire.PHI1 == TriState::One) {
+							Logger::WriteMessage("7\n");
+							return false;
+						}
+						if (apu->dma->StopDMA.get() != TriState::One && apu->wire.PHI1 == TriState::Zero && clk_counter != 0) {
+							Logger::WriteMessage("8\n");
+							return false;
+						}
+						if (apu->wire.SPR_CPU != TriState::Zero) {
+							Logger::WriteMessage("9\n");
+							return false;
+						}
+						if (apu->wire.SPR_PPU != TriState::Zero) {
+							Logger::WriteMessage("10\n");
+							return false;
+						}
+						break;
+					
+					// Read CPU mem
+					case 0:
+						if (apu->dma->SPRS != TriState::Zero) {
+							Logger::WriteMessage("21\n");
+							return false;
+						}
+						if (apu->dma->SPRE != TriState::Zero) {
+							Logger::WriteMessage("22\n");
+							return false;
+						}
+						if (apu->dma->NOSPR != TriState::Zero && apu->wire.PHI1 == TriState::Zero) {		// OAM DMA in progress
+							Logger::WriteMessage("23\n");
+							return false;
+						}
+						if (apu->dma->StartDMA.get() != TriState::Zero && clk_counter != 0) {
+							Logger::WriteMessage("24\n");
+							return false;
+						}
+						if (apu->dma->StopDMA.get() != TriState::One) {
+							Logger::WriteMessage("25\n");
+							return false;
+						}
+						if (apu->wire.SPR_CPU != TriState::One && clk_counter != 0) {		// Read CPU Mem
+							Logger::WriteMessage("26\n");
+							return false;
+						}
+						if (apu->wire.SPR_PPU != TriState::Zero) {
+							Logger::WriteMessage("27\n");
+							return false;
+						}
+						break;
+
+					// Write $2004
+					case 1:
+						if (apu->dma->SPRS != TriState::One && apu->wire.PHI1 == TriState::One) {			// OAM DMA addr++
+							Logger::WriteMessage("31\n");
+							return false;
+						}
+						if (apu->dma->SPRS != TriState::Zero && apu->wire.PHI1 == TriState::Zero) {
+							Logger::WriteMessage("32\n");
+							return false;
+						}
+						if (apu->dma->SPRE != TriState::Zero) {
+							Logger::WriteMessage("33\n");
+							return false;
+						}
+						if (apu->dma->NOSPR != TriState::Zero) {			// OAM DMA in progress
+							Logger::WriteMessage("34\n");
+							return false;
+						}
+						if (apu->dma->StartDMA.get() != TriState::Zero) {
+							Logger::WriteMessage("35\n");
+							return false;
+						}
+						if (apu->dma->StopDMA.get() != TriState::One) {
+							Logger::WriteMessage("36\n");
+							return false;
+						}
+						if (apu->wire.SPR_CPU != TriState::Zero) {
+							Logger::WriteMessage("37\n");
+							return false;
+						}
+						if (apu->wire.SPR_PPU != TriState::One) {				// Write $2004
+							Logger::WriteMessage("38\n");
+							return false;
+						}
+						break;
+				}
+			}
+
+			// Tick
+
+			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
+			clk_counter++;
+			prev_aclk = apu->wire.ACLK;
+			prev_phi = apu->wire.PHI0;
+		}
+
+		return true;
+	}
 }
