@@ -1,4 +1,5 @@
 using SharpTools;
+using static Breaknes.VideoRender;
 
 namespace Breaknes
 {
@@ -19,8 +20,12 @@ namespace Breaknes
 		private Bitmap? field_pic = null;
 		private PictureBox? output_picture_box = null;
 
-		public VideoRender()
+		private OnRenderField? onRenderField = null;
+		public delegate void OnRenderField();
+
+		public VideoRender(OnRenderField _onRender)
 		{
+			onRenderField = _onRender;
 			BreaksCore.GetPpuSignalFeatures(out ppu_features);
 
 			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
@@ -141,6 +146,8 @@ namespace Breaknes
 				output_picture_box.Image = field_pic;
 			}
 			gr.Dispose();
+
+			onRenderField?.Invoke();
 		}
 	}
 }
