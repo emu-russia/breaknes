@@ -1,4 +1,3 @@
-
 using SharpTools;
 
 namespace Breaknes
