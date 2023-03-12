@@ -32,10 +32,10 @@ namespace Breaknes
 			BreaksCore.DestroyBoard();
 		}
 
-		public void InsertCartridge(string nes_file)
+		public int InsertCartridge(string nes_file)
 		{
 			byte[] nes_image = File.ReadAllBytes(nes_file);
-			BreaksCore.InsertCartridge(nes_image, nes_image.Length);
+			return BreaksCore.InsertCartridge(nes_image, nes_image.Length);
 		}
 
 		public void EjectCartridge()

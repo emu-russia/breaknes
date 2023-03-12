@@ -16,45 +16,27 @@ namespace Mappers
 
 		if (nesImage != nullptr && nesImageSize >= sizeof(NESHeader))
 		{
-			// Basic .nes header checks
-
-			printf("Basic .nes header checks ...");
-
 			NESHeader* head = (NESHeader*)nesImage;
 
-			if (head->PRGSize >= 0x10 || head->CHRSize >= 0x10 || head->CHRSize == 0)
-			{
-				printf(" FAILED! Odd size of PRG/CHR banks or unsupported CHR-RAM!\n");
-				return;
-			}
-
 			bool trainer = (head->Flags_6 & 0b100) != 0;
-			size_t mapperNum = (head->Flags_7 & 0xf0) | (head->Flags_6 >> 4);
-
-			if (mapperNum != 0)
-			{
-				printf(" FAILED! The number of the mapper must be 0 (NROM).\n");
-				return;
-			}
-
-			size_t totalSize = (trainer ? 512 : 0) + 0x4000 * head->PRGSize + 0x2000 * head->CHRSize + sizeof(NESHeader);
-			if (nesImageSize < totalSize)
-			{
-				printf(" FAILED! Damaged .nes (file size is smaller than required).\n");
-				return;
-			}
-
 			V_Mirroring = (head->Flags_6 & 1) != 0;
-
-			printf(" OK!\n");
 
 			// Load CHR ROM
 
-			CHRSize = head->CHRSize * 0x2000;
-			CHR = new uint8_t[CHRSize];
+			if (head->CHRSize != 0)
+			{
+				CHRSize = head->CHRSize * 0x2000;
+				CHR = new uint8_t[CHRSize];
 
-			uint8_t* chrPtr = nesImage + sizeof(NESHeader) + (trainer ? 512 : 0) + head->PRGSize * 0x4000;
-			memcpy(CHR, chrPtr, CHRSize);
+				uint8_t* chrPtr = nesImage + sizeof(NESHeader) + (trainer ? 512 : 0) + head->PRGSize * 0x4000;
+				memcpy(CHR, chrPtr, CHRSize);
+			}
+			else
+			{
+				CHRSize = 0x2000;
+				CHR = new uint8_t[CHRSize];
+				memset(CHR, 0, CHRSize);
+			}
 
 			// Load PRG ROM
 
@@ -188,7 +170,7 @@ namespace Mappers
 		MemDesciptor* chrRegion = new MemDesciptor;
 		memset(chrRegion, 0, sizeof(MemDesciptor));
 		strcpy_s(chrRegion->name, sizeof(chrRegion->name), CHR_ROM_NAME);
-		chrRegion->size = (int32_t)Dbg_GetCHRSize();
+		chrRegion->size = (int32_t)CHRSize;
 		dbg_hub->AddMemRegion(chrRegion, Dbg_ReadCHRByte, Dbg_WriteCHRByte, this, true);
 	}
 
@@ -231,14 +213,6 @@ namespace Mappers
 	void NROM::SetCartDebugInfo(void* opaque, DebugInfoEntry* entry, uint32_t value)
 	{
 		// not need
-	}
-
-	size_t NROM::Dbg_GetCHRSize()
-	{
-		if (!valid)
-			return 0;
-
-		return CHRSize;
 	}
 
 	uint8_t NROM::Dbg_ReadCHRByte(void* opaque, size_t addr)

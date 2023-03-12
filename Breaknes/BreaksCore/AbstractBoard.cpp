@@ -19,6 +19,9 @@ namespace Breaknes
 		CartridgeFactory cf(p1_type, nesImage, nesImageSize);
 		cart = cf.GetInstance();
 
+		if (!cart)
+			return -1;
+
 		if (!cart->Valid())
 		{
 			delete cart;
@@ -27,7 +30,7 @@ namespace Breaknes
 			dbg_hub->DisposeCartDebugInfo();
 			dbg_hub->DisposeCartMemMap();
 
-			return -1;
+			return -2;
 		}
 
 		return 0;

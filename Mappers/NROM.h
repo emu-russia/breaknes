@@ -26,7 +26,6 @@ namespace Mappers
 		// Connect to PPU A10 for vertical mirroring or PPU A11 for horizontal mirroring.
 		bool V_Mirroring = false;
 
-		size_t Dbg_GetCHRSize();
 		static uint8_t Dbg_ReadCHRByte(void* opaque, size_t addr);
 		static void Dbg_WriteCHRByte(void* opaque, size_t addr, uint8_t data);
 		void GetDebugInfo(NROM_DebugInfo& info);
