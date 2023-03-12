@@ -33,6 +33,7 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.label3 = new System.Windows.Forms.Label();
+			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -48,6 +49,7 @@
 			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.pictureBox1.TabIndex = 0;
 			this.pictureBox1.TabStop = false;
+			this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
 			// 
 			// label1
 			// 
@@ -84,6 +86,10 @@
 			this.label3.Text = "WARNING!!!11 WIP Version:\r\n- OAM DMA Disabled (Buggy)\r\n- DMC Disabled (RUNDMC=0; " +
     "DMCRDY=1)\r\n- Something else is buggy\r\n- NROM Only";
 			// 
+			// backgroundWorker1
+			// 
+			this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+			// 
 			// FormAbout
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -111,5 +117,6 @@
 		private Label label1;
 		private LinkLabel linkLabel1;
 		private Label label3;
+		private System.ComponentModel.BackgroundWorker backgroundWorker1;
 	}
 }
