@@ -1,5 +1,7 @@
 #pragma once
 
+// TBD: The API will be extended to handle I/O devices (controllers, expansion ports)
+
 namespace Breaknes
 {
 	struct RGB_Triplet
@@ -47,7 +49,7 @@ namespace Breaknes
 		virtual ~Board();
 
 		/// <summary>
-		/// Simulate 1 half cycle of the test board with NSFPlayer. The simulation of the signal edge is not supported, this is overkill.
+		/// Simulate 1 half cycle of the board. The simulation of the signal edge is not supported, this is overkill.
 		/// </summary>
 		virtual void Step() = 0;
 
@@ -94,7 +96,7 @@ namespace Breaknes
 		virtual void SampleAudioSignal(float* sample);
 
 		/// <summary>
-		/// Load the whole NSF data image to the BankedSRAM device.
+		/// Load the whole NSF data image to the NSFMapper device (NSFPlayerBoard only)
 		/// </summary>
 		/// <param name="data">nsf data offset +0x80</param>
 		/// <param name="data_size">nsf data size</param>
@@ -102,13 +104,13 @@ namespace Breaknes
 		virtual void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address);
 
 		/// <summary>
-		/// Enable the bank switching circuit for the BankedSRAM device.
+		/// Enable the bank switching circuit for the NSFMapper device (NSFPlayerBoard only)
 		/// </summary>
 		/// <param name="enable"></param>
 		virtual void EnableNSFBanking(bool enable);
 
 		/// <summary>
-		/// Load APU/PPU registers dump
+		/// Load APU/PPU registers dump (APUPlayer/PPUPlayer only)
 		/// </summary>
 		/// <param name="data">RegDumpEntry records</param>
 		/// <param name="data_size">Dump size (bytes)</param>
