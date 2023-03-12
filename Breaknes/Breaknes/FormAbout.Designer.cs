@@ -81,10 +81,10 @@
 			this.label3.ForeColor = System.Drawing.Color.Crimson;
 			this.label3.Location = new System.Drawing.Point(272, 155);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(283, 95);
+			this.label3.Size = new System.Drawing.Size(283, 76);
 			this.label3.TabIndex = 4;
-			this.label3.Text = "WARNING!!!11 WIP Version:\r\n- OAM DMA Disabled (Buggy)\r\n- DMC Disabled (RUNDMC=0; " +
-    "DMCRDY=1)\r\n- Something else is buggy\r\n- NROM Only";
+			this.label3.Text = "WARNING!!!11 WIP Version:\r\n- DMC Disabled (RUNDMC=0; DMCRDY=1)\r\n- Something else " +
+    "is buggy\r\n- NROM Only";
 			// 
 			// backgroundWorker1
 			// 
