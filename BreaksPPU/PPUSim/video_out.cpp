@@ -344,9 +344,9 @@ namespace PPUSim
 		P[11] = dmxout[13];
 		P[12] = dmxout[8];
 
-		TriState pz[_countof(P)]{};
+		TriState pz[13]{};
 
-		for (size_t n = 0; n < _countof(P); n++)
+		for (size_t n = 0; n < 13; n++)
 		{
 			if (n != 4)
 			{
