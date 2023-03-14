@@ -783,7 +783,7 @@ namespace PPUSim
 
 		// Generate PLA dump name according to the PPU revision.
 
-		sprintf_s(colorMatrixName, sizeof(colorMatrixName), "ColorMatrix_%s.bin", ppu->RevisionToStr(ppu->rev));
+		sprintf(colorMatrixName, "ColorMatrix_%s.bin", ppu->RevisionToStr(ppu->rev));
 
 		color_matrix = new PLA(color_matrix_inputs, color_matrix_outputs, colorMatrixName);
 

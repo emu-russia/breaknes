@@ -30,8 +30,8 @@ namespace PPUSim
 
 		// Generate PLA dump name according to the PPU revision.
 
-		sprintf_s(hplaName, sizeof(hplaName), "HPLA_%s.bin", ppu->RevisionToStr(ppu->rev));
-		sprintf_s(vplaName, sizeof(vplaName), "VPLA_%s.bin", ppu->RevisionToStr(ppu->rev));
+		sprintf(hplaName, "HPLA_%s.bin", ppu->RevisionToStr(ppu->rev));
+		sprintf(vplaName, "VPLA_%s.bin", ppu->RevisionToStr(ppu->rev));
 
 		// Create PLA instances
 
