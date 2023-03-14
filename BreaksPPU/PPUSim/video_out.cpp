@@ -703,7 +703,7 @@ namespace PPUSim
 
 		// Process the batch
 
-		const float π = 3.14159265358979323846f;
+		const float pi = 3.14159265358979323846f;
 		float normalize_factor = 1.1f / features.WhiteLevel;	// 110 IRE
 		float Y = 0, I = 0, Q = 0;
 		size_t cb_phase = 9;
@@ -712,8 +712,8 @@ namespace PPUSim
 		{
 			float level = ((batch[n].composite - features.BlackLevel) * normalize_factor) / num_phases;
 			Y += level;
-			I += level * cos((cb_phase + n) * (2 * π / num_phases));
-			Q += level * sin((cb_phase + n) * (2 * π / num_phases)) * +1.0f;
+			I += level * cos((cb_phase + n) * (2 * pi / num_phases));
+			Q += level * sin((cb_phase + n) * (2 * pi / num_phases)) * +1.0f;
 		}
 
 		// Note to PAL researchers. Read math behind PAL, or just use these:
