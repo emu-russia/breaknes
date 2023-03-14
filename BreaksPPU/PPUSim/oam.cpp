@@ -202,8 +202,13 @@ namespace PPUSim
 					return TriState::Z;
 
 				case OAMDecayBehavior::Randomize:
+#ifdef _WIN32
 					// Year 2022. C++ still doesn't contain a standard way to get TimeStamp.
 					return FromByte (__rdtsc() & 1);
+#else
+					// TBD
+					return TriState::Zero;
+#endif
 
 				default:
 					break;
