@@ -366,7 +366,7 @@ namespace PPUSim
 	{
 		size_t val = 0;
 
-		for (size_t n = 0; n < _countof(down_cnt); n++)
+		for (size_t n = 0; n < 8; n++)
 		{
 			val |= ((down_cnt[n].get() == TriState::One) ? 1ULL : 0) << n;
 		}
