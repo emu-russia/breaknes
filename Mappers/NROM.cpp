@@ -171,26 +171,27 @@ namespace Mappers
 		"Last /RD", offsetof(NROM_DebugInfo, last_nRD), 1,
 		"Last /WR", offsetof(NROM_DebugInfo, last_nWR), 1,
 	};
+	size_t nrom_signals_count = sizeof(nrom_signals) / sizeof(nrom_signals[0]);
 
 	void NROM::AddCartMemDescriptors()
 	{
 		MemDesciptor* chrRegion = new MemDesciptor;
 		memset(chrRegion, 0, sizeof(MemDesciptor));
-		strcpy_s(chrRegion->name, sizeof(chrRegion->name), CHR_ROM_NAME);
+		strcpy(chrRegion->name, CHR_ROM_NAME);
 		chrRegion->size = (int32_t)CHRSize;
 		dbg_hub->AddMemRegion(chrRegion, Dbg_ReadCHRByte, Dbg_WriteCHRByte, this, true);
 	}
 
 	void NROM::AddCartDebugInfoProviders()
 	{
-		for (size_t n = 0; n < _countof(nrom_signals); n++)
+		for (size_t n = 0; n < nrom_signals_count; n++)
 		{
 			SignalOffsetPair* sp = &nrom_signals[n];
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), NROM_CATEGORY);
-			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			strcpy(entry->category, NROM_CATEGORY);
+			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Cart, entry, GetCartDebugInfo, SetCartDebugInfo, this);
 		}
@@ -200,7 +201,7 @@ namespace Mappers
 	{
 		NROM* nrom = (NROM*)opaque;
 
-		for (size_t n = 0; n < _countof(nrom_signals); n++)
+		for (size_t n = 0; n < nrom_signals_count; n++)
 		{
 			SignalOffsetPair* sp = &nrom_signals[n];
 
