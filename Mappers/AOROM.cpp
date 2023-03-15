@@ -168,7 +168,7 @@ namespace Mappers
 	{
 		MemDesciptor* chrRegion = new MemDesciptor;
 		memset(chrRegion, 0, sizeof(MemDesciptor));
-		strcpy_s(chrRegion->name, sizeof(chrRegion->name), CHR_ROM_NAME);
+		strcpy(chrRegion->name, CHR_ROM_NAME);
 		chrRegion->size = (int32_t)CHRSize;
 		dbg_hub->AddMemRegion(chrRegion, Dbg_ReadCHRByte, Dbg_WriteCHRByte, this, true);
 	}

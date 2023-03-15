@@ -26,7 +26,7 @@ namespace Breaknes
 
 		MemDesciptor* vramRegion = new MemDesciptor;
 		memset(vramRegion, 0, sizeof(MemDesciptor));
-		strcpy_s(vramRegion->name, sizeof(vramRegion->name), VRAM_NAME);
+		strcpy(vramRegion->name, VRAM_NAME);
 		vramRegion->size = (int32_t)vram->Dbg_GetSize();
 		dbg_hub->AddMemRegion(vramRegion, DumpVRAM, WriteVRAM, this, false);
 
@@ -34,7 +34,7 @@ namespace Breaknes
 
 		MemDesciptor* cramRegion = new MemDesciptor;
 		memset(cramRegion, 0, sizeof(MemDesciptor));
-		strcpy_s(cramRegion->name, sizeof(cramRegion->name), CRAM_NAME);
+		strcpy(cramRegion->name, CRAM_NAME);
 		cramRegion->size = CRAM_SIZE;
 		dbg_hub->AddMemRegion(cramRegion, DumpCRAM, WriteCRAM, this, false);
 
@@ -42,7 +42,7 @@ namespace Breaknes
 
 		MemDesciptor* oamRegion = new MemDesciptor;
 		memset(oamRegion, 0, sizeof(MemDesciptor));
-		strcpy_s(oamRegion->name, sizeof(oamRegion->name), OAM_NAME);
+		strcpy(oamRegion->name, OAM_NAME);
 		oamRegion->size = OAM_SIZE;
 		dbg_hub->AddMemRegion(oamRegion, DumpOAM, WriteOAM, this, false);
 
@@ -50,12 +50,12 @@ namespace Breaknes
 
 		MemDesciptor* oam2Region = new MemDesciptor;
 		memset(oam2Region, 0, sizeof(MemDesciptor));
-		strcpy_s(oam2Region->name, sizeof(oam2Region->name), OAM2_NAME);
+		strcpy(oam2Region->name, OAM2_NAME);
 		oam2Region->size = OAM2_SIZE;
 		dbg_hub->AddMemRegion(oam2Region, DumpTempOAM, WriteTempOAM, this, false);
 	}
 
-	SignalOffsetPair board_signals[] = {
+	static SignalOffsetPair board_signals[] = {
 		"BoardCLK", offsetof(PPUBoardDebugInfo, CLK), 1,
 		"ALE", offsetof(PPUBoardDebugInfo, ALE), 1,
 		"LS373 Latch", offsetof(PPUBoardDebugInfo, LS373_Latch), 8,
@@ -70,6 +70,7 @@ namespace Breaknes
 		"PDBus", offsetof(PPUBoardDebugInfo, PD), 8,
 		"CPUOpsProcessed", offsetof(PPUBoardDebugInfo, CPUOpsProcessed), 32,
 	};
+	static size_t board_signals_count = sizeof(board_signals) / sizeof(board_signals[0]);
 
 	void PPUPlayerBoard::AddDebugInfoProviders()
 	{
@@ -79,8 +80,8 @@ namespace Breaknes
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), PPU_WIRES_CATEGORY);
-			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			strcpy(entry->category, PPU_WIRES_CATEGORY);
+			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
 		}
@@ -91,8 +92,8 @@ namespace Breaknes
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), PPU_FSM_CATEGORY);
-			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			strcpy(entry->category, PPU_FSM_CATEGORY);
+			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
 		}
@@ -103,8 +104,8 @@ namespace Breaknes
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), PPU_EVAL_CATEGORY);
-			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			strcpy(entry->category, PPU_EVAL_CATEGORY);
+			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
 		}
@@ -115,20 +116,20 @@ namespace Breaknes
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), PPU_REGS_CATEGORY);
-			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			strcpy(entry->category, PPU_REGS_CATEGORY);
+			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPURegs, entry, GetPpuRegsDebugInfo, SetPpuRegsDebugInfo, this);
 		}
 
-		for (size_t n = 0; n < _countof(board_signals); n++)
+		for (size_t n = 0; n < board_signals_count; n++)
 		{
 			SignalOffsetPair* sp = &board_signals[n];
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), BOARD_CATEGORY);
-			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			strcpy(entry->category, BOARD_CATEGORY);
+			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Board, entry, GetBoardDebugInfo, SetBoardDebugInfo, this);
 		}
@@ -298,7 +299,7 @@ namespace Breaknes
 	{
 		PPUPlayerBoard* board = (PPUPlayerBoard*)opaque;
 
-		for (size_t n = 0; n < _countof(board_signals); n++)
+		for (size_t n = 0; n < board_signals_count; n++)
 		{
 			SignalOffsetPair* sp = &board_signals[n];
 
