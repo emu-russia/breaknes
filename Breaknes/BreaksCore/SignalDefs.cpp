@@ -100,7 +100,7 @@ namespace Breaknes
 		"n_DSA", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_DSA), 1,
 		"n_1PC", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_1PC), 1,
 	};
-	size_t core_wires_count = _countof(core_wires);
+	size_t core_wires_count = sizeof(core_wires) / sizeof(core_wires[0]);
 
 	SignalOffsetPair core_regs[] = {
 		"PCH", offsetof(M6502Core::UserRegs, PCH), 8,
@@ -118,7 +118,7 @@ namespace Breaknes
 		"V_OUT", offsetof(M6502Core::UserRegs, V_OUT), 8,
 		"N_OUT", offsetof(M6502Core::UserRegs, N_OUT), 8,
 	};
-	size_t core_regs_count = _countof(core_regs);
+	size_t core_regs_count = sizeof(core_regs) / sizeof(core_regs[0]);
 
 	SignalOffsetPair apu_wires[] = {
 		"/CLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_CLK), 1,
@@ -189,7 +189,7 @@ namespace Breaknes
 		"/DBGRD", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_DBGRD), 1,
 		"LOCK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::LOCK), 1,
 	};
-	size_t apu_wires_count = _countof(apu_wires);
+	size_t apu_wires_count = sizeof(apu_wires) / sizeof(apu_wires[0]);
 
 	SignalOffsetPair apu_regs[] = {
 		"DBOutputLatch", offsetof(APUSim::APU_Registers, DBOutputLatch), 8,
@@ -238,7 +238,7 @@ namespace Breaknes
 		"DMAAddress", offsetof(APUSim::APU_Registers, DMAAddress), 16,
 		"Status", offsetof(APUSim::APU_Registers, Status), 8,
 	};
-	size_t apu_regs_count = _countof(apu_regs);
+	size_t apu_regs_count = sizeof(apu_regs) / sizeof(apu_regs[0]);
 
 	SignalOffsetPair ppu_wires[] = {
 		"CLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLK), 1,
@@ -395,7 +395,7 @@ namespace Breaknes
 		"PrioZ", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PrioZ), 8,
 		"/TX", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_TX), 8,
 	};
-	size_t ppu_wires_count = _countof(ppu_wires);
+	size_t ppu_wires_count = sizeof(ppu_wires) / sizeof(ppu_wires[0]);
 
 	SignalOffsetPair fsm_signals[] = {
 		"S/EV", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::S_EV), 1,
@@ -423,7 +423,7 @@ namespace Breaknes
 		"BLNK", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::BLNK), 1,
 		"INT", offsetof(PPUSim::PPU_FSMStates, PPUSim::PPU_FSMStates::INT), 1,
 	};
-	size_t fsm_signals_count = _countof(fsm_signals);
+	size_t fsm_signals_count = sizeof(fsm_signals) / sizeof(fsm_signals[0]);
 
 	SignalOffsetPair eval_signals[] = {
 		"OMFG", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OMFG), 1,
@@ -439,7 +439,7 @@ namespace Breaknes
 		"COPY_OVF", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::COPY_OVF), 1,
 		"OVZ", offsetof(PPUSim::OAMEvalWires, PPUSim::OAMEvalWires::OVZ), 1,
 	};
-	size_t eval_signals_count = _countof(eval_signals);
+	size_t eval_signals_count = sizeof(eval_signals) / sizeof(eval_signals[0]);
 
 	SignalOffsetPair ppu_regs[] = {
 		"HCounter", offsetof(PPUSim::PPU_Registers, HCounter), 16,
@@ -457,5 +457,5 @@ namespace Breaknes
 		"SCC_TV", offsetof(PPUSim::PPU_Registers, SCC_TV), 8,
 		"SCC_TH", offsetof(PPUSim::PPU_Registers, SCC_TH), 8,
 	};
-	size_t ppu_regs_count = _countof(ppu_regs);
+	size_t ppu_regs_count = sizeof(ppu_regs) / sizeof(ppu_regs[0]);
 }

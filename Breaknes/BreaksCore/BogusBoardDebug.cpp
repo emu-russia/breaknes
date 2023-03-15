@@ -15,7 +15,7 @@ namespace Breaknes
 
 		MemDesciptor* wramRegion = new MemDesciptor;
 		memset(wramRegion, 0, sizeof(MemDesciptor));
-		strcpy_s(wramRegion->name, sizeof(wramRegion->name), WRAM_NAME);
+		strcpy(wramRegion->name, WRAM_NAME);
 		wramRegion->size = (int32_t)wram->Dbg_GetSize();
 		dbg_hub->AddMemRegion(wramRegion, DumpWRAM, WriteWRAM, this, false);
 	}
@@ -34,6 +34,7 @@ namespace Breaknes
 		"A", offsetof(BogusBoardDebugInfo, A), 16,
 		"D", offsetof(BogusBoardDebugInfo, D), 8,
 	};
+	static size_t board_signals_count = sizeof(board_signals) / sizeof(board_signals[0]);
 
 	void BogusBoard::AddDebugInfoProviders()
 	{
@@ -43,8 +44,8 @@ namespace Breaknes
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), CORE_WIRES_CATEGORY);
-			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			strcpy(entry->category, CORE_WIRES_CATEGORY);
+			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Core, entry, GetCoreDebugInfo, SetCoreDebugInfo, this);
 		}
@@ -55,20 +56,20 @@ namespace Breaknes
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), CORE_REGS_CATEGORY);
-			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			strcpy(entry->category, CORE_REGS_CATEGORY);
+			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_CoreRegs, entry, GetCoreRegsDebugInfo, SetCoreRegsDebugInfo, this);
 		}
 
-		for (size_t n = 0; n < _countof(board_signals); n++)
+		for (size_t n = 0; n < board_signals_count; n++)
 		{
 			SignalOffsetPair* sp = &board_signals[n];
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy_s(entry->category, sizeof(entry->category), BOARD_CATEGORY);
-			strcpy_s(entry->name, sizeof(entry->name), sp->name);
+			strcpy(entry->category, BOARD_CATEGORY);
+			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Board, entry, GetBoardDebugInfo, SetBoardDebugInfo, this);
 		}
@@ -160,7 +161,7 @@ namespace Breaknes
 	{
 		BogusBoard* board = (BogusBoard*)opaque;
 
-		for (size_t n = 0; n < _countof(board_signals); n++)
+		for (size_t n = 0; n < board_signals_count; n++)
 		{
 			SignalOffsetPair* sp = &board_signals[n];
 
