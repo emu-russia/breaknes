@@ -4,6 +4,7 @@
 #include <string>
 #include <list>
 #include <cassert>
+#include <memory.h>
 
 #include "../../Breaks6502/Breakasm/ASM.h"
 #include "../../Breaks6502/Breakasm/ASMOPS.h"
