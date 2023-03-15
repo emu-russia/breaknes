@@ -80,11 +80,6 @@ namespace Mappers
 		// NES only
 		uint16_t* exp, bool& exp_dirty)
 	{
-		UNREFERENCED_PARAMETER(snd_in);
-		UNREFERENCED_PARAMETER(snd_out);
-		UNREFERENCED_PARAMETER(exp);
-		UNREFERENCED_PARAMETER(exp_dirty);
-
 		if (!valid)
 			return;
 
