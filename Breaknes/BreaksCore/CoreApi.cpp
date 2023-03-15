@@ -4,10 +4,12 @@ Breaknes::Board* board = nullptr;
 
 extern "C"
 {
+#ifdef _WIN32
 	DLL_EXPORT int Assemble(char* str, uint8_t* buffer)
 	{
 		return assemble(str, buffer);
 	}
+#endif
 
 	DLL_EXPORT void CreateBoard(char* boardName, char* apu, char* ppu, char* p1)
 	{
