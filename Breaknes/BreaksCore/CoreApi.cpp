@@ -4,12 +4,12 @@ Breaknes::Board* board = nullptr;
 
 extern "C"
 {
-	__declspec(dllexport) int Assemble(char* str, uint8_t* buffer)
+	DLL_EXPORT int Assemble(char* str, uint8_t* buffer)
 	{
 		return assemble(str, buffer);
 	}
 
-	__declspec(dllexport) void CreateBoard(char* boardName, char* apu, char* ppu, char* p1)
+	DLL_EXPORT void CreateBoard(char* boardName, char* apu, char* ppu, char* p1)
 	{
 		if (board == nullptr)
 		{
@@ -20,7 +20,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void DestroyBoard()
+	DLL_EXPORT void DestroyBoard()
 	{
 		if (board != nullptr)
 		{
@@ -31,7 +31,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) int InsertCartridge(uint8_t* nesImage, size_t size)
+	DLL_EXPORT int InsertCartridge(uint8_t* nesImage, size_t size)
 	{
 		if (board != nullptr)
 		{
@@ -44,7 +44,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void EjectCartridge()
+	DLL_EXPORT void EjectCartridge()
 	{
 		if (board != nullptr)
 		{
@@ -53,7 +53,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void Step()
+	DLL_EXPORT void Step()
 	{
 		if (board != nullptr)
 		{
@@ -61,7 +61,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void Reset()
+	DLL_EXPORT void Reset()
 	{
 		if (board != nullptr)
 		{
@@ -69,7 +69,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) bool InResetState()
+	DLL_EXPORT bool InResetState()
 	{
 		if (board != nullptr)
 		{
@@ -81,7 +81,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) size_t GetACLKCounter()
+	DLL_EXPORT size_t GetACLKCounter()
 	{
 		if (board != nullptr)
 		{
@@ -93,7 +93,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) size_t GetPHICounter()
+	DLL_EXPORT size_t GetPHICounter()
 	{
 		if (board != nullptr)
 		{
@@ -105,7 +105,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void SampleAudioSignal(float* sample)
+	DLL_EXPORT void SampleAudioSignal(float* sample)
 	{
 		if (board != nullptr)
 		{
@@ -113,7 +113,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
+	DLL_EXPORT void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
 	{
 		if (board != nullptr)
 		{
@@ -121,7 +121,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void EnableNSFBanking(bool enable)
+	DLL_EXPORT void EnableNSFBanking(bool enable)
 	{
 		if (board != nullptr)
 		{
@@ -129,7 +129,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void LoadRegDump(uint8_t* data, size_t data_size)
+	DLL_EXPORT void LoadRegDump(uint8_t* data, size_t data_size)
 	{
 		if (board != nullptr)
 		{
@@ -137,7 +137,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)
+	DLL_EXPORT void GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)
 	{
 		if (board != nullptr)
 		{
@@ -145,7 +145,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) size_t GetPCLKCounter()
+	DLL_EXPORT size_t GetPCLKCounter()
 	{
 		if (board != nullptr)
 		{
@@ -157,7 +157,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void SampleVideoSignal(PPUSim::VideoOutSignal* sample)
+	DLL_EXPORT void SampleVideoSignal(PPUSim::VideoOutSignal* sample)
 	{
 		if (board != nullptr)
 		{
@@ -165,7 +165,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) size_t GetHCounter()
+	DLL_EXPORT size_t GetHCounter()
 	{
 		if (board != nullptr)
 		{
@@ -177,7 +177,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) size_t GetVCounter()
+	DLL_EXPORT size_t GetVCounter()
 	{
 		if (board != nullptr)
 		{
@@ -189,7 +189,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void RenderAlwaysEnabled(bool enable)
+	DLL_EXPORT void RenderAlwaysEnabled(bool enable)
 	{
 		if (board != nullptr)
 		{
@@ -197,7 +197,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features)
+	DLL_EXPORT void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features)
 	{
 		if (board != nullptr)
 		{
@@ -218,7 +218,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	DLL_EXPORT void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
 	{
 		if (board != nullptr)
 		{
@@ -230,7 +230,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void SetRAWColorMode(bool enable)
+	DLL_EXPORT void SetRAWColorMode(bool enable)
 	{
 		if (board != nullptr)
 		{
@@ -238,7 +238,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior)
+	DLL_EXPORT void SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior)
 	{
 		if (board != nullptr)
 		{
@@ -246,7 +246,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void SetNoiseLevel(float volts)
+	DLL_EXPORT void SetNoiseLevel(float volts)
 	{
 		if (board != nullptr)
 		{
@@ -254,7 +254,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void GetAllCoreDebugInfo(M6502Core::DebugInfo* info)
+	DLL_EXPORT void GetAllCoreDebugInfo(M6502Core::DebugInfo* info)
 	{
 		if (board != nullptr)
 		{
