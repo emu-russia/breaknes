@@ -198,7 +198,7 @@ extern "C"
 	/// </summary>
 	/// <param name="type"></param>
 	/// <returns></returns>
-	__declspec(dllexport)
+	DLL_EXPORT
 	size_t GetDebugInfoEntryCount(DebugInfoType type)
 	{
 		if (!dbg_hub)
@@ -256,7 +256,7 @@ extern "C"
 	/// </summary>
 	/// <param name="type"></param>
 	/// <param name="entries"></param>
-	__declspec(dllexport)
+	DLL_EXPORT
 	void GetDebugInfo(DebugInfoType type, DebugInfoEntry* entries)
 	{
 		if (!dbg_hub)
@@ -353,7 +353,7 @@ extern "C"
 	/// </summary>
 	/// <param name="type"></param>
 	/// <param name="entry"></param>
-	__declspec(dllexport)
+	DLL_EXPORT
 	int GetDebugInfoByName(DebugInfoType type, DebugInfoEntry* entry)
 	{
 		if (!dbg_hub)
@@ -383,7 +383,7 @@ extern "C"
 	/// </summary>
 	/// <param name="type"></param>
 	/// <param name="entry"></param>
-	__declspec(dllexport)
+	DLL_EXPORT
 	int SetDebugInfoByName(DebugInfoType type, DebugInfoEntry* entry)
 	{
 		if (!dbg_hub)
@@ -411,7 +411,7 @@ extern "C"
 	/// Get the number of memory descriptors that are registered in the core
 	/// </summary>
 	/// <returns></returns>
-	__declspec(dllexport)
+	DLL_EXPORT
 	size_t GetMemLayout()
 	{
 		if (!dbg_hub)
@@ -425,7 +425,7 @@ extern "C"
 	/// </summary>
 	/// <param name="descrID"></param>
 	/// <param name="descr"></param>
-	__declspec(dllexport)
+	DLL_EXPORT
 	void GetMemDescriptor(size_t descrID, MemDesciptor* descr)
 	{
 		if (!dbg_hub)
@@ -450,7 +450,7 @@ extern "C"
 	/// </summary>
 	/// <param name="descrID"></param>
 	/// <param name="ptr"></param>
-	__declspec(dllexport)
+	DLL_EXPORT
 	void DumpMem(size_t descrID, uint8_t* ptr)
 	{
 		if (!dbg_hub)
@@ -487,7 +487,7 @@ extern "C"
 	/// </summary>
 	/// <param name="descrID"></param>
 	/// <param name="ptr"></param>
-	__declspec(dllexport)
+	DLL_EXPORT
 	void WriteMem(size_t descrID, uint8_t* ptr)
 	{
 		if (!dbg_hub)
