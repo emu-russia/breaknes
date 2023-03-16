@@ -8,19 +8,7 @@ NES/Famicom/Dendy emulator at the gate level.
 
 Use Windows and VS2022. Dotnet 6.0 **Desktop** Runtime is also required.
 
-Builds for Linux will be available as soon as everything settles down.
-
-## Procrastination Chart
-
-- Breaknes GUI (managed part): 90%
-- BreaksCore (native part): 96%
-- 6502 Core: 100%
-- APU: 100%
-- PPU: 100%
-- Boards: 6/6
-- Mappers: 3 (NROM, UNROM, AOROM)
-
-The values reflect mostly a subjective feeling about reaching a critical mass of code. Bugs and improvements can be made ad infinitum.
+Builds for Linux can be found here: https://github.com/emu-russia/breaknes-linux
 
 ## License
 
