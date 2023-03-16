@@ -5,6 +5,7 @@
 #include <cstring>
 #include <cassert>
 #include <list>
+#include <cstddef>
 
 #include "../Common/BaseLogicLib/BaseLogic.h"
 #include "../Breaknes/BreaksCore/DebugHub.h"
