@@ -176,7 +176,9 @@ void CreateDebugHub()
 	if (dbg_hub == nullptr)
 	{
 		dbg_hub = new DebugHub();
+#ifdef _WIN32
 		freopen("CONOUT$", "w", stdout);
+#endif
 	}
 }
 
