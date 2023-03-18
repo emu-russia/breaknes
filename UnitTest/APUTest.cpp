@@ -9,7 +9,7 @@ namespace APUSimUnitTest
 {
 	UnitTest::UnitTest(APUSim::Revision rev)
 	{
-		core = new M6502Core::M6502(false, true);
+		core = new M6502Core::M6502(true, true);
 		apu = new APUSim::APU(core, rev);
 	}
 
