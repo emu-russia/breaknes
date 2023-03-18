@@ -283,6 +283,10 @@ namespace PPUSim
 	/// <returns></returns>
 	TriState FIFOLane::sim_Counter()
 	{
+		if (fast_fifo) {
+			return sim_CounterFast();
+		}
+
 		TriState carry = TriState::One;
 		TriState val_out[5]{};
 		TriState unused{};
@@ -327,6 +331,11 @@ namespace PPUSim
 
 	void FIFOLane::sim_PairedSR(TriState n_TX[8])
 	{
+		if (fast_fifo) {
+			sim_PairedSRFast(n_TX);
+			return;
+		}
+
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState shift_out[2]{};
 
@@ -364,14 +373,19 @@ namespace PPUSim
 
 	size_t FIFOLane::get_Counter()
 	{
-		size_t val = 0;
-
-		for (size_t n = 0; n < 8; n++)
+		if (fast_fifo)
 		{
-			val |= ((down_cnt[n].get() == TriState::One) ? 1ULL : 0) << n;
+			return fast_down_cnt;
 		}
-
-		return val;
+		else
+		{
+			size_t val = 0;
+			for (size_t n = 0; n < 8; n++)
+			{
+				val |= ((down_cnt[n].get() == TriState::One) ? 1ULL : 0) << n;
+			}
+			return val;
+		}
 	}
 
 	TriState FIFO_CounterBit::sim(
@@ -404,5 +418,50 @@ namespace PPUSim
 	}
 
 #pragma endregion "FIFO Lane"
+
+#pragma region "Fast FIFO"
+
+	// Faster versions of the counter and the paired shift register
+
+	TriState FIFOLane::sim_CounterFast()
+	{
+		if (LOAD == TriState::One)
+		{
+			fast_down_cnt = Pack(ppu->wire.OB);
+		}
+		else if (STEP == TriState::One)
+		{
+			fast_down_cnt--;
+		}
+		return fast_down_cnt == 0 ? TriState::One : TriState::Zero;
+	}
+
+	void FIFOLane::sim_PairedSRFast(TriState n_TX[8])
+	{
+		TriState n_PCLK = ppu->wire.n_PCLK;
+		uint8_t nTX = Pack(n_TX);
+
+		if (n_PCLK == TriState::One) {
+			paired_sr_out[0] = paired_sr_in[0];
+			paired_sr_out[1] = paired_sr_in[1];
+		}
+
+		if (T_SR0 == TriState::One) {
+			paired_sr_in[0] = nTX;
+		}
+		if (T_SR1 == TriState::One) {
+			paired_sr_in[1] = nTX;
+		}
+
+		if (SR_EN == TriState::One) {
+			paired_sr_in[0] = 0x80 | (paired_sr_out[0] >> 1);
+			paired_sr_in[1] = 0x80 | (paired_sr_out[1] >> 1);
+		}
+
+		nZ_COL0 = FromByte(paired_sr_out[0] & 1);
+		nZ_COL1 = FromByte(paired_sr_out[1] & 1);
+	}
+
+#pragma endregion "Fast FIFO"
 
 }

@@ -148,6 +148,7 @@ namespace Breaknes
 			cart_in[(size_t)Mappers::CartInput::nRD] = n_RD;
 			cart_in[(size_t)Mappers::CartInput::nWR] = n_WR;
 			cart_in[(size_t)Mappers::CartInput::nPA13] = n_PA13;
+			cart_in[(size_t)Mappers::CartInput::nROMSEL] = TriState::One;
 
 			cart->sim (
 				cart_in,

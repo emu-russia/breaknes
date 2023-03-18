@@ -42,6 +42,8 @@ namespace PPUSim
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
+		bool fast_fifo = true;
+
 		FIFO_SRBit paired_sr[2][8]{};
 		FIFO_CounterBit down_cnt[8]{};
 
@@ -76,6 +78,15 @@ namespace PPUSim
 		void sim_PairedSR(BaseLogic::TriState n_TX[8]);
 
 		size_t get_Counter();
+
+		// Faster version of the paired SR and counter
+
+		uint8_t fast_down_cnt = 0;		// Replacing the counter of the logic gates with an ordinary variable
+		BaseLogic::TriState sim_CounterFast();
+
+		uint8_t paired_sr_in[2]{};
+		uint8_t paired_sr_out[2]{};
+		void sim_PairedSRFast(BaseLogic::TriState n_TX[8]);
 
 	public:
 		FIFOLane(PPU* parent) { ppu = parent; }
