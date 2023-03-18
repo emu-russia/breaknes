@@ -202,7 +202,7 @@ namespace Breaknes
 
 	void FamicomBoard::SampleAudioSignal(float* sample)
 	{
-		// We do everything the same as in the basic class, but with the sound from the cartridge taken into account.
+		// We do everything the same as in the base class, but with the sound from the cartridge taken into account.
 
 		if (sample != nullptr)
 		{

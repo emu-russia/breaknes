@@ -51,7 +51,7 @@ namespace Breaknes
 				board.EjectCartridge();
 				if (board.InsertCartridge(filename) < 0)
 				{
-					MessageBox.Show ("Unsupported or corrupted NES ROM image format.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					MessageBox.Show("Unsupported or corrupted NES ROM image format.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;
 				}
 				BreaksCore.Reset();
@@ -60,7 +60,7 @@ namespace Breaknes
 				vid_out.SetOutputPictureBox(pictureBox1);
 				snd_out = new(Handle);
 				board.Paused = debuggers.Count != 0;
-				
+
 				foreach (var inst in debuggers)
 				{
 					inst.UpdateOnRomLoad();
