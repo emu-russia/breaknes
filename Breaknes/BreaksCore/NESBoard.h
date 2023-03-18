@@ -114,7 +114,7 @@ namespace Breaknes
 #pragma endregion "Debug, look away"
 
 	public:
-		NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1);
+		NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
 		virtual ~NESBoard();
 
 		void Step() override;

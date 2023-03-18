@@ -12,7 +12,7 @@ using namespace BaseLogic;
 
 namespace Mappers
 {
-	UNROM::UNROM(Breaknes::ConnectorType p1, uint8_t* nesImage, size_t nesImageSize) : AbstractCartridge(p1, nesImage, nesImageSize)
+	UNROM::UNROM(ConnectorType p1, uint8_t* nesImage, size_t nesImageSize) : AbstractCartridge(p1, nesImage, nesImageSize)
 	{
 		printf("UNROM::UNROM()\n");
 
@@ -68,15 +68,14 @@ namespace Mappers
 	}
 
 	void UNROM::sim(
-		TriState cart_in[(size_t)Breaknes::CartInput::Max],
-		TriState cart_out[(size_t)Breaknes::CartOutput::Max],
+		TriState cart_in[(size_t)CartInput::Max],
+		TriState cart_out[(size_t)CartOutput::Max],
 		uint16_t cpu_addr,
 		uint8_t* cpu_data, bool& cpu_data_dirty,
 		uint16_t ppu_addr,
 		uint8_t* ppu_data, bool& ppu_data_dirty,
 		// Famicom only
-		APUSim::AudioOutSignal* snd_in,
-		Breaknes::CartAudioOutSignal* snd_out,
+		CartAudioOutSignal* snd_out,
 		// NES only
 		uint16_t* exp, bool& exp_dirty)
 	{
@@ -85,14 +84,14 @@ namespace Mappers
 
 		// PPU Part
 
-		TriState nRD = cart_in[(size_t)Breaknes::CartInput::nRD];
-		TriState nWR = cart_in[(size_t)Breaknes::CartInput::nWR];
+		TriState nRD = cart_in[(size_t)CartInput::nRD];
+		TriState nWR = cart_in[(size_t)CartInput::nWR];
 
 		// H/V Mirroring
-		cart_out[(size_t)Breaknes::CartOutput::VRAM_A10] = V_Mirroring ? FromByte((ppu_addr >> 10) & 1) : FromByte((ppu_addr >> 11) & 1);
+		cart_out[(size_t)CartOutput::VRAM_A10] = V_Mirroring ? FromByte((ppu_addr >> 10) & 1) : FromByte((ppu_addr >> 11) & 1);
 
 		// Contains a jumper between `/PA13` and `/VRAM_CS`
-		cart_out[(size_t)Breaknes::CartOutput::VRAM_nCS] = cart_in[(size_t)Breaknes::CartInput::nPA13];
+		cart_out[(size_t)CartOutput::VRAM_nCS] = cart_in[(size_t)CartInput::nPA13];
 
 		// CHR_A13 is actually `/CS` for CHR
 		TriState nCHR_CS = FromByte((ppu_addr >> 13) & 1);
@@ -124,13 +123,13 @@ namespace Mappers
 
 		// CPU Part
 
-		TriState nROMSEL = cart_in[(size_t)Breaknes::CartInput::nROMSEL];
+		TriState nROMSEL = cart_in[(size_t)CartInput::nROMSEL];
 
 		// Counter to select PRG Bank
 
 		TriState vdd = TriState::One;
 		TriState gnd = TriState::Zero;
-		TriState CPU_RnW = cart_in[(size_t)Breaknes::CartInput::RnW];
+		TriState CPU_RnW = cart_in[(size_t)CartInput::RnW];
 
 		TriState P[4]{};
 
@@ -184,10 +183,15 @@ namespace Mappers
 			}
 		}
 
-		TriState nIRQ = cart_out[(size_t)Breaknes::CartOutput::nIRQ];
+		TriState nIRQ = cart_out[(size_t)CartOutput::nIRQ];
 		if (!(nIRQ == TriState::Zero || nIRQ == TriState::One))
 		{
-			cart_out[(size_t)Breaknes::CartOutput::nIRQ] = TriState::Z;
+			cart_out[(size_t)CartOutput::nIRQ] = TriState::Z;
+		}
+
+		if (p1_type == ConnectorType::FamicomStyle && snd_out)
+		{
+			snd_out->normalized = 0.0f;
 		}
 	}
 

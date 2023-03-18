@@ -112,11 +112,11 @@ namespace Breaknes
 
 		if (p1 == "Fami")
 		{
-			p1_type = ConnectorType::FamicomStyle;
+			p1_type = Mappers::ConnectorType::FamicomStyle;
 		}
 		else if (p1 == "NES")
 		{
-			p1_type = ConnectorType::NESStyle;
+			p1_type = Mappers::ConnectorType::NESStyle;
 		}
 		else
 		{

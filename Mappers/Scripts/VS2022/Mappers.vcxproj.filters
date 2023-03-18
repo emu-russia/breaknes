@@ -30,6 +30,15 @@
     <ClInclude Include="..\..\AOROM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\AbstractCartridge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\CartridgeFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Mappers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\NROM.cpp">
@@ -44,8 +53,15 @@
     <ClCompile Include="..\..\AOROM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\AbstractCartridge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CartridgeFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Readme.md" />
+    <None Include="..\..\Readme_ru.md" />
   </ItemGroup>
 </Project>

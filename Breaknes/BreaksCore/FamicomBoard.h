@@ -28,7 +28,7 @@ namespace Breaknes
 		// TBD: Expansion port
 
 		// Famicom Board specific ⚠️
-		CartAudioOutSignal cart_snd{};
+		Mappers::CartAudioOutSignal cart_snd{};
 
 		// PPU Buses
 
@@ -71,7 +71,7 @@ namespace Breaknes
 		int resetHalfClkCounter = 0;
 
 	public:
-		FamicomBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1);
+		FamicomBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
 		virtual ~FamicomBoard();
 
 		void Step() override;
@@ -79,5 +79,7 @@ namespace Breaknes
 		void Reset() override;
 
 		bool InResetState() override;
+
+		void SampleAudioSignal(float* sample);
 	};
 }

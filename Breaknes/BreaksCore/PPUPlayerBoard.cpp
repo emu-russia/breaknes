@@ -6,7 +6,7 @@ using namespace BaseLogic;
 
 namespace Breaknes
 {
-	PPUPlayerBoard::PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
+	PPUPlayerBoard::PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
 	{
 		core = new M6502Core::FakeM6502(0x2000, 0x7);
 		ppu = new PPUSim::PPU(ppu_rev);
@@ -140,14 +140,14 @@ namespace Breaknes
 
 		if (cart != nullptr)
 		{
-			TriState cart_in[(size_t)CartInput::Max]{};
-			TriState cart_out[(size_t)CartOutput::Max];
+			TriState cart_in[(size_t)Mappers::CartInput::Max]{};
+			TriState cart_out[(size_t)Mappers::CartOutput::Max];
 
 			bool unused;
 
-			cart_in[(size_t)CartInput::nRD] = n_RD;
-			cart_in[(size_t)CartInput::nWR] = n_WR;
-			cart_in[(size_t)CartInput::nPA13] = n_PA13;
+			cart_in[(size_t)Mappers::CartInput::nRD] = n_RD;
+			cart_in[(size_t)Mappers::CartInput::nWR] = n_WR;
+			cart_in[(size_t)Mappers::CartInput::nPA13] = n_PA13;
 
 			cart->sim (
 				cart_in,
@@ -159,8 +159,8 @@ namespace Breaknes
 				nullptr, nullptr,
 				nullptr, unused );
 
-			n_VRAM_CS = cart_out[(size_t)CartOutput::VRAM_nCS];
-			VRAM_A10 = cart_out[(size_t)CartOutput::VRAM_A10];
+			n_VRAM_CS = cart_out[(size_t)Mappers::CartOutput::VRAM_nCS];
+			VRAM_A10 = cart_out[(size_t)Mappers::CartOutput::VRAM_A10];
 		}
 		else
 		{

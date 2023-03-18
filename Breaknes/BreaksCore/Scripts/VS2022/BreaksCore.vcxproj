@@ -22,13 +22,11 @@
     <ClCompile Include="..\..\..\..\Breaks6502\Breakasm\ASM.cpp" />
     <ClCompile Include="..\..\..\..\Breaks6502\Breakasm\ASMOPS.cpp" />
     <ClCompile Include="..\..\AbstractBoard.cpp" />
-    <ClCompile Include="..\..\AbstractCartridge.cpp" />
     <ClCompile Include="..\..\APUPlayerBoard.cpp" />
     <ClCompile Include="..\..\APUPlayerBoardDebug.cpp" />
     <ClCompile Include="..\..\BoardFactory.cpp" />
     <ClCompile Include="..\..\BogusBoard.cpp" />
     <ClCompile Include="..\..\BogusBoardDebug.cpp" />
-    <ClCompile Include="..\..\CartridgeFactory.cpp" />
     <ClCompile Include="..\..\CoreApi.cpp" />
     <ClCompile Include="..\..\DebugHub.cpp" />
     <ClCompile Include="..\..\dllmain.cpp" />
@@ -52,12 +50,10 @@
     <ClInclude Include="..\..\..\..\Breaks6502\Breakasm\ASM.h" />
     <ClInclude Include="..\..\..\..\Breaks6502\Breakasm\ASMOPS.h" />
     <ClInclude Include="..\..\AbstractBoard.h" />
-    <ClInclude Include="..\..\AbstractCartridge.h" />
     <ClInclude Include="..\..\APUPlayerBoard.h" />
     <ClInclude Include="..\..\BoardFactory.h" />
     <ClInclude Include="..\..\BogusBoard.h" />
     <ClInclude Include="..\..\BreaksCore.h" />
-    <ClInclude Include="..\..\CartridgeFactory.h" />
     <ClInclude Include="..\..\CoreApi.h" />
     <ClInclude Include="..\..\DebugHub.h" />
     <ClInclude Include="..\..\FamicomBoard.h" />

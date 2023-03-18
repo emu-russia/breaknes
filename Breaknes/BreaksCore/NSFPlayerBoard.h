@@ -51,7 +51,7 @@ namespace Breaknes
 		void GetDebugInfo(NSFBoardDebugInfo& info);
 
 	public:
-		NSFPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1);
+		NSFPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
 		virtual ~NSFPlayerBoard();
 
 		void Step() override;

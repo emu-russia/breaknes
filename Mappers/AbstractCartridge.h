@@ -2,7 +2,7 @@
 
 #pragma once
 
-namespace Breaknes
+namespace Mappers
 {
 	enum class ConnectorType
 	{
@@ -37,14 +37,12 @@ namespace Breaknes
 	};
 
 	/// <summary>
-	/// A software descriptor of the current audio sample.
+	/// A software descriptor of the current audio sample from cartridge port.
+	/// Famicom only
 	/// </summary>
 	union CartAudioOutSignal
 	{
-		struct NormalizedOut
-		{
-			float bogus;		// TBD
-		} normalized;
+		float normalized;
 	};
 
 	class AbstractCartridge
@@ -66,7 +64,6 @@ namespace Breaknes
 			uint16_t ppu_addr,
 			uint8_t* ppu_data, bool& ppu_data_dirty,
 			// Famicom only
-			APUSim::AudioOutSignal *snd_in,
 			CartAudioOutSignal *snd_out,
 			// NES only
 			uint16_t* exp, bool& exp_dirty ) = 0;

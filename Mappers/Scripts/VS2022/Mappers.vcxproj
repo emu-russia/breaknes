@@ -19,14 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\AbstractCartridge.h" />
     <ClInclude Include="..\..\AOROM.h" />
+    <ClInclude Include="..\..\CartridgeFactory.h" />
+    <ClInclude Include="..\..\Mappers.h" />
     <ClInclude Include="..\..\NES_Header.h" />
     <ClInclude Include="..\..\NROM.h" />
     <ClInclude Include="..\..\pch.h" />
     <ClInclude Include="..\..\UNROM.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\AbstractCartridge.cpp" />
     <ClCompile Include="..\..\AOROM.cpp" />
+    <ClCompile Include="..\..\CartridgeFactory.cpp" />
     <ClCompile Include="..\..\NROM.cpp" />
     <ClCompile Include="..\..\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -38,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Readme.md" />
+    <None Include="..\..\Readme_ru.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
