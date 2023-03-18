@@ -156,7 +156,7 @@ namespace Breaknes
 				nullptr, unused,
 				ppu_addr,
 				&ad_bus, ADDirty,
-				nullptr, nullptr,
+				nullptr,
 				nullptr, unused );
 
 			n_VRAM_CS = cart_out[(size_t)Mappers::CartOutput::VRAM_nCS];
