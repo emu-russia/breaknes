@@ -5,6 +5,7 @@
 #include <list>
 #include <string>
 #include <cassert>
+#include <Windows.h>
 
 #include "../Common/BaseLogicLib/BaseLogic.h"
 

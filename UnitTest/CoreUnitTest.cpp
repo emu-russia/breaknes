@@ -8,7 +8,7 @@ namespace M6502CoreUnitTest
 {
 	UnitTest::UnitTest()
 	{
-		core = new M6502(false, false);
+		core = new M6502(true, true);	// HLE: yes; NESMode: yes
 	}
 
 	UnitTest::~UnitTest()
@@ -414,6 +414,8 @@ namespace M6502CoreUnitTest
 
 		FILE* f;
 		fopen_s(&f, "decoder_sim.csv", "wt");
+		if (!f)
+			return false;
 		fprintf(f, "inputs,outputs\n");
 
 		for (size_t inputs=0; inputs<(size_t)(1 << 14); inputs++)
@@ -468,7 +470,7 @@ namespace M6502CoreUnitTest
 			for (int n = 129; n >= 0; n--)
 			{
 				uint8_t bit_val = ToByte(outputs[n]);
-				fprintf(f, "%zd", bit_val);
+				fprintf(f, "%d", bit_val);
 			}
 
 			fprintf(f, "\n");
@@ -478,6 +480,77 @@ namespace M6502CoreUnitTest
 		fclose(f);
 
 		return true;
+	}
+
+	bool UnitTest::MegaCyclesTest(size_t desired_clk)
+	{
+		char text[0x100]{};
+		TriState PHI = TriState::Zero;
+		
+		// 0 on the data bus will cause the 6502 to always execute a cyclic BRK.
+		// Technically, we are satisfied with this variant, because BRK processing involves almost all the internals of the core
+
+		uint8_t data_bus = 0;
+		uint16_t addr_bus = 0;
+
+		TriState inputs[(size_t)M6502Core::InputPad::Max]{};
+		TriState outputs[(size_t)M6502Core::OutputPad::Max]{};
+
+		inputs[(size_t)InputPad::n_IRQ] = TriState::One;
+		inputs[(size_t)InputPad::n_NMI] = TriState::One;
+		inputs[(size_t)InputPad::PHI0] = TriState::One;
+		inputs[(size_t)InputPad::RDY] = TriState::One;
+		inputs[(size_t)InputPad::SO] = TriState::One;
+
+		// The core requires some number of cycles for proper Reset
+
+		inputs[(size_t)InputPad::n_RES] = TriState::Zero;
+
+		for (size_t n = 0; n < 64; n++)
+		{
+			data_bus = 0;
+			inputs[(size_t)InputPad::PHI0] = PHI;
+			core->sim(inputs, outputs, &addr_bus, &data_bus);
+			PHI = NOT(PHI);
+
+			data_bus = 0;
+			inputs[(size_t)InputPad::PHI0] = PHI;
+			core->sim(inputs, outputs, &addr_bus, &data_bus);
+			PHI = NOT(PHI);
+		}
+
+		// Continue
+
+		inputs[(size_t)InputPad::n_RES] = TriState::One;
+
+		auto stamp1 = GetTickCount64();
+
+		for (size_t n = 0; n < desired_clk; n++)
+		{
+			data_bus = 0;
+			inputs[(size_t)InputPad::PHI0] = PHI;
+			core->sim(inputs, outputs, &addr_bus, &data_bus);
+			PHI = NOT(PHI);
+
+			data_bus = 0;
+			inputs[(size_t)InputPad::PHI0] = PHI;
+			core->sim(inputs, outputs, &addr_bus, &data_bus);
+			PHI = NOT(PHI);
+		}
+
+		auto stamp2 = GetTickCount64();
+		int delta = (int)(stamp2 - stamp1);
+
+		sprintf_s(text, sizeof(text), "Core executed %zd cycles in real %d msec\n", desired_clk, delta);
+		Logger::WriteMessage(text);
+
+		if (delta > 1000)
+		{
+			sprintf_s(text, sizeof(text), "You're %.2f times slower :(\n", (float)delta / 1000.f);
+			Logger::WriteMessage(text);
+		}
+
+		return delta <= 1000;
 	}
 
 }

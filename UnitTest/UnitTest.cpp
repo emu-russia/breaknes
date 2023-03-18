@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace BaseLogic;
@@ -82,6 +82,12 @@ namespace UnitTest
 			M6502CoreUnitTest::UnitTest ut;
 			Assert::IsTrue(ut.DumpDecoder());
 		}
+
+		TEST_METHOD(TestCoreMegaCycles)
+		{
+			M6502CoreUnitTest::UnitTest ut;
+			Assert::IsTrue(ut.MegaCyclesTest(1'789'772));	// 2A03 CLK ÷ 12
+		}
 	};
 
 	TEST_CLASS(ApuUnitTest)
@@ -135,6 +141,12 @@ namespace UnitTest
 		{
 			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
 			Assert::IsTrue(ut.TestOAM_DMA());
+		}
+
+		TEST_METHOD(TestApuMegaCycles)
+		{
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
+			Assert::IsTrue(ut.MegaCyclesTest(21'477272));
 		}
 	};
 
@@ -274,6 +286,12 @@ namespace UnitTest
 		{
 			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C04_0003);
 			ut.Dump_2C04_0003_ColorSpace();
+		}
+
+		TEST_METHOD(TestPpuMegaCycles)
+		{
+			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
+			Assert::IsTrue(ut.MegaCyclesTest(21'477272));
 		}
 	};
 }

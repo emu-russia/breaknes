@@ -44,5 +44,13 @@ namespace PPUSimUnitTest
 		void DumpNtscPpuPhaseShifter(bool reset);
 		void DumpNtscPpuColorSpace(bool emphasis);
 		void Dump_2C04_0003_ColorSpace();
+
+		/// <summary>
+		/// Execute some million cycles and check that their execution time is faster or equal to the real chip.
+		/// The chip in this test is in "pumpkin" mode: it lives, but it does nothing useful.
+		/// </summary>
+		/// <param name="desired_clk">Desired cycle rate per second (Hz)</param>
+		/// <returns></returns>
+		bool MegaCyclesTest(size_t desired_clk);
 	};
 }
