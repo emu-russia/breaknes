@@ -6,6 +6,9 @@
 #include <cassert>
 #include <memory.h>
 #include <cstddef>
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 
 #include "../../Breaks6502/Breakasm/ASM.h"
 #include "../../Breaks6502/Breakasm/ASMOPS.h"

@@ -177,7 +177,9 @@ void CreateDebugHub()
 	{
 		dbg_hub = new DebugHub();
 #ifdef _WIN32
-		freopen("CONOUT$", "w", stdout);
+		if (GetConsoleWindow()) {
+			freopen("CONOUT$", "w", stdout);
+		}
 #endif
 	}
 }
