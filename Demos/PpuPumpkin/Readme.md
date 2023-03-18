@@ -7,4 +7,4 @@ PPU executed 21477272 cycles in real 20375 msec
 You're 20.38 times slower :(
 ```
 
-<picture>
+![ppusim_profiler.png](ppusim_profiler.png)
