@@ -37,6 +37,9 @@ namespace PPUSim
 
 		sim_HInv();
 		BitRev(n_TX);
+		if (fast_fifo) {
+			packed_nTX = Pack(n_TX);
+		}
 		sim_Lanes();
 		sim_Prio();
 	}
@@ -75,7 +78,7 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			lane[n]->sim(HSel[n], n_TX, LaneOut[n]);
+			lane[n]->sim(HSel[n], n_TX, packed_nTX, LaneOut[n]);
 		}
 	}
 
@@ -329,10 +332,10 @@ namespace PPUSim
 		SR_EN = NOR(n_PCLK, n_EN);
 	}
 
-	void FIFOLane::sim_PairedSR(TriState n_TX[8])
+	void FIFOLane::sim_PairedSR(TriState n_TX[8], uint8_t packed_nTX)
 	{
 		if (fast_fifo) {
-			sim_PairedSRFast(n_TX);
+			sim_PairedSRFast(packed_nTX);
 			return;
 		}
 
@@ -352,7 +355,7 @@ namespace PPUSim
 		nZ_COL1 = shift_out[1];
 	}
 
-	void FIFOLane::sim(TriState HSel, TriState n_TX[8], FIFOLaneOutput& ZOut)
+	void FIFOLane::sim(TriState HSel, TriState n_TX[8], uint8_t packed_nTX, FIFOLaneOutput& ZOut)
 	{
 		sim_LaneControl(HSel);
 		sim_CounterControl();
@@ -361,7 +364,7 @@ namespace PPUSim
 		sim_CounterCarry(CarryOut);
 
 		sim_PairedSREnable();
-		sim_PairedSR(n_TX);
+		sim_PairedSR(n_TX, packed_nTX);
 
 		ZOut.nZ_COL0 = nZ_COL0;
 		ZOut.nZ_COL1 = nZ_COL1;
@@ -436,10 +439,9 @@ namespace PPUSim
 		return fast_down_cnt == 0 ? TriState::One : TriState::Zero;
 	}
 
-	void FIFOLane::sim_PairedSRFast(TriState n_TX[8])
+	void FIFOLane::sim_PairedSRFast(uint8_t nTX)
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		uint8_t nTX = Pack(n_TX);
 
 		if (n_PCLK == TriState::One) {
 			paired_sr_out[0] = paired_sr_in[0];

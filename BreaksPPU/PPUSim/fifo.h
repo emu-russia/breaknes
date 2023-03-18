@@ -75,7 +75,7 @@ namespace PPUSim
 		BaseLogic::TriState sim_Counter();
 		void sim_CounterCarry(BaseLogic::TriState Carry);
 		void sim_PairedSREnable();
-		void sim_PairedSR(BaseLogic::TriState n_TX[8]);
+		void sim_PairedSR(BaseLogic::TriState n_TX[8], uint8_t packed_nTX);
 
 		size_t get_Counter();
 
@@ -86,19 +86,21 @@ namespace PPUSim
 
 		uint8_t paired_sr_in[2]{};
 		uint8_t paired_sr_out[2]{};
-		void sim_PairedSRFast(BaseLogic::TriState n_TX[8]);
+		void sim_PairedSRFast(uint8_t packed_nTX);
 
 	public:
 		FIFOLane(PPU* parent) { ppu = parent; }
 		~FIFOLane() {}
 
-		void sim(BaseLogic::TriState HSel, BaseLogic::TriState n_TX[8], FIFOLaneOutput& ZOut);
+		void sim(BaseLogic::TriState HSel, BaseLogic::TriState n_TX[8], uint8_t packed_nTX, FIFOLaneOutput& ZOut);
 	};
 
 	class FIFO
 	{
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
+
+		bool fast_fifo = true;
 
 		FIFOLane* lane[8];
 
@@ -109,6 +111,7 @@ namespace PPUSim
 		BaseLogic::FF HINV_FF;
 		BaseLogic::DLatch tout_latch[8];
 		BaseLogic::TriState n_TX[8]{};
+		uint8_t packed_nTX = 0;
 
 		BaseLogic::DLatch sh2_latch;
 		BaseLogic::DLatch sh3_latch;
