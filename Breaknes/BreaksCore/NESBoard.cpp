@@ -6,7 +6,7 @@ using namespace BaseLogic;
 
 namespace Breaknes
 {
-	NESBoard::NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1) : Board (apu_rev, ppu_rev, p1)
+	NESBoard::NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1) : Board (apu_rev, ppu_rev, p1)
 	{
 		// Big chips
 		core = new M6502Core::M6502(true, true);
@@ -126,18 +126,18 @@ namespace Breaknes
 
 		if (cart != nullptr)
 		{
-			TriState cart_in[(size_t)CartInput::Max]{};
-			TriState cart_out[(size_t)CartOutput::Max];
+			TriState cart_in[(size_t)Mappers::CartInput::Max]{};
+			TriState cart_out[(size_t)Mappers::CartOutput::Max];
 
 			bool unused;
 
-			cart_in[(size_t)CartInput::nRD] = PPU_nRD;
-			cart_in[(size_t)CartInput::nWR] = PPU_nWR;
-			cart_in[(size_t)CartInput::nPA13] = PPU_nA13;
-			cart_in[(size_t)CartInput::M2] = M2;
-			cart_in[(size_t)CartInput::nROMSEL] = nROMSEL;
-			cart_in[(size_t)CartInput::RnW] = CPU_RnW;
-			cart_in[(size_t)CartInput::SYSTEM_CLK] = CLK;		// NES Board specific ⚠️
+			cart_in[(size_t)Mappers::CartInput::nRD] = PPU_nRD;
+			cart_in[(size_t)Mappers::CartInput::nWR] = PPU_nWR;
+			cart_in[(size_t)Mappers::CartInput::nPA13] = PPU_nA13;
+			cart_in[(size_t)Mappers::CartInput::M2] = M2;
+			cart_in[(size_t)Mappers::CartInput::nROMSEL] = nROMSEL;
+			cart_in[(size_t)Mappers::CartInput::RnW] = CPU_RnW;
+			cart_in[(size_t)Mappers::CartInput::SYSTEM_CLK] = CLK;		// NES Board specific ⚠️
 
 			cart->sim(
 				cart_in,
@@ -146,14 +146,14 @@ namespace Breaknes
 				&data_bus, data_bus_dirty,
 				ppu_addr,
 				&ad_bus, ADDirty,
-				nullptr, nullptr,
+				nullptr,
 				// NES Board specific ⚠️
 				&exp_bus, unused);
 
 			// And here you can add some dirt on the contacts
 
-			VRAM_nCE = cart_out[(size_t)CartOutput::VRAM_nCS];
-			VRAM_A10 = cart_out[(size_t)CartOutput::VRAM_A10];
+			VRAM_nCE = cart_out[(size_t)Mappers::CartOutput::VRAM_nCS];
+			VRAM_A10 = cart_out[(size_t)Mappers::CartOutput::VRAM_A10];
 		}
 		else
 		{

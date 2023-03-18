@@ -4,7 +4,7 @@
 
 namespace Mappers
 {
-	class AOROM : public Breaknes::AbstractCartridge
+	class AOROM : public AbstractCartridge
 	{
 		bool valid = false;
 
@@ -22,21 +22,20 @@ namespace Mappers
 		BaseBoard::LS161 counter{};
 
 	public:
-		AOROM(Breaknes::ConnectorType p1, uint8_t* nesImage, size_t nesImageSize);
+		AOROM(ConnectorType p1, uint8_t* nesImage, size_t nesImageSize);
 		virtual ~AOROM();
 
 		bool Valid() override;
 
 		void sim(
-			BaseLogic::TriState cart_in[(size_t)Breaknes::CartInput::Max],
-			BaseLogic::TriState cart_out[(size_t)Breaknes::CartOutput::Max],
+			BaseLogic::TriState cart_in[(size_t)CartInput::Max],
+			BaseLogic::TriState cart_out[(size_t)CartOutput::Max],
 			uint16_t cpu_addr,
 			uint8_t* cpu_data, bool& cpu_data_dirty,
 			uint16_t ppu_addr,
 			uint8_t* ppu_data, bool& ppu_data_dirty,
 			// Famicom only
-			APUSim::AudioOutSignal* snd_in,
-			Breaknes::CartAudioOutSignal* snd_out,
+			CartAudioOutSignal* snd_out,
 			// NES only
 			uint16_t* exp, bool& exp_dirty);
 	};

@@ -11,12 +11,15 @@
 #include "../Breaknes/BreaksCore/DebugHub.h"
 #include "../Breaks6502/M6502Core/core.h"
 #include "../BreaksAPU/APUSim/apu.h"
-#include "../Breaknes/BreaksCore/AbstractCartridge.h"
 
 #include "../Common/BaseBoardLib/LS32.h"
 #include "../Common/BaseBoardLib/LS161.h"
 
+#include "AbstractCartridge.h"
 #include "NES_Header.h"
 #include "NROM.h"
 #include "UNROM.h"
 #include "AOROM.h"
+// Add new mappers here
+// ...
+#include "CartridgeFactory.h"

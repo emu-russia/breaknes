@@ -33,8 +33,8 @@ namespace Breaknes
 
 		// The cartridge slot supports hotplugging during simulation.
 
-		AbstractCartridge* cart = nullptr;
-		ConnectorType p1_type = ConnectorType::None;
+		Mappers::AbstractCartridge* cart = nullptr;
+		Mappers::ConnectorType p1_type = Mappers::ConnectorType::None;
 
 		// Pre-calculated PPU palette
 
@@ -45,7 +45,7 @@ namespace Breaknes
 		BaseLogic::TriState vdd = BaseLogic::TriState::One;
 
 	public:
-		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1);
+		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
 		virtual ~Board();
 
 		/// <summary>

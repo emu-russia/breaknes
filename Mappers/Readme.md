@@ -1,8 +1,18 @@
 # Mappers
 
+This component combines everything related to the cartridge port and mappers. Please treat the term "Mappers" in this context as a synonym for cartridge.
+
 The implementation of mappers is done (in progress) in two ways:
 - Generic simulation of common mapper circuits in C++ using BaseLogicLib
-- Ability to simulate unusual mappers using 6502 microcode
+- Ability to simulate unusual mappers using 6502 microcode + JSON meta
+
+## Abstract Cartridge
+
+The emulation of mappers is based on the same principle as for the other parts of the emulator: take a device or connector, stick signals in it and something happens.
+
+In the case of the сartridge, an "abstract port" is used which summarizes all the interfaces of the real NES/Famicom cartridge connector (sound, Expansion Port), but in a particular instance only the necessary ones are used (for example if you create a NES motherboard - there will be no sound from the cartridge).
+
+CartridgeFactory creates a cartridge instance for the main part of the emulator based on meta-information attributes (NES header, JSONES meta-information).
 
 ## Mapper microcode
 

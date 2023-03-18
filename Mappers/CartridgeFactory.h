@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Breaknes
+namespace Mappers
 {
 	class CartridgeFactory
 	{

@@ -1,6 +1,6 @@
 #include "pch.h"
 
-namespace Breaknes
+namespace Mappers
 {
 	CartridgeFactory::CartridgeFactory(ConnectorType p1, uint8_t* nesImage, size_t size)
 	{

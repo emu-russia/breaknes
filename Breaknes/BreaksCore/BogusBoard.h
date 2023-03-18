@@ -57,7 +57,7 @@ namespace Breaknes
 		size_t phi_counter = 0;
 
 	public:
-		BogusBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, ConnectorType p1);
+		BogusBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
 		virtual ~BogusBoard();
 
 		void Step() override;

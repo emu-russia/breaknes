@@ -35,17 +35,9 @@
 
 #include "DebugHub.h"
 
-// Cartridge Slot
+// Cartridge & Mappers
 
-#include "AbstractCartridge.h"
-#include "CartridgeFactory.h"
-
-// Mappers
-
-#include "../../Mappers/NES_Header.h"
-#include "../../Mappers/NROM.h"
-#include "../../Mappers/UNROM.h"
-#include "../../Mappers/AOROM.h"
+#include "../../Mappers/Mappers.h"
 
 // Boards
 

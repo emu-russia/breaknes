@@ -1,6 +1,6 @@
 #include "pch.h"
 
-namespace Breaknes
+namespace Mappers
 {
 	AbstractCartridge::AbstractCartridge(ConnectorType _p1_type, uint8_t* nesImage, size_t size)
 	{
