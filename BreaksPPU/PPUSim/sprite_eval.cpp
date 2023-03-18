@@ -63,7 +63,7 @@ namespace PPUSim
 			OB_Bits[n] = OB_latch[n].get();
 		}
 
-		if (ppu->HLEMode)
+		if (fast_eval)
 		{
 			uint8_t V = (uint8_t)ppu->v->get();
 			uint8_t OB = Pack(OB_Bits);

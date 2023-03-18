@@ -32,6 +32,8 @@ namespace PPUSim
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
+		bool fast_bgc = true;
+
 		BaseLogic::DLatch fat_latch;
 		BaseLogic::DLatch tho1_latch;
 
@@ -77,6 +79,18 @@ namespace PPUSim
 		void sim_BGC2();
 		void sim_BGC3();
 		void sim_Output();
+
+		// Faster version
+
+		uint8_t fast_bgc0_latch = 0;
+		uint8_t fast_pd_latch = 0;
+		
+		uint8_t bgc_sr1_in[4]{};
+		uint8_t bgc_sr1_out[4]{};
+		uint8_t bgc_sr2_in[4]{};
+		uint8_t bgc_sr2_out[4]{};
+
+		void sim_BGCFast();
 
 	public:
 		BGCol(PPU* parent);
