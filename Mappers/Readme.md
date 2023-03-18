@@ -42,3 +42,14 @@ How it will work:
 - The main part of the emulator picks up signals and rejoices
 
 More details like UCode 6502 memory map etc. in the process of implementation. You also need to figure out how the microcode will gain access to the roms (obviously, they all need to be loaded into memory first, and from the 6502 side, somehow knock there). We'll come up with something.
+
+## Why Assembler?
+
+The reader may have a reasonable question: why such a perverted approach (6502 assembly language microcode) is used instead of the popular scripting language (LUA, Python)?
+
+The reasons are as follows:
+- We already have a ready assembler for 6502 and an emulator. No need to drag any other dependencies into our little project.
+- Scripting engines generate bytecode as a result of their activity. The assembler generates microcode as a result of its activity. In principle, there is no difference between the two.
+- LUA has a wicked syntax that is not for humans.
+- Python has a code base like Boeing.
+- Anyone who was even faced with the torture of choosing which scripting engine to integrate into their C++ project need not read all this (but already read it)
