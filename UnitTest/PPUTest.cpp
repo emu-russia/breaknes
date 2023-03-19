@@ -719,11 +719,10 @@ namespace PPUSimUnitTest
 		TriState ntx[8]{};
 		TriState unused[8]{};
 
-		uint8_t packed_tx = Pack(tx);
-		uint8_t packed_ntx = Pack(ntx);
-
 		Unpack(val, tx);
 		Unpack(~val, ntx);
+		uint8_t packed_tx = Pack(tx);
+		uint8_t packed_ntx = Pack(ntx);
 
 		ppu->wire.n_PCLK = TriState::Zero;
 		lane.T_SR0 = TriState::One;
