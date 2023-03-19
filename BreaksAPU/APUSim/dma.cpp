@@ -29,14 +29,28 @@ namespace APUSim
 
 		// Low
 
-		TriState carry = TriState::One;
-
-		for (size_t n = 0; n < 8; n++)
+		if (fast_dma) {
+			if (W4014 == TriState::One) {
+				fast_spr_lo = 0;
+			}
+			if (SPRS == TriState::One) {
+				fast_spr_lo++;
+			}
+			if (RES == TriState::One) {
+				fast_spr_lo = 0;
+			}
+			SPRE = fast_spr_lo == 0xff ? TriState::One : TriState::Zero;
+		}
+		else
 		{
-			carry = spr_lo[n].sim(carry, RES, W4014, SPRS, n_ACLK, TriState::Zero);
+			TriState carry = TriState::One;
+			for (size_t n = 0; n < 8; n++)
+			{
+				carry = spr_lo[n].sim(carry, RES, W4014, SPRS, n_ACLK, TriState::Zero);
+			}
+			SPRE = carry;
 		}
 
-		SPRE = carry;
 		spre_latch.set(SPRE, n_ACLK);
 
 		// High
@@ -50,9 +64,16 @@ namespace APUSim
 
 		apu->SPR_Addr = 0;
 
+		if (fast_dma) {
+			apu->SPR_Addr = fast_spr_lo;
+		}
+
 		for (size_t n = 0; n < 8; n++)
 		{
-			apu->SPR_Addr |= ((spr_lo[n].get() == TriState::One ? 1 : 0) << n);
+			if (!fast_dma)
+			{
+				apu->SPR_Addr |= ((spr_lo[n].get() == TriState::One ? 1 : 0) << n);
+			}
 			apu->SPR_Addr |= ((spr_hi[n].get() == TriState::One ? 1 : 0) << (8 + n));
 		}
 	}
@@ -153,7 +174,7 @@ namespace APUSim
 			val_lo[n] = spr_lo[n].get();
 			val_hi[n] = spr_hi[n].get();
 		}
-		return Pack(val_lo) | ((uint32_t)Pack(val_hi) << 8);
+		return (fast_dma ? fast_spr_lo : Pack(val_lo)) | ((uint32_t)Pack(val_hi) << 8);
 	}
 
 	void DMA::Set_DMABuffer(uint32_t value)
@@ -172,9 +193,14 @@ namespace APUSim
 		TriState val_hi[8]{};
 		Unpack(value, val_lo);
 		Unpack(value >> 8, val_hi);
+		if (fast_dma) {
+			fast_spr_lo = (uint8_t)value;
+		}
 		for (size_t n = 0; n < 8; n++)
 		{
-			spr_lo[n].set(val_lo[n]);
+			if (!fast_dma) {
+				spr_lo[n].set(val_lo[n]);
+			}
 			spr_hi[n].set(val_hi[n]);
 		}
 	}

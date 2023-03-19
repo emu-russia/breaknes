@@ -82,6 +82,7 @@ namespace APUSim
 		void sim_FreqReg(BaseLogic::TriState WR2, BaseLogic::TriState WR3);
 		void sim_ShiftReg(BaseLogic::TriState WR1);
 		void sim_BarrelShifter();
+		void sim_BarrelShifterFast();
 		void sim_Adder();
 		void sim_FreqCounter();
 		void sim_FreqCounterFast();
@@ -92,6 +93,8 @@ namespace APUSim
 		// Faster
 
 		uint16_t fast_freq_cnt = 0;
+		uint8_t fast_sweep_cnt = 0;
+		uint8_t fast_duty_cnt = 0;
 
 	public:
 		SquareChan(APU* parent, SquareChanCarryIn carry_routing);
