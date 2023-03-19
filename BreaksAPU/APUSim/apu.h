@@ -250,7 +250,7 @@ namespace APUSim
 		size_t phi_counter = 0;
 
 		BaseLogic::TriState PrevPHI_Core = BaseLogic::TriState::X;	// to optimize
-		BaseLogic::TriState PrevPHI_Others = BaseLogic::TriState::X;	// to optimize
+		BaseLogic::TriState PrevPHI_SoundGen = BaseLogic::TriState::X;	// to optimize
 
 		uint8_t Dbg_GetStatus();
 		void Dbg_SetStatus(uint8_t val);
