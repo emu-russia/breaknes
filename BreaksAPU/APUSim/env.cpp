@@ -36,13 +36,52 @@ namespace APUSim
 		envdis_reg.sim(n_ACLK, WR_Reg, apu->GetDBBit(4));
 		lc_reg.sim(n_ACLK, WR_Reg, apu->GetDBBit(5));
 
-		TriState RCO = TriState::One;
-		TriState ECO = TriState::One;
-		for (size_t n = 0; n < 4; n++)
+		TriState RCO{};
+		TriState ECO{};
+		if (fast_env) {
+			for (size_t n = 0; n < 4; n++)
+			{
+				vol_reg[n].sim(n_ACLK, WR_Reg, apu->GetDBBit(n));
+			}
+			if (RLOAD == TriState::One) {
+				TriState val[4]{};
+				for (size_t n = 0; n < 4; n++)
+				{
+					val[n] = vol_reg[n].get();
+				}
+				fast_decay_cnt = PackNibble(val);
+			}
+			if (RSTEP == TriState::One) {
+				fast_decay_cnt = (fast_decay_cnt + 1) & 0xf;
+			}
+			if (ERES == TriState::One) {
+				TriState val[4]{};
+				for (size_t n = 0; n < 4; n++)
+				{
+					val[n] = EIN;
+				}
+				fast_env_cnt = PackNibble(val);
+			}
+			if (ESTEP == TriState::One) {
+				fast_env_cnt = (fast_env_cnt + 1) & 0xf;
+			}
+			if (RES == TriState::One) {
+				fast_decay_cnt = 0;
+				fast_env_cnt = 0;
+			}
+			RCO = fast_decay_cnt == 0 ? TriState::One : TriState::Zero;
+			ECO = fast_env_cnt == 0 ? TriState::One : TriState::Zero;
+		}
+		else
 		{
-			vol_reg[n].sim(n_ACLK, WR_Reg, apu->GetDBBit(n));
-			RCO = decay_cnt[n].sim(RCO, RES, RLOAD, RSTEP, n_ACLK, vol_reg[n].get());
-			ECO = env_cnt[n].sim(ECO, RES, ERES, ESTEP, n_ACLK, EIN);
+			RCO = TriState::One;
+			ECO = TriState::One;
+			for (size_t n = 0; n < 4; n++)
+			{
+				vol_reg[n].sim(n_ACLK, WR_Reg, apu->GetDBBit(n));
+				RCO = decay_cnt[n].sim(RCO, RES, RLOAD, RSTEP, n_ACLK, vol_reg[n].get());
+				ECO = env_cnt[n].sim(ECO, RES, ERES, ESTEP, n_ACLK, EIN);
+			}
 		}
 
 		EnvReload.set(NOR(NOR(EnvReload.get(), NOR(n_LFO1, erld_latch.get())), WR_LC));
@@ -84,6 +123,10 @@ namespace APUSim
 
 	uint32_t EnvelopeUnit::Debug_Get_DecayCounter()
 	{
+		if (fast_env) {
+			return fast_decay_cnt;
+		}
+
 		TriState val[4]{};
 		for (size_t n = 0; n < 4; n++)
 		{
@@ -94,6 +137,10 @@ namespace APUSim
 
 	uint32_t EnvelopeUnit::Debug_Get_EnvCounter()
 	{
+		if (fast_env) {
+			return fast_env_cnt;
+		}
+
 		TriState val[4]{};
 		for (size_t n = 0; n < 4; n++)
 		{
@@ -114,6 +161,11 @@ namespace APUSim
 
 	void EnvelopeUnit::Debug_Set_DecayCounter(uint32_t val)
 	{
+		if (fast_env) {
+			fast_decay_cnt = (uint8_t)val & 0xf;
+			return;
+		}
+
 		TriState unpacked[4]{};
 		UnpackNibble(val, unpacked);
 		for (size_t n = 0; n < 4; n++)
@@ -124,6 +176,11 @@ namespace APUSim
 
 	void EnvelopeUnit::Debug_Set_EnvCounter(uint32_t val)
 	{
+		if (fast_env) {
+			fast_env_cnt = (uint8_t)val & 0xf;
+			return;
+		}
+
 		TriState unpacked[4]{};
 		UnpackNibble(val, unpacked);
 		for (size_t n = 0; n < 4; n++)
