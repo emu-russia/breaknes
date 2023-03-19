@@ -52,7 +52,7 @@ namespace APUSim
 				fast_decay_cnt = PackNibble(val);
 			}
 			if (RSTEP == TriState::One) {
-				fast_decay_cnt = (fast_decay_cnt + 1) & 0xf;
+				fast_decay_cnt = (fast_decay_cnt - 1) & 0xf;
 			}
 			if (ERES == TriState::One) {
 				TriState val[4]{};
@@ -63,7 +63,7 @@ namespace APUSim
 				fast_env_cnt = PackNibble(val);
 			}
 			if (ESTEP == TriState::One) {
-				fast_env_cnt = (fast_env_cnt + 1) & 0xf;
+				fast_env_cnt = (fast_env_cnt - 1) & 0xf;
 			}
 			if (RES == TriState::One) {
 				fast_decay_cnt = 0;
