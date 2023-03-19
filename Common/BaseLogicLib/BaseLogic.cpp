@@ -504,6 +504,22 @@ namespace BaseLogic
 		}
 	}
 
+	void Unpack3(uint8_t val, TriState out[3])
+	{
+		for (size_t i = 0; i < 3; i++)
+		{
+			out[i] = ((val >> i) & 1) ? TriState::One : TriState::Zero;
+		}
+	}
+
+	void Unpack5(uint8_t val, TriState out[5])
+	{
+		for (size_t i = 0; i < 5; i++)
+		{
+			out[i] = ((val >> i) & 1) ? TriState::One : TriState::Zero;
+		}
+	}
+
 	void UnpackNibble(uint8_t val, TriState out[4])
 	{
 		for (size_t i = 0; i < 4; i++)

@@ -20,10 +20,15 @@ namespace PPUSim
 		sim_CountersControl();
 		sim_CountersCarry();
 		sim_Control();
-		sim_FVCounter();
-		sim_NTCounters();
-		sim_TVCounter();
-		sim_THCounter();
+		if (fast_par) {
+			sim_AllCountersFast();
+		}
+		else {
+			sim_FVCounter();
+			sim_NTCounters();
+			sim_TVCounter();
+			sim_THCounter();
+		}
 	}
 
 	void PAR::sim_CountersControl()
@@ -175,6 +180,60 @@ namespace PPUSim
 		}
 	}
 
+	void PAR::sim_AllCountersFast()
+	{
+		TriState PCLK = ppu->wire.PCLK;
+
+		// All counting and counter loading signals are complementary to PCLK
+
+		if (PCLK == TriState::Zero) {
+
+			if (TVLOAD == TriState::One) {
+				fast_FVCounter = Pack3(ppu->wire.FV);
+				fast_NTVCounter = ToByte(ppu->wire.NTV);
+				fast_TVCounter = Pack5(ppu->wire.TV);
+			}
+			if (THLOAD == TriState::One) {
+				fast_THCounter = Pack5(ppu->wire.TH);
+				fast_NTHCounter = ToByte(ppu->wire.NTH);
+			}
+			if (TVSTEP == TriState::One) {
+				if (FVIN == TriState::One) {
+					fast_FVCounter = (fast_FVCounter + 1) & 7;
+				}
+				if (NTVIN == TriState::One) {
+					fast_NTVCounter = (fast_NTVCounter + 1) & 1;
+				}
+				if (TVIN == TriState::One) {
+					fast_TVCounter = (fast_TVCounter + 1) & 0x1f;
+				}
+			}
+			if (THSTEP == TriState::One) {
+				if (THIN == TriState::One) {
+					fast_THCounter = (fast_THCounter + 1) & 0x1f;
+				}
+				if (NTHIN == TriState::One) {
+					fast_NTHCounter = (fast_NTHCounter + 1) & 1;
+				}
+			}
+		}
+		
+		// Freaking 0/TV (clears not only the contents of the counter's input FF during keep, but also pulldowns its output value)
+
+		if (PCLK == TriState::One && Z_TV == TriState::One) {
+			fast_TVCounter = 0;
+		}
+
+		Unpack3(fast_FVCounter, ppu->wire.FVO);
+		Unpack3(~fast_FVCounter, ppu->wire.n_FVO);
+		NTVOut = FromByte(fast_NTVCounter);
+		NTHOut = FromByte(fast_NTHCounter);
+		Unpack5(Z_TV == TriState::One ? 0 : fast_TVCounter, ppu->wire.TVO);
+		Unpack5(~fast_TVCounter, ppu->wire.n_TVO);		// no 0/TV for complement
+		Unpack5(fast_THCounter, ppu->wire.THO);
+		Unpack5(~fast_THCounter, ppu->wire.n_THO);
+	}
+
 	void PAR::sim_PARInputs()
 	{
 		TriState BLNK = ppu->fsm.BLNK;
@@ -244,13 +303,13 @@ namespace PPUSim
 	}
 
 	TriState PAR_CounterBit::sim_res(TriState Clock, TriState Load, TriState Step,
-		TriState val_in, TriState carry_in, TriState Reset,
+		TriState val_in, TriState carry_in, TriState Reset,		// Reset: clears not only the contents of the counter's input FF in keep state, but also pulldowns its output value (but NOT complement output)
 		TriState& val_out, TriState& n_val_out)
 	{
 		auto val = MUX(Step, MUX(Load, MUX(Clock, TriState::Z, AND(ff.get(), NOT(Reset))), val_in), step_latch.nget());
 		ff.set(val);
 		step_latch.set(MUX(carry_in, ff.nget(), ff.get()), Clock);
-		val_out = ff.get();
+		val_out = AND(ff.get(), NOT(Reset));
 		n_val_out = ff.nget();
 		TriState carry_out = NOR(n_val_out, NOT(carry_in));
 		return carry_out;
