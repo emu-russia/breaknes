@@ -58,7 +58,6 @@ namespace PPUSim
 
 			if (n_PCLK) {
 				// Keep
-				fast_bits = RES == TriState::One ? 0 : fast_bits;
 			}
 			else {
 				// Count
@@ -68,6 +67,9 @@ namespace PPUSim
 				if (CLR == TriState::One) {
 					fast_bits = 0;
 				}
+			}
+			if (RES == TriState::One) {
+				fast_bits = 0;
 			}
 		}
 		else {

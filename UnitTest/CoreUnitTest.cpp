@@ -8,7 +8,7 @@ namespace M6502CoreUnitTest
 {
 	UnitTest::UnitTest()
 	{
-		core = new M6502(true, true);	// HLE: yes; NESMode: yes
+		core = new M6502(true, false);	// HLE: yes; NESMode: no
 	}
 
 	UnitTest::~UnitTest()
