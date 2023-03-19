@@ -11,6 +11,7 @@ namespace APUSim
 		apu = parent;
 		cin_type = carry_routing;
 		env_unit = new EnvelopeUnit(apu);
+		fast_square = apu->fast;
 	}
 
 	SquareChan::~SquareChan()
@@ -28,9 +29,19 @@ namespace APUSim
 		sim_Sweep(WR1, NOSQ);
 
 		sim_FreqReg(WR2, WR3);
-		sim_BarrelShifter();
+		if (fast_square) {
+			sim_BarrelShifterFast();
+		}
+		else {
+			sim_BarrelShifter();
+		}
 		sim_Adder();
-		sim_FreqCounter();
+		if (fast_square) {
+			sim_FreqCounterFast();
+		}
+		else {
+			sim_FreqCounter();
+		}
 		sim_Duty(WR0, WR3);
 
 		env_unit->sim(Vol, WR0, WR3);
@@ -89,6 +100,24 @@ namespace APUSim
 		}
 	}
 
+	void SquareChan::sim_BarrelShifterFast()
+	{
+		int32_t bs = 0;
+		int sr = Pack3(SR);
+		for (size_t n = 0; n < 11; n++)
+		{
+			bs |= (int32_t)ToByte(MUX(DEC, freq_reg[n].get_Fx(DO_SWEEP), freq_reg[n].get_nFx(DO_SWEEP))) << n;
+		}
+		if (DEC == TriState::One) {
+			bs |= 0xffff'f800;
+		}
+		int32_t sn = bs >> sr;
+		for (size_t n = 0; n < 11; n++)
+		{
+			S[n] = FromByte((sn >> n) & 1);
+		}
+	}
+
 	void SquareChan::sim_Adder()
 	{
 		TriState n_carry = cin_type == SquareChanCarryIn::Vdd ? TriState::One : INC;
@@ -128,6 +157,37 @@ namespace APUSim
 		fco_latch.set(FCO, n_ACLK);
 	}
 
+	void SquareChan::sim_FreqCounterFast()
+	{
+		TriState ACLK = apu->wire.ACLK;
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState RES = apu->wire.RES;
+
+		FLOAD = NOR(ACLK, fco_latch.nget());
+		TriState FSTEP = NOR(ACLK, NOT(fco_latch.nget()));
+
+		if (FLOAD == TriState::One) {
+			TriState lo[8]{};
+			TriState hi[3]{};
+			for (size_t n = 0; n < 8; n++) {
+				lo[n] = freq_reg[n].get_Fx(DO_SWEEP);
+			}
+			for (size_t n = 0; n < 3; n++) {
+				hi[n] = freq_reg[n + 8].get_Fx(DO_SWEEP);
+			}
+			fast_freq_cnt = ((uint16_t)Pack(hi) << 8) | Pack(lo);
+		}
+		if (FSTEP == TriState::One) {
+			fast_freq_cnt = (fast_freq_cnt - 1) & 0x3ff;
+		}
+		if (RES == TriState::One) {
+			fast_freq_cnt = 0;
+		}
+
+		FCO = fast_freq_cnt == 0 ? TriState::One : TriState::Zero;
+		fco_latch.set(FCO, n_ACLK);
+	}
+
 	void SquareChan::sim_Sweep(TriState WR1, TriState NOSQ)
 	{
 		TriState n_ACLK = apu->wire.n_ACLK;
@@ -145,15 +205,35 @@ namespace APUSim
 			sweep_reg[n].sim(n_ACLK, WR1, apu->GetDBBit(n + 4));
 		}
 
-		TriState SCO = TriState::One;
-
 		TriState temp_reload = NOR(reload_latch.nget(), sco_latch.get());
 		TriState SSTEP = NOR(n_LFO2, NOT(temp_reload));
 		TriState SLOAD = NOR(n_LFO2, temp_reload);
 
-		for (size_t n = 0; n < 3; n++)
+		TriState SCO{};
+		if (fast_square) {
+			if (SLOAD == TriState::One) {
+				TriState val[3]{};
+				for (size_t n = 0; n < 3; n++)
+				{
+					val[n] = sweep_reg[n].get();
+				}
+				fast_sweep_cnt = Pack3(val);
+			}
+			if (SSTEP == TriState::One) {
+				fast_sweep_cnt = (fast_sweep_cnt - 1) & 7;
+			}
+			if (RES == TriState::One) {
+				fast_sweep_cnt = 0;
+			}
+			SCO = fast_sweep_cnt == 0 ? TriState::One : TriState::Zero;
+		}
+		else
 		{
-			SCO = sweep_cnt[n].sim(SCO, RES, SLOAD, SSTEP, n_ACLK, sweep_reg[n].get());
+			SCO = TriState::One;
+			for (size_t n = 0; n < 3; n++)
+			{
+				SCO = sweep_cnt[n].sim(SCO, RES, SLOAD, SSTEP, n_ACLK, sweep_reg[n].get());
+			}
 		}
 
 		sco_latch.set(SCO, n_ACLK);
@@ -167,17 +247,37 @@ namespace APUSim
 	{
 		TriState n_ACLK = apu->wire.n_ACLK;
 		TriState RES = apu->wire.RES;
+		TriState DT[3]{};
 
 		for (size_t n = 0; n < 2; n++)
 		{
 			duty_reg[n].sim(n_ACLK, WR0, apu->GetDBBit(n + 6));
 		}
 
-		TriState carry = FCO;
-
-		for (size_t n = 0; n < 3; n++)
+		if (fast_square) {
+			if (WR3 == TriState::One) {
+				fast_duty_cnt = 0;
+			}
+			if (FLOAD == TriState::One && FCO == TriState::One) {
+				fast_duty_cnt = (fast_duty_cnt - 1) & 7;
+			}
+			if (RES == TriState::One) {
+				fast_duty_cnt = 0;
+			}
+			DT[0] = FromByte((fast_duty_cnt >> 0) & 1);
+			DT[1] = FromByte((fast_duty_cnt >> 1) & 1);
+			DT[2] = FromByte((fast_duty_cnt >> 2) & 1);
+		}
+		else
 		{
-			carry = duty_cnt[n].sim(carry, RES, WR3, FLOAD, n_ACLK, TriState::Zero);
+			TriState carry = FCO;
+			for (size_t n = 0; n < 3; n++)
+			{
+				carry = duty_cnt[n].sim(carry, RES, WR3, FLOAD, n_ACLK, TriState::Zero);
+			}
+			DT[0] = duty_cnt[0].get();
+			DT[1] = duty_cnt[1].get();
+			DT[2] = duty_cnt[2].get();
 		}
 
 		TriState sel[2]{};
@@ -185,10 +285,10 @@ namespace APUSim
 		sel[1] = duty_reg[1].get();
 
 		TriState in[4]{};
-		in[3] = NAND(duty_cnt[1].get(), duty_cnt[2].get());
-		in[0] = NOR(NOT(duty_cnt[0].get()), in[3]);
+		in[3] = NAND(DT[1], DT[2]);
+		in[0] = NOR(NOT(DT[0]), in[3]);
 		in[1] = NOT(in[3]);
-		in[2] = duty_cnt[2].get();
+		in[2] = DT[2];
 
 		DUTY = MUX2(sel, in);		
 	}
@@ -279,6 +379,10 @@ namespace APUSim
 
 	uint32_t SquareChan::Get_FreqCounter()
 	{
+		if (fast_square) {
+			return fast_freq_cnt;
+		}
+
 		TriState val[4]{};
 		TriState val_byte[8]{};
 		for (size_t n = 0; n < 8; n++)
@@ -306,6 +410,10 @@ namespace APUSim
 
 	uint32_t SquareChan::Get_SweepCounter()
 	{
+		if (fast_square) {
+			return fast_sweep_cnt;
+		}
+
 		TriState val[4]{};
 		for (size_t n = 0; n < 3; n++)
 		{
@@ -317,6 +425,10 @@ namespace APUSim
 
 	uint32_t SquareChan::Get_DutyCounter()
 	{
+		if (fast_square) {
+			return fast_duty_cnt;
+		}
+
 		TriState val[4]{};
 		for (size_t n = 0; n < 3; n++)
 		{
@@ -354,6 +466,11 @@ namespace APUSim
 
 	void SquareChan::Set_FreqCounter(uint32_t value)
 	{
+		if (fast_square) {
+			fast_freq_cnt = value & 0x3ff;
+			return;
+		}
+
 		TriState val[4]{};
 		TriState val_byte[8]{};
 		Unpack(value, val_byte);
@@ -380,6 +497,11 @@ namespace APUSim
 
 	void SquareChan::Set_SweepCounter(uint32_t value)
 	{
+		if (fast_square) {
+			fast_sweep_cnt = value & 7;
+			return;
+		}
+
 		TriState val[4]{};
 		UnpackNibble(value, val);
 		for (size_t n = 0; n < 3; n++)
@@ -390,6 +512,11 @@ namespace APUSim
 
 	void SquareChan::Set_DutyCounter(uint32_t value)
 	{
+		if (fast_square) {
+			fast_duty_cnt = value & 7;
+			return;
+		}
+
 		TriState val[4]{};
 		UnpackNibble(value, val);
 		for (size_t n = 0; n < 3; n++)

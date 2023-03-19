@@ -89,8 +89,8 @@ namespace PPUSim
 		void sim_PairedSRFast(uint8_t packed_nTX);
 
 	public:
-		FIFOLane(PPU* parent) { ppu = parent; }
-		~FIFOLane() {}
+		FIFOLane(PPU* parent);
+		~FIFOLane();
 
 		void sim(BaseLogic::TriState HSel, BaseLogic::TriState n_TX[8], uint8_t packed_nTX, FIFOLaneOutput& ZOut);
 	};

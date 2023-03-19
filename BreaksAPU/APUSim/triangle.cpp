@@ -9,6 +9,7 @@ namespace APUSim
 	TriangleChan::TriangleChan(APU* parent)
 	{
 		apu = parent;
+		fast_tri = apu->fast;
 	}
 
 	TriangleChan::~TriangleChan()
@@ -18,8 +19,20 @@ namespace APUSim
 	void TriangleChan::sim()
 	{
 		sim_Control();
-		sim_LinearCounter();
-		sim_FreqCounter();
+		sim_LinearReg();
+		if (fast_tri) {
+			sim_LinearCounterFast();
+		}
+		else {
+			sim_LinearCounter();
+		}
+		sim_FreqReg();
+		if (fast_tri) {
+			sim_FreqCounterFast();
+		}
+		else {
+			sim_FreqCounter();
+		}
 		sim_Output();
 	}
 
@@ -47,28 +60,69 @@ namespace APUSim
 		TSTEP = NOR5(TCO, apu->wire.LOCK, apu->wire.PHI1, apu->wire.NOTRI, n_FOUT);
 	}
 
-	void TriangleChan::sim_LinearCounter()
+	void TriangleChan::sim_LinearReg()
 	{
 		TriState n_ACLK = apu->wire.n_ACLK;
 		TriState W4008 = apu->wire.W4008;
+
+		for (size_t n = 0; n < 7; n++)
+		{
+			lin_reg[n].sim(n_ACLK, W4008, apu->GetDBBit(n));
+		}
+	}
+
+	void TriangleChan::sim_LinearCounter()
+	{
+		TriState n_ACLK = apu->wire.n_ACLK;
 		TriState RES = apu->wire.RES;
 
 		TriState carry = TriState::One;
 
 		for (size_t n = 0; n < 7; n++)
 		{
-			lin_reg[n].sim(n_ACLK, W4008, apu->GetDBBit(n));
 			carry = lin_cnt[n].sim(carry, RES, LOAD, STEP, n_ACLK, lin_reg[n].get());
 		}
 
 		TCO = carry;
 	}
 
-	void TriangleChan::sim_FreqCounter()
+	void TriangleChan::sim_LinearCounterFast()
+	{
+		TriState RES = apu->wire.RES;
+
+		if (LOAD == TriState::One) {
+			TriState val[8]{};
+			for (size_t n = 0; n < 7; n++) {
+				val[n] = lin_reg[n].get();
+			}
+			val[7] = TriState::Zero;
+			fast_lin_cnt = Pack(val);
+		}
+		if (STEP == TriState::One) {
+			fast_lin_cnt = (fast_lin_cnt - 1) & 0x7f;
+		}
+		if (RES == TriState::One) {
+			fast_lin_cnt = 0;
+		}
+
+		TCO = fast_lin_cnt == 0 ? TriState::One : TriState::Zero;
+	}
+
+	void TriangleChan::sim_FreqReg()
 	{
 		TriState PHI1 = apu->wire.PHI1;
 		TriState W400A = apu->wire.W400A;
 		TriState W400B = apu->wire.W400B;
+
+		for (size_t n = 0; n < 11; n++)
+		{
+			freq_reg[n].sim(PHI1, n < 8 ? W400A : W400B, n < 8 ? apu->GetDBBit(n) : apu->GetDBBit(n - 8));
+		}
+	}
+
+	void TriangleChan::sim_FreqCounter()
+	{
+		TriState PHI1 = apu->wire.PHI1;
 		TriState RES = apu->wire.RES;
 
 		TriState carry = TriState::One;
@@ -77,9 +131,38 @@ namespace APUSim
 
 		for (size_t n = 0; n < 11; n++)
 		{
-			freq_reg[n].sim(PHI1, n < 8 ? W400A : W400B, n < 8 ? apu->GetDBBit(n) : apu->GetDBBit(n - 8));
 			carry = freq_cnt[n].sim(carry, RES, FLOAD, FSTEP, PHI1, freq_reg[n].get());
 		}
+
+		fout_latch.set(carry, PHI1);
+	}
+
+	void TriangleChan::sim_FreqCounterFast()
+	{
+		TriState PHI1 = apu->wire.PHI1;
+		TriState RES = apu->wire.RES;
+
+		TriState FLOAD = NOR(PHI1, n_FOUT);
+		TriState FSTEP = NOR(PHI1, NOT(n_FOUT));
+
+		if (FLOAD == TriState::One) {
+			TriState lo[8]{};
+			TriState hi[3]{};
+			for (size_t n = 0; n < 8; n++) {
+				lo[n] = freq_reg[n].get();
+			}
+			for (size_t n = 0; n < 3; n++) {
+				hi[n] = freq_reg[n + 8].get();
+			}
+			fast_freq_cnt = ((uint16_t)Pack(hi) << 8) | Pack(lo);
+		}
+		if (FSTEP == TriState::One) {
+			fast_freq_cnt = (fast_freq_cnt - 1) & 0x3ff;
+		}
+		if (RES == TriState::One) {
+			fast_freq_cnt = 0;
+		}
+		TriState carry = fast_freq_cnt == 0 ? TriState::One : TriState::Zero;
 
 		fout_latch.set(carry, PHI1);
 	}
@@ -92,12 +175,29 @@ namespace APUSim
 		TriState T[5]{};
 		TriState nT[5]{};
 
-		TriState carry = TriState::One;
+		TriState carry{};
 
 		// The developers decided to use PHI1 for the triangle channel instead of ACLK to smooth out the "stepped" signal.
-		for (size_t n = 0; n < 5; n++)
+
+		if (fast_tri) {
+			if (W401A == TriState::One) {
+				fast_out_cnt = apu->DB & 0x1f;
+			}
+			if (TSTEP == TriState::One) {
+				fast_out_cnt = (fast_out_cnt + 1) & 0x1f;
+			}
+			if (RES == TriState::One) {
+				fast_out_cnt = 0;
+			}
+			carry = fast_out_cnt == 0x1f ? TriState::One : TriState::Zero;
+		}
+		else
 		{
-			carry = out_cnt[n].sim(carry, RES, W401A, TSTEP, PHI1 /* !!! */, apu->GetDBBit(n));
+			carry = TriState::One;
+			for (size_t n = 0; n < 5; n++)
+			{
+				carry = out_cnt[n].sim(carry, RES, W401A, TSTEP, PHI1 /* !!! */, apu->GetDBBit(n));
+			}
 		}
 
 		TriState T4 = out_cnt[4].get();
@@ -130,6 +230,10 @@ namespace APUSim
 
 	uint32_t TriangleChan::Get_LinearCounter()
 	{
+		if (fast_tri) {
+			return fast_lin_cnt;
+		}
+
 		TriState val_lo[8]{};
 		for (size_t n = 0; n < 7; n++)
 		{
@@ -157,6 +261,10 @@ namespace APUSim
 
 	uint32_t TriangleChan::Get_FreqCounter()
 	{
+		if (fast_tri) {
+			return fast_freq_cnt;
+		}
+
 		TriState val_lo[8]{};
 		TriState val_hi[4]{};
 		for (size_t n = 0; n < 8; n++)
@@ -173,6 +281,10 @@ namespace APUSim
 
 	uint32_t TriangleChan::Get_OutputCounter()
 	{
+		if (fast_tri) {
+			return fast_out_cnt;
+		}
+
 		TriState val_lo[8]{};
 		for (size_t n = 0; n < 5; n++)
 		{
@@ -196,6 +308,11 @@ namespace APUSim
 
 	void TriangleChan::Set_LinearCounter(uint32_t value)
 	{
+		if (fast_tri) {
+			fast_lin_cnt = value & 0x7f;
+			return;
+		}
+
 		TriState val_lo[8]{};
 		Unpack(value, val_lo);
 		for (size_t n = 0; n < 7; n++)
@@ -222,6 +339,11 @@ namespace APUSim
 
 	void TriangleChan::Set_FreqCounter(uint32_t value)
 	{
+		if (fast_tri) {
+			fast_freq_cnt = value & 0x3ff;
+			return;
+		}
+
 		TriState val_lo[8]{};
 		TriState val_hi[4]{};
 		Unpack(value, val_lo);
@@ -238,6 +360,11 @@ namespace APUSim
 
 	void TriangleChan::Set_OutputCounter(uint32_t value)
 	{
+		if (fast_tri) {
+			fast_out_cnt = value & 0x1f;
+			return;
+		}
+
 		TriState val_lo[8]{};
 		Unpack(value, val_lo);
 		for (size_t n = 0; n < 5; n++)

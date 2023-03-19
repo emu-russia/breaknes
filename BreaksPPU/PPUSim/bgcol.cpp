@@ -9,6 +9,7 @@ namespace PPUSim
 	BGCol::BGCol(PPU* parent)
 	{
 		ppu = parent;
+		fast_bgc = ppu->fast;
 	}
 
 	BGCol::~BGCol()

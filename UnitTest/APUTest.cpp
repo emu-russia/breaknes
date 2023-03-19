@@ -27,8 +27,10 @@ namespace APUSimUnitTest
 	{
 		char text[0x100]{};
 		TriState CLK = TriState::Zero;
-		APUSim::CounterBit down_counter[8]{};
+		APUSim::CounterBit up_counter[8]{};
 		uint8_t last_val;
+
+		// In this test CLK=0 acts as the Keep phase
 
 		for (size_t n = 0; n < 0x200; n++)
 		{
@@ -36,20 +38,30 @@ namespace APUSimUnitTest
 
 			for (size_t cnt_bit = 0; cnt_bit < 8; cnt_bit++)
 			{
-				carry = down_counter[cnt_bit].sim(carry, TriState::Zero, TriState::Zero, CLK, NOT(CLK), TriState::Z);
+				carry = up_counter[cnt_bit].sim(carry, TriState::Zero, TriState::Zero, CLK, NOT(CLK), TriState::Z);
+			}
+
+			uint8_t val = 0;
+			for (size_t cnt_bit = 0; cnt_bit < 8; cnt_bit++)
+			{
+				val |= (up_counter[cnt_bit].get() == TriState::One ? 1 : 0) << cnt_bit;
 			}
 
 			if (CLK == TriState::Zero)
 			{
-				uint8_t val = 0;
-				for (size_t cnt_bit = 0; cnt_bit < 8; cnt_bit++)
-				{
-					val |= (down_counter[cnt_bit].get() == TriState::One ? 1 : 0) << cnt_bit;
-				}
-
-				sprintf_s(text, sizeof(text), "%zd: 0x%02X\n", n / 2, val);
+				sprintf_s(text, sizeof(text), "%zd: 0x%02X %s\n", n / 2, val, carry == TriState::One ? "CARRY!" : "");
 				Logger::WriteMessage(text);
 				last_val = val;
+			}
+
+			// Check overflow
+
+			if (CLK == TriState::One)
+			{
+				if (val == 0xff && carry != TriState::One)
+					return false;
+				if (val != 0xff && carry != TriState::Zero)
+					return false;
 			}
 
 			CLK = NOT(CLK);

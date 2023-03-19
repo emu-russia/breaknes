@@ -36,7 +36,8 @@ namespace PPUSim
 		}
 		else
 		{
-			return;
+			if (ppu->fast)
+				return;
 		}
 
 		// FineH

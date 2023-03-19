@@ -258,8 +258,10 @@ namespace APUSim
 		void sim_CoreIntegration();
 		void sim_SoundGenerators();
 
+		bool fast = false;
+
 	public:
-		APU(M6502Core::M6502 *core, Revision rev);
+		APU(M6502Core::M6502 *core, Revision rev, bool FastMode=false);
 		~APU();
 
 		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t *data, uint16_t* addr, AudioOutSignal& AUX);

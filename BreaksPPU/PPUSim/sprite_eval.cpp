@@ -9,6 +9,7 @@ namespace PPUSim
 	OAMEval::OAMEval(PPU* parent)
 	{
 		ppu = parent;
+		fast_eval = ppu->fast;
 	}
 
 	OAMEval::~OAMEval()
