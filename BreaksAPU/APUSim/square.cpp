@@ -30,7 +30,12 @@ namespace APUSim
 		sim_FreqReg(WR2, WR3);
 		sim_BarrelShifter();
 		sim_Adder();
-		sim_FreqCounter();
+		if (fast_square) {
+			sim_FreqCounterFast();
+		}
+		else {
+			sim_FreqCounter();
+		}
 		sim_Duty(WR0, WR3);
 
 		env_unit->sim(Vol, WR0, WR3);
@@ -125,6 +130,37 @@ namespace APUSim
 		}
 
 		FCO = carry;
+		fco_latch.set(FCO, n_ACLK);
+	}
+
+	void SquareChan::sim_FreqCounterFast()
+	{
+		TriState ACLK = apu->wire.ACLK;
+		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState RES = apu->wire.RES;
+
+		FLOAD = NOR(ACLK, fco_latch.nget());
+		TriState FSTEP = NOR(ACLK, NOT(fco_latch.nget()));
+
+		if (FLOAD == TriState::One) {
+			TriState lo[8]{};
+			TriState hi[3]{};
+			for (size_t n = 0; n < 8; n++) {
+				lo[n] = freq_reg[n].get_Fx(DO_SWEEP);
+			}
+			for (size_t n = 0; n < 3; n++) {
+				hi[n] = freq_reg[n + 8].get_Fx(DO_SWEEP);
+			}
+			fast_freq_cnt = ((uint16_t)Pack(hi) << 8) | Pack(lo);
+		}
+		if (FSTEP == TriState::One) {
+			fast_freq_cnt = (fast_freq_cnt - 1) & 0x3ff;
+		}
+		if (RES == TriState::One) {
+			fast_freq_cnt = 0;
+		}
+
+		FCO = fast_freq_cnt == 0 ? TriState::One : TriState::Zero;
 		fco_latch.set(FCO, n_ACLK);
 	}
 
@@ -279,6 +315,10 @@ namespace APUSim
 
 	uint32_t SquareChan::Get_FreqCounter()
 	{
+		if (fast_square) {
+			return fast_freq_cnt;
+		}
+
 		TriState val[4]{};
 		TriState val_byte[8]{};
 		for (size_t n = 0; n < 8; n++)
@@ -354,6 +394,11 @@ namespace APUSim
 
 	void SquareChan::Set_FreqCounter(uint32_t value)
 	{
+		if (fast_square) {
+			fast_freq_cnt = value & 0x3ff;
+			return;
+		}
+
 		TriState val[4]{};
 		TriState val_byte[8]{};
 		Unpack(value, val_byte);

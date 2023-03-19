@@ -44,6 +44,8 @@ namespace APUSim
 		APU* apu = nullptr;
 		SquareChanCarryIn cin_type = SquareChanCarryIn::Unknown;
 
+		bool fast_square = true;
+
 		BaseLogic::TriState n_sum[11]{};
 		BaseLogic::TriState S[11]{};
 		BaseLogic::TriState SR[3]{};
@@ -82,9 +84,14 @@ namespace APUSim
 		void sim_BarrelShifter();
 		void sim_Adder();
 		void sim_FreqCounter();
+		void sim_FreqCounterFast();
 		void sim_Sweep(BaseLogic::TriState WR1, BaseLogic::TriState NOSQ);
 		void sim_Duty(BaseLogic::TriState WR0, BaseLogic::TriState WR3);
 		void sim_Output(BaseLogic::TriState NOSQ, BaseLogic::TriState* SQ_Out);
+
+		// Faster
+
+		uint16_t fast_freq_cnt = 0;
 
 	public:
 		SquareChan(APU* parent, SquareChanCarryIn carry_routing);
