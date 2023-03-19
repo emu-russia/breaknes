@@ -10,12 +10,12 @@ namespace PPUSim
 	/// Constructor. Creates all PPU modules.
 	/// </summary>
 	/// <param name="_rev">Revision of the PPU chip.</param>
-	/// <param name="_HLEMode">true: High-level circuit emulation mode. Allows you to speed up PPU operation by replacing pieces of logic with fast C++ code.</param>
+	/// <param name="FastMode">true: High-level circuit emulation mode. Allows you to speed up PPU operation by replacing pieces of logic with fast C++ code.</param>
 	/// <param name="VideoGen">true: Create a special version of the PPU that contains only a video generator.</param>
-	PPU::PPU(Revision _rev, bool _HLEMode, bool VideoGen)
+	PPU::PPU(Revision _rev, bool FastMode, bool VideoGen)
 	{
 		rev = _rev;
-		HLEMode = _HLEMode;
+		fast = FastMode;
 
 		if (!VideoGen)
 		{

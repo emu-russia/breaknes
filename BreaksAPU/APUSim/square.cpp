@@ -11,6 +11,7 @@ namespace APUSim
 		apu = parent;
 		cin_type = carry_routing;
 		env_unit = new EnvelopeUnit(apu);
+		fast_square = apu->fast;
 	}
 
 	SquareChan::~SquareChan()

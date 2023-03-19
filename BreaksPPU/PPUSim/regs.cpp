@@ -205,7 +205,8 @@ namespace PPUSim
 		}
 		else
 		{
-			return;
+			if (ppu->fast)
+				return;
 		}
 
 		// All code below is derived from CTRL0/CTRL1 FFs and in the simulator is stored on wires with virtually infinite capacity (ppu->wire)

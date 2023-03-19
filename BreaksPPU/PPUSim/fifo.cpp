@@ -14,6 +14,8 @@ namespace PPUSim
 		{
 			lane[n] = new FIFOLane(ppu);
 		}
+
+		fast_fifo = ppu->fast;
 	}
 
 	FIFO::~FIFO()
@@ -242,6 +244,16 @@ namespace PPUSim
 	}
 
 #pragma region "FIFO Lane"
+
+	FIFOLane::FIFOLane(PPU* parent)
+	{
+		ppu = parent;
+		fast_fifo = ppu->fast;
+	}
+
+	FIFOLane::~FIFOLane()
+	{
+	}
 
 	void FIFOLane::sim_LaneControl(TriState HSel)
 	{

@@ -9,6 +9,7 @@ namespace APUSim
 	DMA::DMA(APU* parent)
 	{
 		apu = parent;
+		fast_dma = apu->fast;
 	}
 
 	DMA::~DMA()

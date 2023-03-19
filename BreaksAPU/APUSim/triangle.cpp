@@ -9,6 +9,7 @@ namespace APUSim
 	TriangleChan::TriangleChan(APU* parent)
 	{
 		apu = parent;
+		fast_tri = apu->fast;
 	}
 
 	TriangleChan::~TriangleChan()

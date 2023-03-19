@@ -9,6 +9,7 @@ namespace PPUSim
 	PAR::PAR(PPU* parent)
 	{
 		ppu = parent;
+		fast_par = ppu->fast;
 	}
 
 	PAR::~PAR()

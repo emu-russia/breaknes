@@ -9,6 +9,7 @@ namespace APUSim
 	LengthCounter::LengthCounter(APU* parent)
 	{
 		apu = parent;
+		fast_lc = apu->fast;
 	}
 
 	LengthCounter::~LengthCounter()

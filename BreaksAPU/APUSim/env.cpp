@@ -10,6 +10,7 @@ namespace APUSim
 	EnvelopeUnit::EnvelopeUnit(APU* parent)
 	{
 		apu = parent;
+		fast_env = apu->fast;
 	}
 
 	EnvelopeUnit::~EnvelopeUnit()
