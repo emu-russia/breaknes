@@ -719,6 +719,9 @@ namespace PPUSimUnitTest
 		TriState ntx[8]{};
 		TriState unused[8]{};
 
+		uint8_t packed_tx = Pack(tx);
+		uint8_t packed_ntx = Pack(ntx);
+
 		Unpack(val, tx);
 		Unpack(~val, ntx);
 
@@ -726,11 +729,11 @@ namespace PPUSimUnitTest
 		lane.T_SR0 = TriState::One;
 		lane.T_SR1 = TriState::Zero;
 		lane.SR_EN = TriState::Zero;
-		lane.sim_PairedSR(tx);
+		lane.sim_PairedSR(tx, packed_tx);
 
 		lane.T_SR0 = TriState::Zero;
 		lane.T_SR1 = TriState::One;
-		lane.sim_PairedSR(ntx);
+		lane.sim_PairedSR(ntx, packed_ntx);
 
 		// Perform 8 shift iterations and check the output.
 
@@ -741,11 +744,11 @@ namespace PPUSimUnitTest
 		{
 			ppu->wire.n_PCLK = TriState::One;
 			lane.SR_EN = TriState::Zero;
-			lane.sim_PairedSR(unused);
+			lane.sim_PairedSR(unused, 0);
 
 			ppu->wire.n_PCLK = TriState::Zero;
 			lane.SR_EN = TriState::One;
-			lane.sim_PairedSR(unused);
+			lane.sim_PairedSR(unused, 0);
 
 			if ((lane.nZ_COL0 == TriState::One ? 1 : 0) != (val & 1))
 				return false;
@@ -760,11 +763,11 @@ namespace PPUSimUnitTest
 
 		ppu->wire.n_PCLK = TriState::One;
 		lane.SR_EN = TriState::Zero;
-		lane.sim_PairedSR(unused);
+		lane.sim_PairedSR(unused, 0);
 
 		ppu->wire.n_PCLK = TriState::Zero;
 		lane.SR_EN = TriState::One;
-		lane.sim_PairedSR(unused);
+		lane.sim_PairedSR(unused, 0);
 
 		if (lane.nZ_COL0 != TriState::One)
 			return false;
