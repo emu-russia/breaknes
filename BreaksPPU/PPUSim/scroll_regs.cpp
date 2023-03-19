@@ -25,6 +25,20 @@ namespace PPUSim
 		TriState W6_1 = NOR(ppu->wire.n_W6_1, n_DBE);
 		TriState W6_2 = NOR(ppu->wire.n_W6_2, n_DBE);
 
+		// Make quick checks
+
+		bool any_regops = (W0 == TriState::One) || (W5_1 == TriState::One) || (W5_2 == TriState::One) || (W6_1 == TriState::One) || (W6_2 == TriState::One);
+
+		if (any_regops || RC == TriState::One || not_derived || ppu->DB != Prev_DB)
+		{
+			Prev_DB = ppu->DB;
+			not_derived = false;
+		}
+		else
+		{
+			return;
+		}
+
 		// FineH
 		
 		for (size_t n = 0; n < 3; n++)
