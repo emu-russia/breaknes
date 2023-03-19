@@ -258,6 +258,11 @@ namespace PPUSim
 
 	void OAMEval::sim_TempCounter()
 	{
+		if (fast_eval) {
+			sim_TempCounterFast();
+			return;
+		}
+
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState carry = TriState::One;
 		TriState ORES = this->ORES;
@@ -271,6 +276,21 @@ namespace PPUSim
 		}
 
 		TMV = carry;			// carry_out from the most significant bit
+	}
+
+	void OAMEval::sim_TempCounterFast()
+	{
+		if (OSTEP == TriState::One) {
+			fast_temp_counter++;
+		}
+		if (ORES == TriState::One) {
+			fast_temp_counter = 0;
+		}
+		for (size_t n = 0; n < 5; n++)
+		{
+			OAM_Temp[n] = FromByte((fast_temp_counter >> n) & 1);
+		}
+		TMV = fast_temp_counter == 31 ? TriState::One : TriState::Zero;
 	}
 
 	void OAMEval::sim_TempCounterControlAfterCounter()

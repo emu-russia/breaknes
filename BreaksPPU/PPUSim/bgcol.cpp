@@ -202,7 +202,7 @@ namespace PPUSim
 			fast_bgc0_latch = rev_pd;
 		}
 
-		if (PD_SEL) {
+		if (PD_SEL == TriState::One) {
 			fast_pd_latch = ~ppu->PD;
 		}
 
@@ -244,7 +244,7 @@ namespace PPUSim
 			bgc_sr2_in[3] = (bgc_sr1_out[3] << 7) | (bgc_sr2_out[3] >> 1);
 		}
 
-		if (NEXT) {
+		if (NEXT == TriState::One) {
 			bgc_sr1_out[0] = bgc_sr1_in[0];
 			bgc_sr2_out[0] = bgc_sr2_in[0];
 			bgc_sr1_out[1] = bgc_sr1_in[1];
