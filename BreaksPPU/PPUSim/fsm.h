@@ -93,6 +93,13 @@ namespace PPUSim
 		void sim_EvenOdd(BaseLogic::TriState* HPLA, BaseLogic::TriState* VPLA);
 		void sim_CountersControl(BaseLogic::TriState* HPLA, BaseLogic::TriState* VPLA);
 
+		BaseLogic::TriState* prev_hpla = nullptr;
+		BaseLogic::TriState* prev_vpla = nullptr;
+
+		BaseLogic::TriState Prev_n_OBCLIP = BaseLogic::TriState::X;
+		BaseLogic::TriState Prev_n_BGCLIP = BaseLogic::TriState::X;
+		BaseLogic::TriState Prev_BLACK = BaseLogic::TriState::X;
+
 	public:
 		FSM(PPU *parent);
 		~FSM();

@@ -18,10 +18,15 @@ namespace PPUSim
 	void BGCol::sim()
 	{
 		sim_Control();
-		sim_BGC0();
-		sim_BGC1();
-		sim_BGC2();
-		sim_BGC3();
+		if (fast_bgc) {
+			sim_BGCFast();
+		}
+		else {
+			sim_BGC0();
+			sim_BGC1();
+			sim_BGC2();
+			sim_BGC3();
+		}
 		sim_Output();
 	}
 
@@ -182,5 +187,77 @@ namespace PPUSim
 			sr[n].sim(shift_in, val[n], Load, Step, Next, sout[n]);
 			shift_in = sout[n];
 		}
+	}
+
+	void BGCol::sim_BGCFast()
+	{
+		TriState bitrev_pd[8]{};
+		Unpack(ppu->PD, bitrev_pd);
+		BitRev(bitrev_pd);
+		uint8_t rev_pd = Pack(bitrev_pd);
+
+		uint8_t fh = Pack3(ppu->wire.FH);
+
+		if (PD_SR == TriState::One) {
+			fast_bgc0_latch = rev_pd;
+		}
+
+		if (PD_SEL) {
+			fast_pd_latch = ~ppu->PD;
+		}
+
+		if (SRLOAD == TriState::One) {
+			bgc_sr1_in[0] = ~fast_bgc0_latch;
+			bgc_sr1_in[1] = rev_pd;
+
+			uint8_t sel_hi = (FromByte(ppu->wire.TVO[1]) << 1) | FromByte(H01);
+			switch (sel_hi)
+			{
+				case 0:
+					bgc_sr1_in[2] = (fast_pd_latch >> 0) & 1;
+					bgc_sr1_in[3] = (fast_pd_latch >> 1) & 1;
+					break;
+				case 1:
+					bgc_sr1_in[2] = (fast_pd_latch >> 2) & 1;
+					bgc_sr1_in[3] = (fast_pd_latch >> 3) & 1;
+					break;
+				case 2:
+					bgc_sr1_in[2] = (fast_pd_latch >> 4) & 1;
+					bgc_sr1_in[3] = (fast_pd_latch >> 5) & 1;
+					break;
+				case 3:
+					bgc_sr1_in[2] = (fast_pd_latch >> 6) & 1;
+					bgc_sr1_in[3] = (fast_pd_latch >> 7) & 1;
+					break;
+			}
+		}
+
+		if (STEP == TriState::One) {
+			bgc_sr1_in[0] = 0x80 | (bgc_sr1_out[0] >> 1);
+			bgc_sr1_in[1] = 0x80 | (bgc_sr1_out[1] >> 1);
+		}
+
+		if (STEP2 == TriState::One) {
+			bgc_sr2_in[0] = ((bgc_sr1_out[0] & 1) << 7) | (bgc_sr2_out[0] >> 1);
+			bgc_sr2_in[1] = ((bgc_sr1_out[1] & 1) << 7) | (bgc_sr2_out[1] >> 1);
+			bgc_sr2_in[2] = (bgc_sr1_out[2] << 7) | (bgc_sr2_out[2] >> 1);
+			bgc_sr2_in[3] = (bgc_sr1_out[3] << 7) | (bgc_sr2_out[3] >> 1);
+		}
+
+		if (NEXT) {
+			bgc_sr1_out[0] = bgc_sr1_in[0];
+			bgc_sr2_out[0] = bgc_sr2_in[0];
+			bgc_sr1_out[1] = bgc_sr1_in[1];
+			bgc_sr2_out[1] = bgc_sr2_in[1];
+			bgc_sr1_out[2] = bgc_sr1_in[2];
+			bgc_sr2_out[2] = bgc_sr2_in[2];
+			bgc_sr1_out[3] = bgc_sr1_in[3];
+			bgc_sr2_out[3] = bgc_sr2_in[3];
+		}
+
+		n_BGC0_Out = FromByte((bgc_sr2_out[0] >> fh) & 1);
+		BGC1_Out = FromByte((bgc_sr2_out[1] >> fh) & 1);
+		n_BGC2_Out = FromByte((bgc_sr2_out[2] >> fh) & 1);
+		n_BGC3_Out = FromByte((bgc_sr2_out[3] >> fh) & 1);
 	}
 }

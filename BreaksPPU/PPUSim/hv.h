@@ -31,10 +31,17 @@ namespace PPUSim
 	{
 		PPU* ppu = nullptr;
 		
+		bool fast_hv = true;
+
 		// To simplify, we reserve space for the maximum number of CounterBit instances.
 		static const size_t bitCountMax = 16;
 		HVCounterBit* bit[bitCountMax] = { 0 };
 		size_t bitCount = 0;
+
+		// Faster version
+
+		size_t fast_bits = 0;
+		size_t fast_bits_mask = 0;
 
 	public:
 		HVCounter(PPU* parent, size_t bits);

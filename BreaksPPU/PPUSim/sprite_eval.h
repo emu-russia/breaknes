@@ -56,6 +56,8 @@ namespace PPUSim
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
+		bool fast_eval = true;
+
 		OAMCounterBit MainCounter[8]{};
 		OAMCounterBit TempCounter[5]{};
 		OAMCmprBit cmpr[4]{};
