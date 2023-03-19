@@ -80,6 +80,13 @@ namespace APUSim
 
 	void APU::sim_SoundGenerators()
 	{
+		// The audio generator circuits are discrete to PHI (Core clock), there is no point in simulating them every CLK
+
+		if (wire.PHI0 == PrevPHI_SoundGen) {
+			return;
+		}
+		PrevPHI_SoundGen = wire.PHI0;
+
 		// Sound channels
 
 		wire.SQA_LC = square[0]->get_LC();
