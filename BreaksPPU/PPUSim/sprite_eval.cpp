@@ -281,7 +281,7 @@ namespace PPUSim
 	void OAMEval::sim_TempCounterFast()
 	{
 		if (OSTEP == TriState::One) {
-			fast_temp_counter++;
+			fast_temp_counter = (fast_temp_counter + 1) & 0x1f;
 		}
 		if (ORES == TriState::One) {
 			fast_temp_counter = 0;

@@ -228,7 +228,7 @@ namespace PPUSim
 
 		switch (ppu->rev)
 		{
-			// The PAL PPU uses a hidden latch for the VBL signal, which is stored between the open transistor and the inverter in the VBlank INT circuit.
+			// The PAL PPU (and derivative) uses a hidden latch for the VBL signal, which is stored between the open transistor and the inverter in the VBlank INT circuit.
 
 			case Revision::RP2C07_0:
 			case Revision::UMC_UA6538:
@@ -358,7 +358,7 @@ namespace PPUSim
 	}
 
 	/// <summary>
-	/// Special BLACK signal processing for PAL PPU.
+	/// Special BLACK signal processing for PAL-Like PPUs.
 	/// </summary>
 	void ControlRegs::sim_PalBLACK()
 	{

@@ -367,14 +367,14 @@ namespace BaseLogic
 	uint8_t Pack(TriState in[8]);
 
 	/// <summary>
-	/// Pack a bit vector into a byte.
+	/// Pack a 3-bit vector into a byte.
 	/// </summary>
 	/// <param name="in"></param>
 	/// <returns></returns>
 	uint8_t Pack3(TriState in[3]);
 
 	/// <summary>
-	/// Pack a bit vector into a byte.
+	/// Pack a 5-bit vector into a byte.
 	/// </summary>
 	/// <param name="in"></param>
 	/// <returns></returns>
@@ -393,6 +393,20 @@ namespace BaseLogic
 	/// <param name="val"></param>
 	/// <param name="out"></param>
 	void Unpack(uint8_t val, TriState out[8]);
+
+	/// <summary>
+	/// Unpack a 3-bit vector.
+	/// </summary>
+	/// <param name="val"></param>
+	/// <param name="out"></param>
+	void Unpack3(uint8_t val, TriState out[3]);
+
+	/// <summary>
+	/// Unpack a 5-bit vector.
+	/// </summary>
+	/// <param name="val"></param>
+	/// <param name="out"></param>
+	void Unpack5(uint8_t val, TriState out[5]);
 
 	/// <summary>
 	/// Unpack a nibble into a bit vector.

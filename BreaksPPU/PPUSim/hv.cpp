@@ -62,7 +62,7 @@ namespace PPUSim
 			else {
 				// Count
 				if (Carry == TriState::One) {
-					fast_bits++;
+					fast_bits = (fast_bits + 1) & fast_bits_mask;
 				}
 				if (CLR == TriState::One) {
 					fast_bits = 0;
