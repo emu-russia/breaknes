@@ -68,7 +68,6 @@
   </metadata>
   <data name="label3.Text" xml:space="preserve">
     <value>WARNING!!!11 WIP Version:
-- The PPU signal levels from the latest HardWareMan measurements and look a bit desaturated. We'll figure it out and fix it.
 - Speed 1-2 FPS is fine
 - IO Ports are not working yet
 - The trash on the screen is addressed (#196)</value>

@@ -250,7 +250,7 @@ namespace PPUPlayer
 		{
 			int ReadPtr = SyncPos;
 			int num_phases = 12;
-			float normalize_factor = 1.1f / ppu_features.WhiteLevel;
+			float normalize_factor = 1.2f / ppu_features.WhiteLevel;    // 120 IRE -- correction for measurements by HardWareMan
 			BreaksCore.VideoOutSample[] batch = new BreaksCore.VideoOutSample[num_phases];
 
 			// TBD: Make phasing per scanline, not the semi-conservative way (PLL at the beginning of Field, then interpolate)

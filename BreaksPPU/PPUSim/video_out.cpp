@@ -704,7 +704,7 @@ namespace PPUSim
 		// Process the batch
 
 		const float pi = 3.14159265358979323846f;
-		float normalize_factor = 1.1f / features.WhiteLevel;	// 110 IRE
+		float normalize_factor = 1.2f / features.WhiteLevel;	// 120 IRE  -- correction for measurements by HardWareMan
 		float Y = 0, I = 0, Q = 0;
 		size_t cb_phase = 9;
 
