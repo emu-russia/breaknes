@@ -104,6 +104,7 @@ namespace APUSim
 		tri->sim();
 		noise->sim();
 
+		// It works ("Dabble Dribble!"), but the world isn't ready to hear it yet..
 		//dpcm->sim();
 		// HACK
 		wire.DMCRDY = TriState::One;
