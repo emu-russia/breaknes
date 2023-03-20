@@ -88,12 +88,14 @@ namespace PPUSim
 		wire.CLK = inputs[(size_t)InputPad::CLK];
 		wire.n_CLK = NOT(wire.CLK);
 
-		Reset_FF.set(NOR(hv_fsm->get_RESCL(), NOR(wire.RES, Reset_FF.get())));
+		sim_PCLK();
+
+		hv_fsm->sim_RESCL_early();
+
+		Reset_FF.set(NOR(fsm.RESCL, NOR(wire.RES, Reset_FF.get())));
 		wire.RC = NOT(Reset_FF.nget());
 
 		sim_BusInput(ext, data_bus, ad_bus);
-
-		sim_PCLK();
 
 		// Regs
 

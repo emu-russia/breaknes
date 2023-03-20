@@ -185,7 +185,8 @@ namespace PPUSim
 
 		// Quick check for changing signals for optimization (check the DB bus change is also important)
 
-		if (RC != Prev_RC || IsPosedge(Prev_W0_Enable, W0_Enable) || IsPosedge(Prev_W1_Enable, W1_Enable) || ppu->DB != Prev_DB)
+		if ( !ppu->fast || 
+			(RC != Prev_RC || IsPosedge(Prev_W0_Enable, W0_Enable) || IsPosedge(Prev_W1_Enable, W1_Enable) || ppu->DB != Prev_DB) )
 		{
 			for (size_t n = 0; n < 8; n++)
 			{
@@ -205,8 +206,7 @@ namespace PPUSim
 		}
 		else
 		{
-			if (ppu->fast)
-				return;
+			return;
 		}
 
 		// All code below is derived from CTRL0/CTRL1 FFs and in the simulator is stored on wires with virtually infinite capacity (ppu->wire)

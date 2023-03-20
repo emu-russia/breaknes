@@ -29,15 +29,15 @@ namespace PPUSim
 
 		bool any_regops = (W0 == TriState::One) || (W5_1 == TriState::One) || (W5_2 == TriState::One) || (W6_1 == TriState::One) || (W6_2 == TriState::One);
 
-		if (any_regops || RC == TriState::One || not_derived || ppu->DB != Prev_DB)
+		if (!ppu->fast || 
+			(any_regops || RC == TriState::One || not_derived || ppu->DB != Prev_DB) )
 		{
 			Prev_DB = ppu->DB;
 			not_derived = false;
 		}
 		else
 		{
-			if (ppu->fast)
-				return;
+			return;
 		}
 
 		// FineH

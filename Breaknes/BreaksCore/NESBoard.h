@@ -50,7 +50,6 @@ namespace Breaknes
 		BaseLogic::TriState PPU_nRD = BaseLogic::TriState::X;
 		BaseLogic::TriState PPU_nWR = BaseLogic::TriState::X;
 		BaseLogic::TriState PPU_ALE = BaseLogic::TriState::X;
-		BaseLogic::TriState nRST = BaseLogic::TriState::Z;
 		BaseLogic::TriState nIRQ = BaseLogic::TriState::Z;
 		BaseLogic::TriState nNMI = BaseLogic::TriState::Z;
 		BaseLogic::TriState M2 = BaseLogic::TriState::X; 			// from cpu
@@ -73,8 +72,10 @@ namespace Breaknes
 		BaseLogic::TriState OUT_1 = BaseLogic::TriState::X;
 		BaseLogic::TriState OUT_2 = BaseLogic::TriState::X;
 
-		bool pendingReset = false;
-		int resetHalfClkCounter = 0;
+		bool pendingReset_CPU = false;
+		bool pendingReset_PPU = false;
+		int resetHalfClkCounter_CPU = 0;
+		int resetHalfClkCounter_PPU = 0;
 
 #pragma region "Debug, look away"
 
@@ -110,6 +111,8 @@ namespace Breaknes
 		void AddDebugInfoProviders();
 
 		void GetDebugInfo(NESBoardDebugInfo& info);
+
+		void DumpCpuIF();
 
 #pragma endregion "Debug, look away"
 
