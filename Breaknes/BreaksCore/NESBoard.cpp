@@ -41,8 +41,6 @@ namespace Breaknes
 
 		// Throw in all the parts and see what's moving there. Don't forget pullups
 
-		nRST = pendingReset ? TriState::Zero : TriState::One;
-
 		Pullup(nIRQ);
 		Pullup(nNMI);
 
@@ -54,7 +52,7 @@ namespace Breaknes
 		inputs[(size_t)APUSim::APU_Input::CLK] = CLK;
 		inputs[(size_t)APUSim::APU_Input::n_NMI] = nNMI;
 		inputs[(size_t)APUSim::APU_Input::n_IRQ] = nIRQ;
-		inputs[(size_t)APUSim::APU_Input::n_RES] = nRST;
+		inputs[(size_t)APUSim::APU_Input::n_RES] = pendingReset_CPU ? TriState::Zero : TriState::One;
 		inputs[(size_t)APUSim::APU_Input::DBG] = TriState::Zero;	// aka TST
 
 		apu->sim(inputs, outputs, &data_bus, &addr_bus, aux);
@@ -102,7 +100,7 @@ namespace Breaknes
 		TriState ppu_outputs[(size_t)PPUSim::OutputPad::Max]{};
 
 		ppu_inputs[(size_t)PPUSim::InputPad::CLK] = CLK;
-		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = nRST;		// NES Board specific ⚠️
+		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = pendingReset_PPU ? TriState::Zero : TriState::One;;		// NES Board specific ⚠️
 		ppu_inputs[(size_t)PPUSim::InputPad::RnW] = CPU_RnW;
 		ppu_inputs[(size_t)PPUSim::InputPad::RS0] = FromByte((addr_bus >> 0) & 1);
 		ppu_inputs[(size_t)PPUSim::InputPad::RS1] = FromByte((addr_bus >> 1) & 1);
@@ -184,19 +182,29 @@ namespace Breaknes
 
 		CLK = NOT(CLK);
 
-		if (pendingReset)
+		if (pendingReset_CPU)
 		{
-			resetHalfClkCounter--;
-			if (resetHalfClkCounter == 0)
+			resetHalfClkCounter_CPU--;
+			if (resetHalfClkCounter_CPU == 0)
 			{
-				pendingReset = false;
+				pendingReset_CPU = false;
+			}
+		}
+
+		if (pendingReset_PPU)
+		{
+			resetHalfClkCounter_PPU--;
+			if (resetHalfClkCounter_PPU == 0)
+			{
+				pendingReset_PPU = false;
 			}
 		}
 	}
 
 	void NESBoard::Reset()
 	{
-		pendingReset = true;
+		pendingReset_CPU = true;
+		pendingReset_PPU = true;
 
 		// By setting the reset time you can adjust the "CPU/PPU Alignment" phenomenon.
 		// The real board has a capacitor that controls the reset and also the CIC interferes with it, but we simplify all this.
@@ -206,12 +214,13 @@ namespace Breaknes
 		// TBD: I am getting signals that Donkey Kong is showing garbage due to insufficient latency of the PPU Warmup. Looks like a few cycles is not enough :-) Maybe a few thousand cycles is better to wait for a reset?
 		// Discussion here: https://forums.nesdev.org/viewtopic.php?t=19792   (nice phenomenon btw)
 
-		resetHalfClkCounter = 64;
+		resetHalfClkCounter_CPU = 640000;
+		resetHalfClkCounter_PPU = 64;
 	}
 
 	bool NESBoard::InResetState()
 	{
-		return pendingReset;
+		return pendingReset_PPU;
 	}
 
 	void NESBoard::DumpCpuIF()
