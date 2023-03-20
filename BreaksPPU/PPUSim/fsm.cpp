@@ -203,8 +203,7 @@ namespace PPUSim
 		ppu->fsm.BLNK = NAND(NOT(BLNK_FF.get()), NOT(BLACK));
 
 		vclr_latch1.set(VPLA[8], n_PCLK);
-		vclr_latch2.set(vclr_latch1.nget(), PCLK);
-		ppu->fsm.RESCL = vclr_latch2.nget();
+		// The second half for propagation to PCLK=1 is in sim_RESCL_early
 	}
 
 	void FSM::sim_VBlankInt()
@@ -314,9 +313,13 @@ namespace PPUSim
 		ppu->wire.VC = NOR(NOT(ppu->wire.HC), ctrl_latch2.nget());
 	}
 
-	TriState FSM::get_RESCL()
+	/// <summary>
+	/// The RESCL signal is required very early for Reset_FF, so this part of the circuit is called as early as possible.
+	/// </summary>
+	void FSM::sim_RESCL_early()
 	{
-		return vclr_latch2.nget();
+		vclr_latch2.set(vclr_latch1.nget(), ppu->wire.PCLK);
+		ppu->fsm.RESCL = vclr_latch2.nget();
 	}
 
 	TriState FSM::get_VB()

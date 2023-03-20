@@ -108,7 +108,7 @@ namespace PPUSim
 
 		// These methods are called BEFORE the FSM simulation, by consumer circuits.
 
-		BaseLogic::TriState get_RESCL();
+		void sim_RESCL_early();
 		BaseLogic::TriState get_VB();
 		BaseLogic::TriState get_BLNK(BaseLogic::TriState BLACK);
 	};
