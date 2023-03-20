@@ -111,6 +111,8 @@ namespace Breaknes
 
 		void GetDebugInfo(NESBoardDebugInfo& info);
 
+		void DumpCpuIF();
+
 #pragma endregion "Debug, look away"
 
 	public:

@@ -23,7 +23,9 @@ namespace PPUSim
 
 		bool any_ctrl_changes = (Prev_n_OBCLIP != ppu->wire.n_OBCLIP) || (Prev_n_BGCLIP != ppu->wire.n_BGCLIP) || (Prev_BLACK != ppu->wire.BLACK);
 
-		if (ppu->wire.PCLK == TriState::One || (prev_hpla != HPLA || prev_vpla != VPLA || any_ctrl_changes)) {
+		if (!ppu->fast || 
+			(ppu->wire.PCLK == TriState::One || (prev_hpla != HPLA || prev_vpla != VPLA || any_ctrl_changes)))
+		{
 			sim_HPosLogic(HPLA, VPLA);
 		}
 
