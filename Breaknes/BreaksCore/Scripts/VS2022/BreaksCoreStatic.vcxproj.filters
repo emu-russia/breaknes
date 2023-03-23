@@ -30,12 +30,6 @@
     <ClCompile Include="..\..\BoardFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\AbstractCartridge.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\CartridgeFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\CoreApi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -96,12 +90,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\BoardFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\AbstractCartridge.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\CartridgeFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\CoreApi.h">
