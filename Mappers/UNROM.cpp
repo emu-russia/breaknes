@@ -88,7 +88,7 @@ namespace Mappers
 		TriState nWR = cart_in[(size_t)CartInput::nWR];
 
 		// H/V Mirroring
-		cart_out[(size_t)CartOutput::VRAM_A10] = V_Mirroring ? FromByte((ppu_addr >> 11) & 1) : FromByte((ppu_addr >> 10) & 1);
+		cart_out[(size_t)CartOutput::VRAM_A10] = V_Mirroring ? FromByte((ppu_addr >> 10) & 1) : FromByte((ppu_addr >> 11) & 1);
 
 		// Contains a jumper between `/PA13` and `/VRAM_CS`
 		cart_out[(size_t)CartOutput::VRAM_nCS] = cart_in[(size_t)CartInput::nPA13];

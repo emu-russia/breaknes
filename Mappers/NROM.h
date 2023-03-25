@@ -27,7 +27,7 @@ namespace Mappers
 		NROM_DebugInfo nrom_debug{};
 
 		// Connect to PPU A10 for vertical mirroring or PPU A11 for horizontal mirroring.
-		bool V_Mirroring = false;			// wtf with this?
+		bool V_Mirroring = false;
 		bool IgnoreMirroring = false;
 
 		static uint8_t Dbg_ReadCHRByte(void* opaque, size_t addr);
