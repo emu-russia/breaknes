@@ -30,6 +30,22 @@ namespace PPUSim
 				sim_PalBLACK();
 				break;
 		}
+
+		// Make a separate log for when the PPU is still warming up after resetting (RC=1);
+		// Don't do the log $2002 read and $2004 write, as it is heavily shit-storming (BUT not while the PPU is warming up)
+
+		PPU_LOG_REGS(
+			ppu->wire.n_DBE == TriState::Zero && ppu->wire.RnW == TriState::One && ppu->wire.RC == TriState::Zero && Pack3(ppu->wire.RS) != 2,
+			"CPU/IF: PPU Read $200%d\n", Pack3(ppu->wire.RS));
+		PPU_LOG_REGS(
+			ppu->wire.n_DBE == TriState::Zero && ppu->wire.RnW == TriState::One && ppu->wire.RC == TriState::One,
+			"CPU/IF (RC): PPU Read $200%d\n", Pack3(ppu->wire.RS));
+		PPU_LOG_REGS(
+			ppu->wire.n_DBE == TriState::Zero && ppu->wire.RnW == TriState::Zero && ppu->wire.RC == TriState::Zero && Pack3(ppu->wire.RS) != 4,
+			"CPU/IF: PPU Write $200%d=0x%02X, SCCX F/F: %d\n", Pack3(ppu->wire.RS), ppu->DB, get_Frst() == TriState::One ? 1 : 0);
+		PPU_LOG_REGS(
+			ppu->wire.n_DBE == TriState::Zero && ppu->wire.RnW == TriState::Zero && ppu->wire.RC == TriState::One,
+			"CPU/IF (RC): PPU Write $200%d=0x%02X, SCCX F/F: %d\n", Pack3(ppu->wire.RS), ppu->DB, get_Frst() == TriState::One ? 1 : 0);
 	}
 
 	void ControlRegs::sim_RWDecoder()

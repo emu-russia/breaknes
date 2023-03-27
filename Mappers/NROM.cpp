@@ -21,6 +21,8 @@ namespace Mappers
 
 		bool trainer = (head->Flags_6 & 0b100) != 0;
 		V_Mirroring = (head->Flags_6 & 1) != 0;
+		IgnoreMirroring = (head->Flags_6 & 0b1000) != 0;
+		nrom_debug.v_mirroring = V_Mirroring ? 1 : 0;
 
 		// Load CHR
 
@@ -99,7 +101,7 @@ namespace Mappers
 		// Contains a jumper between `/PA13` and `/VRAM_CS`
 		cart_out[(size_t)CartOutput::VRAM_nCS] = cart_in[(size_t)CartInput::nPA13];
 
-		// CHR_A13 is actually `/CS`
+		// PPU_A13 is actually `/CS` for CHR-ROM
 		TriState nCHR_CS = FromByte((ppu_addr >> 13) & 1);
 
 		if (NOR(nRD, nCHR_CS) == TriState::One)
@@ -169,6 +171,7 @@ namespace Mappers
 		"Last PA", offsetof(NROM_DebugInfo, last_PA), 16,
 		"Last /RD", offsetof(NROM_DebugInfo, last_nRD), 1,
 		"Last /WR", offsetof(NROM_DebugInfo, last_nWR), 1,
+		"V_Mirroring", offsetof(NROM_DebugInfo, v_mirroring), 1,
 	};
 	size_t nrom_signals_count = sizeof(nrom_signals) / sizeof(nrom_signals[0]);
 

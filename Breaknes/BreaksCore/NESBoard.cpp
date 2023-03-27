@@ -208,10 +208,6 @@ namespace Breaknes
 
 		// By setting the reset time you can adjust the "CPU/PPU Alignment" phenomenon.
 		// The real board has a capacitor that controls the reset and also the CIC interferes with it, but we simplify all this.
-
-		// Do not make the value too small, otherwise the Core will skip /RES=0. To be sure, it is better to hold the reset for several Core cycles
-
-		// TBD: I am getting signals that Donkey Kong is showing garbage due to insufficient latency of the PPU Warmup. Looks like a few cycles is not enough :-) Maybe a few thousand cycles is better to wait for a reset?
 		// Discussion here: https://forums.nesdev.org/viewtopic.php?t=19792   (nice phenomenon btw)
 
 		resetHalfClkCounter_CPU = 640000;

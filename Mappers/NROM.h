@@ -9,6 +9,7 @@ namespace Mappers
 		uint32_t last_PA;
 		uint32_t last_nRD;
 		uint32_t last_nWR;
+		uint32_t v_mirroring;
 	};
 
 	class NROM : public AbstractCartridge
@@ -27,6 +28,7 @@ namespace Mappers
 
 		// Connect to PPU A10 for vertical mirroring or PPU A11 for horizontal mirroring.
 		bool V_Mirroring = false;
+		bool IgnoreMirroring = false;
 
 		static uint8_t Dbg_ReadCHRByte(void* opaque, size_t addr);
 		static void Dbg_WriteCHRByte(void* opaque, size_t addr, uint8_t data);
