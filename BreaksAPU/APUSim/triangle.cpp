@@ -38,22 +38,22 @@ namespace APUSim
 
 	void TriangleChan::sim_Control()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState W4008 = apu->wire.W4008;
 		TriState W400B = apu->wire.W400B;
 		TriState n_LFO1 = apu->wire.n_LFO1;
 
 		n_FOUT = fout_latch.nget();
 
-		lc_reg.sim(n_ACLK, W4008, apu->GetDBBit(7));
+		lc_reg.sim(ACLK1, W4008, apu->GetDBBit(7));
 
 		TriState set_reload = NOR3(reload_latch1.get(), lc_reg.get(), n_LFO1);
 		Reload_FF.set(NOR(NOR(Reload_FF.get(), set_reload), W400B));
 		TriState TRELOAD = Reload_FF.nget();
 
-		reload_latch1.set(Reload_FF.get(), n_ACLK);
-		reload_latch2.set(TRELOAD, n_ACLK);
-		tco_latch.set(TCO, n_ACLK);
+		reload_latch1.set(Reload_FF.get(), ACLK1);
+		reload_latch2.set(TRELOAD, ACLK1);
+		tco_latch.set(TCO, ACLK1);
 
 		LOAD = NOR(n_LFO1, reload_latch2.nget());
 		STEP = NOR3(n_LFO1, reload_latch2.get(), tco_latch.get());
@@ -62,25 +62,25 @@ namespace APUSim
 
 	void TriangleChan::sim_LinearReg()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState W4008 = apu->wire.W4008;
 
 		for (size_t n = 0; n < 7; n++)
 		{
-			lin_reg[n].sim(n_ACLK, W4008, apu->GetDBBit(n));
+			lin_reg[n].sim(ACLK1, W4008, apu->GetDBBit(n));
 		}
 	}
 
 	void TriangleChan::sim_LinearCounter()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 
 		TriState carry = TriState::One;
 
 		for (size_t n = 0; n < 7; n++)
 		{
-			carry = lin_cnt[n].sim(carry, RES, LOAD, STEP, n_ACLK, lin_reg[n].get());
+			carry = lin_cnt[n].sim(carry, RES, LOAD, STEP, ACLK1, lin_reg[n].get());
 		}
 
 		TCO = carry;

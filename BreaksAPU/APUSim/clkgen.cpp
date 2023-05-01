@@ -29,7 +29,7 @@ namespace APUSim
 		TriState PHI1 = apu->wire.PHI1;
 		TriState PHI2 = apu->wire.PHI2;
 		TriState RES = apu->wire.RES;
-		TriState prev_aclk = apu->wire.ACLK;
+		TriState prev_aclk = apu->wire.nACLK2;
 
 		TriState temp = NOR(RES, phi2_latch.nget());
 		phi1_latch.set(temp, PHI1);
@@ -37,8 +37,8 @@ namespace APUSim
 
 		TriState new_aclk = NOT(NOR(NOT(PHI1), temp));
 
-		apu->wire.ACLK = new_aclk;
-		apu->wire.n_ACLK = NOR(NOT(PHI1), phi2_latch.nget());
+		apu->wire.nACLK2 = new_aclk;
+		apu->wire.ACLK1 = NOR(NOT(PHI1), phi2_latch.nget());
 
 		// The software ACLK counter is triggered by the falling edge.
 		// This is purely a software design for convenience, and has nothing to do with APU hardware circuitry.
@@ -51,21 +51,21 @@ namespace APUSim
 
 	void CLKGen::sim_SoftCLK_Mode()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState W4017 = apu->wire.W4017;
 
 		// Mode
 
-		reg_mode.sim(n_ACLK, W4017, apu->GetDBBit(7));
+		reg_mode.sim(ACLK1, W4017, apu->GetDBBit(7));
 		n_mode = reg_mode.nget();
-		md_latch.set(n_mode, n_ACLK);
+		md_latch.set(n_mode, ACLK1);
 		mode = md_latch.nget();
 	}
 
 	void CLKGen::sim_SoftCLK_Control()
 	{
-		TriState ACLK = apu->wire.ACLK;
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState nACLK2 = apu->wire.nACLK2;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState PHI1 = apu->wire.PHI1;
 		TriState RES = apu->wire.RES;
 		TriState DMCINT = apu->wire.DMCINT;
@@ -74,30 +74,30 @@ namespace APUSim
 
 		// Interrupt(s)
 
-		reg_mask.sim(n_ACLK, W4017, apu->GetDBBit(6));
+		reg_mask.sim(ACLK1, W4017, apu->GetDBBit(6));
 		int_ff.set(NOR4(NOR(int_ff.get(), AND(n_mode, pla[3])), NOR(n_R4015, PHI1), reg_mask.get(), RES));
-		int_status.set(int_ff.nget(), n_ACLK);
+		int_status.set(int_ff.nget(), ACLK1);
 		apu->SetDBBit(6, NOT(n_R4015) == TriState::One ? NOT(int_status.get()) : TriState::Z);
 		apu->wire.INT = NOT(NOR(int_ff.get(), DMCINT));
 
 		// LFSR reload
 
-		z1.set(z_ff.get(), n_ACLK);
-		z2.set (n_mode, n_ACLK);
-		z_ff.set(NOR3(NOR(z_ff.get(), NOR(z1.get(), ACLK)), W4017, RES));
+		z1.set(z_ff.get(), ACLK1);
+		z2.set (n_mode, ACLK1);
+		z_ff.set(NOR3(NOR(z_ff.get(), NOR(z1.get(), nACLK2)), W4017, RES));
 		Z1 = z1.nget();
 		Z2 = NOR(z1.get(), z2.get());
 
 		// LFSR operation
 
 		TriState ftemp = NOR3(Z1, pla[3], pla[4]);
-		F1 = NOR(ftemp, ACLK);
-		F2 = NOR(NOT(ftemp), ACLK);
+		F1 = NOR(ftemp, nACLK2);
+		F2 = NOR(NOT(ftemp), nACLK2);
 
 		// LFO Outputs
 
-		apu->wire.n_LFO1 = NOT(NOR(NOR6(pla[0], pla[1], pla[2], pla[3], pla[4], Z2), ACLK));
-		apu->wire.n_LFO2 = NOT(NOR(NOR4(pla[1], pla[3], pla[4], Z2), ACLK));
+		apu->wire.n_LFO1 = NOT(NOR(NOR6(pla[0], pla[1], pla[2], pla[3], pla[4], Z2), nACLK2));
+		apu->wire.n_LFO2 = NOT(NOR(NOR4(pla[1], pla[3], pla[4], Z2), nACLK2));
 	}
 
 	void CLKGen::sim_SoftCLK_PLA()
@@ -121,7 +121,7 @@ namespace APUSim
 
 	void CLKGen::sim_SoftCLK_LFSR()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 
 		// Feedback
 
@@ -133,15 +133,15 @@ namespace APUSim
 
 		for (size_t n = 0; n < 15; n++)
 		{
-			lfsr[n].sim(n_ACLK, F1, F2, sin);
+			lfsr[n].sim(ACLK1, F1, F2, sin);
 			sin = lfsr[n].get_sout();
 		}
 	}
 
-	void SoftCLK_SRBit::sim(TriState n_ACLK, TriState F1, TriState F2, TriState sin)
+	void SoftCLK_SRBit::sim(TriState ACLK1, TriState F1, TriState F2, TriState sin)
 	{
 		in_latch.set(MUX(F2, MUX(F1, TriState::Z, TriState::One), sin), TriState::One);
-		out_latch.set(in_latch.nget(), n_ACLK);
+		out_latch.set(in_latch.nget(), ACLK1);
 	}
 
 	TriState SoftCLK_SRBit::get_sout()

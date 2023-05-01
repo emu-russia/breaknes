@@ -10,7 +10,7 @@ namespace APUSim
 		BaseLogic::DLatch out_latch{};
 
 	public:
-		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState load, BaseLogic::TriState step, BaseLogic::TriState val, BaseLogic::TriState sin);
+		void sim(BaseLogic::TriState ACLK1, BaseLogic::TriState load, BaseLogic::TriState step, BaseLogic::TriState val, BaseLogic::TriState sin);
 		BaseLogic::TriState get_sout();
 	};
 
@@ -20,7 +20,7 @@ namespace APUSim
 		BaseLogic::DLatch out_latch{};
 
 	public:
-		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState clear, BaseLogic::TriState load, BaseLogic::TriState step, BaseLogic::TriState n_val, BaseLogic::TriState sin);
+		void sim(BaseLogic::TriState ACLK1, BaseLogic::TriState clear, BaseLogic::TriState load, BaseLogic::TriState step, BaseLogic::TriState n_val, BaseLogic::TriState sin);
 		BaseLogic::TriState get_sout();
 	};
 
@@ -55,7 +55,7 @@ namespace APUSim
 		BaseLogic::TriState CTRL1 = BaseLogic::TriState::X;		// 0: Stop DMA
 		BaseLogic::TriState CTRL2 = BaseLogic::TriState::X;		// 0: DMC enable delay
 
-		BaseLogic::TriState n_ACLK2 = BaseLogic::TriState::X;
+		BaseLogic::TriState ACLK2 = BaseLogic::TriState::X;
 
 		BaseLogic::FF int_ff{};
 		BaseLogic::DLatch sout_latch{};

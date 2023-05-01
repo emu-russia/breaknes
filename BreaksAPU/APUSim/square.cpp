@@ -21,7 +21,7 @@ namespace APUSim
 
 	void SquareChan::sim(TriState WR0, TriState WR1, TriState WR2, TriState WR3, TriState NOSQ, TriState* SQ_Out)
 	{
-		dir_reg.sim(apu->wire.n_ACLK, WR1, apu->GetDBBit(3));
+		dir_reg.sim(apu->wire.ACLK1, WR1, apu->GetDBBit(3));
 		DEC = dir_reg.get();
 		INC = NOT(DEC);
 
@@ -50,14 +50,14 @@ namespace APUSim
 
 	void SquareChan::sim_FreqReg(TriState WR2, TriState WR3)
 	{
-		TriState ACLK = apu->wire.ACLK;
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState nACLK2 = apu->wire.nACLK2;
+		TriState ACLK1 = apu->wire.ACLK1;
 
-		TriState n_ACLK3 = NOT(ACLK);
+		TriState ACLK3 = NOT(nACLK2);
 
 		for (size_t n = 0; n < 11; n++)
 		{
-			freq_reg[n].sim(n_ACLK3, n_ACLK,
+			freq_reg[n].sim(ACLK3, ACLK1,
 				n < 8 ? WR2 : WR3,
 				n < 8 ? apu->GetDBBit(n) : apu->GetDBBit(n - 8), DO_SWEEP, n_sum[n]);
 		}
@@ -65,11 +65,11 @@ namespace APUSim
 
 	void SquareChan::sim_ShiftReg(TriState WR1)
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 
 		for (size_t n = 0; n < 3; n++)
 		{
-			sr_reg[n].sim(n_ACLK, WR1, apu->GetDBBit(n));
+			sr_reg[n].sim(ACLK1, WR1, apu->GetDBBit(n));
 		}
 	}
 
@@ -139,32 +139,32 @@ namespace APUSim
 
 	void SquareChan::sim_FreqCounter()
 	{
-		TriState ACLK = apu->wire.ACLK;
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState nACLK2 = apu->wire.nACLK2;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 
-		FLOAD = NOR(ACLK, fco_latch.nget());
-		TriState FSTEP = NOR(ACLK, NOT(fco_latch.nget()));
+		FLOAD = NOR(nACLK2, fco_latch.nget());
+		TriState FSTEP = NOR(nACLK2, NOT(fco_latch.nget()));
 
 		TriState carry = TriState::One;
 
 		for (size_t n = 0; n < 11; n++)
 		{
-			carry = freq_cnt[n].sim(carry, RES, FLOAD, FSTEP, n_ACLK, freq_reg[n].get_Fx(DO_SWEEP));
+			carry = freq_cnt[n].sim(carry, RES, FLOAD, FSTEP, ACLK1, freq_reg[n].get_Fx(DO_SWEEP));
 		}
 
 		FCO = carry;
-		fco_latch.set(FCO, n_ACLK);
+		fco_latch.set(FCO, ACLK1);
 	}
 
 	void SquareChan::sim_FreqCounterFast()
 	{
-		TriState ACLK = apu->wire.ACLK;
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState nACLK2 = apu->wire.nACLK2;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 
-		FLOAD = NOR(ACLK, fco_latch.nget());
-		TriState FSTEP = NOR(ACLK, NOT(fco_latch.nget()));
+		FLOAD = NOR(nACLK2, fco_latch.nget());
+		TriState FSTEP = NOR(nACLK2, NOT(fco_latch.nget()));
 
 		if (FLOAD == TriState::One) {
 			TriState lo[8]{};
@@ -185,24 +185,24 @@ namespace APUSim
 		}
 
 		FCO = fast_freq_cnt == 0 ? TriState::One : TriState::Zero;
-		fco_latch.set(FCO, n_ACLK);
+		fco_latch.set(FCO, ACLK1);
 	}
 
 	void SquareChan::sim_Sweep(TriState WR1, TriState NOSQ)
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 		TriState n_LFO2 = apu->wire.n_LFO2;
 
-		reload_latch.set(reload_ff.get(), n_ACLK);
+		reload_latch.set(reload_ff.get(), ACLK1);
 		reload_ff.set(NOR(NOR3(reload_ff.get(), n_LFO2, reload_latch.get()), WR1));
 
-		swdis_reg.sim(n_ACLK, WR1, apu->GetDBBit(7));
+		swdis_reg.sim(ACLK1, WR1, apu->GetDBBit(7));
 		TriState SWDIS = swdis_reg.nget();
 
 		for (size_t n = 0; n < 3; n++)
 		{
-			sweep_reg[n].sim(n_ACLK, WR1, apu->GetDBBit(n + 4));
+			sweep_reg[n].sim(ACLK1, WR1, apu->GetDBBit(n + 4));
 		}
 
 		TriState temp_reload = NOR(reload_latch.nget(), sco_latch.get());
@@ -232,11 +232,11 @@ namespace APUSim
 			SCO = TriState::One;
 			for (size_t n = 0; n < 3; n++)
 			{
-				SCO = sweep_cnt[n].sim(SCO, RES, SLOAD, SSTEP, n_ACLK, sweep_reg[n].get());
+				SCO = sweep_cnt[n].sim(SCO, RES, SLOAD, SSTEP, ACLK1, sweep_reg[n].get());
 			}
 		}
 
-		sco_latch.set(SCO, n_ACLK);
+		sco_latch.set(SCO, ACLK1);
 
 		SW_OVF = NOR(DEC, n_COUT);
 		TriState SRZ = NOR3(SR[0], SR[1], SR[2]);
@@ -245,13 +245,13 @@ namespace APUSim
 
 	void SquareChan::sim_Duty(TriState WR0, TriState WR3)
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 		TriState DT[3]{};
 
 		for (size_t n = 0; n < 2; n++)
 		{
-			duty_reg[n].sim(n_ACLK, WR0, apu->GetDBBit(n + 6));
+			duty_reg[n].sim(ACLK1, WR0, apu->GetDBBit(n + 6));
 		}
 
 		if (fast_square) {
@@ -273,7 +273,7 @@ namespace APUSim
 			TriState carry = FCO;
 			for (size_t n = 0; n < 3; n++)
 			{
-				carry = duty_cnt[n].sim(carry, RES, WR3, FLOAD, n_ACLK, TriState::Zero);
+				carry = duty_cnt[n].sim(carry, RES, WR3, FLOAD, ACLK1, TriState::Zero);
 			}
 			DT[0] = duty_cnt[0].get();
 			DT[1] = duty_cnt[1].get();
@@ -295,11 +295,11 @@ namespace APUSim
 
 	void SquareChan::sim_Output(TriState NOSQ, TriState* SQ_Out)
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState LOCK = apu->wire.LOCK;
 
 		TriState d = NOR4(NOT(DUTY), SW_UVF, NOSQ, SW_OVF);
-		sqo_latch.set(d, n_ACLK);
+		sqo_latch.set(d, ACLK1);
 		TriState sqv = NOR(sqo_latch.get(), LOCK);
 
 		for (size_t n = 0; n < 4; n++)
@@ -308,11 +308,11 @@ namespace APUSim
 		}
 	}
 
-	void FreqRegBit::sim(TriState n_ACLK3, TriState n_ACLK, TriState WR, TriState DB_in, TriState ADDOUT, TriState n_sum)
+	void FreqRegBit::sim(TriState ACLK3, TriState ACLK1, TriState WR, TriState DB_in, TriState ADDOUT, TriState n_sum)
 	{
-		TriState d = MUX(WR, MUX(n_ACLK3, TriState::Z, get_Fx(ADDOUT)), DB_in);
+		TriState d = MUX(WR, MUX(ACLK3, TriState::Z, get_Fx(ADDOUT)), DB_in);
 		transp_latch.set(d, TriState::One);
-		sum_latch.set(n_sum, n_ACLK);
+		sum_latch.set(n_sum, ACLK1);
 	}
 
 	TriState FreqRegBit::get_nFx(TriState ADDOUT)

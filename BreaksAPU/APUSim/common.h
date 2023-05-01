@@ -9,7 +9,7 @@ namespace APUSim
 		BaseLogic::DLatch transp_latch{};
 
 	public:
-		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState Enable, BaseLogic::TriState Value);
+		void sim(BaseLogic::TriState ACLK1, BaseLogic::TriState Enable, BaseLogic::TriState Value);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
 		void set(BaseLogic::TriState val);
@@ -20,7 +20,7 @@ namespace APUSim
 		BaseLogic::DLatch transp_latch{};
 
 	public:
-		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState Enable, BaseLogic::TriState Value, BaseLogic::TriState Res);
+		void sim(BaseLogic::TriState ACLK1, BaseLogic::TriState Enable, BaseLogic::TriState Value, BaseLogic::TriState Res);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
 		void set(BaseLogic::TriState val);
@@ -31,7 +31,7 @@ namespace APUSim
 		BaseLogic::DLatch transp_latch{};
 
 	public:
-		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState Enable, BaseLogic::TriState Value, BaseLogic::TriState Res1, BaseLogic::TriState Res2);
+		void sim(BaseLogic::TriState ACLK1, BaseLogic::TriState Enable, BaseLogic::TriState Value, BaseLogic::TriState Res1, BaseLogic::TriState Res2);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
 		void set(BaseLogic::TriState val);
@@ -48,7 +48,7 @@ namespace APUSim
 			BaseLogic::TriState Clear,
 			BaseLogic::TriState Load,
 			BaseLogic::TriState Step,
-			BaseLogic::TriState n_ACLK,
+			BaseLogic::TriState ACLK1,
 			BaseLogic::TriState val);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
@@ -66,7 +66,7 @@ namespace APUSim
 			BaseLogic::TriState Clear,
 			BaseLogic::TriState Load,
 			BaseLogic::TriState Step,
-			BaseLogic::TriState n_ACLK,
+			BaseLogic::TriState ACLK1,
 			BaseLogic::TriState val);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();
@@ -85,7 +85,7 @@ namespace APUSim
 			BaseLogic::TriState Clear,
 			BaseLogic::TriState Load,
 			BaseLogic::TriState Step,
-			BaseLogic::TriState n_ACLK,
+			BaseLogic::TriState ACLK1,
 			BaseLogic::TriState val);
 		BaseLogic::TriState get();
 		BaseLogic::TriState nget();

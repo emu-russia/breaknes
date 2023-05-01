@@ -10,7 +10,7 @@ namespace APUSim
 		BaseLogic::DLatch out_latch{};
 
 	public:
-		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState load, BaseLogic::TriState step, BaseLogic::TriState val, BaseLogic::TriState sin);
+		void sim(BaseLogic::TriState ACLK1, BaseLogic::TriState load, BaseLogic::TriState step, BaseLogic::TriState val, BaseLogic::TriState sin);
 		BaseLogic::TriState get_sout();
 	};
 
@@ -20,7 +20,7 @@ namespace APUSim
 		BaseLogic::DLatch out_latch{};
 
 	public:
-		void sim(BaseLogic::TriState n_ACLK, BaseLogic::TriState load, BaseLogic::TriState sin);
+		void sim(BaseLogic::TriState ACLK1, BaseLogic::TriState load, BaseLogic::TriState sin);
 		BaseLogic::TriState get_sout();
 	};
 

@@ -6,9 +6,9 @@ using namespace BaseLogic;
 
 namespace APUSim
 {
-	void RegisterBit::sim(TriState n_ACLK, TriState Enable, TriState Value)
+	void RegisterBit::sim(TriState ACLK1, TriState Enable, TriState Value)
 	{
-		transp_latch.set(MUX(n_ACLK, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), TriState::One);
+		transp_latch.set(MUX(ACLK1, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), TriState::One);
 	}
 
 	TriState RegisterBit::get()
@@ -26,9 +26,9 @@ namespace APUSim
 		transp_latch.set(val, TriState::One);
 	}
 
-	void RegisterBitRes::sim(TriState n_ACLK, TriState Enable, TriState Value, TriState Res)
+	void RegisterBitRes::sim(TriState ACLK1, TriState Enable, TriState Value, TriState Res)
 	{
-		transp_latch.set(AND(MUX(n_ACLK, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), NOT(Res)), TriState::One);
+		transp_latch.set(AND(MUX(ACLK1, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), NOT(Res)), TriState::One);
 	}
 
 	TriState RegisterBitRes::get()
@@ -46,9 +46,9 @@ namespace APUSim
 		transp_latch.set(val, TriState::One);
 	}
 
-	void RegisterBitRes2::sim(TriState n_ACLK, TriState Enable, TriState Value, TriState Res1, TriState Res2)
+	void RegisterBitRes2::sim(TriState ACLK1, TriState Enable, TriState Value, TriState Res1, TriState Res2)
 	{
-		transp_latch.set(AND(MUX(n_ACLK, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), NOT(OR(Res1, Res2))), TriState::One);
+		transp_latch.set(AND(MUX(ACLK1, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), NOT(OR(Res1, Res2))), TriState::One);
 	}
 
 	TriState RegisterBitRes2::get()
@@ -66,19 +66,19 @@ namespace APUSim
 		transp_latch.set(val, TriState::One);
 	}
 
-	TriState CounterBit::sim(TriState Carry, TriState Clear, TriState Load, TriState Step, TriState n_ACLK, TriState val)
+	TriState CounterBit::sim(TriState Carry, TriState Clear, TriState Load, TriState Step, TriState ACLK1, TriState val)
 	{
 		TriState latch_in = 
 			MUX(Load, 
 				MUX(Clear, 
 					MUX(Step, 
-						MUX(n_ACLK, TriState::Z, NOT(transp_latch.nget())),
+						MUX(ACLK1, TriState::Z, NOT(transp_latch.nget())),
 						cg_latch.nget()), 
 					TriState::Zero), 
 				val);
 
 		transp_latch.set(latch_in, TriState::One);
-		cg_latch.set( MUX(Carry, transp_latch.nget(), NOT(transp_latch.nget())), n_ACLK);
+		cg_latch.set( MUX(Carry, transp_latch.nget(), NOT(transp_latch.nget())), ACLK1);
 
 		TriState cout = NOR(NOT(Carry), transp_latch.nget());
 		return cout;
@@ -99,19 +99,19 @@ namespace APUSim
 		transp_latch.set(val, TriState::One);
 	}
 
-	TriState DownCounterBit::sim(TriState Carry, TriState Clear, TriState Load, TriState Step, TriState n_ACLK, TriState val)
+	TriState DownCounterBit::sim(TriState Carry, TriState Clear, TriState Load, TriState Step, TriState ACLK1, TriState val)
 	{
 		TriState latch_in =
 			MUX(Load,
 				MUX(Clear,
 					MUX(Step,
-						MUX(n_ACLK, TriState::Z, NOT(transp_latch.nget())),
+						MUX(ACLK1, TriState::Z, NOT(transp_latch.nget())),
 						cg_latch.nget()),
 					TriState::Zero),
 				val);
 
 		transp_latch.set(latch_in, TriState::One);
-		cg_latch.set(MUX(Carry, transp_latch.nget(), NOT(transp_latch.nget())), n_ACLK);
+		cg_latch.set(MUX(Carry, transp_latch.nget(), NOT(transp_latch.nget())), ACLK1);
 
 		TriState cout = NOR(NOT(Carry), NOT(transp_latch.nget()));
 		return cout;
@@ -132,19 +132,19 @@ namespace APUSim
 		transp_latch.set(val, TriState::One);
 	}
 
-	TriState RevCounterBit::sim(TriState Carry, TriState Dec, TriState Clear, TriState Load, TriState Step, TriState n_ACLK, TriState val)
+	TriState RevCounterBit::sim(TriState Carry, TriState Dec, TriState Clear, TriState Load, TriState Step, TriState ACLK1, TriState val)
 	{
 		TriState latch_in =
 			MUX(Load,
 				MUX(Clear,
 					MUX(Step,
-						MUX(n_ACLK, TriState::Z, NOT(transp_latch.nget())),
+						MUX(ACLK1, TriState::Z, NOT(transp_latch.nget())),
 						cg_latch.nget()),
 					TriState::Zero),
 				val);
 
 		transp_latch.set(latch_in, TriState::One);
-		cg_latch.set(MUX(Carry, transp_latch.nget(), NOT(transp_latch.nget())), n_ACLK);
+		cg_latch.set(MUX(Carry, transp_latch.nget(), NOT(transp_latch.nget())), ACLK1);
 
 		TriState cout = NOR(NOT(Carry), MUX(Dec, transp_latch.nget(), NOT(transp_latch.nget())));
 		return cout;
