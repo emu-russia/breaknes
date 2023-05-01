@@ -19,7 +19,7 @@ namespace APUSim
 
 	void EnvelopeUnit::sim(TriState V[4], TriState WR_Reg, TriState WR_LC)
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState n_LFO1 = apu->wire.n_LFO1;
 		TriState RES = apu->wire.RES;
 
@@ -34,15 +34,15 @@ namespace APUSim
 
 		// Reg/counters
 
-		envdis_reg.sim(n_ACLK, WR_Reg, apu->GetDBBit(4));
-		lc_reg.sim(n_ACLK, WR_Reg, apu->GetDBBit(5));
+		envdis_reg.sim(ACLK1, WR_Reg, apu->GetDBBit(4));
+		lc_reg.sim(ACLK1, WR_Reg, apu->GetDBBit(5));
 
 		TriState RCO{};
 		TriState ECO{};
 		if (fast_env) {
 			for (size_t n = 0; n < 4; n++)
 			{
-				vol_reg[n].sim(n_ACLK, WR_Reg, apu->GetDBBit(n));
+				vol_reg[n].sim(ACLK1, WR_Reg, apu->GetDBBit(n));
 			}
 			if (RLOAD == TriState::One) {
 				TriState val[4]{};
@@ -79,19 +79,19 @@ namespace APUSim
 			ECO = TriState::One;
 			for (size_t n = 0; n < 4; n++)
 			{
-				vol_reg[n].sim(n_ACLK, WR_Reg, apu->GetDBBit(n));
-				RCO = decay_cnt[n].sim(RCO, RES, RLOAD, RSTEP, n_ACLK, vol_reg[n].get());
-				ECO = env_cnt[n].sim(ECO, RES, ERES, ESTEP, n_ACLK, EIN);
+				vol_reg[n].sim(ACLK1, WR_Reg, apu->GetDBBit(n));
+				RCO = decay_cnt[n].sim(RCO, RES, RLOAD, RSTEP, ACLK1, vol_reg[n].get());
+				ECO = env_cnt[n].sim(ECO, RES, ERES, ESTEP, ACLK1, EIN);
 			}
 		}
 
 		EnvReload.set(NOR(NOR(EnvReload.get(), NOR(n_LFO1, erld_latch.get())), WR_LC));
 		TriState RELOAD = EnvReload.nget();
 
-		erld_latch.set(EnvReload.get(), n_ACLK);
-		reload_latch.set(RELOAD, n_ACLK);
-		rco_latch.set(NOR(RCO, RELOAD), n_ACLK);
-		eco_latch.set(AND(ECO, NOT(RELOAD)), n_ACLK);
+		erld_latch.set(EnvReload.get(), ACLK1);
+		reload_latch.set(RELOAD, ACLK1);
+		rco_latch.set(NOR(RCO, RELOAD), ACLK1);
+		eco_latch.set(AND(ECO, NOT(RELOAD)), ACLK1);
 
 		TriState ENVDIS = envdis_reg.get();
 		for (size_t n = 0; n < 4; n++)

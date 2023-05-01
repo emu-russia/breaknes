@@ -24,7 +24,7 @@ namespace APUSim
 
 	void DMA::sim_DMA_Address()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState W4014 = apu->wire.W4014;	// Load / SetAddr
 		TriState RES = apu->wire.RES;		// Clear
 
@@ -47,18 +47,18 @@ namespace APUSim
 			TriState carry = TriState::One;
 			for (size_t n = 0; n < 8; n++)
 			{
-				carry = spr_lo[n].sim(carry, RES, W4014, SPRS, n_ACLK, TriState::Zero);
+				carry = spr_lo[n].sim(carry, RES, W4014, SPRS, ACLK1, TriState::Zero);
 			}
 			SPRE = carry;
 		}
 
-		spre_latch.set(SPRE, n_ACLK);
+		spre_latch.set(SPRE, ACLK1);
 
 		// High
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			spr_hi[n].sim(n_ACLK, W4014, apu->GetDBBit(n));
+			spr_hi[n].sim(ACLK1, W4014, apu->GetDBBit(n));
 		}
 
 		// SPR_Addr
@@ -81,8 +81,8 @@ namespace APUSim
 
 	void DMA::sim_DMA_Control()
 	{
-		TriState n_ACLK2 = NOT(apu->wire.ACLK);
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK2 = NOT(apu->wire.nACLK2);
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 		TriState W4014 = apu->wire.W4014;
 		TriState RUNDMC = apu->wire.RUNDMC;
@@ -90,17 +90,17 @@ namespace APUSim
 		TriState RnW = apu->wire.RnW;
 		TriState DMCRDY = apu->wire.DMCRDY;
 
-		DMADirToggle.set(NOR(n_ACLK, NOR(n_ACLK2, DMADirToggle.get())));
+		DMADirToggle.set(NOR(ACLK1, NOR(ACLK2, DMADirToggle.get())));
 
 		NOSPR = nospr_latch.nget();
 
 		StartDMA.set(NOR3(NOT(NOSPR), RES, NOR(W4014, StartDMA.get())));
-		dospr_latch.set(StartDMA.nget(), n_ACLK2);
+		dospr_latch.set(StartDMA.nget(), ACLK2);
 		DOSPR = NOR(dospr_latch.get(), NAND(NOT(PHI1), RnW));
 
-		SPRS = NOR3(NOSPR, RUNDMC, NOT(n_ACLK2));
+		SPRS = NOR3(NOSPR, RUNDMC, NOT(ACLK2));
 		StopDMA.set(NOR3(AND(SPRS, spre_latch.get()), RES, NOR(DOSPR, StopDMA.get())));
-		nospr_latch.set(StopDMA.get(), n_ACLK);
+		nospr_latch.set(StopDMA.get(), ACLK1);
 
 		sprdma_rdy = NOR(NOT(NOSPR), StartDMA.get());
 		apu->wire.RDY = AND(sprdma_rdy, DMCRDY);

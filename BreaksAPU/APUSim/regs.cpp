@@ -138,11 +138,11 @@ namespace APUSim
 
 	void RegsDecoder::sim_DebugLock()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 		TriState W401A = apu->wire.W401A;
 
-		TriState d = MUX(W401A, MUX(n_ACLK, TriState::Z, NOR(lock_latch.nget(), RES)), apu->GetDBBit(7));
+		TriState d = MUX(W401A, MUX(ACLK1, TriState::Z, NOR(lock_latch.nget(), RES)), apu->GetDBBit(7));
 		lock_latch.set(d, TriState::One);
 		apu->wire.LOCK = NOR(lock_latch.nget(), RES);
 	}

@@ -19,7 +19,7 @@ namespace APUSim
 
 	void DpcmChan::sim()
 	{
-		n_ACLK2 = NOT(apu->wire.ACLK);
+		ACLK2 = NOT(apu->wire.nACLK2);
 
 		sim_SampleCounterReg();
 		
@@ -49,19 +49,19 @@ namespace APUSim
 
 	void DpcmChan::sim_ControlReg()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState W4010 = apu->wire.W4010;
 
 		for (size_t n = 0; n < 4; n++)
 		{
-			freq_reg[n].sim(n_ACLK, W4010, apu->GetDBBit(n));
+			freq_reg[n].sim(ACLK1, W4010, apu->GetDBBit(n));
 			Fx[n] = freq_reg[n].get();
 		}
 
-		loop_reg.sim(n_ACLK, W4010, apu->GetDBBit(6));
+		loop_reg.sim(ACLK1, W4010, apu->GetDBBit(6));
 		LOOPMode = loop_reg.get();
 
-		irq_reg.sim(n_ACLK, W4010, apu->GetDBBit(7));
+		irq_reg.sim(ACLK1, W4010, apu->GetDBBit(7));
 		n_IRQEN = irq_reg.nget();
 	}
 
@@ -79,34 +79,34 @@ namespace APUSim
 
 	void DpcmChan::sim_EnableControl()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState W4015 = apu->wire.W4015;
 		TriState n_R4015 = apu->wire.n_R4015;
 		TriState RES = apu->wire.RES;
 		TriState PCMDone = get_DMC1();
 
-		sout_latch.set(SOUT, n_ACLK);
+		sout_latch.set(SOUT, ACLK1);
 		DMC2 = sout_latch.get();
 		ED1 = NOR3(n_IRQEN, sout_latch.nget(), NOT(PCMDone));
-		ena_ff.sim(n_ACLK, W4015, apu->GetDBBit(4), ED1, RES);
+		ena_ff.sim(ACLK1, W4015, apu->GetDBBit(4), ED1, RES);
 		ED2 = ena_ff.get();
 		apu->SetDBBit(4, NOT(n_R4015) == TriState::One ? NOT(ena_ff.nget()) : TriState::Z);
 	}
 
 	void DpcmChan::sim_DMAControl()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState PHI1 = apu->wire.PHI1;
 		TriState RnW = apu->wire.RnW;
 		TriState RES = apu->wire.RES;
 		TriState nDMCEnableDelay = get_CTRL2();
 		TriState nDMAStop = get_CTRL1();
 
-		run_latch1.set(start_ff.get(), n_ACLK2);
-		run_latch2.set(run_latch1.nget(), n_ACLK);
+		run_latch1.set(start_ff.get(), ACLK2);
+		run_latch2.set(run_latch1.nget(), ACLK1);
 		TriState start_set = NOT(NOR3(AND(NOT(PHI1), RnW), nDMCEnableDelay, NOT(nDMAStop)));
 		start_ff.set(NOR4(NOR(start_ff.get(), start_set), nDMCEnableDelay, RES, NOT(nDMAStop)));
-		rdy_ff.set(NOR(NOR(rdy_ff.get(), AND(run_latch1.get(), n_ACLK)), n_ACLK2));
+		rdy_ff.set(NOR(NOR(rdy_ff.get(), AND(run_latch1.get(), ACLK1)), ACLK2));
 
 		apu->wire.RUNDMC = run_latch2.nget();
 		apu->wire.n_DMC_AB = rdy_ff.nget();
@@ -115,18 +115,18 @@ namespace APUSim
 
 	void DpcmChan::sim_SampleCounterControl()
 	{
-		TriState ACLK = apu->wire.ACLK;
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState nACLK2 = apu->wire.nACLK2;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState PCMDone = get_DMC1();
 		TriState DMCFinish = DMC2;
 		TriState DMCEnable = ED2;
 
-		fin_latch.set(DMCFinish, n_ACLK);
-		en_latch1.set(DMCEnable, n_ACLK);
-		en_latch2.set(en_latch1.nget(), n_ACLK2);
-		en_latch3.set(en_latch2.nget(), n_ACLK);
+		fin_latch.set(DMCFinish, ACLK1);
+		en_latch1.set(DMCEnable, ACLK1);
+		en_latch2.set(en_latch1.nget(), ACLK2);
+		en_latch3.set(en_latch2.nget(), ACLK1);
 		CTRL2 = en_latch3.nget();
-		TriState DMC3 = NOR3(ACLK, en_latch1.nget(), en_latch3.get());
+		TriState DMC3 = NOR3(nACLK2, en_latch1.nget(), en_latch3.get());
 
 		NSTEP = NOT(NOT(DFLOAD));
 		DSLOAD = NOT(NOR(AND(fin_latch.get(), PCMDone), DMC3));
@@ -135,7 +135,7 @@ namespace APUSim
 
 	void DpcmChan::sim_SampleBufferControl()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 		TriState PHI1 = apu->wire.PHI1;
 		TriState n_DMC_AB = apu->wire.n_DMC_AB;
@@ -147,13 +147,13 @@ namespace APUSim
 		CTRL1 = stop_ff.nget();
 		pcm_ff.set(NOR3(NOR(pcm_ff.get(), PCM), DMC1, RES));
 
-		dout_latch.set(DOUT, n_ACLK);
-		dstep_latch.set(step_ff.nget(), n_ACLK);
-		stop_latch.set(stop_ff.get(), n_ACLK);
-		pcm_latch.set(pcm_ff.nget(), n_ACLK);
+		dout_latch.set(DOUT, ACLK1);
+		dstep_latch.set(step_ff.nget(), ACLK1);
+		stop_latch.set(stop_ff.get(), ACLK1);
+		pcm_latch.set(pcm_ff.nget(), ACLK1);
 
 		PCM = NOR(PHI1, n_DMC_AB);
-		DMC1 = NOR(pcm_latch.get(), NOT(n_ACLK2));
+		DMC1 = NOR(pcm_latch.get(), NOT(ACLK2));
 		DSTEP = NOR4(dout_latch.get(), dstep_latch.get(), n_DFLOAD, LOCK);
 		BLOAD = NOR3(stop_latch.nget(), n_DFLOAD, n_NOUT);
 		BSTEP = NOR(n_DFLOAD, NOT(n_NOUT));
@@ -171,7 +171,7 @@ namespace APUSim
 
 	TriState DpcmChan::get_DMC1()
 	{
-		return NOR(pcm_latch.get(), NOT(n_ACLK2));
+		return NOR(pcm_latch.get(), NOT(ACLK2));
 	}
 
 #pragma endregion "DPCM Control"
@@ -225,7 +225,7 @@ namespace APUSim
 
 	void DpcmChan::sim_FreqLFSR()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 
 		TriState sout[9]{};
@@ -240,22 +240,22 @@ namespace APUSim
 
 		TriState feedback = NOR3(AND(sout[0], sout[4]), RES, NOR3(sout[0], sout[4], nor1_out));
 		TriState nor3_out = NOR(RES, NOT(nor2_out));
-		DFLOAD = NOR(NOT(n_ACLK2), NOT(nor3_out));
-		TriState DFSTEP = NOR(NOT(n_ACLK2), nor3_out);
+		DFLOAD = NOR(NOT(ACLK2), NOT(nor3_out));
+		TriState DFSTEP = NOR(NOT(ACLK2), nor3_out);
 
 		TriState sin = feedback;
 
 		for (int n = 8; n >= 0; n--)
 		{
-			lfsr[n].sim(n_ACLK, DFLOAD, DFSTEP, FR[n], sin);
+			lfsr[n].sim(ACLK1, DFLOAD, DFSTEP, FR[n], sin);
 			sin = lfsr[n].get_sout();
 		}
 	}
 
-	void DPCM_LFSRBit::sim(TriState n_ACLK, TriState load, TriState step, TriState val, TriState sin)
+	void DPCM_LFSRBit::sim(TriState ACLK1, TriState load, TriState step, TriState val, TriState sin)
 	{
 		in_latch.set(MUX(load, MUX(step, TriState::Z, sin), val), TriState::One);
-		out_latch.set(in_latch.nget(), n_ACLK);
+		out_latch.set(in_latch.nget(), ACLK1);
 	}
 
 	TriState DPCM_LFSRBit::get_sout()
@@ -265,25 +265,25 @@ namespace APUSim
 
 	void DpcmChan::sim_SampleCounterReg()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState W4013 = apu->wire.W4013;
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			scnt_reg[n].sim(n_ACLK, W4013, apu->GetDBBit(n));
+			scnt_reg[n].sim(ACLK1, W4013, apu->GetDBBit(n));
 		}
 	}
 
 	void DpcmChan::sim_SampleCounter()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 
 		TriState carry = TriState::One;
 
 		for (size_t n = 0; n < 12; n++)
 		{
-			carry = scnt[n].sim(carry, RES, DSLOAD, DSSTEP, n_ACLK, n < 4 ? TriState::Zero : scnt_reg[n - 4].get());
+			carry = scnt[n].sim(carry, RES, DSLOAD, DSSTEP, ACLK1, n < 4 ? TriState::Zero : scnt_reg[n - 4].get());
 		}
 
 		SOUT = carry;
@@ -291,52 +291,52 @@ namespace APUSim
 
 	void DpcmChan::sim_SampleBitCounter()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 
 		TriState carry = TriState::One;
 
 		for (size_t n = 0; n < 3; n++)
 		{
-			carry = sbcnt[n].sim(carry, RES, RES, NSTEP, n_ACLK, TriState::Zero);
+			carry = sbcnt[n].sim(carry, RES, RES, NSTEP, ACLK1, TriState::Zero);
 		}
 
-		nout_latch.set(carry, n_ACLK);
+		nout_latch.set(carry, ACLK1);
 		n_NOUT = nout_latch.nget();
 	}
 
 	void DpcmChan::sim_SampleBuffer()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			buf_reg[n].sim(n_ACLK, PCM, apu->GetDBBit(n));
+			buf_reg[n].sim(ACLK1, PCM, apu->GetDBBit(n));
 		}
 
 		TriState sin = TriState::Zero;
 
 		for (int n = 7; n >= 0; n--)
 		{
-			shift_reg[n].sim(n_ACLK, RES, BLOAD, BSTEP, buf_reg[n].nget(), sin);
+			shift_reg[n].sim(ACLK1, RES, BLOAD, BSTEP, buf_reg[n].nget(), sin);
 			sin = shift_reg[n].get_sout();
 		}
 
 		n_BOUT = NOT(shift_reg[0].get_sout());
 	}
 
-	void DPCM_SRBit::sim(TriState n_ACLK, TriState clear, TriState load, TriState step, TriState n_val, TriState sin)
+	void DPCM_SRBit::sim(TriState ACLK1, TriState clear, TriState load, TriState step, TriState n_val, TriState sin)
 	{
 		TriState d = 
 			MUX(clear, 
 				MUX(load, 
 					MUX(step, 
-						MUX(n_ACLK, TriState::Z, NOT(out_latch.nget())), 
+						MUX(ACLK1, TriState::Z, NOT(out_latch.nget())), 
 						in_latch.nget()), 
 					n_val), 
 				TriState::Zero);
-		in_latch.set(sin, n_ACLK);
+		in_latch.set(sin, ACLK1);
 		out_latch.set(d, TriState::One);
 	}
 
@@ -351,30 +351,30 @@ namespace APUSim
 
 	void DpcmChan::sim_AddressReg()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState W4012 = apu->wire.W4012;
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			addr_reg[n].sim(n_ACLK, W4012, apu->GetDBBit(n));
+			addr_reg[n].sim(ACLK1, W4012, apu->GetDBBit(n));
 		}
 	}
 
 	void DpcmChan::sim_AddressCounter()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 
 		TriState carry = TriState::One;
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			carry = addr_lo[n].sim(carry, RES, DSLOAD, DSSTEP, n_ACLK, n < 6 ? TriState::Zero : addr_reg[n - 6].get());
+			carry = addr_lo[n].sim(carry, RES, DSLOAD, DSSTEP, ACLK1, n < 6 ? TriState::Zero : addr_reg[n - 6].get());
 		}
 
 		for (size_t n = 0; n < 7; n++)
 		{
-			carry = addr_hi[n].sim(carry, RES, DSLOAD, DSSTEP, n_ACLK, n < 6 ? addr_reg[n + 2].get() : TriState::One);
+			carry = addr_hi[n].sim(carry, RES, DSLOAD, DSSTEP, ACLK1, n < 6 ? addr_reg[n + 2].get() : TriState::One);
 		}
 
 		apu->DMC_Addr = 0;
@@ -391,7 +391,7 @@ namespace APUSim
 
 	void DpcmChan::sim_Output()
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 		TriState W4011 = apu->wire.W4011;
 		TriState CountDown = n_BOUT;
@@ -400,12 +400,12 @@ namespace APUSim
 
 		for (size_t n = 0; n < 6; n++)
 		{
-			carry = out_cnt[n].sim(carry, CountDown, RES, W4011, DSTEP, n_ACLK, apu->GetDBBit(n + 1));
+			carry = out_cnt[n].sim(carry, CountDown, RES, W4011, DSTEP, ACLK1, apu->GetDBBit(n + 1));
 		}
 
 		DOUT = carry;
 
-		out_reg.sim(n_ACLK, W4011, apu->GetDBBit(0));
+		out_reg.sim(ACLK1, W4011, apu->GetDBBit(0));
 
 		apu->DMC_Out[0] = out_reg.get();
 		for (size_t n = 0; n < 6; n++)

@@ -13,8 +13,8 @@ namespace APUSim
 		uint8_t PHI2;
 		uint8_t RDY;
 		uint8_t RDY2;
-		uint8_t ACLK;
-		uint8_t n_ACLK;
+		uint8_t nACLK2;
+		uint8_t ACLK1;
 		uint8_t RES;
 		uint8_t RESCore;
 		uint8_t n_M2;

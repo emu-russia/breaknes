@@ -139,8 +139,8 @@ namespace APUSim
 			BaseLogic::TriState PHI2;
 			BaseLogic::TriState RDY;			// To core
 			BaseLogic::TriState RDY2;			// Default 1 (2A03)
-			BaseLogic::TriState ACLK;
-			BaseLogic::TriState n_ACLK;
+			BaseLogic::TriState nACLK2;
+			BaseLogic::TriState ACLK1;
 			BaseLogic::TriState RES;
 			BaseLogic::TriState RESCore;		// Artificial signal (not in real chip). Used to reset the core only (NSFPlayer)
 			BaseLogic::TriState n_M2;

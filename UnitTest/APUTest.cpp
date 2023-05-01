@@ -127,10 +127,10 @@ namespace APUSimUnitTest
 		const size_t hcycles = 12 * 4;
 		char clk_dump[hcycles + 1] = { 0 };
 		char phi_dump[hcycles + 1] = { 0 };
-		char aclk_dump[hcycles + 1] = { 0 };
-		char naclk_dump[hcycles + 1] = { 0 };
-		int aclk_integral = 0;
-		int naclk_integral = 0;
+		char aclk2_dump[hcycles + 1] = { 0 };
+		char aclk1_dump[hcycles + 1] = { 0 };
+		int aclk2_integral = 0;
+		int aclk1_integral = 0;
 
 		apu->wire.n_CLK = TriState::One;	// CLK = 0
 		apu->wire.RES = TriState::Zero;
@@ -143,31 +143,31 @@ namespace APUSimUnitTest
 
 			clk_dump[n] = NOT(apu->wire.n_CLK) == TriState::One ? '1' : '0';
 			phi_dump[n] = (apu->wire.PHI0) == TriState::One ? '1' : '0';
-			aclk_dump[n] = (apu->wire.ACLK) == TriState::One ? '1' : '0';
-			naclk_dump[n] = (apu->wire.n_ACLK) == TriState::One ? '1' : '0';
+			aclk2_dump[n] = (apu->wire.nACLK2) == TriState::One ? '1' : '0';
+			aclk1_dump[n] = (apu->wire.ACLK1) == TriState::One ? '1' : '0';
 
-			if (apu->wire.ACLK == TriState::One)
-				aclk_integral++;
+			if (apu->wire.nACLK2 == TriState::One)
+				aclk2_integral++;
 			else
-				aclk_integral--;
+				aclk2_integral--;
 
-			if (apu->wire.n_ACLK == TriState::One)
-				naclk_integral++;
+			if (apu->wire.ACLK1 == TriState::One)
+				aclk1_integral++;
 			else
-				naclk_integral--;
+				aclk1_integral--;
 
 			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
 		}
 
-		Logger::WriteMessage(("CLK  :" + std::string(clk_dump) + "\n").c_str());
-		Logger::WriteMessage(("PHI  :" + std::string(phi_dump) + "\n").c_str());
-		Logger::WriteMessage(("ACLK :" + std::string(aclk_dump) + "\n").c_str());
-		Logger::WriteMessage(("#ACLK:" + std::string(naclk_dump) + "\n").c_str());
+		Logger::WriteMessage(("CLK   :" + std::string(clk_dump) + "\n").c_str());
+		Logger::WriteMessage(("PHI   :" + std::string(phi_dump) + "\n").c_str());
+		Logger::WriteMessage(("#ACLK2:" + std::string(aclk2_dump) + "\n").c_str());
+		Logger::WriteMessage(("ACLK1 :" + std::string(aclk1_dump) + "\n").c_str());
 
-		if (aclk_integral != (36 - 12))
+		if (aclk2_integral != (36 - 12))
 			return false;
 
-		if (naclk_integral != (-12 + 12 - 24))
+		if (aclk1_integral != (-12 + 12 - 24))
 			return false;
 
 		return true;
@@ -526,7 +526,7 @@ namespace APUSimUnitTest
 
 			// We apply synthetic LFO2 control so that it triggers more often and the test finishes faster.
 
-			if (IsNegedge(prev_aclk, apu->wire.ACLK))		// negedge ACLK
+			if (IsNegedge(prev_aclk, apu->wire.nACLK2))		// negedge ACLK
 			{
 				apu->wire.n_LFO2 = TriState::Zero;
 			}
@@ -545,7 +545,7 @@ namespace APUSimUnitTest
 
 			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
 
-			prev_aclk = apu->wire.ACLK;
+			prev_aclk = apu->wire.nACLK2;
 			prev_clk = NOT(apu->wire.n_CLK);
 		}
 
@@ -604,7 +604,7 @@ namespace APUSimUnitTest
 
 			// Clock stats
 
-			if (IsNegedge(prev_aclk, apu->wire.ACLK))
+			if (IsNegedge(prev_aclk, apu->wire.nACLK2))
 			{
 				// TBD: For what?
 				aclk_counter++;
@@ -640,7 +640,7 @@ namespace APUSimUnitTest
 			// Tick
 
 			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
-			prev_aclk = apu->wire.ACLK;
+			prev_aclk = apu->wire.nACLK2;
 			prev_phi = apu->wire.PHI0;
 		}
 
@@ -664,7 +664,7 @@ namespace APUSimUnitTest
 
 			// Clock stats
 
-			if (IsNegedge(prev_aclk, apu->wire.ACLK))
+			if (IsNegedge(prev_aclk, apu->wire.nACLK2))
 			{
 				// TBD: For what?
 				aclk_counter++;
@@ -700,7 +700,7 @@ namespace APUSimUnitTest
 			// Tick
 
 			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
-			prev_aclk = apu->wire.ACLK;
+			prev_aclk = apu->wire.nACLK2;
 			prev_phi = apu->wire.PHI0;
 		}
 
@@ -732,7 +732,7 @@ namespace APUSimUnitTest
 
 			// Clock stats
 
-			if (IsNegedge(prev_aclk, apu->wire.ACLK))
+			if (IsNegedge(prev_aclk, apu->wire.nACLK2))
 			{
 				Hold_4014_Write = false;
 				aclk_counter++;
@@ -750,7 +750,7 @@ namespace APUSimUnitTest
 				Hold_4014_Write = false;
 			}
 
-			// For simplicity, we will simulate an aligned write in $4014 (ACLK=1 at the start of the write cycle in $4014)
+			// For simplicity, we will simulate an aligned write in $4014 (nACLK2=1 at the start of the write cycle in $4014)
 
 			if ((Hold_4014_Write && apu->wire.PHI2 == TriState::One) || (Write_4014_notyet && apu->wire.PHI2 == TriState::One && prev_aclk == TriState::One))
 			{
@@ -770,8 +770,8 @@ namespace APUSimUnitTest
 			// Dump OAM DMA State
 
 			sprintf_s(text, sizeof(text), 
-				"ACLK: %d, PHI1: %d, W4014: %d, SPRS: %d, SPRE: %d, NOSPR: %d, DOSPR: %d, StartDMA: %d, StopDMA: %d, SPR_CPU: %d, SPR_PPU: %d, OAM Addr: 0x%x\n",
-				FromByte(apu->wire.ACLK),
+				"#ACLK2: %d, PHI1: %d, W4014: %d, SPRS: %d, SPRE: %d, NOSPR: %d, DOSPR: %d, StartDMA: %d, StopDMA: %d, SPR_CPU: %d, SPR_PPU: %d, OAM Addr: 0x%x\n",
+				FromByte(apu->wire.nACLK2),
 				FromByte(apu->wire.PHI1),
 				FromByte(apu->wire.W4014),
 				FromByte(apu->dma->SPRS),
@@ -909,7 +909,7 @@ namespace APUSimUnitTest
 
 			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
 			clk_counter++;
-			prev_aclk = apu->wire.ACLK;
+			prev_aclk = apu->wire.nACLK2;
 			prev_phi = apu->wire.PHI0;
 		}
 

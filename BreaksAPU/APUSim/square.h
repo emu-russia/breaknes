@@ -22,7 +22,7 @@ namespace APUSim
 		BaseLogic::DLatch sum_latch{};
 
 	public:
-		void sim(BaseLogic::TriState n_ACLK3, BaseLogic::TriState n_ACLK, BaseLogic::TriState WR, BaseLogic::TriState DB_in, BaseLogic::TriState ADDOUT, BaseLogic::TriState n_sum);
+		void sim(BaseLogic::TriState ACLK3, BaseLogic::TriState ACLK1, BaseLogic::TriState WR, BaseLogic::TriState DB_in, BaseLogic::TriState ADDOUT, BaseLogic::TriState n_sum);
 		BaseLogic::TriState get_nFx(BaseLogic::TriState ADDOUT);
 		BaseLogic::TriState get_Fx(BaseLogic::TriState ADDOUT);
 		BaseLogic::TriState get();

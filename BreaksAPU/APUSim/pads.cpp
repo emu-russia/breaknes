@@ -115,15 +115,15 @@ namespace APUSim
 
 	void Pads::sim_OutReg()
 	{
-		TriState ACLK = apu->wire.ACLK;
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState nACLK2 = apu->wire.nACLK2;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState W4016 = apu->wire.W4016;
-		TriState n_ACLK5 = NOT(ACLK);
+		TriState ACLK5 = NOT(nACLK2);
 
 		for (size_t n = 0; n < 3; n++)
 		{
-			out_reg[n].sim(n_ACLK, W4016, apu->GetDBBit(n));
-			out_latch[n].set(out_reg[n].get(), n_ACLK5);
+			out_reg[n].sim(ACLK1, W4016, apu->GetDBBit(n));
+			out_latch[n].set(out_reg[n].get(), ACLK5);
 			OUT_Signal[n] = NOT(out_latch[n].nget());
 		}
 	}

@@ -32,30 +32,30 @@ namespace APUSim
 
 	void LengthCounter::sim_Control(size_t bit_ena, TriState WriteEn, TriState& LC_NoCount)
 	{
-		TriState ACLK = apu->wire.ACLK;
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState nACLK2 = apu->wire.nACLK2;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 		TriState n_LFO2 = apu->wire.n_LFO2;
 		TriState W4015 = apu->wire.W4015;
 		TriState n_R4015 = apu->wire.n_R4015;
-		TriState n_ACLK4 = NOT(ACLK);
+		TriState ACLK4 = NOT(nACLK2);
 		TriState LCDIS;
 
 		reg_enable_latch.set( 
-			MUX(n_ACLK, 
+			MUX(ACLK1, 
 				MUX(W4015, 
 					MUX(RES, TriState::Z, TriState::Zero),
 					apu->GetDBBit(bit_ena)),
 				NOT(reg_enable_latch.nget())), TriState::One);
 		LCDIS = reg_enable_latch.nget();
 
-		ena_latch.set(LCDIS, n_ACLK);
-		cout_latch.set(carry_out, n_ACLK);
+		ena_latch.set(LCDIS, ACLK1);
+		cout_latch.set(carry_out, ACLK1);
 
 		STEP = NOR(step_latch.get(), n_LFO2);
-		step_latch.set(stat_ff.nget(), n_ACLK);
+		step_latch.set(stat_ff.nget(), ACLK1);
 
-		stat_ff.set(NOR4(AND(ena_latch.get(), n_ACLK4), AND(cout_latch.get(), STEP), RES, NOR(stat_ff.get(), WriteEn)));
+		stat_ff.set(NOR4(AND(ena_latch.get(), ACLK4), AND(cout_latch.get(), STEP), RES, NOR(stat_ff.get(), WriteEn)));
 
 		LC_NoCount = NOT(stat_ff.get());
 		apu->SetDBBit(bit_ena, NOT(n_R4015) == TriState::One ? NOT(stat_ff.nget()) : TriState::Z);
@@ -154,13 +154,13 @@ namespace APUSim
 
 	void LengthCounter::sim_Counter(TriState LC_CarryIn, TriState WriteEn)
 	{
-		TriState n_ACLK = apu->wire.n_ACLK;
+		TriState ACLK1 = apu->wire.ACLK1;
 		TriState RES = apu->wire.RES;
 		TriState carry = LC_CarryIn;
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			carry = cnt[n].sim(carry, RES, WriteEn, STEP, n_ACLK, LC[n]);
+			carry = cnt[n].sim(carry, RES, WriteEn, STEP, ACLK1, LC[n]);
 		}
 
 		carry_out = carry;
