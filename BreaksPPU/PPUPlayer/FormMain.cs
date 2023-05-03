@@ -41,8 +41,6 @@ namespace PPUPlayer
 
 		bool SimulationStarted = false;
 
-		Dictionary<string, List<LogicValue>> waves = new();
-
 		public FormMain()
 		{
 			InitializeComponent();

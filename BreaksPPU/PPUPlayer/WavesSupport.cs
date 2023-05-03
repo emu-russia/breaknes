@@ -7,6 +7,7 @@ namespace PPUPlayer
 {
 	public partial class FormMain : Form
 	{
+		Dictionary<string, List<LogicValue>> waves = new();
 
 		/// <summary>
 		/// Snatch Waves
@@ -47,6 +48,7 @@ namespace PPUPlayer
 		{
 			ValueChangeData[] vcd = new ValueChangeData[0];
 			wavesControl1.PlotWaves(vcd, 0);
+			waves = new();
 		}
 
 		private void UpdateWaves()

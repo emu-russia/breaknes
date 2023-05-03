@@ -238,7 +238,7 @@ namespace System.Windows.Forms
 		{
 			gr.Clear(FillColor);
 
-			if (Width == 0 || Height == 0 || !gdi_init)
+			if (Width == 0 || Height == 0 || !gdi_init || data.Length == 0)
 				return;
 
 			// Determine the width of the table with text labels and an indent at the top for the legend with timing
