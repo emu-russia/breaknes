@@ -59,6 +59,7 @@ namespace PPUPlayer
 			settings.PPU_Revision = "RP2C02G";
 			settings.ResetPPU = false;
 			settings.RenderAlwaysEnabled = false;
+			settings.Visual2C02Mapping = false;
 			settings.ColorDebug = true;
 			settings.PpuRAWMode = false;
 			settings.FreeModeVMirroring = true;
@@ -104,6 +105,11 @@ namespace PPUPlayer
 			[Category("Debug")]
 			[Description("Show color in the VRAM/Objects viewer. The CRAM currently in use will be loaded.")]
 			public bool ColorDebug { get; set; }
+
+			[XmlElement]
+			[Category("Debug")]
+			[Description("Enable the signal names from Visual2C02 instead of the Breaks names.")]
+			public bool Visual2C02Mapping { get; set; }
 
 			[XmlElement]
 			[Category("Board Features")]

@@ -247,6 +247,8 @@ namespace PPUPlayer
 			BreaksCore.GetPpuSignalFeatures(out features);
 			//wavesControl1.EnabledDottedEveryNth(features.SamplesPerPCLK, true);
 
+			BreaksCore.Visual2C02Mapping = settings.Visual2C02Mapping;
+
 			SimulationStarted = true;
 		}
 
@@ -514,6 +516,7 @@ namespace PPUPlayer
 				// TBD: Works unstable, sometimes loses phase (need to make a neater PLL)
 				ResetVisualize(settings.PpuRAWMode);
 			}
+			BreaksCore.Visual2C02Mapping = settings.Visual2C02Mapping;
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)

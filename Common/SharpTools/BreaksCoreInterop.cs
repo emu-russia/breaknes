@@ -442,8 +442,11 @@ namespace SharpTools
 							break;
 						}
 					}
-					
-					if (Visual2C02Mapping) entry.name = Visual2C02.ToVisual2C02(entry.name);
+
+					if (type == DebugInfoType.DebugInfoType_PPU)
+					{
+						if (Visual2C02Mapping) entry.name = Visual2C02.ToVisual2C02(entry.name);
+					}
 
 					entry.bits = raw.bits;
 					entry.value = raw.value;
@@ -479,7 +482,10 @@ namespace SharpTools
 		{
 			DebugInfoEntryRaw entry = new();
 
-			if (Visual2C02Mapping) name = Visual2C02.FromVisual2C02(name);
+			if (type == DebugInfoType.DebugInfoType_PPU)
+			{
+				if (Visual2C02Mapping) name = Visual2C02.FromVisual2C02(name);
+			}
 
 			unsafe
 			{
@@ -506,7 +512,10 @@ namespace SharpTools
 		{
 			DebugInfoEntryRaw entry = new();
 
-			if (Visual2C02Mapping) name = Visual2C02.FromVisual2C02(name);
+			if (type == DebugInfoType.DebugInfoType_PPU)
+			{
+				if (Visual2C02Mapping) name = Visual2C02.FromVisual2C02(name);
+			}
 
 			unsafe
 			{

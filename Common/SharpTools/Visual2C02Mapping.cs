@@ -376,11 +376,19 @@ class Visual2C02
 
     public static string FromVisual2C02 (string name)
 	{
-        return mappingFrom[name];
+        if (mappingFrom.ContainsKey(name))
+        {
+            return mappingFrom[name];
+        }
+        else return name;
 	}
 
 	public static string ToVisual2C02 (string name)
 	{
-        return mappingTo[name];
+        if (mappingTo.ContainsKey(name))
+        {
+            return mappingTo[name];
+        }
+        else return name;
 	}
 }
