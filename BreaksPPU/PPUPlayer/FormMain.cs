@@ -233,22 +233,6 @@ namespace PPUPlayer
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
 
-			// Prepare tracing
-
-			TraceEnabled = settings.TraceEnable;
-			TraceMaxFields = settings.TraceMaxFields;
-			if (settings.TraceFilter != null)
-			{
-				TraceFilter = settings.TraceFilter;
-			}
-			else
-			{
-				TraceFilter = "";
-			}
-			TraceCollapseSameRows = settings.TraceCollapseSameRows;
-			SetTraceTimeResolutionNanos(settings.TraceTimeScale);
-			ResetTrace(TraceMaxFields);
-
 			// Set the next CPU operation and start the simulation.
 
 			if (TotalOps != 0)
@@ -644,6 +628,16 @@ namespace PPUPlayer
 				FormComponentViewer formComponentViewer = new FormComponentViewer(openFileDialogHEX.FileName);
 				formComponentViewer.Show();
 			}
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void toolStripButton5_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

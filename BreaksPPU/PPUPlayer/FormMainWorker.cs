@@ -49,11 +49,6 @@ namespace PPUPlayer
 
 				BreaksCore.Step();
 
-				if (TraceEnabled)
-				{
-					ProcessTrace(scanCounter);
-				}
-
 				// Logic related to the processing of H/V values
 
 				int h = BreaksCore.GetHCounter();

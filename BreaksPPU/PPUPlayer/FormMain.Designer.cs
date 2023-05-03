@@ -196,14 +196,12 @@
 			saveTraceInLogisimFormatToolStripMenuItem.Name = "saveTraceInLogisimFormatToolStripMenuItem";
 			saveTraceInLogisimFormatToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			saveTraceInLogisimFormatToolStripMenuItem.Text = "Save Trace in Logisim format...";
-			saveTraceInLogisimFormatToolStripMenuItem.Click += saveTraceInLogisimFormatToolStripMenuItem_Click;
 			// 
 			// saveTraceInVCDFormatToolStripMenuItem
 			// 
 			saveTraceInVCDFormatToolStripMenuItem.Name = "saveTraceInVCDFormatToolStripMenuItem";
 			saveTraceInVCDFormatToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
 			saveTraceInVCDFormatToolStripMenuItem.Text = "Save Trace in VCD format...";
-			saveTraceInVCDFormatToolStripMenuItem.Click += saveTraceInVCDFormatToolStripMenuItem_Click;
 			// 
 			// saveFieldAsImageToolStripMenuItem
 			// 
@@ -843,7 +841,6 @@
 			comboBoxTraceField.Name = "comboBoxTraceField";
 			comboBoxTraceField.Size = new System.Drawing.Size(70, 23);
 			comboBoxTraceField.TabIndex = 3;
-			comboBoxTraceField.SelectedIndexChanged += comboBoxTraceField_SelectedIndexChanged;
 			// 
 			// label2
 			// 
@@ -862,7 +859,6 @@
 			comboBoxTraceScan.Name = "comboBoxTraceScan";
 			comboBoxTraceScan.Size = new System.Drawing.Size(70, 23);
 			comboBoxTraceScan.TabIndex = 1;
-			comboBoxTraceScan.SelectedIndexChanged += comboBoxTraceScan_SelectedIndexChanged;
 			// 
 			// label1
 			// 

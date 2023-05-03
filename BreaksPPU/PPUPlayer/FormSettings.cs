@@ -58,12 +58,7 @@ namespace PPUPlayer
 
 			settings.PPU_Revision = "RP2C02G";
 			settings.ResetPPU = false;
-			settings.TraceEnable = false;
-			settings.TraceMaxFields = 2;
-			settings.TraceFilter = "";
-			settings.TraceCollapseSameRows = true;
 			settings.RenderAlwaysEnabled = false;
-			settings.TraceTimeScale = 23;   // ns
 			settings.ColorDebug = true;
 			settings.PpuRAWMode = false;
 			settings.FreeModeVMirroring = true;
@@ -102,33 +97,8 @@ namespace PPUPlayer
 
 			[XmlElement]
 			[Category("Debug")]
-			[Description("Enable tracing. Trace starts collecting immediately after the PPU starts. After stopping the trace is cleared. History is stored for no more than the specified number of Fields.")]
-			public bool TraceEnable { get; set; }
-
-			[XmlElement]
-			[Category("Debug")]
-			[Description("The number of full Fields for signal tracing. When the trace history is full, it is automatically cleared.")]
-			public int TraceMaxFields { get; set; }
-
-			[XmlElement]
-			[Category("Debug")]
-			[Description("Specify with ; only necessary signals for tracing. If no filter is specified, all signals will be traced.")]
-			public string? TraceFilter { get; set; }
-
-			[XmlElement]
-			[Category("Debug")]
-			[Description("Merge neighboring trace rows if signal values have not changed.")]
-			public bool TraceCollapseSameRows { get; set; }
-
-			[XmlElement]
-			[Category("Debug")]
 			[Description("Forcibly enable rendering ($2001[3] = $2001[4] always returns as 1). Used for debugging PPU signals, when the CPU I/F register dump is limited, or when you want to get faster simulation results. Keep in mind that with permanently enabled rendering the PPU becomes unstable and this hack should be applied when you know what you're doing.")]
 			public bool RenderAlwaysEnabled { get; set; }
-
-			[XmlElement]
-			[Category("Debug")]
-			[Description("Trace sampling resolution in nanoseconds. A typical interval is 1 half-cycle NTSC PPU lasting 23 nanoseconds. Used in the VCD dump.")]
-			public int TraceTimeScale { get; set; }
 
 			[XmlElement]
 			[Category("Debug")]
