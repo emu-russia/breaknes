@@ -282,6 +282,8 @@ namespace PPUPlayer
 			SimulationStarted = false;
 
 			signalPlotScan.EnableSelection(false);
+			
+			wavesControl1.EnableSelection(false);
 			ResetWaves();
 			waves = new();
 		}
@@ -353,6 +355,7 @@ namespace PPUPlayer
 					toolStripButton3.Checked = false;
 				}
 				signalPlotScan.EnableSelection(Paused);
+				wavesControl1.EnableSelection(Paused);
 			}
 		}
 
@@ -637,7 +640,7 @@ namespace PPUPlayer
 		/// </summary>
 		private void DoDebugStep()
 		{
-			if (Paused && !DebugStep)
+			if (SimulationStarted && Paused && !DebugStep)
 			{
 				DebugStep = true;
 			}
@@ -648,63 +651,6 @@ namespace PPUPlayer
 			DoDebugStep();
 		}
 
-		/// <summary>
-		/// Snatch Waves
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void toolStripButton5_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void ResetWaves()
-		{
-			ValueChangeData[] vcd = new ValueChangeData[0];
-			wavesControl1.PlotWaves(vcd, 0);
-		}
-
-		private void UpdateWaves()
-		{
-			// Update dump
-
-			var info = BreaksCore.GetDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_PPU);
-			foreach (var entry in info)
-			{
-				if (entry.bits == 1 && entry.category == BreaksCore.PPU_FSM_CATEGORY)
-				{
-					if (!waves.ContainsKey(entry.name))
-					{
-						waves.Add(entry.name, new List<LogicValue>());
-					}
-					waves[entry.name].Add(ToLogicValue((byte)entry.value));
-				}
-			}
-
-			// Update waves control
-
-			ValueChangeData[] vcd = new ValueChangeData[waves.Count];
-
-			int i = 0;
-			foreach (var signal in waves.Keys)
-			{
-				vcd[i] = new ValueChangeData();
-				vcd[i].name = signal;
-				vcd[i].values = waves[signal].ToArray();
-				i++;
-			}
-
-			wavesControl1.PlotWaves(vcd, 0);
-		}
-
-		private LogicValue ToLogicValue(byte val)
-		{
-			if (val == 0) return LogicValue.Zero;
-			else if (val == 1) return LogicValue.One;
-			else if (val == 0xff) return LogicValue.Z;
-			else return LogicValue.X;
-		}
-
 		private void FormMain_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.F11)
@@ -712,5 +658,6 @@ namespace PPUPlayer
 				DoDebugStep();
 			}
 		}
+
 	}
 }

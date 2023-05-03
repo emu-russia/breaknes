@@ -31,7 +31,13 @@
     <Compile Update="FormSnatch.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormSnatchWaves.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="VideoProcessing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="WavesSupport.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

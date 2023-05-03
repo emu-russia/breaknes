@@ -118,6 +118,7 @@
 			openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
 			openFileDialogRegdump = new System.Windows.Forms.OpenFileDialog();
+			toolStripButton6 = new System.Windows.Forms.ToolStripButton();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
@@ -824,7 +825,7 @@
 			// 
 			// toolStrip3
 			// 
-			toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton5 });
+			toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton5, toolStripButton6 });
 			toolStrip3.Location = new System.Drawing.Point(0, 0);
 			toolStrip3.Name = "toolStrip3";
 			toolStrip3.Size = new System.Drawing.Size(555, 25);
@@ -891,6 +892,16 @@
 			// 
 			openFileDialogRegdump.DefaultExt = "bin";
 			openFileDialogRegdump.Filter = "Register Dump files|*.bin;*.regdump|All files|*.*";
+			// 
+			// toolStripButton6
+			// 
+			toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton6.Image = (System.Drawing.Image)resources.GetObject("toolStripButton6.Image");
+			toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton6.Name = "toolStripButton6";
+			toolStripButton6.Size = new System.Drawing.Size(38, 22);
+			toolStripButton6.Text = "Clear";
+			toolStripButton6.Click += toolStripButton6_Click;
 			// 
 			// FormMain
 			// 
@@ -1036,5 +1047,6 @@
 		private System.Windows.Forms.WavesControl wavesControl1;
 		private System.Windows.Forms.ToolStrip toolStrip3;
 		private System.Windows.Forms.ToolStripButton toolStripButton5;
+		private System.Windows.Forms.ToolStripButton toolStripButton6;
 	}
 }
