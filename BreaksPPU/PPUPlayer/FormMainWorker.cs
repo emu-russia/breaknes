@@ -113,10 +113,10 @@ namespace PPUPlayer
 				// Show statistics that are updated once every 1 second.
 
 				StepsCounter++;
-				if (StepsCounter >= StepsToStat)
+				if (StepsCounter >= StepsToStat || Paused)
 				{
 					long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-					if (now > (timeStamp + 1000))
+					if (now > (timeStamp + 1000) || Paused)
 					{
 						timeStamp = now;
 
@@ -130,6 +130,7 @@ namespace PPUPlayer
 						UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
 
 						pclkCounter = BreaksCore.GetPCLKCounter();
+						UpdatePpuStats(PPUStats.PCLKCounter, pclkCounter);
 						fieldCounter = 0;
 					}
 					StepsCounter = 0;

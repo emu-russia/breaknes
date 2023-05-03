@@ -54,6 +54,7 @@ namespace PPUPlayer
 
 			pictureBoxField.BackColor = Color.Gray;
 			toolStripButton3.Enabled = false;
+			button3.Enabled = false;
 			comboBox2.SelectedIndex = 0;
 
 			DefaultTitle = this.Text;
@@ -290,6 +291,7 @@ namespace PPUPlayer
 		enum PPUStats
 		{
 			CPU_IF_Ops,
+			PCLKCounter,
 			Scans,
 			Fields,
 			PCLK_Sec,
@@ -310,18 +312,22 @@ namespace PPUPlayer
 			PrevV = -1;
 
 			UpdatePpuStats(PPUStats.CPU_IF_Ops, 0);
+			UpdatePpuStats(PPUStats.PCLKCounter, 0);
 			UpdatePpuStats(PPUStats.Scans, 0);
 			UpdatePpuStats(PPUStats.Fields, 0);
 			UpdatePpuStats(PPUStats.PCLK_Sec, 0);
 			UpdatePpuStats(PPUStats.FPS, 0);
 		}
 
-		void UpdatePpuStats(PPUStats stats, int value)
+		void UpdatePpuStats(PPUStats stats, long value)
 		{
 			switch (stats)
 			{
 				case PPUStats.CPU_IF_Ops:
 					toolStripStatusLabel6.Text = value.ToString() + "/" + TotalOps.ToString();
+					break;
+				case PPUStats.PCLKCounter:
+					toolStripStatusLabel5.Text = value.ToString();
 					break;
 				case PPUStats.Scans:
 					toolStripStatusLabel7.Text = value.ToString();
@@ -354,6 +360,7 @@ namespace PPUPlayer
 				}
 				signalPlotScan.EnableSelection(Paused);
 				wavesControl1.EnableSelection(Paused);
+				button3.Enabled = Paused;
 			}
 		}
 

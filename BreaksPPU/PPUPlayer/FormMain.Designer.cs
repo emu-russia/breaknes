@@ -109,16 +109,6 @@
 			toolStrip3 = new System.Windows.Forms.ToolStrip();
 			toolStripButton5 = new System.Windows.Forms.ToolStripButton();
 			toolStripButton6 = new System.Windows.Forms.ToolStripButton();
-			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-			openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
-			backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-			saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-			saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
-			saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
-			openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
-			openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
-			saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
-			openFileDialogRegdump = new System.Windows.Forms.OpenFileDialog();
 			toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
 			toolStripButton7 = new System.Windows.Forms.ToolStripButton();
 			toolStripButton8 = new System.Windows.Forms.ToolStripButton();
@@ -131,6 +121,18 @@
 			toolStripButton15 = new System.Windows.Forms.ToolStripButton();
 			toolStripButton16 = new System.Windows.Forms.ToolStripButton();
 			toolStripButton17 = new System.Windows.Forms.ToolStripButton();
+			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
+			backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+			saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+			saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
+			saveFileDialogVCD = new System.Windows.Forms.SaveFileDialog();
+			openFileDialogPPUDump = new System.Windows.Forms.OpenFileDialog();
+			openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
+			saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
+			openFileDialogRegdump = new System.Windows.Forms.OpenFileDialog();
+			toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+			toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
@@ -416,7 +418,7 @@
 			// 
 			// statusStrip1
 			// 
-			statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel6, toolStripStatusLabel2, toolStripStatusLabel7, toolStripStatusLabel3, toolStripStatusLabel8, toolStripStatusLabel11, toolStripStatusLabel12, toolStripStatusLabel13, toolStripStatusLabel14 });
+			statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel6, toolStripStatusLabel4, toolStripStatusLabel5, toolStripStatusLabel2, toolStripStatusLabel7, toolStripStatusLabel3, toolStripStatusLabel8, toolStripStatusLabel11, toolStripStatusLabel12, toolStripStatusLabel13, toolStripStatusLabel14 });
 			statusStrip1.Location = new System.Drawing.Point(0, 527);
 			statusStrip1.Name = "statusStrip1";
 			statusStrip1.Size = new System.Drawing.Size(1047, 24);
@@ -544,7 +546,7 @@
 			tabPage1.Location = new System.Drawing.Point(4, 24);
 			tabPage1.Name = "tabPage1";
 			tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			tabPage1.Size = new System.Drawing.Size(850, 436);
+			tabPage1.Size = new System.Drawing.Size(1039, 436);
 			tabPage1.TabIndex = 0;
 			tabPage1.Text = "Field";
 			tabPage1.UseVisualStyleBackColor = true;
@@ -554,7 +556,7 @@
 			pictureBoxField.Dock = System.Windows.Forms.DockStyle.Fill;
 			pictureBoxField.Location = new System.Drawing.Point(3, 3);
 			pictureBoxField.Name = "pictureBoxField";
-			pictureBoxField.Size = new System.Drawing.Size(844, 430);
+			pictureBoxField.Size = new System.Drawing.Size(1033, 430);
 			pictureBoxField.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			pictureBoxField.TabIndex = 0;
 			pictureBoxField.TabStop = false;
@@ -565,7 +567,7 @@
 			tabPage2.Controls.Add(toolStrip2);
 			tabPage2.Location = new System.Drawing.Point(4, 24);
 			tabPage2.Name = "tabPage2";
-			tabPage2.Size = new System.Drawing.Size(850, 436);
+			tabPage2.Size = new System.Drawing.Size(1039, 436);
 			tabPage2.TabIndex = 1;
 			tabPage2.Text = "Current Scan";
 			tabPage2.UseVisualStyleBackColor = true;
@@ -584,7 +586,7 @@
 			signalPlotScan.Name = "signalPlotScan";
 			signalPlotScan.SelectionColor = System.Drawing.Color.GhostWhite;
 			signalPlotScan.SignalColor = System.Drawing.Color.LightGreen;
-			signalPlotScan.Size = new System.Drawing.Size(850, 411);
+			signalPlotScan.Size = new System.Drawing.Size(1039, 411);
 			signalPlotScan.TabIndex = 2;
 			signalPlotScan.Text = "signalPlot1";
 			signalPlotScan.ZeroColor = System.Drawing.Color.Red;
@@ -594,7 +596,7 @@
 			toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton4 });
 			toolStrip2.Location = new System.Drawing.Point(0, 0);
 			toolStrip2.Name = "toolStrip2";
-			toolStrip2.Size = new System.Drawing.Size(850, 25);
+			toolStrip2.Size = new System.Drawing.Size(1039, 25);
 			toolStrip2.TabIndex = 1;
 			toolStrip2.Text = "toolStrip2";
 			// 
@@ -760,7 +762,7 @@
 			tabPage5.Location = new System.Drawing.Point(4, 24);
 			tabPage5.Name = "tabPage5";
 			tabPage5.Padding = new System.Windows.Forms.Padding(3);
-			tabPage5.Size = new System.Drawing.Size(555, 362);
+			tabPage5.Size = new System.Drawing.Size(682, 362);
 			tabPage5.TabIndex = 1;
 			tabPage5.Text = "Human";
 			tabPage5.UseVisualStyleBackColor = true;
@@ -771,7 +773,7 @@
 			pictureBoxForHuman.Dock = System.Windows.Forms.DockStyle.Fill;
 			pictureBoxForHuman.Location = new System.Drawing.Point(3, 3);
 			pictureBoxForHuman.Name = "pictureBoxForHuman";
-			pictureBoxForHuman.Size = new System.Drawing.Size(549, 356);
+			pictureBoxForHuman.Size = new System.Drawing.Size(676, 356);
 			pictureBoxForHuman.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			pictureBoxForHuman.TabIndex = 2;
 			pictureBoxForHuman.TabStop = false;
@@ -864,56 +866,6 @@
 			toolStripButton6.Size = new System.Drawing.Size(38, 22);
 			toolStripButton6.Text = "Clear";
 			toolStripButton6.Click += toolStripButton6_Click;
-			// 
-			// openFileDialog1
-			// 
-			openFileDialog1.DefaultExt = "bin";
-			openFileDialog1.Filter = "Binary files|*.bin|Logisim HEX files|*.hex|All files|*.*";
-			// 
-			// openFileDialog2
-			// 
-			openFileDialog2.DefaultExt = "nes";
-			openFileDialog2.Filter = "NES files|*.nes|All files|*.*";
-			// 
-			// backgroundWorker1
-			// 
-			backgroundWorker1.WorkerSupportsCancellation = true;
-			backgroundWorker1.DoWork += backgroundWorker1_DoWork_1;
-			// 
-			// saveFileDialog1
-			// 
-			saveFileDialog1.DefaultExt = "bin";
-			saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
-			// 
-			// saveFileDialog2
-			// 
-			saveFileDialog2.DefaultExt = "txt";
-			saveFileDialog2.Filter = "Text files|*.txt|All files|*.*";
-			// 
-			// saveFileDialogVCD
-			// 
-			saveFileDialogVCD.DefaultExt = "vcd";
-			saveFileDialogVCD.Filter = "VCD files|*.vcd|All files|*.vcd";
-			// 
-			// openFileDialogPPUDump
-			// 
-			openFileDialogPPUDump.DefaultExt = "ppumem";
-			openFileDialogPPUDump.Filter = "PPU Dump Files|*.ppumem|All files|*.*";
-			// 
-			// openFileDialogHEX
-			// 
-			openFileDialogHEX.DefaultExt = "hex";
-			openFileDialogHEX.Filter = "Logisim Hex files|*.hex|All files|*.*";
-			// 
-			// saveFileDialogImage
-			// 
-			saveFileDialogImage.DefaultExt = "bmp";
-			saveFileDialogImage.Filter = "Bitmap file|*.bmp|All files|*.*";
-			// 
-			// openFileDialogRegdump
-			// 
-			openFileDialogRegdump.DefaultExt = "bin";
-			openFileDialogRegdump.Filter = "Register Dump files|*.bin;*.regdump|All files|*.*";
 			// 
 			// toolStripSeparator6
 			// 
@@ -1033,6 +985,69 @@
 			toolStripButton17.Size = new System.Drawing.Size(41, 22);
 			toolStripButton17.Text = "Other";
 			toolStripButton17.Click += toolStripButton17_Click;
+			// 
+			// openFileDialog1
+			// 
+			openFileDialog1.DefaultExt = "bin";
+			openFileDialog1.Filter = "Binary files|*.bin|Logisim HEX files|*.hex|All files|*.*";
+			// 
+			// openFileDialog2
+			// 
+			openFileDialog2.DefaultExt = "nes";
+			openFileDialog2.Filter = "NES files|*.nes|All files|*.*";
+			// 
+			// backgroundWorker1
+			// 
+			backgroundWorker1.WorkerSupportsCancellation = true;
+			backgroundWorker1.DoWork += backgroundWorker1_DoWork_1;
+			// 
+			// saveFileDialog1
+			// 
+			saveFileDialog1.DefaultExt = "bin";
+			saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
+			// 
+			// saveFileDialog2
+			// 
+			saveFileDialog2.DefaultExt = "txt";
+			saveFileDialog2.Filter = "Text files|*.txt|All files|*.*";
+			// 
+			// saveFileDialogVCD
+			// 
+			saveFileDialogVCD.DefaultExt = "vcd";
+			saveFileDialogVCD.Filter = "VCD files|*.vcd|All files|*.vcd";
+			// 
+			// openFileDialogPPUDump
+			// 
+			openFileDialogPPUDump.DefaultExt = "ppumem";
+			openFileDialogPPUDump.Filter = "PPU Dump Files|*.ppumem|All files|*.*";
+			// 
+			// openFileDialogHEX
+			// 
+			openFileDialogHEX.DefaultExt = "hex";
+			openFileDialogHEX.Filter = "Logisim Hex files|*.hex|All files|*.*";
+			// 
+			// saveFileDialogImage
+			// 
+			saveFileDialogImage.DefaultExt = "bmp";
+			saveFileDialogImage.Filter = "Bitmap file|*.bmp|All files|*.*";
+			// 
+			// openFileDialogRegdump
+			// 
+			openFileDialogRegdump.DefaultExt = "bin";
+			openFileDialogRegdump.Filter = "Register Dump files|*.bin;*.regdump|All files|*.*";
+			// 
+			// toolStripStatusLabel4
+			// 
+			toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+			toolStripStatusLabel4.Size = new System.Drawing.Size(74, 19);
+			toolStripStatusLabel4.Text = "PCLK Count:";
+			// 
+			// toolStripStatusLabel5
+			// 
+			toolStripStatusLabel5.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+			toolStripStatusLabel5.Size = new System.Drawing.Size(17, 19);
+			toolStripStatusLabel5.Text = "0";
 			// 
 			// FormMain
 			// 
@@ -1192,5 +1207,7 @@
 		private System.Windows.Forms.ToolStripButton toolStripButton15;
 		private System.Windows.Forms.ToolStripButton toolStripButton16;
 		private System.Windows.Forms.ToolStripButton toolStripButton17;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
 	}
 }

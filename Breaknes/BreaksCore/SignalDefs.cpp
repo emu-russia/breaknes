@@ -241,10 +241,10 @@ namespace Breaknes
 	size_t apu_regs_count = sizeof(apu_regs) / sizeof(apu_regs[0]);
 
 	SignalOffsetPair ppu_clks_signals[] = {
-		"CLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLK), 1,
 		"/CLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_CLK), 1,
-		"PCLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PCLK), 1,
+		"CLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::CLK), 1,
 		"/PCLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::n_PCLK), 1,
+		"PCLK", offsetof(PPUSim::PPU_Interconnects, PPUSim::PPU_Interconnects::PCLK), 1,
 	};
 	size_t ppu_clks_signals_count = sizeof(ppu_clks_signals) / sizeof(ppu_clks_signals[0]);
 
