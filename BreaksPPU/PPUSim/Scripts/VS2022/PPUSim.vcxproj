@@ -27,7 +27,6 @@
     <ClCompile Include="..\..\fsm.cpp" />
     <ClCompile Include="..\..\hv.cpp" />
     <ClCompile Include="..\..\hv_decoder.cpp" />
-    <ClCompile Include="..\..\log.cpp" />
     <ClCompile Include="..\..\mux.cpp" />
     <ClCompile Include="..\..\oam.cpp" />
     <ClCompile Include="..\..\par.cpp" />
@@ -55,7 +54,6 @@
     <ClInclude Include="..\..\fsm.h" />
     <ClInclude Include="..\..\hv.h" />
     <ClInclude Include="..\..\hv_decoder.h" />
-    <ClInclude Include="..\..\log.h" />
     <ClInclude Include="..\..\mux.h" />
     <ClInclude Include="..\..\oam.h" />
     <ClInclude Include="..\..\par.h" />

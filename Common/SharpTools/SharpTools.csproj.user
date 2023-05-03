@@ -11,5 +11,8 @@
     <Compile Update="SignalPlotControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="WavesControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using Be.Windows.Forms;
 using SharpToolsCustomClass;
 using SharpTools;
+using System.ComponentModel.Design;
 
 namespace PPUPlayer
 {
@@ -22,8 +23,6 @@ namespace PPUPlayer
 		int CPUOpsProcessed = 0;
 		int TotalOps = 0;
 
-		bool Paused = false;
-
 		bool PromptWhenFinished = true;
 
 		long timeStamp;
@@ -37,11 +36,6 @@ namespace PPUPlayer
 
 		List<BreaksCore.MemDesciptor> mem = new();
 		DataHumanizer humanizer = new();
-
-		bool TraceEnabled = false;
-		int TraceMaxFields = 0;
-		string TraceFilter = "";
-		bool TraceCollapseSameRows = true;
 
 		string DefaultTitle;
 
@@ -60,6 +54,7 @@ namespace PPUPlayer
 
 			pictureBoxField.BackColor = Color.Gray;
 			toolStripButton3.Enabled = false;
+			button3.Enabled = false;
 			comboBox2.SelectedIndex = 0;
 
 			DefaultTitle = this.Text;
@@ -233,22 +228,6 @@ namespace PPUPlayer
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
 
-			// Prepare tracing
-
-			TraceEnabled = settings.TraceEnable;
-			TraceMaxFields = settings.TraceMaxFields;
-			if (settings.TraceFilter != null)
-			{
-				TraceFilter = settings.TraceFilter;
-			}
-			else
-			{
-				TraceFilter = "";
-			}
-			TraceCollapseSameRows = settings.TraceCollapseSameRows;
-			SetTraceTimeResolutionNanos(settings.TraceTimeScale);
-			ResetTrace(TraceMaxFields);
-
 			// Set the next CPU operation and start the simulation.
 
 			if (TotalOps != 0)
@@ -263,6 +242,12 @@ namespace PPUPlayer
 					"The trace history of PPU register accesses does not contain any data.",
 					"Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
+
+			BreaksCore.VideoSignalFeatures features;
+			BreaksCore.GetPpuSignalFeatures(out features);
+			//wavesControl1.EnabledDottedEveryNth(features.SamplesPerPCLK, true);
+
+			BreaksCore.Visual2C02Mapping = settings.Visual2C02Mapping;
 
 			SimulationStarted = true;
 		}
@@ -298,12 +283,17 @@ namespace PPUPlayer
 			SimulationStarted = false;
 
 			signalPlotScan.EnableSelection(false);
+
+			wavesControl1.EnableSelection(false);
+			ResetWaves();
+			waves = new();
 		}
 
 
 		enum PPUStats
 		{
 			CPU_IF_Ops,
+			PCLKCounter,
 			Scans,
 			Fields,
 			PCLK_Sec,
@@ -324,18 +314,22 @@ namespace PPUPlayer
 			PrevV = -1;
 
 			UpdatePpuStats(PPUStats.CPU_IF_Ops, 0);
+			UpdatePpuStats(PPUStats.PCLKCounter, 0);
 			UpdatePpuStats(PPUStats.Scans, 0);
 			UpdatePpuStats(PPUStats.Fields, 0);
 			UpdatePpuStats(PPUStats.PCLK_Sec, 0);
 			UpdatePpuStats(PPUStats.FPS, 0);
 		}
 
-		void UpdatePpuStats(PPUStats stats, int value)
+		void UpdatePpuStats(PPUStats stats, long value)
 		{
 			switch (stats)
 			{
 				case PPUStats.CPU_IF_Ops:
 					toolStripStatusLabel6.Text = value.ToString() + "/" + TotalOps.ToString();
+					break;
+				case PPUStats.PCLKCounter:
+					toolStripStatusLabel5.Text = value.ToString();
 					break;
 				case PPUStats.Scans:
 					toolStripStatusLabel7.Text = value.ToString();
@@ -367,6 +361,8 @@ namespace PPUPlayer
 					toolStripButton3.Checked = false;
 				}
 				signalPlotScan.EnableSelection(Paused);
+				wavesControl1.EnableSelection(Paused);
+				button3.Enabled = Paused;
 			}
 		}
 
@@ -520,6 +516,7 @@ namespace PPUPlayer
 				// TBD: Works unstable, sometimes loses phase (need to make a neater PLL)
 				ResetVisualize(settings.PpuRAWMode);
 			}
+			BreaksCore.Visual2C02Mapping = settings.Visual2C02Mapping;
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -645,5 +642,30 @@ namespace PPUPlayer
 				formComponentViewer.Show();
 			}
 		}
+
+		/// <summary>
+		/// Debug Step. Only in Paused mode
+		/// </summary>
+		private void DoDebugStep()
+		{
+			if (SimulationStarted && Paused && !DebugStep)
+			{
+				DebugStep = true;
+			}
+		}
+
+		private void button3_Click_1(object sender, EventArgs e)
+		{
+			DoDebugStep();
+		}
+
+		private void FormMain_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.F11)
+			{
+				DoDebugStep();
+			}
+		}
+
 	}
 }

@@ -5,18 +5,7 @@
 using namespace BaseLogic;
 
 #define WRAM_NAME "WRAM"
-#define CORE_WIRES_CATEGORY "Core Wires"
-#define CORE_REGS_CATEGORY "Core Regs"
-#define APU_WIRES_CATEGORY "APU Wires"
-#define APU_REGS_CATEGORY "APU Regs"
 #define VRAM_NAME "VRAM"
-#define CRAM_NAME "Color RAM"
-#define OAM_NAME "OAM"
-#define OAM2_NAME "Temp OAM"
-#define PPU_WIRES_CATEGORY "PPU Wires"
-#define PPU_FSM_CATEGORY "PPU FSM"
-#define PPU_EVAL_CATEGORY "PPU Eval"
-#define PPU_REGS_CATEGORY "PPU Regs"
 #define BOARD_CATEGORY "Board"
 
 #define CRAM_SIZE (16+16)
@@ -125,21 +114,105 @@ namespace Breaknes
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APURegs, entry, GetApuRegsDebugInfo, SetApuRegsDebugInfo, this);
 		}
 
-		for (size_t n = 0; n < ppu_wires_count; n++)
+		for (size_t n = 0; n < ppu_clks_signals_count; n++)
 		{
-			SignalOffsetPair* sp = &ppu_wires[n];
+			SignalOffsetPair* sp = &ppu_clks_signals[n];
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy(entry->category, PPU_WIRES_CATEGORY);
+			strcpy(entry->category, PPU_CLKS_CATEGORY);
 			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
 		}
 
-		for (size_t n = 0; n < fsm_signals_count; n++)
+		for (size_t n = 0; n < ppu_cpu_signals_count; n++)
 		{
-			SignalOffsetPair* sp = &fsm_signals[n];
+			SignalOffsetPair* sp = &ppu_cpu_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, PPU_CPU_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < ppu_ctrl_signals_count; n++)
+		{
+			SignalOffsetPair* sp = &ppu_ctrl_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, PPU_CTRL_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < ppu_hv_signals_count; n++)
+		{
+			SignalOffsetPair* sp = &ppu_hv_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, PPU_HV_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < ppu_mux_signals_count; n++)
+		{
+			SignalOffsetPair* sp = &ppu_mux_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, PPU_MUX_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < ppu_spg_signals_count; n++)
+		{
+			SignalOffsetPair* sp = &ppu_spg_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, PPU_SPG_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < ppu_cram_signals_count; n++)
+		{
+			SignalOffsetPair* sp = &ppu_cram_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, PPU_CRAM_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < ppu_vram_signals_count; n++)
+		{
+			SignalOffsetPair* sp = &ppu_vram_signals[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, PPU_VRAM_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < ppu_fsm_signals_count; n++)
+		{
+			SignalOffsetPair* sp = &ppu_fsm_signals[n];
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
@@ -149,13 +222,25 @@ namespace Breaknes
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
 		}
 
-		for (size_t n = 0; n < eval_signals_count; n++)
+		for (size_t n = 0; n < ppu_eval_signals_count; n++)
 		{
-			SignalOffsetPair* sp = &eval_signals[n];
+			SignalOffsetPair* sp = &ppu_eval_signals[n];
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
 			strcpy(entry->category, PPU_EVAL_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < ppu_wires_count; n++)
+		{
+			SignalOffsetPair* sp = &ppu_wires[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, PPU_WIRES_CATEGORY);
 			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_PPU, entry, GetPpuDebugInfo, SetPpuDebugInfo, this);
@@ -362,11 +447,130 @@ namespace Breaknes
 	{
 		NESBoard* board = (NESBoard*)opaque;
 
-		if (!strcmp(entry->category, PPU_WIRES_CATEGORY))
+		if (!strcmp(entry->category, PPU_CLKS_CATEGORY))
 		{
-			for (size_t n = 0; n < ppu_wires_count; n++)
+			for (size_t n = 0; n < ppu_clks_signals_count; n++)
 			{
-				SignalOffsetPair* sp = &ppu_wires[n];
+				SignalOffsetPair* sp = &ppu_clks_signals[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					PPUSim::PPU_Interconnects wires{};
+					board->ppu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, PPU_CPU_CATEGORY))
+		{
+			for (size_t n = 0; n < ppu_cpu_signals_count; n++)
+			{
+				SignalOffsetPair* sp = &ppu_cpu_signals[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					PPUSim::PPU_Interconnects wires{};
+					board->ppu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, PPU_CTRL_CATEGORY))
+		{
+			for (size_t n = 0; n < ppu_ctrl_signals_count; n++)
+			{
+				SignalOffsetPair* sp = &ppu_ctrl_signals[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					PPUSim::PPU_Interconnects wires{};
+					board->ppu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, PPU_HV_CATEGORY))
+		{
+			for (size_t n = 0; n < ppu_hv_signals_count; n++)
+			{
+				SignalOffsetPair* sp = &ppu_hv_signals[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					PPUSim::PPU_Interconnects wires{};
+					board->ppu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, PPU_MUX_CATEGORY))
+		{
+			for (size_t n = 0; n < ppu_mux_signals_count; n++)
+			{
+				SignalOffsetPair* sp = &ppu_mux_signals[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					PPUSim::PPU_Interconnects wires{};
+					board->ppu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, PPU_SPG_CATEGORY))
+		{
+			for (size_t n = 0; n < ppu_spg_signals_count; n++)
+			{
+				SignalOffsetPair* sp = &ppu_spg_signals[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					PPUSim::PPU_Interconnects wires{};
+					board->ppu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, PPU_CRAM_CATEGORY))
+		{
+			for (size_t n = 0; n < ppu_cram_signals_count; n++)
+			{
+				SignalOffsetPair* sp = &ppu_cram_signals[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					PPUSim::PPU_Interconnects wires{};
+					board->ppu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, PPU_VRAM_CATEGORY))
+		{
+			for (size_t n = 0; n < ppu_vram_signals_count; n++)
+			{
+				SignalOffsetPair* sp = &ppu_vram_signals[n];
 
 				if (!strcmp(sp->name, entry->name))
 				{
@@ -381,9 +585,9 @@ namespace Breaknes
 
 		else if (!strcmp(entry->category, PPU_FSM_CATEGORY))
 		{
-			for (size_t n = 0; n < fsm_signals_count; n++)
+			for (size_t n = 0; n < ppu_fsm_signals_count; n++)
 			{
-				SignalOffsetPair* sp = &fsm_signals[n];
+				SignalOffsetPair* sp = &ppu_fsm_signals[n];
 
 				if (!strcmp(sp->name, entry->name))
 				{
@@ -398,14 +602,31 @@ namespace Breaknes
 
 		else if (!strcmp(entry->category, PPU_EVAL_CATEGORY))
 		{
-			for (size_t n = 0; n < eval_signals_count; n++)
+			for (size_t n = 0; n < ppu_eval_signals_count; n++)
 			{
-				SignalOffsetPair* sp = &eval_signals[n];
+				SignalOffsetPair* sp = &ppu_eval_signals[n];
 
 				if (!strcmp(sp->name, entry->name))
 				{
 					PPUSim::OAMEvalWires wires{};
 					board->ppu->GetDebugInfo_OAMEval(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, PPU_WIRES_CATEGORY))
+		{
+			for (size_t n = 0; n < ppu_wires_count; n++)
+			{
+				SignalOffsetPair* sp = &ppu_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					PPUSim::PPU_Interconnects wires{};
+					board->ppu->GetDebugInfo_Wires(wires);
 
 					uint8_t* ptr = (uint8_t*)&wires;
 					return ptr[sp->offset];

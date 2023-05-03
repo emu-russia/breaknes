@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using System.Runtime.InteropServices;
 using static SharpTools.CoreDebug;
+using System.DirectoryServices.ActiveDirectory;
+using System.Xml.Linq;
 
 namespace SharpTools
 {
@@ -258,22 +260,31 @@ namespace SharpTools
 			DebugInfoType_Cart,
 		};
 
-		public const string BANKED_SRAM_NAME = "BankedSRAM";
-		public const string WRAM_NAME = "WRAM";
 		public const string CORE_WIRES_CATEGORY = "Core Wires";
 		public const string CORE_REGS_CATEGORY = "Core Regs";
 		public const string APU_WIRES_CATEGORY = "APU Wires";
 		public const string APU_REGS_CATEGORY = "APU Regs";
-		public const string BOARD_CATEGORY = "Board";
-		public const string VRAM_NAME = "VRAM";
 		public const string CRAM_NAME = "Color RAM";
 		public const string OAM_NAME = "OAM";
 		public const string OAM2_NAME = "Temp OAM";
-		public const string CHR_ROM_NAME = "CHR-ROM";
-		public const string PPU_WIRES_CATEGORY = "PPU Wires";
+		public const string PPU_CLKS_CATEGORY = "PPU Clocks";
+		public const string PPU_CPU_CATEGORY = "PPU CPU I/F";
+		public const string PPU_CTRL_CATEGORY = "PPU CTRL";
+		public const string PPU_HV_CATEGORY = "PPU H/V";
+		public const string PPU_MUX_CATEGORY = "PPU MUX";
+		public const string PPU_SPG_CATEGORY = "PPU DataReader";    // aka Still Picture Generator
+		public const string PPU_CRAM_CATEGORY = "PPU CRAM";
+		public const string PPU_VRAM_CATEGORY = "PPU VRAM";
 		public const string PPU_FSM_CATEGORY = "PPU FSM";
 		public const string PPU_EVAL_CATEGORY = "PPU Eval";
+		public const string PPU_WIRES_CATEGORY = "PPU Wires";       // Uncategorized PPU tentacles
 		public const string PPU_REGS_CATEGORY = "PPU Regs";
+		
+		public const string BOARD_CATEGORY = "Board";
+		public const string BANKED_SRAM_NAME = "BankedSRAM";
+		public const string WRAM_NAME = "WRAM";
+		public const string VRAM_NAME = "VRAM";				// aka CIRAM
+		public const string CHR_ROM_NAME = "CHR-ROM";
 		public const string NROM_CATEGORY = "NROM";
 
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -432,6 +443,11 @@ namespace SharpTools
 						}
 					}
 
+					if (type == DebugInfoType.DebugInfoType_PPU)
+					{
+						if (Visual2C02Mapping) entry.name = Visual2C02.ToVisual2C02(entry.name);
+					}
+
 					entry.bits = raw.bits;
 					entry.value = raw.value;
 				}
@@ -466,6 +482,11 @@ namespace SharpTools
 		{
 			DebugInfoEntryRaw entry = new();
 
+			if (type == DebugInfoType.DebugInfoType_PPU)
+			{
+				if (Visual2C02Mapping) name = Visual2C02.FromVisual2C02(name);
+			}
+
 			unsafe
 			{
 				for (int i = 0; i < 32; i++)
@@ -491,6 +512,11 @@ namespace SharpTools
 		{
 			DebugInfoEntryRaw entry = new();
 
+			if (type == DebugInfoType.DebugInfoType_PPU)
+			{
+				if (Visual2C02Mapping) name = Visual2C02.FromVisual2C02(name);
+			}
+
 			unsafe
 			{
 				for (int i = 0; i < 32; i++)
@@ -511,5 +537,8 @@ namespace SharpTools
 
 			SetDebugInfoByName(type, ref entry);
 		}
+
+		public static bool Visual2A03Mapping = false;
+		public static bool Visual2C02Mapping = false;
 	}
 }

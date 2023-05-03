@@ -3,9 +3,6 @@
 using namespace BaseLogic;
 
 #define WRAM_NAME "WRAM"
-#define CORE_WIRES_CATEGORY "Core Wires"
-#define CORE_REGS_CATEGORY "Core Regs"
-#define BOARD_CATEGORY "Board"
 
 namespace Breaknes
 {

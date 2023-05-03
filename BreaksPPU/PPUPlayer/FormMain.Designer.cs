@@ -29,14 +29,11 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			menuStrip1 = new System.Windows.Forms.MenuStrip();
 			fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			choosePPURegsDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			choosenesImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-			saveTraceInLogisimFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			saveTraceInVCDFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			saveFieldAsImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,6 +96,7 @@
 			comboBox2 = new System.Windows.Forms.ComboBox();
 			propertyGrid1 = new System.Windows.Forms.PropertyGrid();
 			splitContainer2 = new System.Windows.Forms.SplitContainer();
+			button3 = new System.Windows.Forms.Button();
 			button1 = new System.Windows.Forms.Button();
 			comboBox1 = new System.Windows.Forms.ComboBox();
 			tabControl2 = new System.Windows.Forms.TabControl();
@@ -107,12 +105,22 @@
 			tabPage4 = new System.Windows.Forms.TabPage();
 			hexBox1 = new Be.Windows.Forms.HexBox();
 			tabPage6 = new System.Windows.Forms.TabPage();
-			splitContainer4 = new System.Windows.Forms.SplitContainer();
-			comboBoxTraceField = new System.Windows.Forms.ComboBox();
-			label2 = new System.Windows.Forms.Label();
-			comboBoxTraceScan = new System.Windows.Forms.ComboBox();
-			label1 = new System.Windows.Forms.Label();
-			dataGridView1 = new System.Windows.Forms.DataGridView();
+			wavesControl1 = new System.Windows.Forms.WavesControl();
+			toolStrip3 = new System.Windows.Forms.ToolStrip();
+			toolStripButton5 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton6 = new System.Windows.Forms.ToolStripButton();
+			toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+			toolStripButton7 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton8 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton9 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton10 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton11 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton12 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton13 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton14 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton15 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton16 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton17 = new System.Windows.Forms.ToolStripButton();
 			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
 			backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -123,6 +131,8 @@
 			openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
 			openFileDialogRegdump = new System.Windows.Forms.OpenFileDialog();
+			toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+			toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
@@ -149,11 +159,7 @@
 			((System.ComponentModel.ISupportInitialize)pictureBoxForHuman).BeginInit();
 			tabPage4.SuspendLayout();
 			tabPage6.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)splitContainer4).BeginInit();
-			splitContainer4.Panel1.SuspendLayout();
-			splitContainer4.Panel2.SuspendLayout();
-			splitContainer4.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+			toolStrip3.SuspendLayout();
 			SuspendLayout();
 			// 
 			// menuStrip1
@@ -161,13 +167,13 @@
 			menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, dumpsToolStripMenuItem, controlsToolStripMenuItem, miscToolStripMenuItem, helpToolStripMenuItem });
 			menuStrip1.Location = new System.Drawing.Point(0, 0);
 			menuStrip1.Name = "menuStrip1";
-			menuStrip1.Size = new System.Drawing.Size(858, 24);
+			menuStrip1.Size = new System.Drawing.Size(1047, 24);
 			menuStrip1.TabIndex = 0;
 			menuStrip1.Text = "menuStrip1";
 			// 
 			// fileToolStripMenuItem
 			// 
-			fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { choosePPURegsDumpToolStripMenuItem, choosenesImageToolStripMenuItem, toolStripSeparator3, saveTraceInLogisimFormatToolStripMenuItem, saveTraceInVCDFormatToolStripMenuItem, saveFieldAsImageToolStripMenuItem, toolStripSeparator5, settingsToolStripMenuItem, toolStripSeparator4, exitToolStripMenuItem });
+			fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { choosePPURegsDumpToolStripMenuItem, choosenesImageToolStripMenuItem, toolStripSeparator3, saveFieldAsImageToolStripMenuItem, toolStripSeparator5, settingsToolStripMenuItem, toolStripSeparator4, exitToolStripMenuItem });
 			fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			fileToolStripMenuItem.Text = "File";
@@ -175,64 +181,50 @@
 			// choosePPURegsDumpToolStripMenuItem
 			// 
 			choosePPURegsDumpToolStripMenuItem.Name = "choosePPURegsDumpToolStripMenuItem";
-			choosePPURegsDumpToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			choosePPURegsDumpToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
 			choosePPURegsDumpToolStripMenuItem.Text = "Choose PPU Regs Dump...";
 			choosePPURegsDumpToolStripMenuItem.Click += choosePPURegsDumpToolStripMenuItem_Click;
 			// 
 			// choosenesImageToolStripMenuItem
 			// 
 			choosenesImageToolStripMenuItem.Name = "choosenesImageToolStripMenuItem";
-			choosenesImageToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			choosenesImageToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
 			choosenesImageToolStripMenuItem.Text = "Choose .nes Image...";
 			choosenesImageToolStripMenuItem.Click += choosenesImageToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator3
 			// 
 			toolStripSeparator3.Name = "toolStripSeparator3";
-			toolStripSeparator3.Size = new System.Drawing.Size(231, 6);
-			// 
-			// saveTraceInLogisimFormatToolStripMenuItem
-			// 
-			saveTraceInLogisimFormatToolStripMenuItem.Name = "saveTraceInLogisimFormatToolStripMenuItem";
-			saveTraceInLogisimFormatToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-			saveTraceInLogisimFormatToolStripMenuItem.Text = "Save Trace in Logisim format...";
-			saveTraceInLogisimFormatToolStripMenuItem.Click += saveTraceInLogisimFormatToolStripMenuItem_Click;
-			// 
-			// saveTraceInVCDFormatToolStripMenuItem
-			// 
-			saveTraceInVCDFormatToolStripMenuItem.Name = "saveTraceInVCDFormatToolStripMenuItem";
-			saveTraceInVCDFormatToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-			saveTraceInVCDFormatToolStripMenuItem.Text = "Save Trace in VCD format...";
-			saveTraceInVCDFormatToolStripMenuItem.Click += saveTraceInVCDFormatToolStripMenuItem_Click;
+			toolStripSeparator3.Size = new System.Drawing.Size(209, 6);
 			// 
 			// saveFieldAsImageToolStripMenuItem
 			// 
 			saveFieldAsImageToolStripMenuItem.Name = "saveFieldAsImageToolStripMenuItem";
-			saveFieldAsImageToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			saveFieldAsImageToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
 			saveFieldAsImageToolStripMenuItem.Text = "Save field as bitmap...";
 			saveFieldAsImageToolStripMenuItem.Click += saveFieldAsImageToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator5
 			// 
 			toolStripSeparator5.Name = "toolStripSeparator5";
-			toolStripSeparator5.Size = new System.Drawing.Size(231, 6);
+			toolStripSeparator5.Size = new System.Drawing.Size(209, 6);
 			// 
 			// settingsToolStripMenuItem
 			// 
 			settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-			settingsToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			settingsToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
 			settingsToolStripMenuItem.Text = "Settings...";
 			settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator4
 			// 
 			toolStripSeparator4.Name = "toolStripSeparator4";
-			toolStripSeparator4.Size = new System.Drawing.Size(231, 6);
+			toolStripSeparator4.Size = new System.Drawing.Size(209, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			exitToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			exitToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
 			exitToolStripMenuItem.Text = "Exit";
 			exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
 			// 
@@ -426,10 +418,10 @@
 			// 
 			// statusStrip1
 			// 
-			statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel6, toolStripStatusLabel2, toolStripStatusLabel7, toolStripStatusLabel3, toolStripStatusLabel8, toolStripStatusLabel11, toolStripStatusLabel12, toolStripStatusLabel13, toolStripStatusLabel14 });
+			statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel6, toolStripStatusLabel4, toolStripStatusLabel5, toolStripStatusLabel2, toolStripStatusLabel7, toolStripStatusLabel3, toolStripStatusLabel8, toolStripStatusLabel11, toolStripStatusLabel12, toolStripStatusLabel13, toolStripStatusLabel14 });
 			statusStrip1.Location = new System.Drawing.Point(0, 527);
 			statusStrip1.Name = "statusStrip1";
-			statusStrip1.Size = new System.Drawing.Size(858, 24);
+			statusStrip1.Size = new System.Drawing.Size(1047, 24);
 			statusStrip1.TabIndex = 1;
 			statusStrip1.Text = "statusStrip1";
 			// 
@@ -502,7 +494,7 @@
 			toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton1, toolStripButton3, toolStripButton2 });
 			toolStrip1.Location = new System.Drawing.Point(0, 24);
 			toolStrip1.Name = "toolStrip1";
-			toolStrip1.Size = new System.Drawing.Size(858, 39);
+			toolStrip1.Size = new System.Drawing.Size(1047, 39);
 			toolStrip1.TabIndex = 3;
 			toolStrip1.Text = "toolStrip1";
 			// 
@@ -541,12 +533,11 @@
 			tabControl1.Controls.Add(tabPage1);
 			tabControl1.Controls.Add(tabPage2);
 			tabControl1.Controls.Add(tabPage3);
-			tabControl1.Controls.Add(tabPage6);
 			tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			tabControl1.Location = new System.Drawing.Point(0, 63);
 			tabControl1.Name = "tabControl1";
 			tabControl1.SelectedIndex = 0;
-			tabControl1.Size = new System.Drawing.Size(858, 464);
+			tabControl1.Size = new System.Drawing.Size(1047, 464);
 			tabControl1.TabIndex = 4;
 			// 
 			// tabPage1
@@ -555,7 +546,7 @@
 			tabPage1.Location = new System.Drawing.Point(4, 24);
 			tabPage1.Name = "tabPage1";
 			tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			tabPage1.Size = new System.Drawing.Size(850, 436);
+			tabPage1.Size = new System.Drawing.Size(1039, 436);
 			tabPage1.TabIndex = 0;
 			tabPage1.Text = "Field";
 			tabPage1.UseVisualStyleBackColor = true;
@@ -565,7 +556,7 @@
 			pictureBoxField.Dock = System.Windows.Forms.DockStyle.Fill;
 			pictureBoxField.Location = new System.Drawing.Point(3, 3);
 			pictureBoxField.Name = "pictureBoxField";
-			pictureBoxField.Size = new System.Drawing.Size(844, 430);
+			pictureBoxField.Size = new System.Drawing.Size(1033, 430);
 			pictureBoxField.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			pictureBoxField.TabIndex = 0;
 			pictureBoxField.TabStop = false;
@@ -576,7 +567,7 @@
 			tabPage2.Controls.Add(toolStrip2);
 			tabPage2.Location = new System.Drawing.Point(4, 24);
 			tabPage2.Name = "tabPage2";
-			tabPage2.Size = new System.Drawing.Size(850, 436);
+			tabPage2.Size = new System.Drawing.Size(1039, 436);
 			tabPage2.TabIndex = 1;
 			tabPage2.Text = "Current Scan";
 			tabPage2.UseVisualStyleBackColor = true;
@@ -595,7 +586,7 @@
 			signalPlotScan.Name = "signalPlotScan";
 			signalPlotScan.SelectionColor = System.Drawing.Color.GhostWhite;
 			signalPlotScan.SignalColor = System.Drawing.Color.LightGreen;
-			signalPlotScan.Size = new System.Drawing.Size(850, 411);
+			signalPlotScan.Size = new System.Drawing.Size(1039, 411);
 			signalPlotScan.TabIndex = 2;
 			signalPlotScan.Text = "signalPlot1";
 			signalPlotScan.ZeroColor = System.Drawing.Color.Red;
@@ -605,7 +596,7 @@
 			toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton4 });
 			toolStrip2.Location = new System.Drawing.Point(0, 0);
 			toolStrip2.Name = "toolStrip2";
-			toolStrip2.Size = new System.Drawing.Size(850, 25);
+			toolStrip2.Size = new System.Drawing.Size(1039, 25);
 			toolStrip2.TabIndex = 1;
 			toolStrip2.Text = "toolStrip2";
 			// 
@@ -625,7 +616,7 @@
 			tabPage3.Controls.Add(splitContainer1);
 			tabPage3.Location = new System.Drawing.Point(4, 24);
 			tabPage3.Name = "tabPage3";
-			tabPage3.Size = new System.Drawing.Size(850, 436);
+			tabPage3.Size = new System.Drawing.Size(1039, 436);
 			tabPage3.TabIndex = 2;
 			tabPage3.Text = "Debug";
 			tabPage3.UseVisualStyleBackColor = true;
@@ -643,8 +634,8 @@
 			// splitContainer1.Panel2
 			// 
 			splitContainer1.Panel2.Controls.Add(splitContainer2);
-			splitContainer1.Size = new System.Drawing.Size(850, 436);
-			splitContainer1.SplitterDistance = 283;
+			splitContainer1.Size = new System.Drawing.Size(1039, 436);
+			splitContainer1.SplitterDistance = 345;
 			splitContainer1.TabIndex = 0;
 			// 
 			// splitContainer3
@@ -663,7 +654,7 @@
 			// splitContainer3.Panel2
 			// 
 			splitContainer3.Panel2.Controls.Add(propertyGrid1);
-			splitContainer3.Size = new System.Drawing.Size(283, 436);
+			splitContainer3.Size = new System.Drawing.Size(345, 436);
 			splitContainer3.SplitterDistance = 42;
 			splitContainer3.TabIndex = 1;
 			// 
@@ -695,7 +686,7 @@
 			propertyGrid1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			propertyGrid1.Location = new System.Drawing.Point(0, 0);
 			propertyGrid1.Name = "propertyGrid1";
-			propertyGrid1.Size = new System.Drawing.Size(283, 390);
+			propertyGrid1.Size = new System.Drawing.Size(345, 390);
 			propertyGrid1.TabIndex = 1;
 			propertyGrid1.PropertyValueChanged += propertyGrid1_PropertyValueChanged;
 			// 
@@ -709,22 +700,33 @@
 			// 
 			// splitContainer2.Panel1
 			// 
+			splitContainer2.Panel1.Controls.Add(button3);
 			splitContainer2.Panel1.Controls.Add(button1);
 			splitContainer2.Panel1.Controls.Add(comboBox1);
 			// 
 			// splitContainer2.Panel2
 			// 
 			splitContainer2.Panel2.Controls.Add(tabControl2);
-			splitContainer2.Size = new System.Drawing.Size(563, 436);
+			splitContainer2.Size = new System.Drawing.Size(690, 436);
 			splitContainer2.SplitterDistance = 42;
 			splitContainer2.TabIndex = 0;
+			// 
+			// button3
+			// 
+			button3.Location = new System.Drawing.Point(4, 5);
+			button3.Name = "button3";
+			button3.Size = new System.Drawing.Size(97, 32);
+			button3.TabIndex = 2;
+			button3.Text = "Step (F11)";
+			button3.UseVisualStyleBackColor = true;
+			button3.Click += button3_Click_1;
 			// 
 			// button1
 			// 
 			button1.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			button1.BackgroundImage = Properties.Resources.button_get_debug;
 			button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			button1.Location = new System.Drawing.Point(528, 5);
+			button1.Location = new System.Drawing.Point(655, 5);
 			button1.Name = "button1";
 			button1.Size = new System.Drawing.Size(32, 32);
 			button1.TabIndex = 1;
@@ -736,7 +738,7 @@
 			comboBox1.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			comboBox1.FormattingEnabled = true;
-			comboBox1.Location = new System.Drawing.Point(309, 9);
+			comboBox1.Location = new System.Drawing.Point(436, 9);
 			comboBox1.Name = "comboBox1";
 			comboBox1.Size = new System.Drawing.Size(213, 23);
 			comboBox1.TabIndex = 0;
@@ -746,11 +748,12 @@
 			// 
 			tabControl2.Controls.Add(tabPage5);
 			tabControl2.Controls.Add(tabPage4);
+			tabControl2.Controls.Add(tabPage6);
 			tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
 			tabControl2.Location = new System.Drawing.Point(0, 0);
 			tabControl2.Name = "tabControl2";
 			tabControl2.SelectedIndex = 0;
-			tabControl2.Size = new System.Drawing.Size(563, 390);
+			tabControl2.Size = new System.Drawing.Size(690, 390);
 			tabControl2.TabIndex = 1;
 			// 
 			// tabPage5
@@ -759,7 +762,7 @@
 			tabPage5.Location = new System.Drawing.Point(4, 24);
 			tabPage5.Name = "tabPage5";
 			tabPage5.Padding = new System.Windows.Forms.Padding(3);
-			tabPage5.Size = new System.Drawing.Size(555, 362);
+			tabPage5.Size = new System.Drawing.Size(682, 362);
 			tabPage5.TabIndex = 1;
 			tabPage5.Text = "Human";
 			tabPage5.UseVisualStyleBackColor = true;
@@ -770,7 +773,7 @@
 			pictureBoxForHuman.Dock = System.Windows.Forms.DockStyle.Fill;
 			pictureBoxForHuman.Location = new System.Drawing.Point(3, 3);
 			pictureBoxForHuman.Name = "pictureBoxForHuman";
-			pictureBoxForHuman.Size = new System.Drawing.Size(549, 356);
+			pictureBoxForHuman.Size = new System.Drawing.Size(676, 356);
 			pictureBoxForHuman.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			pictureBoxForHuman.TabIndex = 2;
 			pictureBoxForHuman.TabStop = false;
@@ -782,7 +785,7 @@
 			tabPage4.Location = new System.Drawing.Point(4, 24);
 			tabPage4.Name = "tabPage4";
 			tabPage4.Padding = new System.Windows.Forms.Padding(3);
-			tabPage4.Size = new System.Drawing.Size(555, 362);
+			tabPage4.Size = new System.Drawing.Size(682, 362);
 			tabPage4.TabIndex = 0;
 			tabPage4.Text = "Hex";
 			tabPage4.UseVisualStyleBackColor = true;
@@ -797,7 +800,7 @@
 			hexBox1.Name = "hexBox1";
 			hexBox1.ReadOnly = true;
 			hexBox1.ShadowSelectionColor = System.Drawing.Color.FromArgb(100, 60, 188, 255);
-			hexBox1.Size = new System.Drawing.Size(549, 356);
+			hexBox1.Size = new System.Drawing.Size(676, 356);
 			hexBox1.StringViewVisible = true;
 			hexBox1.TabIndex = 0;
 			hexBox1.UseFixedBytesPerLine = true;
@@ -805,92 +808,183 @@
 			// 
 			// tabPage6
 			// 
-			tabPage6.Controls.Add(splitContainer4);
+			tabPage6.Controls.Add(wavesControl1);
+			tabPage6.Controls.Add(toolStrip3);
 			tabPage6.Location = new System.Drawing.Point(4, 24);
 			tabPage6.Name = "tabPage6";
-			tabPage6.Size = new System.Drawing.Size(850, 436);
-			tabPage6.TabIndex = 3;
-			tabPage6.Text = "Trace";
+			tabPage6.Size = new System.Drawing.Size(682, 362);
+			tabPage6.TabIndex = 2;
+			tabPage6.Text = "Waves";
 			tabPage6.UseVisualStyleBackColor = true;
 			// 
-			// splitContainer4
+			// wavesControl1
 			// 
-			splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-			splitContainer4.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			splitContainer4.Location = new System.Drawing.Point(0, 0);
-			splitContainer4.Name = "splitContainer4";
-			splitContainer4.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			wavesControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			wavesControl1.DottedColor = System.Drawing.Color.Silver;
+			wavesControl1.DottedOpacity = 95;
+			wavesControl1.FillColor = System.Drawing.Color.Black;
+			wavesControl1.Font = new System.Drawing.Font("Segoe UI", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			wavesControl1.GridColor = System.Drawing.Color.Green;
+			wavesControl1.GridOpacity = 95;
+			wavesControl1.HighZColor = System.Drawing.Color.Gold;
+			wavesControl1.LabelsColor = System.Drawing.Color.White;
+			wavesControl1.Location = new System.Drawing.Point(0, 25);
+			wavesControl1.Name = "wavesControl1";
+			wavesControl1.SelectionColor = System.Drawing.Color.GhostWhite;
+			wavesControl1.SignalColor = System.Drawing.Color.SpringGreen;
+			wavesControl1.Size = new System.Drawing.Size(682, 337);
+			wavesControl1.TabIndex = 1;
+			wavesControl1.Text = "wavesControl1";
+			wavesControl1.UndefinedColor = System.Drawing.Color.Red;
 			// 
-			// splitContainer4.Panel1
+			// toolStrip3
 			// 
-			splitContainer4.Panel1.Controls.Add(comboBoxTraceField);
-			splitContainer4.Panel1.Controls.Add(label2);
-			splitContainer4.Panel1.Controls.Add(comboBoxTraceScan);
-			splitContainer4.Panel1.Controls.Add(label1);
+			toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton5, toolStripButton6, toolStripSeparator6, toolStripButton7, toolStripButton8, toolStripButton9, toolStripButton10, toolStripButton11, toolStripButton12, toolStripButton13, toolStripButton14, toolStripButton15, toolStripButton16, toolStripButton17 });
+			toolStrip3.Location = new System.Drawing.Point(0, 0);
+			toolStrip3.Name = "toolStrip3";
+			toolStrip3.Size = new System.Drawing.Size(682, 25);
+			toolStrip3.TabIndex = 0;
+			toolStrip3.Text = "toolStrip3";
 			// 
-			// splitContainer4.Panel2
+			// toolStripButton5
 			// 
-			splitContainer4.Panel2.Controls.Add(dataGridView1);
-			splitContainer4.Size = new System.Drawing.Size(850, 436);
-			splitContainer4.SplitterDistance = 38;
-			splitContainer4.TabIndex = 0;
+			toolStripButton5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton5.Image = (System.Drawing.Image)resources.GetObject("toolStripButton5.Image");
+			toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton5.Name = "toolStripButton5";
+			toolStripButton5.Size = new System.Drawing.Size(47, 22);
+			toolStripButton5.Text = "Snatch";
+			toolStripButton5.Click += toolStripButton5_Click;
 			// 
-			// comboBoxTraceField
+			// toolStripButton6
 			// 
-			comboBoxTraceField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			comboBoxTraceField.FormattingEnabled = true;
-			comboBoxTraceField.Location = new System.Drawing.Point(196, 9);
-			comboBoxTraceField.Name = "comboBoxTraceField";
-			comboBoxTraceField.Size = new System.Drawing.Size(70, 23);
-			comboBoxTraceField.TabIndex = 3;
-			comboBoxTraceField.SelectedIndexChanged += comboBoxTraceField_SelectedIndexChanged;
+			toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton6.Image = (System.Drawing.Image)resources.GetObject("toolStripButton6.Image");
+			toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton6.Name = "toolStripButton6";
+			toolStripButton6.Size = new System.Drawing.Size(38, 22);
+			toolStripButton6.Text = "Clear";
+			toolStripButton6.Click += toolStripButton6_Click;
 			// 
-			// label2
+			// toolStripSeparator6
 			// 
-			label2.AutoSize = true;
-			label2.Location = new System.Drawing.Point(155, 12);
-			label2.Name = "label2";
-			label2.Size = new System.Drawing.Size(35, 15);
-			label2.TabIndex = 2;
-			label2.Text = "Field:";
+			toolStripSeparator6.Name = "toolStripSeparator6";
+			toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
 			// 
-			// comboBoxTraceScan
+			// toolStripButton7
 			// 
-			comboBoxTraceScan.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			comboBoxTraceScan.FormattingEnabled = true;
-			comboBoxTraceScan.Location = new System.Drawing.Point(59, 9);
-			comboBoxTraceScan.Name = "comboBoxTraceScan";
-			comboBoxTraceScan.Size = new System.Drawing.Size(70, 23);
-			comboBoxTraceScan.TabIndex = 1;
-			comboBoxTraceScan.SelectedIndexChanged += comboBoxTraceScan_SelectedIndexChanged;
+			toolStripButton7.Checked = true;
+			toolStripButton7.CheckState = System.Windows.Forms.CheckState.Checked;
+			toolStripButton7.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton7.Image = (System.Drawing.Image)resources.GetObject("toolStripButton7.Image");
+			toolStripButton7.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton7.Name = "toolStripButton7";
+			toolStripButton7.Size = new System.Drawing.Size(46, 22);
+			toolStripButton7.Text = "Clocks";
+			toolStripButton7.Click += toolStripButton7_Click;
 			// 
-			// label1
+			// toolStripButton8
 			// 
-			label1.AutoSize = true;
-			label1.Location = new System.Drawing.Point(18, 12);
-			label1.Name = "label1";
-			label1.Size = new System.Drawing.Size(35, 15);
-			label1.TabIndex = 0;
-			label1.Text = "Scan:";
+			toolStripButton8.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton8.Image = (System.Drawing.Image)resources.GetObject("toolStripButton8.Image");
+			toolStripButton8.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton8.Name = "toolStripButton8";
+			toolStripButton8.Size = new System.Drawing.Size(51, 22);
+			toolStripButton8.Text = "CPU I/F";
+			toolStripButton8.Click += toolStripButton8_Click;
 			// 
-			// dataGridView1
+			// toolStripButton9
 			// 
-			dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
-			dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-			dataGridView1.Location = new System.Drawing.Point(0, 0);
-			dataGridView1.Name = "dataGridView1";
-			dataGridView1.ReadOnly = true;
-			dataGridView1.RowTemplate.Height = 25;
-			dataGridView1.Size = new System.Drawing.Size(850, 394);
-			dataGridView1.TabIndex = 0;
+			toolStripButton9.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton9.Image = (System.Drawing.Image)resources.GetObject("toolStripButton9.Image");
+			toolStripButton9.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton9.Name = "toolStripButton9";
+			toolStripButton9.Size = new System.Drawing.Size(66, 22);
+			toolStripButton9.Text = "CTRL Regs";
+			toolStripButton9.Click += toolStripButton9_Click;
+			// 
+			// toolStripButton10
+			// 
+			toolStripButton10.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton10.Image = (System.Drawing.Image)resources.GetObject("toolStripButton10.Image");
+			toolStripButton10.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton10.Name = "toolStripButton10";
+			toolStripButton10.Size = new System.Drawing.Size(54, 22);
+			toolStripButton10.Text = "H/V Cnt";
+			toolStripButton10.Click += toolStripButton10_Click;
+			// 
+			// toolStripButton11
+			// 
+			toolStripButton11.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton11.Image = (System.Drawing.Image)resources.GetObject("toolStripButton11.Image");
+			toolStripButton11.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton11.Name = "toolStripButton11";
+			toolStripButton11.Size = new System.Drawing.Size(37, 22);
+			toolStripButton11.Text = "MUX";
+			toolStripButton11.Click += toolStripButton11_Click;
+			// 
+			// toolStripButton12
+			// 
+			toolStripButton12.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton12.Image = (System.Drawing.Image)resources.GetObject("toolStripButton12.Image");
+			toolStripButton12.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton12.Name = "toolStripButton12";
+			toolStripButton12.Size = new System.Drawing.Size(32, 22);
+			toolStripButton12.Text = "SPG";
+			toolStripButton12.Click += toolStripButton12_Click;
+			// 
+			// toolStripButton13
+			// 
+			toolStripButton13.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton13.Image = (System.Drawing.Image)resources.GetObject("toolStripButton13.Image");
+			toolStripButton13.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton13.Name = "toolStripButton13";
+			toolStripButton13.Size = new System.Drawing.Size(45, 22);
+			toolStripButton13.Text = "CRAM";
+			toolStripButton13.Click += toolStripButton13_Click;
+			// 
+			// toolStripButton14
+			// 
+			toolStripButton14.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton14.Image = (System.Drawing.Image)resources.GetObject("toolStripButton14.Image");
+			toolStripButton14.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton14.Name = "toolStripButton14";
+			toolStripButton14.Size = new System.Drawing.Size(44, 22);
+			toolStripButton14.Text = "VRAM";
+			toolStripButton14.Click += toolStripButton14_Click;
+			// 
+			// toolStripButton15
+			// 
+			toolStripButton15.Checked = true;
+			toolStripButton15.CheckState = System.Windows.Forms.CheckState.Checked;
+			toolStripButton15.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton15.Image = (System.Drawing.Image)resources.GetObject("toolStripButton15.Image");
+			toolStripButton15.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton15.Name = "toolStripButton15";
+			toolStripButton15.Size = new System.Drawing.Size(34, 22);
+			toolStripButton15.Text = "FSM";
+			toolStripButton15.Click += toolStripButton15_Click;
+			// 
+			// toolStripButton16
+			// 
+			toolStripButton16.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton16.Image = (System.Drawing.Image)resources.GetObject("toolStripButton16.Image");
+			toolStripButton16.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton16.Name = "toolStripButton16";
+			toolStripButton16.Size = new System.Drawing.Size(63, 22);
+			toolStripButton16.Text = "OAM Eval";
+			toolStripButton16.Click += toolStripButton16_Click;
+			// 
+			// toolStripButton17
+			// 
+			toolStripButton17.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton17.Image = (System.Drawing.Image)resources.GetObject("toolStripButton17.Image");
+			toolStripButton17.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton17.Name = "toolStripButton17";
+			toolStripButton17.Size = new System.Drawing.Size(41, 22);
+			toolStripButton17.Text = "Other";
+			toolStripButton17.Click += toolStripButton17_Click;
 			// 
 			// openFileDialog1
 			// 
@@ -942,19 +1036,35 @@
 			openFileDialogRegdump.DefaultExt = "bin";
 			openFileDialogRegdump.Filter = "Register Dump files|*.bin;*.regdump|All files|*.*";
 			// 
+			// toolStripStatusLabel4
+			// 
+			toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+			toolStripStatusLabel4.Size = new System.Drawing.Size(74, 19);
+			toolStripStatusLabel4.Text = "PCLK Count:";
+			// 
+			// toolStripStatusLabel5
+			// 
+			toolStripStatusLabel5.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+			toolStripStatusLabel5.Size = new System.Drawing.Size(17, 19);
+			toolStripStatusLabel5.Text = "0";
+			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			ClientSize = new System.Drawing.Size(858, 551);
+			ClientSize = new System.Drawing.Size(1047, 551);
 			Controls.Add(tabControl1);
 			Controls.Add(toolStrip1);
 			Controls.Add(statusStrip1);
 			Controls.Add(menuStrip1);
+			KeyPreview = true;
 			MainMenuStrip = menuStrip1;
+			MinimumSize = new System.Drawing.Size(400, 200);
 			Name = "FormMain";
 			Text = "PPU Player";
 			Load += Form1_Load;
+			KeyDown += FormMain_KeyDown;
 			menuStrip1.ResumeLayout(false);
 			menuStrip1.PerformLayout();
 			statusStrip1.ResumeLayout(false);
@@ -986,12 +1096,9 @@
 			((System.ComponentModel.ISupportInitialize)pictureBoxForHuman).EndInit();
 			tabPage4.ResumeLayout(false);
 			tabPage6.ResumeLayout(false);
-			splitContainer4.Panel1.ResumeLayout(false);
-			splitContainer4.Panel1.PerformLayout();
-			splitContainer4.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)splitContainer4).EndInit();
-			splitContainer4.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+			tabPage6.PerformLayout();
+			toolStrip3.ResumeLayout(false);
+			toolStrip3.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -1049,16 +1156,7 @@
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-		private System.Windows.Forms.TabPage tabPage6;
-		private System.Windows.Forms.SplitContainer splitContainer4;
-		private System.Windows.Forms.ComboBox comboBoxTraceField;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.ComboBox comboBoxTraceScan;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.DataGridView dataGridView1;
-		private System.Windows.Forms.ToolStripMenuItem saveTraceInLogisimFormatToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog2;
-		private System.Windows.Forms.ToolStripMenuItem saveTraceInVCDFormatToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialogVCD;
 		private System.Windows.Forms.ToolStripMenuItem sendFeedbackToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
@@ -1091,5 +1189,25 @@
 		private System.Windows.Forms.ToolStrip toolStrip2;
 		private System.Windows.Forms.ToolStripButton toolStripButton4;
 		private System.Windows.Forms.OpenFileDialog openFileDialogRegdump;
+		private System.Windows.Forms.Button button3;
+		private System.Windows.Forms.TabPage tabPage6;
+		private System.Windows.Forms.WavesControl wavesControl1;
+		private System.Windows.Forms.ToolStrip toolStrip3;
+		private System.Windows.Forms.ToolStripButton toolStripButton5;
+		private System.Windows.Forms.ToolStripButton toolStripButton6;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+		private System.Windows.Forms.ToolStripButton toolStripButton7;
+		private System.Windows.Forms.ToolStripButton toolStripButton8;
+		private System.Windows.Forms.ToolStripButton toolStripButton9;
+		private System.Windows.Forms.ToolStripButton toolStripButton10;
+		private System.Windows.Forms.ToolStripButton toolStripButton11;
+		private System.Windows.Forms.ToolStripButton toolStripButton12;
+		private System.Windows.Forms.ToolStripButton toolStripButton13;
+		private System.Windows.Forms.ToolStripButton toolStripButton14;
+		private System.Windows.Forms.ToolStripButton toolStripButton15;
+		private System.Windows.Forms.ToolStripButton toolStripButton16;
+		private System.Windows.Forms.ToolStripButton toolStripButton17;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
 	}
 }

@@ -10,6 +10,9 @@ namespace PPUPlayer
 {
 	public partial class FormMain : Form
 	{
+		bool Paused = false;
+		bool DebugStep = false;
+
 		private int StepsToStat = 32;
 		private int StepsCounter = 0;
 
@@ -19,8 +22,15 @@ namespace PPUPlayer
 			{
 				if (Paused)
 				{
-					Thread.Sleep(10);
-					continue;
+					if (DebugStep)
+					{
+						DebugStep = false;
+					}
+					else
+					{
+						Thread.Sleep(10);
+						continue;
+					}
 				}
 
 				// Check that the PPU Dump records have run out
@@ -49,9 +59,11 @@ namespace PPUPlayer
 
 				BreaksCore.Step();
 
-				if (TraceEnabled)
+				// Update Waves
+
+				if (Paused)
 				{
-					ProcessTrace(scanCounter);
+					UpdateWaves();
 				}
 
 				// Logic related to the processing of H/V values
@@ -101,10 +113,10 @@ namespace PPUPlayer
 				// Show statistics that are updated once every 1 second.
 
 				StepsCounter++;
-				if (StepsCounter >= StepsToStat)
+				if (StepsCounter >= StepsToStat || Paused)
 				{
 					long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-					if (now > (timeStamp + 1000))
+					if (now > (timeStamp + 1000) || Paused)
 					{
 						timeStamp = now;
 
@@ -118,6 +130,7 @@ namespace PPUPlayer
 						UpdatePpuStats(PPUStats.Fields, fieldCounterPersistent);
 
 						pclkCounter = BreaksCore.GetPCLKCounter();
+						UpdatePpuStats(PPUStats.PCLKCounter, pclkCounter);
 						fieldCounter = 0;
 					}
 					StepsCounter = 0;
