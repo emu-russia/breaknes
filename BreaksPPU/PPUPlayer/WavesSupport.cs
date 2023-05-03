@@ -58,7 +58,7 @@ namespace PPUPlayer
 			var info = BreaksCore.GetDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_PPU);
 			foreach (var entry in info)
 			{
-				if (entry.bits == 1 && entry.category == BreaksCore.PPU_FSM_CATEGORY)
+				if (SignalFilter(entry))
 				{
 					if (!waves.ContainsKey(entry.name))
 					{
@@ -95,6 +95,82 @@ namespace PPUPlayer
 		private void toolStripButton6_Click(object sender, EventArgs e)
 		{
 			ResetWaves();
+		}
+
+
+		bool SignalFilter (BreaksCore.DebugInfoEntry entry)
+		{
+			if (entry.bits != 1)
+				return false;
+
+			if (entry.category == BreaksCore.PPU_CLKS_CATEGORY && toolStripButton7.Checked) return true;
+			if (entry.category == BreaksCore.PPU_CPU_CATEGORY && toolStripButton8.Checked) return true;
+			if (entry.category == BreaksCore.PPU_CTRL_CATEGORY && toolStripButton9.Checked) return true;
+			if (entry.category == BreaksCore.PPU_HV_CATEGORY && toolStripButton10.Checked) return true;
+			if (entry.category == BreaksCore.PPU_MUX_CATEGORY && toolStripButton11.Checked) return true;
+			if (entry.category == BreaksCore.PPU_SPG_CATEGORY && toolStripButton12.Checked) return true;
+			if (entry.category == BreaksCore.PPU_CRAM_CATEGORY && toolStripButton13.Checked) return true;
+			if (entry.category == BreaksCore.PPU_VRAM_CATEGORY && toolStripButton14.Checked) return true;
+			if (entry.category == BreaksCore.PPU_FSM_CATEGORY && toolStripButton15.Checked) return true;
+			if (entry.category == BreaksCore.PPU_EVAL_CATEGORY && toolStripButton16.Checked) return true;
+			if (entry.category == BreaksCore.PPU_WIRES_CATEGORY && toolStripButton17.Checked) return true;
+
+			return false;
+		}
+
+		private void toolStripButton7_Click(object sender, EventArgs e)
+		{
+			toolStripButton7.Checked = !toolStripButton7.Checked;
+		}
+
+		private void toolStripButton8_Click(object sender, EventArgs e)
+		{
+			toolStripButton8.Checked = !toolStripButton8.Checked;
+		}
+
+		private void toolStripButton9_Click(object sender, EventArgs e)
+		{
+			toolStripButton9.Checked = !toolStripButton9.Checked;
+		}
+
+		private void toolStripButton10_Click(object sender, EventArgs e)
+		{
+			toolStripButton10.Checked = !toolStripButton10.Checked;
+		}
+
+		private void toolStripButton11_Click(object sender, EventArgs e)
+		{
+			toolStripButton11.Checked = !toolStripButton11.Checked;
+		}
+
+		private void toolStripButton12_Click(object sender, EventArgs e)
+		{
+			toolStripButton12.Checked = !toolStripButton12.Checked;
+		}
+
+		private void toolStripButton13_Click(object sender, EventArgs e)
+		{
+			toolStripButton13.Checked = !toolStripButton13.Checked;
+		}
+
+		private void toolStripButton14_Click(object sender, EventArgs e)
+		{
+			toolStripButton14.Checked = !toolStripButton14.Checked;
+		}
+
+		private void toolStripButton15_Click(object sender, EventArgs e)
+		{
+			toolStripButton15.Checked = !toolStripButton15.Checked;
+		}
+
+		private void toolStripButton16_Click(object sender, EventArgs e)
+		{
+			toolStripButton16.Checked = !toolStripButton16.Checked;
+		}
+
+		private void toolStripButton17_Click(object sender, EventArgs e)
+		{
+			toolStripButton17.Checked = !toolStripButton17.Checked;
 		}
 	}
 }

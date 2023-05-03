@@ -196,27 +196,30 @@ namespace System.Windows.Forms
 			return Math.Max(Math.Min((long)(((x - xofs) * max_samples) / (Width - xofs)), max_samples-1), 0);
 		}
 
-		private void DrawLabels (Graphics gr)
+		private void DrawLabels (Graphics gr, bool cycle_labels)
 		{
 			// Cycles legend
 			// float is used so that the cycle number is properly aligned to the middle of the phases.
 			// The number of phases is determined by the dotted_every_nth property (usually 2)
 
-			float start_cycle = (float)clock_bias / (float)(dotted_enabled ? dotted_every_nth : 1.0f);
-			float end_cycle = (float)(clock_bias + max_samples) / (float)(dotted_enabled ? dotted_every_nth : 1.0f);
-			float total_cycles = end_cycle - start_cycle;
-
-			for (float i = 0; i< total_cycles; i += 1.0f)
+			if (cycle_labels)
 			{
-				float w = (Width - xofs) / total_cycles;
-				float x = xofs + i * w;
+				float start_cycle = (float)clock_bias / (float)(dotted_enabled ? dotted_every_nth : 1.0f);
+				float end_cycle = (float)(clock_bias + max_samples) / (float)(dotted_enabled ? dotted_every_nth : 1.0f);
+				float total_cycles = end_cycle - start_cycle;
 
-				string cycle_text = ((long)(i + start_cycle)).ToString();
-				SizeF textSize = gr.MeasureString(cycle_text, Font);
-				PointF pt = new PointF(
-					w / 2 - (int)(textSize.Width / 2) + x,
-					yofs / 2 - (int)(textSize.Height / 2));
-				gr.DrawString(cycle_text, Font, label_brush, pt);
+				for (float i = 0; i < total_cycles; i += 1.0f)
+				{
+					float w = (Width - xofs) / total_cycles;
+					float x = xofs + i * w;
+
+					string cycle_text = ((long)(i + start_cycle)).ToString();
+					SizeF textSize = gr.MeasureString(cycle_text, Font);
+					PointF pt = new PointF(
+						w / 2 - (int)(textSize.Width / 2) + x,
+						yofs / 2 - (int)(textSize.Height / 2));
+					gr.DrawString(cycle_text, Font, label_brush, pt);
+				}
 			}
 
 			// Signal names
@@ -260,7 +263,7 @@ namespace System.Windows.Forms
 			}
 
 			DrawDotted(gr);
-			DrawLabels(gr);
+			DrawLabels(gr, false);
 			for (int n = 0; n < data.Length; n++)
 			{
 				DrawSignal(gr, n);

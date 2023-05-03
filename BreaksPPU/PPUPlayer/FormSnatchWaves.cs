@@ -16,7 +16,7 @@ namespace PPUPlayer
 
 			wavesControl1.PlotWaves(data, 0);
 			wavesControl1.EnableSelection(true);
-			wavesControl1.EnabledDottedEveryNth(ppu_features.SamplesPerPCLK, true);
+			//wavesControl1.EnabledDottedEveryNth(ppu_features.SamplesPerPCLK, true);
 		}
 
 		private void FormSnatchWaves_KeyUp(object sender, KeyEventArgs e)

@@ -244,7 +244,7 @@ namespace PPUPlayer
 
 			BreaksCore.VideoSignalFeatures features;
 			BreaksCore.GetPpuSignalFeatures(out features);
-			wavesControl1.EnabledDottedEveryNth(features.SamplesPerPCLK, true);
+			//wavesControl1.EnabledDottedEveryNth(features.SamplesPerPCLK, true);
 
 			SimulationStarted = true;
 		}

@@ -119,6 +119,18 @@
 			openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
 			openFileDialogRegdump = new System.Windows.Forms.OpenFileDialog();
+			toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+			toolStripButton7 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton8 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton9 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton10 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton11 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton12 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton13 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton14 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton15 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton16 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton17 = new System.Windows.Forms.ToolStripButton();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
@@ -153,7 +165,7 @@
 			menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, dumpsToolStripMenuItem, controlsToolStripMenuItem, miscToolStripMenuItem, helpToolStripMenuItem });
 			menuStrip1.Location = new System.Drawing.Point(0, 0);
 			menuStrip1.Name = "menuStrip1";
-			menuStrip1.Size = new System.Drawing.Size(858, 24);
+			menuStrip1.Size = new System.Drawing.Size(1047, 24);
 			menuStrip1.TabIndex = 0;
 			menuStrip1.Text = "menuStrip1";
 			// 
@@ -407,7 +419,7 @@
 			statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel6, toolStripStatusLabel2, toolStripStatusLabel7, toolStripStatusLabel3, toolStripStatusLabel8, toolStripStatusLabel11, toolStripStatusLabel12, toolStripStatusLabel13, toolStripStatusLabel14 });
 			statusStrip1.Location = new System.Drawing.Point(0, 527);
 			statusStrip1.Name = "statusStrip1";
-			statusStrip1.Size = new System.Drawing.Size(858, 24);
+			statusStrip1.Size = new System.Drawing.Size(1047, 24);
 			statusStrip1.TabIndex = 1;
 			statusStrip1.Text = "statusStrip1";
 			// 
@@ -480,7 +492,7 @@
 			toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton1, toolStripButton3, toolStripButton2 });
 			toolStrip1.Location = new System.Drawing.Point(0, 24);
 			toolStrip1.Name = "toolStrip1";
-			toolStrip1.Size = new System.Drawing.Size(858, 39);
+			toolStrip1.Size = new System.Drawing.Size(1047, 39);
 			toolStrip1.TabIndex = 3;
 			toolStrip1.Text = "toolStrip1";
 			// 
@@ -523,7 +535,7 @@
 			tabControl1.Location = new System.Drawing.Point(0, 63);
 			tabControl1.Name = "tabControl1";
 			tabControl1.SelectedIndex = 0;
-			tabControl1.Size = new System.Drawing.Size(858, 464);
+			tabControl1.Size = new System.Drawing.Size(1047, 464);
 			tabControl1.TabIndex = 4;
 			// 
 			// tabPage1
@@ -602,7 +614,7 @@
 			tabPage3.Controls.Add(splitContainer1);
 			tabPage3.Location = new System.Drawing.Point(4, 24);
 			tabPage3.Name = "tabPage3";
-			tabPage3.Size = new System.Drawing.Size(850, 436);
+			tabPage3.Size = new System.Drawing.Size(1039, 436);
 			tabPage3.TabIndex = 2;
 			tabPage3.Text = "Debug";
 			tabPage3.UseVisualStyleBackColor = true;
@@ -620,8 +632,8 @@
 			// splitContainer1.Panel2
 			// 
 			splitContainer1.Panel2.Controls.Add(splitContainer2);
-			splitContainer1.Size = new System.Drawing.Size(850, 436);
-			splitContainer1.SplitterDistance = 283;
+			splitContainer1.Size = new System.Drawing.Size(1039, 436);
+			splitContainer1.SplitterDistance = 345;
 			splitContainer1.TabIndex = 0;
 			// 
 			// splitContainer3
@@ -640,7 +652,7 @@
 			// splitContainer3.Panel2
 			// 
 			splitContainer3.Panel2.Controls.Add(propertyGrid1);
-			splitContainer3.Size = new System.Drawing.Size(283, 436);
+			splitContainer3.Size = new System.Drawing.Size(345, 436);
 			splitContainer3.SplitterDistance = 42;
 			splitContainer3.TabIndex = 1;
 			// 
@@ -672,7 +684,7 @@
 			propertyGrid1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			propertyGrid1.Location = new System.Drawing.Point(0, 0);
 			propertyGrid1.Name = "propertyGrid1";
-			propertyGrid1.Size = new System.Drawing.Size(283, 390);
+			propertyGrid1.Size = new System.Drawing.Size(345, 390);
 			propertyGrid1.TabIndex = 1;
 			propertyGrid1.PropertyValueChanged += propertyGrid1_PropertyValueChanged;
 			// 
@@ -693,7 +705,7 @@
 			// splitContainer2.Panel2
 			// 
 			splitContainer2.Panel2.Controls.Add(tabControl2);
-			splitContainer2.Size = new System.Drawing.Size(563, 436);
+			splitContainer2.Size = new System.Drawing.Size(690, 436);
 			splitContainer2.SplitterDistance = 42;
 			splitContainer2.TabIndex = 0;
 			// 
@@ -712,7 +724,7 @@
 			button1.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			button1.BackgroundImage = Properties.Resources.button_get_debug;
 			button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			button1.Location = new System.Drawing.Point(528, 5);
+			button1.Location = new System.Drawing.Point(655, 5);
 			button1.Name = "button1";
 			button1.Size = new System.Drawing.Size(32, 32);
 			button1.TabIndex = 1;
@@ -724,7 +736,7 @@
 			comboBox1.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			comboBox1.FormattingEnabled = true;
-			comboBox1.Location = new System.Drawing.Point(309, 9);
+			comboBox1.Location = new System.Drawing.Point(436, 9);
 			comboBox1.Name = "comboBox1";
 			comboBox1.Size = new System.Drawing.Size(213, 23);
 			comboBox1.TabIndex = 0;
@@ -739,7 +751,7 @@
 			tabControl2.Location = new System.Drawing.Point(0, 0);
 			tabControl2.Name = "tabControl2";
 			tabControl2.SelectedIndex = 0;
-			tabControl2.Size = new System.Drawing.Size(563, 390);
+			tabControl2.Size = new System.Drawing.Size(690, 390);
 			tabControl2.TabIndex = 1;
 			// 
 			// tabPage5
@@ -771,7 +783,7 @@
 			tabPage4.Location = new System.Drawing.Point(4, 24);
 			tabPage4.Name = "tabPage4";
 			tabPage4.Padding = new System.Windows.Forms.Padding(3);
-			tabPage4.Size = new System.Drawing.Size(555, 362);
+			tabPage4.Size = new System.Drawing.Size(682, 362);
 			tabPage4.TabIndex = 0;
 			tabPage4.Text = "Hex";
 			tabPage4.UseVisualStyleBackColor = true;
@@ -786,7 +798,7 @@
 			hexBox1.Name = "hexBox1";
 			hexBox1.ReadOnly = true;
 			hexBox1.ShadowSelectionColor = System.Drawing.Color.FromArgb(100, 60, 188, 255);
-			hexBox1.Size = new System.Drawing.Size(549, 356);
+			hexBox1.Size = new System.Drawing.Size(676, 356);
 			hexBox1.StringViewVisible = true;
 			hexBox1.TabIndex = 0;
 			hexBox1.UseFixedBytesPerLine = true;
@@ -798,7 +810,7 @@
 			tabPage6.Controls.Add(toolStrip3);
 			tabPage6.Location = new System.Drawing.Point(4, 24);
 			tabPage6.Name = "tabPage6";
-			tabPage6.Size = new System.Drawing.Size(555, 362);
+			tabPage6.Size = new System.Drawing.Size(682, 362);
 			tabPage6.TabIndex = 2;
 			tabPage6.Text = "Waves";
 			tabPage6.UseVisualStyleBackColor = true;
@@ -818,17 +830,17 @@
 			wavesControl1.Name = "wavesControl1";
 			wavesControl1.SelectionColor = System.Drawing.Color.GhostWhite;
 			wavesControl1.SignalColor = System.Drawing.Color.SpringGreen;
-			wavesControl1.Size = new System.Drawing.Size(555, 337);
+			wavesControl1.Size = new System.Drawing.Size(682, 337);
 			wavesControl1.TabIndex = 1;
 			wavesControl1.Text = "wavesControl1";
 			wavesControl1.UndefinedColor = System.Drawing.Color.Red;
 			// 
 			// toolStrip3
 			// 
-			toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton5, toolStripButton6 });
+			toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton5, toolStripButton6, toolStripSeparator6, toolStripButton7, toolStripButton8, toolStripButton9, toolStripButton10, toolStripButton11, toolStripButton12, toolStripButton13, toolStripButton14, toolStripButton15, toolStripButton16, toolStripButton17 });
 			toolStrip3.Location = new System.Drawing.Point(0, 0);
 			toolStrip3.Name = "toolStrip3";
-			toolStrip3.Size = new System.Drawing.Size(555, 25);
+			toolStrip3.Size = new System.Drawing.Size(682, 25);
 			toolStrip3.TabIndex = 0;
 			toolStrip3.Text = "toolStrip3";
 			// 
@@ -903,11 +915,130 @@
 			openFileDialogRegdump.DefaultExt = "bin";
 			openFileDialogRegdump.Filter = "Register Dump files|*.bin;*.regdump|All files|*.*";
 			// 
+			// toolStripSeparator6
+			// 
+			toolStripSeparator6.Name = "toolStripSeparator6";
+			toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+			// 
+			// toolStripButton7
+			// 
+			toolStripButton7.Checked = true;
+			toolStripButton7.CheckState = System.Windows.Forms.CheckState.Checked;
+			toolStripButton7.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton7.Image = (System.Drawing.Image)resources.GetObject("toolStripButton7.Image");
+			toolStripButton7.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton7.Name = "toolStripButton7";
+			toolStripButton7.Size = new System.Drawing.Size(46, 22);
+			toolStripButton7.Text = "Clocks";
+			toolStripButton7.Click += toolStripButton7_Click;
+			// 
+			// toolStripButton8
+			// 
+			toolStripButton8.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton8.Image = (System.Drawing.Image)resources.GetObject("toolStripButton8.Image");
+			toolStripButton8.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton8.Name = "toolStripButton8";
+			toolStripButton8.Size = new System.Drawing.Size(51, 22);
+			toolStripButton8.Text = "CPU I/F";
+			toolStripButton8.Click += toolStripButton8_Click;
+			// 
+			// toolStripButton9
+			// 
+			toolStripButton9.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton9.Image = (System.Drawing.Image)resources.GetObject("toolStripButton9.Image");
+			toolStripButton9.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton9.Name = "toolStripButton9";
+			toolStripButton9.Size = new System.Drawing.Size(66, 22);
+			toolStripButton9.Text = "CTRL Regs";
+			toolStripButton9.Click += toolStripButton9_Click;
+			// 
+			// toolStripButton10
+			// 
+			toolStripButton10.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton10.Image = (System.Drawing.Image)resources.GetObject("toolStripButton10.Image");
+			toolStripButton10.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton10.Name = "toolStripButton10";
+			toolStripButton10.Size = new System.Drawing.Size(54, 22);
+			toolStripButton10.Text = "H/V Cnt";
+			toolStripButton10.Click += toolStripButton10_Click;
+			// 
+			// toolStripButton11
+			// 
+			toolStripButton11.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton11.Image = (System.Drawing.Image)resources.GetObject("toolStripButton11.Image");
+			toolStripButton11.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton11.Name = "toolStripButton11";
+			toolStripButton11.Size = new System.Drawing.Size(37, 22);
+			toolStripButton11.Text = "MUX";
+			toolStripButton11.Click += toolStripButton11_Click;
+			// 
+			// toolStripButton12
+			// 
+			toolStripButton12.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton12.Image = (System.Drawing.Image)resources.GetObject("toolStripButton12.Image");
+			toolStripButton12.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton12.Name = "toolStripButton12";
+			toolStripButton12.Size = new System.Drawing.Size(32, 22);
+			toolStripButton12.Text = "SPG";
+			toolStripButton12.Click += toolStripButton12_Click;
+			// 
+			// toolStripButton13
+			// 
+			toolStripButton13.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton13.Image = (System.Drawing.Image)resources.GetObject("toolStripButton13.Image");
+			toolStripButton13.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton13.Name = "toolStripButton13";
+			toolStripButton13.Size = new System.Drawing.Size(45, 22);
+			toolStripButton13.Text = "CRAM";
+			toolStripButton13.Click += toolStripButton13_Click;
+			// 
+			// toolStripButton14
+			// 
+			toolStripButton14.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton14.Image = (System.Drawing.Image)resources.GetObject("toolStripButton14.Image");
+			toolStripButton14.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton14.Name = "toolStripButton14";
+			toolStripButton14.Size = new System.Drawing.Size(44, 22);
+			toolStripButton14.Text = "VRAM";
+			toolStripButton14.Click += toolStripButton14_Click;
+			// 
+			// toolStripButton15
+			// 
+			toolStripButton15.Checked = true;
+			toolStripButton15.CheckState = System.Windows.Forms.CheckState.Checked;
+			toolStripButton15.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton15.Image = (System.Drawing.Image)resources.GetObject("toolStripButton15.Image");
+			toolStripButton15.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton15.Name = "toolStripButton15";
+			toolStripButton15.Size = new System.Drawing.Size(34, 22);
+			toolStripButton15.Text = "FSM";
+			toolStripButton15.Click += toolStripButton15_Click;
+			// 
+			// toolStripButton16
+			// 
+			toolStripButton16.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton16.Image = (System.Drawing.Image)resources.GetObject("toolStripButton16.Image");
+			toolStripButton16.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton16.Name = "toolStripButton16";
+			toolStripButton16.Size = new System.Drawing.Size(63, 22);
+			toolStripButton16.Text = "OAM Eval";
+			toolStripButton16.Click += toolStripButton16_Click;
+			// 
+			// toolStripButton17
+			// 
+			toolStripButton17.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton17.Image = (System.Drawing.Image)resources.GetObject("toolStripButton17.Image");
+			toolStripButton17.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton17.Name = "toolStripButton17";
+			toolStripButton17.Size = new System.Drawing.Size(41, 22);
+			toolStripButton17.Text = "Other";
+			toolStripButton17.Click += toolStripButton17_Click;
+			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			ClientSize = new System.Drawing.Size(858, 551);
+			ClientSize = new System.Drawing.Size(1047, 551);
 			Controls.Add(tabControl1);
 			Controls.Add(toolStrip1);
 			Controls.Add(statusStrip1);
@@ -1049,5 +1180,17 @@
 		private System.Windows.Forms.ToolStrip toolStrip3;
 		private System.Windows.Forms.ToolStripButton toolStripButton5;
 		private System.Windows.Forms.ToolStripButton toolStripButton6;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+		private System.Windows.Forms.ToolStripButton toolStripButton7;
+		private System.Windows.Forms.ToolStripButton toolStripButton8;
+		private System.Windows.Forms.ToolStripButton toolStripButton9;
+		private System.Windows.Forms.ToolStripButton toolStripButton10;
+		private System.Windows.Forms.ToolStripButton toolStripButton11;
+		private System.Windows.Forms.ToolStripButton toolStripButton12;
+		private System.Windows.Forms.ToolStripButton toolStripButton13;
+		private System.Windows.Forms.ToolStripButton toolStripButton14;
+		private System.Windows.Forms.ToolStripButton toolStripButton15;
+		private System.Windows.Forms.ToolStripButton toolStripButton16;
+		private System.Windows.Forms.ToolStripButton toolStripButton17;
 	}
 }
