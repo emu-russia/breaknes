@@ -27,6 +27,3 @@ No 6502 load/store instruction can technically execute faster than a single PCLK
 So we will make the assumption that the CPU I/F (signal `/DBE` and others) will be active for the entire PCLK cycle (`/PCLK` + `PCLK`).
 
 If this does not work, we will do some more research on how to do it better.
-
-EDIT: It doesn't seem to be working after all. See https://github.com/emu-russia/breaknes/issues/196
-Bummer.
