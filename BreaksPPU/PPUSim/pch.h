@@ -17,4 +17,3 @@
 #include "../../Common/BaseLogicLib/BaseLogic.h"
 
 #include "ppu.h"
-#include "log.h"
