@@ -1,8 +1,11 @@
 // Mapping PPU signals for Visual2C02
 
+using System.Data;
+using System.Reflection.Metadata.Ecma335;
+
 class Visual2C02
 {
-    static Dictionary<string, string> mappingFrom = new()
+	static Dictionary<string, string> mappingFrom = new()
     {
 		{ "/_ab8", "/PA8" },
 		{ "/_ab9", "/PA9" },
@@ -73,7 +76,7 @@ class Visual2C02
 		{ "vbl_clear_flags", "RESCL" },
 		{ "+/in_range_1", "VSYNC" },
 		{ "+/vpos_eq_241_2", "/VSET" },
-		{ "in_range_2", "VB" },
+		{ "in_vblank", "VB" },
 		{ "not_rendering", "BLNK" },
 		{ "_int", "INT" },
 		{ "+hpos0", "H0'" },
@@ -189,7 +192,7 @@ class Visual2C02
 	};
 
     static Dictionary<string, string> mappingTo = new()
-    {
+	{
         { "/PA8", "/_ab8" },
         { "/PA9", "/_ab9" },
         { "/PA10", "/_ab10" },
@@ -259,7 +262,7 @@ class Visual2C02
         { "RESCL", "vbl_clear_flags" },
         { "VSYNC", "+/in_range_1" },
         { "/VSET", "+/vpos_eq_241_2" },
-        { "VB", "in_range_2" },
+        { "VB", "in_vblank" },
         { "BLNK", "not_rendering" },
         { "INT", "_int" },
         { "H0'", "+hpos0" },
@@ -371,24 +374,24 @@ class Visual2C02
         { "DB/PAR", "write_2007_ended_2" },
         { "PD/RB", "read_2007_ended_2" },
         { "TH/MUX", "ab_in_palette_range_and_not_rendering_2" },
-        { "XRB", "read_2007_output_vrambuf_2" },
+        { "XRB", "read_2007_output_vrambuf_2" }
     };
 
-    public static string FromVisual2C02 (string name)
+	static public string FromVisual2C02 (string name)
 	{
-        if (mappingFrom.ContainsKey(name))
-        {
-            return mappingFrom[name];
-        }
+		if (mappingFrom.ContainsKey(name))
+		{
+			return mappingFrom[name];
+		}	
         else return name;
 	}
 
-	public static string ToVisual2C02 (string name)
+	static public string ToVisual2C02 (string name)
 	{
-        if (mappingTo.ContainsKey(name))
-        {
-            return mappingTo[name];
-        }
+		if (mappingTo.ContainsKey(name))
+		{
+			return mappingTo[name];
+		}
         else return name;
 	}
 }
