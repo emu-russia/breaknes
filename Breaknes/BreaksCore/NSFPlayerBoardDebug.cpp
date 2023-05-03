@@ -6,11 +6,6 @@ using namespace BaseLogic;
 
 #define BANKED_SRAM_NAME "BankedSRAM"
 #define WRAM_NAME "WRAM"
-#define CORE_WIRES_CATEGORY "Core Wires"
-#define CORE_REGS_CATEGORY "Core Regs"
-#define APU_WIRES_CATEGORY "APU Wires"
-#define APU_REGS_CATEGORY "APU Regs"
-#define BOARD_CATEGORY "Board"
 
 namespace Breaknes
 {
