@@ -10,6 +10,9 @@ namespace PPUPlayer
 {
 	public partial class FormMain : Form
 	{
+		bool Paused = false;
+		bool DebugStep = false;
+
 		private int StepsToStat = 32;
 		private int StepsCounter = 0;
 
@@ -19,8 +22,15 @@ namespace PPUPlayer
 			{
 				if (Paused)
 				{
-					Thread.Sleep(10);
-					continue;
+					if (DebugStep)
+					{
+						DebugStep = false;
+					}
+					else
+					{
+						Thread.Sleep(10);
+						continue;
+					}
 				}
 
 				// Check that the PPU Dump records have run out
@@ -48,6 +58,13 @@ namespace PPUPlayer
 				// Perform one half-cycle of the PPU
 
 				BreaksCore.Step();
+
+				// Update Waves
+
+				if (Paused)
+				{
+					UpdateWaves();
+				}
 
 				// Logic related to the processing of H/V values
 

@@ -34,8 +34,6 @@
 			choosePPURegsDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			choosenesImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-			saveTraceInLogisimFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			saveTraceInVCDFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			saveFieldAsImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,6 +96,7 @@
 			comboBox2 = new System.Windows.Forms.ComboBox();
 			propertyGrid1 = new System.Windows.Forms.PropertyGrid();
 			splitContainer2 = new System.Windows.Forms.SplitContainer();
+			button3 = new System.Windows.Forms.Button();
 			button1 = new System.Windows.Forms.Button();
 			comboBox1 = new System.Windows.Forms.ComboBox();
 			tabControl2 = new System.Windows.Forms.TabControl();
@@ -105,6 +104,10 @@
 			pictureBoxForHuman = new System.Windows.Forms.PictureBox();
 			tabPage4 = new System.Windows.Forms.TabPage();
 			hexBox1 = new Be.Windows.Forms.HexBox();
+			tabPage6 = new System.Windows.Forms.TabPage();
+			wavesControl1 = new System.Windows.Forms.WavesControl();
+			toolStrip3 = new System.Windows.Forms.ToolStrip();
+			toolStripButton5 = new System.Windows.Forms.ToolStripButton();
 			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
 			backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -140,6 +143,8 @@
 			tabPage5.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)pictureBoxForHuman).BeginInit();
 			tabPage4.SuspendLayout();
+			tabPage6.SuspendLayout();
+			toolStrip3.SuspendLayout();
 			SuspendLayout();
 			// 
 			// menuStrip1
@@ -153,7 +158,7 @@
 			// 
 			// fileToolStripMenuItem
 			// 
-			fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { choosePPURegsDumpToolStripMenuItem, choosenesImageToolStripMenuItem, toolStripSeparator3, saveTraceInLogisimFormatToolStripMenuItem, saveTraceInVCDFormatToolStripMenuItem, saveFieldAsImageToolStripMenuItem, toolStripSeparator5, settingsToolStripMenuItem, toolStripSeparator4, exitToolStripMenuItem });
+			fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { choosePPURegsDumpToolStripMenuItem, choosenesImageToolStripMenuItem, toolStripSeparator3, saveFieldAsImageToolStripMenuItem, toolStripSeparator5, settingsToolStripMenuItem, toolStripSeparator4, exitToolStripMenuItem });
 			fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			fileToolStripMenuItem.Text = "File";
@@ -161,62 +166,50 @@
 			// choosePPURegsDumpToolStripMenuItem
 			// 
 			choosePPURegsDumpToolStripMenuItem.Name = "choosePPURegsDumpToolStripMenuItem";
-			choosePPURegsDumpToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			choosePPURegsDumpToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
 			choosePPURegsDumpToolStripMenuItem.Text = "Choose PPU Regs Dump...";
 			choosePPURegsDumpToolStripMenuItem.Click += choosePPURegsDumpToolStripMenuItem_Click;
 			// 
 			// choosenesImageToolStripMenuItem
 			// 
 			choosenesImageToolStripMenuItem.Name = "choosenesImageToolStripMenuItem";
-			choosenesImageToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			choosenesImageToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
 			choosenesImageToolStripMenuItem.Text = "Choose .nes Image...";
 			choosenesImageToolStripMenuItem.Click += choosenesImageToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator3
 			// 
 			toolStripSeparator3.Name = "toolStripSeparator3";
-			toolStripSeparator3.Size = new System.Drawing.Size(231, 6);
-			// 
-			// saveTraceInLogisimFormatToolStripMenuItem
-			// 
-			saveTraceInLogisimFormatToolStripMenuItem.Name = "saveTraceInLogisimFormatToolStripMenuItem";
-			saveTraceInLogisimFormatToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-			saveTraceInLogisimFormatToolStripMenuItem.Text = "Save Trace in Logisim format...";
-			// 
-			// saveTraceInVCDFormatToolStripMenuItem
-			// 
-			saveTraceInVCDFormatToolStripMenuItem.Name = "saveTraceInVCDFormatToolStripMenuItem";
-			saveTraceInVCDFormatToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-			saveTraceInVCDFormatToolStripMenuItem.Text = "Save Trace in VCD format...";
+			toolStripSeparator3.Size = new System.Drawing.Size(209, 6);
 			// 
 			// saveFieldAsImageToolStripMenuItem
 			// 
 			saveFieldAsImageToolStripMenuItem.Name = "saveFieldAsImageToolStripMenuItem";
-			saveFieldAsImageToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			saveFieldAsImageToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
 			saveFieldAsImageToolStripMenuItem.Text = "Save field as bitmap...";
 			saveFieldAsImageToolStripMenuItem.Click += saveFieldAsImageToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator5
 			// 
 			toolStripSeparator5.Name = "toolStripSeparator5";
-			toolStripSeparator5.Size = new System.Drawing.Size(231, 6);
+			toolStripSeparator5.Size = new System.Drawing.Size(209, 6);
 			// 
 			// settingsToolStripMenuItem
 			// 
 			settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-			settingsToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			settingsToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
 			settingsToolStripMenuItem.Text = "Settings...";
 			settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator4
 			// 
 			toolStripSeparator4.Name = "toolStripSeparator4";
-			toolStripSeparator4.Size = new System.Drawing.Size(231, 6);
+			toolStripSeparator4.Size = new System.Drawing.Size(209, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			exitToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			exitToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
 			exitToolStripMenuItem.Text = "Exit";
 			exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
 			// 
@@ -692,6 +685,7 @@
 			// 
 			// splitContainer2.Panel1
 			// 
+			splitContainer2.Panel1.Controls.Add(button3);
 			splitContainer2.Panel1.Controls.Add(button1);
 			splitContainer2.Panel1.Controls.Add(comboBox1);
 			// 
@@ -701,6 +695,16 @@
 			splitContainer2.Size = new System.Drawing.Size(563, 436);
 			splitContainer2.SplitterDistance = 42;
 			splitContainer2.TabIndex = 0;
+			// 
+			// button3
+			// 
+			button3.Location = new System.Drawing.Point(4, 5);
+			button3.Name = "button3";
+			button3.Size = new System.Drawing.Size(97, 32);
+			button3.TabIndex = 2;
+			button3.Text = "Step (F11)";
+			button3.UseVisualStyleBackColor = true;
+			button3.Click += button3_Click_1;
 			// 
 			// button1
 			// 
@@ -729,6 +733,7 @@
 			// 
 			tabControl2.Controls.Add(tabPage5);
 			tabControl2.Controls.Add(tabPage4);
+			tabControl2.Controls.Add(tabPage6);
 			tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
 			tabControl2.Location = new System.Drawing.Point(0, 0);
 			tabControl2.Name = "tabControl2";
@@ -785,6 +790,57 @@
 			hexBox1.TabIndex = 0;
 			hexBox1.UseFixedBytesPerLine = true;
 			hexBox1.VScrollBarVisible = true;
+			// 
+			// tabPage6
+			// 
+			tabPage6.Controls.Add(wavesControl1);
+			tabPage6.Controls.Add(toolStrip3);
+			tabPage6.Location = new System.Drawing.Point(4, 24);
+			tabPage6.Name = "tabPage6";
+			tabPage6.Size = new System.Drawing.Size(555, 362);
+			tabPage6.TabIndex = 2;
+			tabPage6.Text = "Waves";
+			tabPage6.UseVisualStyleBackColor = true;
+			// 
+			// wavesControl1
+			// 
+			wavesControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			wavesControl1.DottedColor = System.Drawing.Color.Silver;
+			wavesControl1.DottedOpacity = 95;
+			wavesControl1.FillColor = System.Drawing.Color.Black;
+			wavesControl1.Font = new System.Drawing.Font("Segoe UI", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			wavesControl1.GridColor = System.Drawing.Color.Green;
+			wavesControl1.GridOpacity = 95;
+			wavesControl1.HighZColor = System.Drawing.Color.Gold;
+			wavesControl1.LabelsColor = System.Drawing.Color.White;
+			wavesControl1.Location = new System.Drawing.Point(0, 25);
+			wavesControl1.Name = "wavesControl1";
+			wavesControl1.SelectionColor = System.Drawing.Color.GhostWhite;
+			wavesControl1.SignalColor = System.Drawing.Color.SpringGreen;
+			wavesControl1.Size = new System.Drawing.Size(555, 337);
+			wavesControl1.TabIndex = 1;
+			wavesControl1.Text = "wavesControl1";
+			wavesControl1.UndefinedColor = System.Drawing.Color.Red;
+			// 
+			// toolStrip3
+			// 
+			toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton5 });
+			toolStrip3.Location = new System.Drawing.Point(0, 0);
+			toolStrip3.Name = "toolStrip3";
+			toolStrip3.Size = new System.Drawing.Size(555, 25);
+			toolStrip3.TabIndex = 0;
+			toolStrip3.Text = "toolStrip3";
+			// 
+			// toolStripButton5
+			// 
+			toolStripButton5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton5.Image = (System.Drawing.Image)resources.GetObject("toolStripButton5.Image");
+			toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton5.Name = "toolStripButton5";
+			toolStripButton5.Size = new System.Drawing.Size(47, 22);
+			toolStripButton5.Text = "Snatch";
+			toolStripButton5.Click += toolStripButton5_Click;
 			// 
 			// openFileDialog1
 			// 
@@ -845,10 +901,12 @@
 			Controls.Add(toolStrip1);
 			Controls.Add(statusStrip1);
 			Controls.Add(menuStrip1);
+			KeyPreview = true;
 			MainMenuStrip = menuStrip1;
 			Name = "FormMain";
 			Text = "PPU Player";
 			Load += Form1_Load;
+			KeyDown += FormMain_KeyDown;
 			menuStrip1.ResumeLayout(false);
 			menuStrip1.PerformLayout();
 			statusStrip1.ResumeLayout(false);
@@ -879,6 +937,10 @@
 			tabPage5.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)pictureBoxForHuman).EndInit();
 			tabPage4.ResumeLayout(false);
+			tabPage6.ResumeLayout(false);
+			tabPage6.PerformLayout();
+			toolStrip3.ResumeLayout(false);
+			toolStrip3.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -936,9 +998,7 @@
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem saveTraceInLogisimFormatToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog2;
-		private System.Windows.Forms.ToolStripMenuItem saveTraceInVCDFormatToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialogVCD;
 		private System.Windows.Forms.ToolStripMenuItem sendFeedbackToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
@@ -971,5 +1031,10 @@
 		private System.Windows.Forms.ToolStrip toolStrip2;
 		private System.Windows.Forms.ToolStripButton toolStripButton4;
 		private System.Windows.Forms.OpenFileDialog openFileDialogRegdump;
+		private System.Windows.Forms.Button button3;
+		private System.Windows.Forms.TabPage tabPage6;
+		private System.Windows.Forms.WavesControl wavesControl1;
+		private System.Windows.Forms.ToolStrip toolStrip3;
+		private System.Windows.Forms.ToolStripButton toolStripButton5;
 	}
 }
