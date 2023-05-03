@@ -179,7 +179,7 @@ namespace PPUSim
 		fsm_states.I_OAM2 = ToByte(fsm.IOAM2);
 		fsm_states.PAR_O = ToByte(fsm.PARO);
 		fsm_states.n_VIS = ToByte(fsm.nVIS);
-		fsm_states.F_NT = ToByte(NOT(fsm.nFNT));	// Direct polarity returns for unification
+		fsm_states.nF_NT = ToByte(fsm.nFNT);
 		fsm_states.F_TB = ToByte(fsm.FTB);
 		fsm_states.F_TA = ToByte(fsm.FTA);
 		fsm_states.F_AT = ToByte(fsm.FAT);

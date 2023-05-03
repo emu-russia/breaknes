@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using System.Runtime.InteropServices;
 using static SharpTools.CoreDebug;
+using System.DirectoryServices.ActiveDirectory;
+using System.Xml.Linq;
 
 namespace SharpTools
 {
@@ -440,6 +442,8 @@ namespace SharpTools
 							break;
 						}
 					}
+					
+					if (Visual2C02Mapping) entry.name = Visual2C02.ToVisual2C02(entry.name);
 
 					entry.bits = raw.bits;
 					entry.value = raw.value;
@@ -475,6 +479,8 @@ namespace SharpTools
 		{
 			DebugInfoEntryRaw entry = new();
 
+			if (Visual2C02Mapping) name = Visual2C02.FromVisual2C02(name);
+
 			unsafe
 			{
 				for (int i = 0; i < 32; i++)
@@ -500,6 +506,8 @@ namespace SharpTools
 		{
 			DebugInfoEntryRaw entry = new();
 
+			if (Visual2C02Mapping) name = Visual2C02.FromVisual2C02(name);
+
 			unsafe
 			{
 				for (int i = 0; i < 32; i++)
@@ -520,5 +528,8 @@ namespace SharpTools
 
 			SetDebugInfoByName(type, ref entry);
 		}
+
+		public static bool Visual2A03Mapping = false;
+		public static bool Visual2C02Mapping = false;
 	}
 }
