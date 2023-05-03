@@ -42,10 +42,5 @@ namespace PPUPlayer
 				MessageBox.Show("Select something first with the left mouse button. A box will appear, then click on Snatch.", "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 		}
-
-		private void FormSnatchWaves_Load(object sender, EventArgs e)
-		{
-
-		}
 	}
 }

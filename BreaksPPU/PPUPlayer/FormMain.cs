@@ -282,7 +282,7 @@ namespace PPUPlayer
 			SimulationStarted = false;
 
 			signalPlotScan.EnableSelection(false);
-			
+
 			wavesControl1.EnableSelection(false);
 			ResetWaves();
 			waves = new();

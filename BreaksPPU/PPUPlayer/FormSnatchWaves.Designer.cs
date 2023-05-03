@@ -58,21 +58,22 @@
 			// wavesControl1
 			// 
 			wavesControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			wavesControl1.DottedColor = System.Drawing.Color.Empty;
-			wavesControl1.DottedOpacity = 0;
-			wavesControl1.FillColor = System.Drawing.Color.Empty;
-			wavesControl1.GridColor = System.Drawing.Color.Empty;
-			wavesControl1.GridOpacity = 0;
-			wavesControl1.HighZColor = System.Drawing.Color.Empty;
-			wavesControl1.LabelsColor = System.Drawing.Color.Empty;
+			wavesControl1.DottedColor = System.Drawing.Color.Silver;
+			wavesControl1.DottedOpacity = 95;
+			wavesControl1.FillColor = System.Drawing.Color.Black;
+			wavesControl1.Font = new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			wavesControl1.GridColor = System.Drawing.Color.Green;
+			wavesControl1.GridOpacity = 95;
+			wavesControl1.HighZColor = System.Drawing.Color.Gold;
+			wavesControl1.LabelsColor = System.Drawing.Color.White;
 			wavesControl1.Location = new System.Drawing.Point(0, 25);
 			wavesControl1.Name = "wavesControl1";
-			wavesControl1.SelectionColor = System.Drawing.Color.Empty;
-			wavesControl1.SignalColor = System.Drawing.Color.Empty;
+			wavesControl1.SelectionColor = System.Drawing.Color.GhostWhite;
+			wavesControl1.SignalColor = System.Drawing.Color.SpringGreen;
 			wavesControl1.Size = new System.Drawing.Size(1025, 526);
 			wavesControl1.TabIndex = 1;
 			wavesControl1.Text = "wavesControl1";
-			wavesControl1.UndefinedColor = System.Drawing.Color.Empty;
+			wavesControl1.UndefinedColor = System.Drawing.Color.Red;
 			// 
 			// FormSnatchWaves
 			// 
@@ -82,6 +83,7 @@
 			Controls.Add(wavesControl1);
 			Controls.Add(toolStrip1);
 			KeyPreview = true;
+			MinimumSize = new System.Drawing.Size(400, 200);
 			Name = "FormSnatchWaves";
 			Text = "Waves";
 			KeyUp += FormSnatchWaves_KeyUp;

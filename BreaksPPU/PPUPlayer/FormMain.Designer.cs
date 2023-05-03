@@ -108,6 +108,7 @@
 			wavesControl1 = new System.Windows.Forms.WavesControl();
 			toolStrip3 = new System.Windows.Forms.ToolStrip();
 			toolStripButton5 = new System.Windows.Forms.ToolStripButton();
+			toolStripButton6 = new System.Windows.Forms.ToolStripButton();
 			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
 			backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -118,7 +119,6 @@
 			openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
 			openFileDialogRegdump = new System.Windows.Forms.OpenFileDialog();
-			toolStripButton6 = new System.Windows.Forms.ToolStripButton();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
@@ -843,6 +843,16 @@
 			toolStripButton5.Text = "Snatch";
 			toolStripButton5.Click += toolStripButton5_Click;
 			// 
+			// toolStripButton6
+			// 
+			toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripButton6.Image = (System.Drawing.Image)resources.GetObject("toolStripButton6.Image");
+			toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripButton6.Name = "toolStripButton6";
+			toolStripButton6.Size = new System.Drawing.Size(38, 22);
+			toolStripButton6.Text = "Clear";
+			toolStripButton6.Click += toolStripButton6_Click;
+			// 
 			// openFileDialog1
 			// 
 			openFileDialog1.DefaultExt = "bin";
@@ -893,16 +903,6 @@
 			openFileDialogRegdump.DefaultExt = "bin";
 			openFileDialogRegdump.Filter = "Register Dump files|*.bin;*.regdump|All files|*.*";
 			// 
-			// toolStripButton6
-			// 
-			toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			toolStripButton6.Image = (System.Drawing.Image)resources.GetObject("toolStripButton6.Image");
-			toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
-			toolStripButton6.Name = "toolStripButton6";
-			toolStripButton6.Size = new System.Drawing.Size(38, 22);
-			toolStripButton6.Text = "Clear";
-			toolStripButton6.Click += toolStripButton6_Click;
-			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -914,6 +914,7 @@
 			Controls.Add(menuStrip1);
 			KeyPreview = true;
 			MainMenuStrip = menuStrip1;
+			MinimumSize = new System.Drawing.Size(400, 200);
 			Name = "FormMain";
 			Text = "PPU Player";
 			Load += Form1_Load;
