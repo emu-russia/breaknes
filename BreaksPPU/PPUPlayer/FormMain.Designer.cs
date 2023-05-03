@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			menuStrip1 = new System.Windows.Forms.MenuStrip();
 			fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			choosePPURegsDumpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -106,13 +105,6 @@
 			pictureBoxForHuman = new System.Windows.Forms.PictureBox();
 			tabPage4 = new System.Windows.Forms.TabPage();
 			hexBox1 = new Be.Windows.Forms.HexBox();
-			tabPage6 = new System.Windows.Forms.TabPage();
-			splitContainer4 = new System.Windows.Forms.SplitContainer();
-			comboBoxTraceField = new System.Windows.Forms.ComboBox();
-			label2 = new System.Windows.Forms.Label();
-			comboBoxTraceScan = new System.Windows.Forms.ComboBox();
-			label1 = new System.Windows.Forms.Label();
-			dataGridView1 = new System.Windows.Forms.DataGridView();
 			openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
 			backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -148,12 +140,6 @@
 			tabPage5.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)pictureBoxForHuman).BeginInit();
 			tabPage4.SuspendLayout();
-			tabPage6.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)splitContainer4).BeginInit();
-			splitContainer4.Panel1.SuspendLayout();
-			splitContainer4.Panel2.SuspendLayout();
-			splitContainer4.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			SuspendLayout();
 			// 
 			// menuStrip1
@@ -539,7 +525,6 @@
 			tabControl1.Controls.Add(tabPage1);
 			tabControl1.Controls.Add(tabPage2);
 			tabControl1.Controls.Add(tabPage3);
-			tabControl1.Controls.Add(tabPage6);
 			tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			tabControl1.Location = new System.Drawing.Point(0, 63);
 			tabControl1.Name = "tabControl1";
@@ -801,93 +786,6 @@
 			hexBox1.UseFixedBytesPerLine = true;
 			hexBox1.VScrollBarVisible = true;
 			// 
-			// tabPage6
-			// 
-			tabPage6.Controls.Add(splitContainer4);
-			tabPage6.Location = new System.Drawing.Point(4, 24);
-			tabPage6.Name = "tabPage6";
-			tabPage6.Size = new System.Drawing.Size(850, 436);
-			tabPage6.TabIndex = 3;
-			tabPage6.Text = "Trace";
-			tabPage6.UseVisualStyleBackColor = true;
-			// 
-			// splitContainer4
-			// 
-			splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-			splitContainer4.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			splitContainer4.Location = new System.Drawing.Point(0, 0);
-			splitContainer4.Name = "splitContainer4";
-			splitContainer4.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// splitContainer4.Panel1
-			// 
-			splitContainer4.Panel1.Controls.Add(comboBoxTraceField);
-			splitContainer4.Panel1.Controls.Add(label2);
-			splitContainer4.Panel1.Controls.Add(comboBoxTraceScan);
-			splitContainer4.Panel1.Controls.Add(label1);
-			// 
-			// splitContainer4.Panel2
-			// 
-			splitContainer4.Panel2.Controls.Add(dataGridView1);
-			splitContainer4.Size = new System.Drawing.Size(850, 436);
-			splitContainer4.SplitterDistance = 38;
-			splitContainer4.TabIndex = 0;
-			// 
-			// comboBoxTraceField
-			// 
-			comboBoxTraceField.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			comboBoxTraceField.FormattingEnabled = true;
-			comboBoxTraceField.Location = new System.Drawing.Point(196, 9);
-			comboBoxTraceField.Name = "comboBoxTraceField";
-			comboBoxTraceField.Size = new System.Drawing.Size(70, 23);
-			comboBoxTraceField.TabIndex = 3;
-			// 
-			// label2
-			// 
-			label2.AutoSize = true;
-			label2.Location = new System.Drawing.Point(155, 12);
-			label2.Name = "label2";
-			label2.Size = new System.Drawing.Size(35, 15);
-			label2.TabIndex = 2;
-			label2.Text = "Field:";
-			// 
-			// comboBoxTraceScan
-			// 
-			comboBoxTraceScan.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			comboBoxTraceScan.FormattingEnabled = true;
-			comboBoxTraceScan.Location = new System.Drawing.Point(59, 9);
-			comboBoxTraceScan.Name = "comboBoxTraceScan";
-			comboBoxTraceScan.Size = new System.Drawing.Size(70, 23);
-			comboBoxTraceScan.TabIndex = 1;
-			// 
-			// label1
-			// 
-			label1.AutoSize = true;
-			label1.Location = new System.Drawing.Point(18, 12);
-			label1.Name = "label1";
-			label1.Size = new System.Drawing.Size(35, 15);
-			label1.TabIndex = 0;
-			label1.Text = "Scan:";
-			// 
-			// dataGridView1
-			// 
-			dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
-			dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-			dataGridView1.Location = new System.Drawing.Point(0, 0);
-			dataGridView1.Name = "dataGridView1";
-			dataGridView1.ReadOnly = true;
-			dataGridView1.RowTemplate.Height = 25;
-			dataGridView1.Size = new System.Drawing.Size(850, 394);
-			dataGridView1.TabIndex = 0;
-			// 
 			// openFileDialog1
 			// 
 			openFileDialog1.DefaultExt = "bin";
@@ -981,13 +879,6 @@
 			tabPage5.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)pictureBoxForHuman).EndInit();
 			tabPage4.ResumeLayout(false);
-			tabPage6.ResumeLayout(false);
-			splitContainer4.Panel1.ResumeLayout(false);
-			splitContainer4.Panel1.PerformLayout();
-			splitContainer4.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)splitContainer4).EndInit();
-			splitContainer4.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -1045,13 +936,6 @@
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-		private System.Windows.Forms.TabPage tabPage6;
-		private System.Windows.Forms.SplitContainer splitContainer4;
-		private System.Windows.Forms.ComboBox comboBoxTraceField;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.ComboBox comboBoxTraceScan;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.DataGridView dataGridView1;
 		private System.Windows.Forms.ToolStripMenuItem saveTraceInLogisimFormatToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog2;
 		private System.Windows.Forms.ToolStripMenuItem saveTraceInVCDFormatToolStripMenuItem;
