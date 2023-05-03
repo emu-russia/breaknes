@@ -1,8 +1,5 @@
 // Mapping PPU signals for Visual2C02
 
-using System.Data;
-using System.Reflection.Metadata.Ecma335;
-
 class Visual2C02
 {
 	static Dictionary<string, string> mappingFrom = new()
