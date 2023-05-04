@@ -1,11 +1,5 @@
 ﻿// Converts Logisim .hex dump to byte/UInt16/UInt32/float array.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using System.Text.RegularExpressions;
 
 namespace SharpTools

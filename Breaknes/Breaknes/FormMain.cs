@@ -1,5 +1,4 @@
 using SharpTools;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Breaknes
@@ -39,6 +38,7 @@ namespace Breaknes
 		{
 			original_title = Text;
 			var settings = FormSettings.LoadSettings();
+			board.onUpdateWaves += OnUpdateWaves;
 			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
 			backgroundWorker1.RunWorkerAsync();
 		}
@@ -64,6 +64,7 @@ namespace Breaknes
 				foreach (var inst in debuggers)
 				{
 					inst.UpdateOnRomLoad();
+					inst.ResetWaves();
 				}
 			}
 		}
@@ -103,6 +104,14 @@ namespace Breaknes
 			foreach (var inst in debuggers)
 			{
 				inst.UpdateOnRenderField();
+			}
+		}
+
+		private void OnUpdateWaves()
+		{
+			foreach (var inst in debuggers)
+			{
+				inst.UpdateWaves();
 			}
 		}
 	}

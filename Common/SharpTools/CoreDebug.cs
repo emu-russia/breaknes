@@ -1,10 +1,8 @@
 // This module is used in the Breaks Debugger for a more "human" output of debugging information received from the core.
 
-using System;
 using System.Text;
 using System.Globalization;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Collections;
 
 namespace SharpTools

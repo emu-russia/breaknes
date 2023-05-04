@@ -1,5 +1,4 @@
 using SharpTools;
-using static Breaknes.VideoRender;
 
 namespace Breaknes
 {
@@ -7,7 +6,7 @@ namespace Breaknes
 	{
 		private BreaksCore.VideoSignalFeatures ppu_features;
 		private int SamplesPerScan;
-		private bool RawMode = false;
+		private bool RawMode = true;
 
 		private BreaksCore.VideoOutSample[] ScanBuffer;
 		private int WritePtr = 0;

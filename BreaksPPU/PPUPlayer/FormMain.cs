@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using Be.Windows.Forms;
 using SharpToolsCustomClass;
 using SharpTools;
-using System.ComponentModel.Design;
 
 namespace PPUPlayer
 {
@@ -282,7 +281,6 @@ namespace PPUPlayer
 
 			wavesControl1.EnableSelection(false);
 			ResetWaves();
-			waves = new();
 		}
 
 

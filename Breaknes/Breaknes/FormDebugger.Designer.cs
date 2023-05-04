@@ -47,14 +47,36 @@
 			tabPage4 = new TabPage();
 			hexBox1 = new Be.Windows.Forms.HexBox();
 			tabPage1 = new TabPage();
+			wavesControl1 = new WavesControl();
 			toolStrip2 = new ToolStrip();
 			toolStripButton4 = new ToolStripButton();
 			toolStripButton5 = new ToolStripButton();
 			toolStripSeparator1 = new ToolStripSeparator();
 			toolStripDropDownButton1 = new ToolStripDropDownButton();
+			bRKInterruptsToolStripMenuItem = new ToolStripMenuItem();
+			dispatcherToolStripMenuItem = new ToolStripMenuItem();
+			aLURelatedToolStripMenuItem = new ToolStripMenuItem();
+			bottomOpsToolStripMenuItem = new ToolStripMenuItem();
+			flagOpsToolStripMenuItem = new ToolStripMenuItem();
 			toolStripDropDownButton2 = new ToolStripDropDownButton();
+			clocksToolStripMenuItem = new ToolStripMenuItem();
+			coreToolStripMenuItem = new ToolStripMenuItem();
+			dMAToolStripMenuItem = new ToolStripMenuItem();
+			regOpsToolStripMenuItem = new ToolStripMenuItem();
+			lengthCountersToolStripMenuItem = new ToolStripMenuItem();
+			othersToolStripMenuItem = new ToolStripMenuItem();
 			toolStripDropDownButton3 = new ToolStripDropDownButton();
-			wavesControl1 = new WavesControl();
+			clocksToolStripMenuItem1 = new ToolStripMenuItem();
+			cPUIFToolStripMenuItem = new ToolStripMenuItem();
+			cTRLRegsToolStripMenuItem = new ToolStripMenuItem();
+			hVToolStripMenuItem = new ToolStripMenuItem();
+			mUXToolStripMenuItem = new ToolStripMenuItem();
+			dataReaderToolStripMenuItem = new ToolStripMenuItem();
+			cRAMToolStripMenuItem = new ToolStripMenuItem();
+			vRAMControlToolStripMenuItem = new ToolStripMenuItem();
+			othersToolStripMenuItem1 = new ToolStripMenuItem();
+			fSMToolStripMenuItem = new ToolStripMenuItem();
+			oAMEvalToolStripMenuItem = new ToolStripMenuItem();
 			toolStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
@@ -299,6 +321,26 @@
 			tabPage1.Text = "Waves";
 			tabPage1.UseVisualStyleBackColor = true;
 			// 
+			// wavesControl1
+			// 
+			wavesControl1.Dock = DockStyle.Fill;
+			wavesControl1.DottedColor = Color.Silver;
+			wavesControl1.DottedOpacity = 95;
+			wavesControl1.FillColor = Color.Black;
+			wavesControl1.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point);
+			wavesControl1.GridColor = Color.Green;
+			wavesControl1.GridOpacity = 95;
+			wavesControl1.HighZColor = Color.Gold;
+			wavesControl1.LabelsColor = Color.White;
+			wavesControl1.Location = new Point(0, 25);
+			wavesControl1.Name = "wavesControl1";
+			wavesControl1.SelectionColor = Color.GhostWhite;
+			wavesControl1.SignalColor = Color.SpringGreen;
+			wavesControl1.Size = new Size(785, 404);
+			wavesControl1.TabIndex = 1;
+			wavesControl1.Text = "wavesControl1";
+			wavesControl1.UndefinedColor = Color.Red;
+			// 
 			// toolStrip2
 			// 
 			toolStrip2.Items.AddRange(new ToolStripItem[] { toolStripButton4, toolStripButton5, toolStripSeparator1, toolStripDropDownButton1, toolStripDropDownButton2, toolStripDropDownButton3 });
@@ -317,6 +359,7 @@
 			toolStripButton4.Name = "toolStripButton4";
 			toolStripButton4.Size = new Size(47, 22);
 			toolStripButton4.Text = "Snatch";
+			toolStripButton4.Click += toolStripButton4_Click;
 			// 
 			// toolStripButton5
 			// 
@@ -326,6 +369,7 @@
 			toolStripButton5.Name = "toolStripButton5";
 			toolStripButton5.Size = new Size(38, 22);
 			toolStripButton5.Text = "Clear";
+			toolStripButton5.Click += toolStripButton5_Click;
 			// 
 			// toolStripSeparator1
 			// 
@@ -335,48 +379,190 @@
 			// toolStripDropDownButton1
 			// 
 			toolStripDropDownButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripDropDownButton1.DropDownItems.AddRange(new ToolStripItem[] { bRKInterruptsToolStripMenuItem, dispatcherToolStripMenuItem, aLURelatedToolStripMenuItem, bottomOpsToolStripMenuItem, flagOpsToolStripMenuItem });
 			toolStripDropDownButton1.Image = (Image)resources.GetObject("toolStripDropDownButton1.Image");
 			toolStripDropDownButton1.ImageTransparentColor = Color.Magenta;
 			toolStripDropDownButton1.Name = "toolStripDropDownButton1";
 			toolStripDropDownButton1.Size = new Size(45, 22);
 			toolStripDropDownButton1.Text = "Core";
 			// 
+			// bRKInterruptsToolStripMenuItem
+			// 
+			bRKInterruptsToolStripMenuItem.Name = "bRKInterruptsToolStripMenuItem";
+			bRKInterruptsToolStripMenuItem.Size = new Size(151, 22);
+			bRKInterruptsToolStripMenuItem.Text = "BRK/Interrupts";
+			bRKInterruptsToolStripMenuItem.Click += bRKInterruptsToolStripMenuItem_Click;
+			// 
+			// dispatcherToolStripMenuItem
+			// 
+			dispatcherToolStripMenuItem.Name = "dispatcherToolStripMenuItem";
+			dispatcherToolStripMenuItem.Size = new Size(151, 22);
+			dispatcherToolStripMenuItem.Text = "Dispatcher";
+			dispatcherToolStripMenuItem.Click += dispatcherToolStripMenuItem_Click;
+			// 
+			// aLURelatedToolStripMenuItem
+			// 
+			aLURelatedToolStripMenuItem.Name = "aLURelatedToolStripMenuItem";
+			aLURelatedToolStripMenuItem.Size = new Size(151, 22);
+			aLURelatedToolStripMenuItem.Text = "ALU Related";
+			aLURelatedToolStripMenuItem.Click += aLURelatedToolStripMenuItem_Click;
+			// 
+			// bottomOpsToolStripMenuItem
+			// 
+			bottomOpsToolStripMenuItem.Name = "bottomOpsToolStripMenuItem";
+			bottomOpsToolStripMenuItem.Size = new Size(151, 22);
+			bottomOpsToolStripMenuItem.Text = "Bottom Ops";
+			bottomOpsToolStripMenuItem.Click += bottomOpsToolStripMenuItem_Click;
+			// 
+			// flagOpsToolStripMenuItem
+			// 
+			flagOpsToolStripMenuItem.Name = "flagOpsToolStripMenuItem";
+			flagOpsToolStripMenuItem.Size = new Size(151, 22);
+			flagOpsToolStripMenuItem.Text = "Flag Ops";
+			flagOpsToolStripMenuItem.Click += flagOpsToolStripMenuItem_Click;
+			// 
 			// toolStripDropDownButton2
 			// 
 			toolStripDropDownButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripDropDownButton2.DropDownItems.AddRange(new ToolStripItem[] { clocksToolStripMenuItem, coreToolStripMenuItem, dMAToolStripMenuItem, regOpsToolStripMenuItem, lengthCountersToolStripMenuItem, othersToolStripMenuItem });
 			toolStripDropDownButton2.Image = (Image)resources.GetObject("toolStripDropDownButton2.Image");
 			toolStripDropDownButton2.ImageTransparentColor = Color.Magenta;
 			toolStripDropDownButton2.Name = "toolStripDropDownButton2";
 			toolStripDropDownButton2.Size = new Size(43, 22);
 			toolStripDropDownButton2.Text = "APU";
 			// 
+			// clocksToolStripMenuItem
+			// 
+			clocksToolStripMenuItem.Checked = true;
+			clocksToolStripMenuItem.CheckState = CheckState.Checked;
+			clocksToolStripMenuItem.Name = "clocksToolStripMenuItem";
+			clocksToolStripMenuItem.Size = new Size(162, 22);
+			clocksToolStripMenuItem.Text = "Clocks";
+			clocksToolStripMenuItem.Click += clocksToolStripMenuItem_Click;
+			// 
+			// coreToolStripMenuItem
+			// 
+			coreToolStripMenuItem.Name = "coreToolStripMenuItem";
+			coreToolStripMenuItem.Size = new Size(162, 22);
+			coreToolStripMenuItem.Text = "Core";
+			coreToolStripMenuItem.Click += coreToolStripMenuItem_Click;
+			// 
+			// dMAToolStripMenuItem
+			// 
+			dMAToolStripMenuItem.Name = "dMAToolStripMenuItem";
+			dMAToolStripMenuItem.Size = new Size(162, 22);
+			dMAToolStripMenuItem.Text = "DMA";
+			dMAToolStripMenuItem.Click += dMAToolStripMenuItem_Click;
+			// 
+			// regOpsToolStripMenuItem
+			// 
+			regOpsToolStripMenuItem.Name = "regOpsToolStripMenuItem";
+			regOpsToolStripMenuItem.Size = new Size(162, 22);
+			regOpsToolStripMenuItem.Text = "RegOps";
+			regOpsToolStripMenuItem.Click += regOpsToolStripMenuItem_Click;
+			// 
+			// lengthCountersToolStripMenuItem
+			// 
+			lengthCountersToolStripMenuItem.Name = "lengthCountersToolStripMenuItem";
+			lengthCountersToolStripMenuItem.Size = new Size(162, 22);
+			lengthCountersToolStripMenuItem.Text = "Length Counters";
+			lengthCountersToolStripMenuItem.Click += lengthCountersToolStripMenuItem_Click;
+			// 
+			// othersToolStripMenuItem
+			// 
+			othersToolStripMenuItem.Name = "othersToolStripMenuItem";
+			othersToolStripMenuItem.Size = new Size(162, 22);
+			othersToolStripMenuItem.Text = "Others";
+			othersToolStripMenuItem.Click += othersToolStripMenuItem_Click;
+			// 
 			// toolStripDropDownButton3
 			// 
 			toolStripDropDownButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripDropDownButton3.DropDownItems.AddRange(new ToolStripItem[] { clocksToolStripMenuItem1, cPUIFToolStripMenuItem, cTRLRegsToolStripMenuItem, hVToolStripMenuItem, mUXToolStripMenuItem, dataReaderToolStripMenuItem, cRAMToolStripMenuItem, vRAMControlToolStripMenuItem, fSMToolStripMenuItem, oAMEvalToolStripMenuItem, othersToolStripMenuItem1 });
 			toolStripDropDownButton3.Image = (Image)resources.GetObject("toolStripDropDownButton3.Image");
 			toolStripDropDownButton3.ImageTransparentColor = Color.Magenta;
 			toolStripDropDownButton3.Name = "toolStripDropDownButton3";
 			toolStripDropDownButton3.Size = new Size(42, 22);
 			toolStripDropDownButton3.Text = "PPU";
 			// 
-			// wavesControl1
+			// clocksToolStripMenuItem1
 			// 
-			wavesControl1.DottedColor = Color.Silver;
-			wavesControl1.DottedOpacity = 95;
-			wavesControl1.FillColor = Color.Black;
-			wavesControl1.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point);
-			wavesControl1.GridColor = Color.Green;
-			wavesControl1.GridOpacity = 95;
-			wavesControl1.HighZColor = Color.Gold;
-			wavesControl1.LabelsColor = Color.White;
-			wavesControl1.Location = new Point(44, 50);
-			wavesControl1.Name = "wavesControl1";
-			wavesControl1.SelectionColor = Color.GhostWhite;
-			wavesControl1.SignalColor = Color.SpringGreen;
-			wavesControl1.Size = new Size(669, 336);
-			wavesControl1.TabIndex = 1;
-			wavesControl1.Text = "wavesControl1";
-			wavesControl1.UndefinedColor = Color.Red;
+			clocksToolStripMenuItem1.Checked = true;
+			clocksToolStripMenuItem1.CheckState = CheckState.Checked;
+			clocksToolStripMenuItem1.Name = "clocksToolStripMenuItem1";
+			clocksToolStripMenuItem1.Size = new Size(180, 22);
+			clocksToolStripMenuItem1.Text = "Clocks";
+			clocksToolStripMenuItem1.Click += clocksToolStripMenuItem1_Click;
+			// 
+			// cPUIFToolStripMenuItem
+			// 
+			cPUIFToolStripMenuItem.Name = "cPUIFToolStripMenuItem";
+			cPUIFToolStripMenuItem.Size = new Size(180, 22);
+			cPUIFToolStripMenuItem.Text = "CPU I/F";
+			cPUIFToolStripMenuItem.Click += cPUIFToolStripMenuItem_Click;
+			// 
+			// cTRLRegsToolStripMenuItem
+			// 
+			cTRLRegsToolStripMenuItem.Name = "cTRLRegsToolStripMenuItem";
+			cTRLRegsToolStripMenuItem.Size = new Size(180, 22);
+			cTRLRegsToolStripMenuItem.Text = "CTRL Regs";
+			cTRLRegsToolStripMenuItem.Click += cTRLRegsToolStripMenuItem_Click;
+			// 
+			// hVToolStripMenuItem
+			// 
+			hVToolStripMenuItem.Name = "hVToolStripMenuItem";
+			hVToolStripMenuItem.Size = new Size(180, 22);
+			hVToolStripMenuItem.Text = "H/V Counters";
+			hVToolStripMenuItem.Click += hVToolStripMenuItem_Click;
+			// 
+			// mUXToolStripMenuItem
+			// 
+			mUXToolStripMenuItem.Name = "mUXToolStripMenuItem";
+			mUXToolStripMenuItem.Size = new Size(180, 22);
+			mUXToolStripMenuItem.Text = "MUX";
+			mUXToolStripMenuItem.Click += mUXToolStripMenuItem_Click;
+			// 
+			// dataReaderToolStripMenuItem
+			// 
+			dataReaderToolStripMenuItem.Name = "dataReaderToolStripMenuItem";
+			dataReaderToolStripMenuItem.Size = new Size(180, 22);
+			dataReaderToolStripMenuItem.Text = "DataReader";
+			dataReaderToolStripMenuItem.Click += dataReaderToolStripMenuItem_Click;
+			// 
+			// cRAMToolStripMenuItem
+			// 
+			cRAMToolStripMenuItem.Name = "cRAMToolStripMenuItem";
+			cRAMToolStripMenuItem.Size = new Size(180, 22);
+			cRAMToolStripMenuItem.Text = "CRAM Control";
+			cRAMToolStripMenuItem.Click += cRAMToolStripMenuItem_Click;
+			// 
+			// vRAMControlToolStripMenuItem
+			// 
+			vRAMControlToolStripMenuItem.Name = "vRAMControlToolStripMenuItem";
+			vRAMControlToolStripMenuItem.Size = new Size(180, 22);
+			vRAMControlToolStripMenuItem.Text = "VRAM Control";
+			vRAMControlToolStripMenuItem.Click += vRAMControlToolStripMenuItem_Click;
+			// 
+			// othersToolStripMenuItem1
+			// 
+			othersToolStripMenuItem1.Name = "othersToolStripMenuItem1";
+			othersToolStripMenuItem1.Size = new Size(180, 22);
+			othersToolStripMenuItem1.Text = "Others";
+			othersToolStripMenuItem1.Click += othersToolStripMenuItem1_Click;
+			// 
+			// fSMToolStripMenuItem
+			// 
+			fSMToolStripMenuItem.Name = "fSMToolStripMenuItem";
+			fSMToolStripMenuItem.Size = new Size(180, 22);
+			fSMToolStripMenuItem.Text = "FSM";
+			fSMToolStripMenuItem.Click += fSMToolStripMenuItem_Click;
+			// 
+			// oAMEvalToolStripMenuItem
+			// 
+			oAMEvalToolStripMenuItem.Name = "oAMEvalToolStripMenuItem";
+			oAMEvalToolStripMenuItem.Size = new Size(180, 22);
+			oAMEvalToolStripMenuItem.Text = "OAM Eval";
+			oAMEvalToolStripMenuItem.Click += oAMEvalToolStripMenuItem_Click;
 			// 
 			// FormDebugger
 			// 
@@ -444,5 +630,27 @@
 		private ToolStripDropDownButton toolStripDropDownButton2;
 		private ToolStripDropDownButton toolStripDropDownButton3;
 		private WavesControl wavesControl1;
+		private ToolStripMenuItem clocksToolStripMenuItem;
+		private ToolStripMenuItem coreToolStripMenuItem;
+		private ToolStripMenuItem dMAToolStripMenuItem;
+		private ToolStripMenuItem regOpsToolStripMenuItem;
+		private ToolStripMenuItem lengthCountersToolStripMenuItem;
+		private ToolStripMenuItem othersToolStripMenuItem;
+		private ToolStripMenuItem clocksToolStripMenuItem1;
+		private ToolStripMenuItem cPUIFToolStripMenuItem;
+		private ToolStripMenuItem cTRLRegsToolStripMenuItem;
+		private ToolStripMenuItem hVToolStripMenuItem;
+		private ToolStripMenuItem mUXToolStripMenuItem;
+		private ToolStripMenuItem dataReaderToolStripMenuItem;
+		private ToolStripMenuItem cRAMToolStripMenuItem;
+		private ToolStripMenuItem vRAMControlToolStripMenuItem;
+		private ToolStripMenuItem bRKInterruptsToolStripMenuItem;
+		private ToolStripMenuItem dispatcherToolStripMenuItem;
+		private ToolStripMenuItem aLURelatedToolStripMenuItem;
+		private ToolStripMenuItem bottomOpsToolStripMenuItem;
+		private ToolStripMenuItem flagOpsToolStripMenuItem;
+		private ToolStripMenuItem othersToolStripMenuItem1;
+		private ToolStripMenuItem fSMToolStripMenuItem;
+		private ToolStripMenuItem oAMEvalToolStripMenuItem;
 	}
 }
