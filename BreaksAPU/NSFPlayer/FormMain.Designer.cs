@@ -65,6 +65,8 @@
 			toolStripStatusLabelState = new ToolStripStatusLabel();
 			toolStripStatusLabel2 = new ToolStripStatusLabel();
 			toolStripStatusLabel4 = new ToolStripStatusLabel();
+			toolStripStatusLabel6 = new ToolStripStatusLabel();
+			toolStripStatusLabelACLKCount = new ToolStripStatusLabel();
 			toolStripStatusLabel7 = new ToolStripStatusLabel();
 			toolStripStatusLabelACLK = new ToolStripStatusLabel();
 			openFileDialogNSF = new OpenFileDialog();
@@ -326,7 +328,7 @@
 			// 
 			// statusStrip1
 			// 
-			statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabelSamples, toolStripStatusLabel3, toolStripStatusLabelMsec, toolStripStatusLabel5, toolStripStatusLabelState, toolStripStatusLabel2, toolStripStatusLabel4, toolStripStatusLabel7, toolStripStatusLabelACLK });
+			statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabelSamples, toolStripStatusLabel3, toolStripStatusLabelMsec, toolStripStatusLabel5, toolStripStatusLabelState, toolStripStatusLabel2, toolStripStatusLabel4, toolStripStatusLabel6, toolStripStatusLabelACLKCount, toolStripStatusLabel7, toolStripStatusLabelACLK });
 			statusStrip1.Location = new Point(0, 533);
 			statusStrip1.Name = "statusStrip1";
 			statusStrip1.Size = new Size(1018, 24);
@@ -384,6 +386,19 @@
 			toolStripStatusLabel4.Name = "toolStripStatusLabel4";
 			toolStripStatusLabel4.Size = new Size(70, 19);
 			toolStripStatusLabel4.Text = "Not loaded";
+			// 
+			// toolStripStatusLabel6
+			// 
+			toolStripStatusLabel6.Name = "toolStripStatusLabel6";
+			toolStripStatusLabel6.Size = new Size(75, 19);
+			toolStripStatusLabel6.Text = "ACLK Count:";
+			// 
+			// toolStripStatusLabelACLKCount
+			// 
+			toolStripStatusLabelACLKCount.BorderSides = ToolStripStatusLabelBorderSides.Right;
+			toolStripStatusLabelACLKCount.Name = "toolStripStatusLabelACLKCount";
+			toolStripStatusLabelACLKCount.Size = new Size(17, 19);
+			toolStripStatusLabelACLKCount.Text = "0";
 			// 
 			// toolStripStatusLabel7
 			// 
@@ -875,10 +890,12 @@
 			Controls.Add(toolStrip1);
 			Controls.Add(statusStrip1);
 			Controls.Add(menuStrip1);
+			KeyPreview = true;
 			MainMenuStrip = menuStrip1;
 			Name = "FormMain";
 			Text = "NSF Player";
 			Load += FormMain_Load;
+			KeyDown += FormMain_KeyDown;
 			menuStrip1.ResumeLayout(false);
 			menuStrip1.PerformLayout();
 			statusStrip1.ResumeLayout(false);
@@ -998,5 +1015,7 @@
 		private ToolStripButton toolStripButton8;
 		private ToolStripButton toolStripButton9;
 		private ToolStripButton toolStripButton10;
+		private ToolStripStatusLabel toolStripStatusLabel6;
+		private ToolStripStatusLabel toolStripStatusLabelACLKCount;
 	}
 }

@@ -77,6 +77,7 @@ namespace NSFPlayer
 						toolStripStatusLabelACLK.Text = aclk_per_sec.ToString();
 
 						aclkCounter = BreaksCore.GetACLKCounter();
+						toolStripStatusLabelACLKCount.Text = aclkCounter.ToString();
 					}
 					StepsCounter = 0;
 				}

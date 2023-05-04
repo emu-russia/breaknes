@@ -69,6 +69,8 @@ namespace NSFPlayer
 
 			nextTrackToolStripMenuItem.Enabled = false;
 			previousTrackToolStripMenuItem.Enabled = false;
+
+			button3.Enabled = false;
 		}
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -175,6 +177,7 @@ namespace NSFPlayer
 			this.Text = DefaultTitle;
 			UpdateTrackStat();
 			aclkCounter = 0;
+			toolStripStatusLabelACLKCount.Text = aclkCounter.ToString();
 
 			nextTrackToolStripMenuItem.Enabled = false;
 			previousTrackToolStripMenuItem.Enabled = false;
@@ -633,17 +636,32 @@ namespace NSFPlayer
 		/// A tool for short-range debugging.
 		/// Step-by-step execution of the simulation. Available only if the worker is stopped.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void button3_Click(object sender, EventArgs e)
+		private void DoDebugStep()
 		{
 			if (Paused && (nsf_loaded || regdump_loaded))
 			{
 				BreaksCore.Step();
-				TraceCore();
+				//TraceCore();
 				if (nsf_loaded)
 					nsf.SyncExec();
 				Button2Click();
+				UpdateWaves();
+
+				aclkCounter = BreaksCore.GetACLKCounter();
+				toolStripStatusLabelACLKCount.Text = aclkCounter.ToString();
+			}
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			DoDebugStep();
+		}
+
+		private void FormMain_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.F11)
+			{
+				DoDebugStep();
 			}
 		}
 
