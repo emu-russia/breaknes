@@ -282,7 +282,6 @@ namespace PPUPlayer
 
 			wavesControl1.EnableSelection(false);
 			ResetWaves();
-			waves = new();
 		}
 
 
