@@ -47,13 +47,61 @@ namespace Breaknes
 
 	void NSFPlayerBoard::AddDebugInfoProviders()
 	{
-		for (size_t n = 0; n < core_wires_count; n++)
+		for (size_t n = 0; n < core_brk_wires_count; n++)
 		{
-			SignalOffsetPair* sp = &core_wires[n];
+			SignalOffsetPair* sp = &core_brk_wires[n];
 
 			DebugInfoEntry* entry = new DebugInfoEntry;
 			memset(entry, 0, sizeof(DebugInfoEntry));
-			strcpy(entry->category, CORE_WIRES_CATEGORY);
+			strcpy(entry->category, CORE_BRK_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Core, entry, GetCoreDebugInfo, SetCoreDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < core_disp_wires_count; n++)
+		{
+			SignalOffsetPair* sp = &core_disp_wires[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, CORE_DISP_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Core, entry, GetCoreDebugInfo, SetCoreDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < core_alu_wires_count; n++)
+		{
+			SignalOffsetPair* sp = &core_alu_wires[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, CORE_ALU_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Core, entry, GetCoreDebugInfo, SetCoreDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < core_bops_wires_count; n++)
+		{
+			SignalOffsetPair* sp = &core_bops_wires[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, CORE_BOPS_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Core, entry, GetCoreDebugInfo, SetCoreDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < core_fops_wires_count; n++)
+		{
+			SignalOffsetPair* sp = &core_fops_wires[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, CORE_FOPS_CATEGORY);
 			strcpy(entry->name, sp->name);
 			entry->bits = sp->bits;
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_Core, entry, GetCoreDebugInfo, SetCoreDebugInfo, this);
@@ -136,13 +184,68 @@ namespace Breaknes
 	{
 		NSFPlayerBoard* board = (NSFPlayerBoard*)opaque;
 
-		for (size_t n = 0; n < core_wires_count; n++)
+		if (!strcmp(entry->category, CORE_BRK_CATEGORY))
 		{
-			SignalOffsetPair* sp = &core_wires[n];
-
-			if (!strcmp(sp->name, entry->name))
+			for (size_t n = 0; n < core_brk_wires_count; n++)
 			{
-				return board->core->getDebugSingle((int)sp->offset);
+				SignalOffsetPair* sp = &core_brk_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					return board->core->getDebugSingle((int)sp->offset);
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, CORE_DISP_CATEGORY))
+		{
+			for (size_t n = 0; n < core_disp_wires_count; n++)
+			{
+				SignalOffsetPair* sp = &core_disp_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					return board->core->getDebugSingle((int)sp->offset);
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, CORE_ALU_CATEGORY))
+		{
+			for (size_t n = 0; n < core_alu_wires_count; n++)
+			{
+				SignalOffsetPair* sp = &core_alu_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					return board->core->getDebugSingle((int)sp->offset);
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, CORE_BOPS_CATEGORY))
+		{
+			for (size_t n = 0; n < core_bops_wires_count; n++)
+			{
+				SignalOffsetPair* sp = &core_bops_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					return board->core->getDebugSingle((int)sp->offset);
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, CORE_FOPS_CATEGORY))
+		{
+			for (size_t n = 0; n < core_fops_wires_count; n++)
+			{
+				SignalOffsetPair* sp = &core_fops_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					return board->core->getDebugSingle((int)sp->offset);
+				}
 			}
 		}
 

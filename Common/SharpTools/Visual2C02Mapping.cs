@@ -2,7 +2,7 @@
 
 class Visual2C02
 {
-	static Dictionary<string, string> mappingFrom = new()
+	private static Dictionary<string, string> mappingFrom = new()
 	{
 		{ "/_ab8", "/PA8" },
 		{ "/_ab9", "/PA9" },
@@ -188,7 +188,7 @@ class Visual2C02
 		{ "read_2007_output_vrambuf_2", "XRB" },
 	};
 
-	static Dictionary<string, string> mappingTo = new()
+	private static Dictionary<string, string> mappingTo = new()
 	{
 		{ "/PA8", "/_ab8" },
 		{ "/PA9", "/_ab9" },

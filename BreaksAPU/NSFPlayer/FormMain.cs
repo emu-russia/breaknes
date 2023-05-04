@@ -24,7 +24,7 @@ namespace NSFPlayer
 		private byte current_song = 0;
 		private bool Paused = true;         // atomic
 		private bool Dma = false;       // atomic
-		private bool InitRequired = false;	// atmoic
+		private bool InitRequired = false;  // atmoic
 
 		// Stats
 		private long timeStamp;
@@ -129,7 +129,7 @@ namespace NSFPlayer
 			// Setup NSF
 
 			bool bank_switching = false;
-			for (int i=0; i<8; i++)
+			for (int i = 0; i < 8; i++)
 			{
 				if (nsf.GetHead().Bankswitch[i] != 0)
 				{
@@ -145,7 +145,7 @@ namespace NSFPlayer
 			for (int i = 0; i < 8; i++)
 			{
 				BreaksCore.SetDebugInfoByName(
-					BreaksCore.DebugInfoType.DebugInfoType_Board, 
+					BreaksCore.DebugInfoType.DebugInfoType_Board,
 					BreaksCore.BOARD_CATEGORY, "Bank" + i.ToString(), head.Bankswitch[i]);
 			}
 
@@ -437,7 +437,7 @@ namespace NSFPlayer
 		/// The AUX output is sampled at a high frequency, which cannot be played by a ordinary sound card.
 		/// Therefore, some of the samples are skipped to match the DSound playback frequency (SourceSampleRate variable).
 		/// </summary>
-		private void FeedSample ()
+		private void FeedSample()
 		{
 			if (DecimateCounter >= DecimateEach)
 			{
@@ -462,7 +462,7 @@ namespace NSFPlayer
 				{
 					BreaksCore.SampleAudioSignal(out sample);
 				}
-				
+
 				SampleBuf.Add(sample);
 				if (fft)
 					furryPlot1.AddSample(sample * FurryIntensity);
@@ -682,7 +682,7 @@ namespace NSFPlayer
 
 				int descrID = -1;
 
-				for (int i=0; i<mem.Count; i++)
+				for (int i = 0; i < mem.Count; i++)
 				{
 					if (mem[i].name == "WRAM")
 					{
@@ -744,7 +744,7 @@ namespace NSFPlayer
 			}
 		}
 
-		
+
 		/// <summary>
 		/// FFT enable button.
 		/// </summary>
@@ -833,7 +833,7 @@ namespace NSFPlayer
 
 		// https://stackoverflow.com/questions/14659684/creating-a-wav-file-in-c-sharp
 
-		private void SaveWav (string filename, List<float> samples, int samplerate)
+		private void SaveWav(string filename, List<float> samples, int samplerate)
 		{
 			int numsamples = samples.Count;
 			ushort numchannels = 1;

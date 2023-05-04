@@ -11,10 +11,10 @@ namespace APUSim
 		uint8_t PHI0;
 		uint8_t PHI1;
 		uint8_t PHI2;
-		uint8_t RDY;
-		uint8_t RDY2;
 		uint8_t nACLK2;
 		uint8_t ACLK1;
+		uint8_t RDY;
+		uint8_t RDY2;
 		uint8_t RES;
 		uint8_t RESCore;
 		uint8_t n_M2;
@@ -23,10 +23,10 @@ namespace APUSim
 		uint8_t INT;
 		uint8_t n_LFO1;
 		uint8_t n_LFO2;
-		uint8_t RnW;
+		uint8_t RnW;				// from cpucore
 		uint8_t SPR_CPU;
 		uint8_t SPR_PPU;
-		uint8_t RW;
+		uint8_t RW;					// from dmabuf to pads
 		uint8_t RD;
 		uint8_t WR;
 		uint8_t SYNC;

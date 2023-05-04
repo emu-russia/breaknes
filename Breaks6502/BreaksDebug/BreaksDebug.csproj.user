@@ -21,5 +21,8 @@
     <Compile Update="UnitTest.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="WavesSupport.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

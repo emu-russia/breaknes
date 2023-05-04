@@ -1,22 +1,16 @@
-﻿using SharpTools;
-using System;
+﻿using System;
 using System.Windows.Forms;
 
-namespace PPUPlayer
+namespace SharpTools
 {
 	public partial class FormSnatchWaves : Form
 	{
-		private BreaksCore.VideoSignalFeatures ppu_features;
-
 		public FormSnatchWaves(ValueChangeData[] data)
 		{
 			InitializeComponent();
 
-			BreaksCore.GetPpuSignalFeatures(out ppu_features);
-
 			wavesControl1.PlotWaves(data, 0);
 			wavesControl1.EnableSelection(true);
-			//wavesControl1.EnabledDottedEveryNth(ppu_features.SamplesPerPCLK, true);
 		}
 
 		private void FormSnatchWaves_KeyUp(object sender, KeyEventArgs e)

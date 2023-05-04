@@ -58,7 +58,7 @@ namespace BreaksDebug
 			label1.Name = "label1";
 			label1.Size = new Size(173, 32);
 			label1.TabIndex = 1;
-			label1.Text = "Breaks Debugger, v. 2.1\r\n© 2023, emu-russia";
+			label1.Text = "Breaks Debugger, v. 2.2\r\n© 2023, emu-russia";
 			// 
 			// linkLabel1
 			// 

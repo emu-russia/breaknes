@@ -1,20 +1,6 @@
 // Module for converting PPU Hex dumps to human form.
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Collections;
-
-using System.Drawing.Drawing2D;
-using SharpTools;
-
-namespace PPUPlayer
+namespace SharpTools
 {
 	public class DataHumanizer
 	{

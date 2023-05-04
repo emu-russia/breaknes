@@ -2,9 +2,7 @@
 
 namespace Breaknes
 {
-	SignalOffsetPair core_wires[] = {
-		"IR", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::IR), 8,
-		"/PRDY", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_PRDY), 1,
+	SignalOffsetPair core_brk_wires[] = {
 		"/NMIP", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_NMIP), 1,
 		"/IRQP", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_IRQP), 1,
 		"RESP", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::RESP), 1,
@@ -12,6 +10,12 @@ namespace Breaknes
 		"BRK7", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::BRK7), 1,
 		"DORES", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DORES), 1,
 		"/DONMI", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_DONMI), 1,
+	};
+	size_t core_brk_wires_count = sizeof(core_brk_wires) / sizeof(core_brk_wires[0]);
+
+	SignalOffsetPair core_disp_wires[] = {
+		"IR", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::IR), 8,
+		"/PRDY", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_PRDY), 1,
 		"/T2", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_T2), 1,
 		"/T3", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_T3), 1,
 		"/T4", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_T4), 1,
@@ -35,9 +39,19 @@ namespace Breaknes
 		"/TRESX", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_TRESX), 1,
 		"BRFW", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::BRFW), 1,
 		"/BRTAKEN", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_BRTAKEN), 1,
+	};
+	size_t core_disp_wires_count = sizeof(core_disp_wires) / sizeof(core_disp_wires[0]);
+
+	SignalOffsetPair core_alu_wires[] = {
+		"n_ACIN", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_ACIN), 1,
+		"n_DAA", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_DAA), 1,
+		"n_DSA", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_DSA), 1,
 		"ACR", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::ACR), 1,
 		"AVR", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::AVR), 1,
+	};
+	size_t core_alu_wires_count = sizeof(core_alu_wires) / sizeof(core_alu_wires[0]);
 
+	SignalOffsetPair core_bops_wires[] = {
 		"Y_SB", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::Y_SB), 1,
 		"SB_Y", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::SB_Y), 1,
 		"X_SB", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::X_SB), 1,
@@ -82,7 +96,11 @@ namespace Breaknes
 		"DL_ADL", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DL_ADL), 1,
 		"DL_ADH", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DL_ADH), 1,
 		"DL_DB", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DL_DB), 1,
+		"n_1PC", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_1PC), 1,
+	};
+	size_t core_bops_wires_count = sizeof(core_bops_wires) / sizeof(core_bops_wires[0]);
 
+	SignalOffsetPair core_fops_wires[] = {
 		"P_DB", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::P_DB), 1,
 		"DB_P", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DB_P), 1,
 		"DBZ_Z", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DBZ_Z), 1,
@@ -95,12 +113,8 @@ namespace Breaknes
 		"DB_V", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DB_V), 1,
 		"AVR_V", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::AVR_V), 1,
 		"Z_V", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::Z_V), 1,
-		"n_ACIN", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_ACIN), 1,
-		"n_DAA", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_DAA), 1,
-		"n_DSA", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_DSA), 1,
-		"n_1PC", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_1PC), 1,
 	};
-	size_t core_wires_count = sizeof(core_wires) / sizeof(core_wires[0]);
+	size_t core_fops_wires_count = sizeof(core_fops_wires) / sizeof(core_fops_wires[0]);
 
 	SignalOffsetPair core_regs[] = {
 		"PCH", offsetof(M6502Core::UserRegs, PCH), 8,
@@ -125,29 +139,32 @@ namespace Breaknes
 		"PHI0", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI0), 1,
 		"PHI1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI1), 1,
 		"PHI2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI2), 1,
-		"RDY", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RDY), 1,
-		"RDY2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RDY2), 1,
 		"nACLK2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::nACLK2), 1,
 		"ACLK1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::ACLK1), 1,
+		"/LFO1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_LFO1), 1,
+		"/LFO2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_LFO2), 1,
+
 		"RES", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RES), 1,
 		"RESCore", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RESCore), 1,
+		"RDY", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RDY), 1,
+		"RDY2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RDY2), 1,
+		"SYNC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SYNC), 1,
 		"/M2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_M2), 1,
 		"/NMI", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_NMI), 1,
 		"/IRQ", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_IRQ), 1,
 		"INT", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::INT), 1,
-		"/LFO1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_LFO1), 1,
-		"/LFO2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_LFO2), 1,
 		"R/W", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RnW), 1,
+
 		"SPR/CPU", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SPR_CPU), 1,
 		"SPR/PPU", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SPR_PPU), 1,
 		"RW", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RW), 1,
 		"RD", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RD), 1,
 		"WR", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::WR), 1,
-		"SYNC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SYNC), 1,
 		"#DMC/AB", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_DMC_AB), 1,
 		"RUNDMC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RUNDMC), 1,
 		"DMCINT", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::DMCINT), 1,
 		"DMCRDY", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::DMCRDY), 1,
+
 		"/R4015", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4015), 1,
 		"/R4016", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4016), 1,
 		"/R4017", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4017), 1,
@@ -177,6 +194,7 @@ namespace Breaknes
 		"W4016", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4016), 1,
 		"W4017", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4017), 1,
 		"W401A", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W401A), 1,
+
 		"SQA/LC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SQA_LC), 1,
 		"SQB/LC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SQB_LC), 1,
 		"TRI/LC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::TRI_LC), 1,
@@ -185,6 +203,7 @@ namespace Breaknes
 		"NOSQB", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::NOSQB), 1,
 		"NOTRI", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::NOTRI), 1,
 		"NORND", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::NORND), 1,
+
 		"DBG", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::DBG), 1,
 		"/DBGRD", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_DBGRD), 1,
 		"LOCK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::LOCK), 1,
