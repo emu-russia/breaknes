@@ -76,9 +76,13 @@ namespace BreaksDebug
 			if (entry.bits != 1)
 				return false;
 
-			//if (entry.category == BreaksCore.PPU_CLKS_CATEGORY && toolStripButton7.Checked) return true;
+			if (entry.category == BreaksCore.CORE_BRK_CATEGORY && toolStripButton9.Checked) return true;
+			if (entry.category == BreaksCore.CORE_DISP_CATEGORY && toolStripButton10.Checked) return true;
+			if (entry.category == BreaksCore.CORE_ALU_CATEGORY && toolStripButton11.Checked) return true;
+			if (entry.category == BreaksCore.CORE_BOPS_CATEGORY && toolStripButton12.Checked) return true;
+			if (entry.category == BreaksCore.CORE_FOPS_CATEGORY && toolStripButton13.Checked) return true;
 
-			return true;
+			return false;
 		}
 
 		/// <summary>
@@ -108,31 +112,31 @@ namespace BreaksDebug
 		// BRK Processing (interrupts/BRK)
 		private void toolStripButton9_Click(object sender, EventArgs e)
 		{
-
+			toolStripButton9.Checked = !toolStripButton9.Checked;
 		}
 
 		// Dispatcher
 		private void toolStripButton10_Click(object sender, EventArgs e)
 		{
-
+			toolStripButton10.Checked = !toolStripButton10.Checked;
 		}
 
 		// ALU Related
 		private void toolStripButton11_Click(object sender, EventArgs e)
 		{
-
+			toolStripButton11.Checked = !toolStripButton11.Checked;
 		}
 
 		// Bops = Bottom Operations
 		private void toolStripButton12_Click(object sender, EventArgs e)
 		{
-
+			toolStripButton12.Checked = !toolStripButton12.Checked;
 		}
 
 		// Fops = Flags Operations
 		private void toolStripButton13_Click(object sender, EventArgs e)
 		{
-
+			toolStripButton13.Checked = !toolStripButton13.Checked;
 		}
 
 	}
