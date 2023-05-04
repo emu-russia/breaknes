@@ -448,6 +448,11 @@ namespace SharpTools
 						if (Visual2C02Mapping) entry.name = Visual2C02.ToVisual2C02(entry.name);
 					}
 
+					if (type == DebugInfoType.DebugInfoType_APU)
+					{
+						if (Visual2A03Mapping) entry.name = Visual2A03.ToVisual2A03(entry.name);
+					}
+
 					entry.bits = raw.bits;
 					entry.value = raw.value;
 				}
@@ -487,6 +492,11 @@ namespace SharpTools
 				if (Visual2C02Mapping) name = Visual2C02.FromVisual2C02(name);
 			}
 
+			if (type == DebugInfoType.DebugInfoType_APU)
+			{
+				if (Visual2A03Mapping) name = Visual2A03.FromVisual2A03(name);
+			}
+
 			unsafe
 			{
 				for (int i = 0; i < 32; i++)
@@ -515,6 +525,11 @@ namespace SharpTools
 			if (type == DebugInfoType.DebugInfoType_PPU)
 			{
 				if (Visual2C02Mapping) name = Visual2C02.FromVisual2C02(name);
+			}
+
+			if (type == DebugInfoType.DebugInfoType_APU)
+			{
+				if (Visual2A03Mapping) name = Visual2A03.FromVisual2A03(name);
 			}
 
 			unsafe

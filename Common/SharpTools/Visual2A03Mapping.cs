@@ -1,1 +1,158 @@
 // Mapping APU signals for Visual2A03
+
+class Visual2A03
+{
+	private static Dictionary<string, string> mappingFrom = new()
+	{
+		{ "node: 11267", "/CLK" },
+		{ "clk0", "PHI0" },
+		{ "clk1out", "PHI1" },
+		{ "clk2out", "PHI2" },
+		{ "rdy", "RDY" },
+		{ "apu_clk1", "ACLK1" },
+		{ "apu_/clk2", "/ACLK2" },
+		{ "_res", "RES" },
+		{ "node: 11200", "/M2" },
+		{ "_nmi", "/NMI" },
+		{ "_irq", "/IRQ" },
+		{ "irq_internal", "INT" },
+		{ "frm_quarter", "/LFO1" },
+		{ "frm_half", "/LFO2" },
+		{ "__rw", "R/W" },
+		{ "ab_use_spr_r", "SPR/CPU" },
+		{ "ab_use_spr_w", "SPR/PPU" },
+		{ "_rw", "RW" },
+		{ "rw_buf", "RD" },
+		{ "dbe", "WR" },
+		{ "/ab_use_pcm", "#DMC/AB" },
+		{ "node: 11515", "RUNDMC" },
+		{ "pcm_irq_out", "DMCINT" },
+		{ "pcm_dma_/rdy", "DMCRDY" },
+		{ "/r4015", "/R4015" },
+		{ "/r4016", "/R4016" },
+		{ "/r4017", "/R4017" },
+		{ "/r4018", "/R4018" },
+		{ "/r4019", "/R4019" },
+		{ "/r401a", "/R401A" },
+		{ "w4000", "W4000" },
+		{ "w4001", "W4001" },
+		{ "w4002", "W4002" },
+		{ "w4003", "W4003" },
+		{ "w4004", "W4004" },
+		{ "w4005", "W4005" },
+		{ "w4006", "W4006" },
+		{ "w4007", "W4007" },
+		{ "w4008", "W4008" },
+		{ "w400a", "W400A" },
+		{ "w400b", "W400B" },
+		{ "w400c", "W400C" },
+		{ "w400e", "W400E" },
+		{ "w400f", "W400F" },
+		{ "w4010", "W4010" },
+		{ "w4011", "W4011" },
+		{ "w4012", "W4012" },
+		{ "w4013", "W4013" },
+		{ "w4014", "W4014" },
+		{ "w4015", "W4015" },
+		{ "w4016", "W4016" },
+		{ "w4017", "W4017" },
+		{ "w401a", "W401A" },
+		{ "sq0_len_reload", "SQA/LC" },
+		{ "sq1_len_reload", "SQB/LC" },
+		{ "tri_len_reload", "TRI/LC" },
+		{ "noi_len_reload", "RND/LC" },
+		{ "sq0_silence", "NOSQA" },
+		{ "sq1_silence", "NOSQB" },
+		{ "tri_silence", "NOTRI" },
+		{ "noi_silence", "NORND" },
+		{ "dbg_en", "DBG" },
+		{ "node: 10839", "/DBGRD" },
+		{ "snd_halt", "LOCK" },
+	};
+
+	private static Dictionary<string, string> mappingTo = new()
+	{
+		{ "/CLK", "node: 11267" },
+		{ "PHI0", "clk0" },
+		{ "PHI1", "clk1out" },
+		{ "PHI2", "clk2out" },
+		{ "RDY", "rdy" },
+		{ "ACLK1", "apu_clk1" },
+		{ "/ACLK2", "apu_/clk2" },
+		{ "RES", "_res" },
+		{ "/M2", "node: 11200" },
+		{ "/NMI", "_nmi" },
+		{ "/IRQ", "_irq" },
+		{ "INT", "irq_internal" },
+		{ "/LFO1", "frm_quarter" },
+		{ "/LFO2", "frm_half" },
+		{ "R/W", "__rw" },
+		{ "SPR/CPU", "ab_use_spr_r" },
+		{ "SPR/PPU", "ab_use_spr_w" },
+		{ "RW", "_rw" },
+		{ "RD", "rw_buf" },
+		{ "WR", "dbe" },
+		{ "#DMC/AB", "/ab_use_pcm" },
+		{ "RUNDMC", "node: 11515" },
+		{ "DMCINT", "pcm_irq_out" },
+		{ "DMCRDY", "pcm_dma_/rdy" },
+		{ "/R4015", "/r4015" },
+		{ "/R4016", "/r4016" },
+		{ "/R4017", "/r4017" },
+		{ "/R4018", "/r4018" },
+		{ "/R4019", "/r4019" },
+		{ "/R401A", "/r401a" },
+		{ "W4000", "w4000" },
+		{ "W4001", "w4001" },
+		{ "W4002", "w4002" },
+		{ "W4003", "w4003" },
+		{ "W4004", "w4004" },
+		{ "W4005", "w4005" },
+		{ "W4006", "w4006" },
+		{ "W4007", "w4007" },
+		{ "W4008", "w4008" },
+		{ "W400A", "w400a" },
+		{ "W400B", "w400b" },
+		{ "W400C", "w400c" },
+		{ "W400E", "w400e" },
+		{ "W400F", "w400f" },
+		{ "W4010", "w4010" },
+		{ "W4011", "w4011" },
+		{ "W4012", "w4012" },
+		{ "W4013", "w4013" },
+		{ "W4014", "w4014" },
+		{ "W4015", "w4015" },
+		{ "W4016", "w4016" },
+		{ "W4017", "w4017" },
+		{ "W401A", "w401a" },
+		{ "SQA/LC", "sq0_len_reload" },
+		{ "SQB/LC", "sq1_len_reload" },
+		{ "TRI/LC", "tri_len_reload" },
+		{ "RND/LC", "noi_len_reload" },
+		{ "NOSQA", "sq0_silence" },
+		{ "NOSQB", "sq1_silence" },
+		{ "NOTRI", "tri_silence" },
+		{ "NORND", "noi_silence" },
+		{ "DBG", "dbg_en" },
+		{ "/DBGRD", "node: 10839" },
+		{ "LOCK", "snd_halt" },
+	};
+
+	static public string FromVisual2A03(string name)
+	{
+		if (mappingFrom.ContainsKey(name))
+		{
+			return mappingFrom[name];
+		}
+		else return name;
+	}
+
+	static public string ToVisual2A03(string name)
+	{
+		if (mappingTo.ContainsKey(name))
+		{
+			return mappingTo[name];
+		}
+		else return name;
+	}
+}
