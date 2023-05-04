@@ -21,6 +21,7 @@ namespace Breaknes
 		{
 			UpdateMemLayout();
 			humanizer.SetColorDebugOutput(true);
+			wavesControl1.EnableSelection(board_ctrl.Paused);
 		}
 
 		private void FormDebugger_KeyDown(object sender, KeyEventArgs e)
@@ -36,6 +37,7 @@ namespace Breaknes
 			else if (e.KeyCode == Keys.F5)
 			{
 				board_ctrl.Paused = false;
+				wavesControl1.EnableSelection(board_ctrl.Paused);
 			}
 		}
 
@@ -174,26 +176,11 @@ namespace Breaknes
 			UpdateMemLayoutInProgress = false;
 		}
 
-		private void TraceCore()
-		{
-			string text = "";
-			List<BreaksCore.DebugInfoEntry> entries = BreaksCore.GetDebugInfo(BreaksCore.DebugInfoType.DebugInfoType_CoreRegs);
-			int max = 4;
-			int cnt = 0;
-			foreach (var entry in entries)
-			{
-				text += entry.name + " = " + entry.value.ToString("X2") + "; ";
-				cnt++;
-				if (cnt > max)
-					break;
-			}
-			Console.WriteLine(text);
-		}
-
 		// Pause
 		private void toolStripButton1_Click(object sender, EventArgs e)
 		{
 			board_ctrl.Paused = true;
+			wavesControl1.EnableSelection(board_ctrl.Paused);
 		}
 
 		/// A tool for short-range debugging.
@@ -216,8 +203,8 @@ namespace Breaknes
 					BreaksCore.Step();
 				}
 
-				TraceCore();
 				Button2Click();
+				board_ctrl.onUpdateWaves?.Invoke();
 			}
 		}
 

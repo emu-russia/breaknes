@@ -6,7 +6,11 @@ namespace Breaknes
 {
 	public class BoardControl
 	{
-		public bool Paused = true;			// atomic
+		public bool Paused = true;          // atomic
+		public bool SimulationStarted = false;
+
+		public OnUpdateWaves? onUpdateWaves = null;
+		public delegate void OnUpdateWaves();
 
 		public void CreateBoard(BoardDescription db, string name)
 		{
@@ -22,6 +26,8 @@ namespace Breaknes
 					BreaksCore.SetOamDecayBehavior(BreaksCore.OAMDecayBehavior.Keep);
 					BreaksCore.SetRAWColorMode(true);
 
+					SimulationStarted = true;
+
 					break;
 				}
 			}
@@ -30,6 +36,7 @@ namespace Breaknes
 		public void DisposeBoard()
 		{
 			BreaksCore.DestroyBoard();
+			SimulationStarted = false;
 		}
 
 		public int InsertCartridge(string nes_file)
