@@ -39,6 +39,9 @@ namespace BreaksDebug
 			toolStripSeparator1 = new ToolStripSeparator();
 			exitToolStripMenuItem = new ToolStripMenuItem();
 			helpToolStripMenuItem = new ToolStripMenuItem();
+			sendFeedbackToolStripMenuItem = new ToolStripMenuItem();
+			checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
+			toolStripSeparator5 = new ToolStripSeparator();
 			aboutToolStripMenuItem = new ToolStripMenuItem();
 			toolStrip1 = new ToolStrip();
 			toolStripButton1 = new ToolStripButton();
@@ -82,15 +85,18 @@ namespace BreaksDebug
 			toolStrip2 = new ToolStrip();
 			toolStripButton7 = new ToolStripButton();
 			toolStripButton8 = new ToolStripButton();
+			toolStripSeparator6 = new ToolStripSeparator();
+			toolStripButton9 = new ToolStripButton();
+			toolStripButton10 = new ToolStripButton();
+			toolStripButton11 = new ToolStripButton();
+			toolStripButton12 = new ToolStripButton();
+			toolStripButton13 = new ToolStripButton();
 			tabControl1 = new TabControl();
 			tabPage1 = new TabPage();
 			hexBox1 = new Be.Windows.Forms.HexBox();
 			openFileDialog1 = new OpenFileDialog();
 			openFileDialog2 = new OpenFileDialog();
 			saveFileDialog1 = new SaveFileDialog();
-			sendFeedbackToolStripMenuItem = new ToolStripMenuItem();
-			checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
-			toolStripSeparator5 = new ToolStripSeparator();
 			menuStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
@@ -182,6 +188,25 @@ namespace BreaksDebug
 			helpToolStripMenuItem.Name = "helpToolStripMenuItem";
 			helpToolStripMenuItem.Size = new Size(44, 20);
 			helpToolStripMenuItem.Text = "Help";
+			// 
+			// sendFeedbackToolStripMenuItem
+			// 
+			sendFeedbackToolStripMenuItem.Name = "sendFeedbackToolStripMenuItem";
+			sendFeedbackToolStripMenuItem.Size = new Size(170, 22);
+			sendFeedbackToolStripMenuItem.Text = "Send feedback";
+			sendFeedbackToolStripMenuItem.Click += sendFeedbackToolStripMenuItem_Click;
+			// 
+			// checkForUpdatesToolStripMenuItem
+			// 
+			checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+			checkForUpdatesToolStripMenuItem.Size = new Size(170, 22);
+			checkForUpdatesToolStripMenuItem.Text = "Check for updates";
+			checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
+			// 
+			// toolStripSeparator5
+			// 
+			toolStripSeparator5.Name = "toolStripSeparator5";
+			toolStripSeparator5.Size = new Size(167, 6);
 			// 
 			// aboutToolStripMenuItem
 			// 
@@ -307,7 +332,7 @@ namespace BreaksDebug
 			// 
 			splitContainer1.Panel2.Controls.Add(tabControl1);
 			splitContainer1.Size = new Size(1172, 528);
-			splitContainer1.SplitterDistance = 358;
+			splitContainer1.SplitterDistance = 356;
 			splitContainer1.SplitterWidth = 5;
 			splitContainer1.TabIndex = 3;
 			// 
@@ -322,7 +347,7 @@ namespace BreaksDebug
 			tabControl2.Margin = new Padding(4, 3, 4, 3);
 			tabControl2.Name = "tabControl2";
 			tabControl2.SelectedIndex = 0;
-			tabControl2.Size = new Size(1172, 358);
+			tabControl2.Size = new Size(1172, 356);
 			tabControl2.TabIndex = 0;
 			// 
 			// tabPage3
@@ -332,7 +357,7 @@ namespace BreaksDebug
 			tabPage3.Margin = new Padding(4, 3, 4, 3);
 			tabPage3.Name = "tabPage3";
 			tabPage3.Padding = new Padding(4, 3, 4, 3);
-			tabPage3.Size = new Size(1164, 330);
+			tabPage3.Size = new Size(1164, 328);
 			tabPage3.TabIndex = 0;
 			tabPage3.Text = "6502 Core";
 			tabPage3.UseVisualStyleBackColor = true;
@@ -366,7 +391,7 @@ namespace BreaksDebug
 			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 23F));
 			tableLayoutPanel1.RowStyles.Add(new RowStyle());
 			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 23F));
-			tableLayoutPanel1.Size = new Size(1156, 324);
+			tableLayoutPanel1.Size = new Size(1156, 322);
 			tableLayoutPanel1.TabIndex = 12;
 			// 
 			// splitContainer4
@@ -563,7 +588,7 @@ namespace BreaksDebug
 			tabPage4.Margin = new Padding(4, 3, 4, 3);
 			tabPage4.Name = "tabPage4";
 			tabPage4.Padding = new Padding(4, 3, 4, 3);
-			tabPage4.Size = new Size(1164, 331);
+			tabPage4.Size = new Size(1164, 329);
 			tabPage4.TabIndex = 1;
 			tabPage4.Text = "Assembler";
 			tabPage4.UseVisualStyleBackColor = true;
@@ -584,8 +609,8 @@ namespace BreaksDebug
 			// splitContainer3.Panel2
 			// 
 			splitContainer3.Panel2.Controls.Add(button2);
-			splitContainer3.Size = new Size(1156, 325);
-			splitContainer3.SplitterDistance = 269;
+			splitContainer3.Size = new Size(1156, 323);
+			splitContainer3.SplitterDistance = 265;
 			splitContainer3.SplitterWidth = 5;
 			splitContainer3.TabIndex = 0;
 			// 
@@ -597,7 +622,7 @@ namespace BreaksDebug
 			richTextBox1.Location = new Point(0, 0);
 			richTextBox1.Margin = new Padding(4, 3, 4, 3);
 			richTextBox1.Name = "richTextBox1";
-			richTextBox1.Size = new Size(1156, 269);
+			richTextBox1.Size = new Size(1156, 265);
 			richTextBox1.TabIndex = 0;
 			richTextBox1.Text = "";
 			// 
@@ -618,7 +643,7 @@ namespace BreaksDebug
 			tabPage2.Location = new Point(4, 24);
 			tabPage2.Margin = new Padding(4, 3, 4, 3);
 			tabPage2.Name = "tabPage2";
-			tabPage2.Size = new Size(1164, 331);
+			tabPage2.Size = new Size(1164, 329);
 			tabPage2.TabIndex = 2;
 			tabPage2.Text = "Core Data Path";
 			tabPage2.UseVisualStyleBackColor = true;
@@ -630,7 +655,7 @@ namespace BreaksDebug
 			dataPathView1.Location = new Point(0, 0);
 			dataPathView1.Margin = new Padding(4, 3, 4, 3);
 			dataPathView1.Name = "dataPathView1";
-			dataPathView1.Size = new Size(1164, 331);
+			dataPathView1.Size = new Size(1164, 329);
 			dataPathView1.TabIndex = 0;
 			dataPathView1.Text = "dataPathView1";
 			// 
@@ -640,7 +665,7 @@ namespace BreaksDebug
 			tabPage5.Controls.Add(toolStrip2);
 			tabPage5.Location = new Point(4, 24);
 			tabPage5.Name = "tabPage5";
-			tabPage5.Size = new Size(1164, 331);
+			tabPage5.Size = new Size(1164, 328);
 			tabPage5.TabIndex = 3;
 			tabPage5.Text = "Waves";
 			tabPage5.UseVisualStyleBackColor = true;
@@ -660,14 +685,14 @@ namespace BreaksDebug
 			wavesControl1.Name = "wavesControl1";
 			wavesControl1.SelectionColor = Color.GhostWhite;
 			wavesControl1.SignalColor = Color.SpringGreen;
-			wavesControl1.Size = new Size(1164, 306);
+			wavesControl1.Size = new Size(1164, 303);
 			wavesControl1.TabIndex = 1;
 			wavesControl1.Text = "wavesControl1";
 			wavesControl1.UndefinedColor = Color.Red;
 			// 
 			// toolStrip2
 			// 
-			toolStrip2.Items.AddRange(new ToolStripItem[] { toolStripButton7, toolStripButton8 });
+			toolStrip2.Items.AddRange(new ToolStripItem[] { toolStripButton7, toolStripButton8, toolStripSeparator6, toolStripButton9, toolStripButton10, toolStripButton11, toolStripButton12, toolStripButton13 });
 			toolStrip2.Location = new Point(0, 0);
 			toolStrip2.Name = "toolStrip2";
 			toolStrip2.Size = new Size(1164, 25);
@@ -683,6 +708,7 @@ namespace BreaksDebug
 			toolStripButton7.Name = "toolStripButton7";
 			toolStripButton7.Size = new Size(47, 22);
 			toolStripButton7.Text = "Snatch";
+			toolStripButton7.Click += toolStripButton7_Click;
 			// 
 			// toolStripButton8
 			// 
@@ -692,6 +718,62 @@ namespace BreaksDebug
 			toolStripButton8.Name = "toolStripButton8";
 			toolStripButton8.Size = new Size(38, 22);
 			toolStripButton8.Text = "Clear";
+			toolStripButton8.Click += toolStripButton8_Click;
+			// 
+			// toolStripSeparator6
+			// 
+			toolStripSeparator6.Name = "toolStripSeparator6";
+			toolStripSeparator6.Size = new Size(6, 25);
+			// 
+			// toolStripButton9
+			// 
+			toolStripButton9.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton9.Image = (Image)resources.GetObject("toolStripButton9.Image");
+			toolStripButton9.ImageTransparentColor = Color.Magenta;
+			toolStripButton9.Name = "toolStripButton9";
+			toolStripButton9.Size = new Size(32, 22);
+			toolStripButton9.Text = "BRK";
+			toolStripButton9.Click += toolStripButton9_Click;
+			// 
+			// toolStripButton10
+			// 
+			toolStripButton10.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton10.Image = (Image)resources.GetObject("toolStripButton10.Image");
+			toolStripButton10.ImageTransparentColor = Color.Magenta;
+			toolStripButton10.Name = "toolStripButton10";
+			toolStripButton10.Size = new Size(34, 22);
+			toolStripButton10.Text = "Disp";
+			toolStripButton10.Click += toolStripButton10_Click;
+			// 
+			// toolStripButton11
+			// 
+			toolStripButton11.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton11.Image = (Image)resources.GetObject("toolStripButton11.Image");
+			toolStripButton11.ImageTransparentColor = Color.Magenta;
+			toolStripButton11.Name = "toolStripButton11";
+			toolStripButton11.Size = new Size(33, 22);
+			toolStripButton11.Text = "ALU";
+			toolStripButton11.Click += toolStripButton11_Click;
+			// 
+			// toolStripButton12
+			// 
+			toolStripButton12.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton12.Image = (Image)resources.GetObject("toolStripButton12.Image");
+			toolStripButton12.ImageTransparentColor = Color.Magenta;
+			toolStripButton12.Name = "toolStripButton12";
+			toolStripButton12.Size = new Size(37, 22);
+			toolStripButton12.Text = "Bops";
+			toolStripButton12.Click += toolStripButton12_Click;
+			// 
+			// toolStripButton13
+			// 
+			toolStripButton13.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton13.Image = (Image)resources.GetObject("toolStripButton13.Image");
+			toolStripButton13.ImageTransparentColor = Color.Magenta;
+			toolStripButton13.Name = "toolStripButton13";
+			toolStripButton13.Size = new Size(36, 22);
+			toolStripButton13.Text = "Fops";
+			toolStripButton13.Click += toolStripButton13_Click;
 			// 
 			// tabControl1
 			// 
@@ -701,7 +783,7 @@ namespace BreaksDebug
 			tabControl1.Margin = new Padding(4, 3, 4, 3);
 			tabControl1.Name = "tabControl1";
 			tabControl1.SelectedIndex = 0;
-			tabControl1.Size = new Size(1172, 165);
+			tabControl1.Size = new Size(1172, 167);
 			tabControl1.TabIndex = 0;
 			// 
 			// tabPage1
@@ -711,7 +793,7 @@ namespace BreaksDebug
 			tabPage1.Margin = new Padding(4, 3, 4, 3);
 			tabPage1.Name = "tabPage1";
 			tabPage1.Padding = new Padding(4, 3, 4, 3);
-			tabPage1.Size = new Size(1164, 137);
+			tabPage1.Size = new Size(1164, 139);
 			tabPage1.TabIndex = 0;
 			tabPage1.Text = "CPU Memory";
 			tabPage1.UseVisualStyleBackColor = true;
@@ -727,7 +809,7 @@ namespace BreaksDebug
 			hexBox1.Name = "hexBox1";
 			hexBox1.ReadOnly = true;
 			hexBox1.ShadowSelectionColor = Color.FromArgb(100, 60, 188, 255);
-			hexBox1.Size = new Size(1156, 131);
+			hexBox1.Size = new Size(1156, 133);
 			hexBox1.StringViewVisible = true;
 			hexBox1.TabIndex = 1;
 			hexBox1.UseFixedBytesPerLine = true;
@@ -747,25 +829,6 @@ namespace BreaksDebug
 			// 
 			saveFileDialog1.DefaultExt = "bin";
 			saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
-			// 
-			// sendFeedbackToolStripMenuItem
-			// 
-			sendFeedbackToolStripMenuItem.Name = "sendFeedbackToolStripMenuItem";
-			sendFeedbackToolStripMenuItem.Size = new Size(180, 22);
-			sendFeedbackToolStripMenuItem.Text = "Send feedback";
-			sendFeedbackToolStripMenuItem.Click += sendFeedbackToolStripMenuItem_Click;
-			// 
-			// checkForUpdatesToolStripMenuItem
-			// 
-			checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-			checkForUpdatesToolStripMenuItem.Size = new Size(180, 22);
-			checkForUpdatesToolStripMenuItem.Text = "Check for updates";
-			checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
-			// 
-			// toolStripSeparator5
-			// 
-			toolStripSeparator5.Name = "toolStripSeparator5";
-			toolStripSeparator5.Size = new Size(167, 6);
 			// 
 			// FormMain
 			// 
@@ -889,6 +952,12 @@ namespace BreaksDebug
 		private ToolStripMenuItem sendFeedbackToolStripMenuItem;
 		private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator5;
+		private ToolStripSeparator toolStripSeparator6;
+		private ToolStripButton toolStripButton9;
+		private ToolStripButton toolStripButton10;
+		private ToolStripButton toolStripButton11;
+		private ToolStripButton toolStripButton12;
+		private ToolStripButton toolStripButton13;
 	}
 }
 

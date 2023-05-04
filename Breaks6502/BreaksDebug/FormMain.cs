@@ -68,6 +68,7 @@ namespace BreaksDebug
 					LoadAsm(testAsmName);
 					Assemble();
 				}
+				wavesControl1.EnableSelection(true);
 			}
 
 			MarkdownOutput = Directory.Exists(MarkdownDir);
@@ -208,6 +209,7 @@ namespace BreaksDebug
 			UpdateCpuPads();
 			UpdateState();
 			UpdateCpuDebugInfo();
+			UpdateWaves();
 		}
 
 		void LoadMemDump(byte[] dump)
@@ -406,5 +408,6 @@ namespace BreaksDebug
 				}
 			}
 		}
+
 	}
 }

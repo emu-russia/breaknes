@@ -243,10 +243,6 @@ namespace PPUPlayer
 					"Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 
-			BreaksCore.VideoSignalFeatures features;
-			BreaksCore.GetPpuSignalFeatures(out features);
-			//wavesControl1.EnabledDottedEveryNth(features.SamplesPerPCLK, true);
-
 			BreaksCore.Visual2C02Mapping = settings.Visual2C02Mapping;
 
 			SimulationStarted = true;

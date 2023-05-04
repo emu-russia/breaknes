@@ -1,4 +1,4 @@
-﻿namespace PPUPlayer
+﻿namespace SharpTools
 {
 	partial class FormSnatchWaves
 	{
