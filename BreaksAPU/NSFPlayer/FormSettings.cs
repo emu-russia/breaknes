@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics.Tracing;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
-using static NSFPlayer.FormSettings;
 
 namespace NSFPlayer
 {
@@ -76,6 +66,7 @@ namespace NSFPlayer
 			settings.PreferPal = false;
 			settings.AuxSampleRate = 3579544;       // 0.5 PHI for 2A03
 			settings.DC = 0.0f;
+			settings.Visual2A03Mapping = false;
 
 			SaveSettings(settings);
 
@@ -141,6 +132,11 @@ namespace NSFPlayer
 			[Category("Host Features")]
 			[Description("A constant offset that is added when converting a normalized sample received from APUSim to 16-bit PCM format for the DSound buffer.")]
 			public float DC { get; set; }
+
+			[XmlElement]
+			[Category("Debug")]
+			[Description("Enable the signal names from Visual2A03 instead of the Breaks names.")]
+			public bool Visual2A03Mapping { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid

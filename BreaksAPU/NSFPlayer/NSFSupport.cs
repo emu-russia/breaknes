@@ -188,7 +188,7 @@ namespace NSFPlayer
 		public void SyncExec ()
 		{
 			bool sync = BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Board, BreaksCore.BOARD_CATEGORY, "SYNC") != 0;
-			byte ir = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Core, BreaksCore.CORE_WIRES_CATEGORY, "IR");
+			byte ir = (byte)BreaksCore.GetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_Core, BreaksCore.CORE_DISP_CATEGORY, "IR");
 			if (sync && (ir == rts) && RDY2_Shadow)
 			{
 				if (trace)
@@ -203,7 +203,7 @@ namespace NSFPlayer
 		/// <param name="ready"></param>
 		private void CoreReady (bool ready)
 		{
-			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_APU, BreaksCore.APU_WIRES_CATEGORY, "RDY2", (UInt32)(ready ? 1 : 0));
+			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_APU, BreaksCore.APU_CORE_CATEGORY, "RDY2", (UInt32)(ready ? 1 : 0));
 			RDY2_Shadow = ready;
 		}
 

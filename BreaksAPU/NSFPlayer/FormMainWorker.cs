@@ -1,6 +1,5 @@
 // Worker is put in a separate module, because it is the main essence of all the processes of the application and it is convenient to study and store it in isolation.
 
-using System.DirectoryServices.ActiveDirectory;
 using SharpTools;
 
 namespace NSFPlayer
@@ -78,6 +77,7 @@ namespace NSFPlayer
 						toolStripStatusLabelACLK.Text = aclk_per_sec.ToString();
 
 						aclkCounter = BreaksCore.GetACLKCounter();
+						toolStripStatusLabelACLKCount.Text = aclkCounter.ToString();
 					}
 					StepsCounter = 0;
 				}

@@ -9,6 +9,11 @@
 
 #define CORE_REGS_CATEGORY "Core Regs"
 
+#define APU_CLKS_CATEGORY "APU Clocks"
+#define APU_CORE_CATEGORY "APU Core"
+#define APU_DMA_CATEGORY "APU DMA"
+#define APU_REGOPS_CATEGORY "APU RegOps"
+#define APU_LC_CATEGORY "APU LC"
 #define APU_WIRES_CATEGORY "APU Wires"
 #define APU_REGS_CATEGORY "APU Regs"
 
@@ -47,6 +52,11 @@ namespace Breaknes
 	extern SignalOffsetPair core_fops_wires[];
 	extern SignalOffsetPair core_regs[];
 	
+	extern SignalOffsetPair apu_clks_wires[];
+	extern SignalOffsetPair apu_core_wires[];
+	extern SignalOffsetPair apu_dma_wires[];
+	extern SignalOffsetPair apu_regops_wires[];
+	extern SignalOffsetPair apu_lc_wires[];
 	extern SignalOffsetPair apu_wires[];
 	extern SignalOffsetPair apu_regs[];
 	
@@ -70,6 +80,11 @@ namespace Breaknes
 	extern size_t core_fops_wires_count;
 	extern size_t core_regs_count;
 	
+	extern size_t apu_clks_wires_count;
+	extern size_t apu_core_wires_count;
+	extern size_t apu_dma_wires_count;
+	extern size_t apu_regops_wires_count;
+	extern size_t apu_lc_wires_count;
 	extern size_t apu_wires_count;
 	extern size_t apu_regs_count;
 

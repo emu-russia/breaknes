@@ -1,11 +1,6 @@
 using Be.Windows.Forms;
 using SharpToolsCustomClass;
 using System.Runtime.InteropServices;
-using System.Security.Policy;
-using System.Windows.Forms;
-using System.IO;
-using Microsoft.VisualBasic.Logging;
-using SharpDX.Multimedia;
 using System.Text;
 using SharpTools;
 
@@ -65,6 +60,7 @@ namespace NSFPlayer
 			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
 			OutputSampleRate = settings.OutputSampleRate;
 			OutputDC = settings.DC;
+			BreaksCore.Visual2A03Mapping = settings.Visual2A03Mapping;
 
 			SetPaused(true);
 
@@ -74,6 +70,8 @@ namespace NSFPlayer
 
 			nextTrackToolStripMenuItem.Enabled = false;
 			previousTrackToolStripMenuItem.Enabled = false;
+
+			button3.Enabled = false;
 		}
 
 		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -94,6 +92,7 @@ namespace NSFPlayer
 				FurryIntensity = settings.FurryIntensity;
 				PreferPal = settings.PreferPal;
 				OutputDC = settings.DC;
+				BreaksCore.Visual2A03Mapping = settings.Visual2A03Mapping;
 			}
 		}
 
@@ -180,11 +179,15 @@ namespace NSFPlayer
 			this.Text = DefaultTitle;
 			UpdateTrackStat();
 			aclkCounter = 0;
+			toolStripStatusLabelACLKCount.Text = aclkCounter.ToString();
 
 			nextTrackToolStripMenuItem.Enabled = false;
 			previousTrackToolStripMenuItem.Enabled = false;
 
 			signalPlot1.PlotSignal(Array.Empty<float>());
+
+			wavesControl1.EnableSelection(false);
+			ResetWaves();
 		}
 
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -278,6 +281,8 @@ namespace NSFPlayer
 				pauseToolStripMenuItem.Checked = false;
 			}
 			signalPlot1.EnableSelection(paused);
+			wavesControl1.EnableSelection(Paused);
+			button3.Enabled = Paused;
 		}
 
 		private void ExecINIT()
@@ -633,17 +638,32 @@ namespace NSFPlayer
 		/// A tool for short-range debugging.
 		/// Step-by-step execution of the simulation. Available only if the worker is stopped.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void button3_Click(object sender, EventArgs e)
+		private void DoDebugStep()
 		{
 			if (Paused && (nsf_loaded || regdump_loaded))
 			{
 				BreaksCore.Step();
-				TraceCore();
+				//TraceCore();
 				if (nsf_loaded)
 					nsf.SyncExec();
 				Button2Click();
+				UpdateWaves();
+
+				aclkCounter = BreaksCore.GetACLKCounter();
+				toolStripStatusLabelACLKCount.Text = aclkCounter.ToString();
+			}
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			DoDebugStep();
+		}
+
+		private void FormMain_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.F11)
+			{
+				DoDebugStep();
 			}
 		}
 

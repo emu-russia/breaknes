@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using static SharpTools.CoreDebug;
-using System.DirectoryServices.ActiveDirectory;
-using System.Xml.Linq;
 
 namespace SharpTools
 {
@@ -266,6 +258,11 @@ namespace SharpTools
 		public const string CORE_BOPS_CATEGORY = "Core Bops";
 		public const string CORE_FOPS_CATEGORY = "Core Fops";
 		public const string CORE_REGS_CATEGORY = "Core Regs";
+		public const string APU_CLKS_CATEGORY = "APU Clocks";
+		public const string APU_CORE_CATEGORY = "APU Core";
+		public const string APU_DMA_CATEGORY = "APU DMA";
+		public const string APU_REGOPS_CATEGORY = "APU RegOps";
+		public const string APU_LC_CATEGORY = "APU LC";
 		public const string APU_WIRES_CATEGORY = "APU Wires";
 		public const string APU_REGS_CATEGORY = "APU Regs";
 		public const string CRAM_NAME = "Color RAM";
