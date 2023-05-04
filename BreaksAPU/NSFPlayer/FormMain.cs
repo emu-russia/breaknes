@@ -60,6 +60,7 @@ namespace NSFPlayer
 			FormSettings.APUPlayerSettings settings = FormSettings.LoadSettings();
 			OutputSampleRate = settings.OutputSampleRate;
 			OutputDC = settings.DC;
+			BreaksCore.Visual2A03Mapping = settings.Visual2A03Mapping;
 
 			SetPaused(true);
 
@@ -91,6 +92,7 @@ namespace NSFPlayer
 				FurryIntensity = settings.FurryIntensity;
 				PreferPal = settings.PreferPal;
 				OutputDC = settings.DC;
+				BreaksCore.Visual2A03Mapping = settings.Visual2A03Mapping;
 			}
 		}
 
