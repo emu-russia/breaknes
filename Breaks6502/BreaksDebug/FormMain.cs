@@ -115,7 +115,7 @@ namespace BreaksDebug
 
 			BreaksCore.Step();
 
-			BreaksCore.GetAllCoreDebugInfo(out sys.info);	// <-- Epic
+			BreaksCore.GetAllCoreDebugInfo(out sys.info);   // <-- Epic
 
 			if (!UnitTestMode)
 			{
@@ -130,7 +130,7 @@ namespace BreaksDebug
 
 		void UpdateMemoryDump()
 		{
-			byte[] dump = SaveMemDump(); 
+			byte[] dump = SaveMemDump();
 			hexBox1.ByteProvider = new DynamicByteProvider(dump);
 			hexBox1.Refresh();
 		}

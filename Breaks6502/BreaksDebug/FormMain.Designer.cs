@@ -83,6 +83,11 @@ namespace BreaksDebug
 			openFileDialog1 = new OpenFileDialog();
 			openFileDialog2 = new OpenFileDialog();
 			saveFileDialog1 = new SaveFileDialog();
+			tabPage5 = new TabPage();
+			toolStrip2 = new ToolStrip();
+			toolStripButton7 = new ToolStripButton();
+			toolStripButton8 = new ToolStripButton();
+			wavesControl1 = new WavesControl();
 			menuStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
@@ -109,6 +114,8 @@ namespace BreaksDebug
 			tabPage2.SuspendLayout();
 			tabControl1.SuspendLayout();
 			tabPage1.SuspendLayout();
+			tabPage5.SuspendLayout();
+			toolStrip2.SuspendLayout();
 			SuspendLayout();
 			// 
 			// menuStrip1
@@ -297,7 +304,7 @@ namespace BreaksDebug
 			// 
 			splitContainer1.Panel2.Controls.Add(tabControl1);
 			splitContainer1.Size = new Size(1172, 528);
-			splitContainer1.SplitterDistance = 360;
+			splitContainer1.SplitterDistance = 359;
 			splitContainer1.SplitterWidth = 5;
 			splitContainer1.TabIndex = 3;
 			// 
@@ -306,12 +313,13 @@ namespace BreaksDebug
 			tabControl2.Controls.Add(tabPage3);
 			tabControl2.Controls.Add(tabPage4);
 			tabControl2.Controls.Add(tabPage2);
+			tabControl2.Controls.Add(tabPage5);
 			tabControl2.Dock = DockStyle.Fill;
 			tabControl2.Location = new Point(0, 0);
 			tabControl2.Margin = new Padding(4, 3, 4, 3);
 			tabControl2.Name = "tabControl2";
 			tabControl2.SelectedIndex = 0;
-			tabControl2.Size = new Size(1172, 360);
+			tabControl2.Size = new Size(1172, 359);
 			tabControl2.TabIndex = 0;
 			// 
 			// tabPage3
@@ -321,7 +329,7 @@ namespace BreaksDebug
 			tabPage3.Margin = new Padding(4, 3, 4, 3);
 			tabPage3.Name = "tabPage3";
 			tabPage3.Padding = new Padding(4, 3, 4, 3);
-			tabPage3.Size = new Size(1164, 332);
+			tabPage3.Size = new Size(1164, 331);
 			tabPage3.TabIndex = 0;
 			tabPage3.Text = "6502 Core";
 			tabPage3.UseVisualStyleBackColor = true;
@@ -355,7 +363,7 @@ namespace BreaksDebug
 			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 23F));
 			tableLayoutPanel1.RowStyles.Add(new RowStyle());
 			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 23F));
-			tableLayoutPanel1.Size = new Size(1156, 326);
+			tableLayoutPanel1.Size = new Size(1156, 325);
 			tableLayoutPanel1.TabIndex = 12;
 			// 
 			// splitContainer4
@@ -552,7 +560,7 @@ namespace BreaksDebug
 			tabPage4.Margin = new Padding(4, 3, 4, 3);
 			tabPage4.Name = "tabPage4";
 			tabPage4.Padding = new Padding(4, 3, 4, 3);
-			tabPage4.Size = new Size(1164, 333);
+			tabPage4.Size = new Size(1164, 331);
 			tabPage4.TabIndex = 1;
 			tabPage4.Text = "Assembler";
 			tabPage4.UseVisualStyleBackColor = true;
@@ -573,8 +581,8 @@ namespace BreaksDebug
 			// splitContainer3.Panel2
 			// 
 			splitContainer3.Panel2.Controls.Add(button2);
-			splitContainer3.Size = new Size(1156, 327);
-			splitContainer3.SplitterDistance = 273;
+			splitContainer3.Size = new Size(1156, 325);
+			splitContainer3.SplitterDistance = 270;
 			splitContainer3.SplitterWidth = 5;
 			splitContainer3.TabIndex = 0;
 			// 
@@ -586,7 +594,7 @@ namespace BreaksDebug
 			richTextBox1.Location = new Point(0, 0);
 			richTextBox1.Margin = new Padding(4, 3, 4, 3);
 			richTextBox1.Name = "richTextBox1";
-			richTextBox1.Size = new Size(1156, 273);
+			richTextBox1.Size = new Size(1156, 270);
 			richTextBox1.TabIndex = 0;
 			richTextBox1.Text = "";
 			// 
@@ -607,7 +615,7 @@ namespace BreaksDebug
 			tabPage2.Location = new Point(4, 24);
 			tabPage2.Margin = new Padding(4, 3, 4, 3);
 			tabPage2.Name = "tabPage2";
-			tabPage2.Size = new Size(1164, 332);
+			tabPage2.Size = new Size(1164, 331);
 			tabPage2.TabIndex = 2;
 			tabPage2.Text = "Core Data Path";
 			tabPage2.UseVisualStyleBackColor = true;
@@ -619,7 +627,7 @@ namespace BreaksDebug
 			dataPathView1.Location = new Point(0, 0);
 			dataPathView1.Margin = new Padding(4, 3, 4, 3);
 			dataPathView1.Name = "dataPathView1";
-			dataPathView1.Size = new Size(1164, 332);
+			dataPathView1.Size = new Size(1164, 331);
 			dataPathView1.TabIndex = 0;
 			dataPathView1.Text = "dataPathView1";
 			// 
@@ -631,7 +639,7 @@ namespace BreaksDebug
 			tabControl1.Margin = new Padding(4, 3, 4, 3);
 			tabControl1.Name = "tabControl1";
 			tabControl1.SelectedIndex = 0;
-			tabControl1.Size = new Size(1172, 163);
+			tabControl1.Size = new Size(1172, 164);
 			tabControl1.TabIndex = 0;
 			// 
 			// tabPage1
@@ -641,7 +649,7 @@ namespace BreaksDebug
 			tabPage1.Margin = new Padding(4, 3, 4, 3);
 			tabPage1.Name = "tabPage1";
 			tabPage1.Padding = new Padding(4, 3, 4, 3);
-			tabPage1.Size = new Size(1164, 135);
+			tabPage1.Size = new Size(1164, 136);
 			tabPage1.TabIndex = 0;
 			tabPage1.Text = "CPU Memory";
 			tabPage1.UseVisualStyleBackColor = true;
@@ -657,7 +665,7 @@ namespace BreaksDebug
 			hexBox1.Name = "hexBox1";
 			hexBox1.ReadOnly = true;
 			hexBox1.ShadowSelectionColor = Color.FromArgb(100, 60, 188, 255);
-			hexBox1.Size = new Size(1156, 129);
+			hexBox1.Size = new Size(1156, 130);
 			hexBox1.StringViewVisible = true;
 			hexBox1.TabIndex = 1;
 			hexBox1.UseFixedBytesPerLine = true;
@@ -677,6 +685,65 @@ namespace BreaksDebug
 			// 
 			saveFileDialog1.DefaultExt = "bin";
 			saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
+			// 
+			// tabPage5
+			// 
+			tabPage5.Controls.Add(wavesControl1);
+			tabPage5.Controls.Add(toolStrip2);
+			tabPage5.Location = new Point(4, 24);
+			tabPage5.Name = "tabPage5";
+			tabPage5.Size = new Size(1164, 331);
+			tabPage5.TabIndex = 3;
+			tabPage5.Text = "Waves";
+			tabPage5.UseVisualStyleBackColor = true;
+			// 
+			// toolStrip2
+			// 
+			toolStrip2.Items.AddRange(new ToolStripItem[] { toolStripButton7, toolStripButton8 });
+			toolStrip2.Location = new Point(0, 0);
+			toolStrip2.Name = "toolStrip2";
+			toolStrip2.Size = new Size(1164, 25);
+			toolStrip2.TabIndex = 0;
+			toolStrip2.Text = "toolStrip2";
+			// 
+			// toolStripButton7
+			// 
+			toolStripButton7.Alignment = ToolStripItemAlignment.Right;
+			toolStripButton7.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton7.Image = (Image)resources.GetObject("toolStripButton7.Image");
+			toolStripButton7.ImageTransparentColor = Color.Magenta;
+			toolStripButton7.Name = "toolStripButton7";
+			toolStripButton7.Size = new Size(47, 22);
+			toolStripButton7.Text = "Snatch";
+			// 
+			// toolStripButton8
+			// 
+			toolStripButton8.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton8.Image = (Image)resources.GetObject("toolStripButton8.Image");
+			toolStripButton8.ImageTransparentColor = Color.Magenta;
+			toolStripButton8.Name = "toolStripButton8";
+			toolStripButton8.Size = new Size(38, 22);
+			toolStripButton8.Text = "Clear";
+			// 
+			// wavesControl1
+			// 
+			wavesControl1.Dock = DockStyle.Fill;
+			wavesControl1.DottedColor = Color.Silver;
+			wavesControl1.DottedOpacity = 95;
+			wavesControl1.FillColor = Color.Black;
+			wavesControl1.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point);
+			wavesControl1.GridColor = Color.Green;
+			wavesControl1.GridOpacity = 95;
+			wavesControl1.HighZColor = Color.Gold;
+			wavesControl1.LabelsColor = Color.White;
+			wavesControl1.Location = new Point(0, 25);
+			wavesControl1.Name = "wavesControl1";
+			wavesControl1.SelectionColor = Color.GhostWhite;
+			wavesControl1.SignalColor = Color.SpringGreen;
+			wavesControl1.Size = new Size(1164, 306);
+			wavesControl1.TabIndex = 1;
+			wavesControl1.Text = "wavesControl1";
+			wavesControl1.UndefinedColor = Color.Red;
 			// 
 			// FormMain
 			// 
@@ -729,6 +796,10 @@ namespace BreaksDebug
 			tabPage2.ResumeLayout(false);
 			tabControl1.ResumeLayout(false);
 			tabPage1.ResumeLayout(false);
+			tabPage5.ResumeLayout(false);
+			tabPage5.PerformLayout();
+			toolStrip2.ResumeLayout(false);
+			toolStrip2.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -788,6 +859,11 @@ namespace BreaksDebug
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.TabPage tabPage2;
 		private DataPathView dataPathView1;
+		private TabPage tabPage5;
+		private ToolStrip toolStrip2;
+		private ToolStripButton toolStripButton7;
+		private ToolStripButton toolStripButton8;
+		private WavesControl wavesControl1;
 	}
 }
 
