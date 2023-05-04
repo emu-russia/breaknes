@@ -100,10 +100,17 @@
 			toolStrip2 = new ToolStrip();
 			toolStripButton3 = new ToolStripButton();
 			toolStripButton4 = new ToolStripButton();
+			toolStripSeparator5 = new ToolStripSeparator();
 			backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			openFileDialogRegDump = new OpenFileDialog();
 			saveFileDialogWAV = new SaveFileDialog();
 			openFileDialogCpumem = new OpenFileDialog();
+			toolStripButton5 = new ToolStripButton();
+			toolStripButton6 = new ToolStripButton();
+			toolStripButton7 = new ToolStripButton();
+			toolStripButton8 = new ToolStripButton();
+			toolStripButton9 = new ToolStripButton();
+			toolStripButton10 = new ToolStripButton();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
@@ -744,7 +751,7 @@
 			// 
 			// toolStrip2
 			// 
-			toolStrip2.Items.AddRange(new ToolStripItem[] { toolStripButton3, toolStripButton4 });
+			toolStrip2.Items.AddRange(new ToolStripItem[] { toolStripButton3, toolStripButton4, toolStripSeparator5, toolStripButton5, toolStripButton6, toolStripButton7, toolStripButton8, toolStripButton9, toolStripButton10 });
 			toolStrip2.Location = new Point(3, 3);
 			toolStrip2.Name = "toolStrip2";
 			toolStrip2.Size = new Size(652, 25);
@@ -770,6 +777,11 @@
 			toolStripButton4.Size = new Size(38, 22);
 			toolStripButton4.Text = "Clear";
 			// 
+			// toolStripSeparator5
+			// 
+			toolStripSeparator5.Name = "toolStripSeparator5";
+			toolStripSeparator5.Size = new Size(6, 25);
+			// 
 			// backgroundWorker1
 			// 
 			backgroundWorker1.WorkerSupportsCancellation = true;
@@ -789,6 +801,62 @@
 			// 
 			openFileDialogCpumem.DefaultExt = "cpumem";
 			openFileDialogCpumem.Filter = "Nintendulator CPU Memory dumps|*.cpumem|All files|*.*";
+			// 
+			// toolStripButton5
+			// 
+			toolStripButton5.Checked = true;
+			toolStripButton5.CheckState = CheckState.Checked;
+			toolStripButton5.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton5.Image = (Image)resources.GetObject("toolStripButton5.Image");
+			toolStripButton5.ImageTransparentColor = Color.Magenta;
+			toolStripButton5.Name = "toolStripButton5";
+			toolStripButton5.Size = new Size(46, 22);
+			toolStripButton5.Text = "Clocks";
+			// 
+			// toolStripButton6
+			// 
+			toolStripButton6.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton6.Image = (Image)resources.GetObject("toolStripButton6.Image");
+			toolStripButton6.ImageTransparentColor = Color.Magenta;
+			toolStripButton6.Name = "toolStripButton6";
+			toolStripButton6.Size = new Size(36, 22);
+			toolStripButton6.Text = "Core";
+			// 
+			// toolStripButton7
+			// 
+			toolStripButton7.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton7.Image = (Image)resources.GetObject("toolStripButton7.Image");
+			toolStripButton7.ImageTransparentColor = Color.Magenta;
+			toolStripButton7.Name = "toolStripButton7";
+			toolStripButton7.Size = new Size(38, 22);
+			toolStripButton7.Text = "DMA";
+			// 
+			// toolStripButton8
+			// 
+			toolStripButton8.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton8.Image = (Image)resources.GetObject("toolStripButton8.Image");
+			toolStripButton8.ImageTransparentColor = Color.Magenta;
+			toolStripButton8.Name = "toolStripButton8";
+			toolStripButton8.Size = new Size(52, 22);
+			toolStripButton8.Text = "RegOps";
+			// 
+			// toolStripButton9
+			// 
+			toolStripButton9.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton9.Image = (Image)resources.GetObject("toolStripButton9.Image");
+			toolStripButton9.ImageTransparentColor = Color.Magenta;
+			toolStripButton9.Name = "toolStripButton9";
+			toolStripButton9.Size = new Size(25, 22);
+			toolStripButton9.Text = "LC";
+			// 
+			// toolStripButton10
+			// 
+			toolStripButton10.DisplayStyle = ToolStripItemDisplayStyle.Text;
+			toolStripButton10.Image = (Image)resources.GetObject("toolStripButton10.Image");
+			toolStripButton10.ImageTransparentColor = Color.Magenta;
+			toolStripButton10.Name = "toolStripButton10";
+			toolStripButton10.Size = new Size(46, 22);
+			toolStripButton10.Text = "Others";
 			// 
 			// FormMain
 			// 
@@ -915,5 +983,12 @@
 		private ToolStrip toolStrip2;
 		private ToolStripButton toolStripButton3;
 		private ToolStripButton toolStripButton4;
+		private ToolStripSeparator toolStripSeparator5;
+		private ToolStripButton toolStripButton5;
+		private ToolStripButton toolStripButton6;
+		private ToolStripButton toolStripButton7;
+		private ToolStripButton toolStripButton8;
+		private ToolStripButton toolStripButton9;
+		private ToolStripButton toolStripButton10;
 	}
 }

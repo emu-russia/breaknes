@@ -134,7 +134,7 @@ namespace Breaknes
 	};
 	size_t core_regs_count = sizeof(core_regs) / sizeof(core_regs[0]);
 
-	SignalOffsetPair apu_wires[] = {
+	SignalOffsetPair apu_clks_wires[] = {
 		"/CLK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_CLK), 1,
 		"PHI0", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI0), 1,
 		"PHI1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::PHI1), 1,
@@ -143,7 +143,10 @@ namespace Breaknes
 		"ACLK1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::ACLK1), 1,
 		"/LFO1", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_LFO1), 1,
 		"/LFO2", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_LFO2), 1,
+	};
+	size_t apu_clks_wires_count = sizeof(apu_clks_wires) / sizeof(apu_clks_wires[0]);
 
+	SignalOffsetPair apu_core_wires[] = {
 		"RES", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RES), 1,
 		"RESCore", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RESCore), 1,
 		"RDY", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RDY), 1,
@@ -154,7 +157,10 @@ namespace Breaknes
 		"/IRQ", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_IRQ), 1,
 		"INT", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::INT), 1,
 		"R/W", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RnW), 1,
+	};
+	size_t apu_core_wires_count = sizeof(apu_core_wires) / sizeof(apu_core_wires[0]);
 
+	SignalOffsetPair apu_dma_wires[] = {
 		"SPR/CPU", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SPR_CPU), 1,
 		"SPR/PPU", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SPR_PPU), 1,
 		"RW", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RW), 1,
@@ -164,7 +170,10 @@ namespace Breaknes
 		"RUNDMC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::RUNDMC), 1,
 		"DMCINT", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::DMCINT), 1,
 		"DMCRDY", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::DMCRDY), 1,
+	};
+	size_t apu_dma_wires_count = sizeof(apu_dma_wires) / sizeof(apu_dma_wires[0]);
 
+	SignalOffsetPair apu_regops_wires[] = {
 		"/R4015", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4015), 1,
 		"/R4016", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4016), 1,
 		"/R4017", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_R4017), 1,
@@ -194,7 +203,10 @@ namespace Breaknes
 		"W4016", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4016), 1,
 		"W4017", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W4017), 1,
 		"W401A", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::W401A), 1,
+	};
+	size_t apu_regops_wires_count = sizeof(apu_regops_wires) / sizeof(apu_regops_wires[0]);
 
+	SignalOffsetPair apu_lc_wires[] = {
 		"SQA/LC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SQA_LC), 1,
 		"SQB/LC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::SQB_LC), 1,
 		"TRI/LC", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::TRI_LC), 1,
@@ -203,7 +215,10 @@ namespace Breaknes
 		"NOSQB", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::NOSQB), 1,
 		"NOTRI", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::NOTRI), 1,
 		"NORND", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::NORND), 1,
+	};
+	size_t apu_lc_wires_count = sizeof(apu_lc_wires) / sizeof(apu_lc_wires[0]);
 
+	SignalOffsetPair apu_wires[] = {
 		"DBG", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::DBG), 1,
 		"/DBGRD", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::n_DBGRD), 1,
 		"LOCK", offsetof(APUSim::APU_Interconnects, APUSim::APU_Interconnects::LOCK), 1,

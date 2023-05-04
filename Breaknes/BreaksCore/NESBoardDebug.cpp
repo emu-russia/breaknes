@@ -138,6 +138,66 @@ namespace Breaknes
 			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_CoreRegs, entry, GetCoreRegsDebugInfo, SetCoreRegsDebugInfo, this);
 		}
 
+		for (size_t n = 0; n < apu_clks_wires_count; n++)
+		{
+			SignalOffsetPair* sp = &apu_clks_wires[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, APU_CLKS_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APU, entry, GetApuDebugInfo, SetApuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < apu_core_wires_count; n++)
+		{
+			SignalOffsetPair* sp = &apu_core_wires[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, APU_CORE_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APU, entry, GetApuDebugInfo, SetApuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < apu_dma_wires_count; n++)
+		{
+			SignalOffsetPair* sp = &apu_dma_wires[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, APU_DMA_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APU, entry, GetApuDebugInfo, SetApuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < apu_regops_wires_count; n++)
+		{
+			SignalOffsetPair* sp = &apu_regops_wires[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, APU_REGOPS_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APU, entry, GetApuDebugInfo, SetApuDebugInfo, this);
+		}
+
+		for (size_t n = 0; n < apu_lc_wires_count; n++)
+		{
+			SignalOffsetPair* sp = &apu_lc_wires[n];
+
+			DebugInfoEntry* entry = new DebugInfoEntry;
+			memset(entry, 0, sizeof(DebugInfoEntry));
+			strcpy(entry->category, APU_LC_CATEGORY);
+			strcpy(entry->name, sp->name);
+			entry->bits = sp->bits;
+			dbg_hub->AddDebugInfo(DebugInfoType::DebugInfoType_APU, entry, GetApuDebugInfo, SetApuDebugInfo, this);
+		}
+
 		for (size_t n = 0; n < apu_wires_count; n++)
 		{
 			SignalOffsetPair* sp = &apu_wires[n];
@@ -492,17 +552,105 @@ namespace Breaknes
 	{
 		NESBoard* board = (NESBoard*)opaque;
 
-		for (size_t n = 0; n < apu_wires_count; n++)
+		if (!strcmp(entry->category, APU_CLKS_CATEGORY))
 		{
-			SignalOffsetPair* sp = &apu_wires[n];
-
-			if (!strcmp(sp->name, entry->name))
+			for (size_t n = 0; n < apu_clks_wires_count; n++)
 			{
-				APUSim::APU_Interconnects wires{};
-				board->apu->GetDebugInfo_Wires(wires);
+				SignalOffsetPair* sp = &apu_clks_wires[n];
 
-				uint8_t* ptr = (uint8_t*)&wires;
-				return ptr[sp->offset];
+				if (!strcmp(sp->name, entry->name))
+				{
+					APUSim::APU_Interconnects wires{};
+					board->apu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, APU_CORE_CATEGORY))
+		{
+			for (size_t n = 0; n < apu_core_wires_count; n++)
+			{
+				SignalOffsetPair* sp = &apu_core_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					APUSim::APU_Interconnects wires{};
+					board->apu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, APU_DMA_CATEGORY))
+		{
+			for (size_t n = 0; n < apu_dma_wires_count; n++)
+			{
+				SignalOffsetPair* sp = &apu_dma_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					APUSim::APU_Interconnects wires{};
+					board->apu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, APU_REGOPS_CATEGORY))
+		{
+			for (size_t n = 0; n < apu_regops_wires_count; n++)
+			{
+				SignalOffsetPair* sp = &apu_regops_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					APUSim::APU_Interconnects wires{};
+					board->apu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, APU_LC_CATEGORY))
+		{
+			for (size_t n = 0; n < apu_lc_wires_count; n++)
+			{
+				SignalOffsetPair* sp = &apu_lc_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					APUSim::APU_Interconnects wires{};
+					board->apu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
+			}
+		}
+
+		else if (!strcmp(entry->category, APU_WIRES_CATEGORY))
+		{
+			for (size_t n = 0; n < apu_wires_count; n++)
+			{
+				SignalOffsetPair* sp = &apu_wires[n];
+
+				if (!strcmp(sp->name, entry->name))
+				{
+					APUSim::APU_Interconnects wires{};
+					board->apu->GetDebugInfo_Wires(wires);
+
+					uint8_t* ptr = (uint8_t*)&wires;
+					return ptr[sp->offset];
+				}
 			}
 		}
 
