@@ -180,6 +180,9 @@ namespace NSFPlayer
 			previousTrackToolStripMenuItem.Enabled = false;
 
 			signalPlot1.PlotSignal(Array.Empty<float>());
+
+			wavesControl1.EnableSelection(false);
+			ResetWaves();
 		}
 
 		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -273,6 +276,8 @@ namespace NSFPlayer
 				pauseToolStripMenuItem.Checked = false;
 			}
 			signalPlot1.EnableSelection(paused);
+			wavesControl1.EnableSelection(Paused);
+			button3.Enabled = Paused;
 		}
 
 		private void ExecINIT()
