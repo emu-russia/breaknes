@@ -107,7 +107,7 @@ namespace Breaknes
 					return BreaksCore.DebugInfoType.DebugInfoType_Board;
 				case 7:
 					return BreaksCore.DebugInfoType.DebugInfoType_Cart;
-		}
+			}
 
 			return BreaksCore.DebugInfoType.DebugInfoType_Test;
 		}
