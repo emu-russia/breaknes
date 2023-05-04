@@ -105,26 +105,31 @@ namespace BreaksDebug
 			}
 		}
 
+		// BRK Processing (interrupts/BRK)
 		private void toolStripButton9_Click(object sender, EventArgs e)
 		{
 
 		}
 
+		// Dispatcher
 		private void toolStripButton10_Click(object sender, EventArgs e)
 		{
 
 		}
 
+		// ALU Related
 		private void toolStripButton11_Click(object sender, EventArgs e)
 		{
 
 		}
 
+		// Bops = Bottom Operations
 		private void toolStripButton12_Click(object sender, EventArgs e)
 		{
 
 		}
 
+		// Fops = Flags Operations
 		private void toolStripButton13_Click(object sender, EventArgs e)
 		{
 

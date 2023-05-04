@@ -260,7 +260,11 @@ namespace SharpTools
 			DebugInfoType_Cart,
 		};
 
-		public const string CORE_WIRES_CATEGORY = "Core Wires";
+		public const string CORE_BRK_CATEGORY = "Core BRK";
+		public const string CORE_DISP_CATEGORY = "Core Dispatcher";
+		public const string CORE_ALU_CATEGORY = "Core ALU Related";
+		public const string CORE_BOPS_CATEGORY = "Core Bops";
+		public const string CORE_FOPS_CATEGORY = "Core Fops";
 		public const string CORE_REGS_CATEGORY = "Core Regs";
 		public const string APU_WIRES_CATEGORY = "APU Wires";
 		public const string APU_REGS_CATEGORY = "APU Regs";

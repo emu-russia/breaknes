@@ -1,7 +1,12 @@
 
 #pragma once
 
-#define CORE_WIRES_CATEGORY "Core Wires"
+#define CORE_BRK_CATEGORY "Core BRK"
+#define CORE_DISP_CATEGORY "Core Dispatcher"
+#define CORE_ALU_CATEGORY "Core ALU Related"
+#define CORE_BOPS_CATEGORY "Core Bops"
+#define CORE_FOPS_CATEGORY "Core Fops"
+
 #define CORE_REGS_CATEGORY "Core Regs"
 
 #define APU_WIRES_CATEGORY "APU Wires"
@@ -35,7 +40,11 @@ namespace Breaknes
 		const uint8_t bits;
 	};
 
-	extern SignalOffsetPair core_wires[];
+	extern SignalOffsetPair core_brk_wires[];
+	extern SignalOffsetPair core_disp_wires[];
+	extern SignalOffsetPair core_alu_wires[];
+	extern SignalOffsetPair core_bops_wires[];
+	extern SignalOffsetPair core_fops_wires[];
 	extern SignalOffsetPair core_regs[];
 	
 	extern SignalOffsetPair apu_wires[];
@@ -54,7 +63,11 @@ namespace Breaknes
 	extern SignalOffsetPair ppu_wires[];
 	extern SignalOffsetPair ppu_regs[];
 
-	extern size_t core_wires_count;
+	extern size_t core_brk_wires_count;
+	extern size_t core_disp_wires_count;
+	extern size_t core_alu_wires_count;
+	extern size_t core_bops_wires_count;
+	extern size_t core_fops_wires_count;
 	extern size_t core_regs_count;
 	
 	extern size_t apu_wires_count;

@@ -2,9 +2,7 @@
 
 namespace Breaknes
 {
-	SignalOffsetPair core_wires[] = {
-		"IR", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::IR), 8,
-
+	SignalOffsetPair core_brk_wires[] = {
 		"/NMIP", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_NMIP), 1,
 		"/IRQP", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_IRQP), 1,
 		"RESP", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::RESP), 1,
@@ -12,7 +10,11 @@ namespace Breaknes
 		"BRK7", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::BRK7), 1,
 		"DORES", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DORES), 1,
 		"/DONMI", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_DONMI), 1,
+	};
+	size_t core_brk_wires_count = sizeof(core_brk_wires) / sizeof(core_brk_wires[0]);
 
+	SignalOffsetPair core_disp_wires[] = {
+		"IR", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::IR), 8,
 		"/PRDY", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_PRDY), 1,
 		"/T2", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_T2), 1,
 		"/T3", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_T3), 1,
@@ -37,13 +39,19 @@ namespace Breaknes
 		"/TRESX", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_TRESX), 1,
 		"BRFW", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::BRFW), 1,
 		"/BRTAKEN", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_BRTAKEN), 1,
+	};
+	size_t core_disp_wires_count = sizeof(core_disp_wires) / sizeof(core_disp_wires[0]);
 
+	SignalOffsetPair core_alu_wires[] = {
 		"n_ACIN", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_ACIN), 1,
 		"n_DAA", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_DAA), 1,
 		"n_DSA", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_DSA), 1,
 		"ACR", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::ACR), 1,
 		"AVR", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::AVR), 1,
+	};
+	size_t core_alu_wires_count = sizeof(core_alu_wires) / sizeof(core_alu_wires[0]);
 
+	SignalOffsetPair core_bops_wires[] = {
 		"Y_SB", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::Y_SB), 1,
 		"SB_Y", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::SB_Y), 1,
 		"X_SB", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::X_SB), 1,
@@ -89,7 +97,10 @@ namespace Breaknes
 		"DL_ADH", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DL_ADH), 1,
 		"DL_DB", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DL_DB), 1,
 		"n_1PC", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::n_1PC), 1,
+	};
+	size_t core_bops_wires_count = sizeof(core_bops_wires) / sizeof(core_bops_wires[0]);
 
+	SignalOffsetPair core_fops_wires[] = {
 		"P_DB", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::P_DB), 1,
 		"DB_P", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DB_P), 1,
 		"DBZ_Z", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::DBZ_Z), 1,
@@ -103,7 +114,7 @@ namespace Breaknes
 		"AVR_V", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::AVR_V), 1,
 		"Z_V", offsetof(M6502Core::DebugInfo, M6502Core::DebugInfo::Z_V), 1,
 	};
-	size_t core_wires_count = sizeof(core_wires) / sizeof(core_wires[0]);
+	size_t core_fops_wires_count = sizeof(core_fops_wires) / sizeof(core_fops_wires[0]);
 
 	SignalOffsetPair core_regs[] = {
 		"PCH", offsetof(M6502Core::UserRegs, PCH), 8,
