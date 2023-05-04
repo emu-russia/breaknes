@@ -77,17 +77,20 @@ namespace BreaksDebug
 			button2 = new Button();
 			tabPage2 = new TabPage();
 			dataPathView1 = new DataPathView();
+			tabPage5 = new TabPage();
+			wavesControl1 = new WavesControl();
+			toolStrip2 = new ToolStrip();
+			toolStripButton7 = new ToolStripButton();
+			toolStripButton8 = new ToolStripButton();
 			tabControl1 = new TabControl();
 			tabPage1 = new TabPage();
 			hexBox1 = new Be.Windows.Forms.HexBox();
 			openFileDialog1 = new OpenFileDialog();
 			openFileDialog2 = new OpenFileDialog();
 			saveFileDialog1 = new SaveFileDialog();
-			tabPage5 = new TabPage();
-			toolStrip2 = new ToolStrip();
-			toolStripButton7 = new ToolStripButton();
-			toolStripButton8 = new ToolStripButton();
-			wavesControl1 = new WavesControl();
+			sendFeedbackToolStripMenuItem = new ToolStripMenuItem();
+			checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
+			toolStripSeparator5 = new ToolStripSeparator();
 			menuStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
@@ -112,10 +115,10 @@ namespace BreaksDebug
 			splitContainer3.Panel2.SuspendLayout();
 			splitContainer3.SuspendLayout();
 			tabPage2.SuspendLayout();
-			tabControl1.SuspendLayout();
-			tabPage1.SuspendLayout();
 			tabPage5.SuspendLayout();
 			toolStrip2.SuspendLayout();
+			tabControl1.SuspendLayout();
+			tabPage1.SuspendLayout();
 			SuspendLayout();
 			// 
 			// menuStrip1
@@ -175,7 +178,7 @@ namespace BreaksDebug
 			// 
 			// helpToolStripMenuItem
 			// 
-			helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { aboutToolStripMenuItem });
+			helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sendFeedbackToolStripMenuItem, checkForUpdatesToolStripMenuItem, toolStripSeparator5, aboutToolStripMenuItem });
 			helpToolStripMenuItem.Name = "helpToolStripMenuItem";
 			helpToolStripMenuItem.Size = new Size(44, 20);
 			helpToolStripMenuItem.Text = "Help";
@@ -183,7 +186,7 @@ namespace BreaksDebug
 			// aboutToolStripMenuItem
 			// 
 			aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			aboutToolStripMenuItem.Size = new Size(107, 22);
+			aboutToolStripMenuItem.Size = new Size(170, 22);
 			aboutToolStripMenuItem.Text = "About";
 			aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
 			// 
@@ -304,7 +307,7 @@ namespace BreaksDebug
 			// 
 			splitContainer1.Panel2.Controls.Add(tabControl1);
 			splitContainer1.Size = new Size(1172, 528);
-			splitContainer1.SplitterDistance = 359;
+			splitContainer1.SplitterDistance = 358;
 			splitContainer1.SplitterWidth = 5;
 			splitContainer1.TabIndex = 3;
 			// 
@@ -319,7 +322,7 @@ namespace BreaksDebug
 			tabControl2.Margin = new Padding(4, 3, 4, 3);
 			tabControl2.Name = "tabControl2";
 			tabControl2.SelectedIndex = 0;
-			tabControl2.Size = new Size(1172, 359);
+			tabControl2.Size = new Size(1172, 358);
 			tabControl2.TabIndex = 0;
 			// 
 			// tabPage3
@@ -329,7 +332,7 @@ namespace BreaksDebug
 			tabPage3.Margin = new Padding(4, 3, 4, 3);
 			tabPage3.Name = "tabPage3";
 			tabPage3.Padding = new Padding(4, 3, 4, 3);
-			tabPage3.Size = new Size(1164, 331);
+			tabPage3.Size = new Size(1164, 330);
 			tabPage3.TabIndex = 0;
 			tabPage3.Text = "6502 Core";
 			tabPage3.UseVisualStyleBackColor = true;
@@ -363,7 +366,7 @@ namespace BreaksDebug
 			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 23F));
 			tableLayoutPanel1.RowStyles.Add(new RowStyle());
 			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 23F));
-			tableLayoutPanel1.Size = new Size(1156, 325);
+			tableLayoutPanel1.Size = new Size(1156, 324);
 			tableLayoutPanel1.TabIndex = 12;
 			// 
 			// splitContainer4
@@ -582,7 +585,7 @@ namespace BreaksDebug
 			// 
 			splitContainer3.Panel2.Controls.Add(button2);
 			splitContainer3.Size = new Size(1156, 325);
-			splitContainer3.SplitterDistance = 270;
+			splitContainer3.SplitterDistance = 269;
 			splitContainer3.SplitterWidth = 5;
 			splitContainer3.TabIndex = 0;
 			// 
@@ -594,7 +597,7 @@ namespace BreaksDebug
 			richTextBox1.Location = new Point(0, 0);
 			richTextBox1.Margin = new Padding(4, 3, 4, 3);
 			richTextBox1.Name = "richTextBox1";
-			richTextBox1.Size = new Size(1156, 270);
+			richTextBox1.Size = new Size(1156, 269);
 			richTextBox1.TabIndex = 0;
 			richTextBox1.Text = "";
 			// 
@@ -631,61 +634,6 @@ namespace BreaksDebug
 			dataPathView1.TabIndex = 0;
 			dataPathView1.Text = "dataPathView1";
 			// 
-			// tabControl1
-			// 
-			tabControl1.Controls.Add(tabPage1);
-			tabControl1.Dock = DockStyle.Fill;
-			tabControl1.Location = new Point(0, 0);
-			tabControl1.Margin = new Padding(4, 3, 4, 3);
-			tabControl1.Name = "tabControl1";
-			tabControl1.SelectedIndex = 0;
-			tabControl1.Size = new Size(1172, 164);
-			tabControl1.TabIndex = 0;
-			// 
-			// tabPage1
-			// 
-			tabPage1.Controls.Add(hexBox1);
-			tabPage1.Location = new Point(4, 24);
-			tabPage1.Margin = new Padding(4, 3, 4, 3);
-			tabPage1.Name = "tabPage1";
-			tabPage1.Padding = new Padding(4, 3, 4, 3);
-			tabPage1.Size = new Size(1164, 136);
-			tabPage1.TabIndex = 0;
-			tabPage1.Text = "CPU Memory";
-			tabPage1.UseVisualStyleBackColor = true;
-			// 
-			// hexBox1
-			// 
-			hexBox1.ColumnInfoVisible = true;
-			hexBox1.Dock = DockStyle.Fill;
-			hexBox1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-			hexBox1.LineInfoVisible = true;
-			hexBox1.Location = new Point(4, 3);
-			hexBox1.Margin = new Padding(4, 3, 4, 3);
-			hexBox1.Name = "hexBox1";
-			hexBox1.ReadOnly = true;
-			hexBox1.ShadowSelectionColor = Color.FromArgb(100, 60, 188, 255);
-			hexBox1.Size = new Size(1156, 130);
-			hexBox1.StringViewVisible = true;
-			hexBox1.TabIndex = 1;
-			hexBox1.UseFixedBytesPerLine = true;
-			hexBox1.VScrollBarVisible = true;
-			// 
-			// openFileDialog1
-			// 
-			openFileDialog1.DefaultExt = "asm";
-			openFileDialog1.Filter = "ASM files|*.asm;*.nas|All files|*.*";
-			// 
-			// openFileDialog2
-			// 
-			openFileDialog2.DefaultExt = "bin";
-			openFileDialog2.Filter = "Binary files|*.bin|All files|*.*";
-			// 
-			// saveFileDialog1
-			// 
-			saveFileDialog1.DefaultExt = "bin";
-			saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
-			// 
 			// tabPage5
 			// 
 			tabPage5.Controls.Add(wavesControl1);
@@ -696,6 +644,26 @@ namespace BreaksDebug
 			tabPage5.TabIndex = 3;
 			tabPage5.Text = "Waves";
 			tabPage5.UseVisualStyleBackColor = true;
+			// 
+			// wavesControl1
+			// 
+			wavesControl1.Dock = DockStyle.Fill;
+			wavesControl1.DottedColor = Color.Silver;
+			wavesControl1.DottedOpacity = 95;
+			wavesControl1.FillColor = Color.Black;
+			wavesControl1.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point);
+			wavesControl1.GridColor = Color.Green;
+			wavesControl1.GridOpacity = 95;
+			wavesControl1.HighZColor = Color.Gold;
+			wavesControl1.LabelsColor = Color.White;
+			wavesControl1.Location = new Point(0, 25);
+			wavesControl1.Name = "wavesControl1";
+			wavesControl1.SelectionColor = Color.GhostWhite;
+			wavesControl1.SignalColor = Color.SpringGreen;
+			wavesControl1.Size = new Size(1164, 306);
+			wavesControl1.TabIndex = 1;
+			wavesControl1.Text = "wavesControl1";
+			wavesControl1.UndefinedColor = Color.Red;
 			// 
 			// toolStrip2
 			// 
@@ -725,25 +693,79 @@ namespace BreaksDebug
 			toolStripButton8.Size = new Size(38, 22);
 			toolStripButton8.Text = "Clear";
 			// 
-			// wavesControl1
+			// tabControl1
 			// 
-			wavesControl1.Dock = DockStyle.Fill;
-			wavesControl1.DottedColor = Color.Silver;
-			wavesControl1.DottedOpacity = 95;
-			wavesControl1.FillColor = Color.Black;
-			wavesControl1.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point);
-			wavesControl1.GridColor = Color.Green;
-			wavesControl1.GridOpacity = 95;
-			wavesControl1.HighZColor = Color.Gold;
-			wavesControl1.LabelsColor = Color.White;
-			wavesControl1.Location = new Point(0, 25);
-			wavesControl1.Name = "wavesControl1";
-			wavesControl1.SelectionColor = Color.GhostWhite;
-			wavesControl1.SignalColor = Color.SpringGreen;
-			wavesControl1.Size = new Size(1164, 306);
-			wavesControl1.TabIndex = 1;
-			wavesControl1.Text = "wavesControl1";
-			wavesControl1.UndefinedColor = Color.Red;
+			tabControl1.Controls.Add(tabPage1);
+			tabControl1.Dock = DockStyle.Fill;
+			tabControl1.Location = new Point(0, 0);
+			tabControl1.Margin = new Padding(4, 3, 4, 3);
+			tabControl1.Name = "tabControl1";
+			tabControl1.SelectedIndex = 0;
+			tabControl1.Size = new Size(1172, 165);
+			tabControl1.TabIndex = 0;
+			// 
+			// tabPage1
+			// 
+			tabPage1.Controls.Add(hexBox1);
+			tabPage1.Location = new Point(4, 24);
+			tabPage1.Margin = new Padding(4, 3, 4, 3);
+			tabPage1.Name = "tabPage1";
+			tabPage1.Padding = new Padding(4, 3, 4, 3);
+			tabPage1.Size = new Size(1164, 137);
+			tabPage1.TabIndex = 0;
+			tabPage1.Text = "CPU Memory";
+			tabPage1.UseVisualStyleBackColor = true;
+			// 
+			// hexBox1
+			// 
+			hexBox1.ColumnInfoVisible = true;
+			hexBox1.Dock = DockStyle.Fill;
+			hexBox1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+			hexBox1.LineInfoVisible = true;
+			hexBox1.Location = new Point(4, 3);
+			hexBox1.Margin = new Padding(4, 3, 4, 3);
+			hexBox1.Name = "hexBox1";
+			hexBox1.ReadOnly = true;
+			hexBox1.ShadowSelectionColor = Color.FromArgb(100, 60, 188, 255);
+			hexBox1.Size = new Size(1156, 131);
+			hexBox1.StringViewVisible = true;
+			hexBox1.TabIndex = 1;
+			hexBox1.UseFixedBytesPerLine = true;
+			hexBox1.VScrollBarVisible = true;
+			// 
+			// openFileDialog1
+			// 
+			openFileDialog1.DefaultExt = "asm";
+			openFileDialog1.Filter = "ASM files|*.asm;*.nas|All files|*.*";
+			// 
+			// openFileDialog2
+			// 
+			openFileDialog2.DefaultExt = "bin";
+			openFileDialog2.Filter = "Binary files|*.bin|All files|*.*";
+			// 
+			// saveFileDialog1
+			// 
+			saveFileDialog1.DefaultExt = "bin";
+			saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
+			// 
+			// sendFeedbackToolStripMenuItem
+			// 
+			sendFeedbackToolStripMenuItem.Name = "sendFeedbackToolStripMenuItem";
+			sendFeedbackToolStripMenuItem.Size = new Size(180, 22);
+			sendFeedbackToolStripMenuItem.Text = "Send feedback";
+			sendFeedbackToolStripMenuItem.Click += sendFeedbackToolStripMenuItem_Click;
+			// 
+			// checkForUpdatesToolStripMenuItem
+			// 
+			checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+			checkForUpdatesToolStripMenuItem.Size = new Size(180, 22);
+			checkForUpdatesToolStripMenuItem.Text = "Check for updates";
+			checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
+			// 
+			// toolStripSeparator5
+			// 
+			toolStripSeparator5.Name = "toolStripSeparator5";
+			toolStripSeparator5.Size = new Size(167, 6);
 			// 
 			// FormMain
 			// 
@@ -794,12 +816,12 @@ namespace BreaksDebug
 			((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
 			splitContainer3.ResumeLayout(false);
 			tabPage2.ResumeLayout(false);
-			tabControl1.ResumeLayout(false);
-			tabPage1.ResumeLayout(false);
 			tabPage5.ResumeLayout(false);
 			tabPage5.PerformLayout();
 			toolStrip2.ResumeLayout(false);
 			toolStrip2.PerformLayout();
+			tabControl1.ResumeLayout(false);
+			tabPage1.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -864,6 +886,9 @@ namespace BreaksDebug
 		private ToolStripButton toolStripButton7;
 		private ToolStripButton toolStripButton8;
 		private WavesControl wavesControl1;
+		private ToolStripMenuItem sendFeedbackToolStripMenuItem;
+		private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
+		private ToolStripSeparator toolStripSeparator5;
 	}
 }
 
