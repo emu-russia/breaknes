@@ -1,12 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Numerics;
-using System.Security.Policy;
+﻿using System.Numerics;
 
 namespace System.Windows.Forms
 {

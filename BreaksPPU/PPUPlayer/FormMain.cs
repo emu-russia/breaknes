@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using Be.Windows.Forms;
 using SharpToolsCustomClass;
 using SharpTools;
-using System.ComponentModel.Design;
 
 namespace PPUPlayer
 {
