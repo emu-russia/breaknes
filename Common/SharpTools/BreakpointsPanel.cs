@@ -12,6 +12,7 @@ namespace SharpTools
 		public BreakpointsPanel()
 		{
 			InitializeComponent();
+			breakpointProps1.DisableProps();
 		}
 
 		public void Reset()
@@ -74,6 +75,11 @@ namespace SharpTools
 				}
 			}
 
+			UpdateAnyEnabled();
+		}
+
+		private void UpdateAnyEnabled ()
+		{
 			foreach (var breakpoint in breakpoints)
 			{
 				if (breakpoint.enabled)
@@ -86,17 +92,38 @@ namespace SharpTools
 
 		private void toolStripButton1_Click(object sender, EventArgs e)
 		{
+			FormAddBreakpoint formAdd = new FormAddBreakpoint();
+			formAdd.FormClosed += FormAdd_FormClosed;
+			formAdd.ShowDialog();
+		}
 
+		private void FormAdd_FormClosed(object? sender, FormClosedEventArgs e)
+		{
+			FormAddBreakpoint formAdd = (FormAddBreakpoint)sender;
+
+			UpdateAnyEnabled();
 		}
 
 		private void toolStripButton2_Click(object sender, EventArgs e)
 		{
-
+			if (listView1.SelectedItems.Count != 0)
+			{
+				var item = listView1.SelectedItems[0];
+				Breakpoint bp = item.Tag as Breakpoint;
+				breakpoints.Remove(bp);
+				listView1.Items.Remove(item);
+				UpdateAnyEnabled();
+			}
 		}
 
 		private void listView1_Click(object sender, EventArgs e)
 		{
-
+			if (listView1.SelectedItems.Count != 0)
+			{
+				var item = listView1.SelectedItems[0];
+				Breakpoint bp = item.Tag as Breakpoint;
+				breakpointProps1.ShowBreakpointProps(bp);
+			}
 		}
 	}
 }
