@@ -5,7 +5,6 @@ public enum BreakpontTrigger
 	High,
 	Low,
 	Z,
-	X,
 	Posedge,
 	Negedge,
 	VectorEqual,
@@ -19,4 +18,5 @@ public class Breakpoint
 	public bool autoclear;
 	public BreakpontTrigger trigger;
 	public UInt32 vector_value;
+	public UInt32 prev_value;
 }

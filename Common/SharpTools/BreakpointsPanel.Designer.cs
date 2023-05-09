@@ -60,6 +60,7 @@
 			toolStripButton1.Name = "toolStripButton1";
 			toolStripButton1.Size = new Size(33, 22);
 			toolStripButton1.Text = "Add";
+			toolStripButton1.Click += toolStripButton1_Click;
 			// 
 			// toolStripButton2
 			// 
@@ -69,6 +70,7 @@
 			toolStripButton2.Name = "toolStripButton2";
 			toolStripButton2.Size = new Size(54, 22);
 			toolStripButton2.Text = "Remove";
+			toolStripButton2.Click += toolStripButton2_Click;
 			// 
 			// splitContainer1
 			// 
@@ -98,6 +100,7 @@
 			listView1.TabIndex = 0;
 			listView1.UseCompatibleStateImageBehavior = false;
 			listView1.View = View.Details;
+			listView1.Click += listView1_Click;
 			// 
 			// columnHeader1
 			// 
