@@ -20,6 +20,7 @@ namespace SharpTools
 			breakpoints = new List<Breakpoint>();
 			listView1.Items.Clear();
 			any_enabled = false;
+			breakpointProps1.ResetControls();
 		}
 
 		public void CheckBreakpoints()
@@ -101,6 +102,15 @@ namespace SharpTools
 		{
 			FormAddBreakpoint formAdd = (FormAddBreakpoint)sender;
 
+			if (formAdd.bp_added)
+			{
+				Breakpoint bp = formAdd.bp;
+
+				ListViewItem item = new ListViewItem(bp.info_entry.name);
+				item.Tag = bp;
+				listView1.Items.Add(item);
+			}
+
 			UpdateAnyEnabled();
 		}
 
@@ -113,6 +123,7 @@ namespace SharpTools
 				breakpoints.Remove(bp);
 				listView1.Items.Remove(item);
 				UpdateAnyEnabled();
+				breakpointProps1.ResetControls();
 			}
 		}
 

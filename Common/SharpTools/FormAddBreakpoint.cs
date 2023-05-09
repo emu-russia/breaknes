@@ -22,6 +22,7 @@ namespace SharpTools
 
 		private void button1_Click(object sender, EventArgs e)
 		{
+			bp = breakpointProps1.ControlsToBreakpoint();
 			bp_added = true;
 			Close();
 		}

@@ -153,7 +153,7 @@
 			// 
 			comboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
 			comboBox4.FormattingEnabled = true;
-			comboBox4.Items.AddRange(new object[] { "High", "Low", "Z", "X", "Posedge", "Negedge", "Vector" });
+			comboBox4.Items.AddRange(new object[] { "High", "Low", "Z", "Posedge", "Negedge", "VectorEqual" });
 			comboBox4.Location = new Point(106, 70);
 			comboBox4.Name = "comboBox4";
 			comboBox4.Size = new Size(179, 23);
