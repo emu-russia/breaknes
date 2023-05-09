@@ -229,6 +229,13 @@ namespace PPUPlayer
 
 			humanizer.SetColorDebugOutput(settings.ColorDebug);
 
+			// Starting a PPU in pause mode
+
+			if (settings.RunPaused)
+			{
+				SetPaused (true);
+			}
+
 			// Set the next CPU operation and start the simulation.
 
 			if (TotalOps != 0)

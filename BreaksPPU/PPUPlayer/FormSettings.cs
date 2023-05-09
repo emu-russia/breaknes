@@ -112,6 +112,11 @@ namespace PPUPlayer
 			public bool Visual2C02Mapping { get; set; }
 
 			[XmlElement]
+			[Category("Debug")]
+			[Description("Pause the PPU after starting the simulation. Can be useful for debugging with breakpoints from the beginning of the simulation.")]
+			public bool RunPaused { get; set; }
+
+			[XmlElement]
 			[Category("Board Features")]
 			[Description("Use RAW color output. RAW color refers to the Chroma/Luma combination that comes to the video generator and the Emphasis bit combination.")]
 			public bool PpuRAWMode { get; set; }
