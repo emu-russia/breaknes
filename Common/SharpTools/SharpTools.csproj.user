@@ -2,6 +2,9 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
+    <Compile Update="BreakpointProps.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="DataPathControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -13,6 +16,9 @@
     </Compile>
     <Compile Update="SignalPlotControl.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="BreakpointsPanel.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="WavesControl.cs">
       <SubType>Component</SubType>
