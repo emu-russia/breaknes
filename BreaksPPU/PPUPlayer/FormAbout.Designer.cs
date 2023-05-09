@@ -54,7 +54,7 @@
 			label1.Name = "label1";
 			label1.Size = new System.Drawing.Size(149, 42);
 			label1.TabIndex = 1;
-			label1.Text = "PPU Player, v. 2.5\r\n© 2023, emu-russia";
+			label1.Text = "PPU Player, v. 2.6\r\n© 2023, emu-russia";
 			// 
 			// button1
 			// 

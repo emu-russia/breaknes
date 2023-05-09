@@ -59,6 +59,11 @@ namespace PPUPlayer
 
 				BreaksCore.Step();
 
+				if (!Paused)
+				{
+					breakpointsPanel1.CheckBreakpoints();
+				}
+
 				// Update Waves
 
 				if (Paused)

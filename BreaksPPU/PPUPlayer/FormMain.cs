@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using Be.Windows.Forms;
 using SharpToolsCustomClass;
 using SharpTools;
+using static SharpTools.BreakpointsPanel;
 
 namespace PPUPlayer
 {
@@ -55,6 +56,7 @@ namespace PPUPlayer
 			toolStripButton3.Enabled = false;
 			button3.Enabled = false;
 			comboBox2.SelectedIndex = 0;
+			breakpointsPanel1.onBreakpointTrigger += BreakpointTrigger;
 
 			DefaultTitle = this.Text;
 		}
@@ -340,23 +342,20 @@ namespace PPUPlayer
 			}
 		}
 
+		void SetPaused (bool paused)
+		{
+			Paused = paused;
+			toolStripButton3.Checked = paused;
+			signalPlotScan.EnableSelection(Paused);
+			wavesControl1.EnableSelection(Paused);
+			button3.Enabled = Paused;
+		}
+
 		private void toolStripButton3_Click(object sender, EventArgs e)
 		{
 			if (backgroundWorker1.IsBusy)
 			{
-				if (!Paused)
-				{
-					Paused = true;
-					toolStripButton3.Checked = true;
-				}
-				else
-				{
-					Paused = false;
-					toolStripButton3.Checked = false;
-				}
-				signalPlotScan.EnableSelection(Paused);
-				wavesControl1.EnableSelection(Paused);
-				button3.Enabled = Paused;
+				SetPaused(!Paused);
 			}
 		}
 
@@ -661,5 +660,11 @@ namespace PPUPlayer
 			}
 		}
 
+		private void BreakpointTrigger(Breakpoint bp)
+		{
+			Console.WriteLine("Triggered breakpoint: {0} {1}", bp.info_entry.category, bp.info_entry.name);
+			MessageBox.Show("Triggered breakpoint: " + bp.info_entry.category + " " + bp.info_entry.name, "Message", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+			SetPaused(true);
+		}
 	}
 }

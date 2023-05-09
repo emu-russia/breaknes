@@ -70,6 +70,8 @@
 			statusStrip1 = new System.Windows.Forms.StatusStrip();
 			toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			toolStripStatusLabel6 = new System.Windows.Forms.ToolStripStatusLabel();
+			toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+			toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
 			toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
 			toolStripStatusLabel7 = new System.Windows.Forms.ToolStripStatusLabel();
 			toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -131,8 +133,8 @@
 			openFileDialogHEX = new System.Windows.Forms.OpenFileDialog();
 			saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
 			openFileDialogRegdump = new System.Windows.Forms.OpenFileDialog();
-			toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
-			toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
+			tabPage7 = new System.Windows.Forms.TabPage();
+			breakpointsPanel1 = new SharpTools.BreakpointsPanel();
 			menuStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
@@ -160,6 +162,7 @@
 			tabPage4.SuspendLayout();
 			tabPage6.SuspendLayout();
 			toolStrip3.SuspendLayout();
+			tabPage7.SuspendLayout();
 			SuspendLayout();
 			// 
 			// menuStrip1
@@ -437,6 +440,19 @@
 			toolStripStatusLabel6.Name = "toolStripStatusLabel6";
 			toolStripStatusLabel6.Size = new System.Drawing.Size(17, 19);
 			toolStripStatusLabel6.Text = "0";
+			// 
+			// toolStripStatusLabel4
+			// 
+			toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+			toolStripStatusLabel4.Size = new System.Drawing.Size(74, 19);
+			toolStripStatusLabel4.Text = "PCLK Count:";
+			// 
+			// toolStripStatusLabel5
+			// 
+			toolStripStatusLabel5.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+			toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+			toolStripStatusLabel5.Size = new System.Drawing.Size(17, 19);
+			toolStripStatusLabel5.Text = "0";
 			// 
 			// toolStripStatusLabel2
 			// 
@@ -749,6 +765,7 @@
 			tabControl2.Controls.Add(tabPage5);
 			tabControl2.Controls.Add(tabPage4);
 			tabControl2.Controls.Add(tabPage6);
+			tabControl2.Controls.Add(tabPage7);
 			tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
 			tabControl2.Location = new System.Drawing.Point(0, 0);
 			tabControl2.Name = "tabControl2";
@@ -1036,18 +1053,23 @@
 			openFileDialogRegdump.DefaultExt = "bin";
 			openFileDialogRegdump.Filter = "Register Dump files|*.bin;*.regdump|All files|*.*";
 			// 
-			// toolStripStatusLabel4
+			// tabPage7
 			// 
-			toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-			toolStripStatusLabel4.Size = new System.Drawing.Size(74, 19);
-			toolStripStatusLabel4.Text = "PCLK Count:";
+			tabPage7.Controls.Add(breakpointsPanel1);
+			tabPage7.Location = new System.Drawing.Point(4, 24);
+			tabPage7.Name = "tabPage7";
+			tabPage7.Size = new System.Drawing.Size(682, 362);
+			tabPage7.TabIndex = 3;
+			tabPage7.Text = "Breakpoints";
+			tabPage7.UseVisualStyleBackColor = true;
 			// 
-			// toolStripStatusLabel5
+			// breakpointsPanel1
 			// 
-			toolStripStatusLabel5.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-			toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-			toolStripStatusLabel5.Size = new System.Drawing.Size(17, 19);
-			toolStripStatusLabel5.Text = "0";
+			breakpointsPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			breakpointsPanel1.Location = new System.Drawing.Point(0, 0);
+			breakpointsPanel1.Name = "breakpointsPanel1";
+			breakpointsPanel1.Size = new System.Drawing.Size(682, 362);
+			breakpointsPanel1.TabIndex = 0;
 			// 
 			// FormMain
 			// 
@@ -1099,6 +1121,7 @@
 			tabPage6.PerformLayout();
 			toolStrip3.ResumeLayout(false);
 			toolStrip3.PerformLayout();
+			tabPage7.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -1209,5 +1232,7 @@
 		private System.Windows.Forms.ToolStripButton toolStripButton17;
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
+		private System.Windows.Forms.TabPage tabPage7;
+		private SharpTools.BreakpointsPanel breakpointsPanel1;
 	}
 }
