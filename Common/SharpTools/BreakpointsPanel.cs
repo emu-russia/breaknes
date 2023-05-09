@@ -105,6 +105,7 @@ namespace SharpTools
 			if (formAdd.bp_added)
 			{
 				Breakpoint bp = formAdd.bp;
+				breakpoints.Add(bp);
 
 				ListViewItem item = new ListViewItem(bp.info_entry.name);
 				item.Tag = bp;
