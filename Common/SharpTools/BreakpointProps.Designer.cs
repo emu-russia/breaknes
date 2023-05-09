@@ -29,19 +29,19 @@
 		private void InitializeComponent()
 		{
 			groupBox1 = new GroupBox();
-			groupBox2 = new GroupBox();
-			checkBox1 = new CheckBox();
-			checkBox2 = new CheckBox();
-			label1 = new Label();
-			comboBox1 = new ComboBox();
-			comboBox2 = new ComboBox();
-			label2 = new Label();
 			comboBox3 = new ComboBox();
 			label3 = new Label();
+			comboBox2 = new ComboBox();
+			label2 = new Label();
+			comboBox1 = new ComboBox();
+			label1 = new Label();
+			groupBox2 = new GroupBox();
+			textBox1 = new TextBox();
+			label5 = new Label();
 			comboBox4 = new ComboBox();
 			label4 = new Label();
-			label5 = new Label();
-			textBox1 = new TextBox();
+			checkBox2 = new CheckBox();
+			checkBox1 = new CheckBox();
 			groupBox1.SuspendLayout();
 			groupBox2.SuspendLayout();
 			SuspendLayout();
@@ -61,6 +61,63 @@
 			groupBox1.TabStop = false;
 			groupBox1.Text = "Signal";
 			// 
+			// comboBox3
+			// 
+			comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
+			comboBox3.FormattingEnabled = true;
+			comboBox3.Location = new Point(106, 74);
+			comboBox3.Name = "comboBox3";
+			comboBox3.Size = new Size(179, 23);
+			comboBox3.TabIndex = 5;
+			// 
+			// label3
+			// 
+			label3.AutoSize = true;
+			label3.Location = new Point(6, 77);
+			label3.Name = "label3";
+			label3.Size = new Size(39, 15);
+			label3.TabIndex = 4;
+			label3.Text = "Name";
+			// 
+			// comboBox2
+			// 
+			comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+			comboBox2.FormattingEnabled = true;
+			comboBox2.Location = new Point(106, 45);
+			comboBox2.Name = "comboBox2";
+			comboBox2.Size = new Size(179, 23);
+			comboBox2.TabIndex = 3;
+			comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
+			// 
+			// label2
+			// 
+			label2.AutoSize = true;
+			label2.Location = new Point(6, 48);
+			label2.Name = "label2";
+			label2.Size = new Size(55, 15);
+			label2.TabIndex = 2;
+			label2.Text = "Category";
+			// 
+			// comboBox1
+			// 
+			comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+			comboBox1.FormattingEnabled = true;
+			comboBox1.Items.AddRange(new object[] { "Core", "CoreRegs", "APU", "APURegs", "PPU", "PPURegs", "Board", "Cart" });
+			comboBox1.Location = new Point(106, 16);
+			comboBox1.Name = "comboBox1";
+			comboBox1.Size = new Size(179, 23);
+			comboBox1.TabIndex = 1;
+			comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+			// 
+			// label1
+			// 
+			label1.AutoSize = true;
+			label1.Location = new Point(6, 19);
+			label1.Name = "label1";
+			label1.Size = new Size(52, 15);
+			label1.TabIndex = 0;
+			label1.Text = "InfoType";
+			// 
 			// groupBox2
 			// 
 			groupBox2.Controls.Add(textBox1);
@@ -76,82 +133,21 @@
 			groupBox2.TabStop = false;
 			groupBox2.Text = "Conditions";
 			// 
-			// checkBox1
+			// textBox1
 			// 
-			checkBox1.AutoSize = true;
-			checkBox1.Location = new Point(6, 22);
-			checkBox1.Name = "checkBox1";
-			checkBox1.Size = new Size(68, 19);
-			checkBox1.TabIndex = 0;
-			checkBox1.Text = "Enabled";
-			checkBox1.UseVisualStyleBackColor = true;
+			textBox1.Location = new Point(106, 100);
+			textBox1.Name = "textBox1";
+			textBox1.Size = new Size(179, 23);
+			textBox1.TabIndex = 9;
 			// 
-			// checkBox2
+			// label5
 			// 
-			checkBox2.AutoSize = true;
-			checkBox2.Location = new Point(6, 47);
-			checkBox2.Name = "checkBox2";
-			checkBox2.Size = new Size(77, 19);
-			checkBox2.TabIndex = 1;
-			checkBox2.Text = "Autoclear";
-			checkBox2.UseVisualStyleBackColor = true;
-			// 
-			// label1
-			// 
-			label1.AutoSize = true;
-			label1.Location = new Point(6, 19);
-			label1.Name = "label1";
-			label1.Size = new Size(52, 15);
-			label1.TabIndex = 0;
-			label1.Text = "InfoType";
-			// 
-			// comboBox1
-			// 
-			comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-			comboBox1.FormattingEnabled = true;
-			comboBox1.Items.AddRange(new object[] { "First", "Second" });
-			comboBox1.Location = new Point(106, 16);
-			comboBox1.Name = "comboBox1";
-			comboBox1.Size = new Size(179, 23);
-			comboBox1.TabIndex = 1;
-			// 
-			// comboBox2
-			// 
-			comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-			comboBox2.FormattingEnabled = true;
-			comboBox2.Items.AddRange(new object[] { "First", "Second" });
-			comboBox2.Location = new Point(106, 45);
-			comboBox2.Name = "comboBox2";
-			comboBox2.Size = new Size(179, 23);
-			comboBox2.TabIndex = 3;
-			// 
-			// label2
-			// 
-			label2.AutoSize = true;
-			label2.Location = new Point(6, 48);
-			label2.Name = "label2";
-			label2.Size = new Size(55, 15);
-			label2.TabIndex = 2;
-			label2.Text = "Category";
-			// 
-			// comboBox3
-			// 
-			comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
-			comboBox3.FormattingEnabled = true;
-			comboBox3.Items.AddRange(new object[] { "First", "Second" });
-			comboBox3.Location = new Point(106, 74);
-			comboBox3.Name = "comboBox3";
-			comboBox3.Size = new Size(179, 23);
-			comboBox3.TabIndex = 5;
-			// 
-			// label3
-			// 
-			label3.AutoSize = true;
-			label3.Location = new Point(6, 77);
-			label3.Name = "label3";
-			label3.Size = new Size(39, 15);
-			label3.TabIndex = 4;
-			label3.Text = "Name";
+			label5.AutoSize = true;
+			label5.Location = new Point(6, 103);
+			label5.Name = "label5";
+			label5.Size = new Size(71, 15);
+			label5.TabIndex = 8;
+			label5.Text = "Vector value";
 			// 
 			// comboBox4
 			// 
@@ -172,21 +168,25 @@
 			label4.TabIndex = 6;
 			label4.Text = "Trigger";
 			// 
-			// label5
+			// checkBox2
 			// 
-			label5.AutoSize = true;
-			label5.Location = new Point(6, 103);
-			label5.Name = "label5";
-			label5.Size = new Size(71, 15);
-			label5.TabIndex = 8;
-			label5.Text = "Vector value";
+			checkBox2.AutoSize = true;
+			checkBox2.Location = new Point(6, 47);
+			checkBox2.Name = "checkBox2";
+			checkBox2.Size = new Size(77, 19);
+			checkBox2.TabIndex = 1;
+			checkBox2.Text = "Autoclear";
+			checkBox2.UseVisualStyleBackColor = true;
 			// 
-			// textBox1
+			// checkBox1
 			// 
-			textBox1.Location = new Point(106, 100);
-			textBox1.Name = "textBox1";
-			textBox1.Size = new Size(179, 23);
-			textBox1.TabIndex = 9;
+			checkBox1.AutoSize = true;
+			checkBox1.Location = new Point(6, 22);
+			checkBox1.Name = "checkBox1";
+			checkBox1.Size = new Size(68, 19);
+			checkBox1.TabIndex = 0;
+			checkBox1.Text = "Enabled";
+			checkBox1.UseVisualStyleBackColor = true;
 			// 
 			// BreakpointProps
 			// 

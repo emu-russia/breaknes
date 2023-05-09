@@ -8,7 +8,7 @@ namespace SharpTools
 			InitializeComponent();
 		}
 
-		public void DisableProps ()
+		public void DisableProps()
 		{
 			comboBox1.Enabled = false;
 			comboBox2.Enabled = false;
@@ -37,6 +37,71 @@ namespace SharpTools
 			else
 			{
 				textBox1.Text = "";
+			}
+		}
+
+		BreaksCore.DebugInfoType ComboBoxToDebugInfoType()
+		{
+			switch (comboBox1.SelectedIndex)
+			{
+				case 0:
+					return BreaksCore.DebugInfoType.DebugInfoType_Core;
+				case 1:
+					return BreaksCore.DebugInfoType.DebugInfoType_CoreRegs;
+				case 2:
+					return BreaksCore.DebugInfoType.DebugInfoType_APU;
+				case 3:
+					return BreaksCore.DebugInfoType.DebugInfoType_APURegs;
+				case 4:
+					return BreaksCore.DebugInfoType.DebugInfoType_PPU;
+				case 5:
+					return BreaksCore.DebugInfoType.DebugInfoType_PPURegs;
+				case 6:
+					return BreaksCore.DebugInfoType.DebugInfoType_Board;
+				case 7:
+					return BreaksCore.DebugInfoType.DebugInfoType_Cart;
+			}
+
+			return BreaksCore.DebugInfoType.DebugInfoType_Test;
+		}
+
+		/// <summary>
+		/// type changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			BreaksCore.DebugInfoType info_type = ComboBoxToDebugInfoType();
+			var list = BreaksCore.GetDebugInfo(info_type);
+			var cats = list.Select(x => x.category).Distinct();
+
+			comboBox2.Items.Clear();
+			foreach ( var item in cats)
+			{
+				comboBox2.Items.Add(item);
+			}
+			comboBox3.Items.Clear();
+		}
+
+		/// <summary>
+		/// category changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			BreaksCore.DebugInfoType info_type = ComboBoxToDebugInfoType();
+			var list = BreaksCore.GetDebugInfo(info_type);
+			var cat = comboBox2.Text;
+
+			comboBox3.Items.Clear();
+			foreach (var item in list)
+			{
+				if (item.category == cat)
+				{
+					comboBox3.Items.Add(item.name);
+				}
 			}
 		}
 	}

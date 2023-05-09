@@ -12,9 +12,18 @@ namespace SharpTools
 {
 	public partial class FormAddBreakpoint : Form
 	{
+		public Breakpoint bp = new Breakpoint();
+		public bool bp_added = false;
+
 		public FormAddBreakpoint()
 		{
 			InitializeComponent();
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			bp_added = true;
+			Close();
 		}
 	}
 }

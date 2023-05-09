@@ -29,8 +29,8 @@
 		private void InitializeComponent()
 		{
 			splitContainer1 = new SplitContainer();
-			button1 = new Button();
 			breakpointProps1 = new BreakpointProps();
+			button1 = new Button();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
 			splitContainer1.Panel2.SuspendLayout();
@@ -56,6 +56,14 @@
 			splitContainer1.SplitterDistance = 337;
 			splitContainer1.TabIndex = 0;
 			// 
+			// breakpointProps1
+			// 
+			breakpointProps1.Dock = DockStyle.Fill;
+			breakpointProps1.Location = new Point(0, 0);
+			breakpointProps1.Name = "breakpointProps1";
+			breakpointProps1.Size = new Size(683, 337);
+			breakpointProps1.TabIndex = 0;
+			// 
 			// button1
 			// 
 			button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
@@ -65,14 +73,7 @@
 			button1.TabIndex = 0;
 			button1.Text = "Add";
 			button1.UseVisualStyleBackColor = true;
-			// 
-			// breakpointProps1
-			// 
-			breakpointProps1.Dock = DockStyle.Fill;
-			breakpointProps1.Location = new Point(0, 0);
-			breakpointProps1.Name = "breakpointProps1";
-			breakpointProps1.Size = new Size(683, 337);
-			breakpointProps1.TabIndex = 0;
+			button1.Click += button1_Click;
 			// 
 			// FormAddBreakpoint
 			// 
