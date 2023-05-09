@@ -94,7 +94,9 @@
 			// 
 			listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1 });
 			listView1.Dock = DockStyle.Fill;
+			listView1.FullRowSelect = true;
 			listView1.Location = new Point(0, 0);
+			listView1.MultiSelect = false;
 			listView1.Name = "listView1";
 			listView1.Size = new Size(193, 350);
 			listView1.TabIndex = 0;

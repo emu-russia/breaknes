@@ -18,6 +18,7 @@ namespace SharpTools
 		public FormAddBreakpoint()
 		{
 			InitializeComponent();
+			breakpointProps1.SetEnabled();
 		}
 
 		private void button1_Click(object sender, EventArgs e)

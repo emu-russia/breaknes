@@ -79,7 +79,7 @@ namespace SharpTools
 			UpdateAnyEnabled();
 		}
 
-		private void UpdateAnyEnabled ()
+		private void UpdateAnyEnabled()
 		{
 			foreach (var breakpoint in breakpoints)
 			{

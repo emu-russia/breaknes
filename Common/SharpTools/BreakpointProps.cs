@@ -31,7 +31,7 @@ namespace SharpTools
 		{
 			ResetControls();
 
-			comboBox1.Items.Add(bp.info_type.ToString());
+			comboBox1.Items.Add(bp.info_type.ToString().Replace("DebugInfoType_", ""));
 			comboBox1.SelectedIndex = 0;
 			comboBox2.Items.Add(bp.info_entry.category);
 			comboBox2.SelectedIndex = 0;
@@ -175,6 +175,11 @@ namespace SharpTools
 			return (str.Contains("0x") || str.Contains("0X")) ?
 				Convert.ToUInt32(str, 16) :
 					str[0] == '0' ? Convert.ToUInt32(str, 8) : Convert.ToUInt32(str, 10);
+		}
+
+		public void SetEnabled()
+		{
+			checkBox1.Checked = true;
 		}
 	}
 }
