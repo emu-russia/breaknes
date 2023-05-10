@@ -27,7 +27,7 @@ namespace Mappers
 
 		NESHeader* head = (NESHeader*)data;
 
-		if (head->PRGSize > 0x10 || head->CHRSize > 0x10)
+		if (head->PRGSize > 0x10 || head->CHRSize > 0x20)
 		{
 			printf(" FAILED! Odd size of PRG/CHR banks! (PRGSize: %d, CHRSize: %d)\n", head->PRGSize, head->CHRSize);
 			return nullptr;
