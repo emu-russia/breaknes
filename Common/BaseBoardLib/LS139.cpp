@@ -20,13 +20,12 @@ namespace BaseBoard
 		TriState n_Y2[4])
 	{
 		TriState EN1 = NOT(n_EN1);
-		TriState EN2 = NOT(n_EN2);
-
 		n_Y1[0] = NAND3(NOT(A1_0), NOT(A1_1), EN1);
 		n_Y1[1] = NAND3(A1_0, NOT(A1_1), EN1);
 		n_Y1[2] = NAND3(NOT(A1_0), A1_1, EN1);
 		n_Y1[3] = NAND3(A1_0, A1_1, EN1);
 
+		TriState EN2 = NOT(n_EN2);
 		n_Y2[0] = NAND3(NOT(A2_0), NOT(A2_1), EN2);
 		n_Y2[1] = NAND3(A2_0, NOT(A2_1), EN2);
 		n_Y2[2] = NAND3(NOT(A2_0), A2_1, EN2);
