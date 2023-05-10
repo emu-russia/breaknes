@@ -77,10 +77,10 @@ namespace PPUSim
 		temp[3] = ppu->wire.n_THO[2];
 		temp[4] = ppu->wire.n_THO[3];
 		temp[5] = ppu->wire.n_THO[4];
-		auto THZB = NOR6(temp);
+		THZB = NOR6(temp);
 
 		temp[0] = BLNK;
-		auto THZ = NOR6(temp);
+		THZ = NOR6(temp);
 
 		// FVIN
 
@@ -95,7 +95,7 @@ namespace PPUSim
 		fvz[2] = ppu->wire.n_FVO[0];
 		fvz[3] = ppu->wire.n_FVO[1];
 		fvz[4] = ppu->wire.n_FVO[2];
-		auto FVZ = NOR5(fvz);
+		FVZ = NOR5(fvz);
 
 		TVIN = NOT(NOR3(FVZ, THZB, AND(BLNK, I1_32)));
 		THIN = NAND(BLNK, I1_32);
@@ -105,14 +105,15 @@ namespace PPUSim
 		temp[0] = NOT(BLNK);
 		temp[1] = NOT(TVIN);
 		temp[2] = ppu->wire.n_TVO[0];
-		temp[3] = ppu->wire.TVO[1];			// !!!
+		temp[3] = ppu->wire.n_TVO[1];
 		temp[4] = ppu->wire.n_TVO[2];
 		temp[5] = ppu->wire.n_TVO[3];
 		temp[6] = ppu->wire.n_TVO[4];
-		auto TVZB = NOR7(temp);
+		TVZB = NOR7(temp);
 
 		temp[0] = BLNK;
-		auto TVZ = NOR7(temp);
+		temp[3] = ppu->wire.TVO[1];			// !!!
+		TVZ = NOR7(temp);
 
 		// NTHIN/NTVIN
 

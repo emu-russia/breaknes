@@ -10,7 +10,7 @@ namespace Breaknes
 	{
 		core = new M6502Core::FakeM6502(0x2000, 0x7);
 		ppu = new PPUSim::PPU(ppu_rev);
-		vram = new BaseBoard::SRAM(11);
+		vram = new BaseBoard::SRAM("CIRAM", vram_bits);
 
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();

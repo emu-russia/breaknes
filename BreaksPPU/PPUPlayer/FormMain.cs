@@ -670,7 +670,7 @@ namespace PPUPlayer
 		private void BreakpointTrigger(Breakpoint bp)
 		{
 			Console.WriteLine("Triggered breakpoint: {0} {1}", bp.info_entry.category, bp.info_entry.name);
-			MessageBox.Show("Triggered breakpoint: " + bp.info_entry.category + " " + bp.info_entry.name, "Message", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+			MessageBox.Show("Triggered breakpoint: " + bp.info_entry.category + " " + bp.info_entry.name, "Message", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			SetPaused(true);
 		}
 	}

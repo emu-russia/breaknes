@@ -39,6 +39,8 @@ namespace Breaknes
 
 		BaseBoard::LS373 latch;
 		BaseBoard::SRAM *vram = nullptr;
+		const size_t vram_bits = 11;
+		const size_t vram_size = 1ULL << vram_bits;
 
 		uint8_t ext_bus = 0;
 		uint8_t ad_bus = 0;

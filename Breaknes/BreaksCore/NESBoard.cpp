@@ -14,8 +14,8 @@ namespace Breaknes
 		ppu = new PPUSim::PPU(ppu_rev);
 
 		// Memory
-		wram = new BaseBoard::SRAM(wram_bits);
-		vram = new BaseBoard::SRAM(vram_bits);
+		wram = new BaseBoard::SRAM("WRAM", wram_bits);
+		vram = new BaseBoard::SRAM("CIRAM", vram_bits, false);
 
 		apu->SetNormalizedOutput(true);
 
@@ -222,7 +222,8 @@ namespace Breaknes
 	void NESBoard::DumpCpuIF()
 	{
 		if (PPU_nCE == TriState::Zero && CPU_RnW == TriState::Zero) {
-			printf("Write PPU %d=0x%02X\n", addr_bus & 7, data_bus);
+			int reg_sel = addr_bus & 7;
+			printf("Write PPU %d=0x%02X\n", reg_sel, data_bus);
 		}
 	}
 }

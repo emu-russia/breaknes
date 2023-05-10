@@ -8,11 +8,13 @@ using namespace BaseLogic;
 
 namespace BaseBoard
 {
-	SRAM::SRAM(size_t bits)
+	SRAM::SRAM(const char* entity, size_t bits, bool trace)
 	{
 		memSize = 1LL << bits;
 		mem = new uint8_t[memSize];
 		memset(mem, 0, memSize);
+		do_trace = trace;
+		strcpy(sram_name, entity);
 	}
 
 	SRAM::~SRAM()
@@ -26,6 +28,9 @@ namespace BaseBoard
 		{
 			if (n_WE == TriState::Zero && !dz)
 			{
+				if (do_trace) {
+					printf("%s Write 0x%x = 0x%02x\n", sram_name, *addr, *data);
+				}
 				mem[*addr] = *data;
 			}
 

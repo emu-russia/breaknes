@@ -10,7 +10,7 @@ namespace Breaknes
 	BogusBoard::BogusBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1) : Board (apu_rev, ppu_rev, p1)
 	{
 		core = new M6502Core::M6502(false, false);
-		wram = new BaseBoard::SRAM(wram_bits);
+		wram = new BaseBoard::SRAM("WRAM", wram_bits);
 
 		for (int i = 0; i < wram->Dbg_GetSize(); i++)
 		{

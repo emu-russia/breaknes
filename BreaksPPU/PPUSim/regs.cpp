@@ -311,7 +311,10 @@ namespace PPUSim
 	{
 		uint8_t val = 0;
 
-		for (size_t n = 0; n < 8; n++)
+		val |= (ppu->data_reader->sccx->NTH.get() == TriState::One ? 1ULL : 0) << 0;
+		val |= (ppu->data_reader->sccx->NTV.get() == TriState::One ? 1ULL : 0) << 1;
+
+		for (size_t n = 2; n < 8; n++)
 		{
 			val |= (PPU_CTRL0[n].get() == TriState::One ? 1ULL : 0) << n;
 		}
@@ -333,7 +336,10 @@ namespace PPUSim
 
 	void ControlRegs::Debug_SetCTRL0(uint8_t val)
 	{
-		for (size_t n = 0; n < 8; n++)
+		ppu->data_reader->sccx->NTH.set(FromByte((val >> 0) & 1));
+		ppu->data_reader->sccx->NTV.set(FromByte((val >> 1) & 1));
+
+		for (size_t n = 2; n < 8; n++)
 		{
 			TriState bit_val = FromByte((val >> n) & 1);
 			PPU_CTRL0[n].set(bit_val);

@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
 			menuStrip1 = new MenuStrip();
 			fileToolStripMenuItem = new ToolStripMenuItem();
 			loadROMDumpToolStripMenuItem = new ToolStripMenuItem();
@@ -42,7 +41,6 @@
 			openFileDialog1 = new OpenFileDialog();
 			backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			pictureBox1 = new PictureBox();
-			label3 = new Label();
 			menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
 			SuspendLayout();
@@ -135,22 +133,11 @@
 			pictureBox1.TabIndex = 1;
 			pictureBox1.TabStop = false;
 			// 
-			// label3
-			// 
-			label3.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-			label3.ForeColor = Color.Crimson;
-			label3.Location = new Point(275, 24);
-			label3.Name = "label3";
-			label3.Size = new Size(322, 164);
-			label3.TabIndex = 5;
-			label3.Text = resources.GetString("label3.Text");
-			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(609, 338);
-			Controls.Add(label3);
 			Controls.Add(pictureBox1);
 			Controls.Add(menuStrip1);
 			MainMenuStrip = menuStrip1;
@@ -180,6 +167,5 @@
 		private PictureBox pictureBox1;
 		private ToolStripMenuItem debugToolStripMenuItem;
 		private ToolStripMenuItem openDebuggerToolStripMenuItem;
-		private Label label3;
 	}
 }
