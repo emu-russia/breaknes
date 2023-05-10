@@ -68,8 +68,14 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 5; n++)
 		{
-			TriState val_prev2 = MUX(W6_2, TriState::Z, n < 3 ? ppu->GetDBBit(5 + n) : TriState::Z);
-			TriState val_prev = MUX(W6_1, val_prev2, n >= 3 ? ppu->GetDBBit(n - 3) : TriState::Z);
+			TriState val_prev{};
+
+			if (n >= 3) {
+				val_prev = MUX(W6_1, TriState::Z, ppu->GetDBBit(n - 3));
+			}
+			else {
+				val_prev = MUX(W6_2, TriState::Z, ppu->GetDBBit(5 + n));
+			}
 			TriState val_in = MUX(W5_2, val_prev, ppu->GetDBBit(3 + n));
 
 			TileV[n].sim(val_in, n_DBE, RC, ppu->wire.TV[n]);
