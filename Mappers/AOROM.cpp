@@ -31,7 +31,7 @@ namespace Mappers
 		PRGSize = head->PRGSize * 0x4000;
 		PRG = new uint8_t[PRGSize];
 
-		uint8_t* prgPtr = nesImage + sizeof(NESHeader) + (trainer ? 512 : 0);
+		uint8_t* prgPtr = nesImage + sizeof(NESHeader) + (trainer ? NES_TRAINER_SIZE : 0);
 		memcpy(PRG, prgPtr, PRGSize);
 
 		valid = true;

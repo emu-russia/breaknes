@@ -14,3 +14,5 @@ struct NESHeader
 	uint8_t padding[5];
 };
 #pragma pack(pop)
+
+#define NES_TRAINER_SIZE 512
