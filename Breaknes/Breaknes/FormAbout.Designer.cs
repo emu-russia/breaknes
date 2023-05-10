@@ -57,7 +57,7 @@
 			label1.Name = "label1";
 			label1.Size = new Size(141, 40);
 			label1.TabIndex = 1;
-			label1.Text = "Breaknes, v. 1.7\r\n© emu-russia, 2023";
+			label1.Text = "Breaknes, v. 1.8\r\n© emu-russia, 2023";
 			// 
 			// linkLabel1
 			// 
