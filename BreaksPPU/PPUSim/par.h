@@ -67,6 +67,12 @@ namespace PPUSim
 		PAR_LowBit par_lo[8]{};
 		PAR_HighBit par_hi[6]{};
 
+		BaseLogic::TriState THZB = BaseLogic::TriState::X;
+		BaseLogic::TriState THZ = BaseLogic::TriState::X;
+		BaseLogic::TriState TVZB = BaseLogic::TriState::X;
+		BaseLogic::TriState TVZ = BaseLogic::TriState::X;
+		BaseLogic::TriState FVZ = BaseLogic::TriState::X;
+
 		BaseLogic::TriState TVLOAD = BaseLogic::TriState::X;
 		BaseLogic::TriState THLOAD = BaseLogic::TriState::X;
 		BaseLogic::TriState TVSTEP = BaseLogic::TriState::X;

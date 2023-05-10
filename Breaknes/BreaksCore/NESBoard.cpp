@@ -222,7 +222,8 @@ namespace Breaknes
 	void NESBoard::DumpCpuIF()
 	{
 		if (PPU_nCE == TriState::Zero && CPU_RnW == TriState::Zero) {
-			printf("Write PPU %d=0x%02X\n", addr_bus & 7, data_bus);
+			int reg_sel = addr_bus & 7;
+			printf("Write PPU %d=0x%02X\n", reg_sel, data_bus);
 		}
 	}
 }
