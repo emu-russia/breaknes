@@ -73,9 +73,6 @@ namespace Mappers
 		// Counter (as register) to select PRG Bank
 
 		TriState nROMSEL = cart_in[(size_t)CartInput::nROMSEL];
-
-		TriState vdd = TriState::One;
-		TriState gnd = TriState::Zero;
 		TriState CPU_RnW = cart_in[(size_t)CartInput::RnW];
 
 		TriState P[4]{};
