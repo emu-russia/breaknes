@@ -89,4 +89,14 @@ namespace PPUSim
 		ff.set(NOR(NOT(MUX(n_DBE, val_in, ff.get())), RC));
 		val_out = ff.get();
 	}
+
+	TriState SCC_FF::get()
+	{
+		return ff.get();
+	}
+
+	void SCC_FF::set(TriState val)
+	{
+		ff.set(val);
+	}
 }

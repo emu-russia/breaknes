@@ -14,8 +14,8 @@ namespace Breaknes
 		ppu = new PPUSim::PPU(ppu_rev);
 
 		// Memory
-		wram = new BaseBoard::SRAM(wram_bits);
-		vram = new BaseBoard::SRAM(vram_bits);
+		wram = new BaseBoard::SRAM("WRAM", wram_bits);
+		vram = new BaseBoard::SRAM("CIRAM", vram_bits);
 
 		apu->SetNormalizedOutput(true);
 	}

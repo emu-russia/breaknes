@@ -10,7 +10,7 @@ namespace Breaknes
 	{
 		core = new M6502Core::FakeM6502(0x4000, 0x1f);
 		apu = new APUSim::APU(core, apu_rev);
-		wram = new BaseBoard::SRAM(wram_bits);
+		wram = new BaseBoard::SRAM("WRAM", wram_bits);
 
 		for (int i = 0; i < wram->Dbg_GetSize(); i++)
 		{

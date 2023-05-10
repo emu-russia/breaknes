@@ -8,9 +8,11 @@ namespace BaseBoard
 	{
 		size_t memSize = 0;
 		uint8_t* mem = nullptr;
+		bool do_trace = false;
+		char sram_name[0x100]{};
 
 	public:
-		SRAM(size_t bits);
+		SRAM(const char *entity, size_t bits, bool trace=false);
 		~SRAM();
 
 		/// <summary>
