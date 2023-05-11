@@ -22,6 +22,8 @@ namespace Breaknes
 		private OnRenderField? onRenderField = null;
 		public delegate void OnRenderField();
 
+		private long field_counter = 0;
+
 		public VideoRender(OnRenderField _onRender)
 		{
 			onRenderField = _onRender;
@@ -145,6 +147,8 @@ namespace Breaknes
 				output_picture_box.Image = field_pic;
 			}
 			gr.Dispose();
+
+			field_counter++;
 
 			onRenderField?.Invoke();
 		}

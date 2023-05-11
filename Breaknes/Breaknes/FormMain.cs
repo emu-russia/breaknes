@@ -48,6 +48,7 @@ namespace Breaknes
 			if (openFileDialog1.ShowDialog() == DialogResult.OK)
 			{
 				string filename = openFileDialog1.FileName;
+				board.Paused = true;
 				board.EjectCartridge();
 				if (board.InsertCartridge(filename) < 0)
 				{
@@ -78,12 +79,17 @@ namespace Breaknes
 
 		private void Settings_FormClosed(object? sender, FormClosedEventArgs e)
 		{
-			board.Paused = true;
-			board.EjectCartridge();
-			board.DisposeBoard();
-			var settings = FormSettings.LoadSettings();
-			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
-			Text = original_title;
+			FormSettings form_settings = (FormSettings)sender;
+
+			if (form_settings.PurgeBoard)
+			{
+				board.Paused = true;
+				board.EjectCartridge();
+				board.DisposeBoard();
+				var settings = FormSettings.LoadSettings();
+				board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
+				Text = original_title;
+			}
 		}
 
 		private void openDebuggerToolStripMenuItem_Click(object sender, EventArgs e)
