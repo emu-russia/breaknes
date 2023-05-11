@@ -83,9 +83,9 @@ namespace UnitTest
 			Assert::IsTrue(ut.DumpDecoder());
 		}
 
-		BEGIN_TEST_METHOD_ATTRIBUTE(TestCoreMegaCycles)
-			TEST_IGNORE()
-		END_TEST_METHOD_ATTRIBUTE()
+		//BEGIN_TEST_METHOD_ATTRIBUTE(TestCoreMegaCycles)
+		//	TEST_IGNORE()
+		//END_TEST_METHOD_ATTRIBUTE()
 		TEST_METHOD(TestCoreMegaCycles)
 		{
 			M6502CoreUnitTest::UnitTest ut;
@@ -146,9 +146,9 @@ namespace UnitTest
 			Assert::IsTrue(ut.TestOAM_DMA());
 		}
 
-		BEGIN_TEST_METHOD_ATTRIBUTE(TestApuMegaCycles)
-			TEST_IGNORE()
-		END_TEST_METHOD_ATTRIBUTE()
+		//BEGIN_TEST_METHOD_ATTRIBUTE(TestApuMegaCycles)
+		//	TEST_IGNORE()
+		//END_TEST_METHOD_ATTRIBUTE()
 		TEST_METHOD(TestApuMegaCycles)
 		{
 			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
@@ -294,9 +294,9 @@ namespace UnitTest
 			ut.Dump_2C04_0003_ColorSpace();
 		}
 
-		BEGIN_TEST_METHOD_ATTRIBUTE(TestPpuMegaCycles)
-			TEST_IGNORE()
-		END_TEST_METHOD_ATTRIBUTE()
+		//BEGIN_TEST_METHOD_ATTRIBUTE(TestPpuMegaCycles)
+		//	TEST_IGNORE()
+		//END_TEST_METHOD_ATTRIBUTE()
 		TEST_METHOD(TestPpuMegaCycles)
 		{
 			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
