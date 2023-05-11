@@ -219,7 +219,7 @@ namespace PPUSim
 		TriState R2_Enable = NOR(n_R2, n_DBE);
 
 		edge_vset_latch1.set(n_VSET, PCLK);
-		edge_vset_latch2.set(edge_vset_latch1.get(), n_PCLK);
+		edge_vset_latch2.set(edge_vset_latch1.nget(), n_PCLK);
 		TriState setFF = NOR3(n_PCLK, n_VSET, edge_vset_latch2.get());
 
 		INT_FF.set(NOR3(NOR(setFF, INT_FF.get()), RESCL, R2_Enable));
