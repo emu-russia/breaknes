@@ -28,7 +28,7 @@ namespace Mappers
 			CHRSize = head->CHRSize * 0x2000;
 			CHR = new uint8_t[CHRSize];
 
-			uint8_t* chrPtr = nesImage + sizeof(NESHeader) + (trainer ? 512 : 0) + head->PRGSize * 0x4000;
+			uint8_t* chrPtr = nesImage + sizeof(NESHeader) + (trainer ? NES_TRAINER_SIZE : 0) + head->PRGSize * 0x4000;
 			memcpy(CHR, chrPtr, CHRSize);
 		}
 		else
@@ -43,7 +43,7 @@ namespace Mappers
 		PRGSize = head->PRGSize * 0x4000;
 		PRG = new uint8_t[PRGSize];
 
-		uint8_t* prgPtr = nesImage + sizeof(NESHeader) + (trainer ? 512 : 0);
+		uint8_t* prgPtr = nesImage + sizeof(NESHeader) + (trainer ? NES_TRAINER_SIZE : 0);
 		memcpy(PRG, prgPtr, PRGSize);
 
 		valid = true;
@@ -124,12 +124,9 @@ namespace Mappers
 		// CPU Part
 
 		TriState nROMSEL = cart_in[(size_t)CartInput::nROMSEL];
+		TriState CPU_RnW = cart_in[(size_t)CartInput::RnW];
 
 		// Counter to select PRG Bank
-
-		TriState vdd = TriState::One;
-		TriState gnd = TriState::Zero;
-		TriState CPU_RnW = cart_in[(size_t)CartInput::RnW];
 
 		TriState P[4]{};
 

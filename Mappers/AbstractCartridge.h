@@ -50,6 +50,9 @@ namespace Mappers
 	protected:
 		ConnectorType p1_type;
 
+		BaseLogic::TriState gnd = BaseLogic::TriState::Zero;
+		BaseLogic::TriState vdd = BaseLogic::TriState::One;
+
 	public:
 		AbstractCartridge(ConnectorType _p1_type, uint8_t* nesImage, size_t size);
 		virtual ~AbstractCartridge();

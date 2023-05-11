@@ -31,7 +31,7 @@ namespace Mappers
 		PRGSize = head->PRGSize * 0x4000;
 		PRG = new uint8_t[PRGSize];
 
-		uint8_t* prgPtr = nesImage + sizeof(NESHeader) + (trainer ? 512 : 0);
+		uint8_t* prgPtr = nesImage + sizeof(NESHeader) + (trainer ? NES_TRAINER_SIZE : 0);
 		memcpy(PRG, prgPtr, PRGSize);
 
 		valid = true;
@@ -73,9 +73,6 @@ namespace Mappers
 		// Counter (as register) to select PRG Bank
 
 		TriState nROMSEL = cart_in[(size_t)CartInput::nROMSEL];
-
-		TriState vdd = TriState::One;
-		TriState gnd = TriState::Zero;
 		TriState CPU_RnW = cart_in[(size_t)CartInput::RnW];
 
 		TriState P[4]{};
