@@ -5,6 +5,9 @@ namespace Breaknes
 {
 	public partial class FormSettings : Form
 	{
+		public bool PurgeBoard = false;
+		private string prev_board;
+
 		public FormSettings()
 		{
 			InitializeComponent();
@@ -59,13 +62,17 @@ namespace Breaknes
 
 		private void FormSettings_Load(object sender, EventArgs e)
 		{
-			propertyGrid1.SelectedObject = LoadSettings();
+			var settings = LoadSettings();
+			prev_board = settings.MainBoard;
+			propertyGrid1.SelectedObject = settings;
 		}
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			SaveSettings((BreaknesSettings)propertyGrid1.SelectedObject);
+			BreaknesSettings settings = (BreaknesSettings)propertyGrid1.SelectedObject;
+			SaveSettings(settings);
 			Close();
+			PurgeBoard = settings.MainBoard != prev_board;
 		}
 
 		private void FormSettings_KeyDown(object sender, KeyEventArgs e)
