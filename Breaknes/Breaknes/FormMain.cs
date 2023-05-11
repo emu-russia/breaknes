@@ -48,6 +48,7 @@ namespace Breaknes
 			if (openFileDialog1.ShowDialog() == DialogResult.OK)
 			{
 				string filename = openFileDialog1.FileName;
+				board.Paused = true;
 				board.EjectCartridge();
 				if (board.InsertCartridge(filename) < 0)
 				{
