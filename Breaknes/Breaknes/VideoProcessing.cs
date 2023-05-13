@@ -14,6 +14,7 @@ namespace Breaknes
 		private int SyncPos = -1;
 
 		private Color[] field = new Color[256 * 240];
+		private byte[] raw_field = new byte[256 * 240 * 2];
 		private int CurrentScan = 0;
 
 		private Bitmap? field_pic = null;
@@ -24,10 +25,18 @@ namespace Breaknes
 
 		private long field_counter = 0;
 
-		public VideoRender(OnRenderField _onRender)
+		private bool dump_video = false;
+		private string dump_video_dir = "";
+		private string dump_rom_name;
+
+		public VideoRender(OnRenderField _onRender, bool dump, string dump_dir, string rom_name)
 		{
 			onRenderField = _onRender;
 			BreaksCore.GetPpuSignalFeatures(out ppu_features);
+
+			dump_video = dump;
+			dump_video_dir = dump_dir;
+			dump_rom_name = rom_name;
 
 			SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
 			ScanBuffer = new BreaksCore.VideoOutSample[2 * SamplesPerScan];
@@ -84,7 +93,7 @@ namespace Breaknes
 			}
 		}
 
-		void ProcessScanRAW()
+		private void ProcessScanRAW()
 		{
 			int ReadPtr = SyncPos;
 
@@ -107,6 +116,13 @@ namespace Breaknes
 					BreaksCore.ConvertRAWToRGB(ScanBuffer[ReadPtr].raw, out r, out g, out b);
 
 					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
+
+					if (dump_video)
+					{
+						UInt16 raw_color = ScanBuffer[ReadPtr].raw;
+						raw_field[2 * CurrentScan * 256 + i] = (byte)((raw_color >> 0) & 0xff);
+						raw_field[2 * CurrentScan * 256 + i + 1] = (byte)((raw_color >> 0) & 0xff);
+					}
 				}
 
 				ReadPtr += ppu_features.SamplesPerPCLK;
@@ -120,7 +136,7 @@ namespace Breaknes
 			}
 		}
 
-		void VisualizeField()
+		private void VisualizeField()
 		{
 			int w = 256;
 			int h = 240;
@@ -142,6 +158,8 @@ namespace Breaknes
 				}
 			}
 
+			DumpVideo();
+
 			if (output_picture_box != null)
 			{
 				output_picture_box.Image = field_pic;
@@ -151,6 +169,23 @@ namespace Breaknes
 			field_counter++;
 
 			onRenderField?.Invoke();
+		}
+
+		private void DumpVideo()
+		{
+			if (dump_video)
+			{
+				string raw_name = dump_video_dir + "/" + dump_rom_name + "_" + field_counter.ToString("D5") + ".bin";
+				string bmp_name = dump_video_dir + "/" + dump_rom_name + "_" + field_counter.ToString("D5") + ".bmp";
+
+				File.WriteAllBytes(raw_name, raw_field);
+				if (field_pic != null)
+				{
+					field_pic.Save(bmp_name, System.Drawing.Imaging.ImageFormat.Bmp);
+				}
+
+				Console.WriteLine("field: {0}", field_counter);
+			}
 		}
 	}
 }
