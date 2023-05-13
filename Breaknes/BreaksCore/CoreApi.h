@@ -4,7 +4,7 @@
 
 #pragma once
 
-#if defined(_WIN32) && !defined(BREAKS_CORE_STATIC)
+#if defined(_WINDOWS) && !defined(BREAKS_CORE_STATIC)
 #define DLL_EXPORT __declspec(dllexport)
 #else
 #define DLL_EXPORT

@@ -210,7 +210,7 @@ namespace Breaknes
 		// The real board has a capacitor that controls the reset and also the CIC interferes with it, but we simplify all this.
 		// Discussion here: https://forums.nesdev.org/viewtopic.php?t=19792   (nice phenomenon btw)
 
-		resetHalfClkCounter_CPU = 640000;
+		resetHalfClkCounter_CPU = 6400000;
 		resetHalfClkCounter_PPU = 64;
 	}
 
