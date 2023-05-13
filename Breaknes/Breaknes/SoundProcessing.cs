@@ -1,4 +1,5 @@
 using SharpTools;
+using System.IO;
 using System.Reflection.Metadata;
 using System.Windows.Forms;
 
@@ -19,8 +20,16 @@ namespace Breaknes
 		private int DecimateEach = 1;
 		private int DecimateCounter = 0;
 
-		public AudioRender(System.IntPtr handle)
+		private bool dump_audio = false;
+		private string dump_audio_dir = "";
+		private string dump_rom_name;
+
+		public AudioRender(System.IntPtr handle, bool dump, string dump_dir, string rom_name)
 		{
+			dump_audio = dump;
+			dump_audio_dir = dump_dir;
+			dump_rom_name = rom_name;
+
 			audio_backend = new DSound(handle);
 
 			// SRC
@@ -69,9 +78,32 @@ namespace Breaknes
 			{
 				Console.WriteLine("Play 1 second");
 				Dma = true;
+				DumpAudio();
 				audio_backend.PlaySampleBuf(OutputSampleRate, SampleBuf, OutputDC);
 				SampleBuf.Clear();
 				Dma = false;
+			}
+		}
+
+		private void DumpAudio()
+		{
+			if (dump_audio)
+			{
+				int numberOfSamples = SampleBuf.Count;
+				byte[] bytes = new byte[numberOfSamples * 2];
+
+				for (int i = 0; i < numberOfSamples; i++)
+				{
+					short value = (short)((SampleBuf[i]) * Int16.MaxValue);
+
+					bytes[2 * i] = (byte)((value >> 0) & 0xff);
+					bytes[2 * i + 1] = (byte)((value >> 8) & 0xff);
+				}
+
+				using (var stream = new FileStream(dump_audio_dir + "/" + dump_rom_name + "_aux.bin", FileMode.Append))
+				{
+					stream.Write(bytes, 0, bytes.Length);
+				}
 			}
 		}
 	}

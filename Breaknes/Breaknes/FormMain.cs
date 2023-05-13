@@ -57,9 +57,11 @@ namespace Breaknes
 				}
 				BreaksCore.Reset();
 				Text = original_title + " - " + filename;
-				vid_out = new(OnRenderField);
+				var settings = FormSettings.LoadSettings();
+				var rom_name = Path.GetFileNameWithoutExtension(filename);
+				vid_out = new(OnRenderField, settings.DumpVideo, settings.DumpVideoDir, rom_name);
 				vid_out.SetOutputPictureBox(pictureBox1);
-				snd_out = new(Handle);
+				snd_out = new(Handle, settings.DumpAudio, settings.DumpAudioDir, rom_name);
 				board.Paused = debuggers.Count != 0;
 
 				foreach (var inst in debuggers)

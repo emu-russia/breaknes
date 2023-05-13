@@ -54,6 +54,10 @@ namespace Breaknes
 			BreaknesSettings settings = new();
 
 			settings.MainBoard = "NES-001 (PCB rev. -01 to -04) (1985-1986)";
+			settings.DumpAudio = false;
+			settings.DumpAudioDir = "";
+			settings.DumpVideo = false;
+			settings.DumpVideoDir = "";
 
 			SaveSettings(settings);
 
@@ -90,6 +94,28 @@ namespace Breaknes
 			[DefaultValue("")]
 			[TypeConverter(typeof(FormatStringConverter_MainBoard))]
 			public string? MainBoard { get; set; }
+
+			[Category("Debug")]
+			[Description("Enable sound dump. Format: 16-bit, little-endian, mono, 48000 Hz")]
+			[DefaultValue(false)]
+			public bool DumpAudio { get; set; }
+
+			[Category("Debug")]
+			[Description("The directory where the sound dump will be saved. File name RomName_aux.bin")]
+			[DefaultValue("")]
+			[EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
+			public string DumpAudioDir { get; set; }
+
+			[Category("Debug")]
+			[Description("Turn on the PPU fields dump. This will dump a field with raw pixels and .bmp")]
+			[DefaultValue(false)]
+			public bool DumpVideo { get; set; }
+
+			[Category("Debug")]
+			[Description("The directory where the field dumps will be stored. The names of the files you can figure out by yourself when you see the dumps.")]
+			[DefaultValue("")]
+			[EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
+			public string DumpVideoDir { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid
