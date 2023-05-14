@@ -104,7 +104,7 @@ namespace APUSim
 
 		run_latch1.set(start_ff.get(), ACLK2);
 		run_latch2.set(run_latch1.nget(), ACLK1);
-		TriState start_set = NOT(NOR3(AND(NOT(PHI1), RnW), nDMCEnableDelay, NOT(nDMAStop)));
+		TriState start_set = NOR3(NAND(RnW, NOT(PHI1)), nDMCEnableDelay, NOT(nDMAStop));
 		start_ff.set(NOR4(NOR(start_ff.get(), start_set), nDMCEnableDelay, RES, NOT(nDMAStop)));
 		rdy_ff.set(NOR(NOR(rdy_ff.get(), AND(run_latch1.get(), ACLK1)), ACLK2));
 
