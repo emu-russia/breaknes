@@ -56,12 +56,15 @@ namespace APUSim
 		pads->sim_InputPads(inputs);
 		pads->sim_DataBusInput(data);
 
-		sim_CoreIntegration();
-		sim_SoundGenerators();
+		dpcm->sim();
 
 		dma->sim();
 		dma->sim_DMA_Buffer();
 		dma->sim_AddressMux();
+
+		sim_CoreIntegration();
+
+		sim_SoundGenerators();
 
 		pads->sim_OutputPads(outputs, addr);
 		pads->sim_DataBusOutput(data);
@@ -103,14 +106,6 @@ namespace APUSim
 		square[1]->sim(wire.W4004, wire.W4005, wire.W4006, wire.W4007, wire.NOSQB, SQB_Out);
 		tri->sim();
 		noise->sim();
-
-		// It works ("Dabble Dribble!"), but the world isn't ready to hear it yet..
-		//dpcm->sim();
-		// HACK
-		wire.DMCRDY = TriState::One;
-		wire.n_DMC_AB = TriState::One;
-		wire.DMCINT = TriState::Zero;
-		wire.RUNDMC = TriState::Zero;
 	}
 
 	TriState APU::GetDBBit(size_t n)
