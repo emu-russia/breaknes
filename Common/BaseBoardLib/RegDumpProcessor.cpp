@@ -49,7 +49,7 @@ namespace BaseBoard
 
 		if (regdump != nullptr)
 		{
-			if (clk_counter >= next_clk && CLK == TriState::One)
+			if (clk_counter >= next_clk && CLK == TriState::Zero)
 			{
 				RegDumpEntry* current = GetCurrentEntry();
 
