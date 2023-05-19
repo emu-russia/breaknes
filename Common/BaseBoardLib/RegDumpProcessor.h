@@ -30,6 +30,8 @@ namespace BaseBoard
 
 		RegDumpEntry* GetCurrentEntry();
 
+		const bool dump_regops = false;		// Enable debug output of register operations
+
 	public:
 		RegDumpProcessor(uint16_t regs_base, uint8_t regs_mask);
 		~RegDumpProcessor();

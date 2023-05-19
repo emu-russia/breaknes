@@ -846,14 +846,14 @@ namespace NSFPlayer
 			{
 				var settings = FormSettings.LoadSettings();
 				Dma = true;
-				SaveWav(saveFileDialogWAV.FileName, SampleBuf, settings.OutputSampleRate);
+				SaveWav(saveFileDialogWAV.FileName, SampleBuf, settings.OutputSampleRate, settings.DC);
 				Dma = false;
 			}
 		}
 
 		// https://stackoverflow.com/questions/14659684/creating-a-wav-file-in-c-sharp
 
-		private void SaveWav(string filename, List<float> samples, int samplerate)
+		private void SaveWav(string filename, List<float> samples, int samplerate, float DC)
 		{
 			int numsamples = samples.Count;
 			ushort numchannels = 1;
@@ -880,7 +880,7 @@ namespace NSFPlayer
 
 			foreach (var sample in samples)
 			{
-				short value = (short)((sample - 0.5f) * Int16.MaxValue);
+				short value = (short)((sample + DC) * Int16.MaxValue);
 				wr.Write(value);
 			}
 

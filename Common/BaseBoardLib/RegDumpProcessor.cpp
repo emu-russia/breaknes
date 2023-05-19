@@ -49,7 +49,7 @@ namespace BaseBoard
 
 		if (regdump != nullptr)
 		{
-			if (clk_counter >= next_clk && CLK == TriState::One)
+			if (clk_counter >= next_clk && CLK == TriState::Zero)
 			{
 				RegDumpEntry* current = GetCurrentEntry();
 
@@ -59,6 +59,16 @@ namespace BaseBoard
 					*data_bus = current->value;
 				}
 				*addr_bus = regbase | (current->reg & regmask);
+
+				if (dump_regops) {
+
+					if (RnW == TriState::One) {
+						printf("%x read 0x%x\n", current->clkDelta, *addr_bus);
+					}
+					else {
+						printf("%x write 0x%x = 0x%02x\n", current->clkDelta, *addr_bus, *data_bus);
+					}
+				}
 
 				hold_entry = *current;
 				hold = true;
