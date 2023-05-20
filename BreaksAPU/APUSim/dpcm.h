@@ -64,7 +64,6 @@ namespace APUSim
 		BaseLogic::DLatch run_latch2{};
 		BaseLogic::FF start_ff{};
 		BaseLogic::FF rdy_ff{};
-		BaseLogic::DLatch fin_latch{};
 		BaseLogic::DLatch en_latch1{};
 		BaseLogic::DLatch en_latch2{};
 		BaseLogic::DLatch en_latch3{};

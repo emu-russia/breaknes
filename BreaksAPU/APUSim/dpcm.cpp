@@ -121,7 +121,6 @@ namespace APUSim
 		TriState DMCFinish = DMC2;
 		TriState DMCEnable = ED2;
 
-		fin_latch.set(DMCFinish, ACLK1);
 		en_latch1.set(DMCEnable, ACLK1);
 		en_latch2.set(en_latch1.nget(), ACLK2);
 		en_latch3.set(en_latch2.nget(), ACLK1);
@@ -129,7 +128,7 @@ namespace APUSim
 		TriState DMC3 = NOR3(nACLK2, en_latch1.nget(), en_latch3.get());
 
 		NSTEP = NOT(NOT(DFLOAD));
-		DSLOAD = NOT(NOR(AND(fin_latch.get(), PCMDone), DMC3));
+		DSLOAD = NOT(NOR(AND(DMCFinish, PCMDone), DMC3));
 		DSSTEP = NOR3(NOT(PCMDone), DMC3, DMCFinish);
 	}
 
