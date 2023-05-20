@@ -72,9 +72,9 @@ namespace APUSim
 		TriState RES = apu->wire.RES;
 		TriState AssertInt = ED1;
 
-		int_ff.set (NOR4(NOR(int_ff.get(), AssertInt), W4015, LOOPMode, RES));
+		int_ff.set (NOR4(NOR(int_ff.get(), AssertInt), W4015, n_IRQEN, RES));
 		apu->SetDBBit(7, NOT(n_R4015) == TriState::One ? NOT(int_ff.nget()) : TriState::Z);
-		apu->wire.DMCINT = NOR(int_ff.nget(), LOOPMode);
+		apu->wire.DMCINT = NOR(int_ff.nget(), n_IRQEN);
 	}
 
 	void DpcmChan::sim_EnableControl()
@@ -87,7 +87,7 @@ namespace APUSim
 
 		sout_latch.set(SOUT, ACLK1);
 		DMC2 = sout_latch.get();
-		ED1 = NOR3(n_IRQEN, sout_latch.nget(), NOT(PCMDone));
+		ED1 = NOR3(LOOPMode, sout_latch.nget(), NOT(PCMDone));
 		ena_ff.sim(ACLK1, W4015, apu->GetDBBit(4), ED1, RES);
 		ED2 = ena_ff.get();
 		apu->SetDBBit(4, NOT(n_R4015) == TriState::One ? NOT(ena_ff.nget()) : TriState::Z);
@@ -322,11 +322,12 @@ namespace APUSim
 			sin = shift_reg[n].get_sout();
 		}
 
-		n_BOUT = NOT(shift_reg[0].get_sout());
+		n_BOUT = NOT(sin);
 	}
 
 	void DPCM_SRBit::sim(TriState ACLK1, TriState clear, TriState load, TriState step, TriState n_val, TriState sin)
 	{
+		in_latch.set(sin, ACLK1);
 		TriState d = 
 			MUX(clear, 
 				MUX(load, 
@@ -335,7 +336,6 @@ namespace APUSim
 						in_latch.nget()), 
 					n_val), 
 				TriState::Zero);
-		in_latch.set(sin, ACLK1);
 		out_latch.set(d, TriState::One);
 	}
 
