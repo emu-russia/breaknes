@@ -32,6 +32,8 @@ namespace BaseBoard
 
 		const bool dump_regops = false;		// Enable debug output of register operations
 
+		const bool dump_4015_writes_only = false;	// The most interesting
+
 	public:
 		RegDumpProcessor(uint16_t regs_base, uint8_t regs_mask);
 		~RegDumpProcessor();

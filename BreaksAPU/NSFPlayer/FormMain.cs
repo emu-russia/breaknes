@@ -46,7 +46,6 @@ namespace NSFPlayer
 		public FormMain()
 		{
 			InitializeComponent();
-			//AllocConsole();
 		}
 
 		private void FormMain_Load(object sender, EventArgs e)
@@ -61,6 +60,11 @@ namespace NSFPlayer
 			OutputSampleRate = settings.OutputSampleRate;
 			OutputDC = settings.DC;
 			BreaksCore.Visual2A03Mapping = settings.Visual2A03Mapping;
+
+			if (settings.AllocConsole)
+			{
+				AllocConsole();
+			}
 
 			SetPaused(true);
 

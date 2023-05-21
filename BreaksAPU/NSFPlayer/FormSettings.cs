@@ -67,6 +67,7 @@ namespace NSFPlayer
 			settings.AuxSampleRate = 3579544;       // 0.5 PHI for 2A03
 			settings.DC = 0.0f;
 			settings.Visual2A03Mapping = false;
+			settings.AllocConsole = false;
 
 			SaveSettings(settings);
 
@@ -137,6 +138,11 @@ namespace NSFPlayer
 			[Category("Debug")]
 			[Description("Enable the signal names from Visual2A03 instead of the Breaks names.")]
 			public bool Visual2A03Mapping { get; set; }
+
+			[XmlElement]
+			[Category("Debug")]
+			[Description("Open the console for debug output.")]
+			public bool AllocConsole { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid

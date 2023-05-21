@@ -28,7 +28,14 @@ namespace APUSim
 
 	void RegisterBitRes::sim(TriState ACLK1, TriState Enable, TriState Value, TriState Res)
 	{
-		transp_latch.set(AND(MUX(ACLK1, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), NOT(Res)), TriState::One);
+		TriState d =
+			MUX(ACLK1,
+				MUX(Enable, TriState::Z, Value),
+				NOT(transp_latch.nget()));
+		if (Res == TriState::One) {
+			d = TriState::Zero;
+		}
+		transp_latch.set(d, TriState::One);
 	}
 
 	TriState RegisterBitRes::get()
@@ -48,7 +55,14 @@ namespace APUSim
 
 	void RegisterBitRes2::sim(TriState ACLK1, TriState Enable, TriState Value, TriState Res1, TriState Res2)
 	{
-		transp_latch.set(AND(MUX(ACLK1, MUX(Enable, TriState::Z, Value), NOT(transp_latch.nget())), NOT(OR(Res1, Res2))), TriState::One);
+		TriState d = 
+			MUX(ACLK1,
+				MUX(Enable, TriState::Z, Value),
+				NOT(transp_latch.nget()));
+		if (OR(Res1, Res2) == TriState::One) {
+			d = TriState::Zero;
+		}
+		transp_latch.set(d, TriState::One);
 	}
 
 	TriState RegisterBitRes2::get()

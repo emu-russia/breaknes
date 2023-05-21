@@ -106,10 +106,10 @@ namespace APUSim
 		run_latch2.set(run_latch1.nget(), ACLK1);
 		TriState start_set = NOR3(NAND(RnW, NOT(PHI1)), nDMCEnableDelay, NOT(nDMAStop));
 		start_ff.set(NOR4(NOR(start_ff.get(), start_set), nDMCEnableDelay, RES, NOT(nDMAStop)));
-		rdy_ff.set(NOR(NOR(rdy_ff.get(), AND(run_latch1.get(), ACLK1)), ACLK2));
+		rdy_ff.set(NOR(AND(run_latch1.get(), ACLK1), NOR(rdy_ff.get(), ACLK2)));
 
 		apu->wire.RUNDMC = run_latch2.nget();
-		apu->wire.n_DMC_AB = rdy_ff.nget();
+		apu->wire.n_DMC_AB = rdy_ff.get();
 		apu->wire.DMCRDY = NOR(start_ff.get(), rdy_ff.get());
 	}
 
