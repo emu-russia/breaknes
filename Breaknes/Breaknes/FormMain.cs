@@ -17,7 +17,6 @@ namespace Breaknes
 		public FormMain()
 		{
 			InitializeComponent();
-			AllocConsole();
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -38,6 +37,10 @@ namespace Breaknes
 		{
 			original_title = Text;
 			var settings = FormSettings.LoadSettings();
+			if (settings.AllocConsole)
+			{
+				AllocConsole();
+			}
 			board.onUpdateWaves += OnUpdateWaves;
 			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
 			backgroundWorker1.RunWorkerAsync();
