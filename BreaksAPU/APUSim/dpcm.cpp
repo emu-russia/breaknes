@@ -110,7 +110,7 @@ namespace APUSim
 
 		apu->wire.RUNDMC = run_latch2.nget();
 		apu->wire.n_DMC_AB = rdy_ff.get();
-		apu->wire.DMCRDY = NOR(start_ff.get(), rdy_ff.get());
+		apu->wire.DMCRDY = NOR(start_ff.get(), rdy_ff.nget());
 	}
 
 	void DpcmChan::sim_SampleCounterControl()

@@ -58,6 +58,7 @@ namespace Breaknes
 			settings.DumpAudioDir = "";
 			settings.DumpVideo = false;
 			settings.DumpVideoDir = "";
+			settings.AllocConsole = false;
 
 			SaveSettings(settings);
 
@@ -116,6 +117,11 @@ namespace Breaknes
 			[DefaultValue("")]
 			[EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
 			public string DumpVideoDir { get; set; }
+
+			[Category("Debug")]
+			[Description("Turn on the debug console. Requires a restart.")]
+			[DefaultValue(false)]
+			public bool AllocConsole { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid
