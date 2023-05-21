@@ -117,13 +117,13 @@ namespace APUSim
 		TriState NSIN = NOR3(AND(sout[0], sout[2]), NOR3(sout[0], sout[2], NFZ), RES);
 		RSTEP = NFLOAD;
 
-		TriState sin = NSIN;
+		TriState shift_in = NSIN;
 
 		for (int n = 10; n >= 0; n--)
 		{
 			TriState nnf = NNF[n];
-			freq_lfsr[n].sim(ACLK1, NFLOAD, NFSTEP, nnf, sin);
-			sin = freq_lfsr[n].get_sout();
+			freq_lfsr[n].sim(ACLK1, NFLOAD, NFSTEP, nnf, shift_in);
+			shift_in = freq_lfsr[n].get_sout();
 		}
 	}
 
@@ -147,18 +147,18 @@ namespace APUSim
 		TriState RIN = NOR3 (LOCK, NOR3(RSOZ, sout[0], mux_out), AND(sout[0], mux_out));
 		RNDOUT = NOR(NOR(sout[0], NORND), LOCK);
 
-		TriState sin = RIN;
+		TriState shift_in = RIN;
 
 		for (int n = 14; n >= 0; n--)
 		{
-			rnd_lfsr[n].sim(ACLK1, RSTEP, sin);
-			sin = rnd_lfsr[n].get_sout();
+			rnd_lfsr[n].sim(ACLK1, RSTEP, shift_in);
+			shift_in = rnd_lfsr[n].get_sout();
 		}
 	}
 
-	void FreqLFSRBit::sim(TriState ACLK1, TriState load, TriState step, TriState val, TriState sin)
+	void FreqLFSRBit::sim(TriState ACLK1, TriState load, TriState step, TriState val, TriState shift_in)
 	{
-		TriState d = MUX(load, MUX(step, TriState::Z, sin), val);
+		TriState d = MUX(load, MUX(step, TriState::Z, shift_in), val);
 		in_latch.set(d, TriState::One);
 		out_latch.set(in_latch.nget(), ACLK1);
 	}
@@ -168,9 +168,9 @@ namespace APUSim
 		return out_latch.nget();
 	}
 
-	void RandomLFSRBit::sim(TriState ACLK1, TriState load, TriState sin)
+	void RandomLFSRBit::sim(TriState ACLK1, TriState load, TriState shift_in)
 	{
-		in_reg.sim(ACLK1, load, sin);
+		in_reg.sim(ACLK1, load, shift_in);
 		out_latch.set(in_reg.nget(), ACLK1);
 	}
 

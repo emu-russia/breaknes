@@ -242,18 +242,18 @@ namespace APUSim
 		DFLOAD = NOR(NOT(ACLK2), NOT(nor3_out));
 		TriState DFSTEP = NOR(NOT(ACLK2), nor3_out);
 
-		TriState sin = feedback;
+		TriState shift_in = feedback;
 
 		for (int n = 8; n >= 0; n--)
 		{
-			lfsr[n].sim(ACLK1, DFLOAD, DFSTEP, FR[n], sin);
-			sin = lfsr[n].get_sout();
+			lfsr[n].sim(ACLK1, DFLOAD, DFSTEP, FR[n], shift_in);
+			shift_in = lfsr[n].get_sout();
 		}
 	}
 
-	void DPCM_LFSRBit::sim(TriState ACLK1, TriState load, TriState step, TriState val, TriState sin)
+	void DPCM_LFSRBit::sim(TriState ACLK1, TriState load, TriState step, TriState val, TriState shift_in)
 	{
-		in_latch.set(MUX(load, MUX(step, TriState::Z, sin), val), TriState::One);
+		in_latch.set(MUX(load, MUX(step, TriState::Z, shift_in), val), TriState::One);
 		out_latch.set(in_latch.nget(), ACLK1);
 	}
 
@@ -314,20 +314,20 @@ namespace APUSim
 			buf_reg[n].sim(ACLK1, PCM, apu->GetDBBit(n));
 		}
 
-		TriState sin = TriState::Zero;
+		TriState shift_in = TriState::Zero;
 
 		for (int n = 7; n >= 0; n--)
 		{
-			shift_reg[n].sim(ACLK1, RES, BLOAD, BSTEP, buf_reg[n].nget(), sin);
-			sin = shift_reg[n].get_sout();
+			shift_reg[n].sim(ACLK1, RES, BLOAD, BSTEP, buf_reg[n].nget(), shift_in);
+			shift_in = shift_reg[n].get_sout();
 		}
 
-		n_BOUT = NOT(sin);
+		n_BOUT = NOT(shift_in);
 	}
 
-	void DPCM_SRBit::sim(TriState ACLK1, TriState clear, TriState load, TriState step, TriState n_val, TriState sin)
+	void DPCM_SRBit::sim(TriState ACLK1, TriState clear, TriState load, TriState step, TriState n_val, TriState shift_in)
 	{
-		in_latch.set(sin, ACLK1);
+		in_latch.set(shift_in, ACLK1);
 		TriState d = 
 			MUX(clear, 
 				MUX(load, 
