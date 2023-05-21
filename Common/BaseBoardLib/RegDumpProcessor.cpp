@@ -62,11 +62,19 @@ namespace BaseBoard
 
 				if (dump_regops) {
 
-					if (RnW == TriState::One) {
-						printf("%x read 0x%x\n", current->clkDelta, *addr_bus);
+					if (dump_4015_writes_only) {
+						if (RnW == TriState::Zero && *addr_bus == 0x4015) {
+							printf("%x write 4015 = 0x%02x\n", current->clkDelta, *data_bus);
+						}
 					}
-					else {
-						printf("%x write 0x%x = 0x%02x\n", current->clkDelta, *addr_bus, *data_bus);
+					else
+					{
+						if (RnW == TriState::One) {
+							printf("%x read 0x%x\n", current->clkDelta, *addr_bus);
+						}
+						else {
+							printf("%x write 0x%x = 0x%02x\n", current->clkDelta, *addr_bus, *data_bus);
+						}
 					}
 				}
 
