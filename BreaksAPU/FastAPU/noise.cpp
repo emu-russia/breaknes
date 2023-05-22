@@ -21,7 +21,7 @@ namespace FastAPU
 
 	int NoiseChan::get_LC()
 	{
-
+		return 0;
 	}
 
 	void NoiseChan::sim_FreqReg()

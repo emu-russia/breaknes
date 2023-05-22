@@ -13,14 +13,14 @@ namespace FastAPU
 
 	}
 
-	void SquareChan::sim(int WR0, int WR1, int WR2, int WR3, int NOSQ, int* SQ_Out)
+	void SquareChan::sim(int WR0, int WR1, int WR2, int WR3, int NOSQ, uint8_t* SQ_Out)
 	{
 
 	}
 
 	int SquareChan::get_LC()
 	{
-
+		return 0;
 	}
 
 	void SquareChan::sim_FreqReg(int WR2, int WR3)

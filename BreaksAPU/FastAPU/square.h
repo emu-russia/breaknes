@@ -69,7 +69,7 @@ namespace FastAPU
 		SquareChan(FastAPU* parent, SquareChanCarryIn carry_routing);
 		~SquareChan();
 
-		void sim(int WR0, int WR1, int WR2, int WR3, int NOSQ, int* SQ_Out);
+		void sim(int WR0, int WR1, int WR2, int WR3, int NOSQ, uint8_t* SQ_Out);
 		int get_LC();
 	};
 }

@@ -15,7 +15,11 @@ using namespace BaseLogic;
 #endif
 
 M6502Core::M6502* core = nullptr;
+#if FAST_APU
+FastAPU::FastAPU* apu = nullptr;
+#else
 APUSim::APU* apu = nullptr;
+#endif
 
 static bool ApuMegaCyclesTest(size_t desired_clk)
 {
@@ -78,6 +82,10 @@ static bool ApuMegaCyclesTest(size_t desired_clk)
 	{
 		printf("You're %.2f times slower :(\n", (float)delta / (float)SIMULATE_MSEC);
 	}
+	else
+	{
+		printf("You're %.2f times faster :)\n", (float)SIMULATE_MSEC / (float)delta);
+	}
 
 	return delta <= SIMULATE_MSEC;
 }
@@ -85,7 +93,11 @@ static bool ApuMegaCyclesTest(size_t desired_clk)
 int main()
 {
 	core = new M6502Core::M6502(true, true);
+#if FAST_APU
+	apu = new FastAPU::FastAPU(core, APUSim::Revision::RP2A03G);
+#else
 	apu = new APUSim::APU(core, APUSim::Revision::RP2A03G);
+#endif
 
 	size_t clks = (ONE_SECOND / 1000) * SIMULATE_MSEC;
 

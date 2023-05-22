@@ -153,43 +153,6 @@ namespace FastAPU
 			int DMCINT;
 			int DMCRDY;
 
-			union
-			{
-				struct
-				{
-					unsigned n_R4015 : 1;
-					unsigned n_R4016 : 1;
-					unsigned n_R4017 : 1;
-					unsigned n_R4018 : 1;
-					unsigned n_R4019 : 1;
-					unsigned n_R401A : 1;
-					unsigned W4000 : 1;
-					unsigned W4001 : 1;
-					unsigned W4002 : 1;
-					unsigned W4003 : 1;
-					unsigned W4004 : 1;
-					unsigned W4005 : 1;
-					unsigned W4006 : 1;
-					unsigned W4007 : 1;
-					unsigned W4008 : 1;
-					unsigned W400A : 1;
-					unsigned W400B : 1;
-					unsigned W400C : 1;
-					unsigned W400E : 1;
-					unsigned W400F : 1;
-					unsigned W4010 : 1;
-					unsigned W4011 : 1;
-					unsigned W4012 : 1;
-					unsigned W4013 : 1;
-					unsigned W4014 : 1;
-					unsigned W4015 : 1;
-					unsigned W4016 : 1;
-					unsigned W4017 : 1;
-					unsigned W401A : 1;
-				};
-				uint32_t raw_bits;
-			} RegOps{};
-
 			int SQA_LC;
 			int SQB_LC;
 			int TRI_LC;
@@ -205,22 +168,59 @@ namespace FastAPU
 			int LOCK;
 		} wire{};
 
+		union
+		{
+			struct
+			{
+				unsigned n_R4015 : 1;
+				unsigned n_R4016 : 1;
+				unsigned n_R4017 : 1;
+				unsigned n_R4018 : 1;
+				unsigned n_R4019 : 1;
+				unsigned n_R401A : 1;
+				unsigned W4000 : 1;
+				unsigned W4001 : 1;
+				unsigned W4002 : 1;
+				unsigned W4003 : 1;
+				unsigned W4004 : 1;
+				unsigned W4005 : 1;
+				unsigned W4006 : 1;
+				unsigned W4007 : 1;
+				unsigned W4008 : 1;
+				unsigned W400A : 1;
+				unsigned W400B : 1;
+				unsigned W400C : 1;
+				unsigned W400E : 1;
+				unsigned W400F : 1;
+				unsigned W4010 : 1;
+				unsigned W4011 : 1;
+				unsigned W4012 : 1;
+				unsigned W4013 : 1;
+				unsigned W4014 : 1;
+				unsigned W4015 : 1;
+				unsigned W4016 : 1;
+				unsigned W4017 : 1;
+				unsigned W401A : 1;
+			};
+			uint32_t raw_bits;
+		} RegOps{};
+
 		APUSim::Revision rev = APUSim::Revision::Unknown;
 
 		// Instances of internal APU modules, including the core
 
 		M6502Core::M6502* core = nullptr;
-		//CoreBinding* core_int = nullptr;
-		//CLKGen* clkgen = nullptr;
-		//RegsDecoder* regs = nullptr;
-		//LengthCounter* lc[4]{};
-		//DpcmChan* dpcm = nullptr;
-		//NoiseChan* noise = nullptr;
-		//SquareChan* square[2]{};
-		//TriangleChan* tri = nullptr;
-		//DMA* dma = nullptr;
-		//Pads* pads = nullptr;
-		//DAC* dac = nullptr;
+		CoreBinding* core_int = nullptr;
+		CLKGen* clkgen = nullptr;
+		RegsDecoder* regs = nullptr;
+		LengthCounter* lc[4]{};
+		DpcmChan* dpcm = nullptr;
+		NoiseChan* noise = nullptr;
+		SquareChan* square[2]{};
+		TriangleChan* tri = nullptr;
+		DMA* dma = nullptr;
+		Pads* pads = nullptr;
+		DAC* dac = nullptr;
 
 		// Internal buses.
 
@@ -258,7 +258,7 @@ namespace FastAPU
 		/// <summary>
 		/// Simulate one half cycle
 		/// </summary>
-		void sim(int inputs[], int outputs[], uint8_t* data, uint16_t* addr, APUSim::AudioOutSignal& AUX);
+		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr, APUSim::AudioOutSignal& AUX);
 
 		/// <summary>
 		/// Turn on the digital output, instead of the analog DAC levels.

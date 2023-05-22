@@ -21,7 +21,7 @@ namespace FastAPU
 
 	int TriangleChan::get_LC()
 	{
-
+		return 0;
 	}
 
 	void TriangleChan::sim_Control()
