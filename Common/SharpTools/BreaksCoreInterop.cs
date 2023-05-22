@@ -39,12 +39,6 @@ namespace SharpTools
 		public static extern void SampleAudioSignal(out float sample);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void LoadNSFData([In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] data, int data_size, UInt16 load_address);
-
-		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void EnableNSFBanking(bool enable);
-
-		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void LoadRegDump([In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] data, int data_size);
 
 		[StructLayout(LayoutKind.Explicit)]
