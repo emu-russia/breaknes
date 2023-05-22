@@ -112,8 +112,8 @@ namespace APUSim
 		TriState NFZ = NOR11(sout[0], sout[1], sout[2], sout[3], sout[4], sout[5], sout[6], sout[7], sout[8], sout[9], sout[10]);
 		TriState NFOUT = NOR11(NOT(sout[0]), sout[1], sout[2], sout[3], sout[4], sout[5], sout[6], sout[7], sout[8], sout[9], sout[10]);
 		TriState step_load = NOR(NOT(NFOUT), RES);
-		TriState NFLOAD = NOR(NOT(ACLK4), step_load);
-		TriState NFSTEP = NOR(NOT(ACLK4), NOT(step_load));
+		TriState NFLOAD = NOR(NOT(ACLK4), NOT(step_load));
+		TriState NFSTEP = NOR(NOT(ACLK4), step_load);
 		TriState NSIN = NOR3(AND(sout[0], sout[2]), NOR3(sout[0], sout[2], NFZ), RES);
 		RSTEP = NFLOAD;
 
