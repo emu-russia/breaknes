@@ -4,5 +4,30 @@
 
 namespace FastAPU
 {
+	class Pads
+	{
+		FastAPU* apu = nullptr;
 
+		int n_irq{};
+		int n_nmi{};
+		uint8_t data_bus{};
+		uint8_t n_in{};
+		uint8_t out{};
+
+		BaseLogic::TriState OUT_Signal[3]{};
+		uint8_t out_reg{};
+		BaseLogic::DLatch out_latch[3]{};
+
+		void sim_OutReg();
+
+	public:
+		Pads(FastAPU* parent);
+		~Pads();
+
+		void sim_InputPads(BaseLogic::TriState inputs[]);
+		void sim_OutputPads(BaseLogic::TriState outputs[], uint16_t* addr);
+
+		void sim_DataBusInput(uint8_t* data);
+		void sim_DataBusOutput(uint8_t* data);
+	};
 }

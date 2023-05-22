@@ -107,18 +107,18 @@ namespace FastAPU
 {
 	class FastAPU
 	{
-		//friend CoreBinding;
-		//friend CLKGen;
-		//friend RegsDecoder;
-		//friend LengthCounter;
-		//friend EnvelopeUnit;
-		//friend DpcmChan;
-		//friend NoiseChan;
-		//friend SquareChan;
-		//friend TriangleChan;
-		//friend DMA;
-		//friend Pads;
-		//friend DAC;
+		friend CoreBinding;
+		friend CLKGen;
+		friend RegsDecoder;
+		friend LengthCounter;
+		friend EnvelopeUnit;
+		friend DpcmChan;
+		friend NoiseChan;
+		friend SquareChan;
+		friend TriangleChan;
+		friend DMA;
+		friend Pads;
+		friend DAC;
 
 		/// <summary>
 		/// Internal auxiliary and intermediate connections.
