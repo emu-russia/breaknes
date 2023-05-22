@@ -109,7 +109,7 @@ namespace APUPlayer
 
 			[XmlElement]
 			[Category("Host Features")]
-			[Description("Automatically start the simulation after loading the NSF/Regdump")]
+			[Description("Automatically start the simulation after loading the Regdump")]
 			public bool AutoPlay { get; set; }
 			
 			[XmlElement]

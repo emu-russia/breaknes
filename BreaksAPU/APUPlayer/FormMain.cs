@@ -164,7 +164,7 @@ namespace APUPlayer
 
 		#region "Regdump Controls"
 
-		// This section of code is intended to replace NSF -- reproducing operations on APU registers from their read/write history dump.
+		// Reproducing operations on APU registers from their read/write history dump.
 
 		private void loadAPURegisterDumpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
