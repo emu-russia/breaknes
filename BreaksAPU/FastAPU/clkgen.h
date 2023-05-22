@@ -8,24 +8,24 @@ namespace FastAPU
 	{
 		FastAPU* apu = nullptr;
 
-		BaseLogic::DLatch phi1_latch{};
-		BaseLogic::DLatch phi2_latch{};
+		int phi1_latch{};
+		int phi2_latch{};
 
-		BaseLogic::TriState shift_in = BaseLogic::TriState::X;
-		BaseLogic::TriState F1 = BaseLogic::TriState::X;
-		BaseLogic::TriState F2 = BaseLogic::TriState::X;
-		BaseLogic::TriState Z1 = BaseLogic::TriState::X;
-		BaseLogic::TriState Z2 = BaseLogic::TriState::X;
-		BaseLogic::TriState mode = BaseLogic::TriState::X;
-		BaseLogic::TriState n_mode = BaseLogic::TriState::X;
-		BaseLogic::TriState pla[6]{};
+		int shift_in{};
+		int F1{};
+		int F2{};
+		int Z1{};
+		int Z2{};
+		int mode{};
+		int n_mode{};
+		int pla[6]{};
 
-		BaseLogic::FF z_ff{};
-		BaseLogic::DLatch z1{};
-		BaseLogic::DLatch z2{};
-		BaseLogic::DLatch md_latch{};
-		BaseLogic::DLatch int_status{};
-		BaseLogic::FF int_ff{};
+		int z_ff{};
+		int z1{};
+		int z2{};
+		int md_latch{};
+		int int_status{};
+		int int_ff{};
 
 		uint16_t lfsr{};
 

@@ -8,51 +8,51 @@ namespace FastAPU
 	{
 		FastAPU* apu = nullptr;
 
-		BaseLogic::TriState LOOPMode = BaseLogic::TriState::X;	// 1: DPCM looped playback
-		BaseLogic::TriState n_IRQEN = BaseLogic::TriState::X;	// 0: Enable interrupt from DPCM
-		BaseLogic::TriState DSLOAD = BaseLogic::TriState::X;	// Load value into Sample Counter and simultaneously into DPCM Address Counter
-		BaseLogic::TriState DSSTEP = BaseLogic::TriState::X;	// Perform Sample Counter decrement and DPCM Address Counter increment simultaneously
-		BaseLogic::TriState BLOAD = BaseLogic::TriState::X;		// Load value into Sample Buffer
-		BaseLogic::TriState BSTEP = BaseLogic::TriState::X;		// Perform a Sample Buffer bit shift
-		BaseLogic::TriState NSTEP = BaseLogic::TriState::X;		// Perform Sample Bit Counter increment
-		BaseLogic::TriState DSTEP = BaseLogic::TriState::X;		// Increment/decrement the DPCM Output counter
-		BaseLogic::TriState PCM = BaseLogic::TriState::X;		// Load new sample value into Sample Buffer. The signal is active when PHI1 = 0 and the address bus is captured (imitating CPU reading)
-		BaseLogic::TriState DOUT = BaseLogic::TriState::X;		// DPCM Out counter has finished counting
-		BaseLogic::TriState n_NOUT = BaseLogic::TriState::X;	// 0: Sample Bit Counter has finished counting
-		BaseLogic::TriState SOUT = BaseLogic::TriState::X;		// Sample Counter has finished counting
-		BaseLogic::TriState DFLOAD = BaseLogic::TriState::X;	// Frequency LFSR finished counting and reloaded itself
-		BaseLogic::TriState n_BOUT = BaseLogic::TriState::X;	// The next bit value pushed out of the Sample Buffer shift register (inverted value)
-		BaseLogic::TriState Fx[4]{};
-		BaseLogic::TriState FR[9]{};
-		BaseLogic::TriState Dec1_out[16]{};
+		int LOOPMode{};	// 1: DPCM looped playback
+		int n_IRQEN{};	// 0: Enable interrupt from DPCM
+		int DSLOAD{};	// Load value into Sample Counter and simultaneously into DPCM Address Counter
+		int DSSTEP{};	// Perform Sample Counter decrement and DPCM Address Counter increment simultaneously
+		int BLOAD{};	// Load value into Sample Buffer
+		int BSTEP{};	// Perform a Sample Buffer bit shift
+		int NSTEP{};	// Perform Sample Bit Counter increment
+		int DSTEP{};	// Increment/decrement the DPCM Output counter
+		int PCM{};		// Load new sample value into Sample Buffer. The signal is active when PHI1 = 0 and the address bus is captured (imitating CPU reading)
+		int DOUT{};		// DPCM Out counter has finished counting
+		int n_NOUT{};	// 0: Sample Bit Counter has finished counting
+		int SOUT{};		// Sample Counter has finished counting
+		int DFLOAD{};	// Frequency LFSR finished counting and reloaded itself
+		int n_BOUT{};	// The next bit value pushed out of the Sample Buffer shift register (inverted value)
+		int Fx[4]{};
+		int FR[9]{};
+		int Dec1_out[16]{};
 
-		BaseLogic::TriState ED1 = BaseLogic::TriState::X;		// 1: Assert interrupt
-		BaseLogic::TriState ED2 = BaseLogic::TriState::X;		// 1: DMC enable ($4015[4])
-		BaseLogic::TriState DMC1 = BaseLogic::TriState::X;		// 1: PCM (DMA fetch) done
-		BaseLogic::TriState DMC2 = BaseLogic::TriState::X;		// 1: DMC finish
-		BaseLogic::TriState CTRL1 = BaseLogic::TriState::X;		// 0: Stop DMA
-		BaseLogic::TriState CTRL2 = BaseLogic::TriState::X;		// 0: DMC enable delay
+		int ED1{};		// 1: Assert interrupt
+		int ED2{};		// 1: DMC enable ($4015[4])
+		int DMC1{};		// 1: PCM (DMA fetch) done
+		int DMC2{};		// 1: DMC finish
+		int CTRL1{};	// 0: Stop DMA
+		int CTRL2{};	// 0: DMC enable delay
 
-		BaseLogic::TriState ACLK2 = BaseLogic::TriState::X;
+		int ACLK2{};
 
-		BaseLogic::FF int_ff{};
-		BaseLogic::DLatch sout_latch{};
+		int int_ff{};
+		int sout_latch{};
 		int ena_ff{};
-		BaseLogic::DLatch run_latch1{};
-		BaseLogic::DLatch run_latch2{};
-		BaseLogic::FF start_ff{};
-		BaseLogic::FF rdy_ff{};
-		BaseLogic::DLatch en_latch1{};
-		BaseLogic::DLatch en_latch2{};
-		BaseLogic::DLatch en_latch3{};
-		BaseLogic::FF step_ff{};
-		BaseLogic::FF stop_ff{};
-		BaseLogic::FF pcm_ff{};
-		BaseLogic::DLatch dout_latch{};
-		BaseLogic::DLatch dstep_latch{};
-		BaseLogic::DLatch stop_latch{};
-		BaseLogic::DLatch pcm_latch{};
-		BaseLogic::DLatch nout_latch{};
+		int run_latch1{};
+		int run_latch2{};
+		int start_ff{};
+		int rdy_ff{};
+		int en_latch1{};
+		int en_latch2{};
+		int en_latch3{};
+		int step_ff{};
+		int stop_ff{};
+		int pcm_ff{};
+		int dout_latch{};
+		int dstep_latch{};
+		int stop_latch{};
+		int pcm_latch{};
+		int nout_latch{};
 
 		uint8_t freq_reg{};
 		int loop_reg{};
@@ -88,9 +88,9 @@ namespace FastAPU
 		void sim_AddressCounter();
 		void sim_Output();
 
-		BaseLogic::TriState get_CTRL1();
-		BaseLogic::TriState get_CTRL2();
-		BaseLogic::TriState get_DMC1();
+		int get_CTRL1();
+		int get_CTRL2();
+		int get_DMC1();
 
 	public:
 		DpcmChan(FastAPU* parent);

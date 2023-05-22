@@ -23,20 +23,20 @@ namespace FastAPU
 		FastAPU* apu = nullptr;
 		SquareChanCarryIn cin_type = SquareChanCarryIn::Unknown;
 
-		BaseLogic::TriState n_sum[11]{};
-		BaseLogic::TriState S[11]{};
-		BaseLogic::TriState SR[3]{};
-		BaseLogic::TriState BS[12]{};
-		BaseLogic::TriState DEC = BaseLogic::TriState::X;
-		BaseLogic::TriState INC = BaseLogic::TriState::X;
-		BaseLogic::TriState n_COUT = BaseLogic::TriState::X;
-		BaseLogic::TriState SW_UVF = BaseLogic::TriState::X;	// Sweep underflow
-		BaseLogic::TriState FCO = BaseLogic::TriState::X;
-		BaseLogic::TriState FLOAD = BaseLogic::TriState::X;
-		BaseLogic::TriState DO_SWEEP = BaseLogic::TriState::X;
-		BaseLogic::TriState SW_OVF = BaseLogic::TriState::X;	// Sweep overflow
-		BaseLogic::TriState DUTY = BaseLogic::TriState::X;
-		BaseLogic::TriState Vol[4]{};
+		uint16_t n_sum{};
+		uint16_t S{};
+		uint8_t SR{};
+		uint16_t BS{};
+		int DEC{};
+		int INC{};
+		int n_COUT{};
+		int SW_UVF{};	// Sweep underflow
+		int FCO{};
+		int FLOAD{};
+		int DO_SWEEP{};
+		int SW_OVF{};	// Sweep overflow
+		int DUTY{};
+		uint8_t Vol{};
 
 		int dir_reg{};
 		uint16_t freq_reg{};
@@ -56,20 +56,20 @@ namespace FastAPU
 
 		EnvelopeUnit* env_unit = nullptr;
 
-		void sim_FreqReg(BaseLogic::TriState WR2, BaseLogic::TriState WR3);
-		void sim_ShiftReg(BaseLogic::TriState WR1);
+		void sim_FreqReg(int WR2, int WR3);
+		void sim_ShiftReg(int WR1);
 		void sim_BarrelShifter();
 		void sim_Adder();
 		void sim_FreqCounter();
-		void sim_Sweep(BaseLogic::TriState WR1, BaseLogic::TriState NOSQ);
-		void sim_Duty(BaseLogic::TriState WR0, BaseLogic::TriState WR3);
-		void sim_Output(BaseLogic::TriState NOSQ, BaseLogic::TriState* SQ_Out);
+		void sim_Sweep(int WR1, int NOSQ);
+		void sim_Duty(int WR0, int WR3);
+		void sim_Output(int NOSQ, int* SQ_Out);
 
 	public:
 		SquareChan(FastAPU* parent, SquareChanCarryIn carry_routing);
 		~SquareChan();
 
-		void sim(BaseLogic::TriState WR0, BaseLogic::TriState WR1, BaseLogic::TriState WR2, BaseLogic::TriState WR3, BaseLogic::TriState NOSQ, BaseLogic::TriState* SQ_Out);
+		void sim(int WR0, int WR1, int WR2, int WR3, int NOSQ, int* SQ_Out);
 		BaseLogic::TriState get_LC();
 	};
 }

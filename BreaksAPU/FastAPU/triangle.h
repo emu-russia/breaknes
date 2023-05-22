@@ -8,23 +8,23 @@ namespace FastAPU
 	{
 		FastAPU* apu = nullptr;
 
-		BaseLogic::TriState TCO = BaseLogic::TriState::X;
-		BaseLogic::TriState n_FOUT = BaseLogic::TriState::X;
-		BaseLogic::TriState LOAD = BaseLogic::TriState::X;
-		BaseLogic::TriState STEP = BaseLogic::TriState::X;
-		BaseLogic::TriState TSTEP = BaseLogic::TriState::X;
+		int TCO{};
+		int n_FOUT{};
+		int LOAD{};
+		int STEP{};
+		int TSTEP{};
 
 		int lc_reg{};
-		BaseLogic::FF Reload_FF{};
-		BaseLogic::DLatch reload_latch1{};
-		BaseLogic::DLatch reload_latch2{};
-		BaseLogic::DLatch tco_latch{};
+		int Reload_FF{};
+		int reload_latch1{};
+		int reload_latch2{};
+		int tco_latch{};
 
 		uint8_t lin_reg{};
 		uint8_t lin_cnt{};
 		uint16_t freq_reg{};
 		uint16_t freq_cnt{};
-		BaseLogic::DLatch fout_latch{};
+		int fout_latch{};
 		uint8_t out_cnt{};
 
 		void sim_Control();
@@ -39,6 +39,6 @@ namespace FastAPU
 		~TriangleChan();
 
 		void sim();
-		BaseLogic::TriState get_LC();
+		int get_LC();
 	};
 }

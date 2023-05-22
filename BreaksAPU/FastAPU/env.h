@@ -14,17 +14,17 @@ namespace FastAPU
 		uint8_t vol_reg{};
 		uint8_t decay_cnt{};
 		uint8_t env_cnt{};
-		BaseLogic::FF EnvReload{};
-		BaseLogic::DLatch erld_latch{};
-		BaseLogic::DLatch reload_latch{};
-		BaseLogic::DLatch rco_latch{};
-		BaseLogic::DLatch eco_latch{};
+		int EnvReload{};
+		int erld_latch{};
+		int reload_latch{};
+		int rco_latch{};
+		int eco_latch{};
 
 	public:
 		EnvelopeUnit(FastAPU* parent);
 		~EnvelopeUnit();
 
-		void sim(BaseLogic::TriState V[4], BaseLogic::TriState WR_Reg, BaseLogic::TriState WR_LC);
+		void sim(uint8_t V, int WR_Reg, int WR_LC);
 		BaseLogic::TriState get_LC();
 	};
 }

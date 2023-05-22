@@ -10,10 +10,10 @@ namespace FastAPU
 
 		FastAPU* apu = nullptr;
 
-		BaseLogic::TriState NNF[11]{};
-		BaseLogic::TriState RSTEP = BaseLogic::TriState::X;
-		BaseLogic::TriState RNDOUT = BaseLogic::TriState::X;
-		BaseLogic::TriState Vol[4]{};
+		uint16_t NNF{};
+		int RSTEP{};
+		int RNDOUT{};
+		uint8_t Vol{};
 		BaseLogic::TriState Dec1_out[16]{};
 
 		uint8_t freq_reg{};
@@ -34,6 +34,6 @@ namespace FastAPU
 		~NoiseChan();
 
 		void sim();
-		BaseLogic::TriState get_LC();
+		int get_LC();
 	};
 }

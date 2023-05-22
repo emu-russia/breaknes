@@ -8,12 +8,10 @@ namespace FastAPU
 	{
 		FastAPU* apu = nullptr;
 
-		BaseLogic::TriState pla[29]{};		// Decoder
+		int nREGWR{};
+		int nREGRD{};
 
-		BaseLogic::TriState nREGWR = BaseLogic::TriState::X;
-		BaseLogic::TriState nREGRD = BaseLogic::TriState::X;
-
-		BaseLogic::DLatch lock_latch{};
+		int lock_latch{};
 
 		void sim_DebugLock();
 		void sim_Predecode();

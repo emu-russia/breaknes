@@ -14,9 +14,9 @@ namespace FastAPU
 		uint8_t n_in{};
 		uint8_t out{};
 
-		BaseLogic::TriState OUT_Signal[3]{};
+		uint8_t OUT_Signal{};
 		uint8_t out_reg{};
-		BaseLogic::DLatch out_latch[3]{};
+		uint8_t out_latch{};
 
 		void sim_OutReg();
 
