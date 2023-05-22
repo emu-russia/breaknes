@@ -17,7 +17,6 @@ namespace APUSim
 		wires.nACLK2 = ToByte(wire.nACLK2);
 		wires.ACLK1 = ToByte(wire.ACLK1);
 		wires.RES = ToByte(wire.RES);
-		wires.RESCore = ToByte(wire.RESCore);
 		wires.n_M2 = ToByte(wire.n_M2);
 		wires.n_NMI = ToByte(wire.n_NMI);
 		wires.n_IRQ = ToByte(wire.n_IRQ);
@@ -149,7 +148,6 @@ namespace APUSim
 			case offsetof(APU_Interconnects, nACLK2): return ToByte(wire.nACLK2);
 			case offsetof(APU_Interconnects, ACLK1): return ToByte(wire.ACLK1);
 			case offsetof(APU_Interconnects, RES): return ToByte(wire.RES);
-			case offsetof(APU_Interconnects, RESCore): return ToByte(wire.RESCore);
 			case offsetof(APU_Interconnects, n_M2): return ToByte(wire.n_M2);
 			case offsetof(APU_Interconnects, n_NMI): return ToByte(wire.n_NMI);
 			case offsetof(APU_Interconnects, n_IRQ): return ToByte(wire.n_IRQ);
@@ -226,7 +224,6 @@ namespace APUSim
 			case offsetof(APU_Interconnects, nACLK2): wire.nACLK2 = FromByte(val); break;
 			case offsetof(APU_Interconnects, ACLK1): wire.ACLK1 = FromByte(val); break;
 			case offsetof(APU_Interconnects, RES): wire.RES = FromByte(val); break;
-			case offsetof(APU_Interconnects, RESCore): wire.RESCore = FromByte(val); break;
 			case offsetof(APU_Interconnects, n_M2): wire.n_M2 = FromByte(val); break;
 			case offsetof(APU_Interconnects, n_NMI): wire.n_NMI = FromByte(val); break;
 			case offsetof(APU_Interconnects, n_IRQ): wire.n_IRQ = FromByte(val); break;

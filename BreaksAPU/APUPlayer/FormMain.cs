@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using SharpTools;
 
-namespace NSFPlayer
+namespace APUPlayer
 {
 	public partial class FormMain : Form
 	{
@@ -12,11 +12,8 @@ namespace NSFPlayer
 		static extern bool AllocConsole();
 
 		private DSound? audio_backend;
-		private NSFSupport nsf = new();
-		private bool nsf_loaded = false;
 		private bool regdump_loaded = false;
 		private bool auxdump_loaded = false;
-		private byte current_song = 0;
 		private bool Paused = true;         // atomic
 		private bool Dma = false;       // atomic
 		private bool InitRequired = false;  // atmoic
@@ -38,7 +35,6 @@ namespace NSFPlayer
 		private int DecimateEach = 1;
 		private int DecimateCounter = 0;
 		private long AclkToPlay = 0;
-		private bool PreferPal = false;
 
 		private float[] aux_dump = Array.Empty<float>();
 		private long aux_dump_pointer = 0;
@@ -72,9 +68,6 @@ namespace NSFPlayer
 
 			signalPlot1.ForceMinMax(true, -0.2f, +1.0f);
 
-			nextTrackToolStripMenuItem.Enabled = false;
-			previousTrackToolStripMenuItem.Enabled = false;
-
 			button3.Enabled = false;
 		}
 
@@ -94,7 +87,6 @@ namespace NSFPlayer
 				OutputSampleRate = settings.OutputSampleRate;
 				Redecimate();
 				FurryIntensity = settings.FurryIntensity;
-				PreferPal = settings.PreferPal;
 				OutputDC = settings.DC;
 				BreaksCore.Visual2A03Mapping = settings.Visual2A03Mapping;
 			}
@@ -112,62 +104,7 @@ namespace NSFPlayer
 		}
 
 
-		#region "NSF Controls"
-
-		private void InitBoard(string nsf_filename)
-		{
-			AclkToPlay = 0;
-
-			byte[] data = File.ReadAllBytes(nsf_filename);
-			nsf.LoadNSF(data);
-			nsf_loaded = true;
-			this.Text = DefaultTitle + " - " + nsf_filename;
-
-			var settings = FormSettings.LoadSettings();
-			BreaksCore.CreateBoard("NSFPlayer", settings.APU_Revision, "RP2C02G", "Fami");
-
-			FurryIntensity = settings.FurryIntensity;
-			PreferPal = settings.PreferPal;
-
-			// Setup NSF
-
-			bool bank_switching = false;
-			for (int i = 0; i < 8; i++)
-			{
-				if (nsf.GetHead().Bankswitch[i] != 0)
-				{
-					bank_switching = true;
-					break;
-				}
-			}
-
-			BreaksCore.LoadNSFData(nsf.GetData(), nsf.GetData().Length, nsf.GetHead().LoadAddress);
-			BreaksCore.EnableNSFBanking(bank_switching);
-
-			var head = nsf.GetHead();
-			for (int i = 0; i < 8; i++)
-			{
-				BreaksCore.SetDebugInfoByName(
-					BreaksCore.DebugInfoType.DebugInfoType_Board,
-					BreaksCore.BOARD_CATEGORY, "Bank" + i.ToString(), head.Bankswitch[i]);
-			}
-
-			BreaksCore.SetDebugInfoByName(BreaksCore.DebugInfoType.DebugInfoType_APURegs, BreaksCore.APU_REGS_CATEGORY, "Status", 0xf);
-
-			UpdateMemLayout();
-
-			// SRC
-			Redecimate();
-
-			// Autoplay
-			SetSong(nsf.GetHead().StartingSong);
-			SetPaused(!settings.AutoPlay);
-
-			nextTrackToolStripMenuItem.Enabled = true;
-			previousTrackToolStripMenuItem.Enabled = true;
-
-			signalPlot1.EnableSelection(true);
-		}
+		#region "Playback Controls"
 
 		private void DisposeBoard()
 		{
@@ -176,31 +113,16 @@ namespace NSFPlayer
 
 			SetPaused(true);
 			BreaksCore.DestroyBoard();
-			nsf_loaded = false;
 			regdump_loaded = false;
 			auxdump_loaded = false;
-			nsf = new();
 			this.Text = DefaultTitle;
-			UpdateTrackStat();
 			aclkCounter = 0;
 			toolStripStatusLabelACLKCount.Text = aclkCounter.ToString();
-
-			nextTrackToolStripMenuItem.Enabled = false;
-			previousTrackToolStripMenuItem.Enabled = false;
 
 			signalPlot1.PlotSignal(Array.Empty<float>());
 
 			wavesControl1.EnableSelection(false);
 			ResetWaves();
-		}
-
-		private void loadNSFToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (openFileDialogNSF.ShowDialog() == DialogResult.OK)
-			{
-				DisposeBoard();
-				InitBoard(openFileDialogNSF.FileName);
-			}
 		}
 
 		private void playToolStripMenuItem_Click(object sender, EventArgs e)
@@ -216,58 +138,6 @@ namespace NSFPlayer
 		private void stopToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			DisposeBoard();
-		}
-
-		private void previousTrackToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			PrevSong();
-		}
-
-		private void nextTrackToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			NextSong();
-		}
-
-		private void nSFInfoToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			FormNSFInfo info = new FormNSFInfo(nsf_loaded ? nsf.GetHead() : null);
-			info.ShowDialog();
-		}
-
-		private void SetSong(byte n)
-		{
-			current_song = n;
-			InitRequired = true;
-			UpdateTrackStat();
-		}
-
-		private void PrevSong()
-		{
-			if (!nsf_loaded)
-				return;
-			if (current_song <= 1)
-				return;
-			current_song--;
-			SetSong(current_song);
-		}
-
-		private void NextSong()
-		{
-			if (!nsf_loaded)
-				return;
-			byte total = nsf.GetHead().TotalSongs;
-			if (current_song >= total)
-				return;
-			current_song++;
-			SetSong(current_song);
-		}
-
-		private void UpdateTrackStat()
-		{
-			if (nsf_loaded)
-				toolStripStatusLabel4.Text = current_song.ToString() + " / " + nsf.GetHead().TotalSongs.ToString();
-			else
-				toolStripStatusLabel4.Text = "Not loaded";
 		}
 
 		private void SetPaused(bool paused)
@@ -289,33 +159,12 @@ namespace NSFPlayer
 			button3.Enabled = Paused;
 		}
 
-		private void ExecINIT()
-		{
-			if (nsf_loaded)
-			{
-				var head = nsf.GetHead();
-				byte? x = (head.PalNtscBits & 2) == 0 ? (byte)(head.PalNtscBits & 1) : null;
-				nsf.ExecuteUntilRTS(head.InitAddress, current_song, x, 0, false);
-			}
-		}
-
-		private void ExecPLAY()
-		{
-			if (nsf_loaded)
-			{
-				var head = nsf.GetHead();
-				if (nsf.IsCoreReady())
-					return;
-				nsf.ExecuteUntilRTS(head.PlayAddress, null, null, null, false);
-			}
-		}
-
-		#endregion "NSF Controls"
+		#endregion "Playback Controls"
 
 
 		#region "Regdump Controls"
 
-		// This section of code is intended to replace NSF -- reproducing operations on APU registers from their read/write history dump.
+		// Reproducing operations on APU registers from their read/write history dump.
 
 		private void loadAPURegisterDumpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -494,7 +343,7 @@ namespace NSFPlayer
 		/// </summary>
 		private void Redecimate()
 		{
-			if (nsf_loaded || regdump_loaded)
+			if (regdump_loaded)
 			{
 				BreaksCore.GetApuSignalFeatures(out aux_features);
 				DecimateEach = aux_features.SampleRate / OutputSampleRate;
@@ -644,12 +493,10 @@ namespace NSFPlayer
 		/// </summary>
 		private void DoDebugStep()
 		{
-			if (Paused && (nsf_loaded || regdump_loaded))
+			if (Paused && regdump_loaded)
 			{
 				BreaksCore.Step();
 				//TraceCore();
-				if (nsf_loaded)
-					nsf.SyncExec();
 				Button2Click();
 				UpdateWaves();
 
@@ -680,22 +527,6 @@ namespace NSFPlayer
 				text += entry.name + " = " + entry.value.ToString("X2") + "; ";
 			}
 			Console.WriteLine(text);
-		}
-
-		/// <summary>
-		/// Exec INIT.
-		/// </summary>
-		private void executeINITToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ExecINIT();
-		}
-
-		/// <summary>
-		/// Exec PLAY
-		/// </summary>
-		private void executePLAYToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ExecPLAY();
 		}
 
 		private void loadCPUMemoryDumpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -893,7 +724,7 @@ namespace NSFPlayer
 
 		private void toolStripButton2_Click(object sender, EventArgs e)
 		{
-			bool loaded_smth = (nsf_loaded || regdump_loaded || auxdump_loaded);
+			bool loaded_smth = (regdump_loaded || auxdump_loaded);
 
 			if (Paused && loaded_smth)
 			{

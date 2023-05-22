@@ -51,8 +51,6 @@
 #include "FamicomBoard.h"
 #include "BoardFactory.h"
 #include "APUPlayerBoard.h"
-#include "NSFMapper.h"
-#include "NSFPlayerBoard.h"
 #include "PPUPlayerBoard.h"
 
 // To C#

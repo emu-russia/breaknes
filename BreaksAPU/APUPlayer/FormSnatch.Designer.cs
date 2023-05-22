@@ -1,4 +1,4 @@
-﻿namespace NSFPlayer
+﻿namespace APUPlayer
 {
 	partial class FormSnatch
 	{

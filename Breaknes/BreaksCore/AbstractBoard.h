@@ -96,20 +96,6 @@ namespace Breaknes
 		virtual void SampleAudioSignal(float* sample);
 
 		/// <summary>
-		/// Load the whole NSF data image to the NSFMapper device (NSFPlayerBoard only)
-		/// </summary>
-		/// <param name="data">nsf data offset +0x80</param>
-		/// <param name="data_size">nsf data size</param>
-		/// <param name="load_address">nsf load address (from header)</param>
-		virtual void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address);
-
-		/// <summary>
-		/// Enable the bank switching circuit for the NSFMapper device (NSFPlayerBoard only)
-		/// </summary>
-		/// <param name="enable"></param>
-		virtual void EnableNSFBanking(bool enable);
-
-		/// <summary>
 		/// Load APU/PPU registers dump (APUPlayer/PPUPlayer only)
 		/// </summary>
 		/// <param name="data">RegDumpEntry records</param>

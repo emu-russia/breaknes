@@ -1,4 +1,4 @@
-﻿namespace NSFPlayer
+﻿namespace APUPlayer
 {
 	partial class FormMain
 	{
@@ -31,7 +31,6 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
 			menuStrip1 = new MenuStrip();
 			fileToolStripMenuItem = new ToolStripMenuItem();
-			loadNSFToolStripMenuItem = new ToolStripMenuItem();
 			loadAPURegisterDumpToolStripMenuItem = new ToolStripMenuItem();
 			loadAUXDumpToolStripMenuItem = new ToolStripMenuItem();
 			loadCPUMemoryDumpToolStripMenuItem = new ToolStripMenuItem();
@@ -40,21 +39,15 @@
 			settingsToolStripMenuItem = new ToolStripMenuItem();
 			exitToolStripMenuItem = new ToolStripMenuItem();
 			debugToolStripMenuItem = new ToolStripMenuItem();
-			executeINITToolStripMenuItem = new ToolStripMenuItem();
-			executePLAYToolStripMenuItem = new ToolStripMenuItem();
 			loadSaveLogisimAUXDumpForAudacityToolStripMenuItem = new ToolStripMenuItem();
 			controlsToolStripMenuItem = new ToolStripMenuItem();
 			playToolStripMenuItem = new ToolStripMenuItem();
 			pauseToolStripMenuItem = new ToolStripMenuItem();
 			stopToolStripMenuItem = new ToolStripMenuItem();
-			toolStripSeparator2 = new ToolStripSeparator();
-			nextTrackToolStripMenuItem = new ToolStripMenuItem();
-			previousTrackToolStripMenuItem = new ToolStripMenuItem();
 			helpToolStripMenuItem = new ToolStripMenuItem();
 			sendFeedbackToolStripMenuItem = new ToolStripMenuItem();
 			checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
 			toolStripSeparator3 = new ToolStripSeparator();
-			nSFInfoToolStripMenuItem = new ToolStripMenuItem();
 			aboutToolStripMenuItem = new ToolStripMenuItem();
 			statusStrip1 = new StatusStrip();
 			toolStripStatusLabel1 = new ToolStripStatusLabel();
@@ -63,8 +56,6 @@
 			toolStripStatusLabelMsec = new ToolStripStatusLabel();
 			toolStripStatusLabel5 = new ToolStripStatusLabel();
 			toolStripStatusLabelState = new ToolStripStatusLabel();
-			toolStripStatusLabel2 = new ToolStripStatusLabel();
-			toolStripStatusLabel4 = new ToolStripStatusLabel();
 			toolStripStatusLabel6 = new ToolStripStatusLabel();
 			toolStripStatusLabelACLKCount = new ToolStripStatusLabel();
 			toolStripStatusLabel7 = new ToolStripStatusLabel();
@@ -152,17 +143,10 @@
 			// 
 			// fileToolStripMenuItem
 			// 
-			fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { loadNSFToolStripMenuItem, loadAPURegisterDumpToolStripMenuItem, loadAUXDumpToolStripMenuItem, loadCPUMemoryDumpToolStripMenuItem, saveSampleBufferAsWAVToolStripMenuItem, toolStripSeparator1, settingsToolStripMenuItem, exitToolStripMenuItem });
+			fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { loadAPURegisterDumpToolStripMenuItem, loadAUXDumpToolStripMenuItem, loadCPUMemoryDumpToolStripMenuItem, saveSampleBufferAsWAVToolStripMenuItem, toolStripSeparator1, settingsToolStripMenuItem, exitToolStripMenuItem });
 			fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			fileToolStripMenuItem.Size = new Size(37, 20);
 			fileToolStripMenuItem.Text = "File";
-			// 
-			// loadNSFToolStripMenuItem
-			// 
-			loadNSFToolStripMenuItem.Name = "loadNSFToolStripMenuItem";
-			loadNSFToolStripMenuItem.Size = new Size(225, 22);
-			loadNSFToolStripMenuItem.Text = "Load NSF...";
-			loadNSFToolStripMenuItem.Click += loadNSFToolStripMenuItem_Click;
 			// 
 			// loadAPURegisterDumpToolStripMenuItem
 			// 
@@ -213,24 +197,10 @@
 			// 
 			// debugToolStripMenuItem
 			// 
-			debugToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { executeINITToolStripMenuItem, executePLAYToolStripMenuItem, loadSaveLogisimAUXDumpForAudacityToolStripMenuItem });
+			debugToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { loadSaveLogisimAUXDumpForAudacityToolStripMenuItem });
 			debugToolStripMenuItem.Name = "debugToolStripMenuItem";
 			debugToolStripMenuItem.Size = new Size(54, 20);
 			debugToolStripMenuItem.Text = "Debug";
-			// 
-			// executeINITToolStripMenuItem
-			// 
-			executeINITToolStripMenuItem.Name = "executeINITToolStripMenuItem";
-			executeINITToolStripMenuItem.Size = new Size(313, 22);
-			executeINITToolStripMenuItem.Text = "Execute INIT";
-			executeINITToolStripMenuItem.Click += executeINITToolStripMenuItem_Click;
-			// 
-			// executePLAYToolStripMenuItem
-			// 
-			executePLAYToolStripMenuItem.Name = "executePLAYToolStripMenuItem";
-			executePLAYToolStripMenuItem.Size = new Size(313, 22);
-			executePLAYToolStripMenuItem.Text = "Execute PLAY";
-			executePLAYToolStripMenuItem.Click += executePLAYToolStripMenuItem_Click;
 			// 
 			// loadSaveLogisimAUXDumpForAudacityToolStripMenuItem
 			// 
@@ -241,7 +211,7 @@
 			// 
 			// controlsToolStripMenuItem
 			// 
-			controlsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { playToolStripMenuItem, pauseToolStripMenuItem, stopToolStripMenuItem, toolStripSeparator2, nextTrackToolStripMenuItem, previousTrackToolStripMenuItem });
+			controlsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { playToolStripMenuItem, pauseToolStripMenuItem, stopToolStripMenuItem });
 			controlsToolStripMenuItem.Name = "controlsToolStripMenuItem";
 			controlsToolStripMenuItem.Size = new Size(105, 20);
 			controlsToolStripMenuItem.Text = "Worker Controls";
@@ -249,46 +219,27 @@
 			// playToolStripMenuItem
 			// 
 			playToolStripMenuItem.Name = "playToolStripMenuItem";
-			playToolStripMenuItem.Size = new Size(149, 22);
+			playToolStripMenuItem.Size = new Size(105, 22);
 			playToolStripMenuItem.Text = "Run";
 			playToolStripMenuItem.Click += playToolStripMenuItem_Click;
 			// 
 			// pauseToolStripMenuItem
 			// 
 			pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
-			pauseToolStripMenuItem.Size = new Size(149, 22);
+			pauseToolStripMenuItem.Size = new Size(105, 22);
 			pauseToolStripMenuItem.Text = "Pause";
 			pauseToolStripMenuItem.Click += pauseToolStripMenuItem_Click;
 			// 
 			// stopToolStripMenuItem
 			// 
 			stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-			stopToolStripMenuItem.Size = new Size(149, 22);
+			stopToolStripMenuItem.Size = new Size(105, 22);
 			stopToolStripMenuItem.Text = "Stop";
 			stopToolStripMenuItem.Click += stopToolStripMenuItem_Click;
 			// 
-			// toolStripSeparator2
-			// 
-			toolStripSeparator2.Name = "toolStripSeparator2";
-			toolStripSeparator2.Size = new Size(146, 6);
-			// 
-			// nextTrackToolStripMenuItem
-			// 
-			nextTrackToolStripMenuItem.Name = "nextTrackToolStripMenuItem";
-			nextTrackToolStripMenuItem.Size = new Size(149, 22);
-			nextTrackToolStripMenuItem.Text = "Next Track";
-			nextTrackToolStripMenuItem.Click += nextTrackToolStripMenuItem_Click;
-			// 
-			// previousTrackToolStripMenuItem
-			// 
-			previousTrackToolStripMenuItem.Name = "previousTrackToolStripMenuItem";
-			previousTrackToolStripMenuItem.Size = new Size(149, 22);
-			previousTrackToolStripMenuItem.Text = "Previous Track";
-			previousTrackToolStripMenuItem.Click += previousTrackToolStripMenuItem_Click;
-			// 
 			// helpToolStripMenuItem
 			// 
-			helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sendFeedbackToolStripMenuItem, checkForUpdatesToolStripMenuItem, toolStripSeparator3, nSFInfoToolStripMenuItem, aboutToolStripMenuItem });
+			helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sendFeedbackToolStripMenuItem, checkForUpdatesToolStripMenuItem, toolStripSeparator3, aboutToolStripMenuItem });
 			helpToolStripMenuItem.Name = "helpToolStripMenuItem";
 			helpToolStripMenuItem.Size = new Size(44, 20);
 			helpToolStripMenuItem.Text = "Help";
@@ -312,13 +263,6 @@
 			toolStripSeparator3.Name = "toolStripSeparator3";
 			toolStripSeparator3.Size = new Size(167, 6);
 			// 
-			// nSFInfoToolStripMenuItem
-			// 
-			nSFInfoToolStripMenuItem.Name = "nSFInfoToolStripMenuItem";
-			nSFInfoToolStripMenuItem.Size = new Size(170, 22);
-			nSFInfoToolStripMenuItem.Text = "NSF Info";
-			nSFInfoToolStripMenuItem.Click += nSFInfoToolStripMenuItem_Click;
-			// 
 			// aboutToolStripMenuItem
 			// 
 			aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
@@ -328,7 +272,7 @@
 			// 
 			// statusStrip1
 			// 
-			statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabelSamples, toolStripStatusLabel3, toolStripStatusLabelMsec, toolStripStatusLabel5, toolStripStatusLabelState, toolStripStatusLabel2, toolStripStatusLabel4, toolStripStatusLabel6, toolStripStatusLabelACLKCount, toolStripStatusLabel7, toolStripStatusLabelACLK });
+			statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabelSamples, toolStripStatusLabel3, toolStripStatusLabelMsec, toolStripStatusLabel5, toolStripStatusLabelState, toolStripStatusLabel6, toolStripStatusLabelACLKCount, toolStripStatusLabel7, toolStripStatusLabelACLK });
 			statusStrip1.Location = new Point(0, 533);
 			statusStrip1.Name = "statusStrip1";
 			statusStrip1.Size = new Size(1018, 24);
@@ -373,19 +317,6 @@
 			toolStripStatusLabelState.Name = "toolStripStatusLabelState";
 			toolStripStatusLabelState.Size = new Size(49, 19);
 			toolStripStatusLabelState.Text = "Paused";
-			// 
-			// toolStripStatusLabel2
-			// 
-			toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-			toolStripStatusLabel2.Size = new Size(60, 19);
-			toolStripStatusLabel2.Text = "NSF track:";
-			// 
-			// toolStripStatusLabel4
-			// 
-			toolStripStatusLabel4.BorderSides = ToolStripStatusLabelBorderSides.Right;
-			toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-			toolStripStatusLabel4.Size = new Size(70, 19);
-			toolStripStatusLabel4.Text = "Not loaded";
 			// 
 			// toolStripStatusLabel6
 			// 
@@ -893,7 +824,7 @@
 			KeyPreview = true;
 			MainMenuStrip = menuStrip1;
 			Name = "FormMain";
-			Text = "NSF Player";
+			Text = "APU Player";
 			Load += FormMain_Load;
 			KeyDown += FormMain_KeyDown;
 			menuStrip1.ResumeLayout(false);
@@ -939,7 +870,6 @@
 		private ToolStripMenuItem aboutToolStripMenuItem;
 		private StatusStrip statusStrip1;
 		private ToolStripStatusLabel toolStripStatusLabel1;
-		private ToolStripMenuItem loadNSFToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator1;
 		private ToolStripMenuItem exitToolStripMenuItem;
 		private ToolStripMenuItem settingsToolStripMenuItem;
@@ -947,10 +877,6 @@
 		private ToolStripMenuItem playToolStripMenuItem;
 		private ToolStripMenuItem pauseToolStripMenuItem;
 		private ToolStripMenuItem stopToolStripMenuItem;
-		private ToolStripSeparator toolStripSeparator2;
-		private ToolStripMenuItem previousTrackToolStripMenuItem;
-		private ToolStripMenuItem nextTrackToolStripMenuItem;
-		private ToolStripMenuItem nSFInfoToolStripMenuItem;
 		private OpenFileDialog openFileDialogNSF;
 		private ToolStripMenuItem debugToolStripMenuItem;
 		private OpenFileDialog openFileDialogHEX;
@@ -971,8 +897,6 @@
 		private SplitContainer splitContainer1;
 		private SignalPlot signalPlot1;
 		private FurryPlot furryPlot1;
-		private ToolStripStatusLabel toolStripStatusLabel2;
-		private ToolStripStatusLabel toolStripStatusLabel4;
 		private TabPage tabPage2;
 		private SplitContainer splitContainer2;
 		private SplitContainer splitContainer3;
@@ -989,8 +913,6 @@
 		private ToolStripSeparator toolStripSeparator4;
 		private ToolStripButton toolStripButton1;
 		private Button button3;
-		private ToolStripMenuItem executeINITToolStripMenuItem;
-		private ToolStripMenuItem executePLAYToolStripMenuItem;
 		private OpenFileDialog openFileDialogRegDump;
 		private ToolStripMenuItem loadAPURegisterDumpToolStripMenuItem;
 		private ToolStripMenuItem loadAUXDumpToolStripMenuItem;

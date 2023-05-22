@@ -115,22 +115,6 @@ extern "C"
 		}
 	}
 
-	DLL_EXPORT void LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
-	{
-		if (board != nullptr)
-		{
-			board->LoadNSFData(data, data_size, load_address);
-		}
-	}
-
-	DLL_EXPORT void EnableNSFBanking(bool enable)
-	{
-		if (board != nullptr)
-		{
-			board->EnableNSFBanking(enable);
-		}
-	}
-
 	DLL_EXPORT void LoadRegDump(uint8_t* data, size_t data_size)
 	{
 		if (board != nullptr)

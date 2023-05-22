@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSFPlayer", "NSFPlayer.csproj", "{C0BA31B5-492F-414E-9E81-2E3C75C2A173}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APUPlayer", "APUPlayer.csproj", "{C0BA31B5-492F-414E-9E81-2E3C75C2A173}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLogicLib", "..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj", "{11AAD192-46EB-4D5D-B81F-BCEE11D6AF8E}"
 EndProject

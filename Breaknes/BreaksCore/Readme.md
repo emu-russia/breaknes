@@ -50,16 +50,6 @@ A special debug board for the PPUPlayer.
 
 The board contains the PPU, adjacent logic (Address Latch, VRAM) and partial support for the cartridge connector (only the PPU/CHR pins are used).
 
-### NSFPlayer Board
-
-A special debug board for the NSFPlayer.
-
-![NSF_Board](/BreaksAPU/NSFPlayer/NSF_Board.png)
-
-Contains only the APU and a special type of memory, inside which is the NSF bank switcher (processing registers $5FF8-$5FFF).
-
-Additional sound chips are not supported yet, since the primary goal is to check the functionality of the coupling of the APU and the 6502 embedded core.
-
 ### APUPlayer Board
 
 Another debug board for "playing" the APU register dump.

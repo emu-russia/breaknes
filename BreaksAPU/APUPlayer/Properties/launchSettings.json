@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "NSFPlayer": {
+    "APUPlayer": {
       "commandName": "Project",
       "nativeDebugging": true
     }

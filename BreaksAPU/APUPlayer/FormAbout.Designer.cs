@@ -1,4 +1,4 @@
-﻿namespace NSFPlayer
+﻿namespace APUPlayer
 {
 	partial class FormAbout
 	{
@@ -66,7 +66,7 @@
 			label1.Name = "label1";
 			label1.Size = new Size(177, 50);
 			label1.TabIndex = 2;
-			label1.Text = "NSFPlayer, 1.8\r\n© emu-russia, 2023";
+			label1.Text = "APUPlayer, 1.9\r\n© emu-russia, 2023";
 			// 
 			// backgroundWorker1
 			// 

@@ -2,7 +2,7 @@
 using SharpTools;
 using System.Windows.Forms;
 
-namespace NSFPlayer
+namespace APUPlayer
 {
 	public partial class FormMain : Form
 	{
@@ -15,7 +15,7 @@ namespace NSFPlayer
 		/// <param name="e"></param>
 		private void toolStripButton3_Click(object sender, EventArgs e)
 		{
-			if (Paused && (nsf_loaded || regdump_loaded))
+			if (Paused && (regdump_loaded))
 			{
 				if (wavesControl1.IsSelectedSomething())
 				{
