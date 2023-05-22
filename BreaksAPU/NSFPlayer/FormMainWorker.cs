@@ -2,7 +2,7 @@
 
 using SharpTools;
 
-namespace NSFPlayer
+namespace APUPlayer
 {
 	public partial class FormMain : Form
 	{
@@ -13,7 +13,7 @@ namespace NSFPlayer
 		{
 			while (!backgroundWorker1.CancellationPending)
 			{
-				if (Paused || !(nsf_loaded || regdump_loaded || auxdump_loaded) || Dma)
+				if (Paused || !(regdump_loaded || auxdump_loaded) || Dma)
 				{
 					Thread.Sleep(10);
 					continue;
@@ -30,35 +30,9 @@ namespace NSFPlayer
 					BreaksCore.Step();        // = 0.5 XTAL CLK
 				}
 
-				if (nsf_loaded)
-				{
-					if (nsf.IsCoreReady())
-						nsf.SyncExec();
-				}
-
 				// Add audio sample
 
 				FeedSample();
-
-				// NSF Runtime logic
-
-				if (nsf_loaded)
-				{
-					var aclk = BreaksCore.GetACLKCounter();
-					if (aclk >= AclkToPlay)
-					{
-						ExecPLAY();
-						var clk_per_second = aux_features.SampleRate / 2;
-						var aclk_per_second = (clk_per_second / 12) / 2;
-						AclkToPlay = aclk + (aclk_per_second * nsf.GetPeriod(PreferPal)) / 1000000;
-					}
-
-					if (InitRequired)
-					{
-						ExecINIT();
-						InitRequired = false;
-					}
-				}
 
 				// Show statistics that are updated once every 1 second.
 

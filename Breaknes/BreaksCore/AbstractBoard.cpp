@@ -84,14 +84,6 @@ namespace Breaknes
 		}
 	}
 
-	void Board::LoadNSFData(uint8_t* data, size_t data_size, uint16_t load_address)
-	{
-	}
-
-	void Board::EnableNSFBanking(bool enable)
-	{
-	}
-
 	void Board::LoadRegDump(uint8_t* data, size_t data_size)
 	{
 	}

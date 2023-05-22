@@ -27,7 +27,6 @@ namespace APUSim
 		dac = new DAC(this);
 
 		wire.RDY2 = TriState::One;
-		wire.RESCore = TriState::Zero;
 	}
 
 	APU::~APU()
@@ -150,11 +149,6 @@ namespace APUSim
 	void APU::ResetPHICounter()
 	{
 		phi_counter = 0;
-	}
-
-	void APU::ResetCore(bool enable)
-	{
-		wire.RESCore = enable ? TriState::One : TriState::Zero;
 	}
 
 	void APU::GetSignalFeatures(AudioSignalFeatures& features)

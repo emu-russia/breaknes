@@ -33,9 +33,6 @@
     <ClCompile Include="..\..\FamicomBoard.cpp" />
     <ClCompile Include="..\..\NESBoard.cpp" />
     <ClCompile Include="..\..\NESBoardDebug.cpp" />
-    <ClCompile Include="..\..\NSFMapper.cpp" />
-    <ClCompile Include="..\..\NSFPlayerBoard.cpp" />
-    <ClCompile Include="..\..\NSFPlayerBoardDebug.cpp" />
     <ClCompile Include="..\..\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -58,8 +55,6 @@
     <ClInclude Include="..\..\DebugHub.h" />
     <ClInclude Include="..\..\FamicomBoard.h" />
     <ClInclude Include="..\..\NESBoard.h" />
-    <ClInclude Include="..\..\NSFMapper.h" />
-    <ClInclude Include="..\..\NSFPlayerBoard.h" />
     <ClInclude Include="..\..\pch.h" />
     <ClInclude Include="..\..\PPUPlayerBoard.h" />
     <ClInclude Include="..\..\SignalDefs.h" />

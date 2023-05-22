@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace NSFPlayer
+namespace APUPlayer
 {
 	public partial class FormSettings : Form
 	{
@@ -63,7 +63,6 @@ namespace NSFPlayer
 			settings.OutputSampleRate = 48000;
 			settings.AutoPlay = true;
 			settings.FurryIntensity = 500.0f;
-			settings.PreferPal = false;
 			settings.AuxSampleRate = 3579544;       // 0.5 PHI for 2A03
 			settings.DC = 0.0f;
 			settings.Visual2A03Mapping = false;
@@ -117,11 +116,6 @@ namespace NSFPlayer
 			[Category("Host Features")]
 			[Description("Amplification for FFT")]
 			public float FurryIntensity { get; set; }
-
-			[XmlElement]
-			[Category("Host Features")]
-			[Description("If the NSF header specifies that you can use hybrid PAL/NTSC - specify explicitly that we want PAL.")]
-			public bool PreferPal { get; set; }
 			
 			[XmlElement]
 			[Category("Host Features")]

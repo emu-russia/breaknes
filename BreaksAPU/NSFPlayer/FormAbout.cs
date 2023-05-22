@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Drawing2D;
 
-namespace NSFPlayer
+namespace APUPlayer
 {
 	public partial class FormAbout : Form
 	{

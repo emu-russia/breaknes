@@ -108,7 +108,6 @@ namespace APUSim
 		OUT_2,
 		M2,
 		RnW,
-		SYNC,			// In a real APU the SYNC core terminal is not connected anywhere. We put it on the outside
 		Max,
 	};
 
@@ -142,7 +141,6 @@ namespace APUSim
 			BaseLogic::TriState nACLK2;
 			BaseLogic::TriState ACLK1;
 			BaseLogic::TriState RES;
-			BaseLogic::TriState RESCore;		// Artificial signal (not in real chip). Used to reset the core only (NSFPlayer)
 			BaseLogic::TriState n_M2;
 			BaseLogic::TriState n_NMI;
 			BaseLogic::TriState n_IRQ;
@@ -292,8 +290,6 @@ namespace APUSim
 		size_t GetPHICounter();
 
 		void ResetPHICounter();
-
-		void ResetCore(bool enable);
 
 		/// <summary>
 		/// Get the audio signal properties of the current APU revision.

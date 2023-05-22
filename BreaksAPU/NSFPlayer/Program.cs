@@ -1,4 +1,4 @@
-namespace NSFPlayer
+namespace APUPlayer
 {
 	internal static class Program
 	{

@@ -143,10 +143,6 @@ namespace Breaknes
 		{
 			inst = new NESBoard(apu_rev, ppu_rev, p1_type);
 		}
-		else if (board_name == "NSFPlayer")
-		{
-			inst = new NSFPlayerBoard(apu_rev, ppu_rev, p1_type);
-		}
 		else if (board_name == "APUPlayer")
 		{
 			inst = new APUPlayerBoard(apu_rev, ppu_rev, p1_type);
