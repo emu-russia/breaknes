@@ -127,20 +127,20 @@ namespace APUSim
 
 		TriState C13 = lfsr[13].get_sout();
 		TriState C14 = lfsr[14].get_sout();
-		sin = NOR(AND(C13, C14), NOR3(C13, C14, pla[5]));
+		shift_in = NOR(AND(C13, C14), NOR3(C13, C14, pla[5]));
 
 		// SR15
 
 		for (size_t n = 0; n < 15; n++)
 		{
-			lfsr[n].sim(ACLK1, F1, F2, sin);
-			sin = lfsr[n].get_sout();
+			lfsr[n].sim(ACLK1, F1, F2, shift_in);
+			shift_in = lfsr[n].get_sout();
 		}
 	}
 
-	void SoftCLK_SRBit::sim(TriState ACLK1, TriState F1, TriState F2, TriState sin)
+	void SoftCLK_SRBit::sim(TriState ACLK1, TriState F1, TriState F2, TriState shift_in)
 	{
-		in_latch.set(MUX(F2, MUX(F1, TriState::Z, TriState::One), sin), TriState::One);
+		in_latch.set(MUX(F2, MUX(F1, TriState::Z, TriState::One), shift_in), TriState::One);
 		out_latch.set(in_latch.nget(), ACLK1);
 	}
 
