@@ -185,6 +185,17 @@ namespace PPUSim
 
 		// All code below is derived from CTRL0/CTRL1 FFs and in the simulator is stored on wires with virtually infinite capacity (ppu->wire)
 
+		for (size_t n = 0; n < 8; n++)
+		{
+			if (n >= 2)
+			{
+				// Bits 0 and 1 in the PAR Gen.
+
+				PPU_CTRL0[n].set(NOR(RC, NOT(MUX(W0_Enable, PPU_CTRL0[n].get(), ppu->GetDBBit(n)))));
+			}
+			PPU_CTRL1[n].set(NOR(RC, NOT(MUX(W1_Enable, PPU_CTRL1[n].get(), ppu->GetDBBit(n)))));
+		}
+
 		// CTRL0
 
 		i132_latch.set(PPU_CTRL0[2].get(), NOT(W0_Enable));
