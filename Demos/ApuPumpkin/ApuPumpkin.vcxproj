@@ -160,6 +160,9 @@
     <ProjectReference Include="..\..\BreaksAPU\APUSim\Scripts\VS2022\APUSim.vcxproj">
       <Project>{50e93d78-36dc-46c3-82ea-cab373e18729}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\BreaksAPU\FastAPU\FastAPU.vcxproj">
+      <Project>{2c9982f5-51f1-4bda-b331-c88690cc3bee}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
     </ProjectReference>

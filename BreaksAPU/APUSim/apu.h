@@ -49,32 +49,7 @@ namespace APUSim
 	};
 
 #pragma pack(pop)
-}
 
-// An external class that has access to all internals. Use for unit testing.
-
-namespace APUSimUnitTest
-{
-	class UnitTest;
-}
-
-#include "common.h"
-#include "debug.h"
-#include "clkgen.h"
-#include "core.h"
-#include "dma.h"
-#include "dpcm.h"
-#include "length.h"
-#include "env.h"
-#include "noise.h"
-#include "square.h"
-#include "triangle.h"
-#include "regs.h"
-#include "pads.h"
-#include "dac.h"
-
-namespace APUSim
-{
 	/// <summary>
 	/// All known revisions of official APUs and compatible clones.
 	/// </summary>
@@ -110,7 +85,32 @@ namespace APUSim
 		RnW,
 		Max,
 	};
+}
 
+// An external class that has access to all internals. Use for unit testing.
+
+namespace APUSimUnitTest
+{
+	class UnitTest;
+}
+
+#include "common.h"
+#include "debug.h"
+#include "clkgen.h"
+#include "core.h"
+#include "dma.h"
+#include "dpcm.h"
+#include "length.h"
+#include "env.h"
+#include "noise.h"
+#include "square.h"
+#include "triangle.h"
+#include "regs.h"
+#include "pads.h"
+#include "dac.h"
+
+namespace APUSim
+{
 	class APU
 	{
 		friend APUSimUnitTest::UnitTest;
@@ -228,10 +228,10 @@ namespace APUSim
 		uint8_t DB = 0;
 		bool DB_Dirty = false;
 
-		uint16_t DMC_Addr;
-		uint16_t SPR_Addr;
-		uint16_t CPU_Addr;			// Core to mux & regs predecoder
-		uint16_t Ax;			// Mux to pads & regs decoder
+		uint16_t DMC_Addr{};
+		uint16_t SPR_Addr{};
+		uint16_t CPU_Addr{};		// Core to mux & regs predecoder
+		uint16_t Ax{};				// Mux to pads & regs decoder
 
 		// DAC Inputs
 
@@ -260,15 +260,45 @@ namespace APUSim
 		APU(M6502Core::M6502 *core, Revision rev);
 		~APU();
 
+		/// <summary>
+		/// Simulate one half cycle
+		/// </summary>
 		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t *data, uint16_t* addr, AudioOutSignal& AUX);
 
+		/// <summary>
+		/// Get the values of internal connections for debugging.
+		/// </summary>
+		/// <param name="wires"></param>
 		void GetDebugInfo_Wires(APU_Interconnects& wires);
+
+		/// <summary>
+		/// Get values of APU registers and counters
+		/// </summary>
+		/// <param name="regs"></param>
 		void GetDebugInfo_Regs(APU_Registers& regs);
 
+		/// <summary>
+		/// Get the APU internal signal value
+		/// </summary>
 		uint8_t GetDebugInfo_Wire(int ofs);
+		
+		/// <summary>
+		/// Set the internal APU signal value
+		/// </summary>
 		void SetDebugInfo_Wire(int ofs, uint8_t val);
 
+		/// <summary>
+		/// Get APU register/counter value
+		/// </summary>
+		/// <param name="ofs"></param>
+		/// <returns></returns>
 		uint32_t GetDebugInfo_Reg(int ofs);
+		
+		/// <summary>
+		/// Set APU register/counter value
+		/// </summary>
+		/// <param name="ofs"></param>
+		/// <param name="val"></param>
 		void SetDebugInfo_Reg(int ofs, uint32_t val);
 
 		/// <summary>
@@ -283,12 +313,26 @@ namespace APUSim
 		/// <param name="enable"></param>
 		void SetNormalizedOutput(bool enable);
 
+		/// <summary>
+		/// Get the value of the ACLK cycle counter (PHI/2)
+		/// </summary>
+		/// <returns></returns>
 		size_t GetACLKCounter();
 
+		/// <summary>
+		/// Reset the ACLK cycle counter
+		/// </summary>
 		void ResetACLKCounter();
 
+		/// <summary>
+		/// Get the value of the 6502 core cycle counter.
+		/// </summary>
+		/// <returns></returns>
 		size_t GetPHICounter();
 
+		/// <summary>
+		/// Reset the 6502 core cycle counter.
+		/// </summary>
 		void ResetPHICounter();
 
 		/// <summary>
