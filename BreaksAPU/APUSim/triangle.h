@@ -9,8 +9,6 @@ namespace APUSim
 		friend APUSimUnitTest::UnitTest;
 		APU* apu = nullptr;
 
-		bool fast_tri = true;
-
 		BaseLogic::TriState TCO = BaseLogic::TriState::X;
 		BaseLogic::TriState n_FOUT = BaseLogic::TriState::X;
 		BaseLogic::TriState LOAD = BaseLogic::TriState::X;
@@ -33,17 +31,9 @@ namespace APUSim
 		void sim_Control();
 		void sim_LinearReg();
 		void sim_LinearCounter();
-		void sim_LinearCounterFast();
 		void sim_FreqReg();
 		void sim_FreqCounter();
-		void sim_FreqCounterFast();
 		void sim_Output();
-
-		// Faster
-
-		uint8_t fast_lin_cnt = 0;
-		uint16_t fast_freq_cnt = 0;
-		uint8_t fast_out_cnt = 0;
 
 	public:
 		TriangleChan(APU* parent);

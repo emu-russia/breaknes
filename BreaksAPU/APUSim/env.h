@@ -10,8 +10,6 @@ namespace APUSim
 		friend APUSimUnitTest::UnitTest;
 		APU* apu = nullptr;
 
-		bool fast_env = true;
-
 		RegisterBit envdis_reg{};
 		RegisterBit lc_reg{};
 		RegisterBit vol_reg[4]{};
@@ -22,11 +20,6 @@ namespace APUSim
 		BaseLogic::DLatch reload_latch{};
 		BaseLogic::DLatch rco_latch{};
 		BaseLogic::DLatch eco_latch{};
-
-		// Faster
-
-		uint8_t fast_decay_cnt = 0;
-		uint8_t fast_env_cnt = 0;
 
 	public:
 		EnvelopeUnit(APU* parent);

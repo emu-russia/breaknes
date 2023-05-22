@@ -9,8 +9,6 @@ namespace APUSim
 		friend APUSimUnitTest::UnitTest;
 		APU* apu = nullptr;
 
-		bool fast_dma = true;
-
 		static const uint16_t PPU_Addr = 0x2004;
 
 		CounterBit spr_lo[8]{};
@@ -34,8 +32,6 @@ namespace APUSim
 
 		void sim_DMA_Address();
 		void sim_DMA_Control();
-
-		uint8_t fast_spr_lo = 0;
 
 	public:
 		DMA(APU* parent);

@@ -9,7 +9,6 @@ namespace APUSim
 	LengthCounter::LengthCounter(APU* parent)
 	{
 		apu = parent;
-		fast_lc = apu->fast;
 	}
 
 	LengthCounter::~LengthCounter()
@@ -18,15 +17,9 @@ namespace APUSim
 
 	void LengthCounter::sim(size_t bit_ena, TriState WriteEn, TriState LC_CarryIn, TriState& LC_NoCount)
 	{
-		if (fast_lc) {
-			sim_DecoderFast();
-			sim_CounterFast(LC_CarryIn, WriteEn);
-		}
-		else {
-			sim_Decoder1();
-			sim_Decoder2();
-			sim_Counter(LC_CarryIn, WriteEn);
-		}
+		sim_Decoder1();
+		sim_Decoder2();
+		sim_Counter(LC_CarryIn, WriteEn);
 		sim_Control(bit_ena, WriteEn, LC_NoCount);
 	}
 
@@ -166,35 +159,10 @@ namespace APUSim
 		carry_out = carry;
 	}
 
-	void LengthCounter::sim_DecoderFast()
-	{
-		packed_LC = decoder_out[apu->DB >> 3];
-	}
-
-	void LengthCounter::sim_CounterFast(TriState LC_CarryIn, TriState WriteEn)
-	{
-		TriState RES = apu->wire.RES;
-
-		if (WriteEn == TriState::One) {
-			fast_down_cnt = packed_LC;
-		}
-		if (STEP == TriState::One && LC_CarryIn == TriState::One) {
-			fast_down_cnt--;
-		}
-		if (RES == TriState::One) {
-			fast_down_cnt = 0;
-		}
-		carry_out = fast_down_cnt == 0 ? TriState::One : TriState::Zero;
-	}
-
 #pragma region "Debug"
 
 	uint8_t LengthCounter::Debug_GetCnt()
 	{
-		if (fast_lc) {
-			return fast_down_cnt;
-		}
-
 		TriState cnt_out[8]{};
 
 		for (size_t n = 0; n < 8; n++)
@@ -207,11 +175,6 @@ namespace APUSim
 
 	void LengthCounter::Debug_SetCnt(uint8_t value)
 	{
-		if (fast_lc) {
-			fast_down_cnt = value;
-			return;
-		}
-
 		TriState cnt_out[8]{};
 		Unpack(value, cnt_out);
 

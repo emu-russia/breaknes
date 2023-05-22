@@ -633,7 +633,7 @@ namespace PPUSim
 
 		// Using a temporary PPU of the same revision, to simulate the video generator
 
-		PPU vppu(ppu->rev, false, true);
+		PPU vppu(ppu->rev, true);
 
 		size_t warmup_halfcycles = 6;
 		size_t num_phases = 12;
@@ -955,7 +955,7 @@ namespace PPUSim
 	{
 		// Using a temporary PPU of the same revision, to simulate the video generator
 
-		PPU vppu(ppu->rev, false, true);
+		PPU vppu(ppu->rev, true);
 
 		// Latch all important signals
 

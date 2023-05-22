@@ -46,8 +46,6 @@ namespace PPUSim
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
-		bool fast_par = true;
-
 		BaseLogic::DLatch w62_latch;
 		BaseLogic::FF W62_FF1;
 		BaseLogic::FF W62_FF2;
@@ -105,16 +103,6 @@ namespace PPUSim
 		void sim_NTCounters();
 		void sim_TVCounter();
 		void sim_THCounter();
-
-		// Faster counters
-
-		void sim_AllCountersFast();
-
-		uint8_t fast_FVCounter = 0;
-		uint8_t fast_NTHCounter = 0;
-		uint8_t fast_NTVCounter = 0;
-		uint8_t fast_TVCounter = 0;
-		uint8_t fast_THCounter = 0;
 
 	public:
 		PAR(PPU* parent);

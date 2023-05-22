@@ -18,17 +18,7 @@ namespace PPUSim
 	void FSM::sim(TriState* HPLA, TriState* VPLA)
 	{
 		sim_DelayedH();
-
-		// Quick checks for the most computationally complex part of the FSM, the rest is trivial
-
-		bool any_ctrl_changes = (Prev_n_OBCLIP != ppu->wire.n_OBCLIP) || (Prev_n_BGCLIP != ppu->wire.n_BGCLIP) || (Prev_BLACK != ppu->wire.BLACK);
-
-		if (!ppu->fast || 
-			(ppu->wire.PCLK == TriState::One || (prev_hpla != HPLA || prev_vpla != VPLA || any_ctrl_changes)))
-		{
-			sim_HPosLogic(HPLA, VPLA);
-		}
-
+		sim_HPosLogic(HPLA, VPLA);
 		sim_VPosLogic(VPLA);
 		sim_VBlankInt();
 		sim_EvenOdd(HPLA, VPLA);

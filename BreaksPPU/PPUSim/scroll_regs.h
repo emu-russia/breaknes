@@ -27,9 +27,6 @@ namespace PPUSim
 		SCC_FF TileV[5]{};
 		SCC_FF TileH[5]{};
 
-		bool not_derived = true;
-		uint8_t Prev_DB = 0xff;
-
 	public:
 		ScrollRegs(PPU* parent);
 		~ScrollRegs();

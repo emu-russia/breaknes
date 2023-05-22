@@ -38,9 +38,6 @@ namespace PPUSim
 		{
 			bit[n] = new HVCounterBit(parent);
 		}
-
-		fast_bits_mask = (1ULL << bitCount) - 1;
-		fast_hv = ppu->fast;
 	}
 
 	HVCounter::~HVCounter()
@@ -53,31 +50,9 @@ namespace PPUSim
 
 	void HVCounter::sim(TriState Carry, TriState CLR)
 	{
-		if (fast_hv) {
-			TriState n_PCLK = ppu->wire.n_PCLK;
-			TriState RES = ppu->wire.RES;
-
-			if (n_PCLK) {
-				// Keep
-			}
-			else {
-				// Count
-				if (Carry == TriState::One) {
-					fast_bits = (fast_bits + 1) & fast_bits_mask;
-				}
-				if (CLR == TriState::One) {
-					fast_bits = 0;
-				}
-			}
-			if (RES == TriState::One) {
-				fast_bits = 0;
-			}
-		}
-		else {
-			for (size_t n = 0; n < bitCount; n++)
-			{
-				Carry = bit[n]->sim(Carry, CLR);
-			}
+		for (size_t n = 0; n < bitCount; n++)
+		{
+			Carry = bit[n]->sim(Carry, CLR);
 		}
 	}
 
@@ -85,17 +60,12 @@ namespace PPUSim
 	{
 		size_t val = 0;
 
-		if (fast_hv) {
-			val = fast_bits;
-		}
-		else {
-			for (size_t n = 0; n < bitCount; n++)
+		for (size_t n = 0; n < bitCount; n++)
+		{
+			auto bitVal = bit[n]->getOut();
+			if (bitVal == TriState::One)
 			{
-				auto bitVal = bit[n]->getOut();
-				if (bitVal == TriState::One)
-				{
-					val |= (1ULL << n);
-				}
+				val |= (1ULL << n);
 			}
 		}
 
@@ -104,25 +74,15 @@ namespace PPUSim
 
 	void HVCounter::set(size_t val)
 	{
-		if (fast_hv) {
-			fast_bits = val & fast_bits_mask;
-		}
-		else {
-			for (size_t n = 0; n < bitCount; n++)
-			{
-				auto bitVal = (val >> n) & 1 ? TriState::One : TriState::Zero;
-				bit[n]->set(bitVal);
-			}
+		for (size_t n = 0; n < bitCount; n++)
+		{
+			auto bitVal = (val >> n) & 1 ? TriState::One : TriState::Zero;
+			bit[n]->set(bitVal);
 		}
 	}
 
 	TriState HVCounter::getBit(size_t n)
 	{
-		if (fast_hv) {
-			return FromByte((fast_bits >> n) & 1);
-		}
-		else {
-			return bit[n]->getOut();
-		}
+		return bit[n]->getOut();
 	}
 }

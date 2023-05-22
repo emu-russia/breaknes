@@ -395,10 +395,8 @@ namespace PPUSim
 
 		BaseLogic::DLatch extout_latch[4]{};
 
-		bool fast = false;
-
 	public:
-		PPU(Revision rev, bool FastMode = false, bool VideoGen = false);
+		PPU(Revision rev, bool VideoGen = false);
 		~PPU();
 
 		/// <summary>

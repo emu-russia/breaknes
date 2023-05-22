@@ -9,7 +9,6 @@ namespace PPUSim
 	OAMEval::OAMEval(PPU* parent)
 	{
 		ppu = parent;
-		fast_eval = ppu->fast;
 	}
 
 	OAMEval::~OAMEval()
@@ -64,22 +63,12 @@ namespace PPUSim
 			OB_Bits[n] = OB_latch[n].get();
 		}
 
-		if (fast_eval)
+		for (size_t n = 0; n < 4; n++)
 		{
-			uint8_t V = (uint8_t)ppu->v->get();
-			uint8_t OB = Pack(OB_Bits);
-			uint8_t OV = (int8_t)V - (int8_t)OB;
-			Unpack(OV, ppu->wire.OV);
-		}
-		else
-		{
-			for (size_t n = 0; n < 4; n++)
-			{
-				carry_in = cmpr[n].sim(
-					OB_Bits[2 * n], ppu->v->getBit(2 * n),
-					OB_Bits[2 * n + 1], ppu->v->getBit(2 * n + 1),
-					carry_in, ppu->wire.OV[2 * n], ppu->wire.OV[2 * n + 1]);
-			}
+			carry_in = cmpr[n].sim(
+				OB_Bits[2 * n], ppu->v->getBit(2 * n),
+				OB_Bits[2 * n + 1], ppu->v->getBit(2 * n + 1),
+				carry_in, ppu->wire.OV[2 * n], ppu->wire.OV[2 * n + 1]);
 		}
 
 		ovz_latch.set(ppu->oam->get_OB(7), PCLK);
@@ -259,11 +248,6 @@ namespace PPUSim
 
 	void OAMEval::sim_TempCounter()
 	{
-		if (fast_eval) {
-			sim_TempCounterFast();
-			return;
-		}
-
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState carry = TriState::One;
 		TriState ORES = this->ORES;
@@ -277,21 +261,6 @@ namespace PPUSim
 		}
 
 		TMV = carry;			// carry_out from the most significant bit
-	}
-
-	void OAMEval::sim_TempCounterFast()
-	{
-		if (OSTEP == TriState::One) {
-			fast_temp_counter = (fast_temp_counter + 1) & 0x1f;
-		}
-		if (ORES == TriState::One) {
-			fast_temp_counter = 0;
-		}
-		for (size_t n = 0; n < 5; n++)
-		{
-			OAM_Temp[n] = FromByte((fast_temp_counter >> n) & 1);
-		}
-		TMV = fast_temp_counter == 31 ? TriState::One : TriState::Zero;
 	}
 
 	void OAMEval::sim_TempCounterControlAfterCounter()
