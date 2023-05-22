@@ -1,4 +1,4 @@
-// Sprite DMA
+// OAM DMA
 
 #pragma once
 
