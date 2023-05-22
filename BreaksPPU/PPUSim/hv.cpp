@@ -40,7 +40,6 @@ namespace PPUSim
 		}
 
 		fast_bits_mask = (1ULL << bitCount) - 1;
-		fast_hv = ppu->fast;
 	}
 
 	HVCounter::~HVCounter()

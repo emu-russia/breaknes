@@ -56,11 +56,8 @@ namespace PPUSim
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
-		bool fast_eval = true;
-
 		OAMCounterBit MainCounter[8]{};
 		OAMCounterBit TempCounter[5]{};
-		uint8_t fast_temp_counter = 0;
 		OAMCmprBit cmpr[4]{};
 
 		BaseLogic::TriState OAM_x[8]{};
@@ -121,7 +118,6 @@ namespace PPUSim
 		void sim_MainCounter();
 		void sim_TempCounterControlBeforeCounter();
 		void sim_TempCounter();
-		void sim_TempCounterFast();
 		void sim_TempCounterControlAfterCounter();
 		void sim_SpriteOVF();
 		void sim_OAMAddress();

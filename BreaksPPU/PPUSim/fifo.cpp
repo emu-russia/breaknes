@@ -14,8 +14,6 @@ namespace PPUSim
 		{
 			lane[n] = new FIFOLane(ppu);
 		}
-
-		fast_fifo = ppu->fast;
 	}
 
 	FIFO::~FIFO()
@@ -39,9 +37,6 @@ namespace PPUSim
 
 		sim_HInv();
 		BitRev(n_TX);
-		if (fast_fifo) {
-			packed_nTX = Pack(n_TX);
-		}
 		sim_Lanes();
 		sim_Prio();
 	}
@@ -248,7 +243,6 @@ namespace PPUSim
 	FIFOLane::FIFOLane(PPU* parent)
 	{
 		ppu = parent;
-		fast_fifo = ppu->fast;
 	}
 
 	FIFOLane::~FIFOLane()
@@ -298,10 +292,6 @@ namespace PPUSim
 	/// <returns></returns>
 	TriState FIFOLane::sim_Counter()
 	{
-		if (fast_fifo) {
-			return sim_CounterFast();
-		}
-
 		TriState carry = TriState::One;
 		TriState val_out[5]{};
 		TriState unused{};
@@ -346,11 +336,6 @@ namespace PPUSim
 
 	void FIFOLane::sim_PairedSR(TriState n_TX[8], uint8_t packed_nTX)
 	{
-		if (fast_fifo) {
-			sim_PairedSRFast(packed_nTX);
-			return;
-		}
-
 		TriState n_PCLK = ppu->wire.n_PCLK;
 		TriState shift_out[2]{};
 
@@ -388,19 +373,12 @@ namespace PPUSim
 
 	size_t FIFOLane::get_Counter()
 	{
-		if (fast_fifo)
+		size_t val = 0;
+		for (size_t n = 0; n < 8; n++)
 		{
-			return fast_down_cnt;
+			val |= ((down_cnt[n].get() == TriState::One) ? 1ULL : 0) << n;
 		}
-		else
-		{
-			size_t val = 0;
-			for (size_t n = 0; n < 8; n++)
-			{
-				val |= ((down_cnt[n].get() == TriState::One) ? 1ULL : 0) << n;
-			}
-			return val;
-		}
+		return val;
 	}
 
 	TriState FIFO_CounterBit::sim(
@@ -433,49 +411,5 @@ namespace PPUSim
 	}
 
 #pragma endregion "FIFO Lane"
-
-#pragma region "Fast FIFO"
-
-	// Faster versions of the counter and the paired shift register
-
-	TriState FIFOLane::sim_CounterFast()
-	{
-		if (LOAD == TriState::One)
-		{
-			fast_down_cnt = Pack(ppu->wire.OB);
-		}
-		else if (STEP == TriState::One)
-		{
-			fast_down_cnt--;
-		}
-		return fast_down_cnt == 0 ? TriState::One : TriState::Zero;
-	}
-
-	void FIFOLane::sim_PairedSRFast(uint8_t nTX)
-	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-
-		if (n_PCLK == TriState::One) {
-			paired_sr_out[0] = paired_sr_in[0];
-			paired_sr_out[1] = paired_sr_in[1];
-		}
-
-		if (T_SR0 == TriState::One) {
-			paired_sr_in[0] = nTX;
-		}
-		if (T_SR1 == TriState::One) {
-			paired_sr_in[1] = nTX;
-		}
-
-		if (SR_EN == TriState::One) {
-			paired_sr_in[0] = 0x80 | (paired_sr_out[0] >> 1);
-			paired_sr_in[1] = 0x80 | (paired_sr_out[1] >> 1);
-		}
-
-		nZ_COL0 = FromByte(paired_sr_out[0] & 1);
-		nZ_COL1 = FromByte(paired_sr_out[1] & 1);
-	}
-
-#pragma endregion "Fast FIFO"
 
 }

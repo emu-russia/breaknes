@@ -53,11 +53,6 @@ namespace PPUSim
 
 		void sim_PalBLACK();
 
-		BaseLogic::TriState Prev_RC = BaseLogic::TriState::X;
-		BaseLogic::TriState Prev_W0_Enable = BaseLogic::TriState::X;
-		BaseLogic::TriState Prev_W1_Enable = BaseLogic::TriState::X;
-		uint8_t Prev_DB = 0xff;
-
 	public:
 		ControlRegs(PPU* parent);
 		~ControlRegs();
