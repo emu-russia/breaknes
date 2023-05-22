@@ -2,8 +2,6 @@
 
 namespace APUSim
 {
-	class APU;
-
 #pragma pack(push,1)
 
 	/// <summary>
@@ -87,15 +85,11 @@ namespace APUSim
 	};
 }
 
-// An external class that has access to all internals. Use for unit testing.
-
-namespace APUSimUnitTest
+namespace FastAPU
 {
-	class UnitTest;
+	class FastAPU;
 }
 
-#include "common.h"
-#include "debug.h"
 #include "clkgen.h"
 #include "core.h"
 #include "dma.h"
@@ -109,11 +103,10 @@ namespace APUSimUnitTest
 #include "pads.h"
 #include "dac.h"
 
-namespace APUSim
+namespace FastAPU
 {
-	class APU
+	class FastAPU
 	{
-		friend APUSimUnitTest::UnitTest;
 		friend CoreBinding;
 		friend CLKGen;
 		friend RegsDecoder;
@@ -132,81 +125,87 @@ namespace APUSim
 		/// </summary>
 		struct InternalWires
 		{
-			BaseLogic::TriState n_CLK;
-			BaseLogic::TriState PHI0;
-			BaseLogic::TriState PHI1;
-			BaseLogic::TriState PHI2;
-			BaseLogic::TriState RDY;			// To core
-			BaseLogic::TriState RDY2;			// Default 1 (2A03)
-			BaseLogic::TriState nACLK2;
-			BaseLogic::TriState ACLK1;
-			BaseLogic::TriState RES;
-			BaseLogic::TriState n_M2;
-			BaseLogic::TriState n_NMI;
-			BaseLogic::TriState n_IRQ;
-			BaseLogic::TriState INT;
-			BaseLogic::TriState n_LFO1;
-			BaseLogic::TriState n_LFO2;
-			BaseLogic::TriState RnW;			// From core
-			BaseLogic::TriState SPR_CPU;
-			BaseLogic::TriState SPR_PPU;
-			BaseLogic::TriState RW;				// To pad
-			BaseLogic::TriState RD;				// To DataBus pads
-			BaseLogic::TriState WR;				// To DataBus pads
-			BaseLogic::TriState SYNC;			// From core
-			
-			BaseLogic::TriState n_DMC_AB;
-			BaseLogic::TriState RUNDMC;
-			BaseLogic::TriState DMCINT;
-			BaseLogic::TriState DMCRDY;
-			
-			// RegOps
-			BaseLogic::TriState n_R4015;
-			BaseLogic::TriState n_R4016;
-			BaseLogic::TriState n_R4017;
-			BaseLogic::TriState n_R4018;
-			BaseLogic::TriState n_R4019;
-			BaseLogic::TriState n_R401A;
-			BaseLogic::TriState W4000;
-			BaseLogic::TriState W4001;
-			BaseLogic::TriState W4002;
-			BaseLogic::TriState W4003;
-			BaseLogic::TriState W4004;
-			BaseLogic::TriState W4005;
-			BaseLogic::TriState W4006;
-			BaseLogic::TriState W4007;
-			BaseLogic::TriState W4008;
-			BaseLogic::TriState W400A;
-			BaseLogic::TriState W400B;
-			BaseLogic::TriState W400C;
-			BaseLogic::TriState W400E;
-			BaseLogic::TriState W400F;
-			BaseLogic::TriState W4010;
-			BaseLogic::TriState W4011;
-			BaseLogic::TriState W4012;
-			BaseLogic::TriState W4013;
-			BaseLogic::TriState W4014;
-			BaseLogic::TriState W4015;
-			BaseLogic::TriState W4016;
-			BaseLogic::TriState W4017;
-			BaseLogic::TriState W401A;
+			int n_CLK;
+			int PHI0;
+			int PHI1;
+			int PHI2;
+			int RDY;			// To core
+			int RDY2;			// Default 1 (2A03)
+			int nACLK2;
+			int ACLK1;
+			int RES;
+			int n_M2;
+			int n_NMI;
+			int n_IRQ;
+			int INT;
+			int n_LFO1;
+			int n_LFO2;
+			int RnW;			// From core
+			int SPR_CPU;
+			int SPR_PPU;
+			int RW;				// To pad
+			int RD;				// To DataBus pads
+			int WR;				// To DataBus pads
+			int SYNC;			// From core
 
-			BaseLogic::TriState SQA_LC;
-			BaseLogic::TriState SQB_LC;
-			BaseLogic::TriState TRI_LC;
-			BaseLogic::TriState RND_LC;
-			BaseLogic::TriState NOSQA;
-			BaseLogic::TriState NOSQB;
-			BaseLogic::TriState NOTRI;
-			BaseLogic::TriState NORND;
+			int n_DMC_AB;
+			int RUNDMC;
+			int DMCINT;
+			int DMCRDY;
+
+			int SQA_LC;
+			int SQB_LC;
+			int TRI_LC;
+			int RND_LC;
+			int NOSQA;
+			int NOSQB;
+			int NOTRI;
+			int NORND;
 
 			// Auxiliary signals associated with the Test mode, which seems to be present only on 2A03.
-			BaseLogic::TriState DBG;			// from pad
-			BaseLogic::TriState n_DBGRD;		// from regs decoder
-			BaseLogic::TriState LOCK;
+			int DBG;			// from pad
+			int n_DBGRD;		// from regs decoder
+			int LOCK;
 		} wire{};
 
-		Revision rev = Revision::Unknown;
+		union
+		{
+			struct
+			{
+				unsigned n_R4015 : 1;
+				unsigned n_R4016 : 1;
+				unsigned n_R4017 : 1;
+				unsigned n_R4018 : 1;
+				unsigned n_R4019 : 1;
+				unsigned n_R401A : 1;
+				unsigned W4000 : 1;
+				unsigned W4001 : 1;
+				unsigned W4002 : 1;
+				unsigned W4003 : 1;
+				unsigned W4004 : 1;
+				unsigned W4005 : 1;
+				unsigned W4006 : 1;
+				unsigned W4007 : 1;
+				unsigned W4008 : 1;
+				unsigned W400A : 1;
+				unsigned W400B : 1;
+				unsigned W400C : 1;
+				unsigned W400E : 1;
+				unsigned W400F : 1;
+				unsigned W4010 : 1;
+				unsigned W4011 : 1;
+				unsigned W4012 : 1;
+				unsigned W4013 : 1;
+				unsigned W4014 : 1;
+				unsigned W4015 : 1;
+				unsigned W4016 : 1;
+				unsigned W4017 : 1;
+				unsigned W401A : 1;
+			};
+			uint32_t raw_bits;
+		} RegOps{};
+
+		APUSim::Revision rev = APUSim::Revision::Unknown;
 
 		// Instances of internal APU modules, including the core
 
@@ -226,7 +225,6 @@ namespace APUSim
 		// Internal buses.
 
 		uint8_t DB = 0;
-		bool DB_Dirty = false;
 
 		uint16_t DMC_Addr{};
 		uint16_t SPR_Addr{};
@@ -235,71 +233,32 @@ namespace APUSim
 
 		// DAC Inputs
 
-		BaseLogic::TriState SQA_Out[4]{};
-		BaseLogic::TriState SQB_Out[4]{};
-		BaseLogic::TriState TRI_Out[4]{};
-		BaseLogic::TriState RND_Out[4]{};
-		BaseLogic::TriState DMC_Out[8]{};		// msb is not used. This is done for the convenience of packing the value in byte.
+		uint8_t SQA_Out{};
+		uint8_t SQB_Out{};
+		uint8_t TRI_Out{};
+		uint8_t RND_Out{};
+		uint8_t DMC_Out{};
 
-		BaseLogic::TriState GetDBBit(size_t n);
-		void SetDBBit(size_t n, BaseLogic::TriState bit_val);
+		int GetDBBit(size_t n);
+		void SetDBBit(size_t n, int bit_val);
 
 		size_t aclk_counter = 0;
 		size_t phi_counter = 0;
 
-		BaseLogic::TriState PrevPHI_Core = BaseLogic::TriState::X;	// to optimize
-		BaseLogic::TriState PrevPHI_SoundGen = BaseLogic::TriState::X;	// to optimize
-
-		uint8_t Dbg_GetStatus();
-		void Dbg_SetStatus(uint8_t val);
+		int PrevPHI_Core = -1;	// to optimize
+		int PrevPHI_SoundGen = -1;	// to optimize
 
 		void sim_CoreIntegration();
 		void sim_SoundGenerators();
 
 	public:
-		APU(M6502Core::M6502 *core, Revision rev);
-		~APU();
+		FastAPU(M6502Core::M6502* core, APUSim::Revision rev);
+		~FastAPU();
 
 		/// <summary>
 		/// Simulate one half cycle
 		/// </summary>
-		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t *data, uint16_t* addr, AudioOutSignal& AUX);
-
-		/// <summary>
-		/// Get the values of internal connections for debugging.
-		/// </summary>
-		/// <param name="wires"></param>
-		void GetDebugInfo_Wires(APU_Interconnects& wires);
-
-		/// <summary>
-		/// Get values of APU registers and counters
-		/// </summary>
-		/// <param name="regs"></param>
-		void GetDebugInfo_Regs(APU_Registers& regs);
-
-		/// <summary>
-		/// Get the APU internal signal value
-		/// </summary>
-		uint8_t GetDebugInfo_Wire(int ofs);
-		
-		/// <summary>
-		/// Set the internal APU signal value
-		/// </summary>
-		void SetDebugInfo_Wire(int ofs, uint8_t val);
-
-		/// <summary>
-		/// Get APU register/counter value
-		/// </summary>
-		/// <param name="ofs"></param>
-		/// <returns></returns>
-		uint32_t GetDebugInfo_Reg(int ofs);
-		
-		/// <summary>
-		/// Set APU register/counter value
-		/// </summary>
-		/// <param name="ofs"></param>
-		/// <param name="val"></param>
-		void SetDebugInfo_Reg(int ofs, uint32_t val);
+		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr, APUSim::AudioOutSignal& AUX);
 
 		/// <summary>
 		/// Turn on the digital output, instead of the analog DAC levels.
@@ -339,6 +298,6 @@ namespace APUSim
 		/// Get the audio signal properties of the current APU revision.
 		/// </summary>
 		/// <param name="features"></param>
-		void GetSignalFeatures(AudioSignalFeatures& features);
+		void GetSignalFeatures(APUSim::AudioSignalFeatures& features);
 	};
 }
