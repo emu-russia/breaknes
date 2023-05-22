@@ -70,6 +70,6 @@ namespace FastAPU
 		~SquareChan();
 
 		void sim(int WR0, int WR1, int WR2, int WR3, int NOSQ, int* SQ_Out);
-		BaseLogic::TriState get_LC();
+		int get_LC();
 	};
 }

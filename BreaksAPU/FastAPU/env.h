@@ -25,6 +25,6 @@ namespace FastAPU
 		~EnvelopeUnit();
 
 		void sim(uint8_t V, int WR_Reg, int WR_LC);
-		BaseLogic::TriState get_LC();
+		int get_LC();
 	};
 }
