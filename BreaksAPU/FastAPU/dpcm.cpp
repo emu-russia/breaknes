@@ -101,16 +101,16 @@ namespace FastAPU
 
 	int DpcmChan::get_CTRL1()
 	{
-
+		return 0;
 	}
 
 	int DpcmChan::get_CTRL2()
 	{
-
+		return 0;
 	}
 
 	int DpcmChan::get_DMC1()
 	{
-
+		return 0;
 	}
 }

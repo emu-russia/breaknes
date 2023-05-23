@@ -22,6 +22,6 @@ namespace FastAPU
 
 	int EnvelopeUnit::get_LC()
 	{
-
+		return 0;
 	}
 }
