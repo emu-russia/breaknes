@@ -67,6 +67,8 @@ namespace APUPlayer
 			settings.DC = 0.0f;
 			settings.Visual2A03Mapping = false;
 			settings.AllocConsole = false;
+			settings.IIR = true;
+			settings.CutoffFrequency = 12000;
 
 			SaveSettings(settings);
 
@@ -137,6 +139,16 @@ namespace APUPlayer
 			[Category("Debug")]
 			[Description("Open the console for debug output.")]
 			public bool AllocConsole { get; set; }
+
+			[XmlElement]
+			[Category("Host Features")]
+			[Description("Implementation of a simple IIR filter, in addition to decimation")]
+			public bool IIR { get; set; }
+
+			[XmlElement]
+			[Category("Host Features")]
+			[Description("Frequency for IIR filter (try 12000 for example)")]
+			public int CutoffFrequency { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid

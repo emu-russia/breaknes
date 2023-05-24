@@ -59,6 +59,8 @@ namespace Breaknes
 			settings.DumpVideo = false;
 			settings.DumpVideoDir = "";
 			settings.AllocConsole = false;
+			settings.IIR = true;
+			settings.CutoffFrequency = 12000;
 
 			SaveSettings(settings);
 
@@ -122,6 +124,16 @@ namespace Breaknes
 			[Description("Turn on the debug console. Requires a restart.")]
 			[DefaultValue(false)]
 			public bool AllocConsole { get; set; }
+
+			[XmlElement]
+			[Category("Sound Features")]
+			[Description("Implementation of a simple IIR filter, in addition to decimation")]
+			public bool IIR { get; set; }
+
+			[XmlElement]
+			[Category("Sound Features")]
+			[Description("Frequency for IIR filter (try 12000 for example)")]
+			public int CutoffFrequency { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid
