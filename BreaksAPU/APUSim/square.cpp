@@ -59,6 +59,7 @@ namespace APUSim
 		for (size_t n = 0; n < 3; n++)
 		{
 			sr_reg[n].sim(ACLK1, WR1, apu->GetDBBit(n));
+			SR[n] = sr_reg[n].get();
 		}
 	}
 
@@ -160,7 +161,7 @@ namespace APUSim
 
 		SW_OVF = NOR(DEC, n_COUT);
 		TriState SRZ = NOR3(SR[0], SR[1], SR[2]);
-		DO_SWEEP = NOR7(SRZ, SWDIS, NOSQ, SW_OVF, NOT(SCO), n_LFO2, SW_UVF);
+		DO_SWEEP = NOR7(SRZ, SWDIS, NOSQ, SW_OVF, sco_latch.nget(), n_LFO2, SW_UVF);
 	}
 
 	void SquareChan::sim_Duty(TriState WR0, TriState WR3)
