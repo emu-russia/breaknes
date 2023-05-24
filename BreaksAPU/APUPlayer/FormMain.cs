@@ -16,7 +16,6 @@ namespace APUPlayer
 		private bool auxdump_loaded = false;
 		private bool Paused = true;         // atomic
 		private bool Dma = false;       // atomic
-		private bool InitRequired = false;  // atmoic
 
 		// Stats
 		private long timeStamp;
@@ -34,10 +33,12 @@ namespace APUPlayer
 		private BreaksCore.AudioSignalFeatures aux_features;
 		private int DecimateEach = 1;
 		private int DecimateCounter = 0;
-		private long AclkToPlay = 0;
 
 		private float[] aux_dump = Array.Empty<float>();
 		private long aux_dump_pointer = 0;
+
+		private SimpleIIR filter = new SimpleIIR();
+		private bool iir = true;
 
 		public FormMain()
 		{
@@ -193,6 +194,14 @@ namespace APUPlayer
 
 			UpdateMemLayout();
 
+			// Filter
+			iir = settings.IIR;
+			if (iir)
+			{
+				BreaksCore.GetApuSignalFeatures(out aux_features);
+				filter.Reconfigure(aux_features.SampleRate, settings.CutoffFrequency);
+			}
+
 			// SRC
 			Redecimate();
 
@@ -297,6 +306,13 @@ namespace APUPlayer
 		/// </summary>
 		private void FeedSample()
 		{
+			if (iir)
+			{
+				float sample;
+				BreaksCore.SampleAudioSignal(out sample);
+				filter.Input(sample);
+			}
+
 			if (DecimateCounter >= DecimateEach)
 			{
 				float sample;
@@ -318,7 +334,14 @@ namespace APUPlayer
 				}
 				else
 				{
-					BreaksCore.SampleAudioSignal(out sample);
+					if (iir)
+					{
+						sample = filter.Output();
+					}
+					else
+					{
+						BreaksCore.SampleAudioSignal(out sample);
+					}
 				}
 
 				SampleBuf.Add(sample);

@@ -24,13 +24,24 @@ namespace Breaknes
 		private string dump_audio_dir = "";
 		private string dump_rom_name;
 
-		public AudioRender(System.IntPtr handle, bool dump, string dump_dir, string rom_name)
+		private SimpleIIR filter = new SimpleIIR();
+		private bool iir = true;
+
+		public AudioRender(System.IntPtr handle, bool dump, string dump_dir, string rom_name, bool use_iir, int cutoff_freq)
 		{
 			dump_audio = dump;
 			dump_audio_dir = dump_dir;
 			dump_rom_name = rom_name;
 
 			audio_backend = new DSound(handle);
+
+			BreaksCore.GetApuSignalFeatures(out aux_features);
+
+			iir = use_iir;
+			if (iir)
+			{
+				filter.Reconfigure(aux_features.SampleRate, cutoff_freq);
+			}
 
 			// SRC
 			Redecimate();
@@ -43,10 +54,24 @@ namespace Breaknes
 		/// </summary>
 		public void FeedSample()
 		{
-			if (DecimateCounter >= DecimateEach)
+			if (iir)
 			{
 				float sample;
 				BreaksCore.SampleAudioSignal(out sample);
+				filter.Input(sample);
+			}
+
+			if (DecimateCounter >= DecimateEach)
+			{
+				float sample;
+				if (iir)
+				{
+					sample = filter.Output();
+				}
+				else
+				{
+					BreaksCore.SampleAudioSignal(out sample);
+				}
 				SampleBuf.Add(sample);
 				DecimateCounter = 0;
 
