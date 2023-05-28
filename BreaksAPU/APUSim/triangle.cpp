@@ -27,18 +27,20 @@ namespace APUSim
 
 	void TriangleChan::sim_Control()
 	{
+		TriState PHI1 = apu->wire.PHI1;
 		TriState ACLK1 = apu->wire.ACLK1;
 		TriState W4008 = apu->wire.W4008;
 		TriState W400B = apu->wire.W400B;
 		TriState n_LFO1 = apu->wire.n_LFO1;
 
+		fout_latch.set(FOUT, PHI1);
 		n_FOUT = fout_latch.nget();
 
 		lc_reg.sim(ACLK1, W4008, apu->GetDBBit(7));
 
-		TriState set_reload = NOR3(reload_latch1.get(), lc_reg.get(), n_LFO1);
-		Reload_FF.set(NOR(NOR(Reload_FF.get(), set_reload), W400B));
-		TriState TRELOAD = Reload_FF.nget();
+		TriState res_reload = NOR3(reload_latch1.get(), lc_reg.get(), n_LFO1);
+		Reload_FF.set(NOR(res_reload, NOR(Reload_FF.get(), W400B)));
+		TriState TRELOAD = Reload_FF.get();
 
 		reload_latch1.set(Reload_FF.get(), ACLK1);
 		reload_latch2.set(TRELOAD, ACLK1);
@@ -47,6 +49,9 @@ namespace APUSim
 		LOAD = NOR(n_LFO1, reload_latch2.nget());
 		STEP = NOR3(n_LFO1, reload_latch2.get(), tco_latch.get());
 		TSTEP = NOR5(TCO, apu->wire.LOCK, apu->wire.PHI1, apu->wire.NOTRI, n_FOUT);
+
+		FLOAD = NOR(PHI1, n_FOUT);
+		FSTEP = NOR(PHI1, NOT(n_FOUT));
 	}
 
 	void TriangleChan::sim_LinearReg()
@@ -93,15 +98,13 @@ namespace APUSim
 		TriState RES = apu->wire.RES;
 
 		TriState carry = TriState::One;
-		TriState FLOAD = NOR(PHI1, n_FOUT);
-		TriState FSTEP = NOR(PHI1, NOT(n_FOUT));
 
 		for (size_t n = 0; n < 11; n++)
 		{
 			carry = freq_cnt[n].sim(carry, RES, FLOAD, FSTEP, PHI1, freq_reg[n].get());
 		}
 
-		fout_latch.set(carry, PHI1);
+		FOUT = carry;
 	}
 
 	void TriangleChan::sim_Output()
