@@ -55,7 +55,9 @@ namespace APUSim
 	/// </summary>
 	enum class Revision
 	{
+		Custom = -1,		// Fully custom implementation, defined solely by the ChipFeature set
 		Unknown = 0,
+		RP2A03,				// "Letterless"
 		RP2A03G,
 		RP2A03H,
 		RP2A07,
@@ -84,6 +86,28 @@ namespace APUSim
 		M2,
 		RnW,
 		Max,
+	};
+
+	/// <summary>
+	/// The list of distinctive features of the chip implementation. Earlier the features were chosen by revision, 
+	/// but this entity looks prettier - you can assemble a customized "chimera" chip from different features.
+	/// TBD: Very preliminary version.
+	/// </summary>
+	enum ChipFeature : uint64_t
+	{
+		ByRevision = 0x0,			// Automatically determined by the chip revision in the constructor
+		QuartzPal = 0x1,
+		QuartzNtsc = 0x2,
+		QuartzCustom = 0x4,
+		DividerPal = 0x8,
+		DividerNtsc = 0x10,
+		DividerCustom = 0x20,
+		MixedSquareDuty = 0x40,
+		ClickingTriangle = 0x80,
+		NoiseMalfunction = 0x100,
+		BCDPresent = 0x200,
+		DebugRegistersInsteadHalt = 0x400,
+		DebugHaltInsteadRegisters = 0x800,
 	};
 }
 
@@ -207,6 +231,7 @@ namespace APUSim
 		} wire{};
 
 		Revision rev = Revision::Unknown;
+		ChipFeature fx = ChipFeature::ByRevision;
 
 		// Instances of internal APU modules, including the core
 
@@ -257,7 +282,7 @@ namespace APUSim
 		void sim_SoundGenerators();
 
 	public:
-		APU(M6502Core::M6502 *core, Revision rev);
+		APU(M6502Core::M6502 *core, Revision rev, ChipFeature features=ChipFeature::ByRevision);
 		~APU();
 
 		/// <summary>

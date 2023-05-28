@@ -4,11 +4,12 @@ using namespace BaseLogic;
 
 namespace APUSim
 {
-	APU::APU(M6502Core::M6502* _core, Revision _rev)
+	APU::APU(M6502Core::M6502* _core, Revision _rev, ChipFeature features)
 	{
 		// For ease of integration, the core instance is created by the consumer
 		core = _core;
 		rev = _rev;
+		fx = features;
 
 		core_int = new CoreBinding(this);
 		clkgen = new CLKGen(this);
