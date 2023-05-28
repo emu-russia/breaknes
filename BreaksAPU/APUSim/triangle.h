@@ -9,11 +9,14 @@ namespace APUSim
 		friend APUSimUnitTest::UnitTest;
 		APU* apu = nullptr;
 
-		BaseLogic::TriState TCO = BaseLogic::TriState::X;
+		BaseLogic::TriState TCO = BaseLogic::TriState::Z;
+		BaseLogic::TriState FOUT = BaseLogic::TriState::Z;
 		BaseLogic::TriState n_FOUT = BaseLogic::TriState::X;
 		BaseLogic::TriState LOAD = BaseLogic::TriState::X;
 		BaseLogic::TriState STEP = BaseLogic::TriState::X;
 		BaseLogic::TriState TSTEP = BaseLogic::TriState::X;
+		BaseLogic::TriState FLOAD = BaseLogic::TriState::X;
+		BaseLogic::TriState FSTEP = BaseLogic::TriState::X;
 
 		RegisterBit lc_reg{};
 		BaseLogic::FF Reload_FF{};
