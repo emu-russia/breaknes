@@ -1,7 +1,33 @@
 #include "pch.h"
 
-VideoRender::VideoRender(SDL_Window* window, SDL_Surface* surface)
+VideoRender::VideoRender()
 {
+	if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
+		printf("SDL video could not initialize! SDL_Error: %s\n", SDL_GetError());
+	}
+
+	SDL_Window* window = SDL_CreateWindow(
+		"Breaknes",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		SCREEN_WIDTH * ScaleFactor, SCREEN_HEIGHT * ScaleFactor,
+		0);
+
+	if (window == NULL) {
+		printf("SDL_CreateWindow failed: %s\n", SDL_GetError());
+		return;
+	}
+
+	SDL_Surface* surface = SDL_GetWindowSurface(window);
+
+	if (surface == NULL) {
+		printf("SDL_GetWindowSurface failed: %s\n", SDL_GetError());
+		return;
+	}
+
+	// Initialize window to all black
+	//SDL_FillSurfaceRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
+	SDL_UpdateWindowSurface(window);
+
 	output_window = window;
 	output_surface = surface;
 
@@ -22,6 +48,8 @@ VideoRender::VideoRender(SDL_Window* window, SDL_Surface* surface)
 
 VideoRender::~VideoRender()
 {
+	SDL_DestroyWindow(output_window);
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	delete[] ScanBuffer;
 	delete[] field;
 }
@@ -102,8 +130,8 @@ void VideoRender::ProcessScanRAW()
 
 void VideoRender::VisualizeField()
 {
-	int w = 256;
-	int h = 240;
+	int w = SCREEN_WIDTH;
+	int h = SCREEN_HEIGHT;
 
 	Uint32* const pixels = (Uint32*)output_surface->pixels;
 
@@ -113,16 +141,16 @@ void VideoRender::VisualizeField()
 		{
 			Uint32 color = field[w * y + x];
 
-			// Upscale x2
-			pixels[2 * x + (2 * y * output_surface->w)] = color;
-			pixels[2 * x + 1 + (2 * y * output_surface->w)] = color;
-			pixels[2 * x + ((2 * y + 1) * output_surface->w)] = color;
-			pixels[2 * x + 1 + ((2 * y + 1) * output_surface->w)] = color;
+			for (int s = 0; s < ScaleFactor; s++) {
+				for (int t = 0; t < ScaleFactor; t++) {
+					pixels[ScaleFactor * x + s + ((ScaleFactor * y + t) * output_surface->w)] = color;
+				}
+			}
 		}
 	}
 
 	SDL_UpdateWindowSurface(output_window);
 
 	field_counter++;
-	printf("field: %lld\n", field_counter);
+	printf("field: %d\n", field_counter);
 }

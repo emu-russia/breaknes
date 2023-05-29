@@ -1,8 +1,5 @@
 #include "pch.h"
 
-const int SCREEN_WIDTH = 256*2;
-const int SCREEN_HEIGHT = 240*2;
-
 bool run_worker = false;
 
 VideoRender* vid_out;
@@ -25,7 +22,6 @@ int SDLCALL MainWorker (void* data)
 			vid_out->ProcessSample(sample);
 			snd_out->FeedSample();
 		}
-
 	}
 
 	return 0;
@@ -63,73 +59,47 @@ int main(int argc, char ** argv) {
 
 	uint8_t* nes_image = new uint8_t[nes_image_size];
 
-	fread(nes_image, 1, nes_image_size, f);
+	auto readed = fread(nes_image, 1, nes_image_size, f);
+	if (readed != nes_image_size) {
+		printf("Wrong nes file size!\n");
+		return -3;
+	}
 	fclose(f);
 
 	if (InsertCartridge(nes_image, nes_image_size) < 0) {
 		printf("InsertCartridge failed!\n");
-		return -3;
+		return -4;
 	}
 
-	if (SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0) {
-		std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
-	} else {
+	bool quit = false;
 
-		SDL_Window* window = SDL_CreateWindow(
-			"Breaknes",
-			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-			SCREEN_WIDTH, SCREEN_HEIGHT,
-			0);
+	vid_out = new VideoRender();
+	snd_out = new SoundOutput();
 
-		if (window == NULL) {
-			printf("SDL_CreateWindow failed: %s\n", SDL_GetError());
-			return -4;
-		}
+	// Run the main thread, which will emulate the system
 
-		SDL_Surface* surface = SDL_GetWindowSurface(window);
+	run_worker = true;
+	worker = SDL_CreateThread(MainWorker, "work thread", 0);
 
-		if (surface == NULL) {
-			printf("SDL_GetWindowSurface failed: %s\n", SDL_GetError());
-			return -5;
-		}
+	// Start the SDL event loop together with the main thread
 
-		// Initialize window to all black
-		//SDL_FillSurfaceRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
-		SDL_UpdateWindowSurface(window);
-		
-		bool quit = false;
-
-		vid_out = new VideoRender(window, surface);
-		snd_out = new SoundOutput();
-
-		// Run the main thread, which will emulate the system
-
-		run_worker = true;
-		worker = SDL_CreateThread(MainWorker, "work thread", 0);
-
-		// Start the SDL event loop together with the main thread
-
-		while (!quit) {
+	while (!quit) {
 			
-			SDL_Delay(1);
+		SDL_Delay(1);
 
-			SDL_Event event;
-			while (SDL_PollEvent(&event)) {
-				if (event.type == SDL_QUIT) {
-					quit = true;
-				}
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT) {
+				quit = true;
 			}
 		}
-
-		run_worker = false;
-		SDL_WaitThread(worker, 0);
-
-		delete vid_out;
-		delete snd_out;
-
-		SDL_DestroyWindow(window);
-		SDL_Quit();
 	}
+
+	run_worker = false;
+	SDL_WaitThread(worker, 0);
+
+	delete vid_out;
+	delete snd_out;
 
 	EjectCartridge();
 	delete[] nes_image;
