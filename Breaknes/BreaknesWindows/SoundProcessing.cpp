@@ -1,7 +1,7 @@
 #include "pch.h"
 
 // Since the simulation is now very slow, the following strategy is used to reproduce the sound:
-// Collect one second of sound. As it is recorded, play it back via DirectSound and clear the receive buffer.
+// Collect one second of sound. As it is recorded, play it back via sound driver and clear the receive buffer.
 
 SoundOutput::SoundOutput()
 {
@@ -9,14 +9,12 @@ SoundOutput::SoundOutput()
 
 	SampleBuf_Size = OutputSampleRate;
 	SampleBuf = new int16_t[SampleBuf_Size];
+	memset(SampleBuf, 0, SampleBuf_Size * sizeof(int16_t));
 	SampleBuf_Ptr = 0;
 
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
 		printf ("SDL audio could not initialize! SDL_Error: %s\n", SDL_GetError());
 	}
-
-	SDL_AudioSpec spec{};
-	SDL_AudioSpec spec_obtainted{};
 
 	spec.freq = OutputSampleRate;
 	spec.format = AUDIO_S16;
@@ -33,6 +31,7 @@ SoundOutput::~SoundOutput()
 {
 	SDL_CloseAudioDevice(dev_id);
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	delete[] SampleBuf;
 }
 
 void SoundOutput::Mixer(void* thisptr, Uint8* stream, int len)

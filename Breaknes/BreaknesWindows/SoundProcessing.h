@@ -2,6 +2,9 @@
 
 class SoundOutput
 {
+	SDL_AudioSpec spec{};
+	SDL_AudioSpec spec_obtainted{};
+
 	SDL_AudioDeviceID dev_id;
 
 	static void SDLCALL Mixer (void* unused, Uint8* stream, int len);
