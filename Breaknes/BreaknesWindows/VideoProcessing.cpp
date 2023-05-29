@@ -4,6 +4,7 @@ VideoRender::VideoRender()
 {
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
 		printf("SDL video could not initialize! SDL_Error: %s\n", SDL_GetError());
+		return;
 	}
 
 	SDL_Window* window = SDL_CreateWindow(
