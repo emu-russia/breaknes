@@ -9,9 +9,9 @@ class SoundOutput
 	void Redecimate();
 	void Playback();
 
-	long DecimateEach;
-	long DecimateCounter;
-	const long OutputSampleRate = 48000;
+	int DecimateEach;
+	int DecimateCounter;
+	const int OutputSampleRate = 48000;
 
 	int16_t* SampleBuf;
 	int SampleBuf_Ptr;

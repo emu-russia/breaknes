@@ -3,8 +3,12 @@
 
 class VideoRender
 {
+	const int ScaleFactor = 2;
+	const int SCREEN_WIDTH = 256;
+	const int SCREEN_HEIGHT = 240;
+
 	PPUSim::VideoSignalFeatures ppu_features{};
-	int SamplesPerScan;
+	int SamplesPerScan = 0;
 	bool RawMode = false;
 
 	PPUSim::VideoOutSignal* ScanBuffer = nullptr;
@@ -21,10 +25,10 @@ class VideoRender
 	void ProcessScanRAW();
 	void VisualizeField();
 
-	uint64_t field_counter = 0;
+	int field_counter = 0;
 
 public:
-	VideoRender(SDL_Window* window, SDL_Surface* surface);
+	VideoRender();
 	~VideoRender();
 
 	void ProcessSample(PPUSim::VideoOutSignal& sample);
