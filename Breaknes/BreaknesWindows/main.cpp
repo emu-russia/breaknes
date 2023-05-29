@@ -17,10 +17,12 @@ int SDLCALL MainWorker (void* data)
 
 		if (!InResetState())
 		{
+#if !CONSOLE_ONLY
 			PPUSim::VideoOutSignal sample;
 			SampleVideoSignal(&sample);
 			vid_out->ProcessSample(sample);
 			snd_out->FeedSample();
+#endif
 		}
 	}
 
@@ -73,8 +75,10 @@ int main(int argc, char ** argv) {
 
 	bool quit = false;
 
+#if !CONSOLE_ONLY
 	vid_out = new VideoRender();
 	snd_out = new SoundOutput();
+#endif
 
 	// Run the main thread, which will emulate the system
 
@@ -98,8 +102,10 @@ int main(int argc, char ** argv) {
 	run_worker = false;
 	SDL_WaitThread(worker, 0);
 
+#if !CONSOLE_ONLY
 	delete vid_out;
 	delete snd_out;
+#endif
 
 	EjectCartridge();
 	delete[] nes_image;
