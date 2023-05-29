@@ -11,7 +11,7 @@ namespace M6502Core
 		// The bitmask corresponds to the values from the Breaking NES Wiki:
 		// https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/6502/decoder.md
 
-		static size_t bitmask[outputs_count] = {		// GCC contains a bug if you do not specify static
+		static size_t bitmask[outputs_count] = {
 			// A
 			0b000101100000100100000,
 			0b000000010110001000100,
