@@ -35,15 +35,15 @@ VideoRender::VideoRender()
 
 	SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
 	ScanBuffer = new PPUSim::VideoOutSignal[2 * SamplesPerScan];
-	memset(ScanBuffer, 0, 2 * SamplesPerScan);
+	memset(ScanBuffer, 0, 2 * SamplesPerScan * sizeof(PPUSim::VideoOutSignal));
 	WritePtr = 0;
 
 	SyncFound = false;
 	SyncPos = -1;
 	CurrentScan = 0;
 
-	field = new uint32_t[256 * 240];
-	memset(field, 0, 256 * 240);
+	field = new uint32_t[SCREEN_WIDTH * SCREEN_HEIGHT];
+	memset(field, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(uint32_t));
 }
 
 VideoRender::~VideoRender()
@@ -107,14 +107,14 @@ void VideoRender::ProcessScanRAW()
 
 	// Output the visible part of the signal
 
-	for (int i = 0; i < 256; i++)
+	for (int i = 0; i < SCREEN_WIDTH; i++)
 	{
-		if (CurrentScan < 240)
+		if (CurrentScan < SCREEN_HEIGHT)
 		{
 			uint8_t r, g, b;
 			ConvertRAWToRGB(ScanBuffer[ReadPtr].RAW.raw, &r, &g, &b);
 
-			field[CurrentScan * 256 + i] = SDL_MapRGB(output_surface->format, r, g, b);
+			field[CurrentScan * SCREEN_WIDTH + i] = SDL_MapRGB(output_surface->format, r, g, b);
 		}
 
 		ReadPtr += ppu_features.SamplesPerPCLK;
