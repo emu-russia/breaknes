@@ -744,7 +744,7 @@ namespace PPUSim
 
 		// Set matrix
 
-		size_t bitmask[] = {
+		static size_t bitmask[] = {		// GCC contains a bug if you do not specify static
 			0b1001100110,
 			0b0110100101,
 			0b1010100101,
@@ -795,7 +795,7 @@ namespace PPUSim
 		{
 			case Revision::RP2C04_0003:
 			{
-				size_t RP2C04_0003_ColorMatrix[] = {
+				static size_t RP2C04_0003_ColorMatrix[] = {		// GCC contains a bug if you do not specify static
 					0b1010100001110110,
 					0b1111000101010100,
 					0b0000110101000000,

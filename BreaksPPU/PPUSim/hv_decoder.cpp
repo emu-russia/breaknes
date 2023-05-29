@@ -48,7 +48,7 @@ namespace PPUSim
 			case Revision::RP2C02G:
 			case Revision::RP2C04_0003:
 			{
-				size_t RP2C02G_HDecoder[] = {
+				static size_t RP2C02G_HDecoder[] = {		// GCC contains a bug if you do not specify static
 					0b01101010011001010100,
 					0b01101010101010101000,
 					0b10100110101010100101,
@@ -75,7 +75,7 @@ namespace PPUSim
 					0b01100110011001101000,
 				};
 
-				size_t RP2C02G_VDecoder[] = {
+				static size_t RP2C02G_VDecoder[] = {
 					0b000101010110010101,
 					0b000101010110011010,
 					0b011010101010011001,
@@ -94,7 +94,7 @@ namespace PPUSim
 
 			case Revision::RP2C07_0:
 			{
-				size_t RP2C07_HDecoder[] = {
+				static size_t RP2C07_HDecoder[] = {
 					0b01101010011001100100,
 					0b01101010101010101000,
 					0b10100110101010100101,
@@ -121,7 +121,7 @@ namespace PPUSim
 					0b01100110011001101000,
 				};
 
-				size_t RP2C07_VDecoder[] = {
+				static size_t RP2C07_VDecoder[] = {
 					0b011010100110101010,
 					0b011010101001011001,
 					0b101010101010101001,
@@ -141,7 +141,7 @@ namespace PPUSim
 
 			case Revision::UMC_UA6538:
 			{
-				size_t UMC_UA6538_HDecoder[] = {		// Same as PAL PPU
+				static size_t UMC_UA6538_HDecoder[] = {		// Same as PAL PPU
 					0b01101010011001100100,
 					0b01101010101010101000,
 					0b10100110101010100101,
@@ -168,7 +168,7 @@ namespace PPUSim
 					0b01100110011001101000,
 				};
 
-				size_t UMC_UA6538_VDecoder[] = {
+				static size_t UMC_UA6538_VDecoder[] = {
 					0b011010100110101010,
 					0b011010101001011001,
 					0b101010101010101001,
