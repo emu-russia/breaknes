@@ -48,7 +48,7 @@ namespace PPUSim
 			case Revision::RP2C02G:
 			case Revision::RP2C04_0003:
 			{
-				static size_t RP2C02G_HDecoder[] = {		// GCC contains a bug if you do not specify static
+				static size_t RP2C02G_HDecoder[] = {		// Undefined behavior in GCC if you do not specify static
 					0b01101010011001010100,
 					0b01101010101010101000,
 					0b10100110101010100101,
