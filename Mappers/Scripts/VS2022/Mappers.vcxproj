@@ -23,6 +23,8 @@
     <ClInclude Include="..\..\AOROM.h" />
     <ClInclude Include="..\..\CartridgeFactory.h" />
     <ClInclude Include="..\..\Mappers.h" />
+    <ClInclude Include="..\..\MMC1.h" />
+    <ClInclude Include="..\..\MMC1_Based.h" />
     <ClInclude Include="..\..\NES_Header.h" />
     <ClInclude Include="..\..\NROM.h" />
     <ClInclude Include="..\..\pch.h" />
@@ -32,6 +34,8 @@
     <ClCompile Include="..\..\AbstractCartridge.cpp" />
     <ClCompile Include="..\..\AOROM.cpp" />
     <ClCompile Include="..\..\CartridgeFactory.cpp" />
+    <ClCompile Include="..\..\MMC1.cpp" />
+    <ClCompile Include="..\..\MMC1_Based.cpp" />
     <ClCompile Include="..\..\NROM.cpp" />
     <ClCompile Include="..\..\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
