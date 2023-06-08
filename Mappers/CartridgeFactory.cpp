@@ -52,6 +52,9 @@ namespace Mappers
 			case 0:
 				return new Mappers::NROM(p1_type, data, data_size);
 
+			case 1:
+				return new Mappers::MMC1_Based(p1_type, data, data_size);
+
 			case 2:
 				return new Mappers::UNROM(p1_type, data, data_size);
 
