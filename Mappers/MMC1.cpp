@@ -94,20 +94,12 @@ namespace Mappers
 		// Regs 0-3
 
 		if (reg_enable > 0) {
-			if (reg_enable == 0) {
-				int extra_enable = div_reset_dff;
-				reg[0].b0 = (shifter_dffs >> 0) & 1;
-				reg[0].b1 = (shifter_dffs >> 1) & 1;
-				// Special processing for bits 2 and 3 of the control register. Most likely related to PRG bank switching, e.g. not to switch yourself.
-				if (posedge(prev_reg0_enable, 1) && extra_enable) {
-					reg[0].b2 = (shifter_dffs >> 2) & 1;
-					reg[0].b3 = (shifter_dffs >> 3) & 1;
-				}
-				reg[0].b4 = (shifter_dffs >> 4) & 1;
-			}
-			else {
-				reg[reg_enable].bitval = shifter_dffs;
-			}
+			reg[reg_enable].bitval = shifter_dffs;
+		}
+		// Special processing for bits 2 and 3 of the control register. These bits are set when the divider is reset from the outside.
+		if (div_reset_dff == 0) {
+			reg[0].b2 = 1;
+			reg[0].b3 = 1;
 		}
 
 		// CHR Bank Switch

@@ -1,6 +1,8 @@
 // SxROM
 #include "pch.h"
 
+// It's all sad here. The NES format does not determine the connection of MMC1 with the rest of the cartridge components, so you have to "guess" and make dirty hacks.
+
 using namespace BaseLogic;
 
 namespace Mappers
