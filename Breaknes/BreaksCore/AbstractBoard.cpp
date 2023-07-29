@@ -151,17 +151,20 @@ namespace Breaknes
 	/// </summary>
 	void Board::TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState m2, BaseLogic::TriState rnw)
 	{
+		// Check delta > 1 because there cannot be operations with registers shorter than 2 cycles
+
 		if (apu_regdump && (addr_bus & ~MappedAPUMask) == MappedAPUBase) {
 
 			uint64_t phi_now = GetPHICounter();
-			if (prev_phi_counter_for_apuregdump != phi_now) {
+			uint64_t delta = phi_now - prev_phi_counter_for_apuregdump;
+			if (prev_phi_counter_for_apuregdump != phi_now && delta > 1) {
 
-				if (rnw)
+				if (rnw == BaseLogic::TriState::One)
 					apu_regdump->LogRegRead(phi_now, addr_bus & MappedAPUMask);
-				else
+				else if (rnw == BaseLogic::TriState::Zero)
 					apu_regdump->LogRegWrite(phi_now, addr_bus & MappedAPUMask, data_bus);
 		
-				phi_flush_counter_apuregdump += (phi_now - prev_phi_counter_for_apuregdump);
+				phi_flush_counter_apuregdump += delta;
 				if (phi_flush_counter_apuregdump >= JustAboutOneSecond) {
 					phi_flush_counter_apuregdump = 0;
 					apu_regdump->Flush();
@@ -173,14 +176,15 @@ namespace Breaknes
 		if (ppu_regdump && (addr_bus & ~MappedPPUMask) == MappedPPUBase) {
 
 			uint64_t phi_now = GetPHICounter();
-			if (prev_phi_counter_for_ppuregdump != phi_now) {
+			uint64_t delta = phi_now - prev_phi_counter_for_ppuregdump;
+			if (prev_phi_counter_for_ppuregdump != phi_now && delta > 1) {
 
-				if (rnw)
+				if (rnw == BaseLogic::TriState::One)
 					ppu_regdump->LogRegRead(phi_now, addr_bus & MappedPPUMask);
-				else
+				else if (rnw == BaseLogic::TriState::Zero)
 					ppu_regdump->LogRegWrite(phi_now, addr_bus & MappedPPUMask, data_bus);
 
-				phi_flush_counter_ppuregdump += (phi_now - prev_phi_counter_for_ppuregdump);
+				phi_flush_counter_ppuregdump += delta;
 				if (phi_flush_counter_ppuregdump >= JustAboutOneSecond) {
 					phi_flush_counter_ppuregdump = 0;
 					ppu_regdump->Flush();
