@@ -41,7 +41,7 @@
 			pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
 			pictureBox1.Location = new Point(12, 12);
 			pictureBox1.Name = "pictureBox1";
-			pictureBox1.Size = new Size(387, 244);
+			pictureBox1.Size = new Size(347, 218);
 			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
 			pictureBox1.TabIndex = 0;
 			pictureBox1.TabStop = false;
@@ -50,9 +50,9 @@
 			// button1
 			// 
 			button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			button1.Location = new Point(635, 230);
+			button1.Location = new Point(673, 196);
 			button1.Name = "button1";
-			button1.Size = new Size(80, 26);
+			button1.Size = new Size(101, 34);
 			button1.TabIndex = 1;
 			button1.Text = "Close";
 			button1.UseVisualStyleBackColor = true;
@@ -61,12 +61,12 @@
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-			label1.Location = new Point(405, 12);
+			label1.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+			label1.Location = new Point(365, 12);
 			label1.Name = "label1";
-			label1.Size = new Size(177, 50);
+			label1.Size = new Size(409, 60);
 			label1.TabIndex = 2;
-			label1.Text = "APUPlayer, 2.0\r\n© emu-russia, 2023";
+			label1.Text = "APUPlayer, 2.1\r\nFunctional Ricoh 2A03/2A07 and compatible APUs simulator\r\n© emu-russia, 2023";
 			// 
 			// backgroundWorker1
 			// 
@@ -77,7 +77,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(727, 268);
+			ClientSize = new Size(786, 244);
 			Controls.Add(label1);
 			Controls.Add(button1);
 			Controls.Add(pictureBox1);

@@ -73,10 +73,10 @@ namespace APUSim
 
 		// TBD: Other APU revisions
 
-		// The software PHI counter is triggered by the falling edge.
+		// The software PHI counter is triggered by the raising edge.
 		// This is purely a software design for convenience, and has nothing to do with APU hardware circuitry.
 
-		if (IsNegedge(prev_phi, new_phi))
+		if (IsPosedge(prev_phi, new_phi))
 		{
 			apu->phi_counter++;
 		}

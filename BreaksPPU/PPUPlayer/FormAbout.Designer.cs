@@ -53,9 +53,9 @@
 			label1.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
 			label1.Location = new System.Drawing.Point(11, 205);
 			label1.Name = "label1";
-			label1.Size = new System.Drawing.Size(480, 42);
+			label1.Size = new System.Drawing.Size(487, 42);
 			label1.TabIndex = 1;
-			label1.Text = "Functional Ricoh 2C02/2C07 and compatible PPU simulator, v. 2.7\r\n© 2023, emu-russia";
+			label1.Text = "Functional Ricoh 2C02/2C07 and compatible PPUs simulator, v. 2.7\r\n© 2023, emu-russia";
 			// 
 			// button1
 			// 

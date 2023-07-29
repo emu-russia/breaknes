@@ -11,7 +11,7 @@ public class SimpleIIR
 		delta = 1.0f / SampleRate;
 		float time_const = (float)(1.0 / (2.0 * Math.PI * cutoff_freq));
 		alpha = delta / (time_const + delta);
-		Console.WriteLine("IIR Reconfigured delta: {0}, alpha: {0}", delta, alpha);
+		Console.WriteLine("IIR Reconfigured delta: {0}, alpha: {1}", delta, alpha);
 	}
 
 	public void Input (float sample)
