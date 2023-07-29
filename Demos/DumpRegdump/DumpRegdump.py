@@ -20,7 +20,7 @@ regbase = 0x2000
 entry_format = '=IBBH' 		# uint32_t + uint8_t + uint8_t + uint16_t
 
 def DumpEntry (entry, clk_counter):
-	#print (f"{entry[0] + clk_counter}, ", end="")
+	print (f"{entry[0]}, ", end="")
 	if entry[1] & 0x80:
 		print (f"read {hex(regbase+(entry[1]&~0x80))}")
 	else:
