@@ -32,6 +32,8 @@ namespace PPUPlayer
 
 		int prev_cb_shift = 0;
 
+		int field_counter = 0;
+
 		void ResetVisualize(bool RAWMode)
 		{
 			BreaksCore.GetPpuSignalFeatures(out ppu_features);
@@ -47,6 +49,7 @@ namespace PPUPlayer
 			SyncPos = -1;
 			CurrentScan = 0;
 			prev_cb_shift = 0;
+			field_counter = 0;
 
 			composite_samples = new float[SamplesPerScan];
 			signalPlotScan.ForceMinMax(true, -0.5f, ppu_features.WhiteLevel * 2);
@@ -426,6 +429,9 @@ namespace PPUPlayer
 					gr.FillRectangle(new SolidBrush(p), x, y, 1, 1);
 				}
 			}
+
+			field_counter++;
+			Console.WriteLine("field: " + field_counter.ToString());
 
 			pictureBoxField.Image = field_pic;
 			gr.Dispose();

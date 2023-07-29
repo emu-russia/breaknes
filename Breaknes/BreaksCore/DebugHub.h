@@ -123,6 +123,6 @@ public:
 
 extern DebugHub* dbg_hub;
 
-void CreateDebugHub();
+void CreateDebugHub(bool reopen_stdout);
 
 void DisposeDebugHub();
