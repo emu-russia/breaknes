@@ -12,6 +12,10 @@ namespace Breaknes
 	Board::~Board()
 	{
 		delete pal;
+		if (ppu_regdump)
+			delete ppu_regdump;
+		if (apu_regdump)
+			delete apu_regdump;
 	}
 
 	int Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
@@ -86,6 +90,105 @@ namespace Breaknes
 
 	void Board::LoadRegDump(uint8_t* data, size_t data_size)
 	{
+	}
+
+	void Board::EnablePpuRegDump(bool enable, char* regdump_dir)
+	{
+		if (enable) {
+
+			char filename[0x200]{};
+			sprintf(filename, "%s/ppu.regdump", regdump_dir);
+
+			if (ppu_regdump) {
+				delete ppu_regdump;
+				ppu_regdump = nullptr;
+			}
+			ppu_regdump = new RegDumper(GetPHICounter(), filename);
+			prev_phi_counter_for_ppuregdump = GetPHICounter();
+			phi_flush_counter_ppuregdump = 0;
+
+			printf("PPU regdump enabled to file: %s\n", filename);
+		}
+		else {
+			if (ppu_regdump) {
+				delete ppu_regdump;
+				ppu_regdump = nullptr;
+			}
+
+			printf("PPU regdump disabled\n");
+		}
+	}
+
+	void Board::EnableApuRegDump(bool enable, char* regdump_dir)
+	{
+		if (enable) {
+
+			char filename[0x200]{};
+			sprintf(filename, "%s/apu.regdump", regdump_dir);
+
+			if (apu_regdump) {
+				delete apu_regdump;
+				apu_regdump = nullptr;
+			}
+			apu_regdump = new RegDumper(GetPHICounter(), filename);
+			prev_phi_counter_for_apuregdump = GetPHICounter();
+			phi_flush_counter_apuregdump = 0;
+
+			printf("APU regdump enabled to file: %s\n", filename);
+		}
+		else {
+			if (apu_regdump) {
+				delete apu_regdump;
+				apu_regdump = nullptr;
+			}
+
+			printf("APU regdump disabled\n");
+		}
+	}
+
+	/// <summary>
+	/// Check that the 6502 core is accessing the mapped APU/PPU registers and add an entry to regdump if necessary.
+	/// </summary>
+	void Board::TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState m2, BaseLogic::TriState rnw)
+	{
+		if (apu_regdump && (addr_bus & ~MappedAPUMask) == MappedAPUBase) {
+
+			uint64_t phi_now = GetPHICounter();
+			if (prev_phi_counter_for_apuregdump != phi_now) {
+
+				if (rnw)
+					apu_regdump->LogRegRead(phi_now, addr_bus & MappedAPUMask);
+				else
+					apu_regdump->LogRegWrite(phi_now, addr_bus & MappedAPUMask, data_bus);
+		
+				phi_flush_counter_apuregdump += (phi_now - prev_phi_counter_for_apuregdump);
+				if (phi_flush_counter_apuregdump >= JustAboutOneSecond) {
+					phi_flush_counter_apuregdump = 0;
+					apu_regdump->Flush();
+				}
+
+				prev_phi_counter_for_apuregdump = phi_now;
+			}
+		}
+		if (ppu_regdump && (addr_bus & ~MappedPPUMask) == MappedPPUBase) {
+
+			uint64_t phi_now = GetPHICounter();
+			if (prev_phi_counter_for_ppuregdump != phi_now) {
+
+				if (rnw)
+					ppu_regdump->LogRegRead(phi_now, addr_bus & MappedPPUMask);
+				else
+					ppu_regdump->LogRegWrite(phi_now, addr_bus & MappedPPUMask, data_bus);
+
+				phi_flush_counter_ppuregdump += (phi_now - prev_phi_counter_for_ppuregdump);
+				if (phi_flush_counter_ppuregdump >= JustAboutOneSecond) {
+					phi_flush_counter_ppuregdump = 0;
+					ppu_regdump->Flush();
+				}
+
+				prev_phi_counter_for_ppuregdump = phi_now;
+			}
+		}
 	}
 
 	void Board::GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)

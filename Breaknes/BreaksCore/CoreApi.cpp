@@ -123,6 +123,22 @@ extern "C"
 		}
 	}
 
+	DLL_EXPORT void EnablePpuRegDump(bool enable, char* regdump_dir)
+	{
+		if (board != nullptr)
+		{
+			board->EnablePpuRegDump(enable, regdump_dir);
+		}
+	}
+
+	DLL_EXPORT void EnableApuRegDump(bool enable, char* regdump_dir)
+	{
+		if (board != nullptr)
+		{
+			board->EnableApuRegDump(enable, regdump_dir);
+		}
+	}
+
 	DLL_EXPORT void GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)
 	{
 		if (board != nullptr)
