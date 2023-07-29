@@ -6,9 +6,9 @@ using namespace BaseLogic;
 
 namespace M6502Core
 {
-	FakeM6502::FakeM6502(uint16_t regs_base, uint8_t regs_mask) : M6502()
+	FakeM6502::FakeM6502(const char* target, uint16_t regs_base, uint16_t regs_mask) : M6502()
 	{
-		rp = new BaseBoard::RegDumpProcessor(regs_base, regs_mask);
+		rp = new BaseBoard::RegDumpProcessor(target, regs_base, regs_mask);
 	}
 
 	FakeM6502::~FakeM6502()

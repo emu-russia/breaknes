@@ -4,10 +4,11 @@ using namespace BaseLogic;
 
 namespace BaseBoard
 {
-	RegDumpProcessor::RegDumpProcessor(uint16_t regs_base, uint8_t regs_mask)
+	RegDumpProcessor::RegDumpProcessor(const char* target, uint16_t regs_base, uint16_t regs_mask)
 	{
 		regbase = regs_base;
 		regmask = regs_mask;
+		strcpy(regdump_target, target);
 	}
 
 	RegDumpProcessor::~RegDumpProcessor()
@@ -20,17 +21,17 @@ namespace BaseBoard
 
 	void RegDumpProcessor::sim(TriState CLK, TriState n_RES, TriState& RnW, uint16_t* addr_bus, uint8_t* data_bus)
 	{
-		if (n_RES == TriState::Zero)
-		{
-			return;
-		}
-
 		// Increase the cycle counter
 
-		if (IsNegedge(PrevCLK, CLK))
+		if (IsPosedge(PrevCLK, CLK))
 		{
 			clk_counter++;
 			hold = false;
+		}
+
+		if (n_RES == TriState::Zero)
+		{
+			return;
 		}
 
 		// It is necessary to repeat the register operation during the whole current cycle, no matter how many times the simulation was called
@@ -59,6 +60,12 @@ namespace BaseBoard
 					*data_bus = current->value;
 				}
 				*addr_bus = regbase | (current->reg & regmask);
+
+				if (first_access) {
+
+					printf("First %s access, clk_counter: 0x%llx\n", regdump_target, clk_counter);
+					first_access = false;
+				}
 
 				if (dump_regops) {
 
@@ -132,6 +139,7 @@ namespace BaseBoard
 
 		clk_counter = 0;
 		PrevCLK = TriState::X;
+		first_access = true;
 	}
 
 	RegDumpEntry* RegDumpProcessor::GetCurrentEntry()

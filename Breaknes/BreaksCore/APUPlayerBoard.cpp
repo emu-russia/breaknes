@@ -8,7 +8,7 @@ namespace Breaknes
 {
 	APUPlayerBoard::APUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
 	{
-		core = new M6502Core::FakeM6502(0x4000, 0x1f);
+		core = new M6502Core::FakeM6502("APU", MappedAPUBase, MappedAPUMask);
 		apu = new APUSim::APU(core, apu_rev);
 		wram = new BaseBoard::SRAM("WRAM", wram_bits);
 

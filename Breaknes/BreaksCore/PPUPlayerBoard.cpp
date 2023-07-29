@@ -9,7 +9,7 @@ namespace Breaknes
 {
 	PPUPlayerBoard::PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
 	{
-		core = new M6502Core::FakeM6502(0x2000, 0x7);
+		core = new M6502Core::FakeM6502("PPU", MappedPPUBase, MappedAPUMask);
 		ppu = new PPUSim::PPU(ppu_rev);
 		vram = new BaseBoard::SRAM("VRAM", vram_bits);
 
@@ -98,7 +98,7 @@ namespace Breaknes
 		TriState Core_SYNC = core_outputs[(size_t)M6502Core::OutputPad::SYNC];
 
 		bool pendingWrite = Core_RnW == TriState::Zero;
-		bool pendingCpuOperation = (addr_bus & ~7) == 0x2000;
+		bool pendingCpuOperation = (addr_bus & ~MappedPPUMask) == MappedPPUBase;
 		size_t ppuRegId = addr_bus & 7;
 
 		// CPU I/F operations counter (negedge)
@@ -201,7 +201,7 @@ namespace Breaknes
 	void PPUPlayerBoard::Reset()
 	{
 		pendingReset = true;
-		resetHalfClkCounter = 4;
+		resetHalfClkCounter = 64;
 	}
 
 	/// <summary>

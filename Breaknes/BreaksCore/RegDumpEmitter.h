@@ -16,9 +16,11 @@ class RegDumper
 {
 	uint64_t SavedPHICounter;
 	FILE* regLogFile;
+	char regdump_target[32];
+	bool first_access = true;
 
 public:
-	RegDumper(uint64_t phi_counter_now, char* filename);
+	RegDumper(const char* target, uint64_t phi_counter_now, char* filename);
 	~RegDumper();
 
 	void LogRegRead(uint64_t phi_counter_now, uint8_t regnum);

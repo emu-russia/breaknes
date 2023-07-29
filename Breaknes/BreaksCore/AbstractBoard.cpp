@@ -103,7 +103,7 @@ namespace Breaknes
 				delete ppu_regdump;
 				ppu_regdump = nullptr;
 			}
-			ppu_regdump = new RegDumper(GetPHICounter(), filename);
+			ppu_regdump = new RegDumper("PPU", GetPHICounter(), filename);
 			prev_phi_counter_for_ppuregdump = GetPHICounter();
 			phi_flush_counter_ppuregdump = 0;
 
@@ -130,7 +130,7 @@ namespace Breaknes
 				delete apu_regdump;
 				apu_regdump = nullptr;
 			}
-			apu_regdump = new RegDumper(GetPHICounter(), filename);
+			apu_regdump = new RegDumper("APU", GetPHICounter(), filename);
 			prev_phi_counter_for_apuregdump = GetPHICounter();
 			phi_flush_counter_apuregdump = 0;
 
@@ -151,11 +151,14 @@ namespace Breaknes
 	/// </summary>
 	void Board::TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState m2, BaseLogic::TriState rnw)
 	{
+		// The reason for checking for delta = 1 is that the first trigger is received during PHI1 of the core when it sets the register address;
+		// And since the PHI counter is posedge, we need to catch its next change (the next PHI2 after the address is set)
+
 		if (apu_regdump && (addr_bus & ~MappedAPUMask) == MappedAPUBase) {
 
 			uint64_t phi_now = GetPHICounter();
 			uint64_t delta = phi_now - prev_phi_counter_for_apuregdump;
-			if (prev_phi_counter_for_apuregdump != phi_now) {
+			if (prev_phi_counter_for_apuregdump != phi_now && delta == 1) {
 
 				if (rnw == BaseLogic::TriState::One)
 					apu_regdump->LogRegRead(phi_now, addr_bus & MappedAPUMask);
@@ -167,15 +170,14 @@ namespace Breaknes
 					phi_flush_counter_apuregdump = 0;
 					apu_regdump->Flush();
 				}
-
-				prev_phi_counter_for_apuregdump = phi_now;
 			}
+			prev_phi_counter_for_apuregdump = phi_now;
 		}
 		if (ppu_regdump && (addr_bus & ~MappedPPUMask) == MappedPPUBase) {
 
 			uint64_t phi_now = GetPHICounter();
 			uint64_t delta = phi_now - prev_phi_counter_for_ppuregdump;
-			if (prev_phi_counter_for_ppuregdump != phi_now) {
+			if (prev_phi_counter_for_ppuregdump != phi_now && delta == 1) {
 
 				if (rnw == BaseLogic::TriState::One)
 					ppu_regdump->LogRegRead(phi_now, addr_bus & MappedPPUMask);
@@ -187,9 +189,8 @@ namespace Breaknes
 					phi_flush_counter_ppuregdump = 0;
 					ppu_regdump->Flush();
 				}
-
-				prev_phi_counter_for_ppuregdump = phi_now;
 			}
+			prev_phi_counter_for_ppuregdump = phi_now;
 		}
 	}
 
