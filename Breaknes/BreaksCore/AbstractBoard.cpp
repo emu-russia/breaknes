@@ -151,13 +151,11 @@ namespace Breaknes
 	/// </summary>
 	void Board::TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState m2, BaseLogic::TriState rnw)
 	{
-		// Check delta > 1 because there cannot be operations with registers shorter than 2 cycles
-
 		if (apu_regdump && (addr_bus & ~MappedAPUMask) == MappedAPUBase) {
 
 			uint64_t phi_now = GetPHICounter();
 			uint64_t delta = phi_now - prev_phi_counter_for_apuregdump;
-			if (prev_phi_counter_for_apuregdump != phi_now && delta > 1) {
+			if (prev_phi_counter_for_apuregdump != phi_now) {
 
 				if (rnw == BaseLogic::TriState::One)
 					apu_regdump->LogRegRead(phi_now, addr_bus & MappedAPUMask);
@@ -177,7 +175,7 @@ namespace Breaknes
 
 			uint64_t phi_now = GetPHICounter();
 			uint64_t delta = phi_now - prev_phi_counter_for_ppuregdump;
-			if (prev_phi_counter_for_ppuregdump != phi_now && delta > 1) {
+			if (prev_phi_counter_for_ppuregdump != phi_now) {
 
 				if (rnw == BaseLogic::TriState::One)
 					ppu_regdump->LogRegRead(phi_now, addr_bus & MappedPPUMask);
