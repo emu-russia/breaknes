@@ -44,7 +44,7 @@
 
 // Boards
 
-#include "RegDump.h"
+#include "RegDumpEmitter.h"
 #include "SignalDefs.h"
 #include "AbstractBoard.h"
 #include "BogusBoard.h"

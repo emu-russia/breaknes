@@ -15,7 +15,7 @@ namespace BaseBoard
 	class RegDumpProcessor
 	{
 		uint16_t regbase = 0x1000;	// e.g. 0x4000 - APU, 0x2000 - PPU
-		uint8_t regmask = 0x7f;			// e.g. 0x1f - APU, 0x7 - PPU
+		uint16_t regmask = 0x7f;			// e.g. 0x1f - APU, 0x7 - PPU
 		uint8_t* regdump = nullptr;
 		size_t regdump_size = 0;
 		size_t regdump_entry = 0;
@@ -34,8 +34,11 @@ namespace BaseBoard
 
 		const bool dump_4015_writes_only = false;	// The most interesting
 
+		char regdump_target[32];
+		bool first_access = true;
+
 	public:
-		RegDumpProcessor(uint16_t regs_base, uint8_t regs_mask);
+		RegDumpProcessor(const char *target, uint16_t regs_base, uint16_t regs_mask);
 		~RegDumpProcessor();
 
 		void sim(BaseLogic::TriState CLK, BaseLogic::TriState n_RES, BaseLogic::TriState& RnW, uint16_t* addr_bus, uint8_t* data_bus);

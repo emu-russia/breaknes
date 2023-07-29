@@ -41,7 +41,7 @@
     </ClCompile>
     <ClCompile Include="..\..\PPUPlayerBoard.cpp" />
     <ClCompile Include="..\..\PPUPlayerBoardDebug.cpp" />
-    <ClCompile Include="..\..\RegDump.cpp" />
+    <ClCompile Include="..\..\RegDumpEmitter.cpp" />
     <ClCompile Include="..\..\SignalDefs.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -58,7 +58,7 @@
     <ClInclude Include="..\..\NESBoard.h" />
     <ClInclude Include="..\..\pch.h" />
     <ClInclude Include="..\..\PPUPlayerBoard.h" />
-    <ClInclude Include="..\..\RegDump.h" />
+    <ClInclude Include="..\..\RegDumpEmitter.h" />
     <ClInclude Include="..\..\SignalDefs.h" />
   </ItemGroup>
   <ItemGroup>
