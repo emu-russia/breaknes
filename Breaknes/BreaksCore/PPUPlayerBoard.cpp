@@ -1,3 +1,4 @@
+// A special type of breadboard that contains only PPU. Instead of CPU, a RegDump processor is used, which feeds register operations to the PPU from the dump via CPU I/F.
 // Module for maintaining a simulated PPU environment.
 
 #include "pch.h"
@@ -10,7 +11,7 @@ namespace Breaknes
 	{
 		core = new M6502Core::FakeM6502(0x2000, 0x7);
 		ppu = new PPUSim::PPU(ppu_rev);
-		vram = new BaseBoard::SRAM("CIRAM", vram_bits);
+		vram = new BaseBoard::SRAM("VRAM", vram_bits);
 
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
