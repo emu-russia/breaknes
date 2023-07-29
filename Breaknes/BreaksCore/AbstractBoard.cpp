@@ -158,9 +158,9 @@ namespace Breaknes
 			if (prev_phi_counter_for_apuregdump != phi_now) {
 
 				if (rnw == BaseLogic::TriState::One)
-					apu_regdump->LogRegRead(phi_now, addr_bus & MappedAPUMask, 0, 0);
+					apu_regdump->LogRegRead(phi_now, addr_bus & MappedAPUMask);
 				else if (rnw == BaseLogic::TriState::Zero)
-					apu_regdump->LogRegWrite(phi_now, addr_bus & MappedAPUMask, data_bus, 0, 0);
+					apu_regdump->LogRegWrite(phi_now, addr_bus & MappedAPUMask, data_bus);
 		
 				phi_flush_counter_apuregdump += delta;
 				if (phi_flush_counter_apuregdump >= JustAboutOneSecond) {
@@ -177,18 +177,10 @@ namespace Breaknes
 			uint64_t delta = phi_now - prev_phi_counter_for_ppuregdump;
 			if (prev_phi_counter_for_ppuregdump != phi_now) {
 
-				size_t ppu_h = 0;
-				size_t ppu_v = 0;
-				if (ppu) {
-
-					ppu_h = ppu->GetHCounter();
-					ppu_v = ppu->GetVCounter();
-				}
-
 				if (rnw == BaseLogic::TriState::One)
-					ppu_regdump->LogRegRead(phi_now, addr_bus & MappedPPUMask, ppu_h, ppu_v);
+					ppu_regdump->LogRegRead(phi_now, addr_bus & MappedPPUMask);
 				else if (rnw == BaseLogic::TriState::Zero)
-					ppu_regdump->LogRegWrite(phi_now, addr_bus & MappedPPUMask, data_bus, ppu_h, ppu_v);
+					ppu_regdump->LogRegWrite(phi_now, addr_bus & MappedPPUMask, data_bus);
 
 				phi_flush_counter_ppuregdump += delta;
 				if (phi_flush_counter_ppuregdump >= JustAboutOneSecond) {
