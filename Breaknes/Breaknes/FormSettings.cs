@@ -61,6 +61,10 @@ namespace Breaknes
 			settings.AllocConsole = false;
 			settings.IIR = true;
 			settings.CutoffFrequency = 12000;
+			settings.PPURegdump = false;
+			settings.PPURegdumpDir = "";
+			settings.APURegdump = false;
+			settings.APURegdumpDir = "";
 
 			SaveSettings(settings);
 
@@ -134,6 +138,28 @@ namespace Breaknes
 			[Category("Sound Features")]
 			[Description("Frequency for IIR filter (try 12000 for example)")]
 			public int CutoffFrequency { get; set; }
+
+			[Category("Debug")]
+			[Description("Enable saving the history of accesses to PPU registers (regdump). Regdump can be used later in the PPUPlayer utility.")]
+			[DefaultValue(false)]
+			public bool PPURegdump { get; set; }
+
+			[Category("Debug")]
+			[Description("Directory where the history of accesses to PPU registers will be saved (regdump)")]
+			[DefaultValue("")]
+			[EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
+			public string PPURegdumpDir { get; set; }
+
+			[Category("Debug")]
+			[Description("Enable saving the history of accesses to APU registers (regdump). Regdump can be used later in the APUPlayer utility.")]
+			[DefaultValue(false)]
+			public bool APURegdump { get; set; }
+
+			[Category("Debug")]
+			[Description("Directory where the history of accesses to APU registers will be saved (regdump)")]
+			[DefaultValue("")]
+			[EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
+			public string APURegdumpDir { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid
