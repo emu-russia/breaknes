@@ -15,7 +15,7 @@ namespace Breaknes
 
 		// Memory
 		wram = new BaseBoard::SRAM("WRAM", wram_bits);
-		vram = new BaseBoard::SRAM("CIRAM", vram_bits);
+		vram = new BaseBoard::SRAM("VRAM", vram_bits);
 
 		apu->SetNormalizedOutput(true);
 	}

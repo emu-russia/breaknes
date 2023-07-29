@@ -17,7 +17,7 @@ extern "C"
 		{
 			printf("CreateBoard\n");
 			Breaknes::BoardFactory bf(boardName, apu, ppu, p1);
-			CreateDebugHub();
+			CreateDebugHub(false);
 			board = bf.CreateInstance();
 		}
 	}

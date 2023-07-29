@@ -57,6 +57,7 @@ namespace PPUPlayer
 			PPUPlayerSettings settings = new();
 
 			settings.PPU_Revision = "RP2C02G";
+			settings.CPU_CLK_Divider = "NTSC CPU (2A03) CLK÷12";
 			settings.ResetPPU = false;
 			settings.RenderAlwaysEnabled = false;
 			settings.Visual2C02Mapping = false;
@@ -65,6 +66,7 @@ namespace PPUPlayer
 			settings.FreeModeVMirroring = true;
 			settings.OAMDecay = BreaksCore.OAMDecayBehavior.Keep;
 			settings.PpuNoise = 0.0f;
+			settings.AllocConsole = false;
 
 			SaveSettings(settings);
 
@@ -90,6 +92,12 @@ namespace PPUPlayer
 			[Description("PPU revision. Right now only the more or less studied PPU revisions are on the list, the rest will be added as chips are sent to me for research.")]
 			[TypeConverter(typeof(FormatStringConverter_PPU_Revision))]
 			public string? PPU_Revision { get; set; }
+
+			[XmlElement]
+			[Category("Board Features")]
+			[Description("Fictional CPU clock divider. Instead of a real CPU, a RegDump processor is used, which feeds the PPU with register operations.")]
+			[TypeConverter(typeof(FormatStringConverter_CLK_Divider))]
+			public string? CPU_CLK_Divider { get; set; }
 
 			[XmlElement]
 			[Category("Board Features")]
@@ -135,6 +143,11 @@ namespace PPUPlayer
 			[Category("Board Features")]
 			[Description("Determines the noise of the video signal. Value in volts (if not equal to zero, the signal will be noisy by +/- the specified value. Works only for the composite output.")]
 			public float PpuNoise { get; set; }
+
+			[Category("Debug")]
+			[Description("Turn on the debug console. Requires a restart.")]
+			[DefaultValue(false)]
+			public bool AllocConsole { get; set; }
 		}
 
 
@@ -152,6 +165,22 @@ namespace PPUPlayer
 				list.Add("RP2C04-0003");
 				list.Add("RP2C07-0");
 				list.Add("UMC UA6538");
+
+				return new StandardValuesCollection(list);
+			}
+		}
+
+		public class FormatStringConverter_CLK_Divider : StringConverter
+		{
+			public override Boolean GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
+			public override Boolean GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
+			public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+			{
+				List<String> list = new List<String>();
+
+				list.Add("NTSC CPU (2A03) CLK÷12");
+				list.Add("PAL CPU (2A07) CLK÷16");
+				list.Add("Decent Famiclone CPU (UMC UM6527P) CLK÷15");
 
 				return new StandardValuesCollection(list);
 			}

@@ -171,13 +171,13 @@ void DebugHub::DisposeCartMemMap()
 	}
 }
 
-void CreateDebugHub()
+void CreateDebugHub(bool reopen_stdout)
 {
 	if (dbg_hub == nullptr)
 	{
 		dbg_hub = new DebugHub();
 #ifdef _WIN32
-		if (GetConsoleWindow()) {
+		if (GetConsoleWindow() && reopen_stdout) {
 			freopen("CONOUT$", "w", stdout);
 		}
 #endif
