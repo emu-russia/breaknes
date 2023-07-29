@@ -48,9 +48,11 @@ namespace PPUPlayer
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
-#if DEBUG
-			AllocConsole();
-#endif
+			var settings = FormSettings.LoadSettings();
+			if (settings.AllocConsole)
+			{
+				AllocConsole();
+			}
 
 			pictureBoxField.BackColor = Color.Gray;
 			toolStripButton3.Enabled = false;
@@ -137,6 +139,17 @@ namespace PPUPlayer
 			StopPPU();
 		}
 
+		string GetApuRevistion(string cpu_clk_divider)
+		{
+			switch (cpu_clk_divider)
+			{
+				case "NTSC CPU (2A03) CLK÷12": return "RP2A03G";
+				case "PAL CPU (2A07) CLK÷16": return "RP2A07";
+				case "Decent Famiclone CPU (UMC UM6527P) CLK÷15": return "UA6527P";
+			}
+			return "RP2A03G";
+		}
+
 		void RunPPU()
 		{
 			if (backgroundWorker1.IsBusy)
@@ -194,8 +207,9 @@ namespace PPUPlayer
 			}
 
 			string ppu_rev = settings.PPU_Revision == null ? "RP2C02G" : settings.PPU_Revision;
+			string cpu_clk_divider = settings.CPU_CLK_Divider == null ? "RP2A03G" : settings.CPU_CLK_Divider;
 
-			BreaksCore.CreateBoard("PPUPlayer", "RP2A03G", ppu_rev, "Fami");
+			BreaksCore.CreateBoard("PPUPlayer", GetApuRevistion(cpu_clk_divider), ppu_rev, "Fami");
 			int res = BreaksCore.InsertCartridge(nes, nes.Length);
 			if (res != 0)
 			{
