@@ -41,6 +41,12 @@ namespace SharpTools
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void LoadRegDump([In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] data, int data_size);
 
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void EnablePpuRegDump(bool enable, string regdump_dir);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void EnableApuRegDump(bool enable, string regdump_dir);
+
 		[StructLayout(LayoutKind.Explicit)]
 		public struct AudioSignalFeatures
 		{

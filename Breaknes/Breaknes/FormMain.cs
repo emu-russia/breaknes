@@ -1,3 +1,4 @@
+using Breaknes.Properties;
 using SharpTools;
 using System.Runtime.InteropServices;
 
@@ -43,6 +44,14 @@ namespace Breaknes
 			}
 			board.onUpdateWaves += OnUpdateWaves;
 			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
+			if (settings.PPURegdump)
+			{
+				BreaksCore.EnablePpuRegDump(true, settings.PPURegdumpDir);
+			}
+			if (settings.APURegdump)
+			{
+				BreaksCore.EnableApuRegDump(true, settings.APURegdumpDir);
+			}
 			backgroundWorker1.RunWorkerAsync();
 		}
 
@@ -86,15 +95,19 @@ namespace Breaknes
 		{
 			FormSettings form_settings = (FormSettings)sender;
 
+			var settings = FormSettings.LoadSettings();
+
 			if (form_settings.PurgeBoard)
 			{
 				board.Paused = true;
 				board.EjectCartridge();
 				board.DisposeBoard();
-				var settings = FormSettings.LoadSettings();
 				board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
 				Text = original_title;
 			}
+
+			BreaksCore.EnablePpuRegDump(settings.PPURegdump, settings.PPURegdumpDir);
+			BreaksCore.EnableApuRegDump(settings.APURegdump, settings.APURegdumpDir);
 		}
 
 		private void openDebuggerToolStripMenuItem_Click(object sender, EventArgs e)

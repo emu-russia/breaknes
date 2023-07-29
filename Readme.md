@@ -13,4 +13,4 @@ Use Windows and VS2022. Dotnet 6.0 **Desktop** Runtime is also required.
 
 Builds for Linux can be found here: https://github.com/emu-russia/breaknes-linux
 
-For those who like minimalism - see Breaknes build using SDL2 (`Breknes/BreknesWindows`).
+For those who like minimalism - see Breaknes build using SDL2 (`Breaknes/BreaknesWindows`).

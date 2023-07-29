@@ -80,6 +80,16 @@ extern "C"
 	DLL_EXPORT void LoadRegDump(uint8_t* data, size_t data_size);
 
 	/// <summary>
+	/// Enable/disable saving the history of PPU register accesses.
+	/// </summary>
+	DLL_EXPORT void EnablePpuRegDump(bool enable, char* regdump_dir);
+
+	/// <summary>
+	/// Enable/disable saving the history of APU register accesses.
+	/// </summary>
+	DLL_EXPORT void EnableApuRegDump(bool enable, char* regdump_dir);
+
+	/// <summary>
 	/// Get audio signal settings that help with its rendering on the consumer side.
 	/// </summary>
 	/// <param name="features"></param>

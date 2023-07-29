@@ -21,6 +21,12 @@ namespace Breaknes
 		APUSim::APU* apu = nullptr;
 		PPUSim::PPU* ppu = nullptr;
 
+		const uint16_t MappedAPUBase = 0x4000;
+		const uint16_t MappedAPUMask = 0x1f;
+		const uint16_t MappedPPUBase = 0x2000;
+		const uint16_t MappedPPUMask = 0x7;
+		const uint64_t JustAboutOneSecond = 20'000'000;
+
 		BaseLogic::TriState CLK = BaseLogic::TriState::Zero;
 
 		// CPU Bus
@@ -43,6 +49,15 @@ namespace Breaknes
 
 		BaseLogic::TriState gnd = BaseLogic::TriState::Zero;
 		BaseLogic::TriState vdd = BaseLogic::TriState::One;
+
+		RegDumper* ppu_regdump = nullptr;
+		RegDumper* apu_regdump = nullptr;
+		size_t prev_phi_counter_for_ppuregdump = 0;
+		size_t prev_phi_counter_for_apuregdump = 0;
+		size_t phi_flush_counter_ppuregdump = 0;
+		size_t phi_flush_counter_apuregdump = 0;
+
+		void TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState m2, BaseLogic::TriState rnw);
 
 	public:
 		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
@@ -101,6 +116,16 @@ namespace Breaknes
 		/// <param name="data">RegDumpEntry records</param>
 		/// <param name="data_size">Dump size (bytes)</param>
 		virtual void LoadRegDump(uint8_t* data, size_t data_size);
+
+		/// <summary>
+		/// Enable/disable saving the history of PPU register accesses.
+		/// </summary>
+		virtual void EnablePpuRegDump(bool enable, char* regdump_dir);
+
+		/// <summary>
+		/// Enable/disable saving the history of APU register accesses.
+		/// </summary>
+		virtual void EnableApuRegDump(bool enable, char* regdump_dir);
 
 		/// <summary>
 		/// Get audio signal settings that help with its rendering on the consumer side.
