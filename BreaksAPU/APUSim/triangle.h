@@ -15,8 +15,6 @@ namespace APUSim
 		BaseLogic::TriState LOAD = BaseLogic::TriState::X;
 		BaseLogic::TriState STEP = BaseLogic::TriState::X;
 		BaseLogic::TriState TSTEP = BaseLogic::TriState::X;
-		BaseLogic::TriState FLOAD = BaseLogic::TriState::X;
-		BaseLogic::TriState FSTEP = BaseLogic::TriState::X;
 
 		RegisterBit lc_reg{};
 		BaseLogic::FF Reload_FF{};
