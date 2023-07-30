@@ -161,4 +161,9 @@ namespace APUSim
 
 		// TBD: Add other APU
 	}
+
+	TriState APU::GetPHI2()
+	{
+		return wire.PHI2;
+	}
 }

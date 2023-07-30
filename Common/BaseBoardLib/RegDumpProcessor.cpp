@@ -23,7 +23,7 @@ namespace BaseBoard
 	{
 		// Increase the cycle counter
 
-		if (IsPosedge(PrevCLK, CLK))
+		if (IsNegedge(PrevCLK, CLK))
 		{
 			clk_counter++;
 			hold = false;

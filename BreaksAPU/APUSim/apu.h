@@ -365,5 +365,7 @@ namespace APUSim
 		/// </summary>
 		/// <param name="features"></param>
 		void GetSignalFeatures(AudioSignalFeatures& features);
+
+		BaseLogic::TriState GetPHI2();
 	};
 }

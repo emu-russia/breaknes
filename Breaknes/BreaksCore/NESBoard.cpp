@@ -61,7 +61,7 @@ namespace Breaknes
 		M2 = outputs[(size_t)APUSim::APU_Output::M2];
 
 		// Accesses by the embedded core to APU registers are still broadcast to the address bus via the multiplexer.
-		TreatCoreForRegdump(addr_bus, data_bus, M2, CPU_RnW);
+		TreatCoreForRegdump(addr_bus, data_bus, apu->GetPHI2(), CPU_RnW);
 
 		nOE1 = outputs[(size_t)APUSim::APU_Output::n_IN0];		// #RDP0 official
 		nOE2 = outputs[(size_t)APUSim::APU_Output::n_IN1];		// #RDP1 official
@@ -226,7 +226,7 @@ namespace Breaknes
 	{
 		if (PPU_nCE == TriState::Zero && CPU_RnW == TriState::Zero) {
 			int reg_sel = addr_bus & 7;
-			printf("Write PPU %d=0x%02X\n", reg_sel, data_bus);
+			printf("Write PPU %d=0x%02X, phi2: %d, phi counter: 0x%llx\n", reg_sel, data_bus, apu->GetPHI2(), GetPHICounter());
 		}
 	}
 }
