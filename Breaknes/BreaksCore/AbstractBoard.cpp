@@ -146,21 +146,21 @@ namespace Breaknes
 
 	/// <summary>
 	/// Check that the 6502 core is accessing the mapped APU/PPU registers and add an entry to regdump if necessary.
+	/// The register operation is committed only on the PHI2 phase of the processor (the signal value is obtained directly from the core)
+	/// If you don't do this, you may catch "bogus" register operations when the register address is set during PHI1.
 	/// </summary>
-	void Board::TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState m2, BaseLogic::TriState rnw)
+	void Board::TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState phi2, BaseLogic::TriState rnw)
 	{
 		// APU Regdump
 		if (apu_regdump && (addr_bus & ~MappedAPUMask) == MappedAPUBase) {
 
 			uint64_t phi_now = GetPHICounter();
-			uint64_t delta = phi_now - prev_phi_counter_for_apuregdump;
-			if (prev_phi_counter_for_apuregdump != phi_now) {
+			if (prev_phi_counter_for_apuregdump != phi_now && phi2 == BaseLogic::TriState::One) {
 
 				if (rnw == BaseLogic::TriState::One)
 					apu_regdump->LogRegRead(phi_now, addr_bus & MappedAPUMask);
 				else if (rnw == BaseLogic::TriState::Zero)
 					apu_regdump->LogRegWrite(phi_now, addr_bus & MappedAPUMask, data_bus);
-
 				prev_phi_counter_for_apuregdump = phi_now;
 			}
 		}
@@ -168,14 +168,12 @@ namespace Breaknes
 		if (ppu_regdump && (addr_bus & ~MappedPPUMask) == MappedPPUBase) {
 
 			uint64_t phi_now = GetPHICounter();
-			uint64_t delta = phi_now - prev_phi_counter_for_ppuregdump;
-			if (prev_phi_counter_for_ppuregdump != phi_now) {
+			if (prev_phi_counter_for_ppuregdump != phi_now && phi2 == BaseLogic::TriState::One) {
 
 				if (rnw == BaseLogic::TriState::One)
 					ppu_regdump->LogRegRead(phi_now, addr_bus & MappedPPUMask);
 				else if (rnw == BaseLogic::TriState::Zero)
 					ppu_regdump->LogRegWrite(phi_now, addr_bus & MappedPPUMask, data_bus);
-
 				prev_phi_counter_for_ppuregdump = phi_now;
 			}
 }

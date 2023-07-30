@@ -55,7 +55,7 @@ namespace Breaknes
 		size_t prev_phi_counter_for_ppuregdump = 0;
 		size_t prev_phi_counter_for_apuregdump = 0;
 
-		void TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState m2, BaseLogic::TriState rnw);
+		void TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState phi2, BaseLogic::TriState rnw);
 
 	public:
 		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
