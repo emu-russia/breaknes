@@ -73,10 +73,11 @@ namespace APUSim
 
 		// TBD: Other APU revisions
 
-		// The software PHI counter is triggered by the raising edge.
+		// The software PHI counter is triggered by the falling edge.
 		// This is purely a software design for convenience, and has nothing to do with APU hardware circuitry.
+		// CPU cycles count by falling edge means that it is a counter of FULL cycles (i.e. PHI1+PHI2 of the processor are executed)
 
-		if (IsPosedge(prev_phi, new_phi))
+		if (IsNegedge(prev_phi, new_phi))
 		{
 			apu->phi_counter++;
 		}
