@@ -1,11 +1,11 @@
 
-<img src="/UserManual/imgstore/157481692-2ecd4e71-2599-4050-9ce0-815c0336ad27.png" />
+![logo](/UserManual/imgstore/157481692-2ecd4e71-2599-4050-9ce0-815c0336ad27.png)
 
 NES/Famicom/Dendy emulator at the gate level.
 
 ## Progress
 
-<img src="/UserManual/imgstore/progress.png" />
+![progress](/UserManual/imgstore/progress.png)
 
 ## Build
 
