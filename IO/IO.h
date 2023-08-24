@@ -1,11 +1,5 @@
 #pragma once
 
-#include "AbstractIODevice.h"
-#include "FamiController.h"
-#include "NESController.h"
-#include "DendyController.h"
-
-
 namespace IO
 {
 	/// <summary>
@@ -19,7 +13,15 @@ namespace IO
 		NESController,
 		DendyController,
 	};
+}
 
+#include "AbstractIODevice.h"
+#include "FamiController.h"
+#include "NESController.h"
+#include "DendyController.h"
+
+namespace IO
+{
 	/// <summary>
 	/// Each motherboard implementation inherits this class to implement port handling by their simulation.
 	/// </summary>
