@@ -99,6 +99,11 @@ add_executable (breaknes
 	Mappers/MMC1.cpp
 	Mappers/MMC1_Based.cpp
 
+	IO/IO.cpp
+	IO/DendyController.cpp
+	IO/FamiController.cpp
+	IO/NESController.cpp
+
 	Breaknes/BreaksCore/AbstractBoard.cpp
 	Breaknes/BreaksCore/APUPlayerBoard.cpp
 	Breaknes/BreaksCore/APUPlayerBoardDebug.cpp
