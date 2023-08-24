@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using static SharpTools.CoreDebug;
 
 namespace SharpTools
@@ -146,6 +147,31 @@ namespace SharpTools
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetNoiseLevel(float volts);
+
+		#region "Core IO Api"
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int IOCreateInstance(UInt32 device_id);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void IOAttach(int port, int handle);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void IODetach(int port, int handle);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void IOSetState(int handle, int io_state, UInt32 value);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern UInt32 IOGetState(int handle, int io_state);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int IOGetNumStates(int handle);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void IOGetStateName(int handle, int io_state, [In, Out][MarshalAs(UnmanagedType.LPStr)] char[] name, int name_size);
+
+		#endregion "Core IO Api"
 
 
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]

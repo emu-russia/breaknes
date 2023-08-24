@@ -22,7 +22,7 @@ namespace IO
 		IODevice() {}
 		virtual ~IODevice() {}
 
-		virtual uint32_t GetID() { return DeviceID::Abstract; }
+		virtual uint32_t GetID() { return (uint32_t)DeviceID::Abstract; }
 		virtual std::string GetName() { return "Abstract"; }
 		virtual int GetIOStates() { return 0; }
 		virtual std::string GetIOStateName(size_t io_state) { return ""; }

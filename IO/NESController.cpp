@@ -29,7 +29,7 @@ namespace IO
 
 	uint32_t NESController::GetID()
 	{
-		return DeviceID::NESController;
+		return (uint32_t)DeviceID::NESController;
 	}
 
 	std::string NESController::GetName()
