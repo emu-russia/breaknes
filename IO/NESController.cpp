@@ -3,7 +3,7 @@
 
 namespace IO
 {
-	NESController::NESController()
+	NESController::NESController() : IODevice()
 	{
 		states[(size_t)NESControllerState::Up].actuator_name = "Up";
 		states[(size_t)NESControllerState::Up].value = 0;
