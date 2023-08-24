@@ -35,3 +35,77 @@ Then each device can be configured (roughly speaking to make binding IOState to 
 After configuration, the device can be attached or detached to the specified motherboard model (Attach / Detach). After starting the emulation for the IO subsystem will be created instances of connected devices, connected to the ports and then the emulator can call SetState from its side, so that the native implementation will convert IOState into specific signals for IO ports.
 
 Again the description is very abstract, it will crystallize into particular classes/methods as the work progresses.
+
+## Famicom Controller (Port1)
+
+![famicom_controller1](/UserManual/imgstore/famicom_controller1.png)
+
+DeviceID: 0x00000001
+
+|IOState|Actuator|Values|
+|---|---|---|
+|1|Up|0/1|
+|2|Down|0/1|
+|3|Left|0/1|
+|4|Right|0/1|
+|5|Select|0/1|
+|6|Start|0/1|
+|7|B|0/1|
+|8|A|0/1|
+
+Although Famicom controllers are not removable, they can be detached inside the case, so for the sake of code unification we will consider them removable.
+
+## Famicom Controller (Port2)
+
+![famicom_controller2](/UserManual/imgstore/famicom_controller2.png)
+
+DeviceID: 0x00000002
+
+|IOState|Actuator|Values|
+|---|---|---|
+|1|Up|0/1|
+|2|Down|0/1|
+|3|Left|0/1|
+|4|Right|0/1|
+|5|Volume|0...255|
+|6|MicLevel|0...255|
+|7|B|0/1|
+|8|A|0/1|
+
+Volume and mic level values are in the UInt8 range so far, we'll see how good this model is in the process.
+
+## NES Controller (Port1/2)
+
+![nes_controller](/UserManual/imgstore/nes_controller.png)
+
+DeviceID: 0x00000003
+
+|IOState|Actuator|Values|
+|---|---|---|
+|1|Up|0/1|
+|2|Down|0/1|
+|3|Left|0/1|
+|4|Right|0/1|
+|5|Select|0/1|
+|6|Start|0/1|
+|7|B|0/1|
+|8|A|0/1|
+
+## Dendy Controller (Port1/2)
+
+![dendy_controller](/UserManual/imgstore/dendy_controller.png)
+
+DeviceID: 0x00000004
+
+|IOState|Actuator|Values|
+|---|---|---|
+|1|Up|0/1|
+|2|Down|0/1|
+|3|Left|0/1|
+|4|Right|0/1|
+|5|Select|0/1|
+|6|Start|0/1|
+|7|TurboB|0/1|
+|8|TurboA|0/1|
+|9|B|0/1|
+|10|A|0/1|
