@@ -148,6 +148,7 @@ namespace SharpTools
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetNoiseLevel(float volts);
 
+
 		#region "Core IO Api"
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
