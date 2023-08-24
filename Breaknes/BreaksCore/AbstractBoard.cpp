@@ -176,7 +176,7 @@ namespace Breaknes
 					ppu_regdump->LogRegWrite(phi_now, addr_bus & MappedPPUMask, data_bus);
 				prev_phi_counter_for_ppuregdump = phi_now;
 			}
-}
+		}
 	}
 
 	void Board::GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)
