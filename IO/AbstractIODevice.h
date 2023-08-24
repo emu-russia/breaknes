@@ -13,21 +13,20 @@ namespace IO
 	/// </summary>
 	class IODevice
 	{
-
 	protected:
 		std::map<size_t, IOState> states;
 
 	public:
-		IODevice();
-		virtual ~IODevice();
+		IODevice() {}
+		virtual ~IODevice() {}
 
-		virtual uint32_t GetID();
-		virtual std::string GetName();
-		virtual void GetIOStates(std::list<size_t>& io_states);
+		virtual uint32_t GetID() { return DeviceID::Abstract; }
+		virtual std::string GetName() { return "Abstract"; }
+		virtual void GetIOStates(std::list<size_t>& io_states) {}
 
-		virtual void SetState(size_t io_state, uint32_t value);
-		virtual uint32_t GetState(size_t io_state);
+		virtual void SetState(size_t io_state, uint32_t value) {}
+		virtual uint32_t GetState(size_t io_state) { return 0; }
 
-		virtual void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]);
+		virtual void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]) {}
 	};
 }
