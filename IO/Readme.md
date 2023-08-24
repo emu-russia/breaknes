@@ -19,8 +19,8 @@ And how to generalize all this nicely? :-)
 - The implementation of the device logic is in native code
 - Each input device is provided with a unique identifier that fully defines its model and implementation (DeviceID); a list of all identifiers is in io.h
 - The Motherboard description in BoardDescription.json contains a list of ports (IOPort). Each port contains a list of device IDs that can be attached to it (Attach / Detach)
-- IO subsystem contains a factory for creating devices by its DeviceID. The created device is defined by a descriptor, an integer > 0 (Handle)
-- Each device provides a list of its I/O controls (IOState). Each IOState is defined by an integer > 0
+- IO subsystem contains a factory for creating devices by its DeviceID. The created device is defined by a descriptor, an integer >= 0 (Handle)
+- Each device provides a list of its I/O controls (IOState). Each IOState is defined by an integer >= 0
 - The device contains a SetState method that can be used by the consumer to set the states of the IOState controls
 
 ## Configuring IO Devices
@@ -44,14 +44,14 @@ DeviceID: 0x00000001
 
 |IOState|Actuator|Values|
 |---|---|---|
-|1|Up|0/1|
-|2|Down|0/1|
-|3|Left|0/1|
-|4|Right|0/1|
-|5|Select|0/1|
-|6|Start|0/1|
-|7|B|0/1|
-|8|A|0/1|
+|0|Up|0/1|
+|1|Down|0/1|
+|2|Left|0/1|
+|3|Right|0/1|
+|4|Select|0/1|
+|5|Start|0/1|
+|6|B|0/1|
+|7|A|0/1|
 
 Although Famicom controllers are not removable, they can be detached inside the case, so for the sake of code unification we will consider them removable.
 
@@ -63,14 +63,14 @@ DeviceID: 0x00000002
 
 |IOState|Actuator|Values|
 |---|---|---|
-|1|Up|0/1|
-|2|Down|0/1|
-|3|Left|0/1|
-|4|Right|0/1|
-|5|Volume|0...255|
-|6|MicLevel|0...255|
-|7|B|0/1|
-|8|A|0/1|
+|0|Up|0/1|
+|1|Down|0/1|
+|2|Left|0/1|
+|3|Right|0/1|
+|4|Volume|0...255|
+|5|MicLevel|0...255|
+|6|B|0/1|
+|7|A|0/1|
 
 Volume and mic level values are in the UInt8 range so far, we'll see how good this model is in the process.
 
@@ -82,14 +82,14 @@ DeviceID: 0x00000003
 
 |IOState|Actuator|Values|
 |---|---|---|
-|1|Up|0/1|
-|2|Down|0/1|
-|3|Left|0/1|
-|4|Right|0/1|
-|5|Select|0/1|
-|6|Start|0/1|
-|7|B|0/1|
-|8|A|0/1|
+|0|Up|0/1|
+|1|Down|0/1|
+|2|Left|0/1|
+|3|Right|0/1|
+|4|Select|0/1|
+|5|Start|0/1|
+|6|B|0/1|
+|7|A|0/1|
 
 ## Dendy Controller (Port1/2)
 
@@ -99,13 +99,13 @@ DeviceID: 0x00000004
 
 |IOState|Actuator|Values|
 |---|---|---|
-|1|Up|0/1|
-|2|Down|0/1|
-|3|Left|0/1|
-|4|Right|0/1|
-|5|Select|0/1|
-|6|Start|0/1|
-|7|TurboB|0/1|
-|8|TurboA|0/1|
-|9|B|0/1|
-|10|A|0/1|
+|0|Up|0/1|
+|1|Down|0/1|
+|2|Left|0/1|
+|3|Right|0/1|
+|4|Select|0/1|
+|5|Start|0/1|
+|6|TurboB|0/1|
+|7|TurboA|0/1|
+|8|B|0/1|
+|9|A|0/1|
