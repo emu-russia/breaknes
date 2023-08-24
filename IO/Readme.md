@@ -36,6 +36,12 @@ After configuration, the device can be attached or detached to the specified mot
 
 Again the description is very abstract, it will crystallize into particular classes/methods as the work progresses.
 
+## Abstract Device
+
+DeviceID: 0x00000000
+
+Does not contain any IOState.
+
 ## Famicom Controller (Port1)
 
 ![famicom_controller1](/UserManual/imgstore/famicom_controller1.png)
