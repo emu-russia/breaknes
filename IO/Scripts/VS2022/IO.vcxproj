@@ -29,6 +29,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\UM6582.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\AbstractIODevice.h" />
@@ -37,6 +38,7 @@
     <ClInclude Include="..\..\IO.h" />
     <ClInclude Include="..\..\NESController.h" />
     <ClInclude Include="..\..\pch.h" />
+    <ClInclude Include="..\..\UM6582.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Readme.md" />

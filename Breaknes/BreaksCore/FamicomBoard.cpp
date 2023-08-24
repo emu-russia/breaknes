@@ -18,10 +18,13 @@ namespace Breaknes
 		vram = new BaseBoard::SRAM("VRAM", vram_bits);
 
 		apu->SetNormalizedOutput(true);
+
+		io = new FamicomBoardIO();
 	}
 
 	FamicomBoard::~FamicomBoard()
 	{
+		delete io;
 		delete vram;
 		delete wram;
 		delete ppu;
@@ -75,6 +78,7 @@ namespace Breaknes
 		// DMX (Bus Master)
 
 		// In real CPU in reset mode M2 goes to `Z` state, it does not suit us
+		// TODO: The pull-up is inside the DMX chip. Soon Famicom will come to disassemble, we will see what is in the chip and make LS139(DMX) properly
 		Pullup(M2);			// HACK
 
 		// The demultiplexer stages are mixed up in the Famicom. I'm not sure it makes sense to simulate it so accurately, but let it be
