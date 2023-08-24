@@ -5,7 +5,7 @@ namespace IO
 	/// <summary>
 	/// A unique device identifier that completely defines the device model and logic.
 	/// </summary>
-	enum DeviceID
+	enum class DeviceID
 	{
 		Abstract = 0,
 		FamiController_1,
@@ -22,14 +22,22 @@ namespace IO
 
 namespace IO
 {
+	struct IOMapped
+	{
+		int port;		// -1: detached
+		int handle;		// -1: no handle
+		IODevice* device;
+	};
+
 	/// <summary>
 	/// Each motherboard implementation inherits this class to implement port handling by their simulation.
 	/// </summary>
 	class IOSubsystem
 	{
+		IOMapped* GetMappedDeviceByHandle(int handle);
 
 	protected:
-		std::map<int, IODevice*> inst;
+		std::list<IOMapped*> devices;
 
 	public:
 		IOSubsystem();
@@ -44,6 +52,9 @@ namespace IO
 
 		void SetState(int handle, size_t io_state, uint32_t value);
 		uint32_t GetState(int handle, size_t io_state);
+
+		int GetNumStates(int handle);
+		std::string GetStateName(int handle, size_t io_state);
 
 #pragma endregion "Interface for the emulator"
 

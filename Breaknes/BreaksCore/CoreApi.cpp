@@ -263,4 +263,64 @@ extern "C"
 			board->GetAllCoreDebugInfo(info);
 		}
 	}
+
+	DLL_EXPORT size_t IOCreateInstance(uint32_t device_id)
+	{
+		if (board != nullptr && board->io != nullptr)
+		{
+			return board->io->CreateInstance((IO::DeviceID)device_id);
+		}
+	}
+
+	DLL_EXPORT void IOAttach(size_t port, size_t handle)
+	{
+		if (board != nullptr && board->io != nullptr)
+		{
+			board->io->Attach(port, handle);
+		}
+	}
+
+	DLL_EXPORT void IODetach(size_t port, size_t handle)
+	{
+		if (board != nullptr && board->io != nullptr)
+		{
+			board->io->Detach(port, handle);
+		}
+	}
+
+	DLL_EXPORT void IOSetState(size_t handle, size_t io_state, uint32_t value)
+	{
+		if (board != nullptr && board->io != nullptr)
+		{
+			board->io->SetState(handle, io_state, value);
+		}
+	}
+
+	DLL_EXPORT uint32_t IOGetState(size_t handle, size_t io_state)
+	{
+		if (board != nullptr && board->io != nullptr)
+		{
+			return board->io->GetState(handle, io_state);
+		}
+	}
+
+	DLL_EXPORT size_t IOGetNumStates(size_t handle)
+	{
+		if (board != nullptr && board->io != nullptr)
+		{
+			return board->io->GetNumStates(handle);
+		}
+	}
+
+	DLL_EXPORT void IOGetStateName(size_t handle, size_t io_state, char* name, size_t name_size)
+	{
+		if (board != nullptr && board->io != nullptr)
+		{
+			auto state_name = board->io->GetStateName(handle, io_state);
+			if (state_name.size() < name_size) {
+				strncpy(name, state_name.c_str(), name_size);
+				name[state_name.size()] = 0;
+			}
+		}
+	}
 };

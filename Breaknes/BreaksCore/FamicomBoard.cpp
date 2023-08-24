@@ -18,10 +18,13 @@ namespace Breaknes
 		vram = new BaseBoard::SRAM("VRAM", vram_bits);
 
 		apu->SetNormalizedOutput(true);
+
+		io = new FamicomBoardIO();
 	}
 
 	FamicomBoard::~FamicomBoard()
 	{
+		delete io;
 		delete vram;
 		delete wram;
 		delete ppu;
@@ -75,6 +78,7 @@ namespace Breaknes
 		// DMX (Bus Master)
 
 		// In real CPU in reset mode M2 goes to `Z` state, it does not suit us
+		// TODO: The pull-up is inside the DMX chip. Soon Famicom will come to disassemble, we will see what is in the chip and make LS139(DMX) properly
 		Pullup(M2);			// HACK
 
 		// The demultiplexer stages are mixed up in the Famicom. I'm not sure it makes sense to simulate it so accurately, but let it be
@@ -212,4 +216,58 @@ namespace Breaknes
 			*sample = (aux.normalized.a * 0.4f /* 20k resistor */ + aux.normalized.b /* 12k resistor */ + cart_snd.normalized /* levels pls, someone? */) / 3.0f;
 		}
 	}
+
+#pragma region "Fami IO"
+
+	FamicomBoardIO::FamicomBoardIO() : IO::IOSubsystem()
+	{
+	}
+
+	FamicomBoardIO::~FamicomBoardIO()
+	{
+	}
+
+	int FamicomBoardIO::GetPorts()
+	{
+		// Only controller ports so far
+		return 2;
+	}
+
+	void FamicomBoardIO::GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices)
+	{
+		devices.clear();
+
+		switch (port)
+		{
+			case 0:
+				devices.push_back(IO::DeviceID::FamiController_1);
+				break;
+
+			case 1:
+				devices.push_back(IO::DeviceID::FamiController_2);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	void FamicomBoardIO::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
+	{
+		for (auto it = devices.begin(); it != devices.end(); ++it) {
+
+			IO::IOMapped* mapped = *it;
+
+			if (mapped->port == port && mapped->handle >= 0) {
+
+				// TODO: Assign input signals to the simulated IO device
+
+				mapped->device->sim(inputs, outputs);
+
+				// TODO: Process the output signals from the device and distribute them across the board
+			}
+		}
+	}
+
+#pragma endregion "Fami IO"
 }

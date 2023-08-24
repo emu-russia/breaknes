@@ -1,7 +1,5 @@
 // The top-level API for managed applications.
 
-// TBD: The API will be extended to handle I/O devices (controllers, expansion ports)
-
 #pragma once
 
 #if defined(_WINDOWS) && !defined(BREAKS_CORE_STATIC)
@@ -162,4 +160,39 @@ extern "C"
 	/// </summary>
 	/// <param name="info"></param>
 	DLL_EXPORT void GetAllCoreDebugInfo(M6502Core::DebugInfo* info);
+
+	/// <summary>
+	/// Create an IO instance of the device with the specified DeviceID. Return handle
+	/// </summary>
+	DLL_EXPORT size_t IOCreateInstance(uint32_t device_id);
+
+	/// <summary>
+	/// Connect the device to the port.
+	/// </summary>
+	DLL_EXPORT void IOAttach(size_t port, size_t handle);
+
+	/// <summary>
+	/// Disconnect the device from the port.
+	/// </summary>
+	DLL_EXPORT void IODetach(size_t port, size_t handle);
+
+	/// <summary>
+	/// Set the IOState state of the device. For example, the state of the controller buttons.
+	/// </summary>
+	DLL_EXPORT void IOSetState(size_t handle, size_t io_state, uint32_t value);
+
+	/// <summary>
+	/// Get the state of the specified device IOState.
+	/// </summary>
+	DLL_EXPORT uint32_t IOGetState(size_t handle, size_t io_state);
+
+	/// <summary>
+	/// Get the number of IO device states. For example, the number of buttons of the controller.
+	/// </summary>
+	DLL_EXPORT size_t IOGetNumStates(size_t handle);
+
+	/// <summary>
+	/// Return the IOState name of the device.
+	/// </summary>
+	DLL_EXPORT void IOGetStateName(size_t handle, size_t io_state, char* name, size_t name_size);
 };

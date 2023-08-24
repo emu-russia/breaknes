@@ -62,6 +62,11 @@ namespace Breaknes
 		virtual ~Board();
 
 		/// <summary>
+		/// IO Subsystem
+		/// </summary>
+		IO::IOSubsystem* io = nullptr;
+
+		/// <summary>
 		/// Simulate 1 half cycle of the board. The simulation of the signal edge is not supported, this is overkill.
 		/// </summary>
 		virtual void Step() = 0;

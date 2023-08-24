@@ -103,6 +103,7 @@ add_executable (breaknes
 	IO/DendyController.cpp
 	IO/FamiController.cpp
 	IO/NESController.cpp
+	IO/UM6582.cpp
 
 	Breaknes/BreaksCore/AbstractBoard.cpp
 	Breaknes/BreaksCore/APUPlayerBoard.cpp

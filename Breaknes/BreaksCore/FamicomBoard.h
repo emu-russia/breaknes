@@ -5,6 +5,16 @@
 
 namespace Breaknes
 {
+	class FamicomBoardIO : public IO::IOSubsystem
+	{
+	public:
+		FamicomBoardIO();
+		virtual ~FamicomBoardIO();
+		int GetPorts() override;
+		void GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices) override;
+		void sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]) override;
+	};
+
 	class FamicomBoard : public Board
 	{
 		BaseBoard::SRAM* wram = nullptr;
@@ -55,12 +65,9 @@ namespace Breaknes
 		BaseLogic::TriState VRAM_nCE = BaseLogic::TriState::X;
 		BaseLogic::TriState PPU_nA13 = BaseLogic::TriState::X;		// To save millions of inverters inside the cartridges
 
-		// Famicom Board specific ⚠️
-		// I/O -- TBD :(
-
+		// Famicom Board specific I/O ⚠️
 		BaseBoard::LS368 P4_IO;
 		BaseBoard::LS368 P5_IO;
-
 		BaseLogic::TriState nOE1 = BaseLogic::TriState::X; 		// aka nRDP0 from cpu
 		BaseLogic::TriState nOE2 = BaseLogic::TriState::X; 		// aka nRDP1 from cpu
 		BaseLogic::TriState OUT_0 = BaseLogic::TriState::X;
