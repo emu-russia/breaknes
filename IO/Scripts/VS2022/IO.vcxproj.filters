@@ -51,4 +51,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Readme.md" />
+    <None Include="..\..\ReadmeRus.md" />
+  </ItemGroup>
 </Project>
