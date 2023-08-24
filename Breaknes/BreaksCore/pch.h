@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <map>
 #include <cassert>
 #include <memory.h>
 #include <cstddef>
@@ -41,6 +42,10 @@
 // Cartridge & Mappers
 
 #include "../../Mappers/Mappers.h"
+
+// IO Subsystem
+
+#include "../../IO/IO.h"
 
 // Boards
 

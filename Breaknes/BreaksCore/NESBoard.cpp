@@ -229,4 +229,58 @@ namespace Breaknes
 			printf("Write PPU %d=0x%02X, phi2: %d, phi counter: 0x%llx\n", reg_sel, data_bus, apu->GetPHI2(), GetPHICounter());
 		}
 	}
+
+#pragma region "NES IO"
+
+	NESBoardIO::NESBoardIO() : IO::IOSubsystem()
+	{
+	}
+
+	NESBoardIO::~NESBoardIO()
+	{
+	}
+
+	int NESBoardIO::GetPorts()
+	{
+		// Only controller ports so far
+		return 2;
+	}
+
+	void NESBoardIO::GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices)
+	{
+		devices.clear();
+
+		switch (port)
+		{
+			case 0:
+				devices.push_back(IO::DeviceID::NESController);
+				break;
+
+			case 1:
+				devices.push_back(IO::DeviceID::NESController);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	void NESBoardIO::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
+	{
+		for (auto it = devices.begin(); it != devices.end(); ++it) {
+
+			IO::IOMapped* mapped = *it;
+
+			if (mapped->port == port && mapped->handle >= 0) {
+
+				// TODO: Assign input signals to the simulated IO device
+
+				mapped->device->sim(inputs, outputs);
+
+				// TODO: Process the output signals from the device and distribute them across the board
+			}
+		}
+	}
+
+#pragma endregion "NES IO"
 }

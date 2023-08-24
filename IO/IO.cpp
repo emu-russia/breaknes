@@ -8,6 +8,19 @@ namespace IO
 	
 	IOSubsystem::~IOSubsystem()
 	{
+		// Disconnect and remove all devices
+
+		while (!devices.empty()) {
+
+			IOMapped* mapped = devices.back();
+
+			if (mapped->device != nullptr) {
+				delete mapped->device;
+			}
+
+			devices.pop_back();
+			delete mapped;
+		}
 	}
 
 	int IOSubsystem::CreateInstance(DeviceID device_id)
@@ -17,18 +30,29 @@ namespace IO
 
 	void IOSubsystem::Attach(int port, int handle)
 	{
+		if (handle < 0)
+			return;
 	}
 	
 	void IOSubsystem::Detach(int port, int handle)
 	{
+		if (handle < 0)
+			return;
+
 	}
 
 	void IOSubsystem::SetState(int handle, size_t io_state, uint32_t value)
 	{
+		if (handle < 0)
+			return;
+
 	}
 	
 	uint32_t IOSubsystem::GetState(int handle, size_t io_state)
 	{
+		if (handle < 0)
+			return 0;
+
 		return 0;
 	}
 

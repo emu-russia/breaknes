@@ -212,4 +212,58 @@ namespace Breaknes
 			*sample = (aux.normalized.a * 0.4f /* 20k resistor */ + aux.normalized.b /* 12k resistor */ + cart_snd.normalized /* levels pls, someone? */) / 3.0f;
 		}
 	}
+
+#pragma region "Fami IO"
+
+	FamicomBoardIO::FamicomBoardIO() : IO::IOSubsystem()
+	{
+	}
+
+	FamicomBoardIO::~FamicomBoardIO()
+	{
+	}
+
+	int FamicomBoardIO::GetPorts()
+	{
+		// Only controller ports so far
+		return 2;
+	}
+
+	void FamicomBoardIO::GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices)
+	{
+		devices.clear();
+
+		switch (port)
+		{
+			case 0:
+				devices.push_back(IO::DeviceID::FamiController_1);
+				break;
+
+			case 1:
+				devices.push_back(IO::DeviceID::FamiController_2);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	void FamicomBoardIO::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
+	{
+		for (auto it = devices.begin(); it != devices.end(); ++it) {
+
+			IO::IOMapped* mapped = *it;
+
+			if (mapped->port == port && mapped->handle >= 0) {
+
+				// TODO: Assign input signals to the simulated IO device
+
+				mapped->device->sim(inputs, outputs);
+
+				// TODO: Process the output signals from the device and distribute them across the board
+			}
+		}
+	}
+
+#pragma endregion "Fami IO"
 }

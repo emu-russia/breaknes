@@ -2,6 +2,16 @@
 
 namespace Breaknes
 {
+	class NESBoardIO : public IO::IOSubsystem
+	{
+	public:
+		NESBoardIO();
+		virtual ~NESBoardIO();
+		int GetPorts() override;
+		void GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices) override;
+		void sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]) override;
+	};
+
 	struct NESBoardDebugInfo
 	{
 		uint32_t CLK;

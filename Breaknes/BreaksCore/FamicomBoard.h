@@ -5,6 +5,16 @@
 
 namespace Breaknes
 {
+	class FamicomBoardIO : public IO::IOSubsystem
+	{
+	public:
+		FamicomBoardIO();
+		virtual ~FamicomBoardIO();
+		int GetPorts() override;
+		void GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices) override;
+		void sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]) override;
+	};
+
 	class FamicomBoard : public Board
 	{
 		BaseBoard::SRAM* wram = nullptr;

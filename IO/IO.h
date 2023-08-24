@@ -22,6 +22,13 @@ namespace IO
 
 namespace IO
 {
+	struct IOMapped
+	{
+		int port;
+		int handle;
+		IODevice* device;
+	};
+
 	/// <summary>
 	/// Each motherboard implementation inherits this class to implement port handling by their simulation.
 	/// </summary>
@@ -29,7 +36,7 @@ namespace IO
 	{
 
 	protected:
-		std::map<int, IODevice*> inst;
+		std::list<IOMapped*> devices;
 
 	public:
 		IOSubsystem();
