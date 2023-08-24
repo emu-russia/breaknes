@@ -10,9 +10,10 @@ namespace Breaknes
 		static extern bool AllocConsole();
 
 		private BoardControl board = new();
-		private VideoRender vid_out = null;
-		private AudioRender snd_out = null;
-		private string original_title;
+		private VideoRender? vid_out = null;
+		private AudioRender? snd_out = null;
+		private InputProcessor? input = null;
+		private string original_title = "";
 		private List<FormDebugger> debuggers = new();
 
 		public FormMain()
@@ -74,6 +75,7 @@ namespace Breaknes
 				vid_out = new(OnRenderField, settings.DumpVideo, settings.DumpVideoDir, rom_name);
 				vid_out.SetOutputPictureBox(pictureBox1);
 				snd_out = new(Handle, settings.DumpAudio, settings.DumpAudioDir, rom_name, settings.IIR, settings.CutoffFrequency);
+				input = new InputProcessor();
 				board.Paused = debuggers.Count != 0;
 
 				foreach (var inst in debuggers)
@@ -125,6 +127,11 @@ namespace Breaknes
 
 		private void OnRenderField()
 		{
+			if (input != null)
+			{
+				input.PollDevices();
+			}
+
 			foreach (var inst in debuggers)
 			{
 				inst.UpdateOnRenderField();
