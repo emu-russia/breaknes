@@ -71,5 +71,6 @@ namespace IO
 
 	void NESController::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
 	{
+		// TODO: There is some chip inside the controller, like a shift register. Simulate it and output signals
 	}
 }
