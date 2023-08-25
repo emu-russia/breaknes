@@ -1,7 +1,7 @@
 {
 	"info":
 	{
-		"descr": "There is a description of the components of the various NES/Famicom models and clones. Very preliminary version."
+		"descr": "There is a description of the components of the various NES/Famicom models and clones."
 	},
 
 	"boards":
@@ -10,49 +10,119 @@
 			"name": "HVC-CPU-01",
 			"apu": "RP2A03G",
 			"ppu": "RP2C02G",
-			"p1": "Fami"
+			"p1": "Fami",
+			"io": [
+				{
+					"name": "Famicom Controller Port1",
+					"devices": [ 1 ]
+				},
+				{
+					"name": "Famicom Controller Port2",
+					"devices": [ 2 ]
+				}
+			]
 		},
 
 		{
-			"name": "NES-001 (PCB rev. -01 to -04) (1985-1986)",
+			"name": "NES-001 (PCB rev. -01 to -04)",
 			"apu": "RP2A03G",
 			"ppu": "RP2C02G",
-			"p1": "NES"
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3 ]
+				}
+			]
 		},
 
 		{
-			"name": "NES-001 (PCB rev. -05 to -09) (1986-1989?/??)",
+			"name": "NES-001 (PCB rev. -05 to -09)",
 			"apu": "RP2A03G",
 			"ppu": "RP2C02G",
-			"p1": "NES"
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3 ]
+				}
+			]
 		},
 
 		{
-			"name": "NES-001 (PCB rev. -10 and -11) (1987-1993)",
+			"name": "NES-001 (PCB rev. -10 and -11)",
 			"apu": "RP2A03G",
 			"ppu": "RP2C02G",
-			"p1": "NES"
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3 ]
+				}
+			]
 		},
 
 		{
-			"name": "NES-101 (NESN-101 PCB) (1993-1995)",
+			"name": "NES-101 (NESN-101 PCB)",
 			"apu": "RP2A03G",
 			"ppu": "RP2C02G",
-			"p1": "NES"
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3 ]
+				}
+			]
 		},
 
 		{
-			"name": "NES-101 (NESN-CPU-JIO-01 PCB) (1993?-1995?)",
+			"name": "NES-101 (NESN-CPU-JIO-01 PCB)",
 			"apu": "RP2A03G",
 			"ppu": "RP2C02G",
-			"p1": "NES"
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3 ]
+				}
+			]
 		},
 
 		{
-			"name": "NES-101 (NESN-CPU-AV-01 PCB) (1993?-1995?)",
+			"name": "NES-101 (NESN-CPU-AV-01 PCB)",
 			"apu": "RP2A03G",
 			"ppu": "RP2C02G",
-			"p1": "NES"
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3 ]
+				}
+			]
 		}
 	]
 }
