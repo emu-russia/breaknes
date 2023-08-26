@@ -193,10 +193,6 @@
 			}
 
 			device.attached = board_list.ToArray();
-
-			// DEBUG
-			string text = IOConfigManager.SerializeIOConfig(config);
-			Console.Write(text);
 		}
 	}
 }
