@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\CD4021.cpp" />
     <ClCompile Include="..\..\DendyController.cpp" />
     <ClCompile Include="..\..\FamiController.cpp" />
     <ClCompile Include="..\..\IO.cpp" />
@@ -33,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\AbstractIODevice.h" />
+    <ClInclude Include="..\..\CD4021.h" />
     <ClInclude Include="..\..\DendyController.h" />
     <ClInclude Include="..\..\FamiController.h" />
     <ClInclude Include="..\..\IO.h" />
