@@ -89,6 +89,7 @@ namespace Breaknes
 		BaseLogic::TriState p5_outputs[(size_t)BaseBoard::LS368_Output::Max]{};
 		BaseLogic::TriState p4016_d0;
 		BaseLogic::TriState p4017_d0;
+		bool io_enabled = false;
 
 		bool pendingReset = false;
 		int resetHalfClkCounter = 0;

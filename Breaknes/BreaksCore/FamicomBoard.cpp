@@ -293,7 +293,7 @@ namespace Breaknes
 
 	void FamicomBoard::SetDataBusIfNotFloating(size_t n, BaseLogic::TriState val)
 	{
-		if (val != TriState::Z) {
+		if (io_enabled && val != TriState::Z) {
 			data_bus &= ~(1 << n);
 			data_bus |= ToByte(val) << n;
 		}
