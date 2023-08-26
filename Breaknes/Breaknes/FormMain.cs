@@ -53,6 +53,7 @@ namespace Breaknes
 			{
 				BreaksCore.EnableApuRegDump(true, settings.APURegdumpDir);
 			}
+			input = new InputProcessor();
 			backgroundWorker1.RunWorkerAsync();
 		}
 
