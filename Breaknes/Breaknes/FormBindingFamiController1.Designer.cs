@@ -28,12 +28,12 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			ListViewItem listViewItem7 = new ListViewItem("Up");
-			ListViewItem listViewItem8 = new ListViewItem("Down");
-			ListViewItem listViewItem9 = new ListViewItem("Left");
-			ListViewItem listViewItem10 = new ListViewItem("Right");
-			ListViewItem listViewItem11 = new ListViewItem("Device Key");
-			ListViewItem listViewItem12 = new ListViewItem("Device Key");
+			ListViewItem listViewItem1 = new ListViewItem("Up");
+			ListViewItem listViewItem2 = new ListViewItem("Down");
+			ListViewItem listViewItem3 = new ListViewItem("Left");
+			ListViewItem listViewItem4 = new ListViewItem("Right");
+			ListViewItem listViewItem5 = new ListViewItem("Device Key");
+			ListViewItem listViewItem6 = new ListViewItem("Device Key");
 			splitContainer1 = new SplitContainer();
 			splitContainer2 = new SplitContainer();
 			tabControl1 = new TabControl();
@@ -41,11 +41,11 @@
 			listView1 = new ListView();
 			tabControl2 = new TabControl();
 			tabPage2 = new TabPage();
+			listView2 = new ListView();
 			button4 = new Button();
 			button3 = new Button();
 			button2 = new Button();
 			button1 = new Button();
-			listView2 = new ListView();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
 			splitContainer1.Panel2.SuspendLayout();
@@ -122,7 +122,8 @@
 			// listView1
 			// 
 			listView1.Dock = DockStyle.Fill;
-			listView1.Items.AddRange(new ListViewItem[] { listViewItem7, listViewItem8, listViewItem9, listViewItem10 });
+			listView1.FullRowSelect = true;
+			listView1.Items.AddRange(new ListViewItem[] { listViewItem1, listViewItem2, listViewItem3, listViewItem4 });
 			listView1.Location = new Point(3, 3);
 			listView1.MultiSelect = false;
 			listView1.Name = "listView1";
@@ -151,6 +152,19 @@
 			tabPage2.TabIndex = 0;
 			tabPage2.Text = "Bindings";
 			tabPage2.UseVisualStyleBackColor = true;
+			// 
+			// listView2
+			// 
+			listView2.Dock = DockStyle.Fill;
+			listView2.FullRowSelect = true;
+			listView2.Items.AddRange(new ListViewItem[] { listViewItem5, listViewItem6 });
+			listView2.Location = new Point(3, 3);
+			listView2.MultiSelect = false;
+			listView2.Name = "listView2";
+			listView2.Size = new Size(408, 334);
+			listView2.TabIndex = 1;
+			listView2.UseCompatibleStateImageBehavior = false;
+			listView2.View = View.List;
 			// 
 			// button4
 			// 
@@ -187,18 +201,6 @@
 			button1.TabIndex = 0;
 			button1.Text = "Clear all";
 			button1.UseVisualStyleBackColor = true;
-			// 
-			// listView2
-			// 
-			listView2.Dock = DockStyle.Fill;
-			listView2.Items.AddRange(new ListViewItem[] { listViewItem11, listViewItem12 });
-			listView2.Location = new Point(3, 3);
-			listView2.MultiSelect = false;
-			listView2.Name = "listView2";
-			listView2.Size = new Size(408, 334);
-			listView2.TabIndex = 1;
-			listView2.UseCompatibleStateImageBehavior = false;
-			listView2.View = View.List;
 			// 
 			// FormBindingFamiController1
 			// 
