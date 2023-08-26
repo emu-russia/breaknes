@@ -145,5 +145,10 @@ namespace Breaknes
 				inst.UpdateWaves();
 			}
 		}
+
+		private void iOSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+
+		}
 	}
 }
