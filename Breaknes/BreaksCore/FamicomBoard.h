@@ -87,8 +87,8 @@ namespace Breaknes
 		BaseLogic::TriState p4_outputs[(size_t)BaseBoard::LS368_Output::Max]{};
 		BaseLogic::TriState p5_inputs[(size_t)BaseBoard::LS368_Input::Max]{};
 		BaseLogic::TriState p5_outputs[(size_t)BaseBoard::LS368_Output::Max]{};
-		BaseLogic::TriState p4016_d0;
-		BaseLogic::TriState p4017_d0;
+		BaseLogic::TriState p4016_d0 = BaseLogic::TriState::Z;
+		BaseLogic::TriState p4017_d0 = BaseLogic::TriState::Z;
 		bool io_enabled = false;
 
 		bool pendingReset = false;
