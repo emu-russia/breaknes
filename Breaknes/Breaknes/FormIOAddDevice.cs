@@ -24,11 +24,12 @@ namespace Breaknes
 		private void button1_Click(object sender, EventArgs e)
 		{
 			UInt32 device_id = ComboIndexToDeviceID();
+			string name = textBox1.Text;
 
-			if (device_id != 0)
+			if (device_id != 0 && name != "")
 			{
 				device_to_add = new IOConfigDevice();
-				device_to_add.name = textBox1.Text;
+				device_to_add.name = name;
 				device_to_add.device_id = device_id;
 			}
 			Close();
