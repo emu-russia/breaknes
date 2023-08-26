@@ -43,8 +43,29 @@ namespace Breaknes
 
 		static public void SaveIOConfig(IOConfig config)
 		{
-			string text = JsonConvert.SerializeObject(config, Formatting.Indented);
+			string text = SerializeIOConfig(config);
 			File.WriteAllText("IOConfig.json", text, Encoding.UTF8);
+		}
+
+		static public string SerializeIOConfig(IOConfig config)
+		{
+			return JsonConvert.SerializeObject(config, Formatting.Indented);
+		}
+
+		static public string DeviceIDToString(UInt32 device_id)
+		{
+			switch (device_id)
+			{
+				case 0x00000001: return "Famicom Controller (Port1)";
+				case 0x00000002: return "Famicom Controller (Port2)";
+				case 0x00000003: return "NES Controller";
+				case 0x00000004: return "Dendy Turbo Controller";
+				case 0x00010001: return "Virtual Famicom Controller (Port1)";
+				case 0x00010002: return "Virtual Famicom Controller (Port2)";
+				case 0x00010003: return "Virtual NES Controller";
+				case 0x00010004: return "Virtual Dendy Turbo Controller";
+			}
+			return device_id.ToString();
 		}
 	}
 }
