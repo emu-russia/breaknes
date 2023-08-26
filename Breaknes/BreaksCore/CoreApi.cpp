@@ -270,13 +270,16 @@ extern "C"
 		{
 			return board->io->CreateInstance((IO::DeviceID)device_id);
 		}
+		else {
+			return -1;
+		}
 	}
 
 	DLL_EXPORT void IOAttach(size_t port, size_t handle)
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			board->io->Attach(port, handle);
+			board->io->Attach((int)port, (int)handle);
 		}
 	}
 
@@ -284,7 +287,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			board->io->Detach(port, handle);
+			board->io->Detach((int)port, (int)handle);
 		}
 	}
 
@@ -292,7 +295,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			board->io->SetState(handle, io_state, value);
+			board->io->SetState((int)handle, io_state, value);
 		}
 	}
 
@@ -300,7 +303,10 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			return board->io->GetState(handle, io_state);
+			return board->io->GetState((int)handle, io_state);
+		}
+		else {
+			return 0;
 		}
 	}
 
@@ -308,7 +314,10 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			return board->io->GetNumStates(handle);
+			return board->io->GetNumStates((int)handle);
+		}
+		else {
+			return 0;
 		}
 	}
 
@@ -316,7 +325,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			auto state_name = board->io->GetStateName(handle, io_state);
+			auto state_name = board->io->GetStateName((int)handle, io_state);
 			if (state_name.size() < name_size) {
 				strncpy(name, state_name.c_str(), name_size);
 				name[state_name.size()] = 0;

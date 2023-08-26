@@ -6,7 +6,6 @@ namespace Breaknes
 	{
 		private BreaksCore.VideoSignalFeatures ppu_features;
 		private int SamplesPerScan;
-		private bool RawMode = true;
 
 		private BreaksCore.VideoOutSample[] ScanBuffer;
 		private int WritePtr = 0;

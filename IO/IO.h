@@ -8,10 +8,14 @@ namespace IO
 	enum class DeviceID
 	{
 		Abstract = 0,
-		FamiController_1,
-		FamiController_2,
-		NESController,
-		DendyController,
+		FamiController_1 = 0x00000001,
+		FamiController_2 = 0x00000002,
+		NESController = 0x00000003,
+		DendyController = 0x00000004,
+		VirtualFamiController_1 = 0x00010001,
+		VirtualFamiController_2 = 0x00010002,
+		VirtualNESController = 0x00010003,
+		VirtualDendyController = 0x00010004,
 	};
 }
 

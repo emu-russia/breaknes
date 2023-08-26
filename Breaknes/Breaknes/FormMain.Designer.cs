@@ -41,6 +41,7 @@
 			openFileDialog1 = new OpenFileDialog();
 			backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			pictureBox1 = new PictureBox();
+			iOSettingsToolStripMenuItem = new ToolStripMenuItem();
 			menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
 			SuspendLayout();
@@ -56,7 +57,7 @@
 			// 
 			// fileToolStripMenuItem
 			// 
-			fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { loadROMDumpToolStripMenuItem, settingsToolStripMenuItem, toolStripSeparator1, exitToolStripMenuItem });
+			fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { loadROMDumpToolStripMenuItem, settingsToolStripMenuItem, iOSettingsToolStripMenuItem, toolStripSeparator1, exitToolStripMenuItem });
 			fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			fileToolStripMenuItem.Size = new Size(37, 20);
 			fileToolStripMenuItem.Text = "File";
@@ -133,6 +134,13 @@
 			pictureBox1.TabIndex = 1;
 			pictureBox1.TabStop = false;
 			// 
+			// iOSettingsToolStripMenuItem
+			// 
+			iOSettingsToolStripMenuItem.Name = "iOSettingsToolStripMenuItem";
+			iOSettingsToolStripMenuItem.Size = new Size(180, 22);
+			iOSettingsToolStripMenuItem.Text = "IO Settings...";
+			iOSettingsToolStripMenuItem.Click += iOSettingsToolStripMenuItem_Click;
+			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -167,5 +175,6 @@
 		private PictureBox pictureBox1;
 		private ToolStripMenuItem debugToolStripMenuItem;
 		private ToolStripMenuItem openDebuggerToolStripMenuItem;
+		private ToolStripMenuItem iOSettingsToolStripMenuItem;
 	}
 }

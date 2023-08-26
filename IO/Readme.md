@@ -30,7 +30,7 @@ The associative link is then used to set the SetState of the connected device.
 
 The emulator contains a pool of registered devices with DeviceID (devices are added and removed by the user).
 
-Then each device can be configured (roughly speaking to make binding IOState to DirectInput/XInput or some other API).
+Then each device can be configured (roughly speaking to make binding IOState to DirectInput/XInput or some other API). Each device type has its own bindings dialog for buttons/other actuators.
 
 After configuration, the device can be attached or detached to the specified motherboard model (Attach / Detach). After starting the emulation for the IO subsystem will be created instances of connected devices, connected to the ports and then the emulator can call SetState from its side, so that the native implementation will convert IOState into specific signals for IO ports.
 
@@ -97,11 +97,81 @@ DeviceID: 0x00000003
 |6|B|0/1|
 |7|A|0/1|
 
-## Dendy Controller (Port1/2)
+## Dendy Turbo Controller (Port1/2)
 
 ![dendy_controller](/UserManual/imgstore/dendy_controller.png)
 
 DeviceID: 0x00000004
+
+|IOState|Actuator|Values|
+|---|---|---|
+|0|Up|0/1|
+|1|Down|0/1|
+|2|Left|0/1|
+|3|Right|0/1|
+|4|Select|0/1|
+|5|Start|0/1|
+|6|TurboB|0/1|
+|7|TurboA|0/1|
+|8|B|0/1|
+|9|A|0/1|
+
+## Virtual Famicom Controller (Port1)
+
+![virt_famicom_controller1](/UserManual/imgstore/virt_famicom_controller1.png)
+
+DeviceID: 0x00010001
+
+|IOState|Actuator|Values|
+|---|---|---|
+|0|Up|0/1|
+|1|Down|0/1|
+|2|Left|0/1|
+|3|Right|0/1|
+|4|Select|0/1|
+|5|Start|0/1|
+|6|B|0/1|
+|7|A|0/1|
+
+## Virtual Famicom Controller (Port2)
+
+![virt_famicom_controller2](/UserManual/imgstore/virt_famicom_controller2.png)
+
+DeviceID: 0x00010002
+
+|IOState|Actuator|Values|
+|---|---|---|
+|0|Up|0/1|
+|1|Down|0/1|
+|2|Left|0/1|
+|3|Right|0/1|
+|4|Volume|0...255|
+|5|MicLevel|0...255|
+|6|B|0/1|
+|7|A|0/1|
+
+## Virtual NES Controller (Port1/2)
+
+![virt_nes_controller](/UserManual/imgstore/virt_nes_controller.png)
+
+DeviceID: 0x00010003
+
+|IOState|Actuator|Values|
+|---|---|---|
+|0|Up|0/1|
+|1|Down|0/1|
+|2|Left|0/1|
+|3|Right|0/1|
+|4|Select|0/1|
+|5|Start|0/1|
+|6|B|0/1|
+|7|A|0/1|
+
+## Virtual Dendy Turbo Controller (Port1/2)
+
+![virt_dendy_controller](/UserManual/imgstore/virt_dendy_controller.png)
+
+DeviceID: 0x00010004
 
 |IOState|Actuator|Values|
 |---|---|---|

@@ -7,13 +7,43 @@
     <Compile Update="FormDebugger.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormBindingDendyController.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormBindingFamiController2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormIOAddDevice.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormBindingFamiController1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormIOConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="FormMainWorker.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormBindingNESController.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormVirtualDendyController.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormVirtualFamiController1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormVirtualFamiController2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormVirtualNESController.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="WavesSupport.cs">

@@ -30,12 +30,15 @@ namespace IO
 
 		switch (device_id)
 		{
+			case DeviceID::VirtualFamiController_1:
 			case DeviceID::FamiController_1:
 				break;
 
+			case DeviceID::VirtualFamiController_2:
 			case DeviceID::FamiController_2:
 				break;
 
+			case DeviceID::VirtualNESController:
 			case DeviceID::NESController:
 				mapped = new IOMapped;
 				mapped->handle = num_devices;
@@ -44,6 +47,7 @@ namespace IO
 				devices.push_back(mapped);
 				return num_devices;
 
+			case DeviceID::VirtualDendyController:
 			case DeviceID::DendyController:
 				break;
 		}
