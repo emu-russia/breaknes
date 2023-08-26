@@ -148,7 +148,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(363, 173);
+			ClientSize = new Size(355, 159);
 			Controls.Add(label2);
 			Controls.Add(trackBar2);
 			Controls.Add(label1);
