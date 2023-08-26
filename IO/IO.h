@@ -19,6 +19,9 @@ namespace IO
 	};
 }
 
+#include "CD4021.h"
+#include "UM6582.h"
+
 #include "AbstractIODevice.h"
 #include "FamiController.h"
 #include "NESController.h"

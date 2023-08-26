@@ -1,6 +1,8 @@
 // NES Controller simulator
 #include "pch.h"
 
+using namespace BaseLogic;
+
 namespace IO
 {
 	NESController::NESController() : IODevice()
@@ -71,6 +73,23 @@ namespace IO
 
 	void NESController::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
 	{
-		// TODO: There is some chip inside the controller, like a shift register. Simulate it and output signals
+		// TODO: board binding
+		TriState clk = TriState::Zero;
+		TriState latch = TriState::Zero;
+		TriState Q5;
+		TriState Q6;
+		TriState Q7;
+
+		uint8_t buttons_state = 0;
+		buttons_state |= (states[(size_t)NESControllerState::Right].value & 1) << 0;
+		buttons_state |= (states[(size_t)NESControllerState::Left].value & 1) << 1;
+		buttons_state |= (states[(size_t)NESControllerState::Down].value & 1) << 2;
+		buttons_state |= (states[(size_t)NESControllerState::Up].value & 1) << 3;
+		buttons_state |= (states[(size_t)NESControllerState::Start].value & 1) << 4;
+		buttons_state |= (states[(size_t)NESControllerState::Select].value & 1) << 5;
+		buttons_state |= (states[(size_t)NESControllerState::B].value & 1) << 6;
+		buttons_state |= (states[(size_t)NESControllerState::A].value & 1) << 7;
+
+		sr.sim(clk, latch, TriState::Zero, buttons_state, Q5, Q6, Q7);
 	}
 }

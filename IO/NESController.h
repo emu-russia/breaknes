@@ -18,6 +18,8 @@ namespace IO
 
 	class NESController : public IODevice
 	{
+		CD4021 sr{};
+
 	public:
 		NESController();
 		virtual ~NESController();
