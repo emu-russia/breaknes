@@ -19,7 +19,7 @@ namespace Breaknes
 
 		apu->SetNormalizedOutput(true);
 
-		io = new FamicomBoardIO();
+		io = new FamicomBoardIO(this);
 	}
 
 	FamicomBoard::~FamicomBoard()
@@ -219,8 +219,9 @@ namespace Breaknes
 
 #pragma region "Fami IO"
 
-	FamicomBoardIO::FamicomBoardIO() : IO::IOSubsystem()
+	FamicomBoardIO::FamicomBoardIO(FamicomBoard* board) : IO::IOSubsystem()
 	{
+		base = board;
 	}
 
 	FamicomBoardIO::~FamicomBoardIO()
@@ -241,10 +242,12 @@ namespace Breaknes
 		{
 			case 0:
 				devices.push_back(IO::DeviceID::FamiController_1);
+				devices.push_back(IO::DeviceID::VirtualFamiController_1);
 				break;
 
 			case 1:
 				devices.push_back(IO::DeviceID::FamiController_2);
+				devices.push_back(IO::DeviceID::VirtualFamiController_2);
 				break;
 
 			default:

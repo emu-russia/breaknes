@@ -5,10 +5,13 @@
 
 namespace Breaknes
 {
+	class FamicomBoard;
+
 	class FamicomBoardIO : public IO::IOSubsystem
 	{
+		FamicomBoard* base;
 	public:
-		FamicomBoardIO();
+		FamicomBoardIO(FamicomBoard *board);
 		virtual ~FamicomBoardIO();
 		int GetPorts() override;
 		void GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices) override;

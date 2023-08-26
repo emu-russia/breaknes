@@ -2,10 +2,13 @@
 
 namespace Breaknes
 {
+	class NESBoard;
+
 	class NESBoardIO : public IO::IOSubsystem
 	{
+		NESBoard* base;
 	public:
-		NESBoardIO();
+		NESBoardIO(NESBoard *board);
 		virtual ~NESBoardIO();
 		int GetPorts() override;
 		void GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices) override;

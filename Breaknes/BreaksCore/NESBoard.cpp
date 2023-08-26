@@ -19,7 +19,7 @@ namespace Breaknes
 
 		apu->SetNormalizedOutput(true);
 
-		io = new NESBoardIO();
+		io = new NESBoardIO(this);
 
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
@@ -236,8 +236,9 @@ namespace Breaknes
 
 #pragma region "NES IO"
 
-	NESBoardIO::NESBoardIO() : IO::IOSubsystem()
+	NESBoardIO::NESBoardIO(NESBoard* board) : IO::IOSubsystem()
 	{
+		base = board;
 	}
 
 	NESBoardIO::~NESBoardIO()
@@ -258,10 +259,12 @@ namespace Breaknes
 		{
 			case 0:
 				devices.push_back(IO::DeviceID::NESController);
+				devices.push_back(IO::DeviceID::VirtualNESController);
 				break;
 
 			case 1:
 				devices.push_back(IO::DeviceID::NESController);
+				devices.push_back(IO::DeviceID::VirtualNESController);
 				break;
 
 			default:
