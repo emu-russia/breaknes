@@ -120,6 +120,7 @@
 			listView1.Dock = DockStyle.Fill;
 			listView1.Items.AddRange(new ListViewItem[] { listViewItem1, listViewItem2 });
 			listView1.Location = new Point(3, 3);
+			listView1.MultiSelect = false;
 			listView1.Name = "listView1";
 			listView1.Size = new Size(361, 348);
 			listView1.TabIndex = 0;
