@@ -14,11 +14,11 @@
 			"io": [
 				{
 					"name": "Famicom Controller Port1",
-					"devices": [ 1 ]
+					"devices": [ 1, 65537 ]
 				},
 				{
 					"name": "Famicom Controller Port2",
-					"devices": [ 2 ]
+					"devices": [ 2, 65538 ]
 				}
 			]
 		},
@@ -31,11 +31,11 @@
 			"io": [
 				{
 					"name": "NES Controller Port1",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				},
 				{
 					"name": "NES Controller Port2",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				}
 			]
 		},
@@ -48,11 +48,11 @@
 			"io": [
 				{
 					"name": "NES Controller Port1",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				},
 				{
 					"name": "NES Controller Port2",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				}
 			]
 		},
@@ -65,11 +65,11 @@
 			"io": [
 				{
 					"name": "NES Controller Port1",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				},
 				{
 					"name": "NES Controller Port2",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				}
 			]
 		},
@@ -82,11 +82,11 @@
 			"io": [
 				{
 					"name": "NES Controller Port1",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				},
 				{
 					"name": "NES Controller Port2",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				}
 			]
 		},
@@ -99,11 +99,11 @@
 			"io": [
 				{
 					"name": "NES Controller Port1",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				},
 				{
 					"name": "NES Controller Port2",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				}
 			]
 		},
@@ -116,11 +116,11 @@
 			"io": [
 				{
 					"name": "NES Controller Port1",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				},
 				{
 					"name": "NES Controller Port2",
-					"devices": [ 3 ]
+					"devices": [ 3, 65539 ]
 				}
 			]
 		}
