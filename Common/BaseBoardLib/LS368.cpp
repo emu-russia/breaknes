@@ -1,5 +1,5 @@
-// 40H368
-// Hex bus buffer inverted 3-State output
+// 40H368 aka `notif0` x6
+// Hex bus buffer inverted 3-State output; inverted tri-state enable
 
 // https://github.com/emu-russia/breaks/blob/master/Docs/Famicom/40H368.pdf
 
