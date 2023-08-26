@@ -142,6 +142,8 @@ namespace Breaknes
 			cart_in[(size_t)Mappers::CartInput::nROMSEL] = nROMSEL;
 			cart_in[(size_t)Mappers::CartInput::RnW] = CPU_RnW;
 
+			CartridgeConnectorSimFailure1();
+
 			cart->sim(
 				cart_in,
 				cart_out,
@@ -153,7 +155,7 @@ namespace Breaknes
 				&cart_snd,
 				nullptr, unused);
 
-			// And here you can add some dirt on the contacts
+			CartridgeConnectorSimFailure2();
 
 			VRAM_nCE = cart_out[(size_t)Mappers::CartOutput::VRAM_nCS];
 			VRAM_A10 = cart_out[(size_t)Mappers::CartOutput::VRAM_A10];
@@ -234,19 +236,19 @@ namespace Breaknes
 		// First you need to simulate 368s in the direction CPU->Ports
 
 		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP0;
-		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = TriState::One;
-		p4_inputs[(size_t)BaseBoard::LS368_Input::A1] = TriState::Zero;
-		p4_inputs[(size_t)BaseBoard::LS368_Input::A2] = TriState::Zero;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = vdd;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A1] = gnd;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A2] = gnd;
 		p4_inputs[(size_t)BaseBoard::LS368_Input::A3] = M2;
-		p4_inputs[(size_t)BaseBoard::LS368_Input::A4] = TriState::Zero;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A4] = gnd;
 		P4_IO.sim(p4_inputs, p4_outputs);
 
 		p5_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP1;
-		p5_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = TriState::One;	// not yet
+		p5_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = vdd;	// not yet
 		p5_inputs[(size_t)BaseBoard::LS368_Input::A1] = M2;
-		p5_inputs[(size_t)BaseBoard::LS368_Input::A2] = TriState::Zero;
-		p5_inputs[(size_t)BaseBoard::LS368_Input::A3] = TriState::Zero;
-		p5_inputs[(size_t)BaseBoard::LS368_Input::A4] = TriState::Zero;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A2] = gnd;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A3] = gnd;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A4] = gnd;
 		P5_IO.sim(p5_inputs, p5_outputs);
 
 		// Call the IO subsystem and it will simulate the controllers and other I/O devices if they are connected
@@ -259,7 +261,7 @@ namespace Breaknes
 		Pullup(p4016_d0);
 		Pullup(p2_4016_data);
 		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP0;
-		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = TriState::One;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = vdd;
 		p4_inputs[(size_t)BaseBoard::LS368_Input::A1] = p4016_d0;	// d0
 		p4_inputs[(size_t)BaseBoard::LS368_Input::A2] = p2_4016_data;	// d1
 		p4_inputs[(size_t)BaseBoard::LS368_Input::A3] = M2;
@@ -297,6 +299,16 @@ namespace Breaknes
 			data_bus &= ~(1 << n);
 			data_bus |= ToByte(val) << n;
 		}
+	}
+
+	void FamicomBoard::CartridgeConnectorSimFailure1()
+	{
+		// And here you can add some dirt on the contacts
+	}
+
+	void FamicomBoard::CartridgeConnectorSimFailure2()
+	{
+		// And here you can add some dirt on the contacts
 	}
 
 #pragma region "Fami IO"

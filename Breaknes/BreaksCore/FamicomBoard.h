@@ -97,6 +97,9 @@ namespace Breaknes
 		void IOBinding();
 		void SetDataBusIfNotFloating(size_t n, BaseLogic::TriState val);
 
+		void CartridgeConnectorSimFailure1();
+		void CartridgeConnectorSimFailure2();
+
 	public:
 		FamicomBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
 		virtual ~FamicomBoard();
