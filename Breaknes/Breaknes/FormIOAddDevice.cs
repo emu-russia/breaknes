@@ -40,5 +40,13 @@
 			}
 			return 0;
 		}
+
+		private void FormIOAddDevice_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				Close();
+			}
+		}
 	}
 }

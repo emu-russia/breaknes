@@ -90,9 +90,11 @@
 			Controls.Add(label2);
 			Controls.Add(textBox1);
 			Controls.Add(label1);
+			KeyPreview = true;
 			Name = "FormIOAddDevice";
 			StartPosition = FormStartPosition.CenterParent;
 			Text = "Add IO Device";
+			KeyDown += FormIOAddDevice_KeyDown;
 			ResumeLayout(false);
 			PerformLayout();
 		}

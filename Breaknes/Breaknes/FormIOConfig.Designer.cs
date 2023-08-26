@@ -28,8 +28,8 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			ListViewItem listViewItem1 = new ListViewItem("NES Controller P1");
-			ListViewItem listViewItem2 = new ListViewItem("Famicom Controller1 P1");
+			ListViewItem listViewItem3 = new ListViewItem("NES Controller P1");
+			ListViewItem listViewItem4 = new ListViewItem("Famicom Controller1 P1");
 			splitContainer1 = new SplitContainer();
 			splitContainer2 = new SplitContainer();
 			tabControl1 = new TabControl();
@@ -118,7 +118,7 @@
 			// listView1
 			// 
 			listView1.Dock = DockStyle.Fill;
-			listView1.Items.AddRange(new ListViewItem[] { listViewItem1, listViewItem2 });
+			listView1.Items.AddRange(new ListViewItem[] { listViewItem3, listViewItem4 });
 			listView1.Location = new Point(3, 3);
 			listView1.MultiSelect = false;
 			listView1.Name = "listView1";
@@ -205,9 +205,11 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 450);
 			Controls.Add(splitContainer1);
+			KeyPreview = true;
 			Name = "FormIOConfig";
 			Text = "Configure IO Devices";
 			Load += FormIOConfig_Load;
+			KeyDown += FormIOConfig_KeyDown;
 			splitContainer1.Panel1.ResumeLayout(false);
 			splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();

@@ -194,5 +194,13 @@
 
 			device.attached = board_list.ToArray();
 		}
+
+		private void FormIOConfig_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				Close();
+			}
+		}
 	}
 }
