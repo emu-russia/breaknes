@@ -28,131 +28,133 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			button1 = new Button();
-			button2 = new Button();
-			button3 = new Button();
-			button4 = new Button();
-			button5 = new Button();
-			button6 = new Button();
-			button7 = new Button();
-			button8 = new Button();
+			checkBox1 = new CheckBox();
+			checkBox2 = new CheckBox();
+			checkBox3 = new CheckBox();
+			checkBox4 = new CheckBox();
+			checkBox5 = new CheckBox();
+			checkBox6 = new CheckBox();
+			checkBox7 = new CheckBox();
+			checkBox8 = new CheckBox();
 			SuspendLayout();
 			// 
-			// button1
+			// checkBox1
 			// 
-			button1.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-			button1.Location = new Point(73, 15);
-			button1.Name = "button1";
-			button1.Size = new Size(33, 40);
-			button1.TabIndex = 0;
-			button1.Text = "U";
-			button1.UseVisualStyleBackColor = true;
-			button1.Click += button1_Click;
+			checkBox1.Appearance = Appearance.Button;
+			checkBox1.AutoSize = true;
+			checkBox1.Location = new Point(55, 22);
+			checkBox1.Name = "checkBox1";
+			checkBox1.Size = new Size(25, 25);
+			checkBox1.TabIndex = 8;
+			checkBox1.Text = "U";
+			checkBox1.UseVisualStyleBackColor = true;
 			// 
-			// button2
+			// checkBox2
 			// 
-			button2.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-			button2.Location = new Point(73, 103);
-			button2.Name = "button2";
-			button2.Size = new Size(33, 40);
-			button2.TabIndex = 1;
-			button2.Text = "D";
-			button2.UseVisualStyleBackColor = true;
-			button2.Click += button2_Click;
+			checkBox2.Appearance = Appearance.Button;
+			checkBox2.AutoSize = true;
+			checkBox2.Location = new Point(21, 53);
+			checkBox2.Name = "checkBox2";
+			checkBox2.Size = new Size(23, 25);
+			checkBox2.TabIndex = 9;
+			checkBox2.Text = "L";
+			checkBox2.UseVisualStyleBackColor = true;
 			// 
-			// button3
+			// checkBox3
 			// 
-			button3.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-			button3.Location = new Point(127, 63);
-			button3.Name = "button3";
-			button3.Size = new Size(40, 33);
-			button3.TabIndex = 2;
-			button3.Text = "R";
-			button3.UseVisualStyleBackColor = true;
-			button3.Click += button3_Click;
+			checkBox3.Appearance = Appearance.Button;
+			checkBox3.AutoSize = true;
+			checkBox3.Location = new Point(92, 53);
+			checkBox3.Name = "checkBox3";
+			checkBox3.Size = new Size(24, 25);
+			checkBox3.TabIndex = 10;
+			checkBox3.Text = "R";
+			checkBox3.UseVisualStyleBackColor = true;
 			// 
-			// button4
+			// checkBox4
 			// 
-			button4.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-			button4.Location = new Point(14, 63);
-			button4.Name = "button4";
-			button4.Size = new Size(40, 33);
-			button4.TabIndex = 3;
-			button4.Text = "L";
-			button4.UseVisualStyleBackColor = true;
-			button4.Click += button4_Click;
+			checkBox4.Appearance = Appearance.Button;
+			checkBox4.AutoSize = true;
+			checkBox4.Location = new Point(55, 81);
+			checkBox4.Name = "checkBox4";
+			checkBox4.Size = new Size(25, 25);
+			checkBox4.TabIndex = 11;
+			checkBox4.Text = "D";
+			checkBox4.UseVisualStyleBackColor = true;
 			// 
-			// button5
+			// checkBox5
 			// 
-			button5.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-			button5.Location = new Point(202, 103);
-			button5.Name = "button5";
-			button5.Size = new Size(66, 33);
-			button5.TabIndex = 4;
-			button5.Text = "Select";
-			button5.UseVisualStyleBackColor = true;
-			button5.Click += button5_Click;
+			checkBox5.Appearance = Appearance.Button;
+			checkBox5.AutoSize = true;
+			checkBox5.Location = new Point(142, 81);
+			checkBox5.Name = "checkBox5";
+			checkBox5.Size = new Size(48, 25);
+			checkBox5.TabIndex = 12;
+			checkBox5.Text = "Select";
+			checkBox5.UseVisualStyleBackColor = true;
 			// 
-			// button6
+			// checkBox6
 			// 
-			button6.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-			button6.Location = new Point(274, 103);
-			button6.Name = "button6";
-			button6.Size = new Size(66, 33);
-			button6.TabIndex = 5;
-			button6.Text = "Start";
-			button6.UseVisualStyleBackColor = true;
-			button6.Click += button6_Click;
+			checkBox6.Appearance = Appearance.Button;
+			checkBox6.AutoSize = true;
+			checkBox6.Location = new Point(196, 81);
+			checkBox6.Name = "checkBox6";
+			checkBox6.Size = new Size(41, 25);
+			checkBox6.TabIndex = 13;
+			checkBox6.Text = "Start";
+			checkBox6.UseVisualStyleBackColor = true;
 			// 
-			// button7
+			// checkBox7
 			// 
-			button7.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-			button7.Location = new Point(385, 81);
-			button7.Name = "button7";
-			button7.Size = new Size(55, 55);
-			button7.TabIndex = 6;
-			button7.Text = "B";
-			button7.UseVisualStyleBackColor = true;
-			button7.Click += button7_Click;
+			checkBox7.Appearance = Appearance.Button;
+			checkBox7.AutoSize = true;
+			checkBox7.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+			checkBox7.Location = new Point(266, 71);
+			checkBox7.Name = "checkBox7";
+			checkBox7.Size = new Size(33, 35);
+			checkBox7.TabIndex = 14;
+			checkBox7.Text = "B";
+			checkBox7.UseVisualStyleBackColor = true;
 			// 
-			// button8
+			// checkBox8
 			// 
-			button8.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-			button8.Location = new Point(446, 81);
-			button8.Name = "button8";
-			button8.Size = new Size(55, 55);
-			button8.TabIndex = 7;
-			button8.Text = "A";
-			button8.UseVisualStyleBackColor = true;
-			button8.Click += button8_Click;
+			checkBox8.Appearance = Appearance.Button;
+			checkBox8.AutoSize = true;
+			checkBox8.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+			checkBox8.Location = new Point(305, 71);
+			checkBox8.Name = "checkBox8";
+			checkBox8.Size = new Size(34, 35);
+			checkBox8.TabIndex = 15;
+			checkBox8.Text = "A";
+			checkBox8.UseVisualStyleBackColor = true;
 			// 
 			// FormVirtualFamiController1
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(517, 157);
-			Controls.Add(button8);
-			Controls.Add(button7);
-			Controls.Add(button6);
-			Controls.Add(button5);
-			Controls.Add(button4);
-			Controls.Add(button3);
-			Controls.Add(button2);
-			Controls.Add(button1);
+			ClientSize = new Size(371, 127);
+			Controls.Add(checkBox8);
+			Controls.Add(checkBox7);
+			Controls.Add(checkBox6);
+			Controls.Add(checkBox5);
+			Controls.Add(checkBox4);
+			Controls.Add(checkBox3);
+			Controls.Add(checkBox2);
+			Controls.Add(checkBox1);
 			Name = "FormVirtualFamiController1";
 			Text = "Virtual Famicom Controller (Port1)";
 			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
-
-		private Button button1;
-		private Button button2;
-		private Button button3;
-		private Button button4;
-		private Button button5;
-		private Button button6;
-		private Button button7;
-		private Button button8;
+		private CheckBox checkBox1;
+		private CheckBox checkBox2;
+		private CheckBox checkBox3;
+		private CheckBox checkBox4;
+		private CheckBox checkBox5;
+		private CheckBox checkBox6;
+		private CheckBox checkBox7;
+		private CheckBox checkBox8;
 	}
 }
