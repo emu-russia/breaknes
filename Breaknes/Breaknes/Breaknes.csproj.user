@@ -7,16 +7,16 @@
     <Compile Update="FormDebugger.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FormDendyControllerBinding.cs">
+    <Compile Update="FormBindingDendyController.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FormFamiController2Binding.cs">
+    <Compile Update="FormBindingFamiController2.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="FormIOAddDevice.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FormFamiController1Binding.cs">
+    <Compile Update="FormBindingFamiController1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="FormIOConfig.cs">
@@ -28,7 +28,7 @@
     <Compile Update="FormMainWorker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FormNESControllerBinding.cs">
+    <Compile Update="FormBindingNESController.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="FormSettings.cs">

@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Breaknes
 {
-	public partial class FormDendyControllerBinding : Form
+	public partial class FormBindingDendyController : Form
 	{
-		public FormDendyControllerBinding()
+		public FormBindingDendyController()
 		{
 			InitializeComponent();
 		}

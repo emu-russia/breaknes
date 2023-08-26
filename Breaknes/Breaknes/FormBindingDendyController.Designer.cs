@@ -1,6 +1,6 @@
 ﻿namespace Breaknes
 {
-	partial class FormDendyControllerBinding
+	partial class FormBindingDendyController
 	{
 		/// <summary>
 		/// Required designer variable.

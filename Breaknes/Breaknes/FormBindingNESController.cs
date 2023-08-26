@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Breaknes
 {
-	public partial class FormFamiController2Binding : Form
+	public partial class FormBindingNESController : Form
 	{
-		public FormFamiController2Binding()
+		public FormBindingNESController()
 		{
 			InitializeComponent();
 		}
