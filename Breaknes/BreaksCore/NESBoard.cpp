@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 
-// TBD: Very preliminary implementation, we sketched out all the components, and now we're trying to figure out how viable this model is.
+// Instead of the signal designations /OE1,2 adopted in the nesdev.com community, we use the official names of these signals /RDP0,1
 
 using namespace BaseLogic;
 
@@ -66,14 +66,14 @@ namespace Breaknes
 		// Accesses by the embedded core to APU registers are still broadcast to the address bus via the multiplexer.
 		TreatCoreForRegdump(addr_bus, data_bus, apu->GetPHI2(), CPU_RnW);
 
-		nOE1 = outputs[(size_t)APUSim::APU_Output::n_IN0];		// #RDP0 official
-		nOE2 = outputs[(size_t)APUSim::APU_Output::n_IN1];		// #RDP1 official
+		nRDP0 = outputs[(size_t)APUSim::APU_Output::n_IN0];
+		nRDP1 = outputs[(size_t)APUSim::APU_Output::n_IN1];
 		OUT_0 = outputs[(size_t)APUSim::APU_Output::OUT_0];
 		OUT_1 = outputs[(size_t)APUSim::APU_Output::OUT_1];
 		OUT_2 = outputs[(size_t)APUSim::APU_Output::OUT_0];
 
-		Pullup(nOE1);
-		Pullup(nOE2);
+		Pullup(nRDP0);
+		Pullup(nRDP1);
 		Pullup(OUT_0);
 
 		// pullup (PPU_A[13]); -- wtf?
@@ -146,6 +146,8 @@ namespace Breaknes
 			cart_in[(size_t)Mappers::CartInput::RnW] = CPU_RnW;
 			cart_in[(size_t)Mappers::CartInput::SYSTEM_CLK] = CLK;		// NES Board specific ⚠️
 
+			CartridgeConnectorSimFailure1();
+
 			cart->sim(
 				cart_in,
 				cart_out,
@@ -157,7 +159,7 @@ namespace Breaknes
 				// NES Board specific ⚠️
 				&exp_bus, unused);
 
-			// And here you can add some dirt on the contacts
+			CartridgeConnectorSimFailure2();
 
 			VRAM_nCE = cart_out[(size_t)Mappers::CartOutput::VRAM_nCS];
 			VRAM_A10 = cart_out[(size_t)Mappers::CartOutput::VRAM_A10];
@@ -187,8 +189,7 @@ namespace Breaknes
 
 		// IO
 
-		io->sim(0);
-		io->sim(1);
+		IOBinding();
 
 		// Tick
 
@@ -239,6 +240,76 @@ namespace Breaknes
 		}
 	}
 
+	void NESBoard::IOBinding()
+	{
+		// There is no need to simulate 368s on input, they only work in the Port->CPU direction
+
+		// Call the IO subsystem and it will simulate the controllers and other I/O devices if they are connected
+
+		io->sim(0);
+		io->sim(1);
+
+		// And now we need to simulate 368s in the direction Ports->CPU (don't forget the resistance array of the pull-ups!)
+
+		Pullup(p4016_data[0]);
+		Pullup(p4016_data[1]);
+		Pullup(p4016_data[2]);
+		Pullup(p4016_data[3]);
+		Pullup(p4016_data[4]);
+		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP0;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = nRDP0;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A1] = p4016_data[0];
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A2] = p4016_data[1];
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A3] = gnd;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A4] = p4016_data[2];
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A5] = p4016_data[3];
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A6] = p4016_data[4];
+		P4_IO.sim(p4_inputs, p4_outputs);
+		SetDataBusIfNotFloating(0, p4_outputs[(size_t)BaseBoard::LS368_Output::n_Y1]);
+		SetDataBusIfNotFloating(1, p4_outputs[(size_t)BaseBoard::LS368_Output::n_Y2]);
+		SetDataBusIfNotFloating(2, p4_outputs[(size_t)BaseBoard::LS368_Output::n_Y4]);
+		SetDataBusIfNotFloating(3, p4_outputs[(size_t)BaseBoard::LS368_Output::n_Y5]);
+		SetDataBusIfNotFloating(4, p4_outputs[(size_t)BaseBoard::LS368_Output::n_Y6]);
+
+		Pullup(p4017_data[0]);
+		Pullup(p4017_data[1]);
+		Pullup(p4017_data[2]);
+		Pullup(p4017_data[3]);
+		Pullup(p4017_data[4]);
+		p5_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP1;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = nRDP1;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A1] = p4017_data[0];
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A2] = p4017_data[1];
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A3] = gnd;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A4] = p4017_data[2];
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A5] = p4017_data[3];
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A6] = p4017_data[4];
+		P5_IO.sim(p5_inputs, p5_outputs);
+		SetDataBusIfNotFloating(0, p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y1]);
+		SetDataBusIfNotFloating(1, p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y2]);
+		SetDataBusIfNotFloating(2, p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y4]);
+		SetDataBusIfNotFloating(3, p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y5]);
+		SetDataBusIfNotFloating(4, p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y6]);
+	}
+
+	void NESBoard::SetDataBusIfNotFloating(size_t n, BaseLogic::TriState val)
+	{
+		if (io_enabled && val != TriState::Z) {
+			data_bus &= ~(1 << n);
+			data_bus |= ToByte(val) << n;
+		}
+	}
+
+	void NESBoard::CartridgeConnectorSimFailure1()
+	{
+		// And here you can add some dirt on the contacts
+	}
+
+	void NESBoard::CartridgeConnectorSimFailure2()
+	{
+		// And here you can add some dirt on the contacts
+	}
+
 #pragma region "NES IO"
 
 	NESBoardIO::NESBoardIO(NESBoard* board) : IO::IOSubsystem()
@@ -285,14 +356,38 @@ namespace Breaknes
 
 			if (mapped->port == port && mapped->handle >= 0) {
 
-				// TODO: Assign input signals to the simulated IO device
+				// Assign input signals to the simulated IO device
 
-				TriState inputs[2];
-				TriState outputs[1];
+				TriState inputs[2]{};
+				TriState outputs[3]{};
+
+				if (port == 0) {
+
+					inputs[0] = base->nRDP0;
+					inputs[1] = base->OUT_0;
+				}
+				else if (port == 1) {
+
+					inputs[0] = base->nRDP1;
+					inputs[1] = base->OUT_0;
+				}
 
 				mapped->device->sim(inputs, outputs, nullptr);
 
-				// TODO: Process the output signals from the device and distribute them across the board
+				// Process the output signals from the device and distribute them across the board
+
+				if (port == 0) {
+
+					base->p4016_data[0] = outputs[0];
+					base->p4016_data[3] = outputs[2];
+					base->p4016_data[4] = outputs[1];
+				}
+				else if (port == 1) {
+
+					base->p4017_data[0] = outputs[0];
+					base->p4017_data[3] = outputs[2];
+					base->p4017_data[4] = outputs[1];
+				}
 			}
 		}
 	}

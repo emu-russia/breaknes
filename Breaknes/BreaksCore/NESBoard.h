@@ -78,16 +78,29 @@ namespace Breaknes
 		// NES Board specific I/O ⚠️
 		BaseBoard::LS368 P4_IO;
 		BaseBoard::LS368 P5_IO;
-		BaseLogic::TriState nOE1 = BaseLogic::TriState::X; 		// aka nRDP0 from cpu
-		BaseLogic::TriState nOE2 = BaseLogic::TriState::X; 		// aka nRDP1 from cpu
+		BaseLogic::TriState nRDP0 = BaseLogic::TriState::X;
+		BaseLogic::TriState nRDP1 = BaseLogic::TriState::X;
 		BaseLogic::TriState OUT_0 = BaseLogic::TriState::X;
 		BaseLogic::TriState OUT_1 = BaseLogic::TriState::X;
 		BaseLogic::TriState OUT_2 = BaseLogic::TriState::X;
+		BaseLogic::TriState p4_inputs[(size_t)BaseBoard::LS368_Input::Max]{};
+		BaseLogic::TriState p4_outputs[(size_t)BaseBoard::LS368_Output::Max]{};
+		BaseLogic::TriState p5_inputs[(size_t)BaseBoard::LS368_Input::Max]{};
+		BaseLogic::TriState p5_outputs[(size_t)BaseBoard::LS368_Output::Max]{};
+		BaseLogic::TriState p4016_data[5]{};	// 4:0
+		BaseLogic::TriState p4017_data[5]{};	// 4:0
+		bool io_enabled = false;
 
 		bool pendingReset_CPU = false;
 		bool pendingReset_PPU = false;
 		int resetHalfClkCounter_CPU = 0;
 		int resetHalfClkCounter_PPU = 0;
+
+		void IOBinding();
+		void SetDataBusIfNotFloating(size_t n, BaseLogic::TriState val);
+
+		void CartridgeConnectorSimFailure1();
+		void CartridgeConnectorSimFailure2();
 
 #pragma region "Debug, look away"
 

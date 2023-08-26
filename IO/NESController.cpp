@@ -92,6 +92,8 @@ namespace IO
 		buttons_state = ~buttons_state;
 
 		sr.sim(clk, latch, TriState::Zero, buttons_state, Q5, Q6, Q7);
-		outputs[0] = Q7;
+		outputs[0] = Q7;		// pin4 (D0)
+		outputs[1] = TriState::Z;	// pin5 (D4)
+		outputs[2] = TriState::Z;	// pin6 (D3)
 	}
 }
