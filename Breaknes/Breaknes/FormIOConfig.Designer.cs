@@ -157,6 +157,7 @@
 			checkedListBox1.Name = "checkedListBox1";
 			checkedListBox1.Size = new Size(407, 348);
 			checkedListBox1.TabIndex = 0;
+			checkedListBox1.ItemCheck += checkedListBox1_ItemCheck;
 			// 
 			// button4
 			// 

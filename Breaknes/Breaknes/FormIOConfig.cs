@@ -118,7 +118,7 @@ namespace Breaknes
 				if (item.Tag != null)
 				{
 					var devices_list = new List<IOConfigDevice>();
-					for (int i=0; i<config.devices.Length; i++)
+					for (int i = 0; i < config.devices.Length; i++)
 					{
 						if (config.devices[i] != (IOConfigDevice)item.Tag)
 						{
@@ -136,8 +136,7 @@ namespace Breaknes
 		// Save
 		private void button4_Click(object sender, EventArgs e)
 		{
-			string text = IOConfigManager.SerializeIOConfig(config);
-			Console.Write(text);
+			IOConfigManager.SaveIOConfig(config);
 			Close();
 		}
 
@@ -157,10 +156,11 @@ namespace Breaknes
 			// Fill in the list of compatible motherboards
 
 			checkedListBox1.Items.Clear();
+			checkedListBox1.Tag = null;
 			BoardDescription boards = BoardDescriptionLoader.Load();
 			foreach (var board in boards.boards)
 			{
-				for (int i=0; i<board.io.Length; i++)
+				for (int i = 0; i < board.io.Length; i++)
 				{
 					if (board.io[i].devices.Contains(device.device_id))
 					{
@@ -174,14 +174,39 @@ namespace Breaknes
 
 			if (device != null)
 			{
-				foreach (var attached in device.attached)
+				for (int i = 0; i < checkedListBox1.Items.Count; i++)
 				{
-					for (int i =0; i<checkedListBox1.Items.Count; i++)
-					{
-						checkedListBox1.SetItemCheckState(i, attached == checkedListBox1.Items[i].ToString() ? CheckState.Checked : CheckState.Unchecked);
-					}
+					int pos = Array.IndexOf(device.attached, checkedListBox1.Items[i].ToString());
+					checkedListBox1.SetItemCheckState(i, pos >= 0 ? CheckState.Checked : CheckState.Unchecked);
 				}
+				checkedListBox1.Tag = device;
 			}
+		}
+
+		private void checkedListBox1_ItemCheck(object sender, ItemCheckEventArgs e)
+		{
+			IOConfigDevice device = checkedListBox1.Tag as IOConfigDevice;
+			if (device == null)
+				return;
+
+			List<string> board_list = device.attached.ToList();
+
+			string board_name = checkedListBox1.Items[e.Index].ToString();
+
+			if (e.CurrentValue == CheckState.Checked)
+			{
+				board_list.Remove(board_name);
+			}
+			else
+			{
+				board_list.Add(board_name);
+			}
+
+			device.attached = board_list.ToArray();
+
+			// DEBUG
+			string text = IOConfigManager.SerializeIOConfig(config);
+			Console.Write(text);
 		}
 	}
 }
