@@ -12,7 +12,7 @@ namespace Breaknes
 {
 	public partial class FormVirtualNESController : Form
 	{
-		public FormVirtualNESController()
+		public FormVirtualNESController(IOConfigDevice device)
 		{
 			InitializeComponent();
 		}

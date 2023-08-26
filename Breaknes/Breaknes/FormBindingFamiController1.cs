@@ -12,7 +12,7 @@ namespace Breaknes
 {
 	public partial class FormBindingFamiController1 : Form
 	{
-		public FormBindingFamiController1()
+		public FormBindingFamiController1(IOConfigDevice device)
 		{
 			InitializeComponent();
 		}

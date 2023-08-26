@@ -47,6 +47,42 @@ namespace Breaknes
 				if (item.Tag != null)
 				{
 					IOConfigDevice device = item.Tag as IOConfigDevice;
+
+					switch (device.device_id)
+					{
+						case 0x00000001:
+							FormBindingFamiController1 fami1 = new FormBindingFamiController1(device);
+							fami1.ShowDialog();
+							break;
+						case 0x00000002:
+							FormBindingFamiController2 fami2 = new FormBindingFamiController2(device);
+							fami2.ShowDialog();
+							break;
+						case 0x00000003:
+							FormBindingNESController nes = new FormBindingNESController(device);
+							nes.ShowDialog();
+							break;
+						case 0x00000004:
+							FormBindingDendyController dendy = new FormBindingDendyController(device);
+							dendy.ShowDialog();
+							break;
+						case 0x00010001:
+							FormVirtualFamiController1 virt_fami1 = new FormVirtualFamiController1(device);
+							virt_fami1.ShowDialog();
+							break;
+						case 0x00010002:
+							FormVirtualFamiController2 virt_fami2 = new FormVirtualFamiController2(device);
+							virt_fami2.ShowDialog();
+							break;
+						case 0x00010003:
+							FormVirtualNESController virt_nes = new FormVirtualNESController(device);
+							virt_nes.ShowDialog();
+							break;
+						case 0x00010004:
+							FormVirtualDendyController virt_dendy = new FormVirtualDendyController(device);
+							virt_dendy.ShowDialog();
+							break;
+					}
 				}
 			}
 		}
