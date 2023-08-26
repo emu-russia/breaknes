@@ -148,7 +148,8 @@ namespace Breaknes
 
 		private void iOSettingsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			FormIOConfig ioconfig = new FormIOConfig();
+			ioconfig.ShowDialog();
 		}
 	}
 }
