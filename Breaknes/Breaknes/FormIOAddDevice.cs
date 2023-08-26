@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Breaknes
+﻿namespace Breaknes
 {
 	public partial class FormIOAddDevice : Form
 	{
-		public IOConfigDevice device_to_add = null;
+		public IOConfigDevice? device_to_add = null;
 
 		public FormIOAddDevice()
 		{
