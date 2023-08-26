@@ -140,9 +140,8 @@ namespace IO
 
 	void FamiController1::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[])
 	{
-		// TODO: board binding
-		TriState clk = TriState::Zero;
-		TriState latch = TriState::Zero;
+		TriState clk = inputs[0];
+		TriState latch = inputs[1];
 		TriState Q5;
 		TriState Q6;
 		TriState Q7;
@@ -160,13 +159,13 @@ namespace IO
 		buttons_state = ~buttons_state;
 
 		sr.sim(clk, latch, TriState::Zero, buttons_state, Q5, Q6, Q7);
+		outputs[0] = Q7;
 	}
 
 	void FamiController2::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[])
 	{
-		// TODO: board binding
-		TriState clk = TriState::Zero;
-		TriState latch = TriState::Zero;
+		TriState clk = inputs[0];
+		TriState latch = inputs[1];
 		TriState Q5;
 		TriState Q6;
 		TriState Q7;
@@ -184,6 +183,7 @@ namespace IO
 		buttons_state = ~buttons_state;
 
 		sr.sim(clk, latch, TriState::Zero, buttons_state, Q5, Q6, Q7);
+		outputs[0] = Q7;
 
 		// Mike
 		// TODO: Volume

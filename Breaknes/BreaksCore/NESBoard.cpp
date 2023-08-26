@@ -19,7 +19,7 @@ namespace Breaknes
 
 		apu->SetNormalizedOutput(true);
 
-		io = new NESBoardIO();
+		io = new NESBoardIO(this);
 
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
@@ -185,6 +185,11 @@ namespace Breaknes
 		WRAM_Addr = addr_bus & (wram_size - 1);
 		wram->sim(WRAM_nCE, CPU_RnW, TriState::Zero, &WRAM_Addr, &data_bus, data_bus_dirty);
 
+		// IO
+
+		io->sim(0);
+		io->sim(1);
+
 		// Tick
 
 		CLK = NOT(CLK);
@@ -236,8 +241,9 @@ namespace Breaknes
 
 #pragma region "NES IO"
 
-	NESBoardIO::NESBoardIO() : IO::IOSubsystem()
+	NESBoardIO::NESBoardIO(NESBoard* board) : IO::IOSubsystem()
 	{
+		base = board;
 	}
 
 	NESBoardIO::~NESBoardIO()
@@ -258,10 +264,12 @@ namespace Breaknes
 		{
 			case 0:
 				devices.push_back(IO::DeviceID::NESController);
+				devices.push_back(IO::DeviceID::VirtualNESController);
 				break;
 
 			case 1:
 				devices.push_back(IO::DeviceID::NESController);
+				devices.push_back(IO::DeviceID::VirtualNESController);
 				break;
 
 			default:
@@ -269,7 +277,7 @@ namespace Breaknes
 		}
 	}
 
-	void NESBoardIO::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[])
+	void NESBoardIO::sim(int port)
 	{
 		for (auto it = devices.begin(); it != devices.end(); ++it) {
 
@@ -278,6 +286,9 @@ namespace Breaknes
 			if (mapped->port == port && mapped->handle >= 0) {
 
 				// TODO: Assign input signals to the simulated IO device
+
+				TriState inputs[2];
+				TriState outputs[1];
 
 				mapped->device->sim(inputs, outputs, nullptr);
 

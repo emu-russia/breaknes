@@ -2,14 +2,17 @@
 
 namespace Breaknes
 {
+	class NESBoard;
+
 	class NESBoardIO : public IO::IOSubsystem
 	{
+		NESBoard* base;
 	public:
-		NESBoardIO();
+		NESBoardIO(NESBoard *board);
 		virtual ~NESBoardIO();
 		int GetPorts() override;
 		void GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices) override;
-		void sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[]) override;
+		void sim(int port) override;
 	};
 
 	struct NESBoardDebugInfo
@@ -21,6 +24,8 @@ namespace Breaknes
 
 	class NESBoard : public Board
 	{
+		friend NESBoardIO;
+
 		BaseBoard::SRAM* wram = nullptr;
 		const size_t wram_bits = 11;
 		const size_t wram_size = 1ULL << wram_bits;

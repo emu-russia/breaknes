@@ -1,5 +1,7 @@
 ﻿// https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/MB/Famicom.md
 
+// Instead of the signal designations /OE1,2 adopted in the nesdev.com community, we use the official names of these signals /RDP0,1
+
 #include "pch.h"
 
 using namespace BaseLogic;
@@ -19,7 +21,7 @@ namespace Breaknes
 
 		apu->SetNormalizedOutput(true);
 
-		io = new FamicomBoardIO();
+		io = new FamicomBoardIO(this);
 	}
 
 	FamicomBoard::~FamicomBoard()
@@ -65,8 +67,8 @@ namespace Breaknes
 		// Accesses by the embedded core to APU registers are still broadcast to the address bus via the multiplexer.
 		TreatCoreForRegdump(addr_bus, data_bus, apu->GetPHI2(), CPU_RnW);
 
-		nOE1 = outputs[(size_t)APUSim::APU_Output::n_IN0];		// #RDP0 official
-		nOE2 = outputs[(size_t)APUSim::APU_Output::n_IN1];		// #RDP1 official
+		nRDP0 = outputs[(size_t)APUSim::APU_Output::n_IN0];
+		nRDP1 = outputs[(size_t)APUSim::APU_Output::n_IN1];
 		OUT_0 = outputs[(size_t)APUSim::APU_Output::OUT_0];
 		OUT_1 = outputs[(size_t)APUSim::APU_Output::OUT_1];
 		OUT_2 = outputs[(size_t)APUSim::APU_Output::OUT_0];
@@ -140,6 +142,8 @@ namespace Breaknes
 			cart_in[(size_t)Mappers::CartInput::nROMSEL] = nROMSEL;
 			cart_in[(size_t)Mappers::CartInput::RnW] = CPU_RnW;
 
+			CartridgeConnectorSimFailure1();
+
 			cart->sim(
 				cart_in,
 				cart_out,
@@ -151,7 +155,7 @@ namespace Breaknes
 				&cart_snd,
 				nullptr, unused);
 
-			// And here you can add some dirt on the contacts
+			CartridgeConnectorSimFailure2();
 
 			VRAM_nCE = cart_out[(size_t)Mappers::CartOutput::VRAM_nCS];
 			VRAM_A10 = cart_out[(size_t)Mappers::CartOutput::VRAM_A10];
@@ -178,6 +182,10 @@ namespace Breaknes
 
 		WRAM_Addr = addr_bus & (wram_size - 1);
 		wram->sim(WRAM_nCE, CPU_RnW, TriState::Zero, &WRAM_Addr, &data_bus, data_bus_dirty);
+
+		// IO
+
+		IOBinding();
 
 		// Tick
 
@@ -211,16 +219,103 @@ namespace Breaknes
 	{
 		// We do everything the same as in the base class, but with the sound from the cartridge taken into account.
 
+		// TODO: Mike
+		// TODO: Expansion port sound
+
 		if (sample != nullptr)
 		{
-			*sample = (aux.normalized.a * 0.4f /* 20k resistor */ + aux.normalized.b /* 12k resistor */ + cart_snd.normalized /* levels pls, someone? */) / 3.0f;
+			*sample = (
+				aux.normalized.a * 0.4f /* 20k resistor */ + 
+				aux.normalized.b /* 12k resistor */ + 
+				cart_snd.normalized /* levels pls, someone? */) / 3.0f;
 		}
+	}
+
+	void FamicomBoard::IOBinding()
+	{
+		// First you need to simulate 368s in the direction CPU->Ports
+
+		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP0;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = vdd;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A1] = gnd;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A2] = gnd;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A3] = M2;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A4] = gnd;
+		P4_IO.sim(p4_inputs, p4_outputs);
+
+		p5_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP1;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = vdd;	// not yet
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A1] = M2;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A2] = gnd;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A3] = gnd;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A4] = gnd;
+		P5_IO.sim(p5_inputs, p5_outputs);
+
+		// Call the IO subsystem and it will simulate the controllers and other I/O devices if they are connected
+
+		io->sim(0);
+		io->sim(1);
+
+		// And now we need to simulate 368s in the direction Ports->CPU (don't forget the resistance matrix of the pull-ups (RM1)!)
+
+		Pullup(p4016_d0);
+		Pullup(p2_4016_data);
+		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP0;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = vdd;
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A1] = p4016_d0;	// d0
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A2] = p2_4016_data;	// d1
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A3] = M2;
+		// TODO: It is not very clear how to convert the Mic signal level into a logical value, for now I will do it like this
+		p4_inputs[(size_t)BaseBoard::LS368_Input::A4] = mic_level > 0.5f ? TriState::One : TriState::Zero;	// d2
+		P4_IO.sim(p4_inputs, p4_outputs);
+		SetDataBusIfNotFloating(0, p4_outputs[(size_t)BaseBoard::LS368_Output::n_Y1]);
+		SetDataBusIfNotFloating(1, p4_outputs[(size_t)BaseBoard::LS368_Output::n_Y2]);
+		SetDataBusIfNotFloating(2, p4_outputs[(size_t)BaseBoard::LS368_Output::n_Y4]);
+
+		Pullup(p2_4017_data[0]);
+		Pullup(p2_4017_data[1]);
+		Pullup(p2_4017_data[2]);
+		Pullup(p2_4017_data[3]);
+		Pullup(p4017_d0);
+		p5_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP1;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::n_G2] = nRDP1;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A1] = M2;
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A2] = p2_4017_data[0];	// d1
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A3] = p2_4017_data[2];	// d3
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A4] = p2_4017_data[3];	// d4
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A5] = p2_4017_data[1];	// d2
+		p5_inputs[(size_t)BaseBoard::LS368_Input::A6] = p4017_d0;	// d0
+		P5_IO.sim(p5_inputs, p5_outputs);
+		SetDataBusIfNotFloating(0, p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y6]);
+		SetDataBusIfNotFloating(1, p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y2]);
+		SetDataBusIfNotFloating(2, p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y5]);
+		SetDataBusIfNotFloating(3, p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y3]);
+		SetDataBusIfNotFloating(4, p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y4]);
+	}
+
+	void FamicomBoard::SetDataBusIfNotFloating(size_t n, BaseLogic::TriState val)
+	{
+		if (io_enabled && val != TriState::Z) {
+			data_bus &= ~(1 << n);
+			data_bus |= ToByte(val) << n;
+		}
+	}
+
+	void FamicomBoard::CartridgeConnectorSimFailure1()
+	{
+		// And here you can add some dirt on the contacts
+	}
+
+	void FamicomBoard::CartridgeConnectorSimFailure2()
+	{
+		// And here you can add some dirt on the contacts
 	}
 
 #pragma region "Fami IO"
 
-	FamicomBoardIO::FamicomBoardIO() : IO::IOSubsystem()
+	FamicomBoardIO::FamicomBoardIO(FamicomBoard* board) : IO::IOSubsystem()
 	{
+		base = board;
 	}
 
 	FamicomBoardIO::~FamicomBoardIO()
@@ -241,10 +336,12 @@ namespace Breaknes
 		{
 			case 0:
 				devices.push_back(IO::DeviceID::FamiController_1);
+				devices.push_back(IO::DeviceID::VirtualFamiController_1);
 				break;
 
 			case 1:
 				devices.push_back(IO::DeviceID::FamiController_2);
+				devices.push_back(IO::DeviceID::VirtualFamiController_2);
 				break;
 
 			default:
@@ -252,7 +349,7 @@ namespace Breaknes
 		}
 	}
 
-	void FamicomBoardIO::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[])
+	void FamicomBoardIO::sim(int port)
 	{
 		for (auto it = devices.begin(); it != devices.end(); ++it) {
 
@@ -260,12 +357,36 @@ namespace Breaknes
 
 			if (mapped->port == port && mapped->handle >= 0) {
 
-				// TODO: Assign input signals to the simulated IO device
+				// Assign input signals to the simulated IO device
 
-				float mic_level;
-				mapped->device->sim(inputs, outputs, &mic_level);
+				TriState inputs[2]{};
+				TriState outputs[1]{};
 
-				// TODO: Process the output signals from the device and distribute them across the board
+				if (port == 0) {
+
+					inputs[0] = base->p4_outputs[(size_t)BaseBoard::LS368_Output::n_Y3];
+					Pullup(inputs[0]);	// RM1
+					inputs[1] = base->OUT_0;
+				}
+				else if (port == 1) {
+
+					inputs[0] = base->p5_outputs[(size_t)BaseBoard::LS368_Output::n_Y1];
+					Pullup(inputs[0]);	// RM1
+					inputs[1] = base->OUT_0;
+				}
+
+				mapped->device->sim(inputs, outputs, &base->mic_level);
+
+				// Process the output signals from the device and distribute them across the board
+
+				if (port == 0) {
+
+					base->p4016_d0 = outputs[0];
+				}
+				else if (port == 1) {
+
+					base->p4017_d0 = outputs[0];
+				}
 			}
 		}
 	}
