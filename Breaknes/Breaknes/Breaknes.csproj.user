@@ -7,6 +7,9 @@
     <Compile Update="FormDebugger.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="FormIOBinding.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FormIOConfig.cs">
       <SubType>Form</SubType>
     </Compile>
