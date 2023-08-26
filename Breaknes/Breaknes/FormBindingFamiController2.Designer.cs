@@ -122,6 +122,7 @@
 			// listView1
 			// 
 			listView1.Dock = DockStyle.Fill;
+			listView1.FullRowSelect = true;
 			listView1.Items.AddRange(new ListViewItem[] { listViewItem1, listViewItem2, listViewItem3, listViewItem4 });
 			listView1.Location = new Point(3, 3);
 			listView1.MultiSelect = false;
@@ -155,6 +156,7 @@
 			// listView2
 			// 
 			listView2.Dock = DockStyle.Fill;
+			listView2.FullRowSelect = true;
 			listView2.Items.AddRange(new ListViewItem[] { listViewItem5, listViewItem6 });
 			listView2.Location = new Point(3, 3);
 			listView2.MultiSelect = false;

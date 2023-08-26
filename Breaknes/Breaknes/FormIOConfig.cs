@@ -193,10 +193,14 @@
 			}
 
 			device.attached = board_list.ToArray();
+		}
 
-			// DEBUG
-			string text = IOConfigManager.SerializeIOConfig(config);
-			Console.Write(text);
+		private void FormIOConfig_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				Close();
+			}
 		}
 	}
 }

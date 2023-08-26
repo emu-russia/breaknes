@@ -269,7 +269,7 @@ namespace Breaknes
 		}
 	}
 
-	void NESBoardIO::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
+	void NESBoardIO::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[])
 	{
 		for (auto it = devices.begin(); it != devices.end(); ++it) {
 
@@ -279,7 +279,7 @@ namespace Breaknes
 
 				// TODO: Assign input signals to the simulated IO device
 
-				mapped->device->sim(inputs, outputs);
+				mapped->device->sim(inputs, outputs, nullptr);
 
 				// TODO: Process the output signals from the device and distribute them across the board
 			}

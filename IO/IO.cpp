@@ -32,11 +32,21 @@ namespace IO
 		{
 			case DeviceID::VirtualFamiController_1:
 			case DeviceID::FamiController_1:
-				break;
+				mapped = new IOMapped;
+				mapped->handle = num_devices;
+				mapped->port = -1;
+				mapped->device = new IO::FamiController1();
+				devices.push_back(mapped);
+				return num_devices;
 
 			case DeviceID::VirtualFamiController_2:
 			case DeviceID::FamiController_2:
-				break;
+				mapped = new IOMapped;
+				mapped->handle = num_devices;
+				mapped->port = -1;
+				mapped->device = new IO::FamiController2();
+				devices.push_back(mapped);
+				return num_devices;
 
 			case DeviceID::VirtualNESController:
 			case DeviceID::NESController:
@@ -126,6 +136,8 @@ namespace IO
 
 			return mapped->device->GetIOStates();
 		}
+
+		return 0;
 	}
 
 	std::string IOSubsystem::GetStateName(int handle, size_t io_state)
@@ -154,7 +166,7 @@ namespace IO
 		devices.clear();
 	}
 
-	void IOSubsystem::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
+	void IOSubsystem::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[])
 	{
 	}
 }

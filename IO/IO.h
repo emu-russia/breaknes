@@ -19,6 +19,9 @@ namespace IO
 	};
 }
 
+#include "CD4021.h"
+#include "UM6582.h"
+
 #include "AbstractIODevice.h"
 #include "FamiController.h"
 #include "NESController.h"
@@ -67,7 +70,7 @@ namespace IO
 		virtual int GetPorts();
 		virtual void GetPortSupportedDevices(int port, std::list<DeviceID>& devices);
 
-		virtual void sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]);
+		virtual void sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[]);
 
 #pragma endregion "Interface for Motherboard implementation"
 

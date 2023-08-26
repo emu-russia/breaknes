@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Breaknes
+﻿namespace Breaknes
 {
 	public partial class FormIOAddDevice : Form
 	{
-		public IOConfigDevice device_to_add = null;
+		public IOConfigDevice? device_to_add = null;
 
 		public FormIOAddDevice()
 		{
@@ -49,6 +39,14 @@ namespace Breaknes
 				case 7: return 0x00010004;
 			}
 			return 0;
+		}
+
+		private void FormIOAddDevice_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				Close();
+			}
 		}
 	}
 }
