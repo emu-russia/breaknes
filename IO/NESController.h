@@ -32,6 +32,6 @@ namespace IO
 		virtual void SetState(size_t io_state, uint32_t value) override;
 		virtual uint32_t GetState(size_t io_state) override;
 
-		virtual void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]) override;
+		virtual void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[]) override;
 	};
 }

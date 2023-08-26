@@ -166,7 +166,7 @@ namespace IO
 		devices.clear();
 	}
 
-	void IOSubsystem::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
+	void IOSubsystem::sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[])
 	{
 	}
 }

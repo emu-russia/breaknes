@@ -36,14 +36,14 @@ namespace IO
 		states[(size_t)FamiController2State::Left].value = 0;
 		states[(size_t)FamiController2State::Right].actuator_name = "Right";
 		states[(size_t)FamiController2State::Right].value = 0;
-		states[(size_t)FamiController2State::Volume].actuator_name = "Volume";
-		states[(size_t)FamiController2State::Volume].value = 0;
-		states[(size_t)FamiController2State::MicLevel].actuator_name = "MicLevel";
-		states[(size_t)FamiController2State::MicLevel].value = 0;
 		states[(size_t)FamiController2State::B].actuator_name = "B";
 		states[(size_t)FamiController2State::B].value = 0;
 		states[(size_t)FamiController2State::A].actuator_name = "A";
 		states[(size_t)FamiController2State::A].value = 0;
+		states[(size_t)FamiController2State::Volume].actuator_name = "Volume";
+		states[(size_t)FamiController2State::Volume].value = 0;
+		states[(size_t)FamiController2State::MicLevel].actuator_name = "MicLevel";
+		states[(size_t)FamiController2State::MicLevel].value = 0;
 	}
 
 	FamiController1::~FamiController1()
@@ -138,13 +138,55 @@ namespace IO
 		}
 	}
 
-	void FamiController1::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
+	void FamiController1::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[])
 	{
-		// TODO
+		// TODO: board binding
+		TriState clk = TriState::Zero;
+		TriState latch = TriState::Zero;
+		TriState Q5;
+		TriState Q6;
+		TriState Q7;
+
+		uint8_t buttons_state = 0;
+		buttons_state |= (states[(size_t)FamiController1State::Right].value & 1) << 0;
+		buttons_state |= (states[(size_t)FamiController1State::Left].value & 1) << 1;
+		buttons_state |= (states[(size_t)FamiController1State::Down].value & 1) << 2;
+		buttons_state |= (states[(size_t)FamiController1State::Up].value & 1) << 3;
+		buttons_state |= (states[(size_t)FamiController1State::Start].value & 1) << 4;
+		buttons_state |= (states[(size_t)FamiController1State::Select].value & 1) << 5;
+		buttons_state |= (states[(size_t)FamiController1State::B].value & 1) << 6;
+		buttons_state |= (states[(size_t)FamiController1State::A].value & 1) << 7;
+		// Pressed button shorts the Px input to ground
+		buttons_state = ~buttons_state;
+
+		sr.sim(clk, latch, TriState::Zero, buttons_state, Q5, Q6, Q7);
 	}
 
-	void FamiController2::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
+	void FamiController2::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[])
 	{
-		// TODO
+		// TODO: board binding
+		TriState clk = TriState::Zero;
+		TriState latch = TriState::Zero;
+		TriState Q5;
+		TriState Q6;
+		TriState Q7;
+
+		uint8_t buttons_state = 0;
+		buttons_state |= (states[(size_t)FamiController2State::Right].value & 1) << 0;
+		buttons_state |= (states[(size_t)FamiController2State::Left].value & 1) << 1;
+		buttons_state |= (states[(size_t)FamiController2State::Down].value & 1) << 2;
+		buttons_state |= (states[(size_t)FamiController2State::Up].value & 1) << 3;
+		buttons_state |= 1 << 4;
+		buttons_state |= 1 << 5;
+		buttons_state |= (states[(size_t)FamiController2State::B].value & 1) << 6;
+		buttons_state |= (states[(size_t)FamiController2State::A].value & 1) << 7;
+		// Pressed button shorts the Px input to ground
+		buttons_state = ~buttons_state;
+
+		sr.sim(clk, latch, TriState::Zero, buttons_state, Q5, Q6, Q7);
+
+		// Mike
+		// TODO: Volume
+		analog[0] = states[(size_t)FamiController2State::MicLevel].value / 255.0f;
 	}
 }

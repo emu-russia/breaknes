@@ -33,6 +33,6 @@ namespace IO
 		/// <summary>
 		/// The number and types of IO port signals are determined by the Motherboard implementation. The IODevice implementation must take this into account
 		/// </summary>
-		virtual void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]) {}
+		virtual void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[]) {}
 	};
 }

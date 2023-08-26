@@ -71,7 +71,7 @@ namespace IO
 		}
 	}
 
-	void NESController::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
+	void NESController::sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[])
 	{
 		// TODO: board binding
 		TriState clk = TriState::Zero;
@@ -89,6 +89,8 @@ namespace IO
 		buttons_state |= (states[(size_t)NESControllerState::Select].value & 1) << 5;
 		buttons_state |= (states[(size_t)NESControllerState::B].value & 1) << 6;
 		buttons_state |= (states[(size_t)NESControllerState::A].value & 1) << 7;
+		// Pressed button shorts the Px input to ground
+		buttons_state = ~buttons_state;
 
 		sr.sim(clk, latch, TriState::Zero, buttons_state, Q5, Q6, Q7);
 	}

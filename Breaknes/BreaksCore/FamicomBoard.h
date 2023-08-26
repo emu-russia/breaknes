@@ -12,7 +12,7 @@ namespace Breaknes
 		virtual ~FamicomBoardIO();
 		int GetPorts() override;
 		void GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices) override;
-		void sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]) override;
+		void sim(int port, BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], float analog[]) override;
 	};
 
 	class FamicomBoard : public Board
