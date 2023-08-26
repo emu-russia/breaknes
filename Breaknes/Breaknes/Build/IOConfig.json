@@ -1,0 +1,21 @@
+﻿{
+  "info": {
+    "descr": "This JSON contains a list of IO devices and their Attach/Detach statuses with Motherboard and Bindings with Input API."
+  },
+  "devices": [
+    {
+      "device_id": 1,
+      "name": "P1",
+      "attached": [
+        "HVC-CPU-01"
+      ],
+      "bindings": []
+    },
+    {
+      "device_id": 3,
+      "name": "NES P1",
+      "attached": [],
+      "bindings": []
+    }
+  ]
+}

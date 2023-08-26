@@ -12,7 +12,7 @@ namespace Breaknes
 {
 	public partial class FormBindingDendyController : Form
 	{
-		public FormBindingDendyController()
+		public FormBindingDendyController(IOConfigDevice device)
 		{
 			InitializeComponent();
 		}
