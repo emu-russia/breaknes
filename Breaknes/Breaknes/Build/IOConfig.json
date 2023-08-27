@@ -17,10 +17,6 @@
         {
           "actuator_id": 4,
           "binding": "Dummy binding"
-        },
-        {
-          "actuator_id": 1,
-          "binding": ""
         }
       ]
     },

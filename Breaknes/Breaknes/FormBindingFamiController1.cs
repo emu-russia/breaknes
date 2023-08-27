@@ -107,14 +107,15 @@ namespace Breaknes
 				var item = listView1.SelectedItems[0];
 				int actuator_id = (int)item.Tag;
 
+				List<IOConfigBinding> list = new();
 				for (int i = 0; i < this_device.bindings.Length; i++)
 				{
-					if (this_device.bindings[i].actuator_id == actuator_id)
+					if (this_device.bindings[i].actuator_id != actuator_id)
 					{
-						this_device.bindings[i].binding = "";
-						break;
+						list.Add(this_device.bindings[i]);
 					}
 				}
+				this_device.bindings = list.ToArray();
 
 				ShowBindings(actuator_id);
 			}
