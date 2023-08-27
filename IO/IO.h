@@ -53,6 +53,7 @@ namespace IO
 #pragma region "Interface for the emulator"
 
 		int CreateInstance(DeviceID device_id);
+		void DisposeInstance(int handle);
 
 		void Attach(int port, int handle);
 		void Detach(int port, int handle);

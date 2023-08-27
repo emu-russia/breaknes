@@ -155,6 +155,9 @@ namespace SharpTools
 		public static extern int IOCreateInstance(UInt32 device_id);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void IODisposeInstance(int handle);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void IOAttach(int port, int handle);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]

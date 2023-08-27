@@ -65,6 +65,20 @@ namespace IO
 		return -1;
 	}
 
+	void IOSubsystem::DisposeInstance(int handle)
+	{
+		IOMapped* mapped = GetMappedDeviceByHandle(handle);
+		if (mapped != nullptr) {
+
+			if (mapped->device != nullptr) {
+				delete mapped->device;
+			}
+
+			devices.remove(mapped);
+			delete mapped;
+		}
+	}
+
 	IOMapped* IOSubsystem::GetMappedDeviceByHandle(int handle)
 	{
 		for (auto it = devices.begin(); it != devices.end(); ++it) {
