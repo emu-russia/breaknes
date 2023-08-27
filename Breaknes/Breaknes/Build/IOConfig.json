@@ -9,7 +9,16 @@
       "attached": [
         "HVC-CPU-01"
       ],
-      "bindings": []
+      "bindings": [
+        {
+          "actuator_id": 0,
+          "binding": "Dummy binding"
+        },
+        {
+          "actuator_id": 4,
+          "binding": "Dummy binding"
+        }
+      ]
     },
     {
       "device_id": 3,
