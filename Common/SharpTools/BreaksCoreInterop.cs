@@ -173,7 +173,7 @@ namespace SharpTools
 		public static extern int IOGetNumStates(int handle);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void IOGetStateName(int handle, int io_state, [In, Out][MarshalAs(UnmanagedType.LPStr)] char[] name, int name_size);
+		public static extern void IOGetStateName(int handle, int io_state, [In, Out][MarshalAs(UnmanagedType.LPArray)] char[] name, int name_size);
 
 		#endregion "Core IO Api"
 

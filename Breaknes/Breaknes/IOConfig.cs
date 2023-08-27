@@ -24,7 +24,7 @@ namespace Breaknes
 
 	public class IOConfigBinding
 	{
-		public string actuator = "";
+		public int actuator_id = 0;
 		public string binding = "";
 	}
 
