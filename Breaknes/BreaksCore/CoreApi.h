@@ -167,6 +167,11 @@ extern "C"
 	DLL_EXPORT size_t IOCreateInstance(uint32_t device_id);
 
 	/// <summary>
+	/// Delete the device instance by handle.
+	/// </summary>
+	DLL_EXPORT void IODisposeInstance(size_t handle);
+
+	/// <summary>
 	/// Connect the device to the port.
 	/// </summary>
 	DLL_EXPORT void IOAttach(size_t port, size_t handle);

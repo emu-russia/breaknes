@@ -89,7 +89,7 @@ namespace Breaknes
 		BaseLogic::TriState p5_outputs[(size_t)BaseBoard::LS368_Output::Max]{};
 		BaseLogic::TriState p4016_data[5]{};	// 4:0
 		BaseLogic::TriState p4017_data[5]{};	// 4:0
-		bool io_enabled = false;
+		bool io_enabled = true;
 
 		bool pendingReset_CPU = false;
 		bool pendingReset_PPU = false;

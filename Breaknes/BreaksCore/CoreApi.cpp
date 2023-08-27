@@ -275,6 +275,14 @@ extern "C"
 		}
 	}
 
+	DLL_EXPORT void IODisposeInstance(size_t handle)
+	{
+		if (board != nullptr && board->io != nullptr)
+		{
+			board->io->DisposeInstance((int)handle);
+		}
+	}
+
 	DLL_EXPORT void IOAttach(size_t port, size_t handle)
 	{
 		if (board != nullptr && board->io != nullptr)
