@@ -56,29 +56,46 @@ namespace Breaknes
 			{
 				var item = listView1.SelectedItems[0];
 				int actuator_id = (int)item.Tag;
-				bool found = false;
 
-				for (int i = 0; i < this_device.bindings.Length; i++)
+				FormWaitInputEvent wait_input = new FormWaitInputEvent(actuator_id);
+				wait_input.FormClosed += Wait_input_FormClosed;
+				wait_input.ShowDialog();
+			}
+		}
+
+		private void AssignBinding(int actuator_id, string bindstr)
+		{
+			bool found = false;
+
+			for (int i = 0; i < this_device.bindings.Length; i++)
+			{
+				if (this_device.bindings[i].actuator_id == actuator_id)
 				{
-					if (this_device.bindings[i].actuator_id == actuator_id)
-					{
-						this_device.bindings[i].binding = "Dummy binding";
-						found = true;
-						break;
-					}
+					this_device.bindings[i].binding = bindstr;
+					found = true;
+					break;
 				}
+			}
 
-				if (!found)
-				{
-					List<IOConfigBinding> list = this_device.bindings.ToList();
-					IOConfigBinding new_binding = new();
-					new_binding.actuator_id = actuator_id;
-					new_binding.binding = "Dummy binding";
-					list.Add(new_binding);
-					this_device.bindings = list.ToArray();
-				}
+			if (!found)
+			{
+				List<IOConfigBinding> list = this_device.bindings.ToList();
+				IOConfigBinding new_binding = new();
+				new_binding.actuator_id = actuator_id;
+				new_binding.binding = bindstr;
+				list.Add(new_binding);
+				this_device.bindings = list.ToArray();
+			}
 
-				ShowBindings(actuator_id);
+			ShowBindings(actuator_id);
+		}
+
+		private void Wait_input_FormClosed(object? sender, FormClosedEventArgs e)
+		{
+			FormWaitInputEvent wait_input = (FormWaitInputEvent)sender;
+			if (wait_input.bindstr != null)
+			{
+				AssignBinding(wait_input.saved_actuator_id, wait_input.bindstr);
 			}
 		}
 
