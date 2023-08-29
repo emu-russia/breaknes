@@ -48,6 +48,7 @@
 			checkBox1.TabIndex = 8;
 			checkBox1.Text = "U";
 			checkBox1.UseVisualStyleBackColor = true;
+			checkBox1.CheckedChanged += checkBox1_CheckedChanged;
 			// 
 			// checkBox2
 			// 
@@ -59,6 +60,7 @@
 			checkBox2.TabIndex = 9;
 			checkBox2.Text = "L";
 			checkBox2.UseVisualStyleBackColor = true;
+			checkBox2.CheckedChanged += checkBox2_CheckedChanged;
 			// 
 			// checkBox3
 			// 
@@ -70,6 +72,7 @@
 			checkBox3.TabIndex = 10;
 			checkBox3.Text = "R";
 			checkBox3.UseVisualStyleBackColor = true;
+			checkBox3.CheckedChanged += checkBox3_CheckedChanged;
 			// 
 			// checkBox4
 			// 
@@ -81,6 +84,7 @@
 			checkBox4.TabIndex = 11;
 			checkBox4.Text = "D";
 			checkBox4.UseVisualStyleBackColor = true;
+			checkBox4.CheckedChanged += checkBox4_CheckedChanged;
 			// 
 			// checkBox5
 			// 
@@ -92,6 +96,7 @@
 			checkBox5.TabIndex = 12;
 			checkBox5.Text = "Select";
 			checkBox5.UseVisualStyleBackColor = true;
+			checkBox5.CheckedChanged += checkBox5_CheckedChanged;
 			// 
 			// checkBox6
 			// 
@@ -103,6 +108,7 @@
 			checkBox6.TabIndex = 13;
 			checkBox6.Text = "Start";
 			checkBox6.UseVisualStyleBackColor = true;
+			checkBox6.CheckedChanged += checkBox6_CheckedChanged;
 			// 
 			// checkBox7
 			// 
@@ -115,6 +121,7 @@
 			checkBox7.TabIndex = 14;
 			checkBox7.Text = "B";
 			checkBox7.UseVisualStyleBackColor = true;
+			checkBox7.CheckedChanged += checkBox7_CheckedChanged;
 			// 
 			// checkBox8
 			// 
@@ -127,6 +134,7 @@
 			checkBox8.TabIndex = 15;
 			checkBox8.Text = "A";
 			checkBox8.UseVisualStyleBackColor = true;
+			checkBox8.CheckedChanged += checkBox8_CheckedChanged;
 			// 
 			// FormVirtualFamiController1
 			// 
