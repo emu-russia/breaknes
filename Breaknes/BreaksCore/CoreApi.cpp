@@ -306,6 +306,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
+			printf("IOSetState: handle: %d, io_state: %d, value: 0x%08X\n", (int)handle, (int)io_state, value);
 			board->io->SetState((int)handle, io_state, value);
 		}
 	}
