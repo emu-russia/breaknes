@@ -15,6 +15,7 @@ namespace Breaknes
 	{
 		public int handle = -1;
 		public IOConfigDevice device = new();
+		public object? opaque = null;
 	}
 
 	/// <summary>
@@ -109,6 +110,33 @@ namespace Breaknes
 					AttachedDevice attached_device = new();
 					attached_device.device = device;
 					attached_device.handle = BreaksCore.IOCreateInstance(device.device_id);
+
+					// If a virtual device is connected, a modeless dialog must be created
+
+					switch (device.device_id)
+					{
+						case 0x00010001:
+							FormVirtualFamiController1 virt_fami1 = new FormVirtualFamiController1(device, this);
+							virt_fami1.Show();
+							attached_device.opaque = virt_fami1;
+							break;
+						case 0x00010002:
+							FormVirtualFamiController2 virt_fami2 = new FormVirtualFamiController2(device, this);
+							virt_fami2.Show();
+							attached_device.opaque = virt_fami2;
+							break;
+						case 0x00010003:
+							FormVirtualNESController virt_nes = new FormVirtualNESController(device, this);
+							virt_nes.Show();
+							attached_device.opaque = virt_nes;
+							break;
+						case 0x00010004:
+							FormVirtualDendyController virt_dendy = new FormVirtualDendyController(device, this);
+							virt_dendy.Show();
+							attached_device.opaque = virt_dendy;
+							break;
+					}
+
 					devices.Add(attached_device);
 				}
 			}
@@ -120,10 +148,36 @@ namespace Breaknes
 			{
 				if (device.handle >= 0)
 				{
+					// Close modeless dialogs for virtual devices
+
+					if (device.opaque != null)
+					{
+						switch (device.device.device_id)
+						{
+							case 0x00010001:
+								((FormVirtualFamiController1)device.opaque).Close();
+								break;
+							case 0x00010002:
+								((FormVirtualFamiController2)device.opaque).Close();
+								break;
+							case 0x00010003:
+								((FormVirtualNESController)device.opaque).Close();
+								break;
+							case 0x00010004:
+								((FormVirtualDendyController)device.opaque).Close();
+								break;
+						}
+					}
+
 					BreaksCore.IODisposeInstance(device.handle);
 				}
 			}
 			devices.Clear();
+		}
+
+		public void PushEvent(IOEvent io_event)
+		{
+
 		}
 
 	}
