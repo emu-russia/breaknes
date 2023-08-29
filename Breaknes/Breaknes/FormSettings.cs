@@ -111,7 +111,7 @@ namespace Breaknes
 			[Description("The directory where the sound dump will be saved. File name RomName_aux.bin")]
 			[DefaultValue("")]
 			[EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
-			public string DumpAudioDir { get; set; }
+			public string DumpAudioDir { get; set; } = "";
 
 			[Category("Debug")]
 			[Description("Turn on the PPU fields dump. This will dump a field with raw pixels and .bmp")]
@@ -122,7 +122,7 @@ namespace Breaknes
 			[Description("The directory where the field dumps will be stored. The names of the files you can figure out by yourself when you see the dumps.")]
 			[DefaultValue("")]
 			[EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
-			public string DumpVideoDir { get; set; }
+			public string DumpVideoDir { get; set; } = "";
 
 			[Category("Debug")]
 			[Description("Turn on the debug console. Requires a restart.")]
@@ -148,7 +148,7 @@ namespace Breaknes
 			[Description("Directory where the history of accesses to PPU registers will be saved (regdump)")]
 			[DefaultValue("")]
 			[EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
-			public string PPURegdumpDir { get; set; }
+			public string PPURegdumpDir { get; set; } = "";
 
 			[Category("Debug")]
 			[Description("Enable saving the history of accesses to APU registers (regdump). Regdump can be used later in the APUPlayer utility.")]
@@ -159,7 +159,7 @@ namespace Breaknes
 			[Description("Directory where the history of accesses to APU registers will be saved (regdump)")]
 			[DefaultValue("")]
 			[EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
-			public string APURegdumpDir { get; set; }
+			public string APURegdumpDir { get; set; } = "";
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid
@@ -170,7 +170,7 @@ namespace Breaknes
 			public override Boolean GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
 			public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
 			{
-				List<String> list = new List<String>();
+				List<String> list = new();
 
 				list.Add("BogusBoard");
 

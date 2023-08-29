@@ -268,7 +268,9 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			return board->io->CreateInstance((IO::DeviceID)device_id);
+			int handle = board->io->CreateInstance((IO::DeviceID)device_id);
+			printf("IOCreateInstance: 0x%08X, handle: %d\n", device_id, handle);
+			return handle;
 		}
 		else {
 			return -1;
@@ -279,6 +281,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
+			printf("IODisposeInstance: %d\n", (int)handle);
 			board->io->DisposeInstance((int)handle);
 		}
 	}
@@ -303,6 +306,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
+			printf("IOSetState: handle: %d, io_state: %d, value: 0x%08X\n", (int)handle, (int)io_state, value);
 			board->io->SetState((int)handle, io_state, value);
 		}
 	}

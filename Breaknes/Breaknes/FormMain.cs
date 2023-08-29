@@ -12,7 +12,7 @@ namespace Breaknes
 		private BoardControl board = new();
 		private VideoRender? vid_out = null;
 		private AudioRender? snd_out = null;
-		private InputProcessor? input = null;
+		private IOProcessor? io = null;
 		private string original_title = "";
 		private List<FormDebugger> debuggers = new();
 
@@ -53,7 +53,7 @@ namespace Breaknes
 			{
 				BreaksCore.EnableApuRegDump(true, settings.APURegdumpDir);
 			}
-			input = new InputProcessor();
+			io = new IOProcessor();
 			backgroundWorker1.RunWorkerAsync();
 		}
 
@@ -76,7 +76,14 @@ namespace Breaknes
 				vid_out = new(OnRenderField, settings.DumpVideo, settings.DumpVideoDir, rom_name);
 				vid_out.SetOutputPictureBox(pictureBox1);
 				snd_out = new(Handle, settings.DumpAudio, settings.DumpAudioDir, rom_name, settings.IIR, settings.CutoffFrequency);
-				input = new InputProcessor();
+
+				if (io != null)
+				{
+					io.DetachDevicesFromBoard();
+				}
+				io = new IOProcessor();
+				io.AttachDevicesToBoard(settings.MainBoard);
+
 				board.Paused = debuggers.Count != 0;
 
 				foreach (var inst in debuggers)
@@ -128,9 +135,10 @@ namespace Breaknes
 
 		private void OnRenderField()
 		{
-			if (input != null)
+			if (io != null)
 			{
-				input.PollDevices();
+				io.PollDevices();
+				io.DispatchEventQueue();
 			}
 
 			foreach (var inst in debuggers)
@@ -149,7 +157,7 @@ namespace Breaknes
 
 		private void iOSettingsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			FormIOConfig ioconfig = new FormIOConfig();
+			FormIOConfig ioconfig = new FormIOConfig(io);
 			ioconfig.ShowDialog();
 		}
 	}

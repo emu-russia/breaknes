@@ -25,6 +25,47 @@
       "name": "NES P1",
       "attached": [],
       "bindings": []
+    },
+    {
+      "device_id": 65539,
+      "name": "V1",
+      "attached": [
+        "NES-001 (PCB rev. -01 to -04)"
+      ],
+      "bindings": [
+        {
+          "actuator_id": 0,
+          "binding": "NES_Up"
+        },
+        {
+          "actuator_id": 1,
+          "binding": "NES_Down"
+        },
+        {
+          "actuator_id": 2,
+          "binding": "NES_Left"
+        },
+        {
+          "actuator_id": 3,
+          "binding": "NES_Right"
+        },
+        {
+          "actuator_id": 4,
+          "binding": "NES_Select"
+        },
+        {
+          "actuator_id": 5,
+          "binding": "NES_Start"
+        },
+        {
+          "actuator_id": 6,
+          "binding": "NES_B"
+        },
+        {
+          "actuator_id": 7,
+          "binding": "NES_A"
+        }
+      ]
     }
   ]
 }
