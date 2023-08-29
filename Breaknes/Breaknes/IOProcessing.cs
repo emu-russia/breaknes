@@ -168,6 +168,8 @@ namespace Breaknes
 					devices.Add(attached_device);
 				}
 			}
+
+			event_queue.Clear();
 		}
 
 		public void DetachDevicesFromBoard()
@@ -215,7 +217,5 @@ namespace Breaknes
 			text += "IOEvent: " + io_event.name + ", value: " + io_event.value.ToString();
 			Console.WriteLine(text);
 		}
-
 	}
-
 }

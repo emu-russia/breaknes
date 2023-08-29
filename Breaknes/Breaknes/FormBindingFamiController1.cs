@@ -5,10 +5,12 @@ namespace Breaknes
 	public partial class FormBindingFamiController1 : Form
 	{
 		IOConfigDevice this_device;
+		IOProcessor io;
 
 		public FormBindingFamiController1(IOConfigDevice device, IOProcessor io)
 		{
 			InitializeComponent();
+			this.io = io;
 			this_device = device;
 		}
 
@@ -57,7 +59,7 @@ namespace Breaknes
 				var item = listView1.SelectedItems[0];
 				int actuator_id = (int)item.Tag;
 
-				FormWaitInputEvent wait_input = new FormWaitInputEvent(actuator_id);
+				FormWaitInputEvent wait_input = new FormWaitInputEvent(actuator_id, io);
 				wait_input.FormClosed += Wait_input_FormClosed;
 				wait_input.ShowDialog();
 			}
@@ -143,7 +145,7 @@ namespace Breaknes
 		private void ShowBindings(int actuator_id)
 		{
 			listView2.Clear();
-			for (int i=0; i<this_device.bindings.Length; i++)
+			for (int i = 0; i < this_device.bindings.Length; i++)
 			{
 				if (this_device.bindings[i].actuator_id == actuator_id)
 				{
