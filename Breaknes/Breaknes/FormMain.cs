@@ -76,7 +76,14 @@ namespace Breaknes
 				vid_out = new(OnRenderField, settings.DumpVideo, settings.DumpVideoDir, rom_name);
 				vid_out.SetOutputPictureBox(pictureBox1);
 				snd_out = new(Handle, settings.DumpAudio, settings.DumpAudioDir, rom_name, settings.IIR, settings.CutoffFrequency);
+
+				if (io != null)
+				{
+					io.DetachDevicesFromBoard();
+				}
 				io = new IOProcessor();
+				io.AttachDevicesToBoard(settings.MainBoard);
+
 				board.Paused = debuggers.Count != 0;
 
 				foreach (var inst in debuggers)

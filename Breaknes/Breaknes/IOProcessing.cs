@@ -1,4 +1,5 @@
 using SharpDX.DirectInput;
+using SharpTools;
 
 // Demo:
 // https://github.com/sharpdx/SharpDX-Samples/blob/master/Desktop/DirectInput/JoystickApp/Program.cs
@@ -6,10 +7,32 @@ using SharpDX.DirectInput;
 namespace Breaknes
 {
 
+	/// <summary>
+	/// Associates the connected device from the configuration with the actual connection in BreaksCore by handle.
+	/// After receiving the IOEvent, all devices take turns receiving the list to filter and process it and send the SetState for BreaksCore by handle.
+	/// </summary>
+	public class AttachedDevice
+	{
+		public int handle = -1;
+		public IOConfigDevice device = new();
+	}
+
+	/// <summary>
+	/// A typical descriptor of some kind of I/O event. Events are registered in a queue and then processed by attached devices in a chain. Classics.
+	/// </summary>
+	public class IOEvent
+	{
+		public string name = "";
+		public int actuator_id = -1;
+		public UInt32 value = 0;
+	}
+
 	public class IOProcessor
 	{
 		Keyboard? keyboard = null;
 		Joystick? joystick = null;
+		List<AttachedDevice> devices = new();
+		List<IOEvent> event_queue = new();
 
 		public IOProcessor()
 		{
@@ -71,6 +94,36 @@ namespace Breaknes
 				foreach (var state in datas)
 					Console.WriteLine(state);
 			}
+		}
+
+		public void AttachDevicesToBoard(string board_name)
+		{
+			IOConfig config = IOConfigManager.LoadIOConfig();
+
+			devices = new();
+
+			foreach (var device in config.devices)
+			{
+				if (device.attached.Contains(board_name))
+				{
+					AttachedDevice attached_device = new();
+					attached_device.device = device;
+					attached_device.handle = BreaksCore.IOCreateInstance(device.device_id);
+					devices.Add(attached_device);
+				}
+			}
+		}
+
+		public void DetachDevicesFromBoard()
+		{
+			foreach (var device in devices)
+			{
+				if (device.handle >= 0)
+				{
+					BreaksCore.IODisposeInstance(device.handle);
+				}
+			}
+			devices.Clear();
 		}
 
 	}
