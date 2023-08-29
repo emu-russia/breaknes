@@ -131,6 +131,7 @@
 			listView1.TabIndex = 0;
 			listView1.UseCompatibleStateImageBehavior = false;
 			listView1.View = View.List;
+			listView1.Click += listView1_Click;
 			// 
 			// tabControl2
 			// 
@@ -174,6 +175,7 @@
 			button4.TabIndex = 3;
 			button4.Text = "Save";
 			button4.UseVisualStyleBackColor = true;
+			button4.Click += button4_Click;
 			// 
 			// button3
 			// 
@@ -183,6 +185,7 @@
 			button3.TabIndex = 2;
 			button3.Text = "Clear Binding";
 			button3.UseVisualStyleBackColor = true;
+			button3.Click += button3_Click;
 			// 
 			// button2
 			// 
@@ -192,6 +195,7 @@
 			button2.TabIndex = 1;
 			button2.Text = "Add Binding";
 			button2.UseVisualStyleBackColor = true;
+			button2.Click += button2_Click;
 			// 
 			// button1
 			// 
@@ -201,6 +205,7 @@
 			button1.TabIndex = 0;
 			button1.Text = "Clear all";
 			button1.UseVisualStyleBackColor = true;
+			button1.Click += button1_Click;
 			// 
 			// FormBindingNESController
 			// 
@@ -210,6 +215,7 @@
 			Controls.Add(splitContainer1);
 			Name = "FormBindingNESController";
 			Text = "NES Controller Binding";
+			Load += FormBindingNESController_Load;
 			splitContainer1.Panel1.ResumeLayout(false);
 			splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
