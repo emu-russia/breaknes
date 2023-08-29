@@ -1,5 +1,4 @@
-﻿
-using SharpTools;
+﻿using SharpTools;
 
 namespace Breaknes
 {
