@@ -145,7 +145,7 @@ namespace Breaknes
 		private void ShowBindings(int actuator_id)
 		{
 			listView2.Clear();
-			for (int i=0; i<this_device.bindings.Length; i++)
+			for (int i = 0; i < this_device.bindings.Length; i++)
 			{
 				if (this_device.bindings[i].actuator_id == actuator_id)
 				{
