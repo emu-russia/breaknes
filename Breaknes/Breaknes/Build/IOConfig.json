@@ -25,6 +25,14 @@
       "name": "NES P1",
       "attached": [],
       "bindings": []
+    },
+    {
+      "device_id": 65539,
+      "name": "V1",
+      "attached": [
+        "NES-001 (PCB rev. -01 to -04)"
+      ],
+      "bindings": []
     }
   ]
 }

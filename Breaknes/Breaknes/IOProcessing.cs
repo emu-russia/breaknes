@@ -6,12 +6,12 @@ using SharpDX.DirectInput;
 namespace Breaknes
 {
 
-	public class InputProcessor
+	public class IOProcessor
 	{
 		Keyboard? keyboard = null;
 		Joystick? joystick = null;
 
-		public InputProcessor()
+		public IOProcessor()
 		{
 			var directInput = new DirectInput();
 

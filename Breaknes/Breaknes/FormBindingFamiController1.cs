@@ -6,7 +6,7 @@ namespace Breaknes
 	{
 		IOConfigDevice this_device;
 
-		public FormBindingFamiController1(IOConfigDevice device)
+		public FormBindingFamiController1(IOConfigDevice device, IOProcessor io)
 		{
 			InitializeComponent();
 			this_device = device;

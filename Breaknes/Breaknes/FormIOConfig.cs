@@ -3,10 +3,12 @@
 	public partial class FormIOConfig : Form
 	{
 		IOConfig config = new();
+		IOProcessor parent_io;
 
-		public FormIOConfig()
+		public FormIOConfig(IOProcessor io)
 		{
 			InitializeComponent();
+			parent_io = io;
 		}
 
 		private void FormIOConfig_Load(object sender, EventArgs e)
@@ -41,35 +43,35 @@
 					switch (device.device_id)
 					{
 						case 0x00000001:
-							FormBindingFamiController1 fami1 = new FormBindingFamiController1(device);
+							FormBindingFamiController1 fami1 = new FormBindingFamiController1(device, parent_io);
 							fami1.ShowDialog();
 							break;
 						case 0x00000002:
-							FormBindingFamiController2 fami2 = new FormBindingFamiController2(device);
+							FormBindingFamiController2 fami2 = new FormBindingFamiController2(device, parent_io);
 							fami2.ShowDialog();
 							break;
 						case 0x00000003:
-							FormBindingNESController nes = new FormBindingNESController(device);
+							FormBindingNESController nes = new FormBindingNESController(device, parent_io);
 							nes.ShowDialog();
 							break;
 						case 0x00000004:
-							FormBindingDendyController dendy = new FormBindingDendyController(device);
+							FormBindingDendyController dendy = new FormBindingDendyController(device, parent_io);
 							dendy.ShowDialog();
 							break;
 						case 0x00010001:
-							FormVirtualFamiController1 virt_fami1 = new FormVirtualFamiController1(device);
+							FormVirtualFamiController1 virt_fami1 = new FormVirtualFamiController1(device, parent_io);
 							virt_fami1.ShowDialog();
 							break;
 						case 0x00010002:
-							FormVirtualFamiController2 virt_fami2 = new FormVirtualFamiController2(device);
+							FormVirtualFamiController2 virt_fami2 = new FormVirtualFamiController2(device, parent_io);
 							virt_fami2.ShowDialog();
 							break;
 						case 0x00010003:
-							FormVirtualNESController virt_nes = new FormVirtualNESController(device);
+							FormVirtualNESController virt_nes = new FormVirtualNESController(device, parent_io);
 							virt_nes.ShowDialog();
 							break;
 						case 0x00010004:
-							FormVirtualDendyController virt_dendy = new FormVirtualDendyController(device);
+							FormVirtualDendyController virt_dendy = new FormVirtualDendyController(device, parent_io);
 							virt_dendy.ShowDialog();
 							break;
 					}
