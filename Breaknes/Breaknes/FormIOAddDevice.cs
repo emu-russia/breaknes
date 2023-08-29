@@ -29,49 +29,49 @@ namespace Breaknes
 				switch (device_id)
 				{
 					case 0x00010001:
-						bindings.Add(new IOConfigBinding(0, "Up"));
-						bindings.Add(new IOConfigBinding(1, "Down"));
-						bindings.Add(new IOConfigBinding(2, "Left"));
-						bindings.Add(new IOConfigBinding(3, "Right"));
-						bindings.Add(new IOConfigBinding(4, "Select"));
-						bindings.Add(new IOConfigBinding(5, "Start"));
-						bindings.Add(new IOConfigBinding(6, "B"));
-						bindings.Add(new IOConfigBinding(7, "A"));
+						bindings.Add(new IOConfigBinding(0, "Fami1_Up"));
+						bindings.Add(new IOConfigBinding(1, "Fami1_Down"));
+						bindings.Add(new IOConfigBinding(2, "Fami1_Left"));
+						bindings.Add(new IOConfigBinding(3, "Fami1_Right"));
+						bindings.Add(new IOConfigBinding(4, "Fami1_Select"));
+						bindings.Add(new IOConfigBinding(5, "Fami1_Start"));
+						bindings.Add(new IOConfigBinding(6, "Fami1_B"));
+						bindings.Add(new IOConfigBinding(7, "Fami1_A"));
 						device_to_add.bindings = bindings.ToArray();
 						break;
 					case 0x00010002:
-						bindings.Add(new IOConfigBinding(0, "Up"));
-						bindings.Add(new IOConfigBinding(1, "Down"));
-						bindings.Add(new IOConfigBinding(2, "Left"));
-						bindings.Add(new IOConfigBinding(3, "Right"));
-						bindings.Add(new IOConfigBinding(4, "B"));
-						bindings.Add(new IOConfigBinding(5, "A"));
-						bindings.Add(new IOConfigBinding(6, "Volume"));
-						bindings.Add(new IOConfigBinding(7, "MicLevel"));
+						bindings.Add(new IOConfigBinding(0, "Fami2_Up"));
+						bindings.Add(new IOConfigBinding(1, "Fami2_Down"));
+						bindings.Add(new IOConfigBinding(2, "Fami2_Left"));
+						bindings.Add(new IOConfigBinding(3, "Fami2_Right"));
+						bindings.Add(new IOConfigBinding(4, "Fami2_B"));
+						bindings.Add(new IOConfigBinding(5, "Fami2_A"));
+						bindings.Add(new IOConfigBinding(6, "Fami2_Volume"));
+						bindings.Add(new IOConfigBinding(7, "Fami2_MicLevel"));
 						device_to_add.bindings = bindings.ToArray();
 						break;
 					case 0x00010003:
-						bindings.Add(new IOConfigBinding(0, "Up"));
-						bindings.Add(new IOConfigBinding(1, "Down"));
-						bindings.Add(new IOConfigBinding(2, "Left"));
-						bindings.Add(new IOConfigBinding(3, "Right"));
-						bindings.Add(new IOConfigBinding(4, "Select"));
-						bindings.Add(new IOConfigBinding(5, "Start"));
-						bindings.Add(new IOConfigBinding(6, "B"));
-						bindings.Add(new IOConfigBinding(7, "A"));
+						bindings.Add(new IOConfigBinding(0, "NES_Up"));
+						bindings.Add(new IOConfigBinding(1, "NES_Down"));
+						bindings.Add(new IOConfigBinding(2, "NES_Left"));
+						bindings.Add(new IOConfigBinding(3, "NES_Right"));
+						bindings.Add(new IOConfigBinding(4, "NES_Select"));
+						bindings.Add(new IOConfigBinding(5, "NES_Start"));
+						bindings.Add(new IOConfigBinding(6, "NES_B"));
+						bindings.Add(new IOConfigBinding(7, "NES_A"));
 						device_to_add.bindings = bindings.ToArray();
 						break;
 					case 0x00010004:
-						bindings.Add(new IOConfigBinding(0, "Up"));
-						bindings.Add(new IOConfigBinding(1, "Down"));
-						bindings.Add(new IOConfigBinding(2, "Left"));
-						bindings.Add(new IOConfigBinding(3, "Right"));
-						bindings.Add(new IOConfigBinding(4, "Select"));
-						bindings.Add(new IOConfigBinding(5, "Start"));
-						bindings.Add(new IOConfigBinding(6, "TurboB"));
-						bindings.Add(new IOConfigBinding(7, "TurboA"));
-						bindings.Add(new IOConfigBinding(8, "B"));
-						bindings.Add(new IOConfigBinding(9, "A"));
+						bindings.Add(new IOConfigBinding(0, "Dendy_Up"));
+						bindings.Add(new IOConfigBinding(1, "Dendy_Down"));
+						bindings.Add(new IOConfigBinding(2, "Dendy_Left"));
+						bindings.Add(new IOConfigBinding(3, "Dendy_Right"));
+						bindings.Add(new IOConfigBinding(4, "Dendy_Select"));
+						bindings.Add(new IOConfigBinding(5, "Dendy_Start"));
+						bindings.Add(new IOConfigBinding(6, "Dendy_TurboB"));
+						bindings.Add(new IOConfigBinding(7, "Dendy_TurboA"));
+						bindings.Add(new IOConfigBinding(8, "Dendy_B"));
+						bindings.Add(new IOConfigBinding(9, "Dendy_A"));
 						device_to_add.bindings = bindings.ToArray();
 						break;
 				}

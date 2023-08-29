@@ -35,35 +35,35 @@
       "bindings": [
         {
           "actuator_id": 0,
-          "binding": "Up"
+          "binding": "NES_Up"
         },
         {
           "actuator_id": 1,
-          "binding": "Down"
+          "binding": "NES_Down"
         },
         {
           "actuator_id": 2,
-          "binding": "Left"
+          "binding": "NES_Left"
         },
         {
           "actuator_id": 3,
-          "binding": "Right"
+          "binding": "NES_Right"
         },
         {
           "actuator_id": 4,
-          "binding": "Select"
+          "binding": "NES_Select"
         },
         {
           "actuator_id": 5,
-          "binding": "Start"
+          "binding": "NES_Start"
         },
         {
           "actuator_id": 6,
-          "binding": "B"
+          "binding": "NES_B"
         },
         {
           "actuator_id": 7,
-          "binding": "A"
+          "binding": "NES_A"
         }
       ]
     }

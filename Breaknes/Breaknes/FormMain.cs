@@ -138,6 +138,7 @@ namespace Breaknes
 			if (io != null)
 			{
 				io.PollDevices();
+				io.DispatchEventQueue();
 			}
 
 			foreach (var inst in debuggers)

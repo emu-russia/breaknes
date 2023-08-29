@@ -111,8 +111,18 @@ namespace Breaknes
 		{
 			foreach (var io_event in event_queue)
 			{
-
+				foreach (var attached_device in devices)
+				{
+					foreach (var binding in attached_device.device.bindings)
+					{
+						if (binding.binding == io_event.name)
+						{
+							BreaksCore.IOSetState(attached_device.handle, binding.actuator_id, io_event.value);
+						}
+					}
+				}
 			}
+			event_queue.Clear();
 		}
 
 		public void AttachDevicesToBoard(string board_name)
