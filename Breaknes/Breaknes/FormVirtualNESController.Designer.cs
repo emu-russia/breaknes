@@ -49,6 +49,7 @@
 			checkBox8.TabIndex = 23;
 			checkBox8.Text = "A";
 			checkBox8.UseVisualStyleBackColor = true;
+			checkBox8.CheckedChanged += checkBox8_CheckedChanged;
 			// 
 			// checkBox7
 			// 
@@ -61,6 +62,7 @@
 			checkBox7.TabIndex = 22;
 			checkBox7.Text = "B";
 			checkBox7.UseVisualStyleBackColor = true;
+			checkBox7.CheckedChanged += checkBox7_CheckedChanged;
 			// 
 			// checkBox6
 			// 
@@ -72,6 +74,7 @@
 			checkBox6.TabIndex = 21;
 			checkBox6.Text = "Start";
 			checkBox6.UseVisualStyleBackColor = true;
+			checkBox6.CheckedChanged += checkBox6_CheckedChanged;
 			// 
 			// checkBox5
 			// 
@@ -83,6 +86,7 @@
 			checkBox5.TabIndex = 20;
 			checkBox5.Text = "Select";
 			checkBox5.UseVisualStyleBackColor = true;
+			checkBox5.CheckedChanged += checkBox5_CheckedChanged;
 			// 
 			// checkBox4
 			// 
@@ -94,6 +98,7 @@
 			checkBox4.TabIndex = 19;
 			checkBox4.Text = "D";
 			checkBox4.UseVisualStyleBackColor = true;
+			checkBox4.CheckedChanged += checkBox4_CheckedChanged;
 			// 
 			// checkBox3
 			// 
@@ -105,6 +110,7 @@
 			checkBox3.TabIndex = 18;
 			checkBox3.Text = "R";
 			checkBox3.UseVisualStyleBackColor = true;
+			checkBox3.CheckedChanged += checkBox3_CheckedChanged;
 			// 
 			// checkBox2
 			// 
@@ -116,6 +122,7 @@
 			checkBox2.TabIndex = 17;
 			checkBox2.Text = "L";
 			checkBox2.UseVisualStyleBackColor = true;
+			checkBox2.CheckedChanged += checkBox2_CheckedChanged;
 			// 
 			// checkBox1
 			// 
@@ -127,6 +134,7 @@
 			checkBox1.TabIndex = 16;
 			checkBox1.Text = "U";
 			checkBox1.UseVisualStyleBackColor = true;
+			checkBox1.CheckedChanged += checkBox1_CheckedChanged;
 			// 
 			// FormVirtualNESController
 			// 

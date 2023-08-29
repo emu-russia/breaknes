@@ -32,7 +32,40 @@
       "attached": [
         "NES-001 (PCB rev. -01 to -04)"
       ],
-      "bindings": []
+      "bindings": [
+        {
+          "actuator_id": 0,
+          "binding": "Up"
+        },
+        {
+          "actuator_id": 1,
+          "binding": "Down"
+        },
+        {
+          "actuator_id": 2,
+          "binding": "Left"
+        },
+        {
+          "actuator_id": 3,
+          "binding": "Right"
+        },
+        {
+          "actuator_id": 4,
+          "binding": "Select"
+        },
+        {
+          "actuator_id": 5,
+          "binding": "Start"
+        },
+        {
+          "actuator_id": 6,
+          "binding": "B"
+        },
+        {
+          "actuator_id": 7,
+          "binding": "A"
+        }
+      ]
     }
   ]
 }

@@ -1,4 +1,5 @@
-﻿namespace Breaknes
+﻿
+namespace Breaknes
 {
 	public partial class FormIOAddDevice : Form
 	{
@@ -21,6 +22,59 @@
 				device_to_add = new IOConfigDevice();
 				device_to_add.name = name;
 				device_to_add.device_id = device_id;
+
+				// Assign bindings automatically for virtual devices
+				List<IOConfigBinding> bindings = new();
+
+				switch (device_id)
+				{
+					case 0x00010001:
+						bindings.Add(new IOConfigBinding(0, "Up"));
+						bindings.Add(new IOConfigBinding(1, "Down"));
+						bindings.Add(new IOConfigBinding(2, "Left"));
+						bindings.Add(new IOConfigBinding(3, "Right"));
+						bindings.Add(new IOConfigBinding(4, "Select"));
+						bindings.Add(new IOConfigBinding(5, "Start"));
+						bindings.Add(new IOConfigBinding(6, "B"));
+						bindings.Add(new IOConfigBinding(7, "A"));
+						device_to_add.bindings = bindings.ToArray();
+						break;
+					case 0x00010002:
+						bindings.Add(new IOConfigBinding(0, "Up"));
+						bindings.Add(new IOConfigBinding(1, "Down"));
+						bindings.Add(new IOConfigBinding(2, "Left"));
+						bindings.Add(new IOConfigBinding(3, "Right"));
+						bindings.Add(new IOConfigBinding(4, "B"));
+						bindings.Add(new IOConfigBinding(5, "A"));
+						bindings.Add(new IOConfigBinding(6, "Volume"));
+						bindings.Add(new IOConfigBinding(7, "MicLevel"));
+						device_to_add.bindings = bindings.ToArray();
+						break;
+					case 0x00010003:
+						bindings.Add(new IOConfigBinding(0, "Up"));
+						bindings.Add(new IOConfigBinding(1, "Down"));
+						bindings.Add(new IOConfigBinding(2, "Left"));
+						bindings.Add(new IOConfigBinding(3, "Right"));
+						bindings.Add(new IOConfigBinding(4, "Select"));
+						bindings.Add(new IOConfigBinding(5, "Start"));
+						bindings.Add(new IOConfigBinding(6, "B"));
+						bindings.Add(new IOConfigBinding(7, "A"));
+						device_to_add.bindings = bindings.ToArray();
+						break;
+					case 0x00010004:
+						bindings.Add(new IOConfigBinding(0, "Up"));
+						bindings.Add(new IOConfigBinding(1, "Down"));
+						bindings.Add(new IOConfigBinding(2, "Left"));
+						bindings.Add(new IOConfigBinding(3, "Right"));
+						bindings.Add(new IOConfigBinding(4, "Select"));
+						bindings.Add(new IOConfigBinding(5, "Start"));
+						bindings.Add(new IOConfigBinding(6, "TurboB"));
+						bindings.Add(new IOConfigBinding(7, "TurboA"));
+						bindings.Add(new IOConfigBinding(8, "B"));
+						bindings.Add(new IOConfigBinding(9, "A"));
+						device_to_add.bindings = bindings.ToArray();
+						break;
+				}
 			}
 			Close();
 		}

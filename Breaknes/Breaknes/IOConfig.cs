@@ -26,6 +26,12 @@ namespace Breaknes
 	{
 		public int actuator_id = 0;
 		public string binding = "";
+		public IOConfigBinding(int actuator_id, string binding)
+		{
+			this.actuator_id = actuator_id;
+			this.binding = binding;
+		}
+		public IOConfigBinding() { }
 	}
 
 	public class IOConfigManager

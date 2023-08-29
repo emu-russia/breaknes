@@ -24,7 +24,6 @@ namespace Breaknes
 	public class IOEvent
 	{
 		public string name = "";
-		public int actuator_id = -1;
 		public UInt32 value = 0;
 	}
 
@@ -78,8 +77,14 @@ namespace Breaknes
 			joystick.Acquire();
 		}
 
+		/// <summary>
+		/// Used to poll real devices, using some platform API to get their state.
+		/// Call often enough, but not infrequently.
+		/// </summary>
 		public void PollDevices()
 		{
+			List<IOEvent> events = new();
+
 			if (keyboard != null)
 			{
 				keyboard.Poll();
@@ -94,6 +99,19 @@ namespace Breaknes
 				var datas = joystick.GetBufferedData();
 				foreach (var state in datas)
 					Console.WriteLine(state);
+			}
+
+			event_queue.AddRange(events);
+		}
+
+		/// <summary>
+		/// Process the current IO event queue and send all devices SetState in BreaksCore.
+		/// </summary>
+		public void DispatchEventQueue()
+		{
+			foreach (var io_event in event_queue)
+			{
+
 			}
 		}
 
@@ -177,7 +195,15 @@ namespace Breaknes
 
 		public void PushEvent(IOEvent io_event)
 		{
+			DumpEvent(io_event);
+			event_queue.Add(io_event);
+		}
 
+		public void DumpEvent(IOEvent io_event)
+		{
+			string text = "";
+			text += "IOEvent: " + io_event.name + ", value: " + io_event.value.ToString();
+			Console.WriteLine(text);
 		}
 
 	}
