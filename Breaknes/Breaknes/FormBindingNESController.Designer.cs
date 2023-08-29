@@ -63,6 +63,7 @@
 			// splitContainer1
 			// 
 			splitContainer1.Dock = DockStyle.Fill;
+			splitContainer1.FixedPanel = FixedPanel.Panel2;
 			splitContainer1.Location = new Point(0, 0);
 			splitContainer1.Name = "splitContainer1";
 			splitContainer1.Orientation = Orientation.Horizontal;
@@ -169,6 +170,7 @@
 			// 
 			// button4
 			// 
+			button4.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			button4.Location = new Point(686, 17);
 			button4.Name = "button4";
 			button4.Size = new Size(102, 34);
@@ -179,6 +181,7 @@
 			// 
 			// button3
 			// 
+			button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			button3.Location = new Point(228, 17);
 			button3.Name = "button3";
 			button3.Size = new Size(102, 34);
@@ -189,6 +192,7 @@
 			// 
 			// button2
 			// 
+			button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			button2.Location = new Point(120, 17);
 			button2.Name = "button2";
 			button2.Size = new Size(102, 34);
@@ -199,6 +203,7 @@
 			// 
 			// button1
 			// 
+			button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			button1.Location = new Point(12, 17);
 			button1.Name = "button1";
 			button1.Size = new Size(102, 34);
