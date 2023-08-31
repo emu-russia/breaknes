@@ -333,6 +333,18 @@ namespace Breaknes
 		return 2;
 	}
 
+	std::string FamicomBoardIO::GetPortName(int port)
+	{
+		switch (port)
+		{
+			case 0: return "Famicom Controller Port 1";
+			case 1: return "Famicom Controller Port 2";
+			default:
+				break;
+		}
+		return "";
+	}
+
 	void FamicomBoardIO::GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices)
 	{
 		devices.clear();

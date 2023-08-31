@@ -332,6 +332,18 @@ namespace Breaknes
 		return 2;
 	}
 
+	std::string NESBoardIO::GetPortName(int port)
+	{
+		switch (port)
+		{
+			case 0: return "NES Controller Port 1";
+			case 1: return "NES Controller Port 2";
+			default:
+				break;
+		}
+		return "";
+	}
+
 	void NESBoardIO::GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices)
 	{
 		devices.clear();
