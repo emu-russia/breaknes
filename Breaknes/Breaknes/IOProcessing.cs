@@ -14,6 +14,7 @@ namespace Breaknes
 	public class AttachedDevice
 	{
 		public int handle = -1;
+		public int port = -1;
 		public IOConfigDevice device = new();
 		public object? opaque = null;
 	}
@@ -133,11 +134,17 @@ namespace Breaknes
 
 			foreach (var device in config.devices)
 			{
-				if (device.attached.Contains(board_name))
+				foreach (var port in device.attached)
 				{
+					if (port.board != board_name)
+						continue;
+					int port_num = port.port;
+
 					AttachedDevice attached_device = new();
 					attached_device.device = device;
+					attached_device.port = port_num;
 					attached_device.handle = BreaksCore.IOCreateInstance(device.device_id);
+					BreaksCore.IOAttach(port_num, attached_device.handle);
 
 					// If a virtual device is connected, a modeless dialog must be created
 
@@ -199,6 +206,7 @@ namespace Breaknes
 						}
 					}
 
+					BreaksCore.IODetach(device.port, device.handle);
 					BreaksCore.IODisposeInstance(device.handle);
 				}
 			}

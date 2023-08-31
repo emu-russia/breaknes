@@ -7,7 +7,10 @@
       "device_id": 1,
       "name": "P1",
       "attached": [
-        "HVC-CPU-01"
+        {
+          "board": "HVC-CPU-01",
+          "port": 0
+        }
       ],
       "bindings": [
         {
@@ -30,7 +33,10 @@
       "device_id": 65539,
       "name": "V1",
       "attached": [
-        "NES-001 (PCB rev. -01 to -04)"
+        {
+          "board": "NES-001 (PCB rev. -01 to -04)",
+          "port": 0
+        }
       ],
       "bindings": [
         {
