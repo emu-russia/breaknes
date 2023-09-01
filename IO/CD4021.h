@@ -14,5 +14,7 @@ namespace IO
 			BaseLogic::TriState PAR_SER, 
 			BaseLogic::TriState SER_IN, uint8_t PAR_IN,
 			BaseLogic::TriState &Q5, BaseLogic::TriState& Q6, BaseLogic::TriState& Q7 );
+		
+		uint8_t get() { return dff; }
 	};
 }

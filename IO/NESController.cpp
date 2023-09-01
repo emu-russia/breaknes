@@ -79,6 +79,11 @@ namespace IO
 		TriState Q6;
 		TriState Q7;
 
+		if (trace_enable && latch == TriState::One) {
+			start_trace = true;
+			posedge_counter = 0;
+		}
+
 		uint8_t buttons_state = 0;
 		buttons_state |= (states[(size_t)NESControllerState::Right].value & 1) << 0;
 		buttons_state |= (states[(size_t)NESControllerState::Left].value & 1) << 1;
@@ -95,5 +100,24 @@ namespace IO
 		outputs[0] = Q7;		// pin4 (D0)
 		outputs[1] = TriState::Z;	// pin5 (D4)
 		outputs[2] = TriState::Z;	// pin6 (D3)
+
+		if (start_trace) {
+			Trace(inputs, outputs);
+		}
+
+		if (trace_enable) {
+			if (IsPosedge(prev_clk, clk)) {
+				posedge_counter++;
+				if (posedge_counter >= 8) {
+					start_trace = false;
+				}
+			}
+			prev_clk = clk;
+		}
+	}
+
+	void NESController::Trace(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[])
+	{
+		printf("seq: %d, sr: 0x%02X, Q7: %d\n", (int)posedge_counter, sr.get(), ToByte(outputs[0]));
 	}
 }

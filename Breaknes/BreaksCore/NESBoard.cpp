@@ -242,11 +242,6 @@ namespace Breaknes
 
 	void NESBoard::IOBinding()
 	{
-		// Quick check
-		bool any_io_port_active = nRDP0 == TriState::Zero || nRDP1 == TriState::Zero || OUT_0 == TriState::One;
-		if (!any_io_port_active)
-			return;
-
 		// There is no need to simulate 368s on input, they only work in the Port->CPU direction
 
 		// Call the IO subsystem and it will simulate the controllers and other I/O devices if they are connected

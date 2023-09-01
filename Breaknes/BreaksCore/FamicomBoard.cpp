@@ -233,11 +233,6 @@ namespace Breaknes
 
 	void FamicomBoard::IOBinding()
 	{
-		// Quick check
-		bool any_io_port_active = nRDP0 == TriState::Zero || nRDP1 == TriState::Zero || OUT_0 == TriState::One;
-		if (!any_io_port_active)
-			return;
-
 		// First you need to simulate 368s in the direction CPU->Ports
 
 		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP0;

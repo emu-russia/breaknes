@@ -20,6 +20,13 @@ namespace IO
 	{
 		CD4021 sr{};
 
+		bool trace_enable = false;
+		bool start_trace = false;
+		size_t posedge_counter = 0;
+		BaseLogic::TriState prev_clk = BaseLogic::TriState::X;
+
+		void Trace(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]);
+
 	public:
 		NESController();
 		virtual ~NESController();
