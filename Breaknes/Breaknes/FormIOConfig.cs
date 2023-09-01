@@ -1,4 +1,6 @@
-﻿namespace Breaknes
+﻿using System.Windows.Forms;
+
+namespace Breaknes
 {
 	public partial class FormIOConfig : Form
 	{
@@ -14,6 +16,7 @@
 		private void FormIOConfig_Load(object sender, EventArgs e)
 		{
 			config = IOConfigManager.LoadIOConfig();
+			InitGridColumns();
 			PopulateDeviceList();
 		}
 
@@ -97,7 +100,7 @@
 				list.Add(addDevice.device_to_add);
 				config.devices = list.ToArray();
 				PopulateDeviceList();
-				checkedListBox1.Items.Clear();
+				dataGridView1.DataSource = null;
 			}
 		}
 
@@ -120,7 +123,7 @@
 
 					config.devices = devices_list.ToArray();
 					PopulateDeviceList();
-					checkedListBox1.Items.Clear();
+					dataGridView1.DataSource = null;
 				}
 			}
 		}
@@ -139,84 +142,44 @@
 			{
 				var item = listView1.SelectedItems[0];
 				if (item.Tag != null)
-					PopulateConnectionStatus(item.Tag as IOConfigDevice);
+					PopulateGrid(item.Tag as IOConfigDevice);
 			}
 		}
 
-		private void PopulateConnectionStatus(IOConfigDevice device)
-		{
-			// Fill in the list of compatible motherboards
-
-			checkedListBox1.Items.Clear();
-			checkedListBox1.Tag = null;
-			BoardDescription boards = BoardDescriptionLoader.Load();
-			foreach (var board in boards.boards)
-			{
-				for (int i = 0; i < board.io.Length; i++)
+		/*
+				private void checkedListBox1_ItemCheck(object sender, ItemCheckEventArgs e)
 				{
-					if (board.io[i].devices.Contains(device.device_id))
+					IOConfigDevice device = checkedListBox1.Tag as IOConfigDevice;
+					if (device == null)
+						return;
+
+					List<IOConfigPort> attached = device.attached.ToList();
+
+					string board_name = checkedListBox1.Items[e.Index].ToString();
+
+					if (e.CurrentValue == CheckState.Checked)
 					{
-						checkedListBox1.Items.Add(board.name);
-						break;
-					}
-				}
-			}
+						List<IOConfigPort> new_board_list = new();
 
-			// Select the Attached status check box
-
-			if (device != null)
-			{
-				for (int i = 0; i < checkedListBox1.Items.Count; i++)
-				{
-					bool attached = false;
-
-					foreach (var port in device.attached)
-					{
-						if (port.board == checkedListBox1.Items[i].ToString())
+						foreach (var port in attached)
 						{
-							attached = true;
-							break;
+							if (port.board != board_name)
+								new_board_list.Add(port);
 						}
+
+						attached = new_board_list;
+					}
+					else
+					{
+						IOConfigPort port = new();
+						port.board = board_name;
+						port.port = 0;  // TODO
+						attached.Add(port);
 					}
 
-					checkedListBox1.SetItemCheckState(i, attached ? CheckState.Checked : CheckState.Unchecked);
+					device.attached = attached.ToArray();
 				}
-				checkedListBox1.Tag = device;
-			}
-		}
-
-		private void checkedListBox1_ItemCheck(object sender, ItemCheckEventArgs e)
-		{
-			IOConfigDevice device = checkedListBox1.Tag as IOConfigDevice;
-			if (device == null)
-				return;
-
-			List<IOConfigPort> attached = device.attached.ToList();
-
-			string board_name = checkedListBox1.Items[e.Index].ToString();
-
-			if (e.CurrentValue == CheckState.Checked)
-			{
-				List<IOConfigPort> new_board_list = new();
-
-				foreach (var port in attached)
-				{
-					if (port.board != board_name)
-						new_board_list.Add(port);
-				}
-
-				attached = new_board_list;
-			}
-			else
-			{
-				IOConfigPort port = new();
-				port.board = board_name;
-				port.port = 0;  // TODO
-				attached.Add(port);
-			}
-
-			device.attached = attached.ToArray();
-		}
+		*/
 
 		private void FormIOConfig_KeyDown(object sender, KeyEventArgs e)
 		{
@@ -225,5 +188,99 @@
 				Close();
 			}
 		}
+
+		private void InitGridColumns()
+		{
+			dataGridView1.AutoGenerateColumns = false;
+			dataGridView1.AutoSize = true;
+
+			// Initialize and add a check box column.
+			DataGridViewCheckBoxColumn check_box_column = new DataGridViewCheckBoxColumn();
+			check_box_column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+			check_box_column.DataPropertyName = "attached";
+			check_box_column.Name = "Attached";
+			dataGridView1.Columns.Add(check_box_column);
+
+			DataGridViewTextBoxColumn text_column = new DataGridViewTextBoxColumn();
+			text_column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+			text_column.DataPropertyName = "board_name";
+			text_column.Name = "Board";
+			text_column.SortMode = DataGridViewColumnSortMode.NotSortable;
+			text_column.ReadOnly = true;
+			dataGridView1.Columns.Add(text_column);
+
+			DataGridViewComboBoxColumn cboBoxColumn = new DataGridViewComboBoxColumn();
+			//cboBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+			cboBoxColumn.DataSource = DataPortBinding.GetPorts();
+			cboBoxColumn.DisplayMember = "port_name";
+			cboBoxColumn.ValueMember = "port_id";
+			cboBoxColumn.Name = "Port";
+			dataGridView1.Columns.Add(cboBoxColumn);
+		}
+
+		private void PopulateGrid(IOConfigDevice device)
+		{
+			// Fill in the list of compatible motherboards
+
+			bindingSource1.Clear();
+			BoardDescription boards = BoardDescriptionLoader.Load();
+			foreach (var board in boards.boards)
+			{
+				for (int i = 0; i < board.io.Length; i++)
+				{
+					if (board.io[i].devices.Contains(device.device_id))
+					{
+						DataBinding dataBinding = new DataBinding();
+
+						// Select the Attached status check box
+						dataBinding.attached = false;
+						foreach (var port in device.attached)
+						{
+							if (port.board == board.name)
+							{
+								dataBinding.attached = true;
+								break;
+							}
+						}
+
+						dataBinding.board_name = board.name;
+						dataBinding.device = device;
+						bindingSource1.Add(dataBinding);
+						break;
+					}
+				}
+			}
+
+			dataGridView1.DataSource = bindingSource1;
+		}
+
+		class DataBinding
+		{
+			public IOConfigDevice device;
+			public bool attached { get; set; }
+			public string board_name { get; set; }
+			public List<string> port { get; set; }
+		}
+
+		class DataPortBinding
+		{
+			public string port_name { get; private set; }
+			public int port_id { get; private set; }
+			public DataPortBinding(string name, int id)
+			{
+				port_name = name;
+				port_id = id;
+			}
+
+			public static List<DataPortBinding> GetPorts()
+			{
+				List<DataPortBinding> ports = new();
+				ports.Add(new DataPortBinding("Port1", 0));
+				ports.Add(new DataPortBinding("Port2", 0));
+				return ports;
+			}
+		}
+
+
 	}
 }

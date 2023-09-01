@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			components = new System.ComponentModel.Container();
 			ListViewItem listViewItem1 = new ListViewItem("NES Controller P1");
 			ListViewItem listViewItem2 = new ListViewItem("Famicom Controller1 P1");
 			splitContainer1 = new SplitContainer();
@@ -37,11 +38,12 @@
 			listView1 = new ListView();
 			tabControl2 = new TabControl();
 			tabPage2 = new TabPage();
-			checkedListBox1 = new CheckedListBox();
+			dataGridView1 = new DataGridView();
 			button4 = new Button();
 			button3 = new Button();
 			button2 = new Button();
 			button1 = new Button();
+			bindingSource1 = new BindingSource(components);
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
 			splitContainer1.Panel2.SuspendLayout();
@@ -54,6 +56,8 @@
 			tabPage1.SuspendLayout();
 			tabControl2.SuspendLayout();
 			tabPage2.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+			((System.ComponentModel.ISupportInitialize)bindingSource1).BeginInit();
 			SuspendLayout();
 			// 
 			// splitContainer1
@@ -142,7 +146,7 @@
 			// 
 			// tabPage2
 			// 
-			tabPage2.Controls.Add(checkedListBox1);
+			tabPage2.Controls.Add(dataGridView1);
 			tabPage2.Location = new Point(4, 24);
 			tabPage2.Name = "tabPage2";
 			tabPage2.Padding = new Padding(3);
@@ -151,15 +155,17 @@
 			tabPage2.Text = "Connected Status";
 			tabPage2.UseVisualStyleBackColor = true;
 			// 
-			// checkedListBox1
+			// dataGridView1
 			// 
-			checkedListBox1.Dock = DockStyle.Fill;
-			checkedListBox1.FormattingEnabled = true;
-			checkedListBox1.Location = new Point(3, 3);
-			checkedListBox1.Name = "checkedListBox1";
-			checkedListBox1.Size = new Size(407, 348);
-			checkedListBox1.TabIndex = 0;
-			checkedListBox1.ItemCheck += checkedListBox1_ItemCheck;
+			dataGridView1.AllowUserToAddRows = false;
+			dataGridView1.AllowUserToDeleteRows = false;
+			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			dataGridView1.Dock = DockStyle.Fill;
+			dataGridView1.Location = new Point(3, 3);
+			dataGridView1.Name = "dataGridView1";
+			dataGridView1.RowTemplate.Height = 25;
+			dataGridView1.Size = new Size(407, 348);
+			dataGridView1.TabIndex = 0;
 			// 
 			// button4
 			// 
@@ -228,6 +234,8 @@
 			tabPage1.ResumeLayout(false);
 			tabControl2.ResumeLayout(false);
 			tabPage2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+			((System.ComponentModel.ISupportInitialize)bindingSource1).EndInit();
 			ResumeLayout(false);
 		}
 
@@ -240,10 +248,11 @@
 		private TabControl tabControl2;
 		private TabPage tabPage2;
 		private ListView listView1;
-		private CheckedListBox checkedListBox1;
 		private Button button4;
 		private Button button3;
 		private Button button2;
 		private Button button1;
+		private DataGridView dataGridView1;
+		private BindingSource bindingSource1;
 	}
 }
