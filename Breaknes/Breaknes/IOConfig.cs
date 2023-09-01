@@ -14,11 +14,17 @@ namespace Breaknes
 		public string descr = "This JSON contains a list of IO devices and their Attach/Detach statuses with Motherboard and Bindings with Input API.";
 	}
 
+	public class IOConfigPort
+	{
+		public string board = "";
+		public int port = -1;
+	}
+
 	public class IOConfigDevice
 	{
 		public UInt32 device_id = 0;
 		public string name = "";
-		public string[] attached = Array.Empty<string>();
+		public IOConfigPort[] attached = Array.Empty<IOConfigPort>();
 		public IOConfigBinding[] bindings = Array.Empty<IOConfigBinding>();
 	}
 

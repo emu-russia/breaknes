@@ -69,6 +69,7 @@ namespace IO
 #pragma region "Interface for Motherboard implementation"
 
 		virtual int GetPorts();
+		virtual std::string GetPortName(int port);
 		virtual void GetPortSupportedDevices(int port, std::list<DeviceID>& devices);
 
 		virtual void sim(int port);

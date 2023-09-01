@@ -7,7 +7,10 @@
       "device_id": 1,
       "name": "P1",
       "attached": [
-        "HVC-CPU-01"
+        {
+          "board": "HVC-CPU-01",
+          "port": 0
+        }
       ],
       "bindings": [
         {
@@ -30,7 +33,10 @@
       "device_id": 65539,
       "name": "V1",
       "attached": [
-        "NES-001 (PCB rev. -01 to -04)"
+        {
+          "board": "NES-001 (PCB rev. -01 to -04)",
+          "port": 0
+        }
       ],
       "bindings": [
         {
@@ -64,6 +70,50 @@
         {
           "actuator_id": 7,
           "binding": "NES_A"
+        }
+      ]
+    },
+    {
+      "device_id": 65537,
+      "name": "Fami1",
+      "attached": [
+        {
+          "board": "HVC-CPU-01",
+          "port": 0
+        }
+      ],
+      "bindings": [
+        {
+          "actuator_id": 0,
+          "binding": "Fami1_Up"
+        },
+        {
+          "actuator_id": 1,
+          "binding": "Fami1_Down"
+        },
+        {
+          "actuator_id": 2,
+          "binding": "Fami1_Left"
+        },
+        {
+          "actuator_id": 3,
+          "binding": "Fami1_Right"
+        },
+        {
+          "actuator_id": 4,
+          "binding": "Fami1_Select"
+        },
+        {
+          "actuator_id": 5,
+          "binding": "Fami1_Start"
+        },
+        {
+          "actuator_id": 6,
+          "binding": "Fami1_B"
+        },
+        {
+          "actuator_id": 7,
+          "binding": "Fami1_A"
         }
       ]
     }

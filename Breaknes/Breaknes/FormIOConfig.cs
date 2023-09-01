@@ -168,8 +168,18 @@
 			{
 				for (int i = 0; i < checkedListBox1.Items.Count; i++)
 				{
-					int pos = Array.IndexOf(device.attached, checkedListBox1.Items[i].ToString());
-					checkedListBox1.SetItemCheckState(i, pos >= 0 ? CheckState.Checked : CheckState.Unchecked);
+					bool attached = false;
+
+					foreach (var port in device.attached)
+					{
+						if (port.board == checkedListBox1.Items[i].ToString())
+						{
+							attached = true;
+							break;
+						}
+					}
+
+					checkedListBox1.SetItemCheckState(i, attached ? CheckState.Checked : CheckState.Unchecked);
 				}
 				checkedListBox1.Tag = device;
 			}
@@ -181,20 +191,31 @@
 			if (device == null)
 				return;
 
-			List<string> board_list = device.attached.ToList();
+			List<IOConfigPort> attached = device.attached.ToList();
 
 			string board_name = checkedListBox1.Items[e.Index].ToString();
 
 			if (e.CurrentValue == CheckState.Checked)
 			{
-				board_list.Remove(board_name);
+				List<IOConfigPort> new_board_list = new();
+
+				foreach (var port in attached)
+				{
+					if (port.board != board_name)
+						new_board_list.Add(port);
+				}
+
+				attached = new_board_list;
 			}
 			else
 			{
-				board_list.Add(board_name);
+				IOConfigPort port = new();
+				port.board = board_name;
+				port.port = 0;  // TODO
+				attached.Add(port);
 			}
 
-			device.attached = board_list.ToArray();
+			device.attached = attached.ToArray();
 		}
 
 		private void FormIOConfig_KeyDown(object sender, KeyEventArgs e)

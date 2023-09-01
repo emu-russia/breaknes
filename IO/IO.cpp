@@ -98,7 +98,19 @@ namespace IO
 		IOMapped* mapped = GetMappedDeviceByHandle(handle);
 		if (mapped != nullptr) {
 
-			mapped->port = port;
+			std::list<DeviceID> supported_devices;
+			GetPortSupportedDevices(port, supported_devices);
+
+			// Check whether the device can be connected to the specified port by DeviceID
+
+			for (auto it = supported_devices.begin(); it != supported_devices.end(); ++it) {
+
+				if (*it == (DeviceID)mapped->device->GetID()) {
+
+					mapped->port = port;
+					break;
+				}
+			}
 		}
 	}
 	
@@ -175,6 +187,11 @@ namespace IO
 		return 0;
 	}
 	
+	std::string IOSubsystem::GetPortName(int port)
+	{
+		return "";
+	}
+
 	void IOSubsystem::GetPortSupportedDevices(int port, std::list<DeviceID>& devices)
 	{
 		devices.clear();

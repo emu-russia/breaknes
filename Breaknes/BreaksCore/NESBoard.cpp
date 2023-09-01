@@ -21,6 +21,12 @@ namespace Breaknes
 
 		io = new NESBoardIO(this);
 
+		// Set safe signal values for the IO subsystem (until Expansion Port is implemented)
+		for (int i = 0; i < 5; i++) {
+			p4016_data[i] = TriState::Z;
+			p4017_data[i] = TriState::Z;
+		}
+
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
 	}
@@ -70,11 +76,17 @@ namespace Breaknes
 		nRDP1 = outputs[(size_t)APUSim::APU_Output::n_IN1];
 		OUT_0 = outputs[(size_t)APUSim::APU_Output::OUT_0];
 		OUT_1 = outputs[(size_t)APUSim::APU_Output::OUT_1];
-		OUT_2 = outputs[(size_t)APUSim::APU_Output::OUT_0];
+		OUT_2 = outputs[(size_t)APUSim::APU_Output::OUT_2];
 
 		Pullup(nRDP0);
 		Pullup(nRDP1);
 		Pullup(OUT_0);
+
+		// IO
+
+		if (io_enabled) {
+			IOBinding();
+		}
 
 		// pullup (PPU_A[13]); -- wtf?
 		// no pullup on R/W -- wtf?
@@ -107,7 +119,7 @@ namespace Breaknes
 		TriState ppu_outputs[(size_t)PPUSim::OutputPad::Max]{};
 
 		ppu_inputs[(size_t)PPUSim::InputPad::CLK] = CLK;
-		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = pendingReset_PPU ? TriState::Zero : TriState::One;;		// NES Board specific ⚠️
+		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = pendingReset_PPU ? TriState::Zero : TriState::One;		// NES Board specific ⚠️
 		ppu_inputs[(size_t)PPUSim::InputPad::RnW] = CPU_RnW;
 		ppu_inputs[(size_t)PPUSim::InputPad::RS0] = FromByte((addr_bus >> 0) & 1);
 		ppu_inputs[(size_t)PPUSim::InputPad::RS1] = FromByte((addr_bus >> 1) & 1);
@@ -187,10 +199,6 @@ namespace Breaknes
 		WRAM_Addr = addr_bus & (wram_size - 1);
 		wram->sim(WRAM_nCE, CPU_RnW, TriState::Zero, &WRAM_Addr, &data_bus, data_bus_dirty);
 
-		// IO
-
-		IOBinding();
-
 		// Tick
 
 		CLK = NOT(CLK);
@@ -242,11 +250,6 @@ namespace Breaknes
 
 	void NESBoard::IOBinding()
 	{
-		// Quick check
-		bool any_io_port_active = nRDP0 == TriState::Zero || nRDP1 == TriState::Zero || OUT_0 == TriState::One;
-		if (!any_io_port_active)
-			return;
-
 		// There is no need to simulate 368s on input, they only work in the Port->CPU direction
 
 		// Call the IO subsystem and it will simulate the controllers and other I/O devices if they are connected
@@ -330,6 +333,18 @@ namespace Breaknes
 	{
 		// Only controller ports so far
 		return 2;
+	}
+
+	std::string NESBoardIO::GetPortName(int port)
+	{
+		switch (port)
+		{
+			case 0: return "NES Controller Port 1";
+			case 1: return "NES Controller Port 2";
+			default:
+				break;
+		}
+		return "";
 	}
 
 	void NESBoardIO::GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices)

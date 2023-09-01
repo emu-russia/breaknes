@@ -14,6 +14,7 @@ namespace Breaknes
 		FamicomBoardIO(FamicomBoard *board);
 		virtual ~FamicomBoardIO();
 		int GetPorts() override;
+		std::string GetPortName(int port) override;
 		void GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices) override;
 		void sim(int port) override;
 	};

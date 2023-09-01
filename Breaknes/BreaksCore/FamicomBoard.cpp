@@ -22,6 +22,12 @@ namespace Breaknes
 		apu->SetNormalizedOutput(true);
 
 		io = new FamicomBoardIO(this);
+
+		// Set safe signal values for the IO subsystem (until Expansion Port is implemented)
+		for (int i = 0; i < 4; i++) {
+			p2_4017_data[i] = TriState::Z;
+		}
+		p2_4016_data = TriState::Z;
 	}
 
 	FamicomBoard::~FamicomBoard()
@@ -71,7 +77,13 @@ namespace Breaknes
 		nRDP1 = outputs[(size_t)APUSim::APU_Output::n_IN1];
 		OUT_0 = outputs[(size_t)APUSim::APU_Output::OUT_0];
 		OUT_1 = outputs[(size_t)APUSim::APU_Output::OUT_1];
-		OUT_2 = outputs[(size_t)APUSim::APU_Output::OUT_0];
+		OUT_2 = outputs[(size_t)APUSim::APU_Output::OUT_2];
+
+		// IO
+
+		if (io_enabled) {
+			IOBinding();
+		}
 
 		// pullup (PPU_A[13]); -- wtf?
 		// no pullup on R/W -- wtf?
@@ -183,10 +195,6 @@ namespace Breaknes
 		WRAM_Addr = addr_bus & (wram_size - 1);
 		wram->sim(WRAM_nCE, CPU_RnW, TriState::Zero, &WRAM_Addr, &data_bus, data_bus_dirty);
 
-		// IO
-
-		IOBinding();
-
 		// Tick
 
 		CLK = NOT(CLK);
@@ -233,11 +241,6 @@ namespace Breaknes
 
 	void FamicomBoard::IOBinding()
 	{
-		// Quick check
-		bool any_io_port_active = nRDP0 == TriState::Zero || nRDP1 == TriState::Zero || OUT_0 == TriState::One;
-		if (!any_io_port_active)
-			return;
-
 		// First you need to simulate 368s in the direction CPU->Ports
 
 		p4_inputs[(size_t)BaseBoard::LS368_Input::n_G1] = nRDP0;
@@ -331,6 +334,18 @@ namespace Breaknes
 	{
 		// Only controller ports so far
 		return 2;
+	}
+
+	std::string FamicomBoardIO::GetPortName(int port)
+	{
+		switch (port)
+		{
+			case 0: return "Famicom Controller Port 1";
+			case 1: return "Famicom Controller Port 2";
+			default:
+				break;
+		}
+		return "";
 	}
 
 	void FamicomBoardIO::GetPortSupportedDevices(int port, std::list<IO::DeviceID>& devices)

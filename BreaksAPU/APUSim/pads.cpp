@@ -128,10 +128,18 @@ namespace APUSim
 		{
 			from_pad = NOT(in_latch.nget());
 		}
+		else
+		{
+			from_pad = TriState::Z;
+		}
 
 		if (NOT(rd) == TriState::One)
 		{
 			pad_out = NOT(NOR(out_latch.get(), rd));
+		}
+		else
+		{
+			pad_out = TriState::Z;
 		}
 	}
 

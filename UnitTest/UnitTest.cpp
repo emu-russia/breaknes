@@ -303,4 +303,19 @@ namespace UnitTest
 			Assert::IsTrue(ut.MegaCyclesTest(21'477272));
 		}
 	};
+
+	TEST_CLASS(SmallChipsUnitTest)
+	{
+	public:
+		TEST_METHOD(TestCD4021)
+		{
+			UnitTest::CD4021_Test test{};
+			Assert::IsTrue(test.TestSequence(0x00));
+			Assert::IsTrue(test.TestSequence(0xff));
+			Assert::IsTrue(test.TestSequence(0xa5));
+			Assert::IsTrue(test.TestSequence(0x5a));
+			Assert::IsTrue(test.TestSequence(0xaa));
+			Assert::IsTrue(test.TestSequence(0x55));
+		}
+	};
 }
