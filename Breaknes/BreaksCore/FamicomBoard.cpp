@@ -22,6 +22,12 @@ namespace Breaknes
 		apu->SetNormalizedOutput(true);
 
 		io = new FamicomBoardIO(this);
+
+		// Set safe signal values for the IO subsystem (until Expansion Port is implemented)
+		for (int i = 0; i < 4; i++) {
+			p2_4017_data[i] = TriState::Z;
+		}
+		p2_4016_data = TriState::Z;
 	}
 
 	FamicomBoard::~FamicomBoard()

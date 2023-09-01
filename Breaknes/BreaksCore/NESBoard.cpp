@@ -21,6 +21,12 @@ namespace Breaknes
 
 		io = new NESBoardIO(this);
 
+		// Set safe signal values for the IO subsystem (until Expansion Port is implemented)
+		for (int i = 0; i < 5; i++) {
+			p4016_data[i] = TriState::Z;
+			p4017_data[i] = TriState::Z;
+		}
+
 		AddBoardMemDescriptors();
 		AddDebugInfoProviders();
 	}
