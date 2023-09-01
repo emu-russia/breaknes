@@ -161,6 +161,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="APUTest.cpp" />
+    <ClCompile Include="CD4021UnitTest.cpp" />
     <ClCompile Include="CoreUnitTest.cpp" />
     <ClCompile Include="EventLog.cpp" />
     <ClCompile Include="pch.cpp">
@@ -174,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APUTest.h" />
+    <ClInclude Include="CD4021UnitTest.h" />
     <ClInclude Include="CoreUnitTest.h" />
     <ClInclude Include="EventLog.h" />
     <ClInclude Include="pch.h" />
@@ -194,6 +196,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Common\JsonLib\Scripts\VS2022\JsonLib.vcxproj">
       <Project>{8782459b-4e38-4227-aa98-6e7e8e06659c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IO\Scripts\VS2022\IO.vcxproj">
+      <Project>{ac032844-ae3a-4224-b6ce-451c5dbe80b9}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
