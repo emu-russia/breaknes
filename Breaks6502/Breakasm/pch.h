@@ -9,3 +9,19 @@
 
 #include "ASM.h"
 #include "ASMOPS.h"
+
+#ifdef _LINUX
+#define _stricmp strcasecmp
+#define _strnicmp strncasecmp
+#define _countof(a) (sizeof(a)/sizeof(*(a)))
+
+inline char* _strupr(char* str)
+{
+    while (*str != '\0')
+    {
+        *str = toupper(*str);
+        str++;
+    }
+    return str;
+}
+#endif
