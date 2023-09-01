@@ -10,7 +10,8 @@ As it may seem - what could be complicated in an ordinary controller? However...
 
 - Controller connection differs between NES/Famicom/Dendy. NES/Dendy uses a port connection. In the Famicom, the controllers are seamlessly connected to the main unit.
 - The second Famicom controller has a microphone (yeah, that's wtf from the 90's).
-- Dendy controllers have Turbo buttons.
+- Dendy controllers have Turbo buttons
+- The number of ports, their type and I/O implementation on the motherboard differs between all consoles
 
 And how to generalize all this nicely? :-)
 

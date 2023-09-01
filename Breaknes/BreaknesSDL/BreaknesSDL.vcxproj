@@ -143,6 +143,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\IO\Scripts\VS2022\IO.vcxproj">
+      <Project>{ac032844-ae3a-4224-b6ce-451c5dbe80b9}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\BreaksCore\Scripts\VS2022\BreaksCoreStatic.vcxproj">
       <Project>{59610324-ce90-474c-89f1-8a998c52b346}</Project>
     </ProjectReference>
