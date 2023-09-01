@@ -71,7 +71,13 @@ namespace Breaknes
 		nRDP1 = outputs[(size_t)APUSim::APU_Output::n_IN1];
 		OUT_0 = outputs[(size_t)APUSim::APU_Output::OUT_0];
 		OUT_1 = outputs[(size_t)APUSim::APU_Output::OUT_1];
-		OUT_2 = outputs[(size_t)APUSim::APU_Output::OUT_0];
+		OUT_2 = outputs[(size_t)APUSim::APU_Output::OUT_2];
+
+		// IO
+
+		if (io_enabled) {
+			IOBinding();
+		}
 
 		// pullup (PPU_A[13]); -- wtf?
 		// no pullup on R/W -- wtf?
@@ -182,10 +188,6 @@ namespace Breaknes
 
 		WRAM_Addr = addr_bus & (wram_size - 1);
 		wram->sim(WRAM_nCE, CPU_RnW, TriState::Zero, &WRAM_Addr, &data_bus, data_bus_dirty);
-
-		// IO
-
-		IOBinding();
 
 		// Tick
 
