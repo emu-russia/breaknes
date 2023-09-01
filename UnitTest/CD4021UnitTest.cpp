@@ -34,7 +34,7 @@ namespace UnitTest
 		for (int i = 0; i < 8; i++) {
 
 			clk = TriState::Zero;
-			shift_reg.sim(clk, par_ser, TriState::Zero, 0, Q5, Q6, Q7);
+			shift_reg.sim(clk, par_ser, TriState::Zero, test_vector, Q5, Q6, Q7);
 
 			sprintf_s(text, sizeof(text), "Q7=%d on clk %d\n", ToByte(Q7), i);
 			Logger::WriteMessage(text);
@@ -43,7 +43,7 @@ namespace UnitTest
 
 			// posedge -> Shift reg
 			clk = TriState::One;
-			shift_reg.sim(clk, par_ser, TriState::Zero, 0, Q5, Q6, Q7);
+			shift_reg.sim(clk, par_ser, TriState::Zero, test_vector, Q5, Q6, Q7);
 		}
 
 		sprintf_s(text, sizeof(text), "Pushed out vector: 0x%02x\n", q);
