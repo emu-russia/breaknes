@@ -113,7 +113,7 @@ namespace Breaknes
 		TriState ppu_outputs[(size_t)PPUSim::OutputPad::Max]{};
 
 		ppu_inputs[(size_t)PPUSim::InputPad::CLK] = CLK;
-		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = pendingReset_PPU ? TriState::Zero : TriState::One;;		// NES Board specific ⚠️
+		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = pendingReset_PPU ? TriState::Zero : TriState::One;		// NES Board specific ⚠️
 		ppu_inputs[(size_t)PPUSim::InputPad::RnW] = CPU_RnW;
 		ppu_inputs[(size_t)PPUSim::InputPad::RS0] = FromByte((addr_bus >> 0) & 1);
 		ppu_inputs[(size_t)PPUSim::InputPad::RS1] = FromByte((addr_bus >> 1) & 1);
