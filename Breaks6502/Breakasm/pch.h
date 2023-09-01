@@ -1,11 +1,11 @@
-
 #pragma once
 
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#include <cctype>
+#include <list>
 
 #include "ASM.h"
 #include "ASMOPS.h"

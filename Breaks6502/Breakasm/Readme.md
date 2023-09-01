@@ -70,10 +70,8 @@ SOMEDATA:
 END
 ```
 
-## Limitations
+## Support for NES and mappers
 
-- Maximum number of labels: 1024
-- Maximum number of XREFs: 1024
-- Maximum number of Defines: 1024
+Dragging some NES and mapper prisserans into a generalized assembler is a bad idea.
 
-If you need more, you need to override the values in `ASM.h`.
+Build multiple PRG files and compile a .nes file from them yourself if you need to.
