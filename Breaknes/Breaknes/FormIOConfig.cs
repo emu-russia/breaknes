@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿
+using System.Windows.Forms;
 
 namespace Breaknes
 {
@@ -188,6 +189,8 @@ namespace Breaknes
 
 		private void PopulateGrid(IOConfigDevice device)
 		{
+			dataGridView1.Tag = null;
+
 			// Fill in the list of compatible motherboards
 
 			current_board_name = "";
@@ -225,6 +228,26 @@ namespace Breaknes
 			InitGridColumns();
 
 			dataGridView1.DataSource = bindingSource1;
+
+			// Set ports
+
+			for (int i = 0; i < dataGridView1.Rows.Count; i++)
+			{
+				bool attached_status = (bool)dataGridView1.Rows[i].Cells["Attached"].Value;
+				string board_name = (string)dataGridView1.Rows[i].Cells["Board"].Value;
+				if (attached_status)
+				{
+					foreach (var attached in device.attached)
+					{
+						if (attached.board == board_name && attached.port >= 0)
+						{
+							dataGridView1.Rows[i].Cells["Port"].Value = attached.port;
+							break;
+						}
+					}
+				}
+			}
+
 			dataGridView1.Tag = device;
 		}
 
