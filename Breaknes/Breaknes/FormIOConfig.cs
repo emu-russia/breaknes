@@ -6,6 +6,7 @@ namespace Breaknes
 	{
 		IOConfig config = new();
 		IOProcessor parent_io;
+		static string current_board_name = null;
 
 		public FormIOConfig(IOProcessor io)
 		{
@@ -16,7 +17,6 @@ namespace Breaknes
 		private void FormIOConfig_Load(object sender, EventArgs e)
 		{
 			config = IOConfigManager.LoadIOConfig();
-			InitGridColumns();
 			PopulateDeviceList();
 		}
 
@@ -131,6 +131,7 @@ namespace Breaknes
 		// Save
 		private void button4_Click(object sender, EventArgs e)
 		{
+			UpdateIOSettings();
 			IOConfigManager.SaveIOConfig(config);
 			Close();
 		}
@@ -146,41 +147,6 @@ namespace Breaknes
 			}
 		}
 
-		/*
-				private void checkedListBox1_ItemCheck(object sender, ItemCheckEventArgs e)
-				{
-					IOConfigDevice device = checkedListBox1.Tag as IOConfigDevice;
-					if (device == null)
-						return;
-
-					List<IOConfigPort> attached = device.attached.ToList();
-
-					string board_name = checkedListBox1.Items[e.Index].ToString();
-
-					if (e.CurrentValue == CheckState.Checked)
-					{
-						List<IOConfigPort> new_board_list = new();
-
-						foreach (var port in attached)
-						{
-							if (port.board != board_name)
-								new_board_list.Add(port);
-						}
-
-						attached = new_board_list;
-					}
-					else
-					{
-						IOConfigPort port = new();
-						port.board = board_name;
-						port.port = 0;  // TODO
-						attached.Add(port);
-					}
-
-					device.attached = attached.ToArray();
-				}
-		*/
-
 		private void FormIOConfig_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Escape)
@@ -191,6 +157,8 @@ namespace Breaknes
 
 		private void InitGridColumns()
 		{
+			dataGridView1.Columns.Clear();
+
 			dataGridView1.AutoGenerateColumns = false;
 			dataGridView1.AutoSize = true;
 
@@ -202,7 +170,7 @@ namespace Breaknes
 			dataGridView1.Columns.Add(check_box_column);
 
 			DataGridViewTextBoxColumn text_column = new DataGridViewTextBoxColumn();
-			text_column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+			text_column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 			text_column.DataPropertyName = "board_name";
 			text_column.Name = "Board";
 			text_column.SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -210,8 +178,8 @@ namespace Breaknes
 			dataGridView1.Columns.Add(text_column);
 
 			DataGridViewComboBoxColumn cboBoxColumn = new DataGridViewComboBoxColumn();
-			//cboBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-			cboBoxColumn.DataSource = DataPortBinding.GetPorts();
+			cboBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+			cboBoxColumn.DataSource = DataBinding.GetPorts();
 			cboBoxColumn.DisplayMember = "port_name";
 			cboBoxColumn.ValueMember = "port_id";
 			cboBoxColumn.Name = "Port";
@@ -222,6 +190,8 @@ namespace Breaknes
 		{
 			// Fill in the list of compatible motherboards
 
+			current_board_name = "";
+
 			bindingSource1.Clear();
 			BoardDescription boards = BoardDescriptionLoader.Load();
 			foreach (var board in boards.boards)
@@ -230,6 +200,8 @@ namespace Breaknes
 				{
 					if (board.io[i].devices.Contains(device.device_id))
 					{
+						current_board_name = board.name;
+
 						DataBinding dataBinding = new DataBinding();
 
 						// Select the Attached status check box
@@ -244,24 +216,50 @@ namespace Breaknes
 						}
 
 						dataBinding.board_name = board.name;
-						dataBinding.device = device;
 						bindingSource1.Add(dataBinding);
 						break;
 					}
 				}
 			}
 
+			InitGridColumns();
+
 			dataGridView1.DataSource = bindingSource1;
+			dataGridView1.Tag = device;
 		}
 
 		class DataBinding
 		{
-			public IOConfigDevice device;
 			public bool attached { get; set; }
 			public string board_name { get; set; }
-			public List<string> port { get; set; }
+
+			public static List<DataPortBinding> GetPorts()
+			{
+				List<DataPortBinding> list = new();
+
+				// TODO: This solution looks crooked, but we assume that for different revisions of motherboards of the same model the names and port numbers do not change.
+
+				BoardDescription board_descr = BoardDescriptionLoader.Load();
+				foreach (var board in board_descr.boards)
+				{
+					if (board.name == current_board_name)
+					{
+						int port_id = 0;
+						foreach (var port in board.io)
+						{
+							list.Add(new DataPortBinding(port.name, port_id));
+							port_id++;
+						}
+					}
+				}
+
+				return list;
+			}
 		}
 
+		/// <summary>
+		/// The plan is to use it as an associative binding of the port name to its sequential number (see BoardDescription.json, `io` array property)
+		/// </summary>
 		class DataPortBinding
 		{
 			public string port_name { get; private set; }
@@ -271,16 +269,67 @@ namespace Breaknes
 				port_name = name;
 				port_id = id;
 			}
-
-			public static List<DataPortBinding> GetPorts()
-			{
-				List<DataPortBinding> ports = new();
-				ports.Add(new DataPortBinding("Port1", 0));
-				ports.Add(new DataPortBinding("Port2", 0));
-				return ports;
-			}
 		}
 
+		/// <summary>
+		/// DataGrid -> IOConfigDevice
+		/// </summary>
+		private void UpdateIOSettings()
+		{
+			bool debug_trace = false;
 
+			if (dataGridView1.Tag == null)
+				return;
+
+			IOConfigDevice device = dataGridView1.Tag as IOConfigDevice;
+
+			List<IOConfigPort> attached = new();
+
+			for (int i = 0; i < dataGridView1.Rows.Count; i++)
+			{
+				bool attached_status = (bool)dataGridView1.Rows[i].Cells["Attached"].Value;
+				string board_name = (string)dataGridView1.Rows[i].Cells["Board"].Value;
+				int? port_num = null;
+				if (dataGridView1.Rows[i].Cells["Port"].Value != null)
+				{
+					port_num = (int)dataGridView1.Rows[i].Cells["Port"].Value;
+				}
+
+				if (attached_status && port_num != null)
+				{
+					IOConfigPort port = new();
+					port.board = board_name;
+					port.port = (int)port_num;
+					attached.Add(port);
+				}
+
+				if (debug_trace)
+				{
+					Console.Write("row: " + i.ToString() + ", ");
+					Console.Write("Attached: " + attached_status.ToString() + ", ");
+					Console.Write("Board: " + board_name + ", ");
+					if (port_num != null)
+					{
+						Console.Write("Port: " + port_num.ToString());
+					}
+					Console.WriteLine();
+				}
+			}
+
+			device.attached = attached.ToArray();
+
+			if (debug_trace)
+				Console.WriteLine("\n");
+		}
+
+		private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+		{
+			UpdateIOSettings();
+		}
+
+		private void dataGridView1_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+		{
+			UpdateIOSettings();
+		}
 	}
 }

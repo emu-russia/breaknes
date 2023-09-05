@@ -166,6 +166,8 @@
 			dataGridView1.RowTemplate.Height = 25;
 			dataGridView1.Size = new Size(407, 348);
 			dataGridView1.TabIndex = 0;
+			dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
+			dataGridView1.CurrentCellDirtyStateChanged += dataGridView1_CurrentCellDirtyStateChanged;
 			// 
 			// button4
 			// 
