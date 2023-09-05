@@ -48,9 +48,11 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(542, 81);
 			Controls.Add(label1);
+			KeyPreview = true;
 			Name = "FormWaitInputEvent";
 			StartPosition = FormStartPosition.CenterParent;
 			Text = "Wait Input Event";
+			KeyDown += FormWaitInputEvent_KeyDown;
 			ResumeLayout(false);
 			PerformLayout();
 		}

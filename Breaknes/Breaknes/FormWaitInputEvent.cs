@@ -3,7 +3,7 @@ namespace Breaknes
 {
 	public partial class FormWaitInputEvent : Form
 	{
-		public string? bindstr = "Dummy binding";
+		public string? bindstr = null;
 		public int saved_actuator_id;
 		IOProcessor io;
 
@@ -12,6 +12,14 @@ namespace Breaknes
 			InitializeComponent();
 			this.io = io;
 			saved_actuator_id = actuator_id;
+		}
+
+		private void FormWaitInputEvent_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				Close();
+			}
 		}
 	}
 }
