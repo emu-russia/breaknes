@@ -133,12 +133,7 @@
     {
       "device_id": 65537,
       "name": "Fami1",
-      "attached": [
-        {
-          "board": "HVC-CPU-01",
-          "port": 0
-        }
-      ],
+      "attached": [],
       "bindings": [
         {
           "actuator_id": 0,
