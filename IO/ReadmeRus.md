@@ -45,7 +45,7 @@ DeviceID: 0x00000000
 
 ## Famicom Controller (Port1)
 
-![famicom_controller1](/UserManual/imgstore/famicom_controller1.png)
+![famicom_controller1](/Wiki/imgstore/famicom_controller1.png)
 
 DeviceID: 0x00000001
 
@@ -64,7 +64,7 @@ DeviceID: 0x00000001
 
 ## Famicom Controller (Port2)
 
-![famicom_controller2](/UserManual/imgstore/famicom_controller2.png)
+![famicom_controller2](/Wiki/imgstore/famicom_controller2.png)
 
 DeviceID: 0x00000002
 
@@ -83,7 +83,7 @@ DeviceID: 0x00000002
 
 ## NES Controller (Port1/2)
 
-![nes_controller](/UserManual/imgstore/nes_controller.png)
+![nes_controller](/Wiki/imgstore/nes_controller.png)
 
 DeviceID: 0x00000003
 
@@ -100,7 +100,7 @@ DeviceID: 0x00000003
 
 ## Dendy Turbo Controller (Port1/2)
 
-![dendy_controller](/UserManual/imgstore/dendy_controller.png)
+![dendy_controller](/Wiki/imgstore/dendy_controller.png)
 
 DeviceID: 0x00000004
 
@@ -119,7 +119,7 @@ DeviceID: 0x00000004
 
 ## Virtual Famicom Controller (Port1)
 
-![virt_famicom_controller1](/UserManual/imgstore/virt_famicom_controller1.png)
+![virt_famicom_controller1](/Wiki/imgstore/virt_famicom_controller1.png)
 
 DeviceID: 0x00010001
 
@@ -136,7 +136,7 @@ DeviceID: 0x00010001
 
 ## Virtual Famicom Controller (Port2)
 
-![virt_famicom_controller2](/UserManual/imgstore/virt_famicom_controller2.png)
+![virt_famicom_controller2](/Wiki/imgstore/virt_famicom_controller2.png)
 
 DeviceID: 0x00010002
 
@@ -153,7 +153,7 @@ DeviceID: 0x00010002
 
 ## Virtual NES Controller (Port1/2)
 
-![virt_nes_controller](/UserManual/imgstore/virt_nes_controller.png)
+![virt_nes_controller](/Wiki/imgstore/virt_nes_controller.png)
 
 DeviceID: 0x00010003
 
@@ -170,7 +170,7 @@ DeviceID: 0x00010003
 
 ## Virtual Dendy Turbo Controller (Port1/2)
 
-![virt_dendy_controller](/UserManual/imgstore/virt_dendy_controller.png)
+![virt_dendy_controller](/Wiki/imgstore/virt_dendy_controller.png)
 
 DeviceID: 0x00010004
 

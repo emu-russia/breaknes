@@ -182,13 +182,13 @@
     <ClInclude Include="PPUTest.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Breaks6502\M6502Core\Scripts\VS2022\M6502Core.vcxproj">
+    <ProjectReference Include="..\Chips\M6502Core\Scripts\VS2022\M6502Core.vcxproj">
       <Project>{75210c0a-a812-4246-a179-b50d8a25a121}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\BreaksAPU\APUSim\Scripts\VS2022\APUSim.vcxproj">
+    <ProjectReference Include="..\Chips\APUSim\Scripts\VS2022\APUSim.vcxproj">
       <Project>{50e93d78-36dc-46c3-82ea-cab373e18729}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\BreaksPPU\PPUSim\Scripts\VS2022\PPUSim.vcxproj">
+    <ProjectReference Include="..\Chips\PPUSim\Scripts\VS2022\PPUSim.vcxproj">
       <Project>{ebd9b3eb-3c04-43ed-b454-e9442b21f5a0}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">

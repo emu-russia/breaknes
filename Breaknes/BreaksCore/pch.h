@@ -11,8 +11,8 @@
 #include <Windows.h>
 #endif
 
-#include "../../Breaks6502/Breakasm/ASM.h"
-#include "../../Breaks6502/Breakasm/ASMOPS.h"
+#include "../../Tools/Breakasm/ASM.h"
+#include "../../Tools/Breakasm/ASMOPS.h"
 
 // Very basic
 
@@ -21,9 +21,9 @@
 
 // Big chips
 
-#include "../../Breaks6502/M6502Core/core.h"
-#include "../../BreaksAPU/APUSim/apu.h"
-#include "../../BreaksPPU/PPUSim/ppu.h"
+#include "../../Chips/M6502Core/core.h"
+#include "../../Chips/APUSim/apu.h"
+#include "../../Chips/PPUSim/ppu.h"
 
 // Board logic
 

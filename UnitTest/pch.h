@@ -9,9 +9,9 @@
 
 #include "../Common/BaseLogicLib/BaseLogic.h"
 
-#include "../Breaks6502/M6502Core/core.h"
-#include "../BreaksAPU/APUSim/apu.h"
-#include "../BreaksPPU/PPUSim/ppu.h"
+#include "../Chips/M6502Core/core.h"
+#include "../Chips/APUSim/apu.h"
+#include "../Chips/PPUSim/ppu.h"
 
 #include "../IO/CD4021.h"
 
