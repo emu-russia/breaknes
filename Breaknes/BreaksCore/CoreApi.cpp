@@ -290,6 +290,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
+			printf("IOAttach: port: %d, handle: %d\n", (int)port, (int)handle);
 			board->io->Attach((int)port, (int)handle);
 		}
 	}
@@ -298,6 +299,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
+			printf("IODetach: port: %d, handle: %d\n", (int)port, (int)handle);
 			board->io->Detach((int)port, (int)handle);
 		}
 	}
