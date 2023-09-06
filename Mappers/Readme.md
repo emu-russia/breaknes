@@ -34,9 +34,8 @@ We have:
 - 6502 Emulator
 - 6502 firmware that simulates cartridge pin access and implements wild mapper logic
 
-![mappers_ucode1](mappers_ucode1.png)
-
-![mappers_ucode2](mappers_ucode2.png)
+|![mappers_ucode1](mappers_ucode1.png)|![mappers_ucode2](mappers_ucode2.png)|
+|---|---|
 
 Of course, most of the mappers are easier to simulate in C++, but for universality, let's add the ability to write simulators of our own mappers.
 

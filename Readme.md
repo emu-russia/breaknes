@@ -1,11 +1,11 @@
 
-![logo](/UserManual/imgstore/157481692-2ecd4e71-2599-4050-9ce0-815c0336ad27.png)
+![logo](/Wiki/imgstore/157481692-2ecd4e71-2599-4050-9ce0-815c0336ad27.png)
 
 NES/Famicom/Dendy emulator at the gate level.
 
 ## Progress
 
-![progress](/UserManual/imgstore/progress.png)
+![progress](/Wiki/imgstore/progress.png)
 
 ## Build for Windows
 

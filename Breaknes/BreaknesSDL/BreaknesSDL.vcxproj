@@ -149,13 +149,13 @@
     <ProjectReference Include="..\BreaksCore\Scripts\VS2022\BreaksCoreStatic.vcxproj">
       <Project>{59610324-ce90-474c-89f1-8a998c52b346}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Breaks6502\M6502Core\Scripts\VS2022\M6502Core.vcxproj">
+    <ProjectReference Include="..\..\Chips\M6502Core\Scripts\VS2022\M6502Core.vcxproj">
       <Project>{75210c0a-a812-4246-a179-b50d8a25a121}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\BreaksAPU\APUSim\Scripts\VS2022\APUSim.vcxproj">
+    <ProjectReference Include="..\..\Chips\APUSim\Scripts\VS2022\APUSim.vcxproj">
       <Project>{50e93d78-36dc-46c3-82ea-cab373e18729}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\BreaksPPU\PPUSim\Scripts\VS2022\PPUSim.vcxproj">
+    <ProjectReference Include="..\..\Chips\PPUSim\Scripts\VS2022\PPUSim.vcxproj">
       <Project>{ebd9b3eb-3c04-43ed-b454-e9442b21f5a0}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\BaseBoardLib\Scripts\VS2022\BaseBoardLib.vcxproj">
