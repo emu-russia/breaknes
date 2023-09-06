@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreaksDebug", "BreaksDebug.csproj", "{F609D0B4-2EB2-491C-BE8F-E2B5D65ECDA4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "M6502Core", "..\..\Chips\Scripts\VS2022\M6502Core.vcxproj", "{75210C0A-A812-4246-A179-B50D8A25A121}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "M6502Core", "..\..\Chips\M6502Core\Scripts\VS2022\M6502Core.vcxproj", "{75210C0A-A812-4246-A179-B50D8A25A121}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLogicLib", "..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj", "{11AAD192-46EB-4D5D-B81F-BCEE11D6AF8E}"
 EndProject
