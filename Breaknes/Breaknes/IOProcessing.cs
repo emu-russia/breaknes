@@ -26,6 +26,7 @@ namespace Breaknes
 	{
 		public string name = "";
 		public UInt32 value = 0;
+		public int device_handle = -1;
 	}
 
 	public class IOProcessor
@@ -116,7 +117,7 @@ namespace Breaknes
 				{
 					foreach (var binding in attached_device.device.bindings)
 					{
-						if (binding.binding == io_event.name)
+						if (binding.binding == io_event.name && attached_device.handle == io_event.device_handle)
 						{
 							BreaksCore.IOSetState(attached_device.handle, binding.actuator_id, io_event.value);
 						}
@@ -151,22 +152,22 @@ namespace Breaknes
 					switch (device.device_id)
 					{
 						case 0x00010001:
-							FormVirtualFamiController1 virt_fami1 = new FormVirtualFamiController1(device, this);
+							FormVirtualFamiController1 virt_fami1 = new FormVirtualFamiController1(device, attached_device.handle, this);
 							virt_fami1.Show();
 							attached_device.opaque = virt_fami1;
 							break;
 						case 0x00010002:
-							FormVirtualFamiController2 virt_fami2 = new FormVirtualFamiController2(device, this);
+							FormVirtualFamiController2 virt_fami2 = new FormVirtualFamiController2(device, attached_device.handle, this);
 							virt_fami2.Show();
 							attached_device.opaque = virt_fami2;
 							break;
 						case 0x00010003:
-							FormVirtualNESController virt_nes = new FormVirtualNESController(device, this);
+							FormVirtualNESController virt_nes = new FormVirtualNESController(device, attached_device.handle, this);
 							virt_nes.Show();
 							attached_device.opaque = virt_nes;
 							break;
 						case 0x00010004:
-							FormVirtualDendyController virt_dendy = new FormVirtualDendyController(device, this);
+							FormVirtualDendyController virt_dendy = new FormVirtualDendyController(device, attached_device.handle, this);
 							virt_dendy.Show();
 							attached_device.opaque = virt_dendy;
 							break;

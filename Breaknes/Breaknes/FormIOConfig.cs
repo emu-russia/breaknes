@@ -63,19 +63,19 @@ namespace Breaknes
 							dendy.ShowDialog();
 							break;
 						case 0x00010001:
-							FormVirtualFamiController1 virt_fami1 = new FormVirtualFamiController1(device, parent_io);
+							FormVirtualFamiController1 virt_fami1 = new FormVirtualFamiController1(device, -1, parent_io);
 							virt_fami1.ShowDialog();
 							break;
 						case 0x00010002:
-							FormVirtualFamiController2 virt_fami2 = new FormVirtualFamiController2(device, parent_io);
+							FormVirtualFamiController2 virt_fami2 = new FormVirtualFamiController2(device, -1, parent_io);
 							virt_fami2.ShowDialog();
 							break;
 						case 0x00010003:
-							FormVirtualNESController virt_nes = new FormVirtualNESController(device, parent_io);
+							FormVirtualNESController virt_nes = new FormVirtualNESController(device, -1, parent_io);
 							virt_nes.ShowDialog();
 							break;
 						case 0x00010004:
-							FormVirtualDendyController virt_dendy = new FormVirtualDendyController(device, parent_io);
+							FormVirtualDendyController virt_dendy = new FormVirtualDendyController(device, -1, parent_io);
 							virt_dendy.ShowDialog();
 							break;
 					}
