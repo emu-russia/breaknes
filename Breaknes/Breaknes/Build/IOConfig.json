@@ -15,29 +15,86 @@
       "bindings": [
         {
           "actuator_id": 0,
-          "binding": "Dummy binding"
+          "binding": "PointOfViewControllers0_Up"
         },
         {
           "actuator_id": 4,
-          "binding": "Dummy binding"
+          "binding": "Buttons6"
+        },
+        {
+          "actuator_id": 1,
+          "binding": "PointOfViewControllers0_Down"
+        },
+        {
+          "actuator_id": 2,
+          "binding": "PointOfViewControllers0_Left"
+        },
+        {
+          "actuator_id": 3,
+          "binding": "PointOfViewControllers0_Right"
+        },
+        {
+          "actuator_id": 5,
+          "binding": "Buttons7"
+        },
+        {
+          "actuator_id": 6,
+          "binding": "Buttons0"
+        },
+        {
+          "actuator_id": 7,
+          "binding": "Buttons1"
         }
       ]
     },
     {
       "device_id": 3,
       "name": "NES P1",
-      "attached": [],
-      "bindings": []
-    },
-    {
-      "device_id": 65539,
-      "name": "V1",
       "attached": [
         {
           "board": "NES-001 (PCB rev. -01 to -04)",
           "port": 0
         }
       ],
+      "bindings": [
+        {
+          "actuator_id": 0,
+          "binding": "Up"
+        },
+        {
+          "actuator_id": 1,
+          "binding": "Down"
+        },
+        {
+          "actuator_id": 2,
+          "binding": "Left"
+        },
+        {
+          "actuator_id": 3,
+          "binding": "Right"
+        },
+        {
+          "actuator_id": 4,
+          "binding": "A"
+        },
+        {
+          "actuator_id": 5,
+          "binding": "S"
+        },
+        {
+          "actuator_id": 6,
+          "binding": "Z"
+        },
+        {
+          "actuator_id": 7,
+          "binding": "X"
+        }
+      ]
+    },
+    {
+      "device_id": 65539,
+      "name": "V1",
+      "attached": [],
       "bindings": [
         {
           "actuator_id": 0,

@@ -153,5 +153,10 @@ namespace Breaknes
 				}
 			}
 		}
+
+		private void FormBindingDendyController_KeyDown(object sender, KeyEventArgs e)
+		{
+			Close();
+		}
 	}
 }

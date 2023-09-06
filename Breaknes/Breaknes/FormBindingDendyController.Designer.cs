@@ -218,9 +218,11 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(801, 476);
 			Controls.Add(splitContainer1);
+			KeyPreview = true;
 			Name = "FormBindingDendyController";
 			Text = "Dendy Controller Binding";
 			Load += FormBindingDendyController_Load;
+			KeyDown += FormBindingDendyController_KeyDown;
 			tabControl1.ResumeLayout(false);
 			tabPage1.ResumeLayout(false);
 			splitContainer1.Panel1.ResumeLayout(false);

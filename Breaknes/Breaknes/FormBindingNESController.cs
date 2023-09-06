@@ -153,5 +153,10 @@ namespace Breaknes
 				}
 			}
 		}
+
+		private void FormBindingNESController_KeyDown(object sender, KeyEventArgs e)
+		{
+			Close();
+		}
 	}
 }

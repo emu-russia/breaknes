@@ -218,9 +218,11 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(801, 434);
 			Controls.Add(splitContainer1);
+			KeyPreview = true;
 			Name = "FormBindingFamiController1";
 			Text = "Famicom Controller Port1 Binding";
 			Load += FormBindingFamiController1_Load;
+			KeyDown += FormBindingFamiController1_KeyDown;
 			splitContainer1.Panel1.ResumeLayout(false);
 			splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
