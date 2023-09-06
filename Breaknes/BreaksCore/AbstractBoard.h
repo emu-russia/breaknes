@@ -1,7 +1,5 @@
 #pragma once
 
-// TBD: The API will be extended to handle I/O devices (controllers, expansion ports)
-
 namespace Breaknes
 {
 	struct RGB_Triplet

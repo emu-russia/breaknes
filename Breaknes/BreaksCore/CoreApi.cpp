@@ -15,7 +15,7 @@ extern "C"
 	{
 		if (board == nullptr)
 		{
-			printf("CreateBoard\n");
+			printf("CreateBoard %s, apu: %s, ppu: %s, cart: %s\n", boardName, apu, ppu, p1);
 			Breaknes::BoardFactory bf(boardName, apu, ppu, p1);
 			CreateDebugHub(false);
 			board = bf.CreateInstance();

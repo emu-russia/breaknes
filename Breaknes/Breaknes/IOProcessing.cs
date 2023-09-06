@@ -26,7 +26,7 @@ namespace Breaknes
 	{
 		public string name = "";
 		public UInt32 value = 0;
-		public int device_handle = -1;
+		public int device_handle = -1;	// -1: broadcast
 	}
 
 	public class IOProcessor
@@ -34,7 +34,8 @@ namespace Breaknes
 		Keyboard? keyboard = null;
 		Joystick? joystick = null;
 		List<AttachedDevice> devices = new();
-		List<IOEvent> event_queue = new();
+		// Made public so that the bindings dialog can poll input devices by getting events from the queue
+		public List<IOEvent> event_queue = new();
 
 		public IOProcessor()
 		{
@@ -87,20 +88,267 @@ namespace Breaknes
 		{
 			List<IOEvent> events = new();
 
+			// Translate keyboard events
+
 			if (keyboard != null)
 			{
 				keyboard.Poll();
 				var datas = keyboard.GetBufferedData();
 				foreach (var state in datas)
-					Console.WriteLine(state);
+				{
+					IOEvent key_event = new();
+					key_event.name = state.Key.ToString();
+					key_event.value = (uint)(state.IsPressed ? 1 : 0);
+					key_event.device_handle = -1;
+					events.Add(key_event);
+				}
 			}
+
+			// Translate events from joystick (TODO: only one is supported so far)
 
 			if (joystick != null)
 			{
 				joystick.Poll();
 				var datas = joystick.GetBufferedData();
 				foreach (var state in datas)
+				{
 					Console.WriteLine(state);
+
+					IOEvent joy_event = new();
+
+					string offset = state.Offset.ToString();
+
+					if (offset.StartsWith("Button"))
+					{
+						joy_event.name = offset;
+						joy_event.value = (uint)(state.Value != 0 ? 1 : 0);
+						joy_event.device_handle = -1;
+						events.Add(joy_event);
+					}
+					else if (offset.StartsWith("PointOfViewControllers"))
+					{
+						IOEvent joy_event1;
+						IOEvent joy_event2;
+						IOEvent joy_event3;
+						IOEvent joy_event4;
+
+						switch (state.Value)
+						{
+							// I don't know who came up with such a "brilliant" idea to make the D-Pad in such a way, but as it is. Pushback will be considered as pushback in all directions
+							case -1:
+								joy_event1 = new();
+								joy_event1.name = offset + "_Up";
+								joy_event1.value = 0;
+								joy_event1.device_handle = -1;
+								events.Add(joy_event1);
+								joy_event2 = new();
+								joy_event2.name = offset + "_Right";
+								joy_event2.value = 0;
+								joy_event2.device_handle = -1;
+								events.Add(joy_event2);
+								joy_event3 = new();
+								joy_event3.name = offset + "_Down";
+								joy_event3.value = 0;
+								joy_event3.device_handle = -1;
+								events.Add(joy_event3);
+								joy_event4 = new();
+								joy_event4.name = offset + "_Left";
+								joy_event4.value = 0;
+								joy_event4.device_handle = -1;
+								events.Add(joy_event4);
+								break;
+							// Up
+							case 0:
+								joy_event1 = new();
+								joy_event1.name = offset + "_Up";
+								joy_event1.value = 1;
+								joy_event1.device_handle = -1;
+								events.Add(joy_event1);
+								joy_event2 = new();
+								joy_event2.name = offset + "_Right";
+								joy_event2.value = 0;
+								joy_event2.device_handle = -1;
+								events.Add(joy_event2);
+								joy_event3 = new();
+								joy_event3.name = offset + "_Down";
+								joy_event3.value = 0;
+								joy_event3.device_handle = -1;
+								events.Add(joy_event3);
+								joy_event4 = new();
+								joy_event4.name = offset + "_Left";
+								joy_event4.value = 0;
+								joy_event4.device_handle = -1;
+								events.Add(joy_event4);
+								break;
+							// Up-Right
+							case 4500:
+								joy_event1 = new();
+								joy_event1.name = offset + "_Up";
+								joy_event1.value = 1;
+								joy_event1.device_handle = -1;
+								events.Add(joy_event1);
+								joy_event2 = new();
+								joy_event2.name = offset + "_Right";
+								joy_event2.value = 1;
+								joy_event2.device_handle = -1;
+								events.Add(joy_event2);
+								joy_event3 = new();
+								joy_event3.name = offset + "_Down";
+								joy_event3.value = 0;
+								joy_event3.device_handle = -1;
+								events.Add(joy_event3);
+								joy_event4 = new();
+								joy_event4.name = offset + "_Left";
+								joy_event4.value = 0;
+								joy_event4.device_handle = -1;
+								events.Add(joy_event4);
+								break;
+							// Right
+							case 9000:
+								joy_event2 = new();
+								joy_event2.name = offset + "_Right";
+								joy_event2.value = 1;
+								joy_event2.device_handle = -1;
+								events.Add(joy_event2);
+								joy_event1 = new();
+								joy_event1.name = offset + "_Up";
+								joy_event1.value = 0;
+								joy_event1.device_handle = -1;
+								events.Add(joy_event1);
+								joy_event3 = new();
+								joy_event3.name = offset + "_Down";
+								joy_event3.value = 0;
+								joy_event3.device_handle = -1;
+								events.Add(joy_event3);
+								joy_event4 = new();
+								joy_event4.name = offset + "_Left";
+								joy_event4.value = 0;
+								joy_event4.device_handle = -1;
+								events.Add(joy_event4);
+								break;
+							// Right-Down
+							case 13500:
+								joy_event2 = new();
+								joy_event2.name = offset + "_Right";
+								joy_event2.value = 1;
+								joy_event2.device_handle = -1;
+								events.Add(joy_event2);
+								joy_event3 = new();
+								joy_event3.name = offset + "_Down";
+								joy_event3.value = 1;
+								joy_event3.device_handle = -1;
+								events.Add(joy_event3);
+								joy_event1 = new();
+								joy_event1.name = offset + "_Up";
+								joy_event1.value = 0;
+								joy_event1.device_handle = -1;
+								events.Add(joy_event1);
+								joy_event4 = new();
+								joy_event4.name = offset + "_Left";
+								joy_event4.value = 0;
+								joy_event4.device_handle = -1;
+								events.Add(joy_event4);
+								break;
+							// Down
+							case 18000:
+								joy_event3 = new();
+								joy_event3.name = offset + "_Down";
+								joy_event3.value = 1;
+								joy_event3.device_handle = -1;
+								events.Add(joy_event3);
+								joy_event1 = new();
+								joy_event1.name = offset + "_Up";
+								joy_event1.value = 0;
+								joy_event1.device_handle = -1;
+								events.Add(joy_event1);
+								joy_event2 = new();
+								joy_event2.name = offset + "_Right";
+								joy_event2.value = 0;
+								joy_event2.device_handle = -1;
+								events.Add(joy_event2);
+								joy_event4 = new();
+								joy_event4.name = offset + "_Left";
+								joy_event4.value = 0;
+								joy_event4.device_handle = -1;
+								events.Add(joy_event4);
+								break;
+							// Down-Left
+							case 22500:
+								joy_event3 = new();
+								joy_event3.name = offset + "_Down";
+								joy_event3.value = 1;
+								joy_event3.device_handle = -1;
+								events.Add(joy_event3);
+								joy_event4 = new();
+								joy_event4.name = offset + "_Left";
+								joy_event4.value = 1;
+								joy_event4.device_handle = -1;
+								events.Add(joy_event4);
+								joy_event1 = new();
+								joy_event1.name = offset + "_Up";
+								joy_event1.value = 0;
+								joy_event1.device_handle = -1;
+								events.Add(joy_event1);
+								joy_event2 = new();
+								joy_event2.name = offset + "_Right";
+								joy_event2.value = 0;
+								joy_event2.device_handle = -1;
+								events.Add(joy_event2);
+								break;
+							// Left
+							case 27000:
+								joy_event4 = new();
+								joy_event4.name = offset + "_Left";
+								joy_event4.value = 1;
+								joy_event4.device_handle = -1;
+								events.Add(joy_event4);
+								joy_event1 = new();
+								joy_event1.name = offset + "_Up";
+								joy_event1.value = 0;
+								joy_event1.device_handle = -1;
+								events.Add(joy_event1);
+								joy_event2 = new();
+								joy_event2.name = offset + "_Right";
+								joy_event2.value = 0;
+								joy_event2.device_handle = -1;
+								events.Add(joy_event2);
+								joy_event3 = new();
+								joy_event3.name = offset + "_Down";
+								joy_event3.value = 0;
+								joy_event3.device_handle = -1;
+								events.Add(joy_event3);
+								break;
+							// Left-Up
+							case 31500:
+								joy_event4 = new();
+								joy_event4.name = offset + "_Left";
+								joy_event4.value = 1;
+								joy_event4.device_handle = -1;
+								events.Add(joy_event4);
+								joy_event1 = new();
+								joy_event1.name = offset + "_Up";
+								joy_event1.value = 1;
+								joy_event1.device_handle = -1;
+								events.Add(joy_event1);
+								joy_event2 = new();
+								joy_event2.name = offset + "_Right";
+								joy_event2.value = 0;
+								joy_event2.device_handle = -1;
+								events.Add(joy_event2);
+								joy_event3 = new();
+								joy_event3.name = offset + "_Down";
+								joy_event3.value = 0;
+								joy_event3.device_handle = -1;
+								events.Add(joy_event3);
+								break;
+						}
+					}
+				}
+
+				foreach (var io_event in events)
+				{
+					DumpEvent(io_event);
+				}
 			}
 
 			event_queue.AddRange(events);
@@ -117,9 +365,19 @@ namespace Breaknes
 				{
 					foreach (var binding in attached_device.device.bindings)
 					{
-						if (binding.binding == io_event.name && attached_device.handle == io_event.device_handle)
+						if (binding.binding == io_event.name)
 						{
-							BreaksCore.IOSetState(attached_device.handle, binding.actuator_id, io_event.value);
+							if (io_event.device_handle >= 0)
+							{
+								if (attached_device.handle == io_event.device_handle)
+								{
+									BreaksCore.IOSetState(attached_device.handle, binding.actuator_id, io_event.value);
+								}
+							}
+							else
+							{
+								BreaksCore.IOSetState(attached_device.handle, binding.actuator_id, io_event.value);
+							}
 						}
 					}
 				}

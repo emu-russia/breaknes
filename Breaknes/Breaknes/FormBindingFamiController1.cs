@@ -153,5 +153,10 @@ namespace Breaknes
 				}
 			}
 		}
+
+		private void FormBindingFamiController1_KeyDown(object sender, KeyEventArgs e)
+		{
+			Close();
+		}
 	}
 }

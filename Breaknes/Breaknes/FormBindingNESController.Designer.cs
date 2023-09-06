@@ -218,9 +218,11 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(809, 471);
 			Controls.Add(splitContainer1);
+			KeyPreview = true;
 			Name = "FormBindingNESController";
 			Text = "NES Controller Binding";
 			Load += FormBindingNESController_Load;
+			KeyDown += FormBindingNESController_KeyDown;
 			splitContainer1.Panel1.ResumeLayout(false);
 			splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
