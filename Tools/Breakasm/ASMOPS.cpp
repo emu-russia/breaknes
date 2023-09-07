@@ -31,13 +31,13 @@
 
 static void NotEnoughParameters (char *cmd)
 {
-	printf ( "ERROR(%i): %s not enough parameters\n", linenum, cmd);
+	printf ( "ERROR(%s,%i): %s not enough parameters\n", get_source_name().c_str(), get_linenum(), cmd);
 	errors++;
 }
 
 static void WrongParameters (char *cmd, char *op)
 {
-	printf ( "ERROR(%i): %s wrong parameters: %s\n", linenum, cmd, op);
+	printf ( "ERROR(%s,%i): %s wrong parameters: %s\n", get_source_name().c_str(), get_linenum(), cmd, op);
 	errors++;
 }
 
@@ -110,7 +110,7 @@ void opLDST (char *cmd, char *ops)
 			if ( !_stricmp (cmd, "LDA") ) emit (0xAD);
 			if ( !_stricmp (cmd, "STA") ) emit (0x8D);
 			label = add_label (val[0].label->name, UNDEF);
-			add_patch (label, org, 0, linenum );
+			add_patch (label, org, 0 );
 			emit (0); emit (0);
 		}
 		else WrongParameters (cmd, ops);
@@ -133,14 +133,14 @@ void opLDST (char *cmd, char *ops)
 					if ( !_stricmp ( cmd, "LDA" ) ) emit ( 0xBD );
 					if ( !_stricmp ( cmd, "STA" ) ) emit ( 0x9D );
 					label = add_label (val[0].label->name, UNDEF);
-					add_patch (label, org, 0, linenum );
+					add_patch (label, org, 0 );
 					emit (0); emit (0);
 				}
 				else if (val[1].label->orig == KEYWORD && !_stricmp(val[1].label->name, "Y")) {
 					if ( !_stricmp ( cmd, "LDA" ) ) emit ( 0xB9 );
 					if ( !_stricmp ( cmd, "STA" ) ) emit ( 0x99 );
 					label = add_label (val[0].label->name, UNDEF);
-					add_patch (label, org, 0, linenum );
+					add_patch (label, org, 0 );
 					emit (0); emit (0);
 				}
 				else WrongParameters (cmd, ops);
@@ -208,7 +208,7 @@ void opLDSTX (char *cmd, char *ops)
 			if ( !_stricmp ( cmd, "LDX" ) ) emit ( 0xAE );
 			if ( !_stricmp ( cmd, "STX" ) ) emit ( 0x8E );
 			label = add_label (val[0].label->name, UNDEF);
-			add_patch (label, org, 0, linenum );
+			add_patch (label, org, 0 );
 			emit (0); emit (0);
 		}
 		else if ( type[0] == EVAL_NUMBER ) {    // #
@@ -230,7 +230,7 @@ void opLDSTX (char *cmd, char *ops)
 					if ( !_stricmp ( cmd, "LDX" ) ) { 
 						emit ( 0xBE );
 						label = add_label (val[0].label->name, UNDEF);
-						add_patch (label, org, 0, linenum );
+						add_patch (label, org, 0 );
 						emit (0); emit (0);
 					}
 					else WrongParameters (cmd, ops);
@@ -291,7 +291,7 @@ void opLDSTY (char *cmd, char *ops)
 			if ( !_stricmp ( cmd, "LDY" ) ) emit ( 0xAC );
 			if ( !_stricmp ( cmd, "STY" ) ) emit ( 0x8C );
 			label = add_label (val[0].label->name, UNDEF);
-			add_patch (label, org, 0, linenum );
+			add_patch (label, org, 0 );
 			emit (0); emit (0);
 		}
 		else if ( type[0] == EVAL_NUMBER ) {    // #
@@ -313,7 +313,7 @@ void opLDSTY (char *cmd, char *ops)
 					if ( !_stricmp ( cmd, "LDY" ) ) { 
 						emit ( 0xBC );
 						label = add_label (val[0].label->name, UNDEF);
-						add_patch (label, org, 0, linenum );
+						add_patch (label, org, 0 );
 						emit (0); emit (0);
 					}
 					else WrongParameters (cmd, ops);
@@ -369,7 +369,7 @@ void opBRA (char *cmd, char *ops)
 			if ( !_stricmp (cmd, "BNE") ) emit (0xD0);
 			if ( !_stricmp (cmd, "BEQ") ) emit (0xF0);
 			label = add_label (val.label->name, UNDEF);
-			add_patch (label, org, 1, linenum );
+			add_patch (label, org, 1 );
 			emit (0);
 		}
 		else WrongParameters (cmd, ops);
@@ -416,7 +416,7 @@ void opJMP (char *cmd, char *ops)
 					if ( !_stricmp (cmd, "JSR") ) emit (0x20);
 				}
 				label = add_label (val.label->name, UNDEF);
-				add_patch (label, org, 0, linenum );
+				add_patch (label, org, 0 );
 				emit (0); emit (0);
 			}
 			else WrongParameters (cmd, ops);
@@ -478,7 +478,7 @@ void opALU1 (char *cmd, char *ops)
 			if ( !_stricmp ( cmd, "CMP" ) ) emit ( 0xCD );
 			if ( !_stricmp ( cmd, "SBC" ) ) emit ( 0xED );
 			label = add_label (val[0].label->name, UNDEF);
-			add_patch (label, org, 0, linenum );
+			add_patch (label, org, 0 );
 			emit (0); emit (0);
 		}
 		else WrongParameters (cmd, ops);
@@ -509,7 +509,7 @@ void opALU1 (char *cmd, char *ops)
 					if ( !_stricmp ( cmd, "CMP" ) ) emit ( 0xDD );
 					if ( !_stricmp ( cmd, "SBC" ) ) emit ( 0xFD );
 					label = add_label (val[0].label->name, UNDEF);
-					add_patch (label, org, 0, linenum );
+					add_patch (label, org, 0 );
 					emit (0); emit (0);
 				}
 				else if (val[1].label->orig == KEYWORD && !_stricmp(val[1].label->name, "Y")) {
@@ -520,7 +520,7 @@ void opALU1 (char *cmd, char *ops)
 					if ( !_stricmp ( cmd, "CMP" ) ) emit ( 0xD9 );
 					if ( !_stricmp ( cmd, "SBC" ) ) emit ( 0xF9 );
 					label = add_label (val[0].label->name, UNDEF);
-					add_patch (label, org, 0, linenum );
+					add_patch (label, org, 0 );
 					emit (0); emit (0);
 				}
 				else WrongParameters (cmd, ops);
@@ -586,7 +586,13 @@ void opSHIFT (char *cmd, char *ops)
 
 	split_param (ops);
 
-	if (param_num == 1) {
+	if (param_num == 0) {
+		if (!_stricmp(cmd, "ASL")) emit(0x0A);
+		if (!_stricmp(cmd, "ROL")) emit(0x2A);
+		if (!_stricmp(cmd, "LSR")) emit(0x4A);
+		if (!_stricmp(cmd, "ROR")) emit(0x6A);
+	}
+	else if (param_num == 1) {
 		type[0] = eval ( params[0].string, &val[0] );
 		if ( type[0] == EVAL_ADDRESS ) {
 			if ( val[0].address < 0x100 ) {     // Zero page
@@ -618,7 +624,7 @@ void opSHIFT (char *cmd, char *ops)
 				if ( !_stricmp ( cmd, "LSR" ) ) emit ( 0x4E );
 				if ( !_stricmp ( cmd, "ROR" ) ) emit ( 0x6E );
 				label = add_label (val[0].label->name, UNDEF);
-				add_patch (label, org, 0, linenum );
+				add_patch (label, org, 0 );
 				emit (0); emit (0);
 			}
 		}
@@ -636,7 +642,7 @@ void opSHIFT (char *cmd, char *ops)
 					if ( !_stricmp ( cmd, "LSR" ) ) emit ( 0x5E );
 					if ( !_stricmp ( cmd, "ROR" ) ) emit ( 0x7E );
 					label = add_label (val[0].label->name, UNDEF);
-					add_patch (label, org, 0, linenum );
+					add_patch (label, org, 0 );
 					emit (0); emit (0);
 				}
 				else WrongParameters (cmd, ops);
@@ -694,7 +700,7 @@ void opBIT (char *cmd, char *ops)
 		else if (type == EVAL_LABEL) {
 			emit (0x2C);
 			label = add_label (val.label->name, UNDEF);
-			add_patch (label, org, 0, linenum );
+			add_patch (label, org, 0 );
 			emit (0); emit (0);
 		}
 		else WrongParameters (cmd, ops);
@@ -730,7 +736,7 @@ void opINCDEC (char *cmd, char *ops)
 			if ( !_stricmp ( cmd, "INC" ) ) emit ( 0xEE );
 			if ( !_stricmp ( cmd, "DEC" ) ) emit ( 0xCE );
 			label = add_label (val[0].label->name, UNDEF);
-			add_patch (label, org, 0, linenum );
+			add_patch (label, org, 0 );
 			emit (0); emit (0);
 		}
 		else WrongParameters (cmd, ops);
@@ -745,7 +751,7 @@ void opINCDEC (char *cmd, char *ops)
 					if ( !_stricmp ( cmd, "INC" ) ) emit ( 0xFE );
 					if ( !_stricmp ( cmd, "DEC" ) ) emit ( 0xDE );
 					label = add_label (val[0].label->name, UNDEF);
-					add_patch (label, org, 0, linenum );
+					add_patch (label, org, 0 );
 					emit (0); emit (0);
 				}
 				else WrongParameters (cmd, ops);
@@ -807,12 +813,62 @@ void opCPXY (char *cmd, char *ops)
 			if ( !_stricmp ( cmd, "CPX" ) ) emit ( 0xEC );
 			if ( !_stricmp ( cmd, "CPY" ) ) emit ( 0xCC );
 			label = add_label (val.label->name, UNDEF);
-			add_patch (label, org, 0, linenum );
+			add_patch (label, org, 0 );
 			emit (0); emit (0);
 		}
 		else WrongParameters (cmd, ops);
 	}
 	else NotEnoughParameters (cmd);
+}
+
+// INCLUDE
+// **************************************************************
+
+void opINCLUDE(char* cmd, char* ops)
+{
+	while (*ops <= ' ' && *ops) ops++;
+	
+	// Construct a file name enclosed in double or single quotes
+
+	char source_name[0x100]{}, *ptr = source_name;
+	while (*ops) {
+		if (*ops == '\"' || *ops == '\'') {
+			ops++;
+			continue;
+		}
+		*ptr++ = *ops++;
+	}
+	*ptr++ = 0;
+
+	FILE* f;
+	f = fopen(source_name, "rt");
+	if (!f) {
+		printf("ERROR(%s,%i): Failed to load the nested source file: %s\n", get_source_name().c_str(), get_linenum(), source_name);
+		errors++;
+		return;
+	}
+
+	// One more byte of memory is allocated to complete the text with the null character (END).
+
+	fseek(f, 0, SEEK_END);
+	long size = ftell(f) + 1;
+	fseek(f, 0, SEEK_SET);
+
+	char* text = new char[size];
+	memset(text, 0, size);
+
+	size_t readSize = fread(text, 1, size, f);
+	fclose(f);
+	if (readSize >= size)
+	{
+		delete[] text;
+		printf("ERROR(%s,%i): Error loading the source file.\n", get_source_name().c_str(), get_linenum());
+		errors++;
+		return;
+	}
+	
+	assemble_include(text, source_name);
+	delete[] text;
 }
 
 // DEFINE
@@ -839,7 +895,7 @@ void opBYTE (char *cmd, char *ops)
 	for (i=0; i<param_num; i++) {
 		type = eval ( params[i].string, &val );
 		if ( type == EVAL_LABEL ) {
-			printf ( "ERROR(%i): Label cannot be used here\n", linenum );
+			printf ( "ERROR(%s,%i): Label cannot be used here\n", get_source_name().c_str(), get_linenum());
 			errors++;
 		}
 		else if ( type == EVAL_NUMBER ) {
@@ -865,7 +921,7 @@ void opWORD (char *cmd, char *ops)
 	for (i=0; i<param_num; i++) {
 		type = eval ( params[i].string, &val );
 		if ( type == EVAL_STRING ) {
-			printf ( "ERROR(%i): String cannot be used here\n", linenum );
+			printf ( "ERROR(%s,%i): String cannot be used here\n", get_source_name().c_str(), get_linenum());
 			errors++;
 		}
 		else if ( type == EVAL_NUMBER ) {
@@ -878,7 +934,7 @@ void opWORD (char *cmd, char *ops)
 		}
 		else if ( type == EVAL_LABEL ) {
 			label = add_label (val.label->name, UNDEF);
-			add_patch (label, org, 0, linenum );
+			add_patch (label, org, 0 );
 			emit (0); emit (0);
 		}
 		else WrongParameters(cmd, ops);

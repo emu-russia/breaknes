@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 
 	// Assemble
 
-	int err_count = assemble(text, prg);
+	int err_count = assemble(text, argv[1], prg);
 	if (err_count != 0)
 	{
 		delete[] text;
