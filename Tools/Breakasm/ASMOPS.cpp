@@ -7,6 +7,9 @@
 
 	ORG: just set origin in range 0...0xFFFF
 
+	INCLUDE: calls assemble_include from the main module.
+	The current source file name and line numbers are stored on the stack (INCLUDE can be nested)
+
 	DEFINE: add new define if not exist or replace existing define
 
 	BYTE, WORD:
