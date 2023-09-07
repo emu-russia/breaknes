@@ -39,6 +39,7 @@ void opBIT(char* cmd, char* ops);
 void opINCDEC(char* cmd, char* ops);
 void opCPXY(char* cmd, char* ops);
 
+void opINCLUDE(char* cmd, char* ops);
 void opDEFINE(char* cmd, char* ops);
 void opBYTE(char* cmd, char* ops);
 void opWORD(char* cmd, char* ops);

@@ -25,6 +25,7 @@ The label (`LABEL`) is optional. The command (`COMMAND`) contains 6502 instructi
 |Directive|Description|
 |---|---|
 |ORG|Set the current PRG assembly position.|
+|INCLUDE|Process a nested source file|
 |DEFINE|Define a simple constant|
 |BYTE|Output a byte or string|
 |WORD|Output uint16_t in little-endian order. You can use both numbers as well as labels and addresses.|

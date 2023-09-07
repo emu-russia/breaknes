@@ -19,7 +19,6 @@
 
 static uint8_t *PRG;
 long org;        // current emit offset
-int linenum;
 long stop;
 long errors;
 
@@ -27,7 +26,33 @@ static  std::list<label_s *> labels;    // name labels
 static  std::list<patch_s *> patchs;    // patch history
 static  std::list<define_s *> defines;  // definitions
 
+static  std::list<std::string> source_name_stack;	// Stack for the name of the current source file (for INCLUDE)
+static  std::list<int> linenum_stack;		// Stack for the line number of the current source file (for INCLUDE)
+
 // ****************************************************************
+
+/// <summary>
+/// The linenum stack is required to support INCLUDE. Where previously just the linenum variable was used, this call is now used.
+/// </summary>
+/// <returns>Line number where the assembler is currently located in the current source file</returns>
+int get_linenum()
+{
+	return linenum_stack.back();
+}
+
+void nextline()
+{
+	linenum_stack.back()++;
+}
+
+/// <summary>
+/// Get the name of the current source file currently being worked with.
+/// </summary>
+/// <returns></returns>
+std::string get_source_name()
+{
+	return source_name_stack.back();
+}
 
 // Labels management.
 //
@@ -58,22 +83,24 @@ label_s *add_label (const char *name, long orig)
 		label = new label_s;
 		strcpy (label->name, temp_name);
 		label->orig = orig;
-		label->line = linenum;
+		strcpy(label->source, get_source_name().c_str());
+		label->line = get_linenum();
 		labels.push_back(label);
 	}
 	else {
 		if ( label->orig == KEYWORD ) {
-			printf ("ERROR(%i): Reserved keyword used as label \'%s\'\n", linenum, temp_name);
+			printf ("ERROR(%s,%i): Reserved keyword used as label \'%s\'\n", get_source_name().c_str(), get_linenum(), temp_name);
 			errors++;
 		}
 		else if (orig != UNDEF && label->orig != UNDEF ) {
-			printf ("ERROR(%i): label \'%s\' already defined in line %i\n", linenum, temp_name, label->line);
+			printf ("ERROR(%s,%i): label \'%s\' already defined in %s, line %i\n", get_source_name().c_str(), get_linenum(), temp_name, label->source, label->line);
 			errors++;
 		}
 		else {
 			if (orig != UNDEF) {
 				label->orig = orig;
-				label->line = linenum;
+				strcpy(label->source, get_source_name().c_str());
+				label->line = get_linenum();
 			}
 		}
 	}
@@ -85,7 +112,7 @@ static void dump_labels (void)
 	int i = 0;
 	label_s * label;
 	printf ("\nLABELS (%d):\n", (int)labels.size());
-	for (auto it = labels.begin(); it != labels.end(); ++i) {
+	for (auto it = labels.begin(); it != labels.end(); ++it) {
 		label = *it;
 		if (label->orig == KEYWORD) continue;
 		printf("%i: $%08X = \'%s\'\n", i + 1, label->orig, label->name);
@@ -96,13 +123,14 @@ static void dump_labels (void)
 // Patch management.
 //
 
-void add_patch (label_s *label, long orig, int branch, int line)
+void add_patch (label_s *label, long orig, int branch)
 {
 	patch_s * patch = new patch_s;
 	patch->label = label;
 	patch->orig = orig;
 	patch->branch = branch;
-	patch->line = line;
+	strcpy(patch->source, get_source_name().c_str());
+	patch->line = get_linenum();
 	patchs.push_back(patch);
 }
 
@@ -115,7 +143,7 @@ static void do_patch (void)
 		patch = *it;
 		orig = patch->label->orig;
 		if ( orig == UNDEF ) {
-			printf ("ERROR(%i): Undefined label \'%s\' (%08X)\n", patch->line, patch->label->name, orig );
+			printf ("ERROR(%s,%i): Undefined label \'%s\' (%08X)\n", patch->source, patch->line, patch->label->name, orig );
 			errors++;
 		}
 		else { 
@@ -123,7 +151,7 @@ static void do_patch (void)
 				org = patch->orig;
 				rel = orig - org - 1;
 				if (rel > 127 || rel < -128) {
-					printf("ERROR(%i): Branch relative offset to %s out of range\n", patch->line, patch->label->name);
+					printf("ERROR(%s,%i): Branch relative offset to %s out of range\n", patch->source, patch->line, patch->label->name);
 					errors++;
 				}
 				else emit(rel & 0xff);
@@ -143,7 +171,7 @@ static void dump_patches (void)
 	printf ("\nPATCHS (%d):\n", (int)patchs.size());
 	for (auto it = patchs.begin(); it != patchs.end(); ++it) {
 		patch = *it;
-		printf("LINE %i: $%08X = \'%s\'", patch->line, patch->orig, patch->label->name);
+		printf("%s, line %i: $%08X = \'%s\'", patch->source, patch->line, patch->orig, patch->label->name);
 		if (patch->branch) printf(" (REL)\n");
 		else printf(" (ABS)\n");
 	}
@@ -168,7 +196,7 @@ define_s *add_define (char *name, char *replace)
 	define_s * def;
 
 	if ( label = label_lookup (name) ) {
-		printf ("ERROR(%i): Already defined as label in line %i\n", linenum, label->line );
+		printf ("ERROR(%s,%i): Already defined as label in %s, line %i\n", get_source_name().c_str(), get_linenum(), label->source, label->line );
 		errors++;
 		return NULL;
 	}
@@ -201,7 +229,7 @@ static void dump_defines (void)
 // ****************************************************************
 // Evaluate expression
 
-// Evaluation code can be replaced by more complicated version (with macro-operations etc.)
+// TODO: Evaluation code will be replaced by more complicated version (with macro-operations etc.)
 
 int eval (char *text, eval_t *result)
 {
@@ -479,6 +507,7 @@ static oplink optab[] = {
 	{ "STY", opLDSTY },
 
 	// Directives
+	{ "INCLUDE", opINCLUDE },
 	{ "DEFINE", opDEFINE },
 	{ "BYTE", opBYTE },
 	{ "WORD", opWORD },
@@ -505,6 +534,7 @@ static void cleanup (void)
 		delete item;
 	}
 
+	// Clear defines
 	while (!defines.empty()) {
 		define_s* item = defines.back();
 		defines.pop_back();
@@ -512,7 +542,7 @@ static void cleanup (void)
 	}
 }
 
-int assemble (char *text, uint8_t *prg)
+int assemble (char *text, char* source_name, uint8_t *prg)
 {
 	line l;
 	oplink *opl;
@@ -523,8 +553,10 @@ int assemble (char *text, uint8_t *prg)
 
 	cleanup ();
 
+	source_name_stack.push_back(source_name);
+
 	// Add keywords
-	linenum = 0;
+	linenum_stack.push_back(0);
 	add_label ("A", KEYWORD);
 	add_label ("X", KEYWORD);
 	add_label ("Y", KEYWORD);
@@ -534,7 +566,7 @@ int assemble (char *text, uint8_t *prg)
 		else add_label (opl->name, KEYWORD);
 		opl++;
 	}
-	linenum++;
+	nextline();
 
 	while (1) {
 		if (*text == 0) break;
@@ -552,7 +584,7 @@ int assemble (char *text, uint8_t *prg)
 			opl = optab;
 			while (1) {
 				if ( opl->name == NULL ) {
-					printf ("ERROR(%i): Unknown command %s\n", linenum, l.cmd);
+					printf ("ERROR(%s,%i): Unknown command %s\n", get_source_name().c_str(), get_linenum(), l.cmd);
 					break;
 				}
 				else if ( !_stricmp (opl->name, l.cmd) ) {
@@ -564,7 +596,7 @@ int assemble (char *text, uint8_t *prg)
 			}
 			if (stop) break;
 		}
-		linenum++;
+		nextline();
 	}
 
 	// Patch jump/branch offsets.
@@ -578,4 +610,53 @@ int assemble (char *text, uint8_t *prg)
 
 	printf ( "%i error(s)\n", errors );
 	return errors;
+}
+
+/// <summary>
+/// Assemble nested source file (called from the INCLUDE directive).
+/// The name of the source file will be placed on the name stack, and the line counter will count from the beginning of the file.
+/// </summary>
+/// <param name="text">Source file text</param>
+/// <param name="source_name">Source file name</param>
+void assemble_include(char* text, char* source_name)
+{
+	line l;
+	oplink* opl;
+
+	source_name_stack.push_back(source_name);
+	linenum_stack.push_back(1);
+
+	while (1) {
+		if (*text == 0) break;
+		parse_line(&text, l);
+
+		//printf ( "%s: \'%s\' \'%s\'\n", l.label, l.cmd, l.op );
+
+		// Add label
+		if (strlen(l.label) > 1) {
+			add_label(l.label, org);
+		}
+
+		// Execute command
+		if (strlen(l.cmd) > 1) {
+			opl = optab;
+			while (1) {
+				if (opl->name == NULL) {
+					printf("ERROR(%s,%i): Unknown command %s\n", get_source_name().c_str(), get_linenum(), l.cmd);
+					break;
+				}
+				else if (!_stricmp(opl->name, l.cmd)) {
+					_strupr(l.cmd);
+					opl->handler(l.cmd, l.op);
+					break;
+				}
+				opl++;
+			}
+			if (stop) break;
+		}
+		nextline();
+	}
+
+	source_name_stack.pop_back();
+	linenum_stack.pop_back();
 }

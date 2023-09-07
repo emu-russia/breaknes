@@ -1,6 +1,6 @@
 #pragma once
 
-#define BREAKASM_VERSION "1.2"
+#define BREAKASM_VERSION "1.3"
 
 #define UNDEF   0xbabadaba  // undefined offset
 #define KEYWORD 0xd0d0d0d0  // keyword
@@ -19,6 +19,7 @@ struct line {
 struct label_s {
 	char    name[128];
 	long    orig;
+	char	source[0x100];
 	int     line;
 };
 
@@ -26,6 +27,7 @@ struct patch_s {
 	label_s* label;
 	long    orig;
 	int     branch;     // 1: relative branch, 0: absolute jmp
+	char	source[0x100];
 	int     line;
 };
 
@@ -55,7 +57,6 @@ struct param_t {
 };
 
 extern long org;        // current emit offset
-extern int linenum;
 extern long stop;
 extern long errors;
 
@@ -63,10 +64,14 @@ extern param_t* params;
 extern int param_num;
 
 label_s* add_label(const char* name, long orig);
-void add_patch(label_s* label, long orig, int branch, int line);
+void add_patch(label_s* label, long orig, int branch);
 define_s* add_define(char* name, char* replace);
 int eval(char* text, eval_t* result);
 void split_param(char* op);
 void emit(uint8_t b);
 
-int assemble (char *text, uint8_t *prg);
+int get_linenum();
+std::string get_source_name();
+
+int assemble (char *text, char *source_name, uint8_t *prg);
+void assemble_include(char* text, char* source_name);

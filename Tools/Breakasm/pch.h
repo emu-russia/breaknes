@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cctype>
 #include <list>
+#include <string>
 
 #include "ASM.h"
 #include "ASMOPS.h"
