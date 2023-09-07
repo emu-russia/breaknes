@@ -1,5 +1,5 @@
 // 6502 assembler.
-// There is NO experssion evaluation, I'm lazy to it )
+// There is NO experssion evaluation, I'm lazy to it :-)
 #include "pch.h"
 
 /*
@@ -8,7 +8,7 @@
 	[LABEL:]  COMMAND  [OPERAND1, OPERAND2, OPERAND3]       ; Comments
 
 	Commands can be any 6502 instruction or one of reserved directives:
-		ORG, DEFINE, BYTE, WORD, END, PROCESSOR
+		ORG, INCLUDE, DEFINE, BYTE, WORD, END, PROCESSOR
 
 	Register names and CPU instructions cannot be used as label names.
 
@@ -423,6 +423,7 @@ static void parse_line (char **text, line& ln)
 	char linebuf[1000], *lp = linebuf;
 	char label[1000] = {0}, cmd[1000] = {0}, op[1000] = {0}, *pp;
 	int parsing_cmd = 1;
+	int quot = 0, dquot = 0;
 
 	// Get actual line characters
 	while (timeout--) {
@@ -445,7 +446,9 @@ static void parse_line (char **text, line& ln)
 	while (1) {
 		c = *lp++;
 		if (c == 0) break;
-		if (c == ':') {
+		if (c == '\'' && !dquot) quot ^= 1;
+		if (c == '\"' && !quot) dquot ^= 1;
+		if (c == ':' && !(quot || dquot)) {
 			*pp++ = 0;              // complete parsing label
 			strcpy (label, cmd);
 			pp = cmd;
