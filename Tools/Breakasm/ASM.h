@@ -19,16 +19,16 @@ struct line {
 struct label_s {
 	char    name[128];
 	long    orig;
-	char	source[0x100];
-	int     line;
+	char	source[0x100];	// Name of the source file where the label was declared
+	int     line;		// Line number in the source file
 };
 
 struct patch_s {
 	label_s* label;
 	long    orig;
 	int     branch;     // 1: relative branch, 0: absolute jmp
-	char	source[0x100];
-	int     line;
+	char	source[0x100];	// Name of the source file where the patch field was encountered
+	int     line;		// Line number in the source file
 };
 
 struct define_s {
@@ -40,7 +40,7 @@ struct define_s {
 #define EVAL_WTF        0
 #define EVAL_NUMBER     1       // #$12
 #define EVAL_ADDRESS    2       // $aabb
-#define EVAL_LABEL      3       // BEGIN
+#define EVAL_LABEL      3       // BEGIN + including complex expressions that are saved as Label, but the expression is evaluated on the second pass
 #define EVAL_STRING     4       // "Hello", 'Hello'
 
 struct eval_t {
@@ -49,7 +49,7 @@ struct eval_t {
 	long    address;
 	char    string[256];
 	label_s* label;
-	int     indirect;
+	int     indirect;		// If the expression is enclosed in outer parentheses - such operand is considered as Indirect addressing
 };
 
 struct param_t {

@@ -1,5 +1,6 @@
 // 6502 assembler.
-// There is NO experssion evaluation, I'm lazy to it :-)
+// Note for experienced developers: the code was written when I was still a student and didn't know about Dragon Books or regular expressions.
+// That's why the code looks naive, but that's even good. New developers will learn it faster and take the ideas into circulation.
 #include "pch.h"
 
 /*
@@ -21,6 +22,9 @@ static uint8_t *PRG;
 long org;        // current emit offset
 long stop;
 long errors;
+
+// Previously, instead of list, we used a ordinary array of large size (limited) + a variable that stores the number of records.
+// Now it is essentially the same, but instead of an array it is a list of virtually unlimited size (as long as memory is available)
 
 static  std::list<label_s *> labels;    // name labels
 static  std::list<patch_s *> patchs;    // patch history
@@ -77,7 +81,7 @@ label_s *add_label (const char *name, long orig)
 	for (i=len-1; i>=0; i--) {
 		if (temp_name[i] <= ' ') temp_name[i] = 0;
 	}
-	//printf ( "ADD LABEL(%i): \'%s\' = %08X\n", linenum, temp_name, orig);
+	//printf ( "ADD LABEL(%s,%i): \'%s\' = %08X\n", get_source_name().c_str(), get_linenum(), temp_name, orig);
 	label = label_lookup (temp_name);
 	if ( label == NULL ) {
 		label = new label_s;
@@ -233,7 +237,7 @@ static void dump_defines (void)
 
 int eval (char *text, eval_t *result)
 {
-	char buf[1024], *p = buf, c, quot = 0, *ptr;
+	char buf[1024]{}, * p = buf, c, quot = 0, * ptr;
 	int type = EVAL_WTF, i, len;
 	define_s * def;
 	label_s * label;
@@ -386,7 +390,7 @@ static void dump_param (void)
 
 void split_param (char *op)
 {
-	char param[1024];
+	char param[1024]{};
 	char c, *ptr = param, quot = 0;
 
 	memset (param, 0, sizeof(param));
