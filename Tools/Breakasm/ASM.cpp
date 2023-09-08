@@ -27,7 +27,7 @@ long errors;
 // Now it is essentially the same, but instead of an array it is a list of virtually unlimited size (as long as memory is available)
 
 static  std::list<label_s *> labels;    // name labels
-static  std::list<patch_s *> patchs;    // patch history
+static  std::list<patch_s *> patches;   // patch history
 static  std::list<define_s *> defines;  // definitions
 
 static  std::list<std::string> source_name_stack;	// Stack for the name of the current source file (for INCLUDE)
@@ -41,6 +41,8 @@ static  std::list<int> linenum_stack;		// Stack for the line number of the curre
 /// <returns>Line number where the assembler is currently located in the current source file</returns>
 int get_linenum()
 {
+	if (linenum_stack.empty())
+		return 0;
 	return linenum_stack.back();
 }
 
@@ -55,6 +57,8 @@ void nextline()
 /// <returns></returns>
 std::string get_source_name()
 {
+	if (source_name_stack.empty())
+		return "";
 	return source_name_stack.back();
 }
 
@@ -89,6 +93,7 @@ label_s *add_label (const char *name, long orig)
 		label->orig = orig;
 		strcpy(label->source, get_source_name().c_str());
 		label->line = get_linenum();
+		label->composite = 0;
 		labels.push_back(label);
 	}
 	else {
@@ -119,7 +124,7 @@ static void dump_labels (void)
 	for (auto it = labels.begin(); it != labels.end(); ++it) {
 		label = *it;
 		if (label->orig == KEYWORD) continue;
-		printf("%i: $%08X = \'%s\'\n", i + 1, label->orig, label->name);
+		printf("%i: $%08X = \'%s\' %s\n", i + 1, label->orig, label->name, label->composite ? "=> expr" : "");
 		i++;
 	}
 }
@@ -135,7 +140,7 @@ void add_patch (label_s *label, long orig, int branch)
 	patch->branch = branch;
 	strcpy(patch->source, get_source_name().c_str());
 	patch->line = get_linenum();
-	patchs.push_back(patch);
+	patches.push_back(patch);
 }
 
 static void do_patch (void)
@@ -143,7 +148,7 @@ static void do_patch (void)
 	long orig;
 	int rel;
 	patch_s * patch;
-	for (auto it= patchs.begin(); it!= patchs.end(); ++it) {
+	for (auto it= patches.begin(); it!= patches.end(); ++it) {
 		patch = *it;
 		orig = patch->label->orig;
 		if ( orig == UNDEF ) {
@@ -172,8 +177,8 @@ static void do_patch (void)
 static void dump_patches (void)
 {
 	patch_s * patch;
-	printf ("\nPATCHS (%d):\n", (int)patchs.size());
-	for (auto it = patchs.begin(); it != patchs.end(); ++it) {
+	printf ("\nPATCHES (%d):\n", (int)patches.size());
+	for (auto it = patches.begin(); it != patches.end(); ++it) {
 		patch = *it;
 		printf("%s, line %i: $%08X = \'%s\'", patch->source, patch->line, patch->orig, patch->label->name);
 		if (patch->branch) printf(" (REL)\n");
@@ -233,14 +238,13 @@ static void dump_defines (void)
 // ****************************************************************
 // Evaluate expression
 
-// TODO: Evaluation code will be replaced by more complicated version (with macro-operations etc.)
-
 int eval (char *text, eval_t *result)
 {
 	char buf[1024]{}, * p = buf, c, quot = 0, * ptr;
 	int type = EVAL_WTF, i, len;
 	define_s * def;
 	label_s * label;
+	int composite_expr = 0;
 
 	// Indirect test
 	result->indirect = 0;
@@ -301,7 +305,7 @@ int eval (char *text, eval_t *result)
 		*p++ = 0;
 		type = EVAL_STRING;
 	}
-	else {          // Label azAZ09_
+	else {          // Label azAZ09_  + composite expressions are also saved as a "label"
 		while (1) {
 			c = *text++;
 			if (c == 0) break;
@@ -309,7 +313,12 @@ int eval (char *text, eval_t *result)
 			else if (c >= 'A' && c <= 'Z') *p++ = c;
 			else if (c >= '0' && c <= '9') *p++ = c;
 			else if (c == '_' ) *p++ = c;
-			else *p++ = c;
+			else {
+				// If we encounter some symbol NOT of the alphabet, we will assume that the label is a composite expression
+				if (c > ' ')
+					composite_expr = 1;
+				*p++ = c;
+			}
 		}
 		*p++ = 0;
 		type = EVAL_LABEL;
@@ -328,7 +337,10 @@ int eval (char *text, eval_t *result)
 			else {
 				label = label_lookup (buf);
 				if (label) result->label = label;
-				else result->label = add_label (buf, UNDEF);
+				else {
+					result->label = add_label(buf, UNDEF);
+					result->label->composite = composite_expr;
+				}
 			}
 			break;
 		case EVAL_STRING:
@@ -357,7 +369,41 @@ static void dump_eval (eval_t *eval)
 		case EVAL_STRING:
 			printf ("STRING: %s\n", eval->string);
 			break;
+		default:
+			printf("Undefined expression\n");
+			break;
 	}
+}
+
+static void tokenize(char* text, std::list<token_t>& tokens)
+{
+	tokens.clear();
+}
+
+static void dump_tokens(std::list<token_t>& tokens)
+{
+	for (auto it = tokens.begin(); it != tokens.end(); ++it) {
+
+	}
+}
+
+/// <summary>
+/// Calculate the expression and return a number. Possible errors are displayed in the process (if there is an error, return 0).
+/// </summary>
+/// <param name="text">The text of the expression, for example: MyData + 32 * entry_size + 12. Other labels and defines can be identifiers</param>
+/// <returns></returns>
+long eval_expr(char* text)
+{
+	std::list<token_t> tokens;
+	tokenize(text, tokens);
+
+#ifdef _DEBUG
+	dump_tokens(tokens);
+	dump_labels();
+	dump_defines();
+	dump_patches();
+#endif
+	return 0;
 }
 
 // ****************************************************************
@@ -535,9 +581,9 @@ static void cleanup (void)
 	}
 
 	// Clear patch table
-	while (!patchs.empty()) {
-		patch_s* item = patchs.back();
-		patchs.pop_back();
+	while (!patches.empty()) {
+		patch_s* item = patches.back();
+		patches.pop_back();
 		delete item;
 	}
 

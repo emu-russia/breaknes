@@ -21,6 +21,7 @@ struct label_s {
 	long    orig;
 	char	source[0x100];	// Name of the source file where the label was declared
 	int     line;		// Line number in the source file
+	int		composite;	// 1: A composite expression that uses the eval_expr method to parse it
 };
 
 struct patch_s {
@@ -42,6 +43,7 @@ struct define_s {
 #define EVAL_ADDRESS    2       // $aabb
 #define EVAL_LABEL      3       // BEGIN + including complex expressions that are saved as Label, but the expression is evaluated on the second pass
 #define EVAL_STRING     4       // "Hello", 'Hello'
+#define EVAL_OP			5		// Operation (+, -, etc.)
 
 struct eval_t {
 	int     type;
@@ -50,6 +52,29 @@ struct eval_t {
 	char    string[256];
 	label_s* label;
 	int     indirect;		// If the expression is enclosed in outer parentheses - such operand is considered as Indirect addressing
+};
+
+/// <summary>
+/// Operations for composite expressions. Used in the eval_expr method.
+/// </summary>
+enum OPS
+{
+	NOP = 0,
+	LPAREN, RPAREN,   // ( )
+	PLUS, MINUS,	// + -
+	NOT, NEG,     // ! ~
+	MUL, DIV, MOD,     // * / %
+	SHL, SHR, ROTL, ROTR,   // << >> <<< >>>
+	GREATER, GREATER_EQ, LESS, LESS_EQ,     // > >= < <=
+	LOGICAL_EQ, LOGICAL_NOTEQ,	// == !=
+	AND, OR, XOR, // & | ^
+};
+
+struct token_t {
+	int		type;			// Token type, overused definition EVAL_xxx; EVAL_LABEL in this case means that the token is an identifier
+	int		op;				// Type of operation (see OPS)
+	long	number;			// Converted number (EVAL_NUMBER)
+	char	string[0x100];	// String representation for EVAL_LABEL and EVAL_STRING
 };
 
 struct param_t {
@@ -67,6 +92,7 @@ label_s* add_label(const char* name, long orig);
 void add_patch(label_s* label, long orig, int branch);
 define_s* add_define(char* name, char* replace);
 int eval(char* text, eval_t* result);
+long eval_expr(char* text);
 void split_param(char* op);
 void emit(uint8_t b);
 
