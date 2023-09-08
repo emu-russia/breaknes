@@ -13,7 +13,7 @@ void Usage()
 
 void test_expr_eval()
 {
-	const char* text = "A * X + 2 - $100";
+	const char* text = "  A * X + 2 - $100   ";
 	add_define((char *)"A", (char*)"#5");
 	add_label("X", 0x1000);
 	auto res = eval_expr((char*)text);

@@ -375,15 +375,296 @@ static void dump_eval (eval_t *eval)
 	}
 }
 
-static void tokenize(char* text, std::list<token_t>& tokens)
+// The process of lexical analysis is classical: from a stream of characters (chars) a stream of tokens (token_t) is made. Then the list of obtained tokens is processed by the expression parser.
+
+static char get_char(char** pp)
 {
-	tokens.clear();
+	char* ptr = *pp;
+	char ch = *ptr++;
+	*pp = ptr;
+	return ch;
 }
 
-static void dump_tokens(std::list<token_t>& tokens)
+static void put_back_char(char** pp)
+{
+	char* ptr = *pp;
+	*pp = --ptr;
+}
+
+static token_t* create_op_token(int optype)
+{
+	token_t* token = new token_t;
+	token->type = EVAL_OP;
+	token->op = optype;
+	return token;
+}
+
+static token_t* next_token(char** pp)
+{
+	token_t* token = nullptr;
+	char buf[0x100]{}, *ptr;
+	int base = 10;
+	bool quot;
+
+	while (1) {
+
+		char ch = get_char(pp);
+		if (ch == 0)
+			break;
+		if (ch <= ' ')
+			continue;
+
+		if (ch == '#' || ch == '$' || isdigit(ch)) {	// Number
+			ptr = buf;
+			if (ch == '$')
+				base = 16;
+			else
+				base = 10;
+			if (isdigit(ch))
+				*ptr++ = ch;
+			while (1) {
+				ch = get_char(pp);
+				if (ch == '#') {
+				}
+				else if (ch == '$') {
+					base = 16;
+				}
+				else if (isxdigit(ch)) {
+					*ptr++ = ch;
+				}
+				else {
+					put_back_char(pp);
+					break;
+				}
+			}
+			*ptr++ = 0;
+			//printf("number: %s\n", buf);
+			token = new token_t;
+			token->type = EVAL_NUMBER;
+			token->number = strtoul(buf, nullptr, base);
+			return token;
+		}
+		else if (ch == '_' || isalpha(ch)) {	// Identifier [_a-zA-Z][_a-zA-Z0-9]
+			ptr = buf;
+			*ptr++ = ch;
+			while (1) {
+				ch = get_char(pp);
+				if (ch == '_' || isalpha(ch) || isdigit(ch)) {
+					*ptr++ = ch;
+				}
+				else {
+					put_back_char(pp);
+					break;
+				}
+			}
+			*ptr++ = 0;
+			//printf("ident: %s\n", buf);
+			token = new token_t;
+			token->type = EVAL_LABEL;
+			strcpy(token->string, buf);
+			return token;
+		}
+		else if (ch == '\"' || ch == '\'') {	// "String" 'String'
+			ptr = buf;
+			quot = ch == '\'';
+			while (1) {
+				ch = get_char(pp);
+				if (ch == '\'' || ch == '\"') {
+					if (quot) {
+						if (ch == '\'')
+							break;
+						else
+							*ptr++ = ch;
+					}
+					else {
+						if (ch == '\"')
+							break;
+						else
+							*ptr++ = ch;
+					}
+				}
+				else if (ch == 0) {
+					break;
+				}
+				else {
+					*ptr++ = ch;
+				}
+			}
+			*ptr++ = 0;
+			printf("string: %s\n", buf);
+			token = new token_t;
+			token->type = EVAL_STRING;
+			strcpy(token->string, buf);
+			return token;
+		}
+
+		// Operations
+		else if (ch == '(') {
+			token = create_op_token(LPAREN);
+			break;
+		}
+		else if (ch == ')') {
+			token = create_op_token(RPAREN);
+			break;
+		}
+		else if (ch == '+') {
+			token = create_op_token(PLUS);
+			break;
+		}
+		else if (ch == '-') {
+			token = create_op_token(MINUS);
+			break;
+		}
+		else if (ch == '!') {	// ! !=
+			char ch2 = get_char(pp);
+			if (ch2 == '=') {
+				token = create_op_token(LOGICAL_NOTEQ);
+				break;
+			}
+			else {
+				put_back_char(pp);
+				token = create_op_token(NOT);
+				break;
+			}
+		}
+		else if (ch == '~') {
+			token = create_op_token(NEG);
+			break;
+		}
+		else if (ch == '*') {
+			token = create_op_token(MUL);
+			break;
+		}
+		else if (ch == '/') {
+			token = create_op_token(DIV);
+			break;
+		}
+		else if (ch == '%') {
+			token = create_op_token(MOD);
+			break;
+		}
+		else if (ch == '&') {
+			token = create_op_token(AND);
+			break;
+		}
+		else if (ch == '|') {
+			token = create_op_token(OR);
+			break;
+		}
+		else if (ch == '^') {
+			token = create_op_token(XOR);
+			break;
+		}
+
+		else if (ch == '>') {	// > >= >> >>>
+			char ch2 = get_char(pp);
+			if (ch2 == '=') {
+				token = create_op_token(GREATER_EQ);
+				break;
+			}
+			else if (ch2 == '>') {
+				char ch3 = get_char(pp);
+				if (ch3 == '>') {
+					token = create_op_token(ROTR);
+					break;
+				}
+				else {
+					put_back_char(pp);
+					token = create_op_token(SHR);
+					break;
+				}
+			}
+			else {
+				put_back_char(pp);
+				token = create_op_token(GREATER);
+				break;
+			}
+		}
+		else if (ch == '<') {	// < <= << <<<
+			char ch2 = get_char(pp);
+			if (ch2 == '=') {
+				token = create_op_token(LESS_EQ);
+				break;
+			}
+			else if (ch2 == '<') {
+				char ch3 = get_char(pp);
+				if (ch3 == '<') {
+					token = create_op_token(ROTL);
+					break;
+				}
+				else {
+					put_back_char(pp);
+					token = create_op_token(SHL);
+					break;
+				}
+			}
+			else {
+				put_back_char(pp);
+				token = create_op_token(LESS);
+				break;
+			}
+		}
+		else if (ch == '=') {	// ==
+
+			char ch2 = get_char(pp);
+			if (ch2 == '=') {
+				token = create_op_token(LOGICAL_EQ);
+				break;
+			}
+			else {
+				put_back_char(pp);
+			}
+		}
+
+		printf("ERROR(%s,%i): unknown character in string: %c\n", get_source_name().c_str(), get_linenum(), ch);
+		errors++;
+		break;
+	}
+
+	return token;
+}
+
+static void tokenize(char* text, std::list<token_t*>& tokens)
+{
+	token_t* next = nullptr;
+	char* pp = text;
+	do {
+		next = next_token(&pp);
+		if (next != nullptr)
+			tokens.push_back(next);
+	} while (next != nullptr);
+}
+
+static const char* opstr(int type)
+{
+	const char* str[] = {
+		"NOP", "(", ")", "+", "-", "!", "~", "*", "/", "%",
+		"<<", ">>", "<<<", ">>>", ">", ">=", "<", "<=", 
+		"==", "!=", "&", "|", "^",
+	};
+	return str[type];
+}
+
+static void dump_tokens(std::list<token_t*>& tokens)
 {
 	for (auto it = tokens.begin(); it != tokens.end(); ++it) {
 
+		token_t* token = *it;
+		switch (token->type)
+		{
+			case EVAL_NUMBER:
+				printf("EVAL_NUMBER: %d (0x%08X)\n", token->number, token->number);
+				break;
+			case EVAL_LABEL:
+				printf("EVAL_IDENT: %s\n", token->string);
+				break;
+			case EVAL_STRING:
+				printf("EVAL_STRING: %s\n", token->string);
+				break;
+			case EVAL_OP:
+				printf("EVAL_OP: %s\n", opstr(token->op));
+				break;
+		}
 	}
 }
 
@@ -394,15 +675,24 @@ static void dump_tokens(std::list<token_t>& tokens)
 /// <returns></returns>
 long eval_expr(char* text)
 {
-	std::list<token_t> tokens;
+	std::list<token_t*> tokens;
 	tokenize(text, tokens);
 
 #ifdef _DEBUG
+	printf("Source expression: %s\n", text);
 	dump_tokens(tokens);
 	dump_labels();
 	dump_defines();
 	dump_patches();
 #endif
+
+	// Clean
+	while (!tokens.empty()) {
+		token_t* token = tokens.back();
+		tokens.pop_back();
+		delete token;
+	}
+	
 	return 0;
 }
 
