@@ -62,6 +62,7 @@ IndirectLabel:
 	cmp #1
 	sbc #1
 
+; It is no longer necessary to specify the A register in the parameters, since version 1.2
 	asl a
 	rol a
 	lsr a
