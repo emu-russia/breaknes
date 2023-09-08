@@ -8,7 +8,7 @@ void Usage()
 {
 	printf("Breakasm, ver. %s\n", BREAKASM_VERSION);
 	printf("Use: Breakasm <source.asm> <output.prg>\n");
-	printf("Example: Breakasm Test.asm Test.prg\n");
+	printf("Example: Breakasm test.asm test.prg\n");
 }
 
 void test_expr_eval()
