@@ -77,6 +77,19 @@ struct token_t {
 	char	string[0x100];	// String representation for EVAL_LABEL and EVAL_STRING
 };
 
+// Parses a stream of tokens into a syntax tree. The nodes of the tree can be either expressions or operations.
+// Expressions are identifiers, numbers or strings.
+// Operations are special commands that control the "growth" of the tree.
+// The branches of a tree can grow recursively, in the form of subtrees.
+
+struct node_t
+{
+	node_t* lvalue;
+	node_t* rvalue;
+	token_t* token;
+	int     depth;
+};
+
 struct param_t {
 	char    string[1024];
 };

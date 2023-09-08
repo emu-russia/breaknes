@@ -13,9 +13,9 @@ void Usage()
 
 void test_expr_eval()
 {
-	const char* text = "  A * X + 2 - $100   ";
-	add_define((char *)"A", (char*)"#5");
-	add_label("X", 0x1000);
+	const char* text = "  Base * ItemID + 2 - $100   ";
+	add_define((char *)"Base", (char*)"#$1000");
+	add_label("ItemID", 5);
 	auto res = eval_expr((char*)text);
 }
 
@@ -23,8 +23,8 @@ int main(int argc, char** argv)
 {
 	FILE* f;
 
-	test_expr_eval();
-	return 0;
+	//test_expr_eval();
+	//return 0;
 
 	if (argc < 3)
 	{
