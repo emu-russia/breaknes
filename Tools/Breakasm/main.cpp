@@ -17,7 +17,7 @@ void test_expr_eval()
 	//const char* text = " $700";
 	add_define((char *)"SPR_TAB", (char*)"$700");
 	//add_label("ItemID", 5);
-	auto res = eval_expr((char*)text, true);
+	auto res = eval_expr((char*)text, true, false);
 }
 
 int main(int argc, char** argv)

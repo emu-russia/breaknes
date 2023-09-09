@@ -28,6 +28,8 @@
 
 */
 
+// TODO: Simplify addressing modes.
+
 // Typical errors
 
 #include "pch.h"
@@ -110,11 +112,27 @@ void opLDST (char *cmd, char *ops)
 			}
 		}
 		else if ( type[0] == EVAL_LABEL ) {     // Absolute
-			if ( !_stricmp (cmd, "LDA") ) emit (0xAD);
-			if ( !_stricmp (cmd, "STA") ) emit (0x8D);
-			label = add_label (val[0].label->name, UNDEF);
-			add_patch (label, org, 0 );
-			emit (0); emit (0);
+			long addr = eval_expr(val[0].label->name, false, true);
+			if (addr != 0) {
+				if (addr >= 0x100) {
+					if (!_stricmp(cmd, "LDA")) emit(0xAD);
+					if (!_stricmp(cmd, "STA")) emit(0x8D);
+					emit(addr & 0xff);
+					emit((addr >> 8) & 0xff);
+				}
+				else {      // Zero Page
+					if (!_stricmp(cmd, "LDA")) emit(0xA5);
+					if (!_stricmp(cmd, "STA")) emit(0x85);
+					emit(addr & 0xff);
+				}
+			}
+			else {
+				if (!_stricmp(cmd, "LDA")) emit(0xAD);
+				if (!_stricmp(cmd, "STA")) emit(0x8D);
+				label = add_label(val[0].label->name, UNDEF);
+				add_patch(label, org, 0);
+				emit(0); emit(0);
+			}
 		}
 		else WrongParameters (cmd, ops);
 	}
@@ -150,17 +168,18 @@ void opLDST (char *cmd, char *ops)
 			}
 			else WrongParameters (cmd, ops);
 		}
-		else if ( type[0] == EVAL_ADDRESS ) {
-			if ( val[0].address < 0x100 ) {     // Zero page, X
+		else if ( type[0] == EVAL_ADDRESS || type[0] == EVAL_NUMBER ) {
+			long addr = type[0] == EVAL_ADDRESS ? val[0].address : val[0].number;
+			if (addr < 0x100 ) {     // Zero page, X
 				if (val[1].label->orig == KEYWORD && !_stricmp(val[1].label->name, "X")) {
 					if ( !_stricmp ( cmd, "LDA" ) ) emit ( 0xB5 );
 					if ( !_stricmp ( cmd, "STA" ) ) emit ( 0x95 );
-					emit ( val[0].address & 0xff );
+					emit (addr & 0xff );
 				}
 				else if (val[1].label->orig == KEYWORD && !_stricmp(val[1].label->name, "Y")) {     // Indirect, Y
 					if ( !_stricmp ( cmd, "LDA" ) ) emit ( 0xB1 );
 					if ( !_stricmp ( cmd, "STA" ) ) emit ( 0x91 );
-					emit ( val[0].address & 0xff );
+					emit (addr & 0xff );
 				}
 				else WrongParameters (cmd, ops);
 			}
@@ -168,18 +187,19 @@ void opLDST (char *cmd, char *ops)
 				if (val[1].label->orig == KEYWORD && !_stricmp(val[1].label->name, "X")) {
 					if ( !_stricmp ( cmd, "LDA" ) ) emit ( 0xBD );
 					if ( !_stricmp ( cmd, "STA" ) ) emit ( 0x9D );
-					emit ( val[0].address & 0xff );
-					emit ( (val[0].address >> 8) & 0xff );
+					emit (addr & 0xff );
+					emit ( (addr >> 8) & 0xff );
 				}
 				else if (val[1].label->orig == KEYWORD && !_stricmp(val[1].label->name, "Y")) {
 					if ( !_stricmp ( cmd, "LDA" ) ) emit ( 0xB9 );
 					if ( !_stricmp ( cmd, "STA" ) ) emit ( 0x99 );
-					emit ( val[0].address & 0xff );
-					emit ( (val[0].address >> 8) & 0xff );
+					emit (addr & 0xff );
+					emit ( (addr >> 8) & 0xff );
 				}
 				else WrongParameters (cmd, ops);
 			}
 		}
+		else WrongParameters(cmd, ops);
 	}
 	else NotEnoughParameters (cmd);
 }
@@ -208,11 +228,27 @@ void opLDSTX (char *cmd, char *ops)
 			}
 		}
 		else if ( type[0] == EVAL_LABEL ) {     // Absolute by label
-			if ( !_stricmp ( cmd, "LDX" ) ) emit ( 0xAE );
-			if ( !_stricmp ( cmd, "STX" ) ) emit ( 0x8E );
-			label = add_label (val[0].label->name, UNDEF);
-			add_patch (label, org, 0 );
-			emit (0); emit (0);
+			long addr = eval_expr(val[0].label->name, false, true);
+			if (addr != 0) {
+				if (addr < 0x100) {     // Zero page
+					if (!_stricmp(cmd, "LDX")) emit(0xA6);
+					if (!_stricmp(cmd, "STX")) emit(0x86);
+					emit(addr & 0xff);
+				}
+				else {  // Absolute
+					if (!_stricmp(cmd, "LDX")) emit(0xAE);
+					if (!_stricmp(cmd, "STX")) emit(0x8E);
+					emit(addr & 0xff);
+					emit((addr >> 8) & 0xff);
+				}
+			}
+			else {
+				if (!_stricmp(cmd, "LDX")) emit(0xAE);
+				if (!_stricmp(cmd, "STX")) emit(0x8E);
+				label = add_label(val[0].label->name, UNDEF);
+				add_patch(label, org, 0);
+				emit(0); emit(0);
+			}
 		}
 		else if ( type[0] == EVAL_NUMBER ) {    // #
 			if ( !_stricmp ( cmd, "LDX" ) ) {
@@ -291,11 +327,27 @@ void opLDSTY (char *cmd, char *ops)
 			}
 		}
 		else if ( type[0] == EVAL_LABEL ) {     // Absolute by label
-			if ( !_stricmp ( cmd, "LDY" ) ) emit ( 0xAC );
-			if ( !_stricmp ( cmd, "STY" ) ) emit ( 0x8C );
-			label = add_label (val[0].label->name, UNDEF);
-			add_patch (label, org, 0 );
-			emit (0); emit (0);
+			long addr = eval_expr(val[0].label->name, false, true);
+			if (addr != 0) {
+				if (addr < 0x100) {     // Zero page
+					if (!_stricmp(cmd, "LDY")) emit(0xA4);
+					if (!_stricmp(cmd, "STY")) emit(0x84);
+					emit(addr & 0xff);
+				}
+				else {  // Absolute
+					if (!_stricmp(cmd, "LDY")) emit(0xAC);
+					if (!_stricmp(cmd, "STY")) emit(0x8C);
+					emit(addr & 0xff);
+					emit((addr >> 8) & 0xff);
+				}
+			}
+			else {
+				if (!_stricmp(cmd, "LDY")) emit(0xAC);
+				if (!_stricmp(cmd, "STY")) emit(0x8C);
+				label = add_label(val[0].label->name, UNDEF);
+				add_patch(label, org, 0);
+				emit(0); emit(0);
+			}
 		}
 		else if ( type[0] == EVAL_NUMBER ) {    // #
 			if ( !_stricmp ( cmd, "LDY" ) ) {
@@ -474,15 +526,39 @@ void opALU1 (char *cmd, char *ops)
 			emit ( val[0].number & 0xff );
 		}
 		else if ( type[0] == EVAL_LABEL ) {     // Absolute by label
-			if ( !_stricmp ( cmd, "ORA" ) ) emit ( 0x0D );
-			if ( !_stricmp ( cmd, "AND" ) ) emit ( 0x2D );
-			if ( !_stricmp ( cmd, "EOR" ) ) emit ( 0x4D );
-			if ( !_stricmp ( cmd, "ADC" ) ) emit ( 0x6D );
-			if ( !_stricmp ( cmd, "CMP" ) ) emit ( 0xCD );
-			if ( !_stricmp ( cmd, "SBC" ) ) emit ( 0xED );
-			label = add_label (val[0].label->name, UNDEF);
-			add_patch (label, org, 0 );
-			emit (0); emit (0);
+			long addr = eval_expr(val[0].label->name, false, true);
+			if (addr != 0) {
+				if (addr < 0x100) {     // Zero page
+					if (!_stricmp(cmd, "ORA")) emit(0x05);
+					if (!_stricmp(cmd, "AND")) emit(0x25);
+					if (!_stricmp(cmd, "EOR")) emit(0x45);
+					if (!_stricmp(cmd, "ADC")) emit(0x65);
+					if (!_stricmp(cmd, "CMP")) emit(0xC5);
+					if (!_stricmp(cmd, "SBC")) emit(0xE5);
+					emit(addr & 0xff);
+				}
+				else {  // Absolute
+					if (!_stricmp(cmd, "ORA")) emit(0x0D);
+					if (!_stricmp(cmd, "AND")) emit(0x2D);
+					if (!_stricmp(cmd, "EOR")) emit(0x4D);
+					if (!_stricmp(cmd, "ADC")) emit(0x6D);
+					if (!_stricmp(cmd, "CMP")) emit(0xCD);
+					if (!_stricmp(cmd, "SBC")) emit(0xED);
+					emit(addr & 0xff);
+					emit((addr >> 8) & 0xff);
+				}
+			}
+			else {
+				if (!_stricmp(cmd, "ORA")) emit(0x0D);
+				if (!_stricmp(cmd, "AND")) emit(0x2D);
+				if (!_stricmp(cmd, "EOR")) emit(0x4D);
+				if (!_stricmp(cmd, "ADC")) emit(0x6D);
+				if (!_stricmp(cmd, "CMP")) emit(0xCD);
+				if (!_stricmp(cmd, "SBC")) emit(0xED);
+				label = add_label(val[0].label->name, UNDEF);
+				add_patch(label, org, 0);
+				emit(0); emit(0);
+			}
 		}
 		else WrongParameters (cmd, ops);
 	}
@@ -622,13 +698,33 @@ void opSHIFT (char *cmd, char *ops)
 				if ( !_stricmp ( cmd, "ROR" ) ) emit ( 0x6A );
 			}
 			else {                              // Absolute by label
-				if ( !_stricmp ( cmd, "ASL" ) ) emit ( 0x0E );
-				if ( !_stricmp ( cmd, "ROL" ) ) emit ( 0x2E );
-				if ( !_stricmp ( cmd, "LSR" ) ) emit ( 0x4E );
-				if ( !_stricmp ( cmd, "ROR" ) ) emit ( 0x6E );
-				label = add_label (val[0].label->name, UNDEF);
-				add_patch (label, org, 0 );
-				emit (0); emit (0);
+				long addr = eval_expr(val[0].label->name, false, true);
+				if (addr != 0) {
+					if (addr < 0x100) {     // Zero page
+						if (!_stricmp(cmd, "ASL")) emit(0x06);
+						if (!_stricmp(cmd, "ROL")) emit(0x26);
+						if (!_stricmp(cmd, "LSR")) emit(0x46);
+						if (!_stricmp(cmd, "ROR")) emit(0x66);
+						emit(addr & 0xff);
+					}
+					else {  // Absolute
+						if (!_stricmp(cmd, "ASL")) emit(0x0E);
+						if (!_stricmp(cmd, "ROL")) emit(0x2E);
+						if (!_stricmp(cmd, "LSR")) emit(0x4E);
+						if (!_stricmp(cmd, "ROR")) emit(0x6E);
+						emit(addr & 0xff);
+						emit((addr >> 8) & 0xff);
+					}
+				}
+				else {
+					if (!_stricmp(cmd, "ASL")) emit(0x0E);
+					if (!_stricmp(cmd, "ROL")) emit(0x2E);
+					if (!_stricmp(cmd, "LSR")) emit(0x4E);
+					if (!_stricmp(cmd, "ROR")) emit(0x6E);
+					label = add_label(val[0].label->name, UNDEF);
+					add_patch(label, org, 0);
+					emit(0); emit(0);
+				}
 			}
 		}
 		else WrongParameters (cmd, ops);
@@ -701,10 +797,24 @@ void opBIT (char *cmd, char *ops)
 			}
 		}
 		else if (type == EVAL_LABEL) {
-			emit (0x2C);
-			label = add_label (val.label->name, UNDEF);
-			add_patch (label, org, 0 );
-			emit (0); emit (0);
+			long addr = eval_expr(val.label->name, false, true);
+			if (addr != 0) {
+				if (addr < 0x100) {     // Zero page
+					emit(0x24);
+					emit(addr & 0xff);
+				}
+				else {      // Absoulte
+					emit(0x2C);
+					emit(addr & 0xff);
+					emit((addr >> 8) & 0xff);
+				}
+			}
+			else {
+				emit(0x2C);
+				label = add_label(val.label->name, UNDEF);
+				add_patch(label, org, 0);
+				emit(0); emit(0);
+			}
 		}
 		else WrongParameters (cmd, ops);
 	}
@@ -736,11 +846,27 @@ void opINCDEC (char *cmd, char *ops)
 			}
 		}
 		else if ( type[0] == EVAL_LABEL ) {     // Absolute by label
-			if ( !_stricmp ( cmd, "INC" ) ) emit ( 0xEE );
-			if ( !_stricmp ( cmd, "DEC" ) ) emit ( 0xCE );
-			label = add_label (val[0].label->name, UNDEF);
-			add_patch (label, org, 0 );
-			emit (0); emit (0);
+			long addr = eval_expr(val[0].label->name, false, true);
+			if (addr != 0) {
+				if (addr < 0x100) {     // Zero page
+					if (!_stricmp(cmd, "INC")) emit(0xE6);
+					if (!_stricmp(cmd, "DEC")) emit(0xC6);
+					emit(addr & 0xff);
+				}
+				else {  // Absolute
+					if (!_stricmp(cmd, "INC")) emit(0xEE);
+					if (!_stricmp(cmd, "DEC")) emit(0xCE);
+					emit(addr & 0xff);
+					emit((addr >> 8) & 0xff);
+				}
+			}
+			else {
+				if (!_stricmp(cmd, "INC")) emit(0xEE);
+				if (!_stricmp(cmd, "DEC")) emit(0xCE);
+				label = add_label(val[0].label->name, UNDEF);
+				add_patch(label, org, 0);
+				emit(0); emit(0);
+			}
 		}
 		else WrongParameters (cmd, ops);
 	}
@@ -813,11 +939,27 @@ void opCPXY (char *cmd, char *ops)
 			}
 		}
 		else if (type == EVAL_LABEL) {
-			if ( !_stricmp ( cmd, "CPX" ) ) emit ( 0xEC );
-			if ( !_stricmp ( cmd, "CPY" ) ) emit ( 0xCC );
-			label = add_label (val.label->name, UNDEF);
-			add_patch (label, org, 0 );
-			emit (0); emit (0);
+			long addr = eval_expr(val.label->name, false, true);
+			if (addr != 0) {
+				if (addr < 0x100) {     // Zero page
+					if (!_stricmp(cmd, "CPX")) emit(0xE4);
+					if (!_stricmp(cmd, "CPY")) emit(0xC4);
+					emit(addr & 0xff);
+				}
+				else {      // Absoulte
+					if (!_stricmp(cmd, "CPX")) emit(0xEC);
+					if (!_stricmp(cmd, "CPY")) emit(0xCC);
+					emit(addr & 0xff);
+					emit((addr >> 8) & 0xff);
+				}
+			}
+			else {
+				if (!_stricmp(cmd, "CPX")) emit(0xEC);
+				if (!_stricmp(cmd, "CPY")) emit(0xCC);
+				label = add_label(val.label->name, UNDEF);
+				add_patch(label, org, 0);
+				emit(0); emit(0);
+			}
 		}
 		else WrongParameters (cmd, ops);
 	}

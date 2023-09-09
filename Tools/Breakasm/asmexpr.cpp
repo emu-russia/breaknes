@@ -26,7 +26,7 @@ static token_t* create_op_token(OPS optype)
 	return token;
 }
 
-static token_t* next_token(char** pp)
+static token_t* next_token(char** pp, bool quiet)
 {
 	token_t* token = nullptr;
 	char buf[0x100]{}, *ptr;
@@ -122,7 +122,7 @@ static token_t* next_token(char** pp)
 				}
 			}
 			*ptr++ = 0;
-			printf("string: %s\n", buf);
+			//printf("string: %s\n", buf);
 			token = new token_t;
 			token->type = TOKEN_STRING;
 			token->op = OPS::NOP;
@@ -251,20 +251,22 @@ static token_t* next_token(char** pp)
 			}
 		}
 
-		printf("ERROR(%s,%i): unknown character in string: %c\n", get_source_name().c_str(), get_linenum(), ch);
-		errors++;
+		if (!quiet) {
+			printf("ERROR(%s,%i): unknown character in string: %c\n", get_source_name().c_str(), get_linenum(), ch);
+			errors++;
+		}
 		break;
 	}
 
 	return token;
 }
 
-static void tokenize(char* text, std::list<token_t*>& tokens)
+static void tokenize(char* text, std::list<token_t*>& tokens, bool quiet)
 {
 	token_t* next = nullptr;
 	char* pp = text;
 	do {
-		next = next_token(&pp);
+		next = next_token(&pp, quiet);
 		if (next != nullptr)
 			tokens.push_back(next);
 	} while (next != nullptr);
@@ -357,7 +359,7 @@ static node_t* addnode(std::list<node_t*>& tree, token_t* token, int depth)
 }
 
 // executing the tree (semantic analysis)
-static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
+static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue, bool quiet)
 {
 	node_t * curr;
 	long rvalue = 0, mvalue;
@@ -377,8 +379,10 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 		token = curr->token;
 		if ( token->type == TOKEN_OP && isunary(token->op) ) {
 			if (curr->rvalue == NULL) {
-				printf("Missing identifier\n");
-				errors++;
+				if (!quiet) {
+					printf("Missing identifier\n");
+					errors++;
+				}
 			}
 			else {
 				curr = curr->rvalue;
@@ -397,7 +401,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 
 			if ( curr->depth > expr->depth ) {  // nested expression
 				if (debug) printf ( "SUBEVAL " );
-				curr = evaluate (tree, curr, &mvalue);
+				curr = evaluate (tree, curr, &mvalue, quiet);
 				//printf ( "SUB LVALUE : %i\n", mvalue.num.value );
 			}
 			else if ( token->type == TOKEN_IDENT) {
@@ -405,7 +409,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 
 				define_s* def = define_lookup(token->string);
 				if (def) {
-					mvalue = eval_expr(def->replace, debug);
+					mvalue = eval_expr(def->replace, debug, quiet);
 				}
 				else {
 					label_s* label = label_lookup(token->string);
@@ -413,7 +417,10 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 						mvalue = label->orig;
 					}
 					else {
-						printf("Undefined identifier: %s", token->string);
+						if (!quiet) {
+							printf("Undefined identifier: %s", token->string);
+							errors++;
+						}
 					}
 				}
 				if (debug) printf ( "SYMBOL: %s", token->string );
@@ -461,8 +468,10 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 			else rvalue = mvalue;
 		}
 		else {
-			printf ("Identifier required\n");
-			errors++;
+			if (!quiet) {
+				printf("Identifier required\n");
+				errors++;
+			}
 		}
 
 		// optional binary operation
@@ -485,7 +494,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 }
 
 // grow a syntax tree
-static void grow (tree_t& tree, node_t **expr, token_t * token)
+static void grow (tree_t& tree, node_t **expr, token_t * token, bool quiet)
 {
 	node_t *node = addnode (tree.nodes, token, tree.depth );
 
@@ -508,7 +517,11 @@ static void grow (tree_t& tree, node_t **expr, token_t * token)
 			else if (token->op == OPS::RPAREN) {
 				tree.prio--;
 				if (tree.depth > 0) tree.depth--;
-				else printf("Unmatched parenthesis");
+				else {
+					if (!quiet) {
+						printf("Unmatched parenthesis");
+					}
+				}
 				return;
 			}
 			else if (opprio[(int)token->op] > tree.prio_stack[tree.prio]) {  // priority increase. for binary operations, the priority of the previous token is also increased.
@@ -545,7 +558,7 @@ static void dump_tree(tree_t& tree, node_t* root)
 	printf("\n");
 }
 
-long eval_expr(char* text, bool debug)
+long eval_expr(char* text, bool debug, bool quiet)
 {
 	char expr[0x100];
 	sprintf(expr, "res=%s", text);
@@ -553,7 +566,7 @@ long eval_expr(char* text, bool debug)
 	// Obtain token stream
 
 	std::list<token_t*> tokens;
-	tokenize(expr, tokens);
+	tokenize(expr, tokens, quiet);
 	if (debug)
 		dump_tokens(tokens);
 
@@ -562,7 +575,7 @@ long eval_expr(char* text, bool debug)
 	tree_t tree{};
 	node_t* root = nullptr;
 	for (auto it = tokens.begin(); it != tokens.end(); ++it) {
-		grow(tree, &root, *it);
+		grow(tree, &root, *it, quiet);
 	}
 	if (debug)
 		dump_tree(tree, root);
@@ -570,7 +583,7 @@ long eval_expr(char* text, bool debug)
 	// Execute the tree
 
 	long result = 0;
-	evaluate(tree.nodes, root->rvalue->rvalue, &result);
+	evaluate(tree.nodes, root->rvalue->rvalue, &result, quiet);
 
 	if (debug)
 		printf("Source expression: %s, result: %d (0x%08X)\n", text, result, result);
