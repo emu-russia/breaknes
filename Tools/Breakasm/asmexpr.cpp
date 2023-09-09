@@ -19,7 +19,7 @@ static void put_back_char(char** pp)
 static token_t* create_op_token(OPS optype)
 {
 	token_t* token = new token_t;
-	token->type = EVAL_OP;
+	token->type = TOKEN_OP;
 	token->op = optype;
 	return token;
 }
@@ -65,7 +65,7 @@ static token_t* next_token(char** pp)
 			*ptr++ = 0;
 			//printf("number: %s\n", buf);
 			token = new token_t;
-			token->type = EVAL_NUMBER;
+			token->type = TOKEN_NUMBER;
 			token->number = strtoul(buf, nullptr, base);
 			return token;
 		}
@@ -85,7 +85,7 @@ static token_t* next_token(char** pp)
 			*ptr++ = 0;
 			//printf("ident: %s\n", buf);
 			token = new token_t;
-			token->type = EVAL_LABEL;
+			token->type = TOKEN_IDENT;
 			strcpy(token->string, buf);
 			return token;
 		}
@@ -118,7 +118,7 @@ static token_t* next_token(char** pp)
 			*ptr++ = 0;
 			printf("string: %s\n", buf);
 			token = new token_t;
-			token->type = EVAL_STRING;
+			token->type = TOKEN_STRING;
 			strcpy(token->string, buf);
 			return token;
 		}
@@ -277,17 +277,17 @@ static void dump_tokens(std::list<token_t*>& tokens)
 		token_t* token = *it;
 		switch (token->type)
 		{
-			case EVAL_NUMBER:
-				printf("EVAL_NUMBER: %d (0x%08X)\n", token->number, token->number);
+			case TOKEN_NUMBER:
+				printf("TOKEN_NUMBER: %d (0x%08X)\n", token->number, token->number);
 				break;
-			case EVAL_LABEL:
-				printf("EVAL_IDENT: %s\n", token->string);
+			case TOKEN_IDENT:
+				printf("TOKEN_IDENT: %s\n", token->string);
 				break;
-			case EVAL_STRING:
-				printf("EVAL_STRING: %s\n", token->string);
+			case TOKEN_STRING:
+				printf("TOKEN_STRING: %s\n", token->string);
 				break;
-			case EVAL_OP:
-				printf("EVAL_OP: %s\n", opstr(token->op));
+			case TOKEN_OP:
+				printf("TOKEN_OP: %s\n", opstr(token->op));
 				break;
 		}
 	}
@@ -364,7 +364,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 
 		// optional unary operation
 		token = curr->token;
-		if ( token->type == EVAL_OP && isunary(token->op) ) {
+		if ( token->type == TOKEN_OP && isunary(token->op) ) {
 			if (curr->rvalue == NULL) {
 				printf("Missing identifier\n");
 				errors++;
@@ -380,7 +380,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 
 		// mandatory identifier or nested expression
 		token = curr->token;
-		if ( token->type == EVAL_LABEL || token->type == EVAL_NUMBER || curr->depth > expr->depth ) {
+		if ( token->type == TOKEN_IDENT || token->type == TOKEN_NUMBER || curr->depth > expr->depth ) {
 
 			mvalue = 0;
 
@@ -389,7 +389,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 				curr = evaluate (tree, curr, &mvalue);
 				//printf ( "SUB LVALUE : %i\n", mvalue.num.value );
 			}
-			else if ( token->type == EVAL_LABEL) {
+			else if ( token->type == TOKEN_IDENT) {
 				curr = curr->rvalue;
 
 				define_s* def = define_lookup(token->string);
@@ -407,7 +407,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 				}
 				if (debug) printf ( "SYMBOL: %s", token->string );
 			}
-			else if ( token->type == EVAL_NUMBER) {
+			else if ( token->type == TOKEN_NUMBER) {
 				curr = curr->rvalue;
 				mvalue = token->number;
 				if (debug) printf ( "NUMBER(%i) ", mvalue );
@@ -457,7 +457,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 		// optional binary operation
 		if (curr && curr->depth == expr->depth ) {
 			token = curr->token;
-			if ( token->type == EVAL_OP && isbinary(token->op) ) {
+			if ( token->type == TOKEN_OP && isbinary(token->op) ) {
 				curr = curr->rvalue;
 				op = token->op;
 			}
@@ -487,7 +487,7 @@ static void grow (tree_t& tree, node_t **expr, token_t * token)
 		tree.initialized = 1;
 	}
 
-	if ( token->type == EVAL_OP) {
+	if ( token->type == TOKEN_OP) {
 		if ( token->op == OPS::LPAREN) {
 			tree.prio++;
 			tree.depth++;

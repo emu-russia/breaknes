@@ -7,6 +7,11 @@
 
 #pragma once
 
+#define TOKEN_NUMBER	1		// #$12, $aabb
+#define TOKEN_IDENT		2		// identifier (label / define)
+#define TOKEN_STRING	3		// "Hello", 'Hello'
+#define TOKEN_OP		4		// Operation (+, -, etc.)
+
 /// <summary>
 /// Operations for composite expressions. Used in the eval_expr method.
 /// </summary>
@@ -24,10 +29,10 @@ enum class OPS
 };
 
 struct token_t {
-	int		type;			// Token type, overused definition EVAL_xxx; EVAL_LABEL in this case means that the token is an identifier
+	int		type;			// Token type
 	OPS		op;				// Type of operation (see OPS)
-	long	number;			// Converted number (EVAL_NUMBER)
-	char	string[0x100];	// String representation for EVAL_LABEL and EVAL_STRING
+	long	number;			// Converted number (TOKEN_NUMBER)
+	char	string[0x100];	// String representation for TOKEN_IDENT and TOKEN_STRING
 };
 
 struct node_t
