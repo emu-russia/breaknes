@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using static SharpTools.CoreDebug;
 
 namespace SharpTools
@@ -7,7 +6,7 @@ namespace SharpTools
 	public class BreaksCore
 	{
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern int Assemble(string text, byte[] buffer);
+		public static extern int Assemble(string text, string source_name, byte[] buffer);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void CreateBoard(string boardName, string apu, string ppu, string p1);

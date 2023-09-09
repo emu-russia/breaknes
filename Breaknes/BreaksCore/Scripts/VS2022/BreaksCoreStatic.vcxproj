@@ -19,8 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Tools\Breakasm\ASM.cpp" />
-    <ClCompile Include="..\..\..\..\Tools\Breakasm\ASMOPS.cpp" />
+    <ClCompile Include="..\..\..\..\Tools\Breakasm\asm.cpp" />
+    <ClCompile Include="..\..\..\..\Tools\Breakasm\asmexpr.cpp" />
+    <ClCompile Include="..\..\..\..\Tools\Breakasm\asmops.cpp" />
     <ClCompile Include="..\..\AbstractBoard.cpp" />
     <ClCompile Include="..\..\APUPlayerBoard.cpp" />
     <ClCompile Include="..\..\APUPlayerBoardDebug.cpp" />
@@ -44,8 +45,9 @@
     <ClCompile Include="..\..\SignalDefs.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Tools\Breakasm\ASM.h" />
-    <ClInclude Include="..\..\..\..\Tools\Breakasm\ASMOPS.h" />
+    <ClInclude Include="..\..\..\..\Tools\Breakasm\asm.h" />
+    <ClInclude Include="..\..\..\..\Tools\Breakasm\asmexpr.h" />
+    <ClInclude Include="..\..\..\..\Tools\Breakasm\asmops.h" />
     <ClInclude Include="..\..\AbstractBoard.h" />
     <ClInclude Include="..\..\APUPlayerBoard.h" />
     <ClInclude Include="..\..\BoardFactory.h" />

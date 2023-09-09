@@ -24,8 +24,8 @@ int main(int argc, char** argv)
 {
 	FILE* f;
 
-	test_expr_eval();
-	return 0;
+	//test_expr_eval();
+	//return 0;
 
 	if (argc < 3)
 	{

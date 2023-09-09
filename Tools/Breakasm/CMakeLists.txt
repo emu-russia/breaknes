@@ -9,6 +9,7 @@ set(CMAKE_BUILD_TYPE Release)
 
 add_executable (breakasm 
 	main.cpp 
-	ASM.cpp
-	ASMOPS.cpp
+	asm.cpp
+	asmops.cpp
+	asmexpr.cpp
 )

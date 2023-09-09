@@ -5,9 +5,9 @@ Breaknes::Board* board = nullptr;
 extern "C"
 {
 #ifdef _WIN32
-	DLL_EXPORT int Assemble(char* str, uint8_t* buffer)
+	DLL_EXPORT int Assemble(char* str, char *source_name, uint8_t* buffer)
 	{
-		return assemble(str, buffer);
+		return assemble(str, source_name, buffer);
 	}
 #endif
 

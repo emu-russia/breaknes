@@ -8,8 +8,9 @@
 #include <list>
 #include <string>
 
-#include "ASM.h"
-#include "ASMOPS.h"
+#include "asm.h"
+#include "asmops.h"
+#include "asmexpr.h"
 
 #ifdef _LINUX
 #define _stricmp strcasecmp

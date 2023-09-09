@@ -312,7 +312,7 @@ namespace BreaksDebug
 
 			byte[] buffer = new byte[0x10000];
 
-			int num_err = BreaksCore.Assemble(richTextBox1.Text, buffer);
+			int num_err = BreaksCore.Assemble(richTextBox1.Text, "main.asm", buffer);
 			if (num_err != 0)
 			{
 				MessageBox.Show(
