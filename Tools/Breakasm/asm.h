@@ -43,7 +43,6 @@ struct define_s {
 #define EVAL_ADDRESS    2       // $aabb
 #define EVAL_LABEL      3       // BEGIN + including complex expressions that are saved as Label, but the expression is evaluated on the second pass
 #define EVAL_STRING     4       // "Hello", 'Hello'
-#define EVAL_OP			5		// Operation (+, -, etc.), is used only in the eval_expr method
 
 struct eval_t {
 	int     type;
