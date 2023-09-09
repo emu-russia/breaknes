@@ -29,7 +29,6 @@ long errors;
 static  std::list<label_s *> labels;    // name labels
 static  std::list<patch_s *> patches;   // patch history
 static  std::list<define_s *> defines;  // definitions
-static  std::list<node_t*> tree;	// syntax tree
 
 static  std::list<std::string> source_name_stack;	// Stack for the name of the current source file (for INCLUDE)
 static  std::list<int> linenum_stack;		// Stack for the line number of the current source file (for INCLUDE)
@@ -711,7 +710,7 @@ static int isbinary (int op)
 }
 
 // adding a new branch to the syntax tree
-static node_t* addnode(token_t* token, int depth)
+static node_t* addnode(std::list<node_t*>& tree, token_t* token, int depth)
 {
 	node_t* node = new node_t;
 	node->lvalue = node->rvalue = NULL;
@@ -722,7 +721,7 @@ static node_t* addnode(token_t* token, int depth)
 }
 
 // executing the tree (semantic analysis)
-static node_t * evaluate (node_t * expr, long *lvalue)
+static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 {
     node_t * curr;
     long rvalue = 0, mvalue;
@@ -762,7 +761,7 @@ static node_t * evaluate (node_t * expr, long *lvalue)
 
             if ( curr->depth > expr->depth ) {  // nested expression
                 if (debug) printf ( "SUBEVAL " );
-                curr = evaluate (curr, &mvalue);
+                curr = evaluate (tree, curr, &mvalue);
                 //printf ( "SUB LVALUE : %i\n", mvalue.num.value );
             }
             else if ( token->type == EVAL_LABEL) {
@@ -770,17 +769,7 @@ static node_t * evaluate (node_t * expr, long *lvalue)
 
 				define_s* def = define_lookup(token->string);
 				if (def) {
-					eval_t define_eval{};
-					eval(def->replace, &define_eval);
-					if (define_eval.type == EVAL_NUMBER) {
-						mvalue = define_eval.number;
-					}
-					else if (define_eval.type == EVAL_ADDRESS) {
-						mvalue = define_eval.address;
-					}
-					else if (define_eval.type == EVAL_LABEL) {
-						mvalue = define_eval.label->orig;
-					}
+					mvalue = eval_expr(def->replace);
 				}
 				else {
 					label_s* label = label_lookup(token->string);
@@ -860,52 +849,48 @@ static node_t * evaluate (node_t * expr, long *lvalue)
 }
 
 // grow a syntax tree
-static void grow ( node_t **expr, token_t * token)
+static void grow (tree_t& tree, node_t **expr, token_t * token)
 {
-    static node_t * curr, * node;
-    static int depth, prio, prio_stack[1000];
+    tree.node = addnode (tree.nodes, token, tree.depth );
 
-    node = addnode ( token, depth );
-
-    if (*expr == NULL)
+    if (!tree.initialized)
     {
-		curr = node;
-        *expr = curr;
-        depth = prio = 0;
-        memset ( prio_stack, 0, sizeof(prio_stack) );
+		tree.curr = tree.node;
+        *expr = tree.curr;
+		tree.depth = tree.prio = 0;
+        memset (tree.prio_stack, 0, sizeof(tree.prio_stack) );
+		tree.initialized = 1;
     }
-    else {
 
-		if ( token->type == EVAL_OP) {
-			if ( token->op == LPAREN) {
-				prio++;
-				depth++;
-				return;
-			}
-			else if ( token->op == RPAREN ) {
-				prio--;
-				if (depth > 0) depth--;
-				else printf ( "Unmatched parenthesis" );
-				return;
-			}
-			else if ( opprio[token->op] > prio_stack[prio] ) {  // priority increase. for binary operations, the priority of the previous token is also increased.
-				if ( isbinary (token->op) ) curr->depth++;
-				node->depth++;
-				prio_stack[prio] = opprio[token->op];
-				depth++;
-			}
-			else if ( opprio[token->op] < prio_stack[prio] ) { // de-prioritizing
-				prio_stack[prio] = opprio[token->op];
-				node->depth--;
-				depth--;
-			}
+	if ( token->type == EVAL_OP) {
+		if ( token->op == LPAREN) {
+			tree.prio++;
+			tree.depth++;
+			return;
 		}
-		// we just ignore the unclosed parentheses
+		else if ( token->op == RPAREN ) {
+			tree.prio--;
+			if (tree.depth > 0) tree.depth--;
+			else printf ( "Unmatched parenthesis" );
+			return;
+		}
+		else if ( opprio[token->op] > tree.prio_stack[tree.prio] ) {  // priority increase. for binary operations, the priority of the previous token is also increased.
+			if ( isbinary (token->op) ) tree.curr->depth++;
+			tree.node->depth++;
+			tree.prio_stack[tree.prio] = opprio[token->op];
+			tree.depth++;
+		}
+		else if ( opprio[token->op] < tree.prio_stack[tree.prio] ) { // de-prioritizing
+			tree.prio_stack[tree.prio] = opprio[token->op];
+			tree.node->depth--;
+			tree.depth--;
+		}
+	}
+	// we just ignore the unclosed parentheses
 
-		curr->rvalue = node;
-		node->lvalue = curr;
-		curr = node;
-    }
+	tree.curr->rvalue = tree.node;
+	tree.node->lvalue = tree.curr;
+	tree.curr = tree.node;
 }
 
 /// <summary>
@@ -919,25 +904,25 @@ long eval_expr(char* text)
 
 	std::list<token_t*> tokens;
 	tokenize(text, tokens);
+#ifdef _DEBUG
+	dump_tokens(tokens);
+#endif
 
 	// Grow syntax tree
 
+	tree_t tree{};
 	node_t* root = nullptr;
 	for (auto it = tokens.begin(); it != tokens.end(); ++it) {
-		grow(&root, *it);
+		grow(tree, &root, *it);
 	}
 
 	// Execute the tree
 
 	long result = 0;
-	evaluate(root, &result);
+	evaluate(tree.nodes, root, &result);
 
 #ifdef _DEBUG
-	//printf("Source expression: %s, result: %d (0x%08X)\n", text, result, result);
-	//dump_tokens(tokens);
-	//dump_labels();
-	//dump_defines();
-	//dump_patches();
+	printf("Source expression: %s, result: %d (0x%08X)\n", text, result, result);
 #endif
 
 	// Clean
@@ -947,9 +932,9 @@ long eval_expr(char* text)
 		delete token;
 	}
 
-	while (!tree.empty()) {
-		node_t* node = tree.back();
-		tree.pop_back();
+	while (!tree.nodes.empty()) {
+		node_t* node = tree.nodes.back();
+		tree.nodes.pop_back();
 		delete node;
 	}
 	

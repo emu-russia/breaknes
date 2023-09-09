@@ -90,6 +90,17 @@ struct node_t
 	int     depth;
 };
 
+struct tree_t
+{
+	std::list<node_t*> nodes;
+	node_t* curr;
+	node_t* node;
+	int depth;
+	int prio;
+	int prio_stack[1000];
+	int initialized;
+};
+
 struct param_t {
 	char    string[1024];
 };
