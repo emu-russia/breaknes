@@ -237,7 +237,7 @@ static token_t* next_token(char** pp)
 				break;
 			}
 		}
-		else if (ch == '=') {	// ==
+		else if (ch == '=') {	// = ==
 
 			char ch2 = get_char(pp);
 			if (ch2 == '=') {
@@ -246,6 +246,8 @@ static token_t* next_token(char** pp)
 			}
 			else {
 				put_back_char(pp);
+				token = create_op_token(OPS::EQ);
+				break;
 			}
 		}
 
@@ -273,7 +275,7 @@ static const char* opstr(OPS type)
 	const char* str[] = {
 		"NOP", "(", ")", "+", "-", "!", "~", "*", "/", "%",
 		"<<", ">>", "<<<", ">>>", ">", ">=", "<", "<=", 
-		"==", "!=", "&", "|", "^",
+		"==", "!=", "&", "|", "^", "=",
 	};
 	return str[(int)type];
 }
@@ -313,6 +315,7 @@ static int opprio[] = {
 	7, 7, 7, 7,	// > >= < <=
 	7, 7,		// == !=
 	6, 4, 5,	// & | ^
+	9,			// =
 };
 
 static int isunary (OPS op)
@@ -402,7 +405,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 
 				define_s* def = define_lookup(token->string);
 				if (def) {
-					mvalue = eval_expr(def->replace);
+					mvalue = eval_expr(def->replace, debug);
 				}
 				else {
 					label_s* label = label_lookup(token->string);
@@ -484,71 +487,75 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue)
 // grow a syntax tree
 static void grow (tree_t& tree, node_t **expr, token_t * token)
 {
-	tree.node = addnode (tree.nodes, token, tree.depth );
+	node_t *node = addnode (tree.nodes, token, tree.depth );
 
 	if (!tree.initialized)
 	{
-		tree.curr = tree.node;
+		tree.curr = node;
 		*expr = tree.curr;
 		tree.depth = tree.prio = 0;
 		memset (tree.prio_stack, 0, sizeof(tree.prio_stack) );
 		tree.initialized = 1;
 	}
+	else {
 
-	if ( token->type == TOKEN_OP) {
-		if ( token->op == OPS::LPAREN) {
-			tree.prio++;
-			tree.depth++;
-			return;
+		if (token->type == TOKEN_OP) {
+			if (token->op == OPS::LPAREN) {
+				tree.prio++;
+				tree.depth++;
+				return;
+			}
+			else if (token->op == OPS::RPAREN) {
+				tree.prio--;
+				if (tree.depth > 0) tree.depth--;
+				else printf("Unmatched parenthesis");
+				return;
+			}
+			else if (opprio[(int)token->op] > tree.prio_stack[tree.prio]) {  // priority increase. for binary operations, the priority of the previous token is also increased.
+				if (isbinary(token->op)) tree.curr->depth++;
+				node->depth++;
+				tree.prio_stack[tree.prio] = opprio[(int)token->op];
+				tree.depth++;
+			}
+			else if (opprio[(int)token->op] < tree.prio_stack[tree.prio]) { // de-prioritizing
+				tree.prio_stack[tree.prio] = opprio[(int)token->op];
+				node->depth--;
+				tree.depth--;
+			}
 		}
-		else if ( token->op == OPS::RPAREN ) {
-			tree.prio--;
-			if (tree.depth > 0) tree.depth--;
-			else printf ( "Unmatched parenthesis" );
-			return;
-		}
-		else if ( opprio[(int)token->op] > tree.prio_stack[tree.prio] ) {  // priority increase. for binary operations, the priority of the previous token is also increased.
-			if ( isbinary (token->op) ) tree.curr->depth++;
-			tree.node->depth++;
-			tree.prio_stack[tree.prio] = opprio[(int)token->op];
-			tree.depth++;
-		}
-		else if ( opprio[(int)token->op] < tree.prio_stack[tree.prio] ) { // de-prioritizing
-			tree.prio_stack[tree.prio] = opprio[(int)token->op];
-			tree.node->depth--;
-			tree.depth--;
-		}
+		// we just ignore the unclosed parentheses
 
-		tree.curr->rvalue = tree.node;
-		tree.node->lvalue = tree.curr;
-		tree.curr = tree.node;
+		tree.curr->rvalue = node;
+		node->lvalue = tree.curr;
+		tree.curr = node;
 	}
-	// we just ignore the unclosed parentheses
 }
 
-static void dump_tree(tree_t& tree, node_t* parent)
+static void dump_tree(tree_t& tree, node_t* root)
 {
-	if (!parent)
-		return;
-	for (int i = 0; i < parent->depth; i++)
-		printf(" ");
-	printf("node: %x, token: %d, op: %s, string: %s, number: %d(0x%x), depth: %d, lvalue: %x, rvalue: %x\n", 
-		parent, 
-		parent->token->type, opstr(parent->token->op), parent->token->string, parent->token->number, parent->token->number,
-		parent->depth, parent->lvalue, parent->rvalue);
-	dump_tree(tree, parent->lvalue);
-	dump_tree(tree, parent->rvalue);
+	node_t *curr = root;
+	while (curr) {
+		token_t *tok = curr->token;
+		printf("(%i)", curr->depth);
+		if (tok->type == TOKEN_OP) printf("%s ", opstr(tok->op));
+		else if (tok->type == TOKEN_NUMBER) printf("%i ", tok->number);
+		else printf("%s ", tok->string);
+		curr = curr->rvalue;
+	}
+	printf("\n");
 }
 
-long eval_expr(char* text)
+long eval_expr(char* text, bool debug)
 {
+	char expr[0x100];
+	sprintf(expr, "res=%s", text);
+
 	// Obtain token stream
 
 	std::list<token_t*> tokens;
-	tokenize(text, tokens);
-#ifdef _DEBUG
-	dump_tokens(tokens);
-#endif
+	tokenize(expr, tokens);
+	if (debug)
+		dump_tokens(tokens);
 
 	// Grow syntax tree
 
@@ -557,18 +564,16 @@ long eval_expr(char* text)
 	for (auto it = tokens.begin(); it != tokens.end(); ++it) {
 		grow(tree, &root, *it);
 	}
-#ifdef _DEBUG
-	dump_tree(tree, root);
-#endif
+	if (debug)
+		dump_tree(tree, root);
 
 	// Execute the tree
 
 	long result = 0;
-	evaluate(tree.nodes, root, &result);
+	evaluate(tree.nodes, root->rvalue->rvalue, &result);
 
-#ifdef _DEBUG
-	printf("Source expression: %s, result: %d (0x%08X)\n", text, result, result);
-#endif
+	if (debug)
+		printf("Source expression: %s, result: %d (0x%08X)\n", text, result, result);
 
 	// Clean
 	while (!tokens.empty()) {

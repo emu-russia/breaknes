@@ -124,7 +124,7 @@ static void do_expr_labels()
 	for (auto it = labels.begin(); it != labels.end(); ++it) {
 		label_s* label = *it;
 		if (label->composite) {
-			label->orig = eval_expr(label->name);
+			label->orig = eval_expr(label->name, false);
 		}
 	}
 }

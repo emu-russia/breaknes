@@ -17,15 +17,15 @@ void test_expr_eval()
 	//const char* text = " $700";
 	add_define((char *)"SPR_TAB", (char*)"$700");
 	//add_label("ItemID", 5);
-	auto res = eval_expr((char*)text);
+	auto res = eval_expr((char*)text, true);
 }
 
 int main(int argc, char** argv)
 {
 	FILE* f;
 
-	test_expr_eval();
-	return 0;
+	//test_expr_eval();
+	//return 0;
 
 	if (argc < 3)
 	{

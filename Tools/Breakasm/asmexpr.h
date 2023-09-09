@@ -26,6 +26,7 @@ enum class OPS
 	GREATER, GREATER_EQ, LESS, LESS_EQ,     // > >= < <=
 	LOGICAL_EQ, LOGICAL_NOTEQ,	// == !=
 	AND, OR, XOR, // & | ^
+	EQ,		// =
 };
 
 struct token_t {
@@ -39,15 +40,17 @@ struct node_t
 {
 	node_t* lvalue;
 	node_t* rvalue;
-	token_t* token;
+	token_t* token;			// Token associated with the given node
 	int     depth;
 };
 
+/// <summary>
+/// The tree is an ordinary binary tree. Each node has 2 links with other nodes (L and R)
+/// </summary>
 struct tree_t
 {
-	std::list<node_t*> nodes;
-	node_t* curr;
-	node_t* node;
+	std::list<node_t*> nodes;		// List of all nodes in the tree 
+	node_t* curr;				// Current node for tree growth
 	int depth;
 	int prio;
 	int prio_stack[1000];
@@ -58,5 +61,6 @@ struct tree_t
 /// Calculate the expression and return a number. Possible errors are displayed in the process (if there is an error, return 0).
 /// </summary>
 /// <param name="text">The text of the expression, for example: MyData + 32 * entry_size + 12. Other labels and defines can be identifiers</param>
+/// <param name="debug">Output debugging states during operation</param>
 /// <returns></returns>
-long eval_expr(char* text);
+long eval_expr(char* text, bool debug);
