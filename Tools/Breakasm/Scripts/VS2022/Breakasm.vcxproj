@@ -19,19 +19,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ASM.cpp" />
-    <ClCompile Include="..\..\ASMOPS.cpp" />
+    <ClCompile Include="..\..\asm.cpp" />
+    <ClCompile Include="..\..\asmexpr.cpp" />
+    <ClCompile Include="..\..\asmops.cpp" />
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\pch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\ASM.h" />
-    <ClInclude Include="..\..\ASMOPS.h" />
+    <ClInclude Include="..\..\asm.h" />
+    <ClInclude Include="..\..\asmexpr.h" />
+    <ClInclude Include="..\..\asmops.h" />
     <ClInclude Include="..\..\pch.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Readme.md" />
     <None Include="..\..\ReadmeRus.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\CMakeLists.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

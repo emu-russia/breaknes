@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Breakasm">
+      <UniqueIdentifier>{f0945310-014f-439c-b125-26ed5dac2f8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\FamicomBoard.cpp">
@@ -42,12 +45,6 @@
     <ClCompile Include="..\..\APUPlayerBoardDebug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Breaks6502\Breakasm\ASM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Breaks6502\Breakasm\ASMOPS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\PPUPlayerBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -68,6 +65,15 @@
     </ClCompile>
     <ClCompile Include="..\..\RegDumpEmitter.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Tools\Breakasm\asm.cpp">
+      <Filter>Breakasm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Tools\Breakasm\asmexpr.cpp">
+      <Filter>Breakasm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Tools\Breakasm\asmops.cpp">
+      <Filter>Breakasm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,12 +101,6 @@
     <ClInclude Include="..\..\APUPlayerBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Breaks6502\Breakasm\ASM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Breaks6502\Breakasm\ASMOPS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\PPUPlayerBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -115,6 +115,15 @@
     </ClInclude>
     <ClInclude Include="..\..\RegDumpEmitter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Tools\Breakasm\asm.h">
+      <Filter>Breakasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Tools\Breakasm\asmexpr.h">
+      <Filter>Breakasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Tools\Breakasm\asmops.h">
+      <Filter>Breakasm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

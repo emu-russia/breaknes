@@ -11,8 +11,9 @@
 #include <Windows.h>
 #endif
 
-#include "../../Tools/Breakasm/ASM.h"
-#include "../../Tools/Breakasm/ASMOPS.h"
+#include "../../Tools/Breakasm/asm.h"
+#include "../../Tools/Breakasm/asmops.h"
+#include "../../Tools/Breakasm/asmexpr.h"
 
 // Very basic
 

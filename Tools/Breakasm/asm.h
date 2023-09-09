@@ -19,16 +19,17 @@ struct line {
 struct label_s {
 	char    name[128];
 	long    orig;
-	char	source[0x100];
-	int     line;
+	char	source[0x100];	// Name of the source file where the label was declared
+	int     line;		// Line number in the source file
+	int		composite;	// 1: A composite expression that uses the eval_expr method to parse it
 };
 
 struct patch_s {
 	label_s* label;
 	long    orig;
 	int     branch;     // 1: relative branch, 0: absolute jmp
-	char	source[0x100];
-	int     line;
+	char	source[0x100];	// Name of the source file where the patch field was encountered
+	int     line;		// Line number in the source file
 };
 
 struct define_s {
@@ -40,8 +41,9 @@ struct define_s {
 #define EVAL_WTF        0
 #define EVAL_NUMBER     1       // #$12
 #define EVAL_ADDRESS    2       // $aabb
-#define EVAL_LABEL      3       // BEGIN
+#define EVAL_LABEL      3       // BEGIN + including complex expressions that are saved as Label, but the expression is evaluated on the second pass
 #define EVAL_STRING     4       // "Hello", 'Hello'
+#define EVAL_OP			5		// Operation (+, -, etc.), is used only in the eval_expr method
 
 struct eval_t {
 	int     type;
@@ -49,7 +51,7 @@ struct eval_t {
 	long    address;
 	char    string[256];
 	label_s* label;
-	int     indirect;
+	int     indirect;		// If the expression is enclosed in outer parentheses - such operand is considered as Indirect addressing
 };
 
 struct param_t {
@@ -64,8 +66,10 @@ extern param_t* params;
 extern int param_num;
 
 label_s* add_label(const char* name, long orig);
+label_s* label_lookup(char* name);
 void add_patch(label_s* label, long orig, int branch);
 define_s* add_define(char* name, char* replace);
+define_s* define_lookup(char* name);
 int eval(char* text, eval_t* result);
 void split_param(char* op);
 void emit(uint8_t b);

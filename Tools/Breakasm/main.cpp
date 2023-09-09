@@ -8,12 +8,24 @@ void Usage()
 {
 	printf("Breakasm, ver. %s\n", BREAKASM_VERSION);
 	printf("Use: Breakasm <source.asm> <output.prg>\n");
-	printf("Example: Breakasm Test.asm Test.prg\n");
+	printf("Example: Breakasm test.asm test.prg\n");
+}
+
+void test_expr_eval()
+{
+	//const char* text = "  SPR_TAB+1";
+	const char* text = " $700";
+	add_define((char *)"SPR_TAB", (char*)"$700");
+	//add_label("ItemID", 5);
+	auto res = eval_expr((char*)text);
 }
 
 int main(int argc, char** argv)
 {
 	FILE* f;
+
+	//test_expr_eval();
+	//return 0;
 
 	if (argc < 3)
 	{
