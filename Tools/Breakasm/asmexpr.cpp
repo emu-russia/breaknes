@@ -21,6 +21,8 @@ static token_t* create_op_token(OPS optype)
 	token_t* token = new token_t;
 	token->type = TOKEN_OP;
 	token->op = optype;
+	token->number = 0;
+	token->string[0] = 0;
 	return token;
 }
 
@@ -66,7 +68,9 @@ static token_t* next_token(char** pp)
 			//printf("number: %s\n", buf);
 			token = new token_t;
 			token->type = TOKEN_NUMBER;
+			token->op = OPS::NOP;
 			token->number = strtoul(buf, nullptr, base);
+			token->string[0] = 0;
 			return token;
 		}
 		else if (ch == '_' || isalpha(ch)) {	// Identifier [_a-zA-Z][_a-zA-Z0-9]
@@ -86,6 +90,8 @@ static token_t* next_token(char** pp)
 			//printf("ident: %s\n", buf);
 			token = new token_t;
 			token->type = TOKEN_IDENT;
+			token->op = OPS::NOP;
+			token->number = 0;
 			strcpy(token->string, buf);
 			return token;
 		}
@@ -119,6 +125,8 @@ static token_t* next_token(char** pp)
 			printf("string: %s\n", buf);
 			token = new token_t;
 			token->type = TOKEN_STRING;
+			token->op = OPS::NOP;
+			token->number = 0;
 			strcpy(token->string, buf);
 			return token;
 		}
@@ -510,12 +518,26 @@ static void grow (tree_t& tree, node_t **expr, token_t * token)
 			tree.node->depth--;
 			tree.depth--;
 		}
+
+		tree.curr->rvalue = tree.node;
+		tree.node->lvalue = tree.curr;
+		tree.curr = tree.node;
 	}
 	// we just ignore the unclosed parentheses
+}
 
-	tree.curr->rvalue = tree.node;
-	tree.node->lvalue = tree.curr;
-	tree.curr = tree.node;
+static void dump_tree(tree_t& tree, node_t* parent)
+{
+	if (!parent)
+		return;
+	for (int i = 0; i < parent->depth; i++)
+		printf(" ");
+	printf("node: %x, token: %d, op: %s, string: %s, number: %d(0x%x), depth: %d, lvalue: %x, rvalue: %x\n", 
+		parent, 
+		parent->token->type, opstr(parent->token->op), parent->token->string, parent->token->number, parent->token->number,
+		parent->depth, parent->lvalue, parent->rvalue);
+	dump_tree(tree, parent->lvalue);
+	dump_tree(tree, parent->rvalue);
 }
 
 long eval_expr(char* text)
@@ -535,6 +557,9 @@ long eval_expr(char* text)
 	for (auto it = tokens.begin(); it != tokens.end(); ++it) {
 		grow(tree, &root, *it);
 	}
+#ifdef _DEBUG
+	dump_tree(tree, root);
+#endif
 
 	// Execute the tree
 
