@@ -413,7 +413,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue,
 				}
 				else {
 					label_s* label = label_lookup(token->string);
-					if (label) {
+					if (label && label->orig != UNDEF) {
 						mvalue = label->orig;
 					}
 					else {
@@ -583,7 +583,9 @@ long eval_expr(char* text, bool debug, bool quiet)
 	// Execute the tree
 
 	long result = 0;
-	evaluate(tree.nodes, root->rvalue->rvalue, &result, quiet);
+	if (root) {
+		evaluate(tree.nodes, root->rvalue->rvalue, &result, quiet);
+	}
 
 	if (debug)
 		printf("Source expression: %s, result: %d (0x%08X)\n", text, result, result);

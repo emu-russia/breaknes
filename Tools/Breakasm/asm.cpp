@@ -593,17 +593,18 @@ static void assemble_text(char* text)
 {
 	oplink* opl;
 	line l;
+	int listing = 0;
 
 	while (1) {
 		if (*text == 0) break;
 		parse_line(&text, l);
 
-		//printf ( "%s: \'%s\' \'%s\'\n", l.label, l.cmd, l.op );
-
 		// Add label
 		if (strlen(l.label) > 1) {
 			add_label(l.label, org);
 		}
+
+		long org_before = org;
 
 		// Execute command
 		if (strlen(l.cmd) > 1) {
@@ -622,6 +623,18 @@ static void assemble_text(char* text)
 			}
 			if (stop) break;
 		}
+
+		// Listing
+		if (listing) {
+			printf("0x%08X: ", org_before);
+			int num_bytes = org - org_before;
+			for (int i = 0; i < num_bytes; i++) {
+				printf("%02X ", PRG[org_before + i]);
+			}
+			printf("%s: \'%s\' \'%s\'\n", l.label, l.cmd, l.op);
+			printf("\n");
+		}
+
 		nextline();
 	}
 }
