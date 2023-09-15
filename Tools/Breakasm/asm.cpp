@@ -504,9 +504,21 @@ static void parse_line (char **text, line& ln)
 
 // ****************************************************************
 
+int emit_mode = 1;		// 1: output byte stream; 0: just change origin
+
+void set_emit_mode(int mode)
+{
+	emit_mode = mode;
+}
+
 void emit (uint8_t b)
 {
-	PRG[org++] = b;
+	if (emit_mode) {
+		PRG[org++] = b;
+	}
+	else {
+		org++;
+	}
 }
 
 static oplink optab[] = {
@@ -577,90 +589,10 @@ static void cleanup (void)
 	}
 }
 
-int assemble (char *text, char* source_name, uint8_t *prg)
+static void assemble_text(char* text)
 {
-	line l;
-	oplink *opl;
-	PRG = prg;
-	org = 0;
-	stop = 0;
-	errors = 0;
-
-	cleanup ();
-
-	source_name_stack.push_back(source_name);
-
-	// Add keywords
-	linenum_stack.push_back(0);
-	add_label ("A", KEYWORD);
-	add_label ("X", KEYWORD);
-	add_label ("Y", KEYWORD);
-	opl = optab;
-	while (1) {
-		if ( opl->name == NULL ) break;
-		else add_label (opl->name, KEYWORD);
-		opl++;
-	}
-	nextline();
-
-	while (1) {
-		if (*text == 0) break;
-		parse_line (&text, l);
-
-		//printf ( "%s: \'%s\' \'%s\'\n", l.label, l.cmd, l.op );
-
-		// Add label
-		if ( strlen (l.label) > 1 ) {
-			add_label ( l.label, org );
-		}
-
-		// Execute command
-		if ( strlen (l.cmd) > 1 ) {
-			opl = optab;
-			while (1) {
-				if ( opl->name == NULL ) {
-					printf ("ERROR(%s,%i): Unknown command %s\n", get_source_name().c_str(), get_linenum(), l.cmd);
-					break;
-				}
-				else if ( !_stricmp (opl->name, l.cmd) ) {
-					_strupr (l.cmd);
-					opl->handler (l.cmd, l.op);
-					break;
-				}
-				opl++;
-			}
-			if (stop) break;
-		}
-		nextline();
-	}
-
-	// Patch jump/branch offsets.
-	do_expr_labels();
-	do_patch ();
-
-#ifdef _DEBUG
-	dump_labels ();
-	dump_defines ();
-	dump_patches ();
-#endif
-
-	printf ( "%i error(s)\n", errors );
-	return errors;
-}
-
-/// <summary>
-/// Assemble nested source file (called from the INCLUDE directive).
-/// The name of the source file will be placed on the name stack, and the line counter will count from the beginning of the file.
-/// </summary>
-/// <param name="text">Source file text</param>
-/// <param name="source_name">Source file name</param>
-void assemble_include(char* text, char* source_name)
-{
-	line l;
 	oplink* opl;
-
-	source_name_stack.push_back(source_name);
-	linenum_stack.push_back(1);
+	line l;
 
 	while (1) {
 		if (*text == 0) break;
@@ -692,6 +624,61 @@ void assemble_include(char* text, char* source_name)
 		}
 		nextline();
 	}
+}
+
+int assemble (char *text, char* source_name, uint8_t *prg)
+{
+	oplink *opl;
+	PRG = prg;
+	org = 0;
+	stop = 0;
+	errors = 0;
+
+	cleanup ();
+
+	source_name_stack.push_back(source_name);
+
+	// Add keywords
+	linenum_stack.push_back(0);
+	add_label ("A", KEYWORD);
+	add_label ("X", KEYWORD);
+	add_label ("Y", KEYWORD);
+	opl = optab;
+	while (1) {
+		if ( opl->name == NULL ) break;
+		else add_label (opl->name, KEYWORD);
+		opl++;
+	}
+	nextline();
+
+	assemble_text(text);
+
+	// Patch jump/branch offsets.
+	do_expr_labels();
+	do_patch ();
+
+#ifdef _DEBUG
+	dump_labels ();
+	dump_defines ();
+	dump_patches ();
+#endif
+
+	printf ( "%i error(s)\n", errors );
+	return errors;
+}
+
+/// <summary>
+/// Assemble nested source file (called from the INCLUDE directive).
+/// The name of the source file will be placed on the name stack, and the line counter will count from the beginning of the file.
+/// </summary>
+/// <param name="text">Source file text</param>
+/// <param name="source_name">Source file name</param>
+void assemble_include(char* text, char* source_name)
+{
+	source_name_stack.push_back(source_name);
+	linenum_stack.push_back(1);
+
+	assemble_text(text);
 
 	source_name_stack.pop_back();
 	linenum_stack.pop_back();
