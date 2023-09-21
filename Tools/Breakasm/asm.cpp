@@ -504,9 +504,21 @@ static void parse_line (char **text, line& ln)
 
 // ****************************************************************
 
+int emit_mode = 1;		// 1: output byte stream; 0: just change origin
+
+void set_emit_mode(int mode)
+{
+	emit_mode = mode;
+}
+
 void emit (uint8_t b)
 {
-	PRG[org++] = b;
+	if (emit_mode) {
+		PRG[org++] = b;
+	}
+	else {
+		org++;
+	}
 }
 
 static oplink optab[] = {
@@ -577,9 +589,58 @@ static void cleanup (void)
 	}
 }
 
+static void assemble_text(char* text)
+{
+	oplink* opl;
+	line l;
+	int listing = 0;
+
+	while (1) {
+		if (*text == 0) break;
+		parse_line(&text, l);
+
+		// Add label
+		if (strlen(l.label) > 1) {
+			add_label(l.label, org);
+		}
+
+		long org_before = org;
+
+		// Execute command
+		if (strlen(l.cmd) > 1) {
+			opl = optab;
+			while (1) {
+				if (opl->name == NULL) {
+					printf("ERROR(%s,%i): Unknown command %s\n", get_source_name().c_str(), get_linenum(), l.cmd);
+					break;
+				}
+				else if (!_stricmp(opl->name, l.cmd)) {
+					_strupr(l.cmd);
+					opl->handler(l.cmd, l.op);
+					break;
+				}
+				opl++;
+			}
+			if (stop) break;
+		}
+
+		// Listing
+		if (listing) {
+			printf("0x%08X: ", org_before);
+			int num_bytes = org - org_before;
+			for (int i = 0; i < num_bytes; i++) {
+				printf("%02X ", PRG[org_before + i]);
+			}
+			printf("%s: \'%s\' \'%s\'\n", l.label, l.cmd, l.op);
+			printf("\n");
+		}
+
+		nextline();
+	}
+}
+
 int assemble (char *text, char* source_name, uint8_t *prg)
 {
-	line l;
 	oplink *opl;
 	PRG = prg;
 	org = 0;
@@ -603,36 +664,7 @@ int assemble (char *text, char* source_name, uint8_t *prg)
 	}
 	nextline();
 
-	while (1) {
-		if (*text == 0) break;
-		parse_line (&text, l);
-
-		//printf ( "%s: \'%s\' \'%s\'\n", l.label, l.cmd, l.op );
-
-		// Add label
-		if ( strlen (l.label) > 1 ) {
-			add_label ( l.label, org );
-		}
-
-		// Execute command
-		if ( strlen (l.cmd) > 1 ) {
-			opl = optab;
-			while (1) {
-				if ( opl->name == NULL ) {
-					printf ("ERROR(%s,%i): Unknown command %s\n", get_source_name().c_str(), get_linenum(), l.cmd);
-					break;
-				}
-				else if ( !_stricmp (opl->name, l.cmd) ) {
-					_strupr (l.cmd);
-					opl->handler (l.cmd, l.op);
-					break;
-				}
-				opl++;
-			}
-			if (stop) break;
-		}
-		nextline();
-	}
+	assemble_text(text);
 
 	// Patch jump/branch offsets.
 	do_expr_labels();
@@ -656,42 +688,10 @@ int assemble (char *text, char* source_name, uint8_t *prg)
 /// <param name="source_name">Source file name</param>
 void assemble_include(char* text, char* source_name)
 {
-	line l;
-	oplink* opl;
-
 	source_name_stack.push_back(source_name);
 	linenum_stack.push_back(1);
 
-	while (1) {
-		if (*text == 0) break;
-		parse_line(&text, l);
-
-		//printf ( "%s: \'%s\' \'%s\'\n", l.label, l.cmd, l.op );
-
-		// Add label
-		if (strlen(l.label) > 1) {
-			add_label(l.label, org);
-		}
-
-		// Execute command
-		if (strlen(l.cmd) > 1) {
-			opl = optab;
-			while (1) {
-				if (opl->name == NULL) {
-					printf("ERROR(%s,%i): Unknown command %s\n", get_source_name().c_str(), get_linenum(), l.cmd);
-					break;
-				}
-				else if (!_stricmp(opl->name, l.cmd)) {
-					_strupr(l.cmd);
-					opl->handler(l.cmd, l.op);
-					break;
-				}
-				opl++;
-			}
-			if (stop) break;
-		}
-		nextline();
-	}
+	assemble_text(text);
 
 	source_name_stack.pop_back();
 	linenum_stack.pop_back();

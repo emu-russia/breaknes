@@ -359,7 +359,7 @@ static node_t* addnode(std::list<node_t*>& tree, token_t* token, int depth)
 }
 
 // executing the tree (semantic analysis)
-static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue, bool quiet)
+static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue, bool quiet, bool& syntax_error)
 {
 	node_t * curr;
 	long rvalue = 0, mvalue;
@@ -379,6 +379,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue,
 		token = curr->token;
 		if ( token->type == TOKEN_OP && isunary(token->op) ) {
 			if (curr->rvalue == NULL) {
+				syntax_error = true;
 				if (!quiet) {
 					printf("Missing identifier\n");
 					errors++;
@@ -401,7 +402,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue,
 
 			if ( curr->depth > expr->depth ) {  // nested expression
 				if (debug) printf ( "SUBEVAL " );
-				curr = evaluate (tree, curr, &mvalue, quiet);
+				curr = evaluate (tree, curr, &mvalue, quiet, syntax_error);
 				//printf ( "SUB LVALUE : %i\n", mvalue.num.value );
 			}
 			else if ( token->type == TOKEN_IDENT) {
@@ -413,10 +414,11 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue,
 				}
 				else {
 					label_s* label = label_lookup(token->string);
-					if (label) {
+					if (label && label->orig != UNDEF && !label->composite) {
 						mvalue = label->orig;
 					}
 					else {
+						syntax_error = true;
 						if (!quiet) {
 							printf("Undefined identifier: %s", token->string);
 							errors++;
@@ -468,6 +470,7 @@ static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue,
 			else rvalue = mvalue;
 		}
 		else {
+			syntax_error = true;
 			if (!quiet) {
 				printf("Identifier required\n");
 				errors++;
@@ -583,7 +586,13 @@ long eval_expr(char* text, bool debug, bool quiet)
 	// Execute the tree
 
 	long result = 0;
-	evaluate(tree.nodes, root->rvalue->rvalue, &result, quiet);
+	bool syntax_error = false;
+	if (root) {
+		evaluate(tree.nodes, root->rvalue->rvalue, &result, quiet, syntax_error);
+	}
+	if (syntax_error) {
+		result = 0;
+	}
 
 	if (debug)
 		printf("Source expression: %s, result: %d (0x%08X)\n", text, result, result);
