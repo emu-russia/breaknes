@@ -175,7 +175,7 @@ namespace M6502Core
 
 			DCLatch.set(DC7, PHI2);
 			ACLatch.set(NOT(carry[7]), PHI2);
-			AVRLatch.set(AND(NAND(carry[6], nors[7]), NOT(NOR(carry[6], carry[7]))), PHI2);
+			AVRLatch.set(NOR(NOR(carry[6], nands[7]), AND(carry[6], nors[7])), PHI2);		// AVR = C6 ^ C7
 
 			if (!BCD_Hack)
 			{
