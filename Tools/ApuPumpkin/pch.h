@@ -14,7 +14,7 @@
 #include "../../Chips/M6502Core/core.h"
 
 #if FAST_APU
-#include "../../Chips/FastAPU/apu.h"
+#include "../../private/Chips/FastAPU/apu.h"
 #else
 #include "../../Chips/APUSim/apu.h"
 #endif
