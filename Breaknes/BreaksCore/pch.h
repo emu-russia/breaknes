@@ -7,6 +7,7 @@
 #include <cassert>
 #include <memory.h>
 #include <cstddef>
+#include <cstdint>
 #ifdef _WIN32
 #include <Windows.h>
 #endif
