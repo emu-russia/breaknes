@@ -51,7 +51,7 @@ namespace PPUSim
 	{
 		PPU* ppu = nullptr;
 
-		static const size_t cells_per_lane = 32 * 8;	// 32 Columns x 8 Bits
+		static const size_t cells_per_lane = 32 * 8;	// 32 Rows x 8 Bits
 
 		OAMCell* cells[cells_per_lane];
 
@@ -61,7 +61,7 @@ namespace PPUSim
 		OAMLane(PPU *parent, bool SkipAttrBits);
 		~OAMLane();
 
-		void sim(size_t Column, size_t bit_num, BaseLogic::TriState& inOut);
+		void sim(size_t Row, size_t bit_num, BaseLogic::TriState& inOut);
 	};
 
 	class OAMBufferBit
@@ -78,7 +78,7 @@ namespace PPUSim
 		OAMBufferBit(PPU* parent) { ppu = parent; }
 		~OAMBufferBit() {}
 
-		virtual void sim(OAMLane *lane, size_t column, size_t bit_num, BaseLogic::TriState OB_OAM, BaseLogic::TriState n_WE);
+		virtual void sim(OAMLane *lane, size_t row, size_t bit_num, BaseLogic::TriState OB_OAM, BaseLogic::TriState n_WE);
 
 		BaseLogic::TriState get();
 		void set(BaseLogic::TriState val);
@@ -93,7 +93,7 @@ namespace PPUSim
 		OAMBufferBit_RGB(PPU* parent) : OAMBufferBit(parent) {}
 		~OAMBufferBit_RGB() {}
 
-		virtual void sim(OAMLane* lane, size_t column, size_t bit_num, BaseLogic::TriState OB_OAM, BaseLogic::TriState n_WE);
+		virtual void sim(OAMLane* lane, size_t row, size_t bit_num, BaseLogic::TriState OB_OAM, BaseLogic::TriState n_WE);
 	};
 
 	class OAM
@@ -112,14 +112,14 @@ namespace PPUSim
 
 		BaseLogic::TriState OB_OAM = BaseLogic::TriState::X;
 
-		// The physical location of the column on the chip.
-		size_t COL = 0;
+		// The physical location of the row on the chip.
+		size_t ROW = 0;
 
 		OAMLane* sim_AddressDecoder();
 		void sim_OBControl();
 		void sim_OB(OAMLane *lane);
 
-		size_t ColMap(size_t n);
+		size_t RowMap(size_t n);
 
 		OAMDecayBehavior decay_behav = OAMDecayBehavior::Keep;
 

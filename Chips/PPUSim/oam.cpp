@@ -53,17 +53,17 @@ namespace PPUSim
 	}
 
 	/// <summary>
-	/// From the input OAM address (n_OAM0-7 + OAM8) determines the row (lane) and column number (COL).
-	/// During PCLK the precharge is made and all COLx outputs are 0. This situation is handled by returning nullptr instead of lane.
+	/// From the input OAM address (n_OAM0-7 + OAM8) determines the column (lane) and row number (ROW).
+	/// During PCLK the precharge is made and all ROWx outputs are 0. This situation is handled by returning nullptr instead of lane.
 	/// </summary>
 	/// <returns></returns>
 	OAMLane* OAM::sim_AddressDecoder()
 	{
-		size_t row = 0;
+		size_t col = 0;
 
 		if (ppu->wire.OAM8 == TriState::One)
 		{
-			row = 8;
+			col = 8;
 		}
 		else
 		{
@@ -71,24 +71,24 @@ namespace PPUSim
 			{
 				if (ppu->wire.n_OAM[n] == TriState::Zero)
 				{
-					row |= (1ULL << n);
+					col |= (1ULL << n);
 				}
 			}
 		}
 
-		COL = 0;
+		ROW = 0;
 
 		for (size_t n = 0; n < 5; n++)
 		{
 			if (ppu->wire.n_OAM[3 + n] == TriState::Zero)
 			{
-				COL |= (1ULL << n);
+				ROW |= (1ULL << n);
 			}
 		}
 
-		COL = ColMap(COL);
+		ROW = RowMap(ROW);
 
-		return ppu->wire.PCLK == TriState::One ? nullptr : lane[row];
+		return ppu->wire.PCLK == TriState::One ? nullptr : lane[col];
 	}
 
 	void OAM::sim_OBControl()
@@ -178,7 +178,7 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			ob[n]->sim(lane, COL, n, OB_OAM, n_WE);
+			ob[n]->sim(lane, ROW, n, OB_OAM, n_WE);
 		}
 	}
 
@@ -242,7 +242,7 @@ namespace PPUSim
 		bank = bank_num;
 	}
 
-	void OAMBufferBit::sim(OAMLane* lane, size_t column, size_t bit_num, TriState OB_OAM, TriState n_WE)
+	void OAMBufferBit::sim(OAMLane* lane, size_t row, size_t bit_num, TriState OB_OAM, TriState n_WE)
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState n_R4 = ppu->wire.n_R4;
@@ -255,7 +255,7 @@ namespace PPUSim
 		TriState FromOAM = TriState::Z;
 		if (lane != nullptr)
 		{
-			lane->sim(column, bit_num, FromOAM);
+			lane->sim(row, bit_num, FromOAM);
 		}
 
 		Input_FF.set(MUX(PCLK, FromOAM, TriState::Zero));
@@ -269,7 +269,7 @@ namespace PPUSim
 		if (lane != nullptr)
 		{
 			TriState val_out = MUX(NOT(n_WE), TriState::Z, out_latch.get());
-			lane->sim(column, bit_num, val_out);
+			lane->sim(row, bit_num, val_out);
 		}
 	}
 
@@ -315,11 +315,11 @@ namespace PPUSim
 	/// Repeats the logic of the real cell.
 	/// If the input is z - place the cell value on it (Read), otherwise - write a new value to the cell (Write).
 	/// </summary>
-	void OAMLane::sim(size_t Column, size_t bit_num, TriState& inOut)
+	void OAMLane::sim(size_t Row, size_t bit_num, TriState& inOut)
 	{
-		OAMCell* cell = cells[8 * Column + bit_num];
+		OAMCell* cell = cells[8 * Row + bit_num];
 
-		// Skip unused bits 2-4 for rows 2/6, which correspond to the attribute byte.
+		// Skip unused bits 2-4 for columns 2/6, which correspond to the attribute byte.
 
 		bool skip_bit = skip_attr_bits && (bit_num == 2 || bit_num == 3 || bit_num == 4);
 
@@ -337,14 +337,14 @@ namespace PPUSim
 	}
 
 	/// <summary>
-	/// Remaps the logical COL value to the physical column position.
+	/// Remaps the logical ROW value to the physical row position.
 	/// Physical topology: 0 - left, 31 - right.
 	/// The need for this method arose because the NTSC PPU OAM address is in inverse logic (/OAM0-7) and the PAL PPU is in direct logic (OAM0-7).
-	/// Therefore the physical arrangement of the columns on the chip is different.
+	/// Therefore the physical arrangement of the rows on the chip is different.
 	/// </summary>
 	/// <param name="n"></param>
 	/// <returns></returns>
-	size_t OAM::ColMap(size_t n)
+	size_t OAM::RowMap(size_t n)
 	{
 		// TBD.
 
@@ -365,15 +365,15 @@ namespace PPUSim
 
 	uint8_t OAM::Dbg_OAMReadByte(size_t addr)
 	{
-		size_t row = addr & 7;
-		OAMLane* l = lane[row];
-		size_t col = addr >> 3;
+		size_t col = addr & 7;
+		OAMLane* l = lane[col];
+		size_t row = addr >> 3;
 		TriState val[8]{};
 
 		for (size_t bit_num = 0; bit_num < 8; bit_num++)
 		{
 			val[bit_num] = TriState::Z;
-			l->sim(col, bit_num, val[bit_num]);
+			l->sim(row, bit_num, val[bit_num]);
 
 			// Set the unused bits of the attribute byte to 0.
 
@@ -389,13 +389,13 @@ namespace PPUSim
 	uint8_t OAM::Dbg_TempOAMReadByte(size_t addr)
 	{
 		OAMLane* l = lane[8];
-		size_t col = addr;
+		size_t row = addr;
 		TriState val[8]{};
 
 		for (size_t bit_num = 0; bit_num < 8; bit_num++)
 		{
 			val[bit_num] = TriState::Z;
-			l->sim(col, bit_num, val[bit_num]);
+			l->sim(row, bit_num, val[bit_num]);
 		}
 
 		return Pack(val);
@@ -403,30 +403,30 @@ namespace PPUSim
 
 	void OAM::Dbg_OAMWriteByte(size_t addr, uint8_t value)
 	{
-		size_t row = addr & 7;
-		OAMLane* l = lane[row];
-		size_t col = addr >> 3;
+		size_t col = addr & 7;
+		OAMLane* l = lane[col];
+		size_t row = addr >> 3;
 		TriState val[8]{};
 
 		Unpack(value, val);
 
 		for (size_t bit_num = 0; bit_num < 8; bit_num++)
 		{
-			l->sim(col, bit_num, val[bit_num]);
+			l->sim(row, bit_num, val[bit_num]);
 		}
 	}
 
 	void OAM::Dbg_TempOAMWriteByte(size_t addr, uint8_t value)
 	{
 		OAMLane* l = lane[8];
-		size_t col = addr;
+		size_t row = addr;
 		TriState val[8]{};
 
 		Unpack(value, val);
 
 		for (size_t bit_num = 0; bit_num < 8; bit_num++)
 		{
-			l->sim(col, bit_num, val[bit_num]);
+			l->sim(row, bit_num, val[bit_num]);
 		}
 	}
 
@@ -443,7 +443,7 @@ namespace PPUSim
 	/// <summary>
 	/// The different version for RGB PPU (the one studied) is that OAM is Write-Only.
 	/// </summary>
-	void OAMBufferBit_RGB::sim(OAMLane* lane, size_t column, size_t bit_num, TriState OB_OAM, TriState n_WE)
+	void OAMBufferBit_RGB::sim(OAMLane* lane, size_t row, size_t bit_num, TriState OB_OAM, TriState n_WE)
 	{
 		TriState PCLK = ppu->wire.PCLK;
 		TriState BLNK = ppu->fsm.BLNK;
@@ -452,7 +452,7 @@ namespace PPUSim
 		TriState FromOAM = TriState::Z;
 		if (lane != nullptr)
 		{
-			lane->sim(column, bit_num, FromOAM);
+			lane->sim(row, bit_num, FromOAM);
 		}
 
 		Input_FF.set(MUX(PCLK, FromOAM, TriState::Zero));
@@ -464,7 +464,7 @@ namespace PPUSim
 		if (lane != nullptr)
 		{
 			TriState val_out = MUX(NOT(n_WE), TriState::Z, out_latch.get());
-			lane->sim(column, bit_num, val_out);
+			lane->sim(row, bit_num, val_out);
 		}
 	}
 
