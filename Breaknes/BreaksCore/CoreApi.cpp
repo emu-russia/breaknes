@@ -256,6 +256,14 @@ extern "C"
 		}
 	}
 
+	DLL_EXPORT void PpuUseExternalDacLevels(bool use, PPUSim::DacLevels* tab)
+	{
+		if (board != nullptr)
+		{
+			board->PpuUseExternalDacLevels(use, *tab);
+		}
+	}
+
 	DLL_EXPORT void GetAllCoreDebugInfo(M6502Core::DebugInfo* info)
 	{
 		if (board != nullptr)

@@ -156,6 +156,13 @@ extern "C"
 	DLL_EXPORT void SetNoiseLevel(float volts);
 
 	/// <summary>
+	/// Use externally set DAC signal levels.
+	/// </summary>
+	/// <param name="use">true: Use externally set table, false: Use internal values (see video_out.cpp class constructor)</param>
+	/// <param name="tab">signal value table</param>
+	DLL_EXPORT void PpuUseExternalDacLevels(bool use, PPUSim::DacLevels* tab);
+
+	/// <summary>
 	/// Return all core debugging information for BreaksDebug.
 	/// </summary>
 	/// <param name="info"></param>

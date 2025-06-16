@@ -430,41 +430,41 @@ namespace PPUSim
 	void VideoOut::sim_CompositeDAC(VideoOutSignal& vout)
 	{
 		TriState tmp = TriState::Zero;
-		float v = LumaLevel[3][1];		// White level
+		float v = use_ext_levels ? ext_levels.LumaLevel[3][1] : LumaLevel[3][1];		// White level
 
 		// Synch Low Level
 
 		if (sync_latch.nget() == TriState::One)
 		{
-			v = std::min(v, SyncLevel[0]);
+			v = std::min(v, use_ext_levels ? ext_levels.SyncLevel[0] : SyncLevel[0]);
 		}
 
 		// Synch High Level
 
 		if (black_latch.nget() == TriState::One)
 		{
-			v = std::min(v, SyncLevel[1]);
+			v = std::min(v, use_ext_levels ? ext_levels.SyncLevel[1] : SyncLevel[1]);
 		}
 
 		// Colorburst phase level
 
-		v = PhaseSwing(v, cb_latch.nget(), BurstLevel[0], BurstLevel[1]);
+		v = PhaseSwing(v, cb_latch.nget(), use_ext_levels ? ext_levels.BurstLevel[0] : BurstLevel[0], use_ext_levels ? ext_levels.BurstLevel[1] : BurstLevel[1]);
 
 		// Luminance phase levels
 
 		if (TINT == TriState::One)
 		{
-			v = PhaseSwing(v, n_LU[0], EmphasizedLumaLevel[0][0], EmphasizedLumaLevel[0][1]);
-			v = PhaseSwing(v, n_LU[1], EmphasizedLumaLevel[1][0], EmphasizedLumaLevel[1][1]);
-			v = PhaseSwing(v, n_LU[2], EmphasizedLumaLevel[2][0], EmphasizedLumaLevel[2][1]);
-			v = PhaseSwing(v, n_LU[3], EmphasizedLumaLevel[3][0], EmphasizedLumaLevel[3][1]);
+			v = PhaseSwing(v, n_LU[0], use_ext_levels ? ext_levels.EmphasizedLumaLevel[0][0] : EmphasizedLumaLevel[0][0], use_ext_levels ? ext_levels.EmphasizedLumaLevel[0][1] : EmphasizedLumaLevel[0][1]);
+			v = PhaseSwing(v, n_LU[1], use_ext_levels ? ext_levels.EmphasizedLumaLevel[1][0] : EmphasizedLumaLevel[1][0], use_ext_levels ? ext_levels.EmphasizedLumaLevel[1][1] : EmphasizedLumaLevel[1][1]);
+			v = PhaseSwing(v, n_LU[2], use_ext_levels ? ext_levels.EmphasizedLumaLevel[2][0] : EmphasizedLumaLevel[2][0], use_ext_levels ? ext_levels.EmphasizedLumaLevel[2][1] : EmphasizedLumaLevel[2][1]);
+			v = PhaseSwing(v, n_LU[3], use_ext_levels ? ext_levels.EmphasizedLumaLevel[3][0] : EmphasizedLumaLevel[3][0], use_ext_levels ? ext_levels.EmphasizedLumaLevel[3][1] : EmphasizedLumaLevel[3][1]);
 		}
 		else
 		{
-			v = PhaseSwing(v, n_LU[0], LumaLevel[0][0], LumaLevel[0][1]);
-			v = PhaseSwing(v, n_LU[1], LumaLevel[1][0], LumaLevel[1][1]);
-			v = PhaseSwing(v, n_LU[2], LumaLevel[2][0], LumaLevel[2][1]);
-			v = PhaseSwing(v, n_LU[3], LumaLevel[3][0], LumaLevel[3][1]);
+			v = PhaseSwing(v, n_LU[0], use_ext_levels ? ext_levels.LumaLevel[0][0] : LumaLevel[0][0], use_ext_levels ? ext_levels.LumaLevel[0][1] : LumaLevel[0][1]);
+			v = PhaseSwing(v, n_LU[1], use_ext_levels ? ext_levels.LumaLevel[1][0] : LumaLevel[1][0], use_ext_levels ? ext_levels.LumaLevel[1][1] : LumaLevel[1][1]);
+			v = PhaseSwing(v, n_LU[2], use_ext_levels ? ext_levels.LumaLevel[2][0] : LumaLevel[2][0], use_ext_levels ? ext_levels.LumaLevel[2][1] : LumaLevel[2][1]);
+			v = PhaseSwing(v, n_LU[3], use_ext_levels ? ext_levels.LumaLevel[3][0] : LumaLevel[3][0], use_ext_levels ? ext_levels.LumaLevel[3][1] : LumaLevel[3][1]);
 		}
 
 		// In order not to torture the video decoder too much we will mix the noise only in the visible part of the line.
@@ -1024,5 +1024,11 @@ namespace PPUSim
 		{
 			ConvertRAWToRGB_Component(rawIn, rgbOut);
 		}
+	}
+
+	void VideoOut::UseExternalDacLevels(bool use, DacLevels& tab)
+	{
+		use_ext_levels = use;
+		ext_levels = tab;
 	}
 }

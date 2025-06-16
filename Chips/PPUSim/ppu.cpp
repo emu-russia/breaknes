@@ -368,4 +368,9 @@ namespace PPUSim
 	{
 		vid_out->SetCompositeNoise(volts);
 	}
+
+	void PPU::UseExternalDacLevels(bool use, DacLevels& tab)
+	{
+		vid_out->UseExternalDacLevels(use, tab);
+	}
 }
