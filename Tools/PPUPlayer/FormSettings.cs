@@ -67,6 +67,7 @@ namespace PPUPlayer
 			settings.OAMDecay = BreaksCore.OAMDecayBehavior.Keep;
 			settings.PpuNoise = 0.0f;
 			settings.AllocConsole = false;
+			settings.UseDacLevels = false;
 
 			SaveSettings(settings);
 
@@ -148,6 +149,113 @@ namespace PPUPlayer
 			[Description("Turn on the debug console. Requires a restart.")]
 			[DefaultValue(false)]
 			public bool AllocConsole { get; set; }
+
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("Enable the use of DAC preset levels. There are 4 groups of levels: Sync level, ColorBurst level, 4 Luma levels and 4 EmphasizedLuma levels. Each level is represented by a pair of values (low level and high level). All values are floats, in volts (V)")]
+			[DefaultValue(false)]
+			public bool UseDacLevels { get; set; }
+
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("SyncLevel low")]
+			[DefaultValue(0)]
+			public float SyncLevel_0 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("SyncLevel high")]
+			[DefaultValue(0)]
+			public float SyncLevel_1 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("BurstLevel low")]
+			[DefaultValue(0)]
+			public float BurstLevel_0 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("BurstLevel high")]
+			[DefaultValue(0)]
+			public float BurstLevel_1 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("LumaLevel[0] low")]
+			[DefaultValue(0)]
+			public float LumaLevel_0_0 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("LumaLevel[1] low")]
+			[DefaultValue(0)]
+			public float LumaLevel_0_1 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("LumaLevel[2] low")]
+			[DefaultValue(0)]
+			public float LumaLevel_0_2 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("LumaLevel[3] low")]
+			[DefaultValue(0)]
+			public float LumaLevel_0_3 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("LumaLevel[0] high")]
+			[DefaultValue(0)]
+			public float LumaLevel_1_0 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("LumaLevel[1] high")]
+			[DefaultValue(0)]
+			public float LumaLevel_1_1 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("LumaLevel[2] high")]
+			[DefaultValue(0)]
+			public float LumaLevel_1_2 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("LumaLevel[3] high")]
+			[DefaultValue(0)]
+			public float LumaLevel_1_3 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("EmphasizedLumaLevel[0] low")]
+			[DefaultValue(0)]
+			public float EmphasizedLumaLevel_0_0 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("EmphasizedLumaLevel[1] low")]
+			[DefaultValue(0)]
+			public float EmphasizedLumaLevel_0_1 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("EmphasizedLumaLevel[2] low")]
+			[DefaultValue(0)]
+			public float EmphasizedLumaLevel_0_2 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("EmphasizedLumaLevel[3] low")]
+			[DefaultValue(0)]
+			public float EmphasizedLumaLevel_0_3 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("EmphasizedLumaLevel[0] high")]
+			[DefaultValue(0)]
+			public float EmphasizedLumaLevel_1_0 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("EmphasizedLumaLevel[1] high")]
+			[DefaultValue(0)]
+			public float EmphasizedLumaLevel_1_1 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("EmphasizedLumaLevel[2] high")]
+			[DefaultValue(0)]
+			public float EmphasizedLumaLevel_1_2 { get; set; }
+			[XmlElement]
+			[Category("External DAC Levels")]
+			[Description("EmphasizedLumaLevel[3] high")]
+			[DefaultValue(0)]
+			public float EmphasizedLumaLevel_1_3 { get; set; }
 		}
 
 

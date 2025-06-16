@@ -41,6 +41,9 @@ namespace PPUSim
 		float LumaLevel[4][2]{};
 		float EmphasizedLumaLevel[4][2]{};
 
+		DacLevels ext_levels{};		// Externally set level values
+		bool use_ext_levels = false;		// true: use ext_levels instead of level values set in the class constructor
+
 		BaseLogic::DLatch cc_latch1[4]{};
 		BaseLogic::DLatch cc_latch2[4]{};
 		BaseLogic::DLatch cc_burst_latch;
@@ -134,6 +137,8 @@ namespace PPUSim
 		bool IsComposite();
 
 		void SetCompositeNoise(float volts);
+
+		void UseExternalDacLevels(bool use, DacLevels& tab);
 	};
 
 	union PALChromaInputs

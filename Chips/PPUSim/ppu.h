@@ -67,7 +67,7 @@ namespace PPUSim
 	};
 
 	/// <summary>
-	/// How to handle the OAM Corruption effect.
+	/// How to handle the OAM Decay effect.
 	/// </summary>
 	enum class OAMDecayBehavior
 	{
@@ -76,6 +76,17 @@ namespace PPUSim
 		ToZero,
 		ToOne,
 		Randomize,
+	};
+
+	/// <summary>
+	/// Externally set composite video signal levels (#481). All values are in volts (V)
+	/// </summary>
+	struct DacLevels
+	{
+		float SyncLevel[2];
+		float BurstLevel[2];
+		float LumaLevel[4][2];
+		float EmphasizedLumaLevel[4][2];
 	};
 
 #pragma pack(pop)
@@ -470,6 +481,13 @@ namespace PPUSim
 		/// </summary>
 		/// <param name="volts">Noise +/- value. 0 to disable.</param>
 		void SetCompositeNoise(float volts);
+
+		/// <summary>
+		/// Use externally set DAC signal levels.
+		/// </summary>
+		/// <param name="use">true: Use externally set table, false: Use internal values (see video_out.cpp class constructor)</param>
+		/// <param name="tab">signal value table</param>
+		void UseExternalDacLevels(bool use, DacLevels& tab);
 
 		uint8_t Dbg_OAMReadByte(size_t addr);
 		uint8_t Dbg_TempOAMReadByte(size_t addr);

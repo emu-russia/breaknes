@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Be.Windows.Forms;
+using SharpTools;
+using SharpToolsCustomClass;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
 using System.Runtime.InteropServices;
-
-using Be.Windows.Forms;
-using SharpToolsCustomClass;
-using SharpTools;
-using static SharpTools.BreakpointsPanel;
+using System.Windows.Forms;
 
 namespace PPUPlayer
 {
@@ -225,6 +223,30 @@ namespace PPUPlayer
 			}
 			BreaksCore.SetOamDecayBehavior(settings.OAMDecay);
 			BreaksCore.SetNoiseLevel(settings.PpuNoise);
+
+			BreaksCore.DacLevels tab = new BreaksCore.DacLevels();
+			tab.SyncLevel_0 = settings.SyncLevel_0;
+			tab.SyncLevel_1 = settings.SyncLevel_1;
+			tab.BurstLevel_0 = settings.BurstLevel_0;
+			tab.BurstLevel_1 = settings.BurstLevel_1;
+			tab.LumaLevel_0_0 = settings.LumaLevel_0_0;
+			tab.LumaLevel_0_1 = settings.LumaLevel_0_1;
+			tab.LumaLevel_0_2 = settings.LumaLevel_0_2;
+			tab.LumaLevel_0_3 = settings.LumaLevel_0_3;
+			tab.LumaLevel_1_0 = settings.LumaLevel_1_0;
+			tab.LumaLevel_1_1 = settings.LumaLevel_1_1;
+			tab.LumaLevel_1_2 = settings.LumaLevel_1_2;
+			tab.LumaLevel_1_3 = settings.LumaLevel_1_3;
+			tab.EmphasizedLumaLevel_0_0 = settings.EmphasizedLumaLevel_0_0;
+			tab.EmphasizedLumaLevel_0_1 = settings.EmphasizedLumaLevel_0_1;
+			tab.EmphasizedLumaLevel_0_2 = settings.EmphasizedLumaLevel_0_2;
+			tab.EmphasizedLumaLevel_0_3 = settings.EmphasizedLumaLevel_0_3;
+			tab.EmphasizedLumaLevel_1_0 = settings.EmphasizedLumaLevel_1_0;
+			tab.EmphasizedLumaLevel_1_1 = settings.EmphasizedLumaLevel_1_1;
+			tab.EmphasizedLumaLevel_1_2 = settings.EmphasizedLumaLevel_1_2;
+			tab.EmphasizedLumaLevel_1_3 = settings.EmphasizedLumaLevel_1_3;
+			BreaksCore.PpuUseExternalDacLevels(settings.UseDacLevels, tab);
+
 			BreaksCore.LoadRegDump(reg_dump, reg_dump.Length);
 			UpdateMemLayout();
 

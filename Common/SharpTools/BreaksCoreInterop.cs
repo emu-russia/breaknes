@@ -120,6 +120,31 @@ namespace SharpTools
 			public int PhaseAlteration;     // 1: PAL
 		}
 
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public unsafe struct DacLevels
+		{
+			public float SyncLevel_0;
+			public float SyncLevel_1;
+			public float BurstLevel_0;
+			public float BurstLevel_1;
+			public float LumaLevel_0_0;
+			public float LumaLevel_0_1;
+			public float LumaLevel_0_2;
+			public float LumaLevel_0_3;
+			public float LumaLevel_1_0;
+			public float LumaLevel_1_1;
+			public float LumaLevel_1_2;
+			public float LumaLevel_1_3;
+			public float EmphasizedLumaLevel_0_0;
+			public float EmphasizedLumaLevel_0_1;
+			public float EmphasizedLumaLevel_0_2;
+			public float EmphasizedLumaLevel_0_3;
+			public float EmphasizedLumaLevel_1_0;
+			public float EmphasizedLumaLevel_1_1;
+			public float EmphasizedLumaLevel_1_2;
+			public float EmphasizedLumaLevel_1_3;
+		}
+
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void GetPpuSignalFeatures(out VideoSignalFeatures features);
 
@@ -147,6 +172,8 @@ namespace SharpTools
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetNoiseLevel(float volts);
 
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void PpuUseExternalDacLevels(bool use, DacLevels tab);
 
 		#region "Core IO Api"
 

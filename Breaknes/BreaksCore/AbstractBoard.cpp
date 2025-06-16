@@ -263,6 +263,11 @@ namespace Breaknes
 		ppu->SetCompositeNoise(volts);
 	}
 
+	void Board::PpuUseExternalDacLevels(bool use, PPUSim::DacLevels& tab)
+	{
+		ppu->UseExternalDacLevels(use, tab);
+	}
+
 	void Board::GetAllCoreDebugInfo(M6502Core::DebugInfo* info)
 	{
 		core->getDebug(info);
