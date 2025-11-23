@@ -475,33 +475,43 @@ namespace System.Windows.Forms
 
 
 		[Category("Waves Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Color FillColor { get; set; }
 
 		[Category("Waves Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Color SignalColor { get; set; }
 
 		[Category("Waves Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Color HighZColor { get; set; }
 		
 		[Category("Waves Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Color UndefinedColor { get; set; }
 
 		[Category("Waves Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Color GridColor { get; set; }
 
 		[Category("Waves Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Color LabelsColor { get; set; }
 
 		[Category("Waves Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Color SelectionColor { get; set; }
 
 		[Category("Waves Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Color DottedColor { get; set; }
 
 		[Category("Waves Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int GridOpacity { get; set; }
 
 		[Category("Waves Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int DottedOpacity { get; set; }
 	}
 

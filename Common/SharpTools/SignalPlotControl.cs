@@ -25,6 +25,17 @@ namespace System.Windows.Forms
 		private PointF p2 = new PointF(0, 0);
 		private PointF tp = new PointF(0, 0);
 
+		// fix error WFO1000
+		private Color fillColor;
+		private Color zeroColor;
+		private Color signalColor;
+		private Color gridColor;
+		private Color labelsColor;
+		private Color selectionColor;
+		private Color dottedColor;
+		private int gridOpacity;
+		private int dottedOpacity;
+
 		public SignalPlot()
 		{
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
@@ -407,30 +418,39 @@ namespace System.Windows.Forms
 
 
 		[Category("Plot Appearance")]
-		public Color FillColor { get; set; }
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Color FillColor { get => fillColor; set => fillColor = value; }
 
 		[Category("Plot Appearance")]
-		public Color ZeroColor { get; set; }
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Color ZeroColor { get => zeroColor; set => zeroColor = value; }
 
 		[Category("Plot Appearance")]
-		public Color SignalColor { get; set; }
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Color SignalColor { get => signalColor; set => signalColor = value; }
 
 		[Category("Plot Appearance")]
-		public Color GridColor { get; set; }
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Color GridColor { get => gridColor; set => gridColor = value; }
 
 		[Category("Plot Appearance")]
-		public Color LabelsColor { get; set; }
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Color LabelsColor { get => labelsColor; set => labelsColor = value; }
 
 		[Category("Plot Appearance")]
-		public Color SelectionColor { get; set; }
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Color SelectionColor { get => selectionColor; set => selectionColor = value; }
 
 		[Category("Plot Appearance")]
-		public Color DottedColor { get; set; }
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Color DottedColor { get => dottedColor; set => dottedColor = value; }
 
 		[Category("Plot Appearance")]
-		public int GridOpacity { get; set; }
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int GridOpacity { get => gridOpacity; set => gridOpacity = value; }
 
 		[Category("Plot Appearance")]
-		public int DottedOpacity { get; set; }
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int DottedOpacity { get => dottedOpacity; set => dottedOpacity = value; }
 	}
 }

@@ -154,13 +154,13 @@
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Chips\M6502Core\Scripts\VS2022\M6502Core.vcxproj">
+    <ProjectReference Include="..\..\Chips\M6502Core\Scripts\VS2026\M6502Core.vcxproj">
       <Project>{75210c0a-a812-4246-a179-b50d8a25a121}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Chips\APUSim\Scripts\VS2022\APUSim.vcxproj">
+    <ProjectReference Include="..\..\Chips\APUSim\Scripts\VS2026\APUSim.vcxproj">
       <Project>{50e93d78-36dc-46c3-82ea-cab373e18729}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
+    <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2026\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
     </ProjectReference>
   </ItemGroup>

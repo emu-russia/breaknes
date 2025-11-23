@@ -5,11 +5,11 @@ VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ApuPumpkin", "ApuPumpkin.vcxproj", "{D9CEAC88-1547-494B-A65D-4899C509C36A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLogicLib", "..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj", "{11AAD192-46EB-4D5D-B81F-BCEE11D6AF8E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLogicLib", "..\..\Common\BaseLogicLib\Scripts\VS2026\BaseLogicLib.vcxproj", "{11AAD192-46EB-4D5D-B81F-BCEE11D6AF8E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "M6502Core", "..\..\Chips\M6502Core\Scripts\VS2022\M6502Core.vcxproj", "{75210C0A-A812-4246-A179-B50D8A25A121}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "M6502Core", "..\..\Chips\M6502Core\Scripts\VS2026\M6502Core.vcxproj", "{75210C0A-A812-4246-A179-B50D8A25A121}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APUSim", "..\..\Chips\APUSim\Scripts\VS2022\APUSim.vcxproj", "{50E93D78-36DC-46C3-82EA-CAB373E18729}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APUSim", "..\..\Chips\APUSim\Scripts\VS2026\APUSim.vcxproj", "{50E93D78-36DC-46C3-82EA-CAB373E18729}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
