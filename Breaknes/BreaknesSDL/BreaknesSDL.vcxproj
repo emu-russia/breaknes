@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -143,28 +143,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\IO\Scripts\VS2022\IO.vcxproj">
+    <ProjectReference Include="..\..\IO\Scripts\VS2026\IO.vcxproj">
       <Project>{ac032844-ae3a-4224-b6ce-451c5dbe80b9}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\BreaksCore\Scripts\VS2022\BreaksCoreStatic.vcxproj">
+    <ProjectReference Include="..\BreaksCore\Scripts\VS2026\BreaksCoreStatic.vcxproj">
       <Project>{59610324-ce90-474c-89f1-8a998c52b346}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Chips\M6502Core\Scripts\VS2022\M6502Core.vcxproj">
+    <ProjectReference Include="..\..\Chips\M6502Core\Scripts\VS2026\M6502Core.vcxproj">
       <Project>{75210c0a-a812-4246-a179-b50d8a25a121}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Chips\APUSim\Scripts\VS2022\APUSim.vcxproj">
+    <ProjectReference Include="..\..\Chips\APUSim\Scripts\VS2026\APUSim.vcxproj">
       <Project>{50e93d78-36dc-46c3-82ea-cab373e18729}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Chips\PPUSim\Scripts\VS2022\PPUSim.vcxproj">
+    <ProjectReference Include="..\..\Chips\PPUSim\Scripts\VS2026\PPUSim.vcxproj">
       <Project>{ebd9b3eb-3c04-43ed-b454-e9442b21f5a0}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Common\BaseBoardLib\Scripts\VS2022\BaseBoardLib.vcxproj">
+    <ProjectReference Include="..\..\Common\BaseBoardLib\Scripts\VS2026\BaseBoardLib.vcxproj">
       <Project>{36f535ad-b87b-4f4d-a5f9-0f2377fba7ea}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj">
+    <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2026\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Mappers\Scripts\VS2022\Mappers.vcxproj">
+    <ProjectReference Include="..\..\Mappers\Scripts\VS2026\Mappers.vcxproj">
       <Project>{1ce1efd6-4dbf-4d93-ad3a-94c808ea70ab}</Project>
     </ProjectReference>
   </ItemGroup>
