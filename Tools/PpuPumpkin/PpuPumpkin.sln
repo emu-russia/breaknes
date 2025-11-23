@@ -5,9 +5,9 @@ VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PpuPumpkin", "PpuPumpkin.vcxproj", "{FF6C1A38-9927-4198-9C90-F373BE5E0BC4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLogicLib", "..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj", "{11AAD192-46EB-4D5D-B81F-BCEE11D6AF8E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLogicLib", "..\..\Common\BaseLogicLib\Scripts\VS2026\BaseLogicLib.vcxproj", "{11AAD192-46EB-4D5D-B81F-BCEE11D6AF8E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PPUSim", "..\..\Chips\PPUSim\Scripts\VS2022\PPUSim.vcxproj", "{EBD9B3EB-3C04-43ED-B454-E9442B21F5A0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PPUSim", "..\..\Chips\PPUSim\Scripts\VS2026\PPUSim.vcxproj", "{EBD9B3EB-3C04-43ED-B454-E9442B21F5A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

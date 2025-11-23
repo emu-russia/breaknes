@@ -5,27 +5,27 @@ VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreaksDebug", "BreaksDebug.csproj", "{F609D0B4-2EB2-491C-BE8F-E2B5D65ECDA4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "M6502Core", "..\..\Chips\M6502Core\Scripts\VS2022\M6502Core.vcxproj", "{75210C0A-A812-4246-A179-B50D8A25A121}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "M6502Core", "..\..\Chips\M6502Core\Scripts\VS2026\M6502Core.vcxproj", "{75210C0A-A812-4246-A179-B50D8A25A121}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLogicLib", "..\..\Common\BaseLogicLib\Scripts\VS2022\BaseLogicLib.vcxproj", "{11AAD192-46EB-4D5D-B81F-BCEE11D6AF8E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLogicLib", "..\..\Common\BaseLogicLib\Scripts\VS2026\BaseLogicLib.vcxproj", "{11AAD192-46EB-4D5D-B81F-BCEE11D6AF8E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpTools", "..\..\Common\SharpTools\SharpTools.csproj", "{B63A28E1-5C32-4164-934A-F163BD7589A3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BreaksCore", "..\..\Breaknes\BreaksCore\Scripts\VS2022\BreaksCore.vcxproj", "{88908FB4-0012-4533-BFFB-30AA9F72EBDC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BreaksCore", "..\..\Breaknes\BreaksCore\Scripts\VS2026\BreaksCore.vcxproj", "{88908FB4-0012-4533-BFFB-30AA9F72EBDC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PPUSim", "..\..\Chips\PPUSim\Scripts\VS2022\PPUSim.vcxproj", "{EBD9B3EB-3C04-43ED-B454-E9442B21F5A0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PPUSim", "..\..\Chips\PPUSim\Scripts\VS2026\PPUSim.vcxproj", "{EBD9B3EB-3C04-43ED-B454-E9442B21F5A0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JsonLib", "..\..\Common\JsonLib\Scripts\VS2022\JsonLib.vcxproj", "{8782459B-4E38-4227-AA98-6E7E8E06659C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JsonLib", "..\..\Common\JsonLib\Scripts\VS2026\JsonLib.vcxproj", "{8782459B-4E38-4227-AA98-6E7E8E06659C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mappers", "..\..\Mappers\Scripts\VS2022\Mappers.vcxproj", "{1CE1EFD6-4DBF-4D93-AD3A-94C808EA70AB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mappers", "..\..\Mappers\Scripts\VS2026\Mappers.vcxproj", "{1CE1EFD6-4DBF-4D93-AD3A-94C808EA70AB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseBoardLib", "..\..\Common\BaseBoardLib\Scripts\VS2022\BaseBoardLib.vcxproj", "{36F535AD-B87B-4F4D-A5F9-0F2377FBA7EA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseBoardLib", "..\..\Common\BaseBoardLib\Scripts\VS2026\BaseBoardLib.vcxproj", "{36F535AD-B87B-4F4D-A5F9-0F2377FBA7EA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APUSim", "..\..\Chips\APUSim\Scripts\VS2022\APUSim.vcxproj", "{50E93D78-36DC-46C3-82EA-CAB373E18729}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APUSim", "..\..\Chips\APUSim\Scripts\VS2026\APUSim.vcxproj", "{50E93D78-36DC-46C3-82EA-CAB373E18729}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BreaksCore Libs", "BreaksCore Libs", "{E71BE94D-A2B9-4175-B510-261ACD5576A7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IO", "..\..\IO\Scripts\VS2022\IO.vcxproj", "{AC032844-AE3A-4224-B6CE-451C5DBE80B9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IO", "..\..\IO\Scripts\VS2026\IO.vcxproj", "{AC032844-AE3A-4224-B6CE-451C5DBE80B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
