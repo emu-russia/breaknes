@@ -1,5 +1,7 @@
 # Breaks Debugger
 
+![breaksdebug_logo](breaksdebug_logo.png)
+
 A simple GUI for checking the operation of the 6502 Core component (`M6502Core`).
 
 ![concept](concept.jpg)
