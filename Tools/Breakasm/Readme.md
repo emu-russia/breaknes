@@ -1,5 +1,7 @@
 # Breakasm
 
+![breakasm_logo](breakasm_logo.png)
+
 As simple and dumb assembler as possible, to generate code.
 
 To run:
