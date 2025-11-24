@@ -63,6 +63,16 @@ namespace BreaksDebug.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap breaksdebug_logo {
+            get {
+                object obj = ResourceManager.GetObject("breaksdebug_logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap datapath2 {
             get {
                 object obj = ResourceManager.GetObject("datapath2", resourceCulture);
