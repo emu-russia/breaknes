@@ -12,7 +12,7 @@ namespace BreaksDebug
 			CoreDebug.CpuDebugInfo_Decoder decoderOut,
 			CoreDebug.CpuDebugInfo_Commands commands,
             byte PHI1, byte PHI2, 
-            DataPathView dataPathView,
+            DataPathView2 dataPathView,
             string MarkdownDir, string MarkdownImgDir, string WikiRoot)
         {
             // Generate file name

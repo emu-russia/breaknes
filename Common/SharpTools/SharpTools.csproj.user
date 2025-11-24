@@ -8,6 +8,9 @@
     <Compile Update="DataPathControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="DataPathControl2.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="FormAddBreakpoint.cs">
       <SubType>Form</SubType>
     </Compile>

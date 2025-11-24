@@ -54,7 +54,9 @@ namespace BreaksDebug
 			toolStripButton2 = new ToolStripButton();
 			statusStrip1 = new StatusStrip();
 			toolStripStatusLabel1 = new ToolStripStatusLabel();
-			splitContainer1 = new SplitContainer();
+			openFileDialog1 = new OpenFileDialog();
+			openFileDialog2 = new OpenFileDialog();
+			saveFileDialog1 = new SaveFileDialog();
 			tabControl2 = new TabControl();
 			tabPage3 = new TabPage();
 			tableLayoutPanel1 = new TableLayoutPanel();
@@ -89,21 +91,13 @@ namespace BreaksDebug
 			toolStripButton11 = new ToolStripButton();
 			toolStripButton12 = new ToolStripButton();
 			toolStripButton13 = new ToolStripButton();
-			tabControl1 = new TabControl();
-			tabPage1 = new TabPage();
-			openFileDialog1 = new OpenFileDialog();
-			openFileDialog2 = new OpenFileDialog();
-			saveFileDialog1 = new SaveFileDialog();
-			splitContainer5 = new SplitContainer();
+			tabPage2 = new TabPage();
+			dataPathView21 = new DataPathView2();
+			tabPage6 = new TabPage();
 			hexBox1 = new Be.Windows.Forms.HexBox();
-			dataPathView1 = new DataPathView();
 			menuStrip1.SuspendLayout();
 			toolStrip1.SuspendLayout();
 			statusStrip1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
-			splitContainer1.Panel1.SuspendLayout();
-			splitContainer1.Panel2.SuspendLayout();
-			splitContainer1.SuspendLayout();
 			tabControl2.SuspendLayout();
 			tabPage3.SuspendLayout();
 			tableLayoutPanel1.SuspendLayout();
@@ -122,12 +116,8 @@ namespace BreaksDebug
 			splitContainer3.SuspendLayout();
 			tabPage5.SuspendLayout();
 			toolStrip2.SuspendLayout();
-			tabControl1.SuspendLayout();
-			tabPage1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)splitContainer5).BeginInit();
-			splitContainer5.Panel1.SuspendLayout();
-			splitContainer5.Panel2.SuspendLayout();
-			splitContainer5.SuspendLayout();
+			tabPage2.SuspendLayout();
+			tabPage6.SuspendLayout();
 			SuspendLayout();
 			// 
 			// menuStrip1
@@ -318,39 +308,35 @@ namespace BreaksDebug
 			toolStripStatusLabel1.Size = new Size(118, 17);
 			toolStripStatusLabel1.Text = "toolStripStatusLabel1";
 			// 
-			// splitContainer1
+			// openFileDialog1
 			// 
-			splitContainer1.Dock = DockStyle.Fill;
-			splitContainer1.FixedPanel = FixedPanel.Panel2;
-			splitContainer1.Location = new Point(0, 63);
-			splitContainer1.Margin = new Padding(4, 3, 4, 3);
-			splitContainer1.Name = "splitContainer1";
-			splitContainer1.Orientation = Orientation.Horizontal;
+			openFileDialog1.DefaultExt = "asm";
+			openFileDialog1.Filter = "ASM files|*.asm;*.nas|All files|*.*";
 			// 
-			// splitContainer1.Panel1
+			// openFileDialog2
 			// 
-			splitContainer1.Panel1.Controls.Add(tabControl2);
+			openFileDialog2.DefaultExt = "bin";
+			openFileDialog2.Filter = "Binary files|*.bin|All files|*.*";
 			// 
-			// splitContainer1.Panel2
+			// saveFileDialog1
 			// 
-			splitContainer1.Panel2.Controls.Add(tabControl1);
-			splitContainer1.Size = new Size(1597, 611);
-			splitContainer1.SplitterDistance = 438;
-			splitContainer1.SplitterWidth = 5;
-			splitContainer1.TabIndex = 3;
+			saveFileDialog1.DefaultExt = "bin";
+			saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
 			// 
 			// tabControl2
 			// 
 			tabControl2.Controls.Add(tabPage3);
 			tabControl2.Controls.Add(tabPage4);
 			tabControl2.Controls.Add(tabPage5);
+			tabControl2.Controls.Add(tabPage2);
+			tabControl2.Controls.Add(tabPage6);
 			tabControl2.Dock = DockStyle.Fill;
-			tabControl2.Location = new Point(0, 0);
+			tabControl2.Location = new Point(0, 63);
 			tabControl2.Margin = new Padding(4, 3, 4, 3);
 			tabControl2.Name = "tabControl2";
 			tabControl2.SelectedIndex = 0;
-			tabControl2.Size = new Size(1597, 438);
-			tabControl2.TabIndex = 0;
+			tabControl2.Size = new Size(1597, 611);
+			tabControl2.TabIndex = 3;
 			// 
 			// tabPage3
 			// 
@@ -359,7 +345,7 @@ namespace BreaksDebug
 			tabPage3.Margin = new Padding(4, 3, 4, 3);
 			tabPage3.Name = "tabPage3";
 			tabPage3.Padding = new Padding(4, 3, 4, 3);
-			tabPage3.Size = new Size(1589, 410);
+			tabPage3.Size = new Size(1589, 583);
 			tabPage3.TabIndex = 0;
 			tabPage3.Text = "6502 Core";
 			tabPage3.UseVisualStyleBackColor = true;
@@ -393,7 +379,7 @@ namespace BreaksDebug
 			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 23F));
 			tableLayoutPanel1.RowStyles.Add(new RowStyle());
 			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 23F));
-			tableLayoutPanel1.Size = new Size(1581, 404);
+			tableLayoutPanel1.Size = new Size(1581, 577);
 			tableLayoutPanel1.TabIndex = 12;
 			// 
 			// splitContainer4
@@ -429,7 +415,7 @@ namespace BreaksDebug
 			// label9
 			// 
 			label9.AutoSize = true;
-			label9.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
+			label9.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
 			label9.Location = new Point(4, 0);
 			label9.Margin = new Padding(4, 0, 4, 0);
 			label9.Name = "label9";
@@ -439,57 +425,62 @@ namespace BreaksDebug
 			// 
 			// propertyGrid1
 			// 
+			propertyGrid1.BackColor = SystemColors.Control;
 			propertyGrid1.Dock = DockStyle.Fill;
-			propertyGrid1.Font = new Font("Microsoft Sans Serif", 6.75F, FontStyle.Regular, GraphicsUnit.Point);
+			propertyGrid1.Font = new Font("Microsoft Sans Serif", 6.75F);
 			propertyGrid1.HelpVisible = false;
 			propertyGrid1.Location = new Point(4, 49);
 			propertyGrid1.Margin = new Padding(4, 3, 4, 3);
 			propertyGrid1.Name = "propertyGrid1";
-			propertyGrid1.Size = new Size(308, 352);
+			propertyGrid1.Size = new Size(308, 525);
 			propertyGrid1.TabIndex = 13;
 			// 
 			// propertyGrid2
 			// 
+			propertyGrid2.BackColor = SystemColors.Control;
 			propertyGrid2.Dock = DockStyle.Fill;
-			propertyGrid2.Font = new Font("Microsoft Sans Serif", 6.75F, FontStyle.Regular, GraphicsUnit.Point);
+			propertyGrid2.Font = new Font("Microsoft Sans Serif", 6.75F);
 			propertyGrid2.HelpVisible = false;
 			propertyGrid2.Location = new Point(320, 49);
 			propertyGrid2.Margin = new Padding(4, 3, 4, 3);
 			propertyGrid2.Name = "propertyGrid2";
-			propertyGrid2.Size = new Size(308, 352);
+			propertyGrid2.Size = new Size(308, 525);
 			propertyGrid2.TabIndex = 4;
 			// 
 			// propertyGrid3
 			// 
+			propertyGrid3.BackColor = SystemColors.Control;
 			propertyGrid3.Dock = DockStyle.Fill;
-			propertyGrid3.Font = new Font("Microsoft Sans Serif", 6.75F, FontStyle.Regular, GraphicsUnit.Point);
+			propertyGrid3.Font = new Font("Microsoft Sans Serif", 6.75F);
 			propertyGrid3.HelpVisible = false;
 			propertyGrid3.Location = new Point(636, 49);
 			propertyGrid3.Margin = new Padding(4, 3, 4, 3);
 			propertyGrid3.Name = "propertyGrid3";
-			propertyGrid3.Size = new Size(308, 352);
+			propertyGrid3.Size = new Size(308, 525);
 			propertyGrid3.TabIndex = 6;
 			// 
 			// propertyGrid4
 			// 
+			propertyGrid4.BackColor = SystemColors.Control;
 			propertyGrid4.Dock = DockStyle.Fill;
-			propertyGrid4.Font = new Font("Microsoft Sans Serif", 6.75F, FontStyle.Regular, GraphicsUnit.Point);
+			propertyGrid4.Font = new Font("Microsoft Sans Serif", 6.75F);
 			propertyGrid4.HelpVisible = false;
 			propertyGrid4.Location = new Point(952, 49);
 			propertyGrid4.Margin = new Padding(4, 3, 4, 3);
 			propertyGrid4.Name = "propertyGrid4";
-			propertyGrid4.Size = new Size(308, 352);
+			propertyGrid4.Size = new Size(308, 525);
 			propertyGrid4.TabIndex = 8;
 			// 
 			// propertyGrid5
 			// 
+			propertyGrid5.BackColor = SystemColors.Control;
 			propertyGrid5.Dock = DockStyle.Fill;
-			propertyGrid5.Font = new Font("Microsoft Sans Serif", 6.75F, FontStyle.Regular, GraphicsUnit.Point);
+			propertyGrid5.Font = new Font("Microsoft Sans Serif", 6.75F);
 			propertyGrid5.HelpVisible = false;
 			propertyGrid5.Location = new Point(1268, 49);
 			propertyGrid5.Margin = new Padding(4, 3, 4, 3);
 			propertyGrid5.Name = "propertyGrid5";
-			propertyGrid5.Size = new Size(309, 352);
+			propertyGrid5.Size = new Size(309, 525);
 			propertyGrid5.TabIndex = 10;
 			// 
 			// label5
@@ -565,7 +556,7 @@ namespace BreaksDebug
 			// label3
 			// 
 			label3.AutoSize = true;
-			label3.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
+			label3.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
 			label3.Location = new Point(4, 0);
 			label3.Margin = new Padding(4, 0, 4, 0);
 			label3.Name = "label3";
@@ -590,7 +581,7 @@ namespace BreaksDebug
 			tabPage4.Margin = new Padding(4, 3, 4, 3);
 			tabPage4.Name = "tabPage4";
 			tabPage4.Padding = new Padding(4, 3, 4, 3);
-			tabPage4.Size = new Size(1589, 410);
+			tabPage4.Size = new Size(1589, 551);
 			tabPage4.TabIndex = 1;
 			tabPage4.Text = "Assembler";
 			tabPage4.UseVisualStyleBackColor = true;
@@ -611,8 +602,8 @@ namespace BreaksDebug
 			// splitContainer3.Panel2
 			// 
 			splitContainer3.Panel2.Controls.Add(button2);
-			splitContainer3.Size = new Size(1581, 404);
-			splitContainer3.SplitterDistance = 345;
+			splitContainer3.Size = new Size(1581, 545);
+			splitContainer3.SplitterDistance = 480;
 			splitContainer3.SplitterWidth = 5;
 			splitContainer3.TabIndex = 0;
 			// 
@@ -620,11 +611,11 @@ namespace BreaksDebug
 			// 
 			richTextBox1.AcceptsTab = true;
 			richTextBox1.Dock = DockStyle.Fill;
-			richTextBox1.Font = new Font("Courier New", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
+			richTextBox1.Font = new Font("Courier New", 8.25F);
 			richTextBox1.Location = new Point(0, 0);
 			richTextBox1.Margin = new Padding(4, 3, 4, 3);
 			richTextBox1.Name = "richTextBox1";
-			richTextBox1.Size = new Size(1581, 345);
+			richTextBox1.Size = new Size(1581, 480);
 			richTextBox1.TabIndex = 0;
 			richTextBox1.Text = "";
 			// 
@@ -637,7 +628,6 @@ namespace BreaksDebug
 			button2.TabIndex = 0;
 			button2.Text = "Assemble";
 			button2.UseVisualStyleBackColor = true;
-			button2.Click += button2_Click;
 			// 
 			// tabPage5
 			// 
@@ -645,7 +635,7 @@ namespace BreaksDebug
 			tabPage5.Controls.Add(toolStrip2);
 			tabPage5.Location = new Point(4, 24);
 			tabPage5.Name = "tabPage5";
-			tabPage5.Size = new Size(1589, 410);
+			tabPage5.Size = new Size(1589, 551);
 			tabPage5.TabIndex = 3;
 			tabPage5.Text = "Waves";
 			tabPage5.UseVisualStyleBackColor = true;
@@ -653,22 +643,12 @@ namespace BreaksDebug
 			// wavesControl1
 			// 
 			wavesControl1.Dock = DockStyle.Fill;
-			wavesControl1.DottedColor = Color.Silver;
-			wavesControl1.DottedOpacity = 95;
-			wavesControl1.FillColor = Color.Black;
-			wavesControl1.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point);
-			wavesControl1.GridColor = Color.Green;
-			wavesControl1.GridOpacity = 95;
-			wavesControl1.HighZColor = Color.Gold;
-			wavesControl1.LabelsColor = Color.White;
+			wavesControl1.Font = new Font("Segoe UI", 6F);
 			wavesControl1.Location = new Point(0, 25);
 			wavesControl1.Name = "wavesControl1";
-			wavesControl1.SelectionColor = Color.GhostWhite;
-			wavesControl1.SignalColor = Color.SpringGreen;
-			wavesControl1.Size = new Size(1589, 385);
+			wavesControl1.Size = new Size(1589, 526);
 			wavesControl1.TabIndex = 1;
 			wavesControl1.Text = "wavesControl1";
-			wavesControl1.UndefinedColor = Color.Red;
 			// 
 			// toolStrip2
 			// 
@@ -688,7 +668,6 @@ namespace BreaksDebug
 			toolStripButton7.Name = "toolStripButton7";
 			toolStripButton7.Size = new Size(47, 22);
 			toolStripButton7.Text = "Snatch";
-			toolStripButton7.Click += toolStripButton7_Click;
 			// 
 			// toolStripButton8
 			// 
@@ -698,7 +677,6 @@ namespace BreaksDebug
 			toolStripButton8.Name = "toolStripButton8";
 			toolStripButton8.Size = new Size(38, 22);
 			toolStripButton8.Text = "Clear";
-			toolStripButton8.Click += toolStripButton8_Click;
 			// 
 			// toolStripSeparator6
 			// 
@@ -713,7 +691,6 @@ namespace BreaksDebug
 			toolStripButton9.Name = "toolStripButton9";
 			toolStripButton9.Size = new Size(32, 22);
 			toolStripButton9.Text = "BRK";
-			toolStripButton9.Click += toolStripButton9_Click;
 			// 
 			// toolStripButton10
 			// 
@@ -723,7 +700,6 @@ namespace BreaksDebug
 			toolStripButton10.Name = "toolStripButton10";
 			toolStripButton10.Size = new Size(34, 22);
 			toolStripButton10.Text = "Disp";
-			toolStripButton10.Click += toolStripButton10_Click;
 			// 
 			// toolStripButton11
 			// 
@@ -733,7 +709,6 @@ namespace BreaksDebug
 			toolStripButton11.Name = "toolStripButton11";
 			toolStripButton11.Size = new Size(33, 22);
 			toolStripButton11.Text = "ALU";
-			toolStripButton11.Click += toolStripButton11_Click;
 			// 
 			// toolStripButton12
 			// 
@@ -743,7 +718,6 @@ namespace BreaksDebug
 			toolStripButton12.Name = "toolStripButton12";
 			toolStripButton12.Size = new Size(37, 22);
 			toolStripButton12.Text = "Bops";
-			toolStripButton12.Click += toolStripButton12_Click;
 			// 
 			// toolStripButton13
 			// 
@@ -753,97 +727,60 @@ namespace BreaksDebug
 			toolStripButton13.Name = "toolStripButton13";
 			toolStripButton13.Size = new Size(36, 22);
 			toolStripButton13.Text = "Fops";
-			toolStripButton13.Click += toolStripButton13_Click;
 			// 
-			// tabControl1
+			// tabPage2
 			// 
-			tabControl1.Controls.Add(tabPage1);
-			tabControl1.Dock = DockStyle.Fill;
-			tabControl1.Location = new Point(0, 0);
-			tabControl1.Margin = new Padding(4, 3, 4, 3);
-			tabControl1.Name = "tabControl1";
-			tabControl1.SelectedIndex = 0;
-			tabControl1.Size = new Size(1597, 168);
-			tabControl1.TabIndex = 0;
+			tabPage2.Controls.Add(dataPathView21);
+			tabPage2.Location = new Point(4, 24);
+			tabPage2.Name = "tabPage2";
+			tabPage2.Size = new Size(1589, 551);
+			tabPage2.TabIndex = 4;
+			tabPage2.Text = "DataPath";
+			tabPage2.UseVisualStyleBackColor = true;
 			// 
-			// tabPage1
+			// dataPathView21
 			// 
-			tabPage1.Controls.Add(splitContainer5);
-			tabPage1.Location = new Point(4, 24);
-			tabPage1.Margin = new Padding(4, 3, 4, 3);
-			tabPage1.Name = "tabPage1";
-			tabPage1.Padding = new Padding(4, 3, 4, 3);
-			tabPage1.Size = new Size(1589, 140);
-			tabPage1.TabIndex = 0;
-			tabPage1.Text = "CPU Memory";
-			tabPage1.UseVisualStyleBackColor = true;
+			dataPathView21.BackgroundImage = Properties.Resources.datapath2;
+			dataPathView21.Dock = DockStyle.Fill;
+			dataPathView21.Location = new Point(0, 0);
+			dataPathView21.Name = "dataPathView21";
+			dataPathView21.Size = new Size(1589, 551);
+			dataPathView21.TabIndex = 1;
+			dataPathView21.Text = "dataPathView21";
 			// 
-			// openFileDialog1
+			// tabPage6
 			// 
-			openFileDialog1.DefaultExt = "asm";
-			openFileDialog1.Filter = "ASM files|*.asm;*.nas|All files|*.*";
-			// 
-			// openFileDialog2
-			// 
-			openFileDialog2.DefaultExt = "bin";
-			openFileDialog2.Filter = "Binary files|*.bin|All files|*.*";
-			// 
-			// saveFileDialog1
-			// 
-			saveFileDialog1.DefaultExt = "bin";
-			saveFileDialog1.Filter = "Binary files|*.bin|All files|*.*";
-			// 
-			// splitContainer5
-			// 
-			splitContainer5.Dock = DockStyle.Fill;
-			splitContainer5.Location = new Point(4, 3);
-			splitContainer5.Name = "splitContainer5";
-			// 
-			// splitContainer5.Panel1
-			// 
-			splitContainer5.Panel1.Controls.Add(hexBox1);
-			// 
-			// splitContainer5.Panel2
-			// 
-			splitContainer5.Panel2.Controls.Add(dataPathView1);
-			splitContainer5.Size = new Size(1581, 134);
-			splitContainer5.SplitterDistance = 714;
-			splitContainer5.TabIndex = 0;
+			tabPage6.Controls.Add(hexBox1);
+			tabPage6.Location = new Point(4, 24);
+			tabPage6.Name = "tabPage6";
+			tabPage6.Size = new Size(1589, 551);
+			tabPage6.TabIndex = 5;
+			tabPage6.Text = "CPU Memory";
+			tabPage6.UseVisualStyleBackColor = true;
 			// 
 			// hexBox1
 			// 
 			hexBox1.ColumnInfoVisible = true;
 			hexBox1.Dock = DockStyle.Fill;
-			hexBox1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+			hexBox1.Font = new Font("Segoe UI", 9F);
 			hexBox1.LineInfoVisible = true;
 			hexBox1.Location = new Point(0, 0);
 			hexBox1.Margin = new Padding(4, 3, 4, 3);
 			hexBox1.Name = "hexBox1";
 			hexBox1.ReadOnly = true;
 			hexBox1.ShadowSelectionColor = Color.FromArgb(100, 60, 188, 255);
-			hexBox1.Size = new Size(714, 134);
+			hexBox1.Size = new Size(1589, 551);
 			hexBox1.StringViewVisible = true;
-			hexBox1.TabIndex = 2;
+			hexBox1.TabIndex = 3;
 			hexBox1.UseFixedBytesPerLine = true;
 			hexBox1.VScrollBarVisible = true;
-			// 
-			// dataPathView1
-			// 
-			dataPathView1.BackgroundImage = (Image)resources.GetObject("dataPathView1.BackgroundImage");
-			dataPathView1.Dock = DockStyle.Fill;
-			dataPathView1.Location = new Point(0, 0);
-			dataPathView1.Margin = new Padding(4, 3, 4, 3);
-			dataPathView1.Name = "dataPathView1";
-			dataPathView1.Size = new Size(863, 134);
-			dataPathView1.TabIndex = 1;
-			dataPathView1.Text = "dataPathView1";
 			// 
 			// FormMain
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(1597, 696);
-			Controls.Add(splitContainer1);
+			Controls.Add(tabControl2);
 			Controls.Add(statusStrip1);
 			Controls.Add(toolStrip1);
 			Controls.Add(menuStrip1);
@@ -861,10 +798,6 @@ namespace BreaksDebug
 			toolStrip1.PerformLayout();
 			statusStrip1.ResumeLayout(false);
 			statusStrip1.PerformLayout();
-			splitContainer1.Panel1.ResumeLayout(false);
-			splitContainer1.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
-			splitContainer1.ResumeLayout(false);
 			tabControl2.ResumeLayout(false);
 			tabPage3.ResumeLayout(false);
 			tableLayoutPanel1.ResumeLayout(false);
@@ -890,12 +823,8 @@ namespace BreaksDebug
 			tabPage5.PerformLayout();
 			toolStrip2.ResumeLayout(false);
 			toolStrip2.PerformLayout();
-			tabControl1.ResumeLayout(false);
-			tabPage1.ResumeLayout(false);
-			splitContainer5.Panel1.ResumeLayout(false);
-			splitContainer5.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)splitContainer5).EndInit();
-			splitContainer5.ResumeLayout(false);
+			tabPage2.ResumeLayout(false);
+			tabPage6.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -921,54 +850,52 @@ namespace BreaksDebug
 		private System.Windows.Forms.ToolStripButton toolStripButton4;
 		private System.Windows.Forms.ToolStripButton toolStripButton5;
 		private System.Windows.Forms.ToolStripButton toolStripButton6;
-		private System.Windows.Forms.SplitContainer splitContainer1;
-		private System.Windows.Forms.TabControl tabControl2;
-		private System.Windows.Forms.TabPage tabPage3;
-		private System.Windows.Forms.TabPage tabPage4;
-		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.ToolStripMenuItem loadAssemblySourceToolStripMenuItem;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.PropertyGrid propertyGrid5;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.PropertyGrid propertyGrid4;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.PropertyGrid propertyGrid3;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.SplitContainer splitContainer3;
-		private System.Windows.Forms.RichTextBox richTextBox1;
-		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.OpenFileDialog openFileDialog2;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private System.Windows.Forms.PropertyGrid propertyGrid1;
-		private System.Windows.Forms.PropertyGrid propertyGrid2;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.SplitContainer splitContainer2;
-		private System.Windows.Forms.SplitContainer splitContainer4;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label9;
-		private TabPage tabPage5;
-		private ToolStrip toolStrip2;
-		private ToolStripButton toolStripButton7;
-		private ToolStripButton toolStripButton8;
-		private WavesControl wavesControl1;
 		private ToolStripMenuItem sendFeedbackToolStripMenuItem;
 		private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator5;
+		private TabControl tabControl2;
+		private TabPage tabPage3;
+		private TableLayoutPanel tableLayoutPanel1;
+		private SplitContainer splitContainer4;
+		private Label label1;
+		private Label label9;
+		private PropertyGrid propertyGrid1;
+		private PropertyGrid propertyGrid2;
+		private PropertyGrid propertyGrid3;
+		private PropertyGrid propertyGrid4;
+		private PropertyGrid propertyGrid5;
+		private Label label5;
+		private Label label6;
+		private Label label7;
+		private Label label8;
+		private SplitContainer splitContainer2;
+		private Label label2;
+		private Label label3;
+		private Label label4;
+		private TabPage tabPage4;
+		private SplitContainer splitContainer3;
+		private RichTextBox richTextBox1;
+		private Button button2;
+		private TabPage tabPage5;
+		private WavesControl wavesControl1;
+		private ToolStrip toolStrip2;
+		private ToolStripButton toolStripButton7;
+		private ToolStripButton toolStripButton8;
 		private ToolStripSeparator toolStripSeparator6;
 		private ToolStripButton toolStripButton9;
 		private ToolStripButton toolStripButton10;
 		private ToolStripButton toolStripButton11;
 		private ToolStripButton toolStripButton12;
 		private ToolStripButton toolStripButton13;
-		private SplitContainer splitContainer5;
+		private TabPage tabPage2;
+		private DataPathView2 dataPathView21;
+		private TabPage tabPage6;
 		private Be.Windows.Forms.HexBox hexBox1;
-		private DataPathView dataPathView1;
 	}
 }
 
