@@ -477,7 +477,7 @@ namespace System.Windows.Forms
             GraphicsPath zv = new GraphicsPath();
             mapping[(int)CoreDebug.ControlCommand.Z_V] = zv;
 
-            // CPU R/W
+            // CPU R/W (for DL/DB)
 
             cpu_read.AddLines(new Point[] {
                 new Point(769, 181),
@@ -491,7 +491,7 @@ namespace System.Windows.Forms
                 new Point(783, 157)
             });
 
-            // ALU -> ADD
+            // ALU Operation -> ADD
 
             alu_add.AddLines(new Point[] {
                 new Point(305, 112),
