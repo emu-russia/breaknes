@@ -643,12 +643,24 @@ namespace BreaksDebug
 			// wavesControl1
 			// 
 			wavesControl1.Dock = DockStyle.Fill;
+			wavesControl1.DottedColor = Color.Silver;
+			wavesControl1.DottedOpacity = 95;
+			wavesControl1.FillColor = Color.Black;
+			wavesControl1.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point);
+			wavesControl1.GridColor = Color.Green;
+			wavesControl1.GridOpacity = 95;
+			wavesControl1.HighZColor = Color.Gold;
+			wavesControl1.LabelsColor = Color.White;
 			wavesControl1.Font = new Font("Segoe UI", 6F);
 			wavesControl1.Location = new Point(0, 25);
 			wavesControl1.Name = "wavesControl1";
+			wavesControl1.SelectionColor = Color.GhostWhite;
+			wavesControl1.SignalColor = Color.SpringGreen;
+			wavesControl1.Size = new Size(1589, 385);
 			wavesControl1.Size = new Size(1589, 526);
 			wavesControl1.TabIndex = 1;
 			wavesControl1.Text = "wavesControl1";
+			wavesControl1.UndefinedColor = Color.Red;
 			// 
 			// toolStrip2
 			// 
@@ -668,6 +680,7 @@ namespace BreaksDebug
 			toolStripButton7.Name = "toolStripButton7";
 			toolStripButton7.Size = new Size(47, 22);
 			toolStripButton7.Text = "Snatch";
+			toolStripButton7.Click += toolStripButton7_Click;
 			// 
 			// toolStripButton8
 			// 
@@ -677,6 +690,7 @@ namespace BreaksDebug
 			toolStripButton8.Name = "toolStripButton8";
 			toolStripButton8.Size = new Size(38, 22);
 			toolStripButton8.Text = "Clear";
+			toolStripButton8.Click += toolStripButton8_Click;
 			// 
 			// toolStripSeparator6
 			// 
@@ -691,6 +705,7 @@ namespace BreaksDebug
 			toolStripButton9.Name = "toolStripButton9";
 			toolStripButton9.Size = new Size(32, 22);
 			toolStripButton9.Text = "BRK";
+			toolStripButton9.Click += toolStripButton9_Click;
 			// 
 			// toolStripButton10
 			// 
@@ -700,6 +715,7 @@ namespace BreaksDebug
 			toolStripButton10.Name = "toolStripButton10";
 			toolStripButton10.Size = new Size(34, 22);
 			toolStripButton10.Text = "Disp";
+			toolStripButton10.Click += toolStripButton10_Click;
 			// 
 			// toolStripButton11
 			// 
@@ -709,6 +725,7 @@ namespace BreaksDebug
 			toolStripButton11.Name = "toolStripButton11";
 			toolStripButton11.Size = new Size(33, 22);
 			toolStripButton11.Text = "ALU";
+			toolStripButton11.Click += toolStripButton11_Click;
 			// 
 			// toolStripButton12
 			// 
@@ -718,6 +735,7 @@ namespace BreaksDebug
 			toolStripButton12.Name = "toolStripButton12";
 			toolStripButton12.Size = new Size(37, 22);
 			toolStripButton12.Text = "Bops";
+			toolStripButton12.Click += toolStripButton12_Click;
 			// 
 			// toolStripButton13
 			// 
@@ -727,6 +745,7 @@ namespace BreaksDebug
 			toolStripButton13.Name = "toolStripButton13";
 			toolStripButton13.Size = new Size(36, 22);
 			toolStripButton13.Text = "Fops";
+			toolStripButton13.Click += toolStripButton13_Click;
 			// 
 			// tabPage2
 			// 
