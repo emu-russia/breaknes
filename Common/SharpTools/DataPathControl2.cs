@@ -6,7 +6,7 @@ using SharpTools;
 
 namespace System.Windows.Forms
 {
-    public partial class DataPathView : Control
+    public partial class DataPathView2 : Control
     {
         private BufferedGraphics gfx = null;
         private BufferedGraphicsContext context;
@@ -20,7 +20,7 @@ namespace System.Windows.Forms
         Font labelFont = new Font("Segoe UI", 10.0f, FontStyle.Bold);
         Brush labelBrush = new SolidBrush(Color.Black);
 
-        public DataPathView()
+        public DataPathView2()
         {
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 

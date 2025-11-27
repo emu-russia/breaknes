@@ -180,7 +180,7 @@ namespace BreaksDebug
 			propertyGrid5.SelectedObject = commands;
 			propertyGrid5.ExpandAllGridItems();
 
-			dataPathView1.ShowCpuCommands(commands, sys.cpu_pads.PHI1 != 0);
+			dataPathView21.ShowCpuCommands(commands, sys.cpu_pads.PHI1 != 0);
 
 			UpdateDisasm(regsBuses.IRForDisasm, regsBuses.PDForDisasm, internals.FETCH != 0);
 
@@ -189,7 +189,7 @@ namespace BreaksDebug
 			if (MarkdownOutput)
 			{
 				MarkdownDump.ExportStepMarkdown(regsBuses, internals, decoderOut, commands,
-					sys.cpu_pads.PHI1, sys.cpu_pads.PHI2, dataPathView1, MarkdownDir, MarkdownImgDir, WikiRoot);
+					sys.cpu_pads.PHI1, sys.cpu_pads.PHI2, dataPathView21, MarkdownDir, MarkdownImgDir, WikiRoot);
 			}
 		}
 

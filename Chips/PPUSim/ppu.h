@@ -108,8 +108,9 @@ namespace PPUSimUnitTest
 #include "hv_decoder.h"
 #include "mux.h"
 #include "oam.h"
-#include "patgen.h"
 #include "par.h"
+#include "tilecnt.h"
+#include "pamux.h"
 #include "regs.h"
 #include "scroll_regs.h"
 #include "dataread.h"
@@ -205,8 +206,9 @@ namespace PPUSim
 		friend FIFOLane;
 		friend FIFO;
 		friend DataReader;
-		friend PATGen;
 		friend PAR;
+		friend TileCnt;
+		friend PAMUX;
 		friend ScrollRegs;
 		friend BGCol;
 		friend RB_Bit;
@@ -306,7 +308,9 @@ namespace PPUSim
 			BaseLogic::TriState FH[3];			// Fine H value
 			BaseLogic::TriState FV[3];			// Fine V value
 			BaseLogic::TriState NTV;
+			BaseLogic::TriState NTVOut;
 			BaseLogic::TriState NTH;
+			BaseLogic::TriState NTHOut;
 			BaseLogic::TriState TV[5];
 			BaseLogic::TriState TH[5];
 			BaseLogic::TriState THO[5];
