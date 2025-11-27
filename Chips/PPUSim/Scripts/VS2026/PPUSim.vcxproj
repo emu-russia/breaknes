@@ -29,8 +29,8 @@
     <ClCompile Include="..\..\hv_decoder.cpp" />
     <ClCompile Include="..\..\mux.cpp" />
     <ClCompile Include="..\..\oam.cpp" />
+    <ClCompile Include="..\..\pamux.cpp" />
     <ClCompile Include="..\..\par.cpp" />
-    <ClCompile Include="..\..\patgen.cpp" />
     <ClCompile Include="..\..\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -42,6 +42,7 @@
     <ClCompile Include="..\..\regs.cpp" />
     <ClCompile Include="..\..\scroll_regs.cpp" />
     <ClCompile Include="..\..\sprite_eval.cpp" />
+    <ClCompile Include="..\..\tilecnt.cpp" />
     <ClCompile Include="..\..\video_out.cpp" />
     <ClCompile Include="..\..\vram_ctrl.cpp" />
   </ItemGroup>
@@ -56,13 +57,14 @@
     <ClInclude Include="..\..\hv_decoder.h" />
     <ClInclude Include="..\..\mux.h" />
     <ClInclude Include="..\..\oam.h" />
+    <ClInclude Include="..\..\pamux.h" />
     <ClInclude Include="..\..\par.h" />
-    <ClInclude Include="..\..\patgen.h" />
     <ClInclude Include="..\..\pch.h" />
     <ClInclude Include="..\..\ppu.h" />
     <ClInclude Include="..\..\regs.h" />
     <ClInclude Include="..\..\scroll_regs.h" />
     <ClInclude Include="..\..\sprite_eval.h" />
+    <ClInclude Include="..\..\tilecnt.h" />
     <ClInclude Include="..\..\video_out.h" />
     <ClInclude Include="..\..\vram_ctrl.h" />
   </ItemGroup>

@@ -69,10 +69,13 @@
     <ClCompile Include="..\..\debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\patgen.cpp">
+    <ClCompile Include="..\..\pclk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\pclk.cpp">
+    <ClCompile Include="..\..\pamux.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tilecnt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -131,7 +134,10 @@
     <ClInclude Include="..\..\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\patgen.h">
+    <ClInclude Include="..\..\pamux.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tilecnt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

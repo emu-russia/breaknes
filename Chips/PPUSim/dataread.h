@@ -10,8 +10,9 @@ namespace PPUSim
 
 	public:
 
-		PATGen* patgen = nullptr;
 		PAR* par = nullptr;
+		TileCnt* tilecnt = nullptr;
+		PAMUX* pamux = nullptr;
 		ScrollRegs* sccx = nullptr;
 		BGCol* bgcol = nullptr;
 

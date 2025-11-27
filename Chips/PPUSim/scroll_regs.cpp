@@ -1,4 +1,4 @@
-// Scrolling Registers
+// Scroll Registers (nesdev `t`)
 
 #include "pch.h"
 
