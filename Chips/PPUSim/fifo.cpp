@@ -1,4 +1,4 @@
-// OAM FIFO (Motion picture buffer memory)
+// Object FIFO (Motion picture buffer memory)
 
 #include "pch.h"
 

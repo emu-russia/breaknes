@@ -344,7 +344,7 @@ namespace PPUSim
 		struct FsmCommands
 		{
 			BaseLogic::TriState SEV;			// "Start Sprite Evaluation"
-			BaseLogic::TriState CLIP_O;			// "Clip Objects". 1: Do not show the left 8 screen points for sprites. Used to get the CLPO signal that goes into the OAM FIFO.
+			BaseLogic::TriState CLIP_O;			// "Clip Objects". 1: Do not show the left 8 screen points for sprites. Used to get the CLPO signal that goes into the Obj FIFO.
 			BaseLogic::TriState CLIP_B;			// "Clip Background". 1: Do not show the left 8 points of the screen for the background. Used to get the /CLPB signal that goes into the Data Reader.
 			BaseLogic::TriState ZHPOS;			// "Clear HPos". Clear the H counters in the sprite FIFO and start the FIFO
 			BaseLogic::TriState n_EVAL;			// 0: "Sprite Evaluation in Progress"

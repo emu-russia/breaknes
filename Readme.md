@@ -9,7 +9,7 @@ NES/Famicom/Dendy emulator at the gate level.
 
 ## Build for Windows
 
-Use Windows and VS2022. Open Breaknes.sln and click the Build button with your left heel. Dotnet 6.0 **Desktop** Runtime is also required.
+Use Windows and VS2026. Open Breaknes.sln and click the Build button with your left heel. Dotnet 6.0 **Desktop** Runtime is also required.
 
 For those who like minimalism - see Breaknes build using SDL2 (`Breaknes/BreaknesSDL`).
 
