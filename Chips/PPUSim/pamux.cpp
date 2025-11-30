@@ -36,38 +36,37 @@ namespace PPUSim
 	{
 		TriState BLNK = ppu->fsm.BLNK;
 
-		FAT_in[0] = ppu->wire.THO[2];
-		FAT_in[1] = ppu->wire.THO[3];
-		FAT_in[2] = ppu->wire.THO[4];
-		FAT_in[3] = ppu->wire.TVO[2];
-		FAT_in[4] = ppu->wire.TVO[3];
-		FAT_in[5] = ppu->wire.TVO[4];
-		FAT_in[6] = TriState::One;
-		FAT_in[7] = TriState::One;
-		FAT_in[8] = TriState::One;
-		FAT_in[9] = TriState::One;
+		AT_ADR[0] = ppu->wire.THO[2];
+		AT_ADR[1] = ppu->wire.THO[3];
+		AT_ADR[2] = ppu->wire.THO[4];
+		AT_ADR[3] = ppu->wire.TVO[2];
+		AT_ADR[4] = ppu->wire.TVO[3];
+		AT_ADR[5] = ppu->wire.TVO[4];
+		AT_ADR[6] = TriState::One;
+		AT_ADR[7] = TriState::One;
+		AT_ADR[8] = TriState::One;
+		AT_ADR[9] = TriState::One;
 
-		PAR_in[0] = ppu->wire.THO[0];
-		PAR_in[1] = ppu->wire.THO[1];
-		PAR_in[2] = ppu->wire.THO[2];
-		PAR_in[3] = ppu->wire.THO[3];
-		PAR_in[4] = ppu->wire.THO[4];
-		PAR_in[5] = ppu->wire.TVO[0];
-		PAR_in[6] = ppu->wire.TVO[1];
-		PAR_in[7] = ppu->wire.TVO[2];
-		PAR_in[8] = ppu->wire.TVO[3];
-		PAR_in[9] = ppu->wire.TVO[4];
+		NT_ADR[0] = ppu->wire.THO[0];
+		NT_ADR[1] = ppu->wire.THO[1];
+		NT_ADR[2] = ppu->wire.THO[2];
+		NT_ADR[3] = ppu->wire.THO[3];
+		NT_ADR[4] = ppu->wire.THO[4];
+		NT_ADR[5] = ppu->wire.TVO[0];
+		NT_ADR[6] = ppu->wire.TVO[1];
+		NT_ADR[7] = ppu->wire.TVO[2];
+		NT_ADR[8] = ppu->wire.TVO[3];
+		NT_ADR[9] = ppu->wire.TVO[4];
 
-		FAT_in[10] = PAR_in[10] = ppu->wire.NTHOut;
-		FAT_in[11] = PAR_in[11] = ppu->wire.NTVOut;
-		FAT_in[12] = PAR_in[12] = NOR(ppu->wire.n_FVO[0], NOT(BLNK));
-		FAT_in[13] = PAR_in[13] = NOT(NOR(ppu->wire.FVO[1], NOT(BLNK)));
+		AT_ADR[10] = NT_ADR[10] = ppu->wire.NTHOut;
+		AT_ADR[11] = NT_ADR[11] = ppu->wire.NTVOut;
+		AT_ADR[12] = NT_ADR[12] = NOR(ppu->wire.n_FVO[0], NOT(BLNK));
+		AT_ADR[13] = NT_ADR[13] = NOT(NOR(ppu->wire.FVO[1], NOT(BLNK)));
 
-		for (size_t n = 0; n < 13; n++)
+		for (size_t n = 0; n < 14; n++)
 		{
-			PAD_in[n] = ppu->wire.PAD[n];
+			PAT_ADR[n] = ppu->wire.PAT_ADR[n];
 		}
-		PAD_in[13] = TriState::Zero;
 	}
 
 	void PAMUX::sim_MuxOutputs()
@@ -78,12 +77,12 @@ namespace PPUSim
 
 		for (size_t n = 0; n < 8; n++)
 		{
-			par_lo[n].sim(PCLK, PARR, DB_PAR, PAL, F_AT, FAT_in[n], PAR_in[n], PAD_in[n], ppu->GetDBBit(n), ppu->wire.n_PA_Bot[n]);
+			par_lo[n].sim(PCLK, PARR, DB_PAR, PAL, F_AT, AT_ADR[n], NT_ADR[n], PAT_ADR[n], ppu->GetDBBit(n), ppu->wire.n_PA_Bot[n]);
 		}
 
 		for (size_t n = 0; n < 6; n++)
 		{
-			par_hi[n].sim(PCLK, PARR, PAH, F_AT, FAT_in[8 + n], PAR_in[8 + n], PAD_in[8 + n], ppu->wire.n_PA_Top[n]);
+			par_hi[n].sim(PCLK, PARR, PAH, F_AT, AT_ADR[8 + n], NT_ADR[8 + n], PAT_ADR[8 + n], ppu->wire.n_PA_Top[n]);
 		}
 	}
 

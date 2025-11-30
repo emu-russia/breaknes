@@ -51,7 +51,7 @@ namespace PPUSim
 			BaseLogic::TriState & n_Q );
 	};
 
-	class OAMEval
+	class ObjEval
 	{
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
@@ -127,8 +127,8 @@ namespace PPUSim
 		BaseLogic::TriState get_SPR_OV();
 
 	public:
-		OAMEval(PPU* parent);
-		~OAMEval();
+		ObjEval(PPU* parent);
+		~ObjEval();
 
 		void sim();
 

@@ -28,8 +28,8 @@ namespace PPUSim
 		BaseLogic::DLatch eev_latch2;
 		BaseLogic::DLatch ioam_latch1;
 		BaseLogic::DLatch ioam_latch2;
-		BaseLogic::DLatch paro_latch1;
-		BaseLogic::DLatch paro_latch2;
+		BaseLogic::DLatch objrd_latch1;
+		BaseLogic::DLatch objrd_latch2;
 		BaseLogic::DLatch nvis_latch1;
 		BaseLogic::DLatch nvis_latch2;
 		BaseLogic::DLatch fnt_latch1;

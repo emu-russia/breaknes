@@ -38,9 +38,9 @@ namespace PPUSim
 		BaseLogic::TriState PAH = BaseLogic::TriState::X;
 		BaseLogic::TriState PAL = BaseLogic::TriState::X;
 
-		BaseLogic::TriState FAT_in[14]{};
-		BaseLogic::TriState PAR_in[14]{};
-		BaseLogic::TriState PAD_in[14]{};
+		BaseLogic::TriState AT_ADR[14]{};
+		BaseLogic::TriState NT_ADR[14]{};
+		BaseLogic::TriState PAT_ADR[14]{};
 
 		void sim_Control();
 

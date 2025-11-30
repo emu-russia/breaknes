@@ -22,7 +22,7 @@ namespace PPUSim
 		BaseLogic::DLatch padx_latch;
 
 	public:
-		void sim(BaseLogic::TriState n_PCLK, BaseLogic::TriState O, BaseLogic::TriState val_OB, BaseLogic::TriState val_PD, BaseLogic::TriState PAR_O,
+		void sim(BaseLogic::TriState n_PCLK, BaseLogic::TriState O, BaseLogic::TriState val_OB, BaseLogic::TriState val_PD, BaseLogic::TriState OBJ_READ,
 			BaseLogic::TriState& PADx);
 	};
 
