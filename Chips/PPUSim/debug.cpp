@@ -144,7 +144,7 @@ namespace PPUSim
 		wires.n_DB_CB = ToByte(wire.n_DB_CB);
 		for (size_t n = 0; n < 5; n++)
 		{
-			wires.PAL[n] = ToByte(wire.PAL[n]);
+			wires.CGA[n] = ToByte(wire.CGA[n]);
 		}
 		for (size_t n = 0; n < 4; n++)
 		{
@@ -249,7 +249,7 @@ namespace PPUSim
 		uint8_t addr = 0;
 		for (size_t n = 0; n < 5; n++)
 		{
-			addr |= ToByte(wire.PAL[n]) << n;
+			addr |= ToByte(wire.CGA[n]) << n;
 		}
 		return addr;
 	}

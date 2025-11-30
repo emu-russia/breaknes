@@ -97,7 +97,7 @@ namespace PPUSim
 		uint8_t n_CB_DB;
 		uint8_t n_BW;
 		uint8_t n_DB_CB;
-		uint8_t PAL[5];
+		uint8_t CGA[5];
 		uint8_t n_CC[4];
 		uint8_t n_LL[2];
 		uint8_t RD;

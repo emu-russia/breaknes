@@ -324,7 +324,7 @@ namespace PPUSim
 			BaseLogic::TriState n_CB_DB;		// 0: CB -> DB
 			BaseLogic::TriState n_BW;			// The outputs of the 4 bit CB responsible for the chrominance are controlled by the /BW control signal.
 			BaseLogic::TriState n_DB_CB;		// 0: DB -> CB
-			BaseLogic::TriState PAL[5];			// Palette RAM Address
+			BaseLogic::TriState CGA[5];			// Color RAM Address
 			BaseLogic::TriState n_CC[4];		// 4 bits of the chrominance of the current "pixel" (inverted value)
 			BaseLogic::TriState n_LL[2];		// 2 bits of the luminance of the current "pixel" (inverted value)
 

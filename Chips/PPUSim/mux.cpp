@@ -29,12 +29,12 @@ namespace PPUSim
 			ppu->wire.n_EXT_Out[n] = NOT(MUX(OCOL, ppu->wire.BGC[n], step1[n].nget()));
 			step2[n].set(ppu->wire.n_EXT_Out[n], n_PCLK);
 			step3[n].set(MUX(EXT, step2[n].nget(), ppu->wire.EXT_In[n]), PCLK);
-			ppu->wire.PAL[n] = NOT(MUX(TH_MUX, step3[n].nget(), dir_color[n].nget()));
+			ppu->wire.CGA[n] = NOT(MUX(TH_MUX, step3[n].nget(), dir_color[n].nget()));
 		}
 
 		tho4_latch.set(ppu->wire.THO[4], PCLK);
 		pal4_latch.set(MUX(TH_MUX, n_PAL4, tho4_latch.nget()), PCLK);
-		ppu->wire.PAL[4] = pal4_latch.nget();
+		ppu->wire.CGA[4] = pal4_latch.nget();
 
 		sim_Spr0Hit();
 	}
