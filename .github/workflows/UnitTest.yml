@@ -28,7 +28,7 @@ jobs:
     - name: setup-msbuild
       uses: microsoft/setup-msbuild@v2
       with:
-        vs-version: 11222.16
+        vs-version: 18.0
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
