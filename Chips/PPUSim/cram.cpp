@@ -1,4 +1,4 @@
-// Palette (Color RAM)
+// Color Generator RAM (Palette)
 
 #include "pch.h"
 
@@ -115,14 +115,14 @@ namespace PPUSim
 	void CRAM::sim_CRAMDecoder()
 	{
 		TriState col_in[2]{};
-		col_in[0] = ppu->wire.PAL[2];
-		col_in[1] = ppu->wire.PAL[3];
+		col_in[0] = ppu->wire.CGA[2];
+		col_in[1] = ppu->wire.CGA[3];
 		DMX2(col_in, COL);
 
 		TriState row_in[3]{};
-		row_in[0] = ppu->wire.PAL[0];
-		row_in[1] = ppu->wire.PAL[1];
-		row_in[2] = ppu->wire.PAL[4];
+		row_in[0] = ppu->wire.CGA[0];
+		row_in[1] = ppu->wire.CGA[1];
+		row_in[2] = ppu->wire.CGA[4];
 		DMX3(row_in, ROW);
 
 		for (size_t n = 0; n < 8; n++)

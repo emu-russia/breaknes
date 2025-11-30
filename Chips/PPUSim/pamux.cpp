@@ -87,23 +87,23 @@ namespace PPUSim
 	}
 
 	void PAMUX_LowBit::sim(TriState PCLK, TriState PARR, TriState DB_PAR, TriState PAL, TriState F_AT,
-		TriState FAT_in, TriState PAL_in, TriState PAD_in, TriState DB_in,
+		TriState AT_ADR, TriState NT_ADR, TriState PAT_ADR, TriState DB_in,
 		TriState& n_PAx)
 	{
 		auto val = MUX(DB_PAR,
 			MUX(PARR,
-				MUX(PAL, MUX(F_AT, TriState::Z, FAT_in), PAL_in), PAD_in), DB_in);
+				MUX(PAL, MUX(F_AT, TriState::Z, AT_ADR), NT_ADR), PAT_ADR), DB_in);
 		in_latch.set(val, TriState::One);
 		out_latch.set(in_latch.nget(), PCLK);
 		n_PAx = out_latch.get();
 	}
 
 	void PAMUX_HighBit::sim(TriState PCLK, TriState PARR, TriState PAH, TriState F_AT,
-		TriState FAT_in, TriState PAH_in, TriState PAD_in,
+		TriState AT_ADR, TriState NT_ADR, TriState PAT_ADR,
 		TriState& n_PAx)
 	{
 		auto val = MUX(PARR,
-			MUX(PAH, MUX(F_AT, TriState::Z, FAT_in), PAH_in), PAD_in);
+			MUX(PAH, MUX(F_AT, TriState::Z, AT_ADR), NT_ADR), PAT_ADR);
 		in_latch.set(val, TriState::One);
 		out_latch.set(in_latch.nget(), PCLK);
 		n_PAx = out_latch.get();

@@ -11,7 +11,7 @@ namespace PPUSim
 
 	public:
 		void sim(BaseLogic::TriState PCLK, BaseLogic::TriState PARR, BaseLogic::TriState DB_PAR, BaseLogic::TriState PAL, BaseLogic::TriState F_AT,
-			BaseLogic::TriState FAT_in, BaseLogic::TriState PAL_in, BaseLogic::TriState PAD_in, BaseLogic::TriState DB_in,
+			BaseLogic::TriState AT_ADR, BaseLogic::TriState NT_ADR, BaseLogic::TriState PAT_ADR, BaseLogic::TriState DB_in,
 			BaseLogic::TriState& n_PAx);
 	};
 
@@ -22,7 +22,7 @@ namespace PPUSim
 
 	public:
 		void sim(BaseLogic::TriState PCLK, BaseLogic::TriState PARR, BaseLogic::TriState PAH, BaseLogic::TriState F_AT,
-			BaseLogic::TriState FAT_in, BaseLogic::TriState PAH_in, BaseLogic::TriState PAD_in,
+			BaseLogic::TriState AT_ADR, BaseLogic::TriState NT_ADR, BaseLogic::TriState PAT_ADR,
 			BaseLogic::TriState& n_PAx);
 	};
 
