@@ -300,7 +300,7 @@ namespace PPUSimUnitTest
 		CloseFSM(n_EVAL, 104);
 		CloseFSM(E_EV, 105);
 		CloseFSM(I_OAM2, 106);
-		CloseFSM(PAR_O, 107);
+		CloseFSM(OBJ_READ, 107);
 		CloseFSM(n_VIS, 108);
 		CloseFSM(nF_NT, 109);
 		CloseFSM(F_TB, 110);
@@ -445,7 +445,7 @@ namespace PPUSimUnitTest
 		OpenInverseFSM(n_EVAL, 104);
 		OpenDirectFSM(E_EV, 105);
 		OpenDirectFSM(I_OAM2, 106);
-		OpenDirectFSM(PAR_O, 107);
+		OpenDirectFSM(OBJ_READ, 107);
 		OpenInverseFSM(n_VIS, 108);
 		OpenInverseFSM(nF_NT, 109);
 		OpenDirectFSM(F_TB, 110);
@@ -545,7 +545,7 @@ namespace PPUSimUnitTest
 
 		// Reset
 
-		ppu->fsm.PARO = TriState::One;
+		ppu->fsm.OBJ_READ = TriState::One;
 		ppu->eval->OMOUT = TriState::One;
 		ppu->eval->sim_MainCounter();
 
@@ -556,7 +556,7 @@ namespace PPUSimUnitTest
 
 		ppu->eval->OMFG = TriState::Zero;
 		ppu->fsm.BLNK = TriState::One;
-		ppu->fsm.PARO = TriState::Zero;
+		ppu->fsm.OBJ_READ = TriState::Zero;
 
 		for (size_t n = 0; n < 0x100; n++)
 		{
@@ -584,7 +584,7 @@ namespace PPUSimUnitTest
 
 		// Reset
 
-		ppu->fsm.PARO = TriState::One;
+		ppu->fsm.OBJ_READ = TriState::One;
 		ppu->eval->OMOUT = TriState::One;
 		ppu->eval->sim_MainCounter();
 
@@ -595,7 +595,7 @@ namespace PPUSimUnitTest
 
 		ppu->eval->OMFG = TriState::One;
 		ppu->fsm.BLNK = TriState::Zero;
-		ppu->fsm.PARO = TriState::Zero;
+		ppu->fsm.OBJ_READ = TriState::Zero;
 
 		for (size_t n = 0; n < 0x100; n+=4)
 		{

@@ -3,6 +3,10 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace BaseLogic;
 
+#ifndef IGNORE_MEGACYCLES
+#define IGNORE_MEGACYCLES 1
+#endif
+
 namespace UnitTest
 {
 	TEST_CLASS(BaseLogicUnitTest)
@@ -83,9 +87,11 @@ namespace UnitTest
 			Assert::IsTrue(ut.DumpDecoder());
 		}
 
-		//BEGIN_TEST_METHOD_ATTRIBUTE(TestCoreMegaCycles)
-		//	TEST_IGNORE()
-		//END_TEST_METHOD_ATTRIBUTE()
+#if IGNORE_MEGACYCLES
+		BEGIN_TEST_METHOD_ATTRIBUTE(TestCoreMegaCycles)
+			TEST_IGNORE()
+		END_TEST_METHOD_ATTRIBUTE()
+#endif
 		TEST_METHOD(TestCoreMegaCycles)
 		{
 			M6502CoreUnitTest::UnitTest ut;
@@ -146,9 +152,11 @@ namespace UnitTest
 			Assert::IsTrue(ut.TestOAM_DMA());
 		}
 
-		//BEGIN_TEST_METHOD_ATTRIBUTE(TestApuMegaCycles)
-		//	TEST_IGNORE()
-		//END_TEST_METHOD_ATTRIBUTE()
+#if IGNORE_MEGACYCLES
+		BEGIN_TEST_METHOD_ATTRIBUTE(TestApuMegaCycles)
+			TEST_IGNORE()
+		END_TEST_METHOD_ATTRIBUTE()
+#endif
 		TEST_METHOD(TestApuMegaCycles)
 		{
 			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
@@ -294,9 +302,11 @@ namespace UnitTest
 			ut.Dump_2C04_0003_ColorSpace();
 		}
 
-		//BEGIN_TEST_METHOD_ATTRIBUTE(TestPpuMegaCycles)
-		//	TEST_IGNORE()
-		//END_TEST_METHOD_ATTRIBUTE()
+#if IGNORE_MEGACYCLES
+		BEGIN_TEST_METHOD_ATTRIBUTE(TestPpuMegaCycles)
+			TEST_IGNORE()
+		END_TEST_METHOD_ATTRIBUTE()
+#endif
 		TEST_METHOD(TestPpuMegaCycles)
 		{
 			PPUSimUnitTest::UnitTest ut(PPUSim::Revision::RP2C02G);
