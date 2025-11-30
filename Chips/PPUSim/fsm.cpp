@@ -100,9 +100,9 @@ namespace PPUSim
 		ioam_latch2.set(ioam_latch1.nget(), PCLK);
 		ppu->fsm.IOAM2 = ioam_latch2.nget();
 
-		paro_latch1.set(HPLA[9], n_PCLK);
-		paro_latch2.set(paro_latch1.nget(), PCLK);
-		ppu->fsm.PARO = paro_latch2.nget();
+		objrd_latch1.set(HPLA[9], n_PCLK);
+		objrd_latch2.set(objrd_latch1.nget(), PCLK);
+		ppu->fsm.OBJ_READ = objrd_latch2.nget();
 
 		nvis_latch1.set(HPLA[10], n_PCLK);
 		nvis_latch2.set(nvis_latch1.nget(), PCLK);

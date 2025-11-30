@@ -24,7 +24,7 @@ namespace PPUSim
 			hv_fsm = new FSM(this);
 			cram = new CRAM(this);
 			mux = new Mux(this);
-			eval = new OAMEval(this);
+			eval = new ObjEval(this);
 			oam = new OAM(this);
 			fifo = new FIFO(this);
 			data_reader = new DataReader(this);

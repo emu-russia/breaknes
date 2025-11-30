@@ -90,10 +90,10 @@ namespace PPUSim
 
 		wires.n_CLPB = ToByte(wire.n_CLPB);
 		wires.CLPO = ToByte(wire.CLPO);
-		wires.n_SH2 = ToByte(wire.n_SH2);
-		wires.n_SH3 = ToByte(wire.n_SH3);
-		wires.n_SH5 = ToByte(wire.n_SH5);
-		wires.n_SH7 = ToByte(wire.n_SH7);
+		wires.n_OBJ_RD_ATTR = ToByte(wire.n_OBJ_RD_ATTR);
+		wires.n_OBJ_RD_X = ToByte(wire.n_OBJ_RD_X);
+		wires.n_OBJ_RD_A = ToByte(wire.n_OBJ_RD_A);
+		wires.n_OBJ_RD_B = ToByte(wire.n_OBJ_RD_B);
 
 		wires.n_PA_Bot = Pack(wire.n_PA_Bot);
 		for (size_t n = 0; n < 6; n++)
@@ -177,7 +177,7 @@ namespace PPUSim
 		fsm_states.n_EVAL = ToByte(fsm.n_EVAL);
 		fsm_states.E_EV = ToByte(fsm.EEV);
 		fsm_states.I_OAM2 = ToByte(fsm.IOAM2);
-		fsm_states.PAR_O = ToByte(fsm.PARO);
+		fsm_states.OBJ_READ = ToByte(fsm.OBJ_READ);
 		fsm_states.n_VIS = ToByte(fsm.nVIS);
 		fsm_states.nF_NT = ToByte(fsm.nFNT);
 		fsm_states.F_TB = ToByte(fsm.FTB);

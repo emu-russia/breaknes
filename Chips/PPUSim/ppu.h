@@ -114,7 +114,7 @@ namespace PPUSimUnitTest
 #include "regs.h"
 #include "scroll_regs.h"
 #include "dataread.h"
-#include "sprite_eval.h"
+#include "obj_eval.h"
 #include "video_out.h"
 #include "vram_ctrl.h"
 
@@ -198,7 +198,7 @@ namespace PPUSim
 		friend CRAM;
 		friend VideoOut;
 		friend Mux;
-		friend OAMEval;
+		friend ObjEval;
 		friend OAMBufferBit;
 		friend OAMBufferBit_RGB;
 		friend OAMCell;
@@ -296,10 +296,10 @@ namespace PPUSim
 
 			BaseLogic::TriState n_CLPB;			// 0: To enable background clipping
 			BaseLogic::TriState CLPO;			// To enable sprite clipping
-			BaseLogic::TriState n_SH2;			// Sprite H value bits. /SH2 also goes into V. Inversion.
-			BaseLogic::TriState n_SH3;			// Sprite H value bits
-			BaseLogic::TriState n_SH5;			// Sprite H value bits
-			BaseLogic::TriState n_SH7;			// Sprite H value bits
+			BaseLogic::TriState n_OBJ_RD_ATTR;		// Sprite H value bits. /OBJ_RD_ATTR also goes into V. Inversion.
+			BaseLogic::TriState n_OBJ_RD_X;			// Sprite H value bits
+			BaseLogic::TriState n_OBJ_RD_A;			// Sprite H value bits
+			BaseLogic::TriState n_OBJ_RD_B;			// Sprite H value bits
 			BaseLogic::TriState n_ZH;
 
 			BaseLogic::TriState n_PA_Bot[8];
@@ -319,7 +319,7 @@ namespace PPUSim
 			BaseLogic::TriState n_TVO[5];
 			BaseLogic::TriState FVO[3];
 			BaseLogic::TriState n_FVO[3];
-			BaseLogic::TriState PAD[13];		// Pattern address (patgen)
+			BaseLogic::TriState PAT_ADR[14];	// Pattern address (PAR)
 
 			BaseLogic::TriState n_CB_DB;		// 0: CB -> DB
 			BaseLogic::TriState n_BW;			// The outputs of the 4 bit CB responsible for the chrominance are controlled by the /BW control signal.
@@ -350,7 +350,7 @@ namespace PPUSim
 			BaseLogic::TriState n_EVAL;			// 0: "Sprite Evaluation in Progress"
 			BaseLogic::TriState EEV;			// "End Sprite Evaluation"
 			BaseLogic::TriState IOAM2;			// "Init OAM2". Initialize an additional (temp) OAM
-			BaseLogic::TriState PARO;			// "PAR for Object". Selecting a tile for an object (sprite)
+			BaseLogic::TriState OBJ_READ;		// Common sprite fetch event, shared by many modules. Selecting a tile for an object (sprite)
 			BaseLogic::TriState nVIS;			// "Not Visible". The invisible part of the signal (used in sprite logic)
 			BaseLogic::TriState nFNT;			// 0: "Fetch Name Table"
 			BaseLogic::TriState FTB;			// "Fetch Tile B"
@@ -394,7 +394,7 @@ namespace PPUSim
 		CRAM* cram = nullptr;
 		VideoOut* vid_out = nullptr;
 		Mux* mux = nullptr;
-		OAMEval* eval = nullptr;
+		ObjEval* eval = nullptr;
 		OAM* oam = nullptr;
 		FIFO* fifo = nullptr;
 		VRAM_Control* vram_ctrl = nullptr;

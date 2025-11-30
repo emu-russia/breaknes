@@ -77,10 +77,10 @@ namespace PPUSim
 		uint8_t n_WE;
 		uint8_t n_CLPB;
 		uint8_t CLPO;
-		uint8_t n_SH2;
-		uint8_t n_SH3;
-		uint8_t n_SH5;
-		uint8_t n_SH7;
+		uint8_t n_OBJ_RD_ATTR;
+		uint8_t n_OBJ_RD_X;
+		uint8_t n_OBJ_RD_A;
+		uint8_t n_OBJ_RD_B;
 		uint8_t n_PA_Bot;	// Packed
 		uint8_t n_PA_Top[6];
 		uint8_t BGC[4];
@@ -123,7 +123,7 @@ namespace PPUSim
 		uint8_t n_EVAL;
 		uint8_t E_EV;
 		uint8_t I_OAM2;
-		uint8_t PAR_O;
+		uint8_t OBJ_READ;
 		uint8_t n_VIS;
 		uint8_t nF_NT;
 		uint8_t F_TB;

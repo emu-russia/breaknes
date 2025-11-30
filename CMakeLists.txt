@@ -59,13 +59,13 @@ add_executable (breaknes
 	Chips/PPUSim/hv_decoder.cpp
 	Chips/PPUSim/mux.cpp
 	Chips/PPUSim/oam.cpp
+	Chips/PPUSim/obj_eval.cpp
 	Chips/PPUSim/pamux.cpp
 	Chips/PPUSim/par.cpp
 	Chips/PPUSim/pclk.cpp
 	Chips/PPUSim/ppu.cpp
 	Chips/PPUSim/regs.cpp
 	Chips/PPUSim/scroll_regs.cpp
-	Chips/PPUSim/sprite_eval.cpp
 	Chips/PPUSim/tilecnt.cpp
 	Chips/PPUSim/video_out.cpp
 	Chips/PPUSim/vram_ctrl.cpp

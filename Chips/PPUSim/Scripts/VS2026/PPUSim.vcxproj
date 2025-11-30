@@ -41,7 +41,7 @@
     <ClCompile Include="..\..\ppu.cpp" />
     <ClCompile Include="..\..\regs.cpp" />
     <ClCompile Include="..\..\scroll_regs.cpp" />
-    <ClCompile Include="..\..\sprite_eval.cpp" />
+    <ClCompile Include="..\..\obj_eval.cpp" />
     <ClCompile Include="..\..\tilecnt.cpp" />
     <ClCompile Include="..\..\video_out.cpp" />
     <ClCompile Include="..\..\vram_ctrl.cpp" />
@@ -63,7 +63,7 @@
     <ClInclude Include="..\..\ppu.h" />
     <ClInclude Include="..\..\regs.h" />
     <ClInclude Include="..\..\scroll_regs.h" />
-    <ClInclude Include="..\..\sprite_eval.h" />
+    <ClInclude Include="..\..\obj_eval.h" />
     <ClInclude Include="..\..\tilecnt.h" />
     <ClInclude Include="..\..\video_out.h" />
     <ClInclude Include="..\..\vram_ctrl.h" />

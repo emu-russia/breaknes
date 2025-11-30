@@ -44,11 +44,11 @@ namespace PPUSim
 	void FIFO::sim_HInv()
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState n_SH2 = ppu->wire.n_SH2;
+		TriState n_OBJ_RD_ATTR = ppu->wire.n_OBJ_RD_ATTR;
 		TriState OB6 = ppu->wire.OB[6];
 		TriState PD_FIFO = ppu->wire.PD_FIFO;
 
-		HINV_FF.set(MUX(NOR(n_PCLK, n_SH2), NOT(NOT(HINV_FF.get())), OB6));
+		HINV_FF.set(MUX(NOR(n_PCLK, n_OBJ_RD_ATTR), NOT(NOT(HINV_FF.get())), OB6));
 
 		auto HINV = HINV_FF.get();
 
@@ -214,7 +214,7 @@ namespace PPUSim
 	void FIFO::sim_SpriteH()
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState PAR_O = ppu->fsm.PARO;
+		TriState OBJ_READ = ppu->fsm.OBJ_READ;
 		TriState H0_DD = ppu->wire.H0_Dash2;
 		TriState H1_DD = ppu->wire.H1_Dash2;
 		TriState H2_DD = ppu->wire.H2_Dash2;
@@ -227,15 +227,15 @@ namespace PPUSim
 
 		DMX3(in, dec_out);
 
-		sh2_latch.set(MUX(PAR_O, TriState::Zero, dec_out[2]), n_PCLK);
-		sh3_latch.set(MUX(PAR_O, TriState::Zero, dec_out[3]), n_PCLK);
-		sh5_latch.set(MUX(PAR_O, TriState::Zero, dec_out[5]), n_PCLK);
-		sh7_latch.set(MUX(PAR_O, TriState::Zero, dec_out[7]), n_PCLK);
+		sh2_latch.set(MUX(OBJ_READ, TriState::Zero, dec_out[2]), n_PCLK);
+		sh3_latch.set(MUX(OBJ_READ, TriState::Zero, dec_out[3]), n_PCLK);
+		sh5_latch.set(MUX(OBJ_READ, TriState::Zero, dec_out[5]), n_PCLK);
+		sh7_latch.set(MUX(OBJ_READ, TriState::Zero, dec_out[7]), n_PCLK);
 
-		ppu->wire.n_SH2 = sh2_latch.nget();
-		ppu->wire.n_SH3 = sh3_latch.nget();
-		ppu->wire.n_SH5 = sh5_latch.nget();
-		ppu->wire.n_SH7 = sh7_latch.nget();
+		ppu->wire.n_OBJ_RD_ATTR = sh2_latch.nget();
+		ppu->wire.n_OBJ_RD_X = sh3_latch.nget();
+		ppu->wire.n_OBJ_RD_A = sh5_latch.nget();
+		ppu->wire.n_OBJ_RD_B = sh7_latch.nget();
 	}
 
 #pragma region "FIFO Lane"
@@ -252,17 +252,17 @@ namespace PPUSim
 	void FIFOLane::sim_LaneControl(TriState HSel)
 	{
 		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState n_SH2 = ppu->wire.n_SH2;
-		TriState n_SH3 = ppu->wire.n_SH3;
-		TriState n_SH5 = ppu->wire.n_SH5;
-		TriState n_SH7 = ppu->wire.n_SH7;
+		TriState n_OBJ_RD_ATTR = ppu->wire.n_OBJ_RD_ATTR;
+		TriState n_OBJ_RD_X = ppu->wire.n_OBJ_RD_X;
+		TriState n_OBJ_RD_A = ppu->wire.n_OBJ_RD_A;
+		TriState n_OBJ_RD_B = ppu->wire.n_OBJ_RD_B;
 
 		hsel_latch.set(HSel, n_PCLK);
 
-		LDAT = NOR3(n_PCLK, hsel_latch.nget(), n_SH2);
-		LOAD = NOR3(n_PCLK, hsel_latch.nget(), n_SH3);
-		T_SR0 = NOR3(n_PCLK, hsel_latch.nget(), n_SH5);
-		T_SR1 = NOR3(n_PCLK, hsel_latch.nget(), n_SH7);
+		LDAT = NOR3(n_PCLK, hsel_latch.nget(), n_OBJ_RD_ATTR);
+		LOAD = NOR3(n_PCLK, hsel_latch.nget(), n_OBJ_RD_X);
+		T_SR0 = NOR3(n_PCLK, hsel_latch.nget(), n_OBJ_RD_A);
+		T_SR1 = NOR3(n_PCLK, hsel_latch.nget(), n_OBJ_RD_B);
 
 		ob0_latch[0].set(ppu->wire.OB[0], LDAT);
 		ob1_latch[0].set(ppu->wire.OB[1], LDAT);
