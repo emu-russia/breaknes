@@ -647,13 +647,22 @@ namespace BreaksDebug
 			// wavesControl1
 			// 
 			wavesControl1.Dock = DockStyle.Fill;
-			wavesControl1.Font = new Font("Segoe UI", 6F);
-			wavesControl1.Location = new Point(0, 27);
-			wavesControl1.Margin = new Padding(3, 4, 3, 4);
+			wavesControl1.DottedColor = Color.Silver;
+			wavesControl1.DottedOpacity = 95;
+			wavesControl1.FillColor = Color.Black;
+			wavesControl1.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point);
+			wavesControl1.GridColor = Color.Green;
+			wavesControl1.GridOpacity = 95;
+			wavesControl1.HighZColor = Color.Gold;
+			wavesControl1.LabelsColor = Color.White;
+			wavesControl1.Location = new Point(0, 25);
 			wavesControl1.Name = "wavesControl1";
-			wavesControl1.Size = new Size(1817, 773);
+			wavesControl1.SelectionColor = Color.GhostWhite;
+			wavesControl1.SignalColor = Color.SpringGreen;
+			wavesControl1.Size = new Size(1164, 306);
 			wavesControl1.TabIndex = 1;
 			wavesControl1.Text = "wavesControl1";
+			wavesControl1.UndefinedColor = Color.Red;
 			// 
 			// toolStrip2
 			// 
