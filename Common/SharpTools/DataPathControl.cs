@@ -34,6 +34,21 @@ namespace System.Windows.Forms
 			return (T)Enum.Parse(typeof(T), value);
 		}
 
+        private GraphicsPath PathFromIntsArray(List<int[]> path)
+		{
+			GraphicsPath gr_path = new GraphicsPath();
+			List<Point> points = new();
+			foreach (var pair in path)
+			{
+				points.Add(new Point(pair[0], pair[1]));
+			}
+			if (points.Count > 0)
+			{
+				gr_path.AddLines(points.ToArray());
+			}
+            return gr_path;
+		}
+
 		public void LoadGraphModel(string json)
 		{
 			var model = JsonSerializer.Deserialize<DataPathGraphModel>(json);
@@ -48,18 +63,17 @@ namespace System.Windows.Forms
 
 			foreach (var path in model.paths)
             {
-				GraphicsPath gr_path = new GraphicsPath();
-                List<Point> points = new();
-                foreach(var pair in path.Value)
-                {
-					points.Add(new Point(pair[0], pair[1]));
-                }
-                if (points.Count > 0)
-                {
-                    gr_path.AddLines(points.ToArray());
-                }
-				mapping[(int)ToEnum<CoreDebug.ControlCommand>(path.Key)] = gr_path;
+				mapping[(int)ToEnum<CoreDebug.ControlCommand>(path.Key)] = PathFromIntsArray(path.Value);
 			}
+
+            // CPU R/W (for DL/DB)
+
+            cpu_read = PathFromIntsArray(model.special_paths["cpu_read"]);
+			cpu_write = PathFromIntsArray(model.special_paths["cpu_write"]);
+
+			// ALU Operation -> ADD
+
+			alu_add = PathFromIntsArray(model.special_paths["alu_add"]);
 		}
 
         public DataPathView()
