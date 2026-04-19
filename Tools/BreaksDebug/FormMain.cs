@@ -76,6 +76,8 @@ namespace BreaksDebug
 			{
 				Directory.CreateDirectory(MarkdownDir + "/" + MarkdownImgDir);
 			}
+
+			dataPathView21.LoadGraphModel(System.Text.Encoding.UTF8.GetString(Properties.Resources.datapath_json));
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)

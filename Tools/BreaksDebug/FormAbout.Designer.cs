@@ -38,12 +38,12 @@ namespace BreaksDebug
 			// 
 			// pictureBox1
 			// 
-			pictureBox1.BackgroundImage = Properties.Resources.breaksdebug_logo;
+			pictureBox1.BackgroundImage = Properties.Resources.hand_holding_hammer_icon_png;
 			pictureBox1.BackgroundImageLayout = ImageLayout.Zoom;
-			pictureBox1.Location = new Point(15, 15);
-			pictureBox1.Margin = new Padding(4, 3, 4, 3);
+			pictureBox1.Location = new Point(17, 20);
+			pictureBox1.Margin = new Padding(5, 4, 5, 4);
 			pictureBox1.Name = "pictureBox1";
-			pictureBox1.Size = new Size(433, 130);
+			pictureBox1.Size = new Size(126, 112);
 			pictureBox1.TabIndex = 0;
 			pictureBox1.TabStop = false;
 			// 
@@ -51,20 +51,20 @@ namespace BreaksDebug
 			// 
 			label1.AutoSize = true;
 			label1.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Bold);
-			label1.Location = new Point(15, 148);
-			label1.Margin = new Padding(4, 0, 4, 0);
+			label1.Location = new Point(153, 20);
+			label1.Margin = new Padding(5, 0, 5, 0);
 			label1.Name = "label1";
-			label1.Size = new Size(173, 32);
+			label1.Size = new Size(211, 40);
 			label1.TabIndex = 1;
-			label1.Text = "Breaks Debugger, v. 2.4\r\n© 2025, emu-russia";
+			label1.Text = "Breaks Debugger, v. 2.4\r\n© 2026, emu-russia";
 			// 
 			// linkLabel1
 			// 
 			linkLabel1.AutoSize = true;
-			linkLabel1.Location = new Point(236, 149);
-			linkLabel1.Margin = new Padding(4, 0, 4, 0);
+			linkLabel1.Location = new Point(153, 71);
+			linkLabel1.Margin = new Padding(5, 0, 5, 0);
 			linkLabel1.Name = "linkLabel1";
-			linkLabel1.Size = new Size(212, 15);
+			linkLabel1.Size = new Size(259, 20);
 			linkLabel1.TabIndex = 2;
 			linkLabel1.TabStop = true;
 			linkLabel1.Text = "https://github.com/emu-russia/breaks";
@@ -72,10 +72,10 @@ namespace BreaksDebug
 			// button1
 			// 
 			button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			button1.Location = new Point(496, 149);
-			button1.Margin = new Padding(4, 3, 4, 3);
+			button1.Location = new Point(488, 122);
+			button1.Margin = new Padding(5, 4, 5, 4);
 			button1.Name = "button1";
-			button1.Size = new Size(110, 35);
+			button1.Size = new Size(126, 47);
 			button1.TabIndex = 3;
 			button1.Text = "Close";
 			button1.UseVisualStyleBackColor = true;
@@ -83,16 +83,16 @@ namespace BreaksDebug
 			// 
 			// FormAbout
 			// 
-			AutoScaleDimensions = new SizeF(7F, 15F);
+			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(619, 196);
+			ClientSize = new Size(628, 182);
 			Controls.Add(button1);
 			Controls.Add(linkLabel1);
 			Controls.Add(label1);
 			Controls.Add(pictureBox1);
 			KeyPreview = true;
-			Margin = new Padding(4, 3, 4, 3);
-			MinimumSize = new Size(487, 179);
+			Margin = new Padding(5, 4, 5, 4);
+			MinimumSize = new Size(554, 223);
 			Name = "FormAbout";
 			StartPosition = FormStartPosition.CenterParent;
 			Text = "About";

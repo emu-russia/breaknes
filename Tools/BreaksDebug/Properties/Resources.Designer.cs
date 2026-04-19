@@ -73,9 +73,39 @@ namespace BreaksDebug.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap datapath {
+            get {
+                object obj = ResourceManager.GetObject("datapath", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] datapath_json {
+            get {
+                object obj = ResourceManager.GetObject("datapath_json", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap datapath2 {
             get {
                 object obj = ResourceManager.GetObject("datapath2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap hand_holding_hammer_icon_png {
+            get {
+                object obj = ResourceManager.GetObject("hand-holding-hammer-icon-png", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
