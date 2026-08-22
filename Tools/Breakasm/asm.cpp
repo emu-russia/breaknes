@@ -109,8 +109,11 @@ label_s *add_label (const char *name, long orig)
 
 	int len = (int)strlen (temp_name), i;
 	label_s * label;
+	// Trim only the TRAILING whitespace: composite label names are complex
+	// expressions that may contain spaces inside (e.g. "(TAB >> 8)").
 	for (i=len-1; i>=0; i--) {
 		if (temp_name[i] <= ' ') temp_name[i] = 0;
+		else break;
 	}
 	//printf ( "ADD LABEL(%s,%i): \'%s\' = %08X\n", get_source_name().c_str(), get_linenum(), temp_name, orig);
 	label = label_lookup (temp_name);
@@ -329,6 +332,10 @@ int eval (char *text, eval_t *result)
 	int i, len;
 	bool resolved = false;
 
+	// The label pointer is only meaningful for EVAL_LABEL and for immediate
+	// forward references (#label); it must be null for plain numbers.
+	result->label = NULL;
+
 	// Indirect test: the whole operand wrapped in parentheses is indirect addressing (JMP (addr))
 	result->indirect = strip_outer_parens(text) ? 1 : 0;
 	len = (int)strlen (text);
@@ -353,6 +360,40 @@ int eval (char *text, eval_t *result)
 		*ptr++ = 0;
 		strncpy (result->string, buf, 255);
 		return result->type = EVAL_STRING;
+	}
+
+	// Immediate: the '#' prefix. Evaluate the rest of the expression,
+	// e.g. #(MONSTER_TAB & #$FF), #MONSTER_TAB, #5+1, #-1.
+	if ( text[0] == '#' ) {
+		char* expr = text + 1;
+		while (*expr <= ' ' && *expr) expr++;		// Skip whitespaces
+		char buf2[1024];
+		if (expr[0] == '-' || expr[0] == '+') {
+			// The expression engine has no unary +/-; "0-" makes it binary.
+			sprintf(buf2, "0%s", expr);
+			expr = buf2;
+		}
+		long value = eval_expr(expr, false, true, &resolved);
+		if (!resolved) {
+			// Forward reference: the value is computed on a later pass and the
+			// immediate operand is patched with the final value. A pure identifier
+			// is a real label; complex expressions are evaluated by do_expr_labels().
+			label_s* label = add_label(expr, UNDEF);
+			label->composite = 0;
+			for (int k = 0; expr[k]; k++) {
+				char cc = expr[k];
+				if (!((cc >= 'a' && cc <= 'z') || (cc >= 'A' && cc <= 'Z') ||
+				      (cc >= '0' && cc <= '9') || cc == '_')) {
+					label->composite = 1;
+					break;
+				}
+			}
+			result->label = label;
+			result->number = 0;
+			return result->type = EVAL_NUMBER;
+		}
+		result->number = value;
+		return result->type = EVAL_NUMBER;
 	}
 
 	// A pure identifier [_a-zA-Z][_a-zA-Z0-9]* is a label or a define
