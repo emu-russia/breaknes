@@ -252,7 +252,7 @@ static token_t* next_token(char** pp, bool quiet)
 		}
 
 		if (!quiet) {
-			printf("ERROR(%s,%i): unknown character in string: %c\n", get_source_name().c_str(), get_linenum(), ch);
+			ERR("ERROR(%s,%i): unknown character in string: %c\n", get_source_name().c_str(), get_linenum(), ch);
 			errors++;
 		}
 		break;
@@ -358,142 +358,162 @@ static node_t* addnode(std::list<node_t*>& tree, token_t* token, int depth)
 	return node;
 }
 
-// executing the tree (semantic analysis)
-static node_t * evaluate (std::list<node_t*>& tree, node_t * expr, long *lvalue, bool quiet, bool& syntax_error)
+// applying a binary operation to two values
+static long apply_binary(OPS op, long lvalue, long mvalue)
 {
-	node_t * curr;
-	long rvalue = 0, mvalue;
-	token_t * token;
-	OPS uop = OPS::NOP, op = OPS::NOP;
-	int debug = 0;
+	switch (op)
+	{
+		case OPS::MINUS:
+			return lvalue - mvalue;
+		case OPS::PLUS:
+			return lvalue + mvalue;
+		case OPS::MUL:
+			return lvalue * mvalue;
+		case OPS::DIV:
+			return mvalue ? lvalue / mvalue : lvalue;
+		case OPS::MOD:
+			return mvalue ? lvalue % mvalue : lvalue;
+		case OPS::SHL:
+			return lvalue << mvalue;
+		case OPS::SHR:
+			return (unsigned long)lvalue >> mvalue;
+		case OPS::ROTL:
+			return (lvalue << mvalue) | ((unsigned long)lvalue >> (32 - mvalue));
+		case OPS::ROTR:
+			return ((unsigned long)lvalue >> mvalue) | (lvalue << (32 - mvalue));
+		case OPS::GREATER:
+			return lvalue > mvalue;
+		case OPS::GREATER_EQ:
+			return lvalue >= mvalue;
+		case OPS::LESS:
+			return lvalue < mvalue;
+		case OPS::LESS_EQ:
+			return lvalue <= mvalue;
+		case OPS::LOGICAL_EQ:
+			return lvalue == mvalue;
+		case OPS::LOGICAL_NOTEQ:
+			return lvalue != mvalue;
+		case OPS::AND:
+			return lvalue & mvalue;
+		case OPS::OR:
+			return lvalue | mvalue;
+		case OPS::XOR:
+			return lvalue ^ mvalue;
+	}
+	return lvalue;
+}
 
-	if (debug) printf ( "[" );
-
-	// lvalue = { [uop] <ident|expr> [op] }
-	curr = expr;
-	while (curr) {
-
-		if (curr->depth < expr->depth) break;
-
-		// optional unary operation
-		token = curr->token;
-		if ( token->type == TOKEN_OP && isunary(token->op) ) {
-			if (curr->rvalue == NULL) {
-				syntax_error = true;
-				if (!quiet) {
-					printf("Missing identifier\n");
-					errors++;
-				}
-			}
-			else {
-				curr = curr->rvalue;
-				uop = token->op;
-			}
-		}
-		else uop = OPS::NOP;
-
-		if (uop != OPS::NOP && debug) printf ( "%s ", opstr(uop) );
-
-		// mandatory identifier or nested expression
-		token = curr->token;
-		if ( token->type == TOKEN_IDENT || token->type == TOKEN_NUMBER || curr->depth > expr->depth ) {
-
-			mvalue = 0;
-
-			if ( curr->depth > expr->depth ) {  // nested expression
-				if (debug) printf ( "SUBEVAL " );
-				curr = evaluate (tree, curr, &mvalue, quiet, syntax_error);
-				//printf ( "SUB LVALUE : %i\n", mvalue.num.value );
-			}
-			else if ( token->type == TOKEN_IDENT) {
-				curr = curr->rvalue;
-
-				define_s* def = define_lookup(token->string);
-				if (def) {
-					mvalue = eval_expr(def->replace, debug, quiet);
-				}
-				else {
-					label_s* label = label_lookup(token->string);
-					if (label && label->orig != UNDEF && !label->composite) {
-						mvalue = label->orig;
-					}
-					else {
-						syntax_error = true;
-						if (!quiet) {
-							printf("Undefined identifier: %s", token->string);
-							errors++;
-						}
-					}
-				}
-				if (debug) printf ( "SYMBOL: %s", token->string );
-			}
-			else if ( token->type == TOKEN_NUMBER) {
-				curr = curr->rvalue;
-				mvalue = token->number;
-				if (debug) printf ( "NUMBER(%i) ", mvalue );
-			}
-
-			// perform unary operation on MVALUE
-			if (uop != OPS::NOP) {
-				switch (uop)
-				{
-					case OPS::NOT:
-						mvalue = !mvalue;
-						break;
-					case OPS::NEG:
-						mvalue = ~mvalue;
-						break;
-				}
-			}
-
-			// perform binary operation RVALUE = RVALUE op MVALUE
-			if (op != OPS::NOP) {
-				switch (op)
-				{
-					case OPS::MINUS:
-						rvalue -= mvalue;
-						break;
-					case OPS::PLUS:
-						rvalue += mvalue;
-						break;
-					case OPS::MUL:
-						rvalue *= mvalue;
-						break;
-					case OPS::DIV:
-						if (mvalue) rvalue /= mvalue;
-						break;
-					case OPS::MOD:
-						if (mvalue) rvalue %= mvalue;
-						break;
-				}
-			}
-			else rvalue = mvalue;
-		}
-		else {
+// Resolve an identifier to its numeric value (define or label).
+static bool resolve_ident(const char* name, long* value, bool quiet, bool& syntax_error)
+{
+	define_s* def = define_lookup((char*)name);
+	if (def) {
+		bool ok = false;
+		*value = eval_expr(def->replace, false, quiet, &ok);
+		if (!ok)
 			syntax_error = true;
-			if (!quiet) {
-				printf("Identifier required\n");
-				errors++;
-			}
+		return ok;
+	}
+	label_s* label = label_lookup((char*)name);
+	if (label && label->orig != UNDEF && !label->composite) {
+		*value = label->orig;
+		return true;
+	}
+	syntax_error = true;
+	if (!quiet) {
+		ERR("Undefined identifier: %s", name);
+		errors++;
+	}
+	return false;
+}
+
+// forward declaration (mutual recursion with evaluate)
+static long evaluate(std::list<node_t*>& tree, node_t** node, int min_depth, bool quiet, bool& syntax_error);
+
+// Evaluate a single operand: an optional run of unary operations applied to an
+// identifier, a number or a higher-priority (nested) run of the syntax tree.
+static long eval_operand(std::list<node_t*>& tree, node_t** node, int min_depth, bool quiet, bool& syntax_error)
+{
+	node_t* curr = *node;
+	OPS uops[8];
+	int nuop = 0;
+	long value = 0;
+
+	// optional unary operations
+	while (curr && curr->token->type == TOKEN_OP && isunary(curr->token->op) && nuop < 8) {
+		uops[nuop++] = curr->token->op;
+		curr = curr->rvalue;
+	}
+
+	if (!curr || curr->depth < min_depth) {
+		syntax_error = true;
+		if (!quiet) {
+			ERR("Missing identifier\n");
+			errors++;
 		}
+		*node = NULL;
+		return 0;
+	}
 
-		// optional binary operation
-		if (curr && curr->depth == expr->depth ) {
-			token = curr->token;
-			if ( token->type == TOKEN_OP && isbinary(token->op) ) {
-				curr = curr->rvalue;
-				op = token->op;
-			}
-			else op = OPS::NOP;
+	if (curr->depth > min_depth) {          // higher-priority run: nested expression
+		node_t* sub = curr;
+		value = evaluate(tree, &sub, curr->depth, quiet, syntax_error);
+		*node = sub;
+	}
+	else if (curr->token->type == TOKEN_IDENT) {
+		if (!resolve_ident(curr->token->string, &value, quiet, syntax_error))
+			value = 0;
+		*node = curr->rvalue;
+	}
+	else if (curr->token->type == TOKEN_NUMBER) {
+		value = curr->token->number;
+		*node = curr->rvalue;
+	}
+	else {
+		syntax_error = true;
+		if (!quiet) {
+			ERR("Identifier required\n");
+			errors++;
+		}
+		*node = curr->rvalue;
+		return 0;
+	}
 
-			if (op != OPS::NOP && debug) printf ( "%s ", opstr(op) );
+	// apply the unary operations (right to left, as written)
+	for (int i = nuop - 1; i >= 0; i--) {
+		switch (uops[i])
+		{
+			case OPS::NOT:
+				value = !value;
+				break;
+			case OPS::NEG:
+				value = ~value;
+				break;
 		}
 	}
 
-	if (debug) printf ( "]" );
+	return value;
+}
 
-	*lvalue = rvalue;
-	return curr;
+// Execute the syntax tree (semantic analysis).
+// Evaluates a run of terms joined by binary operators at depth >= min_depth,
+// starting from *node (which must point at an operand position).
+static long evaluate(std::list<node_t*>& tree, node_t** node, int min_depth, bool quiet, bool& syntax_error)
+{
+	long lvalue = eval_operand(tree, node, min_depth, quiet, syntax_error);
+
+	while (!syntax_error && *node) {
+		node_t* curr = *node;
+		if (curr->depth < min_depth) break;
+		if (curr->token->type != TOKEN_OP || !isbinary(curr->token->op)) break;
+
+		OPS op = curr->token->op;
+		*node = curr->rvalue;
+		long mvalue = eval_operand(tree, node, min_depth, quiet, syntax_error);
+		lvalue = apply_binary(op, lvalue, mvalue);
+	}
+
+	return lvalue;
 }
 
 // grow a syntax tree
@@ -522,7 +542,7 @@ static void grow (tree_t& tree, node_t **expr, token_t * token, bool quiet)
 				if (tree.depth > 0) tree.depth--;
 				else {
 					if (!quiet) {
-						printf("Unmatched parenthesis");
+						ERR("Unmatched parenthesis");
 					}
 				}
 				return;
@@ -561,7 +581,7 @@ static void dump_tree(tree_t& tree, node_t* root)
 	printf("\n");
 }
 
-long eval_expr(char* text, bool debug, bool quiet)
+long eval_expr(char* text, bool debug, bool quiet, bool* resolved)
 {
 	char expr[0x100];
 	sprintf(expr, "res=%s", text);
@@ -588,11 +608,14 @@ long eval_expr(char* text, bool debug, bool quiet)
 	long result = 0;
 	bool syntax_error = false;
 	if (root) {
-		evaluate(tree.nodes, root->rvalue->rvalue, &result, quiet, syntax_error);
+		node_t* start = root->rvalue->rvalue;
+		result = evaluate(tree.nodes, &start, 0, quiet, syntax_error);
 	}
 	if (syntax_error) {
 		result = 0;
 	}
+	if (resolved)
+		*resolved = !syntax_error;
 
 	if (debug)
 		printf("Source expression: %s, result: %d (0x%08X)\n", text, result, result);
