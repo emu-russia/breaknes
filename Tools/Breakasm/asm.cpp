@@ -739,6 +739,11 @@ static int run_pass(char* text, char* source_name, uint8_t* prg)
 	errors = 0;
 	force_abs = 0;
 
+	// Zero the PRG: a previous pass may have written bytes at offsets that the
+	// current pass no longer reaches (e.g. a zero page instruction replaced an
+	// absolute one after the label was resolved).
+	memset(prg, 0, 0x10000);
+
 	cleanup ();
 
 	source_name_stack.clear();
