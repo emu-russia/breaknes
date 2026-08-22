@@ -182,6 +182,11 @@ IndirectLabel:
 
 define ABS_ADDR $700
 
+; Immediate expressions with the '#' prefix
+
+	ldx #(ABS_ADDR & #$FF)      ; A2 00
+	ldy #(ABS_ADDR >> 8)        ; A0 07
+
 	ora ABS_ADDR, y
 	and ABS_ADDR, y
 	eor ABS_ADDR, y

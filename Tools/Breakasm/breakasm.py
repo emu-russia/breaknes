@@ -718,6 +718,23 @@ class Assembler(object):
                 buf.append(c)
             return Eval(EVAL_STRING, string=''.join(buf), indirect=indirect)
 
+        # Immediate: the '#' prefix. Evaluate the rest of the expression,
+        # e.g. #(MONSTER_TAB & #$FF), #MONSTER_TAB, #5+1, #-1.
+        if text and text[0] == '#':
+            rest = text[1:].lstrip()
+            if rest[:1] in ('-', '+'):
+                rest = '0' + rest     # the expression engine has no unary +/-
+            value, resolved = self.eval_expr(rest, quiet=True)
+            if not resolved:
+                # Forward reference: the value is computed on a later pass and
+                # the immediate operand is patched with the final value. A pure
+                # identifier is a real label; complex expressions are evaluated
+                # by do_expr_labels().
+                lab = self.add_label(rest, UNDEF)
+                lab.composite = not all(is_ident_char(c) for c in rest)
+                return Eval(EVAL_NUMBER, number=0, label=lab)
+            return Eval(EVAL_NUMBER, number=value)
+
         # A pure identifier [_a-zA-Z][_a-zA-Z0-9]* is a label or a define
         if text and text[0] != '#' and not is_digit(text[0]) and text[0] != '$':
             if all(is_ident_char(c) for c in text):
@@ -976,7 +993,11 @@ class Assembler(object):
             if e0.type == EVAL_NUMBER:          # #immediate
                 if ins[1]:
                     self.emit(ins[1])
-                    self.emit(e0.number & 0xFF)
+                    if e0.label is not None:    # forward-referenced immediate: patch later
+                        self.add_patch(e0.label, self.org, 2)
+                        self.emit(0)
+                    else:
+                        self.emit(e0.number & 0xFF)
                 else:
                     self.wrong_parameters(cmd, ops)
             elif e0.type == EVAL_STRING:
@@ -1091,7 +1112,11 @@ class Assembler(object):
             if e.type == EVAL_LABEL:
                 self.error("Label cannot be used here")
             elif e.type == EVAL_NUMBER:
-                self.emit(e.number & 0xFF)
+                if e.label is not None:         # forward-referenced immediate: patch later
+                    self.add_patch(e.label, self.org, 2)
+                    self.emit(0)
+                else:
+                    self.emit(e.number & 0xFF)
             elif e.type == EVAL_ADDRESS:
                 self.emit(e.address & 0xFF)
             elif e.type == EVAL_STRING:
@@ -1104,8 +1129,13 @@ class Assembler(object):
             if e.type == EVAL_STRING:
                 self.error("String cannot be used here")
             elif e.type == EVAL_NUMBER:
-                self.emit(e.number & 0xFF)
-                self.emit((e.number >> 8) & 0xFF)
+                if e.label is not None:         # forward-referenced immediate: patch later
+                    self.add_patch(e.label, self.org, 0)
+                    self.emit(0)
+                    self.emit(0)
+                else:
+                    self.emit(e.number & 0xFF)
+                    self.emit((e.number >> 8) & 0xFF)
             elif e.type == EVAL_ADDRESS:
                 self.emit(e.address & 0xFF)
                 self.emit((e.address >> 8) & 0xFF)

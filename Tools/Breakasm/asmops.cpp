@@ -382,7 +382,11 @@ void op_std(char* cmd, char* ops)
 			case EVAL_NUMBER:   // #immediate
 				if (ins->op_imm) {
 					emit(ins->op_imm);
-					emit(val[0].number & 0xff);
+					if (val[0].label) {      // forward-referenced immediate: patch later
+						add_patch(val[0].label, org, 2);
+						emit(0);
+					}
+					else emit(val[0].number & 0xff);
 				}
 				else WrongParameters(cmd, ops);
 				return;
@@ -571,7 +575,11 @@ void opBYTE (char *cmd, char *ops)
 			errors++;
 		}
 		else if ( type == EVAL_NUMBER ) {
-			emit ( val.number & 0xff );
+			if ( val.label ) {		// forward-referenced immediate (#label): patch later
+				add_patch (val.label, org, 2 );
+				emit (0);
+			}
+			else emit ( val.number & 0xff );
 		}
 		else if ( type == EVAL_ADDRESS ) {
 			emit ( val.address & 0xff );
@@ -597,8 +605,14 @@ void opWORD (char *cmd, char *ops)
 			errors++;
 		}
 		else if ( type == EVAL_NUMBER ) {
-			emit ( val.number & 0xff );
-			emit ( (val.number >> 8) & 0xff );
+			if ( val.label ) {		// forward-referenced immediate (#label): patch later
+				add_patch (val.label, org, 0 );
+				emit (0); emit (0);
+			}
+			else {
+				emit ( val.number & 0xff );
+				emit ( (val.number >> 8) & 0xff );
+			}
 		}
 		else if ( type == EVAL_ADDRESS ) {
 			emit ( val.address & 0xff );
