@@ -174,24 +174,18 @@ namespace APUSimUnitTest
 	}
 
 	/// <summary>
-	/// Simulate one second and count how many times the LFO 1/2 signals are triggered.
-	/// TODO: the number of nanoseconds executed is for some reason very different from 10^9 (shows 536870912 ns).
+	/// Check the LFO1/LFO2 periods against the documented values (BreakingNESWiki, clkgen.md).
+	/// Mode 0: LFO1 activates on PLA0/1/2/3, each 7457 CPU cycles apart; LFO2 on PLA1/3, 14913 apart.
+	/// Mode 1: LFO1 activates on PLA0/1/2/4 (intervals 7457, 7457, 7457, 14913);
+	///         LFO2 on PLA1/4 (intervals 14913, 22367).
+	/// The periods are measured between consecutive LFO negedges, in CPU cycles (via the APU PHI counter),
+	/// so the test only needs a few LFO periods instead of simulating a whole second (~43M half-cycles).
 	/// </summary>
 	/// <param name="mode">SoftCLK mode (0 - normal, 1 - extended)</param>
 	/// <returns></returns>
 	bool UnitTest::TestLFO(bool mode)
 	{
 		char text[0x100]{};
-		const size_t osc = 21477272;	// Hz
-		const size_t hcycles = osc * 2;	// 1 sumulated second
-		TriState prev_nLFO1 = TriState::X;
-		TriState prev_nLFO2 = TriState::X;
-		const float ns_in_second = 1000000000.f;
-		const float hcycle_len = ns_in_second / (float)osc / 2.f;  // in nanoseconds
-		float t = 0.f;
-		size_t lfo1_counter = 0;
-		size_t lfo2_counter = 0;
-		bool trace = false;
 
 		apu->wire.n_CLK = TriState::One;	// CLK = 0
 		apu->wire.RES = TriState::Zero;
@@ -203,7 +197,23 @@ namespace APUSimUnitTest
 		sprintf_s(text, sizeof(text), "Test LFO in Mode: %d\n", mode ? 1 : 0);
 		Logger::WriteMessage(text);
 
-		for (size_t n = 0; n < hcycles; n++)
+		TriState prev_nLFO1 = TriState::X;
+		TriState prev_nLFO2 = TriState::X;
+
+		// PHI counter values at the LFO negedges (periods measured in CPU cycles)
+
+		size_t lfo1_phi[6]{};
+		size_t lfo2_phi[4]{};
+		size_t lfo1_cnt = 0;
+		size_t lfo2_cnt = 0;
+
+		// Enough for a full LFSR cycle in Mode 1 (4 LFO1 intervals + 2 LFO2 intervals,
+		// ~37k CPU cycles = ~900k half-cycles)
+		const size_t max_hcycles = 1300000;
+
+		apu->ResetPHICounter();
+
+		for (size_t n = 0; n < max_hcycles; n++)
 		{
 			apu->core_int->sim();
 
@@ -213,48 +223,76 @@ namespace APUSimUnitTest
 
 			if (apu->wire.n_LFO1 != prev_nLFO1)
 			{
-				if (prev_nLFO1 == TriState::One && apu->wire.n_LFO1 == TriState::Zero)
+				if (prev_nLFO1 == TriState::One && apu->wire.n_LFO1 == TriState::Zero && lfo1_cnt < _countof(lfo1_phi))
 				{
-					if (trace)
-					{
-						sprintf_s(text, sizeof(text), "LFO1: %f ns\n", t);
-						Logger::WriteMessage(text);
-					}
-
-					lfo1_counter++;
+					lfo1_phi[lfo1_cnt++] = apu->GetPHICounter();
 				}
-
 				prev_nLFO1 = apu->wire.n_LFO1;
 			}
 
 			if (apu->wire.n_LFO2 != prev_nLFO2)
 			{
-				if (prev_nLFO2 == TriState::One && apu->wire.n_LFO2 == TriState::Zero)
+				if (prev_nLFO2 == TriState::One && apu->wire.n_LFO2 == TriState::Zero && lfo2_cnt < _countof(lfo2_phi))
 				{
-					if (trace)
-					{
-						sprintf_s(text, sizeof(text), "LFO2: %f ns\n", t);
-						Logger::WriteMessage(text);
-					}
-
-					lfo2_counter++;
+					lfo2_phi[lfo2_cnt++] = apu->GetPHICounter();
 				}
-
 				prev_nLFO2 = apu->wire.n_LFO2;
 			}
 
+			if (lfo1_cnt == _countof(lfo1_phi) && lfo2_cnt == _countof(lfo2_phi))
+				break;
+
 			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
-			t += hcycle_len;
 		}
 
-		sprintf_s(text, sizeof(text), "Executed %f ns. CLK: %f ns\n", t, hcycle_len * 2.f);
-		Logger::WriteMessage(text);
+		// We need at least one full interval set: Mode 0: LFO1 4x7457, LFO2 2x14913.
+		// Mode 1: LFO1 {7457,7457,7457,14913}, LFO2 {14913,22367}.
 
-		sprintf_s(text, sizeof(text), "LFO1 freq: ~%zd Hz\n", lfo1_counter);
-		Logger::WriteMessage(text);
+		if (lfo1_cnt < 5 || lfo2_cnt < 3)
+		{
+			sprintf_s(text, sizeof(text), "LFO test: not enough edges (LFO1: %zd, LFO2: %zd)\n", lfo1_cnt, lfo2_cnt);
+			Logger::WriteMessage(text);
+			return false;
+		}
 
-		sprintf_s(text, sizeof(text), "LFO2 freq: ~%zd Hz\n\n", lfo2_counter);
-		Logger::WriteMessage(text);
+		// Check every interval between consecutive negedges.
+		// Documented intervals (CPU cycles): Mode 0: LFO1 = 7457, LFO2 = 14913.
+		// Mode 1: LFO1 = {7457, 7457, 7457, 14913}, LFO2 = {14913, 22367}.
+		// Tolerance 3% covers the "slightly floating number of cycles for the last output".
+
+		for (size_t n = 1; n < lfo1_cnt; n++)
+		{
+			double period = (double)(lfo1_phi[n] - lfo1_phi[n - 1]);
+
+			double expected = mode ? (period > 11000 ? 14913.0 : 7457.0) : 7457.0;
+
+			sprintf_s(text, sizeof(text), "LFO1 interval %zd: %.1f CPU cycles\n", n, period);
+			Logger::WriteMessage(text);
+
+			if (fabs(period - expected) / expected > 0.03)
+			{
+				sprintf_s(text, sizeof(text), "LFO1 interval %zd mismatch!\n", n);
+				Logger::WriteMessage(text);
+				return false;
+			}
+		}
+
+		for (size_t n = 1; n < lfo2_cnt; n++)
+		{
+			double period = (double)(lfo2_phi[n] - lfo2_phi[n - 1]);
+
+			double expected = mode ? (period > 18000 ? 22367.0 : 14913.0) : 14913.0;
+
+			sprintf_s(text, sizeof(text), "LFO2 interval %zd: %.1f CPU cycles\n", n, period);
+			Logger::WriteMessage(text);
+
+			if (fabs(period - expected) / expected > 0.03)
+			{
+				sprintf_s(text, sizeof(text), "LFO2 interval %zd mismatch!\n", n);
+				Logger::WriteMessage(text);
+				return false;
+			}
+		}
 
 		return true;
 	}
