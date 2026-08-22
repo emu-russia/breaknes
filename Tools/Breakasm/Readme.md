@@ -13,6 +13,12 @@ Example: Breakasm -l test.lst test.asm test.prg
 
 The `-l <file.lst>` option writes an assembly listing (address, emitted bytes and the source line) to the given file.
 
+There is also a Python port with the same behaviour and command line:
+
+```
+python breakasm.py [-l <file.lst>] <source.asm> <output.prg>
+```
+
 PRG file is always 64 Kbytes (the size of 6502 address space). The current assembly pointer (`ORG`) can be set anywhere in the PRG.
 
 ## Syntax
