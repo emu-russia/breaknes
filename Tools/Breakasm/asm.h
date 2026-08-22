@@ -1,6 +1,9 @@
 #pragma once
 
-#define BREAKASM_VERSION "1.3"
+#include <cstdio>
+#include <utility>   // std::pair (used by the multi-pass convergence tracking in asm.cpp)
+
+#define BREAKASM_VERSION "1.4"
 
 #define UNDEF   0xbabadaba  // undefined offset
 #define KEYWORD 0xd0d0d0d0  // keyword
@@ -27,7 +30,7 @@ struct label_s {
 struct patch_s {
 	label_s* label;
 	long    orig;
-	int     branch;     // 1: relative branch, 0: absolute jmp
+	int     branch;     // 0: absolute (2 bytes), 1: relative branch (1 byte), 2: zero page (1 byte)
 	char	source[0x100];	// Name of the source file where the patch field was encountered
 	int     line;		// Line number in the source file
 };
@@ -61,6 +64,13 @@ extern long org;        // current emit offset
 extern long stop;
 extern long errors;
 
+extern int silent;      // 1: suppress error output (used for intermediate assembly passes)
+extern int force_abs;   // 1: the ABS directive is active - the next instruction must use absolute addressing
+extern FILE* list_file; // Listing output stream (NULL = listing disabled)
+
+// Error output helper: respects the "silent" mode used by the intermediate passes of multi-pass assembling
+#define ERR(...) do { if (!silent) printf(__VA_ARGS__); } while (0)
+
 extern param_t* params;
 extern int param_num;
 
@@ -72,6 +82,11 @@ define_s* define_lookup(char* name);
 int eval(char* text, eval_t* result);
 void split_param(char* op);
 void emit(uint8_t b);
+
+// Returns the value of the label from the previous assembly pass (if any).
+// Used to resolve the Zero Page / Absolute ambiguity for forward references:
+// the mode is chosen by the best-known value and the operand is patched later.
+bool prev_label_value(const char* name, long* out);
 
 int get_linenum();
 std::string get_source_name();
