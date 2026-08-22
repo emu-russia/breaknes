@@ -775,7 +775,9 @@ namespace APUSimUnitTest
 
 		if (env.Debug_Get_DecayCounter() != 0xA) return false;
 
-		// The following count-down cycle (n_LFO1=0, rco_latch=1 -> Step=1) changes the counter
+		// The following count-down cycle (n_LFO1=0, rco_latch=1 -> Step=1) decrements
+		// the decay counter by exactly 1 (documented 2A03 behavior: the decay counter
+		// counts down by 1 on every quarter-frame /LFO1 pulse).
 
 		uint32_t before = env.Debug_Get_DecayCounter();
 		env.sim(V, TriState::Zero, TriState::Zero);
@@ -784,7 +786,7 @@ namespace APUSimUnitTest
 		sprintf_s(text, sizeof(text), "Decay counter: 0x%X -> 0x%X\n", before, after);
 		Logger::WriteMessage(text);
 
-		if (after == before) return false;
+		if (after != before - 1) return false;
 
 		// get_LC(): with the halt bit set in the control register it goes to 0
 
@@ -938,6 +940,262 @@ namespace APUSimUnitTest
 			if (cout != TriState::One) return false;
 			if (n_sum != TriState::Zero) return false;		// sum = 1
 		}
+
+		// Duty cycle table (documented in BreakingNESWiki square.md):
+		// The DUTY output for each duty counter value (7..0) and duty setting d (0..3).
+		// We drive the duty counter directly and read the DUTY wire through sim_Duty.
+
+		const TriState duty_table[4][8] = {
+			// d=0 (12.5%): 7->1, rest 0
+			{ TriState::One, TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero },
+			// d=1 (25%):   7->1, 6->1, rest 0
+			{ TriState::One, TriState::One, TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero },
+			// d=2 (50%):   7..4->1, 3..0->0
+			{ TriState::One, TriState::One, TriState::One, TriState::One, TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero },
+			// d=3 (75%):   7,6->0, 5..0->1
+			{ TriState::Zero, TriState::Zero, TriState::One, TriState::One, TriState::One, TriState::One, TriState::One, TriState::One },
+		};
+
+		APUSim::SquareChan sq(apu, APUSim::SquareChanCarryIn::Vdd);
+		TriState SQ_Out[4]{};
+
+		for (size_t d = 0; d < 4; d++)
+		{
+			// Load the duty setting (bits 7:6 of $4000) via WR0
+
+			apu->DB = (uint8_t)(d << 6);
+			apu->wire.ACLK1 = TriState::Zero;
+			sq.sim(TriState::One, TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero, SQ_Out);
+
+			// Check every duty counter value
+
+			for (size_t v = 0; v < 8; v++)
+			{
+				// Counter value 0 corresponds to DT[2:0] = 0. The circuit counts
+				// down, so we map the table index (7..0) to the counter value.
+
+				sq.Set_DutyCounter((uint32_t)v);
+
+				// sim_Duty is called from sim(); it reads duty_reg and duty_cnt.
+				// With WR3=0/FLOAD=0 the counter holds its value.
+
+				sq.sim(TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero, TriState::Zero, SQ_Out);
+
+				TriState expected = duty_table[d][7 - v];	// table is indexed by duty counter value 7..0
+
+				if (sq.DUTY != expected)
+				{
+					char text[0x100]{};
+					sprintf_s(text, sizeof(text), "Duty mismatch: d=%zd, counter=%zd, DUTY=%d, expected=%d\n",
+						d, v, ToByte(sq.DUTY), ToByte(expected));
+					Logger::WriteMessage(text);
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/// <summary>
+	/// Check the square channel sweep against the documented 2A03 behavior:
+	/// - increase: new_freq = freq + (freq >> shift)
+	/// - decrease: new_freq = freq - (freq >> shift) - 1
+	/// - overflow (target > $7FF) mutes the channel and blocks DO_SWEEP
+	/// - underflow (target < 0) also mutes the channel
+	/// </summary>
+	/// <returns></returns>
+	bool UnitTest::TestSquareSweep()
+	{
+		char text[0x100]{};
+
+		APUSim::SquareChan* sq = apu->square[0];
+		TriState SQ_Out[4]{};
+
+		apu->wire.n_CLK = TriState::One;	// CLK = 0
+		apu->wire.RES = TriState::Zero;
+		apu->wire.DMCINT = TriState::Zero;
+		apu->wire.n_LFO2 = TriState::One;
+		apu->wire.NOSQA = TriState::Zero;	// Length counter enabled
+
+		// Accelerated LFO2: pulse on every negedge of ACLK2 (like TestLengthCounter does)
+
+		TriState prev_aclk = TriState::X;
+		TriState prev_clk = TriState::X;
+		TriState prev_phi0 = TriState::X;
+
+		// Write the sweep register $4001: DB = enable(7) | period(6:4) | DEC(3) | shift(2:0)
+		// Case A: enable, increase (DEC=0), shift=1, period=0 -> DB = 0x80 | 0x01 = 0x81
+
+		apu->DB = 0x81;
+		apu->wire.ACLK1 = TriState::Zero;
+		apu->wire.nACLK2 = TriState::One;
+		sq->sim(TriState::Zero, TriState::One, TriState::Zero, TriState::Zero, TriState::Zero, SQ_Out);	// WR1=1
+
+		sq->Set_FreqReg(0x100);
+
+		// Run a few accelerated LFO2 cycles.
+		// The sound generators are clocked once per PHI0 change (see APU::sim_SoundGenerators).
+		// With period=0 the sweep applies on every LFO2 pulse: freq = freq + (freq >> shift).
+
+		uint32_t freq = sq->Get_FreqReg();
+		uint32_t expected = freq;
+
+		for (size_t n = 0; n < 4096; n++)
+		{
+			apu->core_int->sim();
+			apu->clkgen->sim();
+
+			if (IsNegedge(prev_aclk, apu->wire.nACLK2))
+			{
+				apu->wire.n_LFO2 = TriState::Zero;
+			}
+			if (IsPosedge(prev_clk, NOT(apu->wire.n_CLK)))
+			{
+				apu->wire.n_LFO2 = TriState::One;
+			}
+
+			if (apu->wire.PHI0 != prev_phi0)
+			{
+				prev_phi0 = apu->wire.PHI0;
+				sq->sim(apu->wire.W4000, apu->wire.W4001, apu->wire.W4002, apu->wire.W4003, apu->wire.NOSQA, SQ_Out);
+
+				uint32_t new_freq = sq->Get_FreqReg();
+				if (new_freq != freq)
+				{
+					expected = freq + (freq >> 1);		// increase, shift=1
+					if (new_freq != expected)
+					{
+						sprintf_s(text, sizeof(text), "Sweep increase mismatch: 0x%X -> 0x%X, expected 0x%X\n", freq, new_freq, expected);
+						Logger::WriteMessage(text);
+						return false;
+					}
+					sprintf_s(text, sizeof(text), "Sweep: freq 0x%X -> 0x%X\n", freq, new_freq);
+					Logger::WriteMessage(text);
+					freq = new_freq;
+				}
+			}
+
+			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
+			prev_aclk = apu->wire.nACLK2;
+			prev_clk = NOT(apu->wire.n_CLK);
+		}
+
+		sprintf_s(text, sizeof(text), "Sweep increase final freq: 0x%X\n", freq);
+		Logger::WriteMessage(text);
+
+		if (freq <= 0x100)
+			return false;
+
+		// Case B: decrease. target = freq - (freq >> shift) - 1 (the -1 is the 2A03 sweep quirk).
+
+		sq->Set_FreqReg(0x100);
+		apu->DB = 0x88 | 0x01;		// enable, DEC=1 (decrease), shift=1, period=0
+		apu->wire.ACLK1 = TriState::Zero;
+		apu->wire.nACLK2 = TriState::One;
+		sq->sim(TriState::Zero, TriState::One, TriState::Zero, TriState::Zero, TriState::Zero, SQ_Out);	// WR1=1
+
+		prev_phi0 = TriState::X;
+		freq = sq->Get_FreqReg();
+		uint32_t prev_freq = freq;
+
+		for (size_t n = 0; n < 4096; n++)
+		{
+			apu->core_int->sim();
+			apu->clkgen->sim();
+
+			if (IsNegedge(prev_aclk, apu->wire.nACLK2))
+			{
+				apu->wire.n_LFO2 = TriState::Zero;
+			}
+			if (IsPosedge(prev_clk, NOT(apu->wire.n_CLK)))
+			{
+				apu->wire.n_LFO2 = TriState::One;
+			}
+
+			if (apu->wire.PHI0 != prev_phi0)
+			{
+				prev_phi0 = apu->wire.PHI0;
+				sq->sim(apu->wire.W4000, apu->wire.W4001, apu->wire.W4002, apu->wire.W4003, apu->wire.NOSQA, SQ_Out);
+
+				uint32_t new_freq = sq->Get_FreqReg();
+				if (new_freq != freq)
+				{
+					expected = (freq - (freq >> 1)) - 1;	// decrease, shift=1, -1 quirk
+					if (new_freq != expected)
+					{
+						sprintf_s(text, sizeof(text), "Sweep decrease mismatch: 0x%X -> 0x%X, expected 0x%X\n", freq, new_freq, expected);
+						Logger::WriteMessage(text);
+						return false;
+					}
+					sprintf_s(text, sizeof(text), "Sweep decrease: freq 0x%X -> 0x%X\n", freq, new_freq);
+					Logger::WriteMessage(text);
+					freq = new_freq;
+				}
+			}
+
+			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
+			prev_aclk = apu->wire.nACLK2;
+			prev_clk = NOT(apu->wire.n_CLK);
+		}
+
+		sprintf_s(text, sizeof(text), "Sweep decrease final freq: 0x%X\n", freq);
+		Logger::WriteMessage(text);
+
+		if (freq >= 0x100)
+			return false;
+
+		// Case C: overflow. target = 0x700 + (0x700 >> 1) = 0x700 + 0x380 = 0xA80 > 0x7FF.
+		// The sweep must not happen (SW_OVF blocks DO_SWEEP) and the channel must be muted.
+
+		sq->Set_FreqReg(0x700);
+		apu->DB = 0x80 | 0x01;		// enable, increase, shift=1, period=0
+		apu->wire.ACLK1 = TriState::Zero;
+		apu->wire.nACLK2 = TriState::One;
+		sq->sim(TriState::Zero, TriState::One, TriState::Zero, TriState::Zero, TriState::Zero, SQ_Out);	// WR1=1
+
+		prev_phi0 = TriState::X;
+		freq = sq->Get_FreqReg();
+		uint32_t overflow_sweeps = 0;
+
+		for (size_t n = 0; n < 4096; n++)
+		{
+			apu->core_int->sim();
+			apu->clkgen->sim();
+
+			if (IsNegedge(prev_aclk, apu->wire.nACLK2))
+			{
+				apu->wire.n_LFO2 = TriState::Zero;
+			}
+			if (IsPosedge(prev_clk, NOT(apu->wire.n_CLK)))
+			{
+				apu->wire.n_LFO2 = TriState::One;
+			}
+
+			if (apu->wire.PHI0 != prev_phi0)
+			{
+				prev_phi0 = apu->wire.PHI0;
+				sq->sim(apu->wire.W4000, apu->wire.W4001, apu->wire.W4002, apu->wire.W4003, apu->wire.NOSQA, SQ_Out);
+
+				if (sq->Get_FreqReg() != freq)
+				{
+					overflow_sweeps++;
+				}
+			}
+
+			apu->wire.n_CLK = NOT(apu->wire.n_CLK);
+			prev_aclk = apu->wire.nACLK2;
+			prev_clk = NOT(apu->wire.n_CLK);
+		}
+
+		sprintf_s(text, sizeof(text), "Sweep overflow: freq stayed 0x%X, %d sweeps\n", sq->Get_FreqReg(), (int)overflow_sweeps);
+		Logger::WriteMessage(text);
+
+		if (overflow_sweeps != 0)
+			return false;
+
+		if (sq->Get_FreqReg() != 0x700)
+			return false;
 
 		return true;
 	}
@@ -1367,6 +1625,12 @@ namespace UnitTest
 		{
 			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
 			Assert::IsTrue(ut.TestSquareChan());
+		}
+
+		TEST_METHOD(TestSquareSweep)
+		{
+			APUSimUnitTest::UnitTest ut(APUSim::Revision::RP2A03G);
+			Assert::IsTrue(ut.TestSquareSweep());
 		}
 
 		TEST_METHOD(TestTriangleChan)

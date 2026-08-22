@@ -41,6 +41,7 @@ namespace APUSimUnitTest
 		bool TestNoiseChan();
 		bool TestSquareBits();
 		bool TestSquareChan();
+		bool TestSquareSweep();
 		bool TestTriangleChan();
 		bool TestRegsDecoder();
 		bool TestBIDIR();
