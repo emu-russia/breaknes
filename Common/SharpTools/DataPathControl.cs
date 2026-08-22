@@ -8,19 +8,19 @@ using System.Text.Json.Serialization;
 
 namespace System.Windows.Forms
 {
-    public partial class DataPathView : Control
-    {
-        private BufferedGraphics gfx = null;
-        private BufferedGraphicsContext context;
-        GraphicsPath [] mapping = new GraphicsPath[(int)CoreDebug.ControlCommand.Max];
-        GraphicsPath cpu_write = new GraphicsPath();
-        GraphicsPath cpu_read = new GraphicsPath();
-        GraphicsPath alu_add = new GraphicsPath();
+	public partial class DataPathView : Control
+	{
+		private BufferedGraphics gfx = null;
+		private BufferedGraphicsContext context;
+		GraphicsPath [] mapping = new GraphicsPath[(int)CoreDebug.ControlCommand.Max];
+		GraphicsPath cpu_write = new GraphicsPath();
+		GraphicsPath cpu_read = new GraphicsPath();
+		GraphicsPath alu_add = new GraphicsPath();
 		CoreDebug.CpuDebugInfo_Commands cur_info = null;
-        bool SavedPHI1 = false;
-        Pen path_pen = new Pen(new SolidBrush(Color.OrangeRed), 5);
-        Font labelFont = new Font("Segoe UI", 10.0f, FontStyle.Bold);
-        Brush labelBrush = new SolidBrush(Color.Black);
+		bool SavedPHI1 = false;
+		Pen path_pen = new Pen(new SolidBrush(Color.OrangeRed), 5);
+		Font labelFont = new Font("Segoe UI", 10.0f, FontStyle.Bold);
+		Brush labelBrush = new SolidBrush(Color.Black);
 
 		public class DataPathGraphModel
 		{
@@ -34,7 +34,7 @@ namespace System.Windows.Forms
 			return (T)Enum.Parse(typeof(T), value);
 		}
 
-        private GraphicsPath PathFromIntsArray(List<int[]> path)
+		private GraphicsPath PathFromIntsArray(List<int[]> path)
 		{
 			GraphicsPath gr_path = new GraphicsPath();
 			List<Point> points = new();
@@ -46,13 +46,13 @@ namespace System.Windows.Forms
 			{
 				gr_path.AddLines(points.ToArray());
 			}
-            return gr_path;
+			return gr_path;
 		}
 
 		public void LoadGraphModel(string json)
 		{
 			var model = JsonSerializer.Deserialize<DataPathGraphModel>(json);
-            if (model == null) return;
+			if (model == null) return;
 
 			mapping = new GraphicsPath[(int)CoreDebug.ControlCommand.Max];
 			cpu_write = new GraphicsPath();
@@ -62,13 +62,13 @@ namespace System.Windows.Forms
 			// Initialize the mapping to highlight the paths of each command.
 
 			foreach (var path in model.paths)
-            {
+			{
 				mapping[(int)ToEnum<CoreDebug.ControlCommand>(path.Key)] = PathFromIntsArray(path.Value);
 			}
 
-            // CPU R/W (for DL/DB)
+			// CPU R/W (for DL/DB)
 
-            cpu_read = PathFromIntsArray(model.special_paths["cpu_read"]);
+			cpu_read = PathFromIntsArray(model.special_paths["cpu_read"]);
 			cpu_write = PathFromIntsArray(model.special_paths["cpu_write"]);
 
 			// ALU Operation -> ADD
@@ -76,236 +76,212 @@ namespace System.Windows.Forms
 			alu_add = PathFromIntsArray(model.special_paths["alu_add"]);
 		}
 
-        public DataPathView()
-        {
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+		public DataPathView()
+		{
+			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+		}
 
-            // CPU R/W (for DL/DB)
+		private void ReallocateGraphics()
+		{
+			context = BufferedGraphicsManager.Current;
+			context.MaximumBuffer = new Size(Width + 1, Height + 1);
 
-            cpu_read.AddLines(new Point[] {
-                new Point(769, 181),
-                new Point(777, 187),
-                new Point(783, 181)
-            });
+			gfx = context.Allocate(CreateGraphics(),
+				 new Rectangle(0, 0, Width, Height));
+		}
 
-            cpu_write.AddLines(new Point[] {
-                new Point(769, 157),
-                new Point(777, 151),
-                new Point(783, 157)
-            });
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			if (gfx != null)
+			{
+				gfx.Dispose();
+				ReallocateGraphics();
+			}
 
-            // ALU Operation -> ADD
+			Invalidate();
+			base.OnSizeChanged(e);
+		}
 
-            alu_add.AddLines(new Point[] {
-                new Point(305, 112),
-                new Point(321, 112),
-                new Point(317, 108),
-                new Point(317, 116),
-                new Point(321, 112)
-            });
-        }
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			if (gfx == null)
+			{
+				ReallocateGraphics();
+			}
 
-        private void ReallocateGraphics()
-        {
-            context = BufferedGraphicsManager.Current;
-            context.MaximumBuffer = new Size(Width + 1, Height + 1);
+			long beginTime = DateTime.Now.Ticks;
 
-            gfx = context.Allocate(CreateGraphics(),
-                 new Rectangle(0, 0, Width, Height));
-        }
+			DrawScene(gfx.Graphics, Width, Height);
 
-        protected override void OnSizeChanged(EventArgs e)
-        {
-            if (gfx != null)
-            {
-                gfx.Dispose();
-                ReallocateGraphics();
-            }
+			gfx.Render(e.Graphics);
 
-            Invalidate();
-            base.OnSizeChanged(e);
-        }
+			long endTime = DateTime.Now.Ticks;
+		}
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            if (gfx == null)
-            {
-                ReallocateGraphics();
-            }
+		private void DrawScene(Graphics gr, int width, int height)
+		{
+			gr.Clear(BackColor);
 
-            long beginTime = DateTime.Now.Ticks;
+			DrawImage(gr);
+			DrawPaths(gr);
+			DrawLabels(gr);
+		}
 
-            DrawScene(gfx.Graphics, Width, Height);
+		private void DrawImage(Graphics gr)
+		{
+			if (BackgroundImage != null)
+			{
+				float imageWidth = (float)BackgroundImage.Width;
+				float imageHeight = (float)BackgroundImage.Height;
+				float sx = 0;
+				float sy = 0;
 
-            gfx.Render(e.Graphics);
+				gr.DrawImage(BackgroundImage, sx, sy, imageWidth, imageHeight);
+			}
+		}
 
-            long endTime = DateTime.Now.Ticks;
-        }
+		private void DrawPaths(Graphics gr)
+		{
+			if (cur_info == null)
+				return;
 
-        private void DrawScene(Graphics gr, int width, int height)
-        {
-            gr.Clear(BackColor);
+			for (int i=0; i< (int)CoreDebug.ControlCommand.Max; i++)
+			{
+				if (cur_info.cmd[i] != 0)
+				{
+					// ABH/ABL are only set during PHI1, even if commands are active, they are blocked.
 
-            DrawImage(gr);
-            DrawPaths(gr);
-            DrawLabels(gr);
-        }
+					if ((i == (int)CoreDebug.ControlCommand.ADL_ABL || i == (int)CoreDebug.ControlCommand.ADH_ABH) && !SavedPHI1)
+					{
+						continue;
+					}
 
-        private void DrawImage(Graphics gr)
-        {
-            if (BackgroundImage != null)
-            {
-                float imageWidth = (float)BackgroundImage.Width;
-                float imageHeight = (float)BackgroundImage.Height;
-                float sx = 0;
-                float sy = 0;
+					gr.DrawPath(path_pen, mapping[i]);
+				}
+			}
 
-                gr.DrawImage(BackgroundImage, sx, sy, imageWidth, imageHeight);
-            }
-        }
+			if (cur_info.cmd[(int)CoreDebug.ControlCommand.DL_DB] != 0)
+			{
+				if (cur_info.WR)
+				{
+					gr.DrawPath(path_pen, cpu_write);
+				}
+				else
+				{
+					gr.DrawPath(path_pen, cpu_read);
+				}
+			}
+		}
 
-        private void DrawPaths(Graphics gr)
-        {
-            if (cur_info == null)
-                return;
+		private void DrawLabels(Graphics gr)
+		{
+			if (cur_info == null)
+				return;
 
-            for (int i=0; i< (int)CoreDebug.ControlCommand.Max; i++)
-            {
-                if (cur_info.cmd[i] != 0)
-                {
-                    // ABH/ABL are only set during PHI1, even if commands are active, they are blocked.
+			Point point = new Point(263, 59);
 
-                    if ((i == (int)CoreDebug.ControlCommand.ADL_ABL || i == (int)CoreDebug.ControlCommand.ADH_ABH) && !SavedPHI1)
-                    {
-                        continue;
-                    }
+			// ALU operations are saved only during PHI2
 
-                    gr.DrawPath(path_pen, mapping[i]);
-                }
-            }
+			if (!SavedPHI1)
+			{
+				bool anyOp = false;
 
-            if (cur_info.cmd[(int)CoreDebug.ControlCommand.DL_DB] != 0)
-            {
-                if (cur_info.WR)
-                {
-                    gr.DrawPath(path_pen, cpu_write);
-                }
-                else
-                {
-                    gr.DrawPath(path_pen, cpu_read);
-                }
-            }
-        }
+				if (cur_info.cmd[(int)CoreDebug.ControlCommand.ANDS] != 0)
+				{
+					gr.DrawString("ANDS", labelFont, labelBrush, point);
+					anyOp = true;
+				}
 
-        private void DrawLabels(Graphics gr)
-        {
-            if (cur_info == null)
-                return;
+				if (cur_info.cmd[(int)CoreDebug.ControlCommand.EORS] != 0)
+				{
+					gr.DrawString("EORS", labelFont, labelBrush, point);
+					anyOp = true;
+				}
 
-            Point point = new Point(263, 59);
+				if (cur_info.cmd[(int)CoreDebug.ControlCommand.ORS] != 0)
+				{
+					gr.DrawString("ORS", labelFont, labelBrush, point);
+					anyOp = true;
+				}
 
-            // ALU operations are saved only during PHI2
+				if (cur_info.cmd[(int)CoreDebug.ControlCommand.SRS] != 0)
+				{
+					gr.DrawString("SRS", labelFont, labelBrush, point);
+					anyOp = true;
+				}
 
-            if (!SavedPHI1)
-            {
-                bool anyOp = false;
+				if (cur_info.cmd[(int)CoreDebug.ControlCommand.SUMS] != 0)
+				{
+					gr.DrawString("SUMS", labelFont, labelBrush, point);
+					anyOp = true;
+				}
 
-                if (cur_info.cmd[(int)CoreDebug.ControlCommand.ANDS] != 0)
-                {
-                    gr.DrawString("ANDS", labelFont, labelBrush, point);
-                    anyOp = true;
-                }
+				if (cur_info.n_ACIN == 0 && anyOp)
+				{
+					gr.DrawString("+C", labelFont, labelBrush, new Point(300, 70));
+				}
 
-                if (cur_info.cmd[(int)CoreDebug.ControlCommand.EORS] != 0)
-                {
-                    gr.DrawString("EORS", labelFont, labelBrush, point);
-                    anyOp = true;
-                }
+				if (anyOp)
+				{
+					gr.DrawPath(path_pen, alu_add);
+				}
+			}
 
-                if (cur_info.cmd[(int)CoreDebug.ControlCommand.ORS] != 0)
-                {
-                    gr.DrawString("ORS", labelFont, labelBrush, point);
-                    anyOp = true;
-                }
+			if (cur_info.n_DAA == 0)
+			{
+				gr.DrawString("DAA", labelFont, labelBrush, new Point(367, 52));
+			}
+			if (cur_info.n_DSA == 0)
+			{
+				gr.DrawString("DSA", labelFont, labelBrush, new Point(367, 72));
+			}
 
-                if (cur_info.cmd[(int)CoreDebug.ControlCommand.SRS] != 0)
-                {
-                    gr.DrawString("SRS", labelFont, labelBrush, point);
-                    anyOp = true;
-                }
+			if (cur_info.n_1PC == 0)
+			{
+				gr.DrawString("+1", labelFont, labelBrush, new Point(635, 64));
+			}
+		}
 
-                if (cur_info.cmd[(int)CoreDebug.ControlCommand.SUMS] != 0)
-                {
-                    gr.DrawString("SUMS", labelFont, labelBrush, point);
-                    anyOp = true;
-                }
+		public void ShowCpuCommands(CoreDebug.CpuDebugInfo_Commands info, bool PHI1)
+		{
+			cur_info = info;
+			SavedPHI1 = PHI1;
+			Invalidate();
+		}
 
-                if (cur_info.n_ACIN == 0 && anyOp)
-                {
-                    gr.DrawString("+C", labelFont, labelBrush, new Point(300, 70));
-                }
+		public void SaveSceneAsImage(string FileName)
+		{
+			ImageFormat imageFormat;
+			string ext;
 
-                if (anyOp)
-                {
-                    gr.DrawPath(path_pen, alu_add);
-                }
-            }
+			if (BackgroundImage == null)
+				return;
 
-            if (cur_info.n_DAA == 0)
-            {
-                gr.DrawString("DAA", labelFont, labelBrush, new Point(367, 52));
-            }
-            if (cur_info.n_DSA == 0)
-            {
-                gr.DrawString("DSA", labelFont, labelBrush, new Point(367, 72));
-            }
+			int bitmapWidth = BackgroundImage.Width;
+			int bitmapHeight = BackgroundImage.Height;
 
-            if (cur_info.n_1PC == 0)
-            {
-                gr.DrawString("+1", labelFont, labelBrush, new Point(635, 64));
-            }
-        }
+			Bitmap bitmap = new Bitmap(bitmapWidth, bitmapHeight, PixelFormat.Format16bppRgb565);
 
-        public void ShowCpuCommands(CoreDebug.CpuDebugInfo_Commands info, bool PHI1)
-        {
-            cur_info = info;
-            SavedPHI1 = PHI1;
-            Invalidate();
-        }
+			Graphics gr = Graphics.FromImage(bitmap);
 
-        public void SaveSceneAsImage(string FileName)
-        {
-            ImageFormat imageFormat;
-            string ext;
+			DrawScene(gr, bitmapWidth, bitmapHeight);
 
-            if (BackgroundImage == null)
-                return;
+			ext = Path.GetExtension(FileName);
 
-            int bitmapWidth = BackgroundImage.Width;
-            int bitmapHeight = BackgroundImage.Height;
+			if (ext.ToLower() == ".jpg" || ext.ToLower() == ".jpeg")
+				imageFormat = ImageFormat.Jpeg;
+			else if (ext.ToLower() == ".png")
+				imageFormat = ImageFormat.Png;
+			else if (ext.ToLower() == ".bmp")
+				imageFormat = ImageFormat.Bmp;
+			else
+				imageFormat = ImageFormat.Jpeg;
 
-            Bitmap bitmap = new Bitmap(bitmapWidth, bitmapHeight, PixelFormat.Format16bppRgb565);
+			bitmap.Save(FileName, imageFormat);
 
-            Graphics gr = Graphics.FromImage(bitmap);
+			bitmap.Dispose();
+			gr.Dispose();
+		}
 
-            DrawScene(gr, bitmapWidth, bitmapHeight);
-
-            ext = Path.GetExtension(FileName);
-
-            if (ext.ToLower() == ".jpg" || ext.ToLower() == ".jpeg")
-                imageFormat = ImageFormat.Jpeg;
-            else if (ext.ToLower() == ".png")
-                imageFormat = ImageFormat.Png;
-            else if (ext.ToLower() == ".bmp")
-                imageFormat = ImageFormat.Bmp;
-            else
-                imageFormat = ImageFormat.Jpeg;
-
-            bitmap.Save(FileName, imageFormat);
-
-            bitmap.Dispose();
-            gr.Dispose();
-        }
-
-    }
+	}
 }
