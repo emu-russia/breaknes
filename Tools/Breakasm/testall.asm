@@ -138,6 +138,46 @@ IndirectLabel:
 	inc $1
 	inc $1, x
 
+; ABS directive: forces the absolute opcode for the next instruction
+; even when the address is below $100 (Zero Page / Absolute ambiguity)
+
+	abs
+	lda $1
+	abs
+	sta $1
+	abs
+	ldx $1
+	abs
+	ldy $1
+	abs
+	ora $1
+	abs
+	and $1, x
+	abs
+	lda $1, y
+	abs
+	ldx $1, y
+	abs
+	ldy $1, x
+	abs
+	asl $1
+	abs
+	rol $1, x
+	abs
+	bit $1
+	abs
+	inc $1
+	abs
+	dec $1, x
+	abs
+	cpx $1
+	abs
+	cpy $1
+	abs
+	adc $1
+	abs
+	sbc $1, x
+
 ; abs, Y
 
 define ABS_ADDR $700
@@ -217,6 +257,14 @@ BogusNMI:
 BogusIRQBrk:
 	iny
 	rti
+
+; ABS with a label defined after the use, below $100.
+; The label resolves below $100, but the ABS directive forces the absolute opcode.
+
+	org $0
+	abs
+	lda AbsZP
+AbsZP:
 
 org $fffa
 word BogusNMI

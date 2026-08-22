@@ -9,19 +9,32 @@
 	[LABEL:]  COMMAND  [OPERAND1, OPERAND2, OPERAND3]       ; Comments
 
 	Commands can be any 6502 instruction or one of reserved directives:
-		ORG, INCLUDE, DEFINE, BYTE, WORD, END, PROCESSOR
+		ORG, INCLUDE, DEFINE, BYTE, WORD, END, PROCESSOR, ABS
 
 	Register names and CPU instructions cannot be used as label names.
 
 	You cannot DEFINE, if such label is already defined.
 	Redefinition of labels is NOT allowed.
 	Redefinition of DEFINEs just replace previous definition.
+
+	All operands are evaluated with the expression engine (eval_expr):
+	labels, defines and complex expressions like MyData + 32 * entry_size + 12
+	are supported in every operand position.
+
+	The assembler performs multiple passes until all identifiers, labels and defines
+	are resolved (this resolves the Zero Page / Absolute ambiguity for forward
+	references to labels placed below $100). The ABS directive forces the absolute
+	opcode for the next instruction with such an ambiguity.
 */
 
 static uint8_t *PRG;
 long org;        // current emit offset
 long stop;
 long errors;
+
+int silent = 0;      // 1: suppress error output (used for the intermediate assembly passes)
+int force_abs = 0;   // 1: the ABS directive is active - the next instruction must use absolute addressing
+FILE* list_file = NULL; // Listing output stream (NULL = listing disabled)
 
 // Previously, instead of list, we used a ordinary array of large size (limited) + a variable that stores the number of records.
 // Now it is essentially the same, but instead of an array it is a list of virtually unlimited size (as long as memory is available)
@@ -32,6 +45,20 @@ static  std::list<define_s *> defines;  // definitions
 
 static  std::list<std::string> source_name_stack;	// Stack for the name of the current source file (for INCLUDE)
 static  std::list<int> linenum_stack;		// Stack for the line number of the current source file (for INCLUDE)
+
+// Snapshot of label values from the previous pass (used to detect multi-pass convergence).
+static  std::list<std::pair<std::string, long>> prev_labels;
+
+// Listing lines are recorded during the final pass and formatted after patching,
+// so that the listing shows the final patched bytes.
+struct listing_line_s {
+	long    org_before;     // PRG offset before the line was assembled
+	long    org_after;      // PRG offset after the line was assembled (for ORG)
+	char    label[256];
+	char    cmd[256];
+	char    op[1024];
+};
+static  std::list<listing_line_s*> listing_lines;
 
 // ****************************************************************
 
@@ -98,11 +125,11 @@ label_s *add_label (const char *name, long orig)
 	}
 	else {
 		if ( label->orig == KEYWORD ) {
-			printf ("ERROR(%s,%i): Reserved keyword used as label \'%s\'\n", get_source_name().c_str(), get_linenum(), temp_name);
+			ERR ("ERROR(%s,%i): Reserved keyword used as label \'%s\'\n", get_source_name().c_str(), get_linenum(), temp_name);
 			errors++;
 		}
 		else if (orig != UNDEF && label->orig != UNDEF ) {
-			printf ("ERROR(%s,%i): label \'%s\' already defined in %s, line %i\n", get_source_name().c_str(), get_linenum(), temp_name, label->source, label->line);
+			ERR ("ERROR(%s,%i): label \'%s\' already defined in %s, line %i\n", get_source_name().c_str(), get_linenum(), temp_name, label->source, label->line);
 			errors++;
 		}
 		else {
@@ -165,20 +192,24 @@ static void do_patch (void)
 		patch = *it;
 		orig = patch->label->orig;
 		if ( orig == UNDEF ) {
-			printf ("ERROR(%s,%i): Undefined label \'%s\' (%08X)\n", patch->source, patch->line, patch->label->name, orig );
+			ERR ("ERROR(%s,%i): Undefined label \'%s\' (%08X)\n", patch->source, patch->line, patch->label->name, orig );
 			errors++;
 		}
 		else { 
-			if ( patch->branch != 0) {
+			if ( patch->branch == 1 ) {          // relative branch
 				org = patch->orig;
 				rel = orig - org - 1;
 				if (rel > 127 || rel < -128) {
-					printf("ERROR(%s,%i): Branch relative offset to %s out of range\n", patch->source, patch->line, patch->label->name);
+					ERR("ERROR(%s,%i): Branch relative offset to %s out of range\n", patch->source, patch->line, patch->label->name);
 					errors++;
 				}
 				else emit(rel & 0xff);
 			}
-			else {
+			else if ( patch->branch == 2 ) {     // zero page operand
+				org = patch->orig;
+				emit(orig & 0xff);
+			}
+			else {                               // absolute jump / word operand
 				org = patch->orig;
 				emit ( orig & 0xff );
 				emit ( (orig >> 8) & 0xff );
@@ -194,7 +225,8 @@ static void dump_patches (void)
 	for (auto it = patches.begin(); it != patches.end(); ++it) {
 		patch = *it;
 		printf("%s, line %i: $%08X = \'%s\' ($%08X)", patch->source, patch->line, patch->orig, patch->label->name, patch->label->orig);
-		if (patch->branch) printf(" (REL)\n");
+		if (patch->branch == 1) printf(" (REL)\n");
+		else if (patch->branch == 2) printf(" (ZPG)\n");
 		else printf(" (ABS)\n");
 	}
 }
@@ -218,7 +250,7 @@ define_s *add_define (char *name, char *replace)
 	define_s * def;
 
 	if ( label = label_lookup (name) ) {
-		printf ("ERROR(%s,%i): Already defined as label in %s, line %i\n", get_source_name().c_str(), get_linenum(), label->source, label->line );
+		ERR ("ERROR(%s,%i): Already defined as label in %s, line %i\n", get_source_name().c_str(), get_linenum(), label->source, label->line );
 		errors++;
 		return NULL;
 	}
@@ -250,118 +282,118 @@ static void dump_defines (void)
 
 // ****************************************************************
 // Evaluate expression
+//
+// All numeric evaluation is delegated to the expression engine (eval_expr):
+//   - "#..."   -> EVAL_NUMBER  (immediate)
+//   - leading digit -> EVAL_NUMBER  (legacy behavior: plain numbers are immediate)
+//   - "$..."   -> EVAL_ADDRESS (memory address)
+//   - "..." / '...' -> EVAL_STRING
+//   - identifier / complex expression -> EVAL_LABEL (if not resolved yet, the whole
+//     expression is registered as a "composite" label whose value is computed
+//     by do_expr_labels() at the end of the pass)
+
+// Returns true if the whole operand is wrapped in a single pair of parentheses
+// (indirect addressing: JMP (addr)). In that case the outer parentheses are
+// replaced with spaces. Parentheses inside the expression are grouping only.
+static bool strip_outer_parens(char* text)
+{
+	int len = (int)strlen(text);
+	int i = 0, j = len - 1;
+	while (i < len && text[i] <= ' ') i++;
+	while (j >= 0 && text[j] <= ' ') j--;
+	if (i >= j || text[i] != '(' || text[j] != ')')
+		return false;
+
+	// The first '(' must match the last ')'
+	int depth = 0;
+	for (int k = i; k <= j; k++) {
+		if (text[k] == '(') depth++;
+		else if (text[k] == ')') {
+			depth--;
+			if (depth == 0 && k != j)
+				return false;   // parentheses close early: grouping, not indirect
+		}
+	}
+	if (depth != 0)
+		return false;
+
+	text[i] = ' ';
+	text[j] = ' ';
+	return true;
+}
 
 int eval (char *text, eval_t *result)
 {
-	char buf[1024]{}, * p = buf, c, quot = 0, * ptr;
-	int type = EVAL_WTF, i, len;
-	define_s * def;
-	label_s * label;
-	int composite_expr = 0;
+	char buf[1024];
+	char c, quot = 0;
+	int i, len;
+	bool resolved = false;
 
-	// Indirect test
-	result->indirect = 0;
+	// Indirect test: the whole operand wrapped in parentheses is indirect addressing (JMP (addr))
+	result->indirect = strip_outer_parens(text) ? 1 : 0;
 	len = (int)strlen (text);
-	for (i=0; i<len; i++) {
-		c = text[i];
-		if ( (c == '(' || c == ')') && quot == 0 ) {
-			text[i] = ' ';
-			result->indirect = 1;
-		}
-		else if ( c == '\"' || c == '\'' ) {
-			if ( c == quot ) quot = 0;
-			else quot = c;
-		}
-	}
 	for (i=len-1; i>=0; i--) {
 		if ( text[i] <= ' ' ) text[i] = 0;
 		else break;
 	}
-	ptr = text;
+	char* ptr = text;
 	while (*ptr <= ' ' && *ptr) ptr++;      // Skip whitespaces
 	text = ptr;
 
-	if ( text[0] == '#' || isdigit(text[0]) ) {      // Number
-		if (!isdigit(text[0])) text++;
-		while (1) {
-			c = *text++;
-			if (c == 0) break;
-			if (c == '$') {
-				*p++ = '0';
-				*p++ = 'x';
-			}
-			else *p++ = c;
-		}
-		*p++ = 0;
-		type = EVAL_NUMBER;
-	}
-	else if ( text[0] == '$' ) {    // Address
-		text++;
-		*p++ = '0';
-		*p++ = 'x';
-		while (1) {
-			c = *text++;
-			if (c == 0) break;
-			else *p++ = c;
-		}
-		*p++ = 0;
-		type = EVAL_ADDRESS;
-	}
-	else if ( text[0] == '\'' || text[0] == '\"' ) {    // String
+	// String
+	if ( text[0] == '\'' || text[0] == '\"' ) {
 		quot = text[0];
 		text++;
+		ptr = buf;
 		while (1) {
 			c = *text++;
 			if (c == 0 || c == quot) break;
-			else *p++ = c;
+			else *ptr++ = c;
 		}
-		*p++ = 0;
-		type = EVAL_STRING;
-	}
-	else {          // Label azAZ09_  + composite expressions are also saved as a "label"
-		while (1) {
-			c = *text++;
-			if (c == 0) break;
-			if (c >= 'a' && c <= 'z') *p++ = c;
-			else if (c >= 'A' && c <= 'Z') *p++ = c;
-			else if (c >= '0' && c <= '9') *p++ = c;
-			else if (c == '_' ) *p++ = c;
-			else {
-				// If we encounter some symbol NOT of the alphabet, we will assume that the label is a composite expression
-				if (c > ' ')
-					composite_expr = 1;
-				*p++ = c;
-			}
-		}
-		*p++ = 0;
-		type = EVAL_LABEL;
+		*ptr++ = 0;
+		strncpy (result->string, buf, 255);
+		return result->type = EVAL_STRING;
 	}
 
-	switch (type) {
-		case EVAL_NUMBER:
-			result->number = strtoul ( buf, NULL, 0);
-			break;
-		case EVAL_ADDRESS:
-			result->address = strtoul ( buf, NULL, 0);
-			break;
-		case EVAL_LABEL:
-			def = define_lookup (buf);
+	// A pure identifier [_a-zA-Z][_a-zA-Z0-9]* is a label or a define
+	if (text[0] != '#' && !isdigit(text[0]) && text[0] != '$') {
+		int ident = 1;
+		for (i = 0; text[i]; i++) {
+			c = text[i];
+			if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_')) {
+				ident = 0;
+				break;
+			}
+		}
+		if (ident) {
+			define_s* def = define_lookup (text);
 			if (def) return eval (def->replace, result);
-			else {
-				label = label_lookup (buf);
-				if (label) result->label = label;
-				else {
-					result->label = add_label(buf, UNDEF);
-					result->label->composite = composite_expr;
-				}
-			}
-			break;
-		case EVAL_STRING:
-			strncpy (result->string, buf, 255);
-			break;
+			label_s* label = label_lookup (text);
+			if (!label) label = add_label(text, UNDEF);
+			result->label = label;
+			return result->type = EVAL_LABEL;
+		}
 	}
 
-	return result->type = type;
+	// Everything else is evaluated by the expression engine
+	long value = eval_expr(text, false, true, &resolved);
+	if (!resolved) {
+		// The expression refers to not-yet-defined identifiers.
+		// Register the whole expression as a composite label; its value
+		// is computed by do_expr_labels() at the end of the pass.
+		label_s* label = add_label(text, UNDEF);
+		label->composite = 1;
+		result->label = label;
+		return result->type = EVAL_LABEL;
+	}
+
+	if (text[0] == '#' || isdigit(text[0])) {      // Immediate number
+		result->number = value;
+		return result->type = EVAL_NUMBER;
+	}
+
+	result->address = value;                       // Memory address
+	return result->type = EVAL_ADDRESS;
 }
 
 static void dump_eval (eval_t *eval)
@@ -523,35 +555,36 @@ void emit (uint8_t b)
 
 static oplink optab[] = {
 
-	// CPU Instructions
-	{ "BRK", opBRK }, { "RTI", opRTI }, { "RTS", opRTS },
+	// CPU Instructions (all handled by the unified table-driven handler)
 
-	{ "PHP", opPHP }, { "CLC", opCLC }, { "PLP", opPLP }, { "SEC", opSEC },
-	{ "PHA", opPHA }, { "CLI", opCLI }, { "PLA", opPLA }, { "SEI", opSEI },
-	{ "DEY", opDEY }, { "TYA", opTYA }, { "TAY", opTAY }, { "CLV", opCLV },
-	{ "INY", opINY }, { "CLD", opCLD }, { "INX", opINX }, { "SED", opSED },
+	{ "BRK", op_std }, { "RTI", op_std }, { "RTS", op_std },
 
-	{ "TXA", opTXA }, { "TXS", opTXS }, { "TAX", opTAX }, { "TSX", opTSX },
-	{ "DEX", opDEX }, { "NOP", opNOP },
+	{ "PHP", op_std }, { "CLC", op_std }, { "PLP", op_std }, { "SEC", op_std },
+	{ "PHA", op_std }, { "CLI", op_std }, { "PLA", op_std }, { "SEI", op_std },
+	{ "DEY", op_std }, { "TYA", op_std }, { "TAY", op_std }, { "CLV", op_std },
+	{ "INY", op_std }, { "CLD", op_std }, { "INX", op_std }, { "SED", op_std },
+
+	{ "TXA", op_std }, { "TXS", op_std }, { "TAX", op_std }, { "TSX", op_std },
+	{ "DEX", op_std }, { "NOP", op_std },
 
 	{ "BPL", opBRA }, { "BMI", opBRA }, { "BVC", opBRA }, { "BVS", opBRA },
 	{ "BCC", opBRA }, { "BCS", opBRA }, { "BNE", opBRA }, { "BEQ", opBRA },
 
-	{ "JSR", opJMP }, { "JMP", opJMP }, 
+	{ "JSR", op_std }, { "JMP", op_std }, 
 
-	{ "ORA", opALU1 }, { "AND", opALU1 }, { "EOR", opALU1 }, { "ADC", opALU1 }, 
-	{ "CMP", opALU1 }, { "SBC", opALU1 }, 
-	{ "CPX", opCPXY }, { "CPY", opCPXY }, 
-	{ "INC", opINCDEC }, { "DEC", opINCDEC }, 
-	{ "BIT", opBIT },
-	{ "ASL", opSHIFT }, { "LSR", opSHIFT }, { "ROL", opSHIFT }, { "ROR", opSHIFT }, 
+	{ "ORA", op_std }, { "AND", op_std }, { "EOR", op_std }, { "ADC", op_std }, 
+	{ "CMP", op_std }, { "SBC", op_std }, 
+	{ "CPX", op_std }, { "CPY", op_std }, 
+	{ "INC", op_std }, { "DEC", op_std }, 
+	{ "BIT", op_std },
+	{ "ASL", op_std }, { "LSR", op_std }, { "ROL", op_std }, { "ROR", op_std }, 
 
-	{ "LDA", opLDST },
-	{ "LDX", opLDSTX },
-	{ "LDY", opLDSTY },
-	{ "STA", opLDST },
-	{ "STX", opLDSTX },
-	{ "STY", opLDSTY },
+	{ "LDA", op_std },
+	{ "LDX", op_std },
+	{ "LDY", op_std },
+	{ "STA", op_std },
+	{ "STX", op_std },
+	{ "STY", op_std },
 
 	// Directives
 	{ "INCLUDE", opINCLUDE },
@@ -561,6 +594,7 @@ static oplink optab[] = {
 	{ "ORG", opORG },
 	{ "END", opEND },
 	{ "PROCESSOR", opDUMMY },
+	{ "ABS", opABS },
 
 	{ NULL, NULL }
 };
@@ -589,11 +623,24 @@ static void cleanup (void)
 	}
 }
 
+// Register the labels that cannot be used as user labels (keywords).
+static void add_keywords(void)
+{
+	add_label ("A", KEYWORD);
+	add_label ("X", KEYWORD);
+	add_label ("Y", KEYWORD);
+	oplink* opl = optab;
+	while (1) {
+		if ( opl->name == NULL ) break;
+		else add_label (opl->name, KEYWORD);
+		opl++;
+	}
+}
+
 static void assemble_text(char* text)
 {
 	oplink* opl;
 	line l;
-	int listing = 0;
 
 	while (1) {
 		if (*text == 0) break;
@@ -611,7 +658,8 @@ static void assemble_text(char* text)
 			opl = optab;
 			while (1) {
 				if (opl->name == NULL) {
-					printf("ERROR(%s,%i): Unknown command %s\n", get_source_name().c_str(), get_linenum(), l.cmd);
+					ERR("ERROR(%s,%i): Unknown command %s\n", get_source_name().c_str(), get_linenum(), l.cmd);
+					errors++;
 					break;
 				}
 				else if (!_stricmp(opl->name, l.cmd)) {
@@ -621,54 +669,150 @@ static void assemble_text(char* text)
 				}
 				opl++;
 			}
+			// The ABS hint directive applies to the next CPU instruction only:
+			// it is not consumed by labels or non-emitting directives.
+			if (opl->handler == op_std || opl->handler == opBRA) force_abs = 0;
 			if (stop) break;
 		}
 
-		// Listing
-		if (listing) {
-			printf("0x%08X: ", org_before);
-			int num_bytes = org - org_before;
-			for (int i = 0; i < num_bytes; i++) {
-				printf("%02X ", PRG[org_before + i]);
-			}
-			printf("%s: \'%s\' \'%s\'\n", l.label, l.cmd, l.op);
-			printf("\n");
+		// Listing (recorded now, formatted after patching)
+		if (list_file && !silent) {
+			listing_line_s* rec = new listing_line_s;
+			rec->org_before = org_before;
+			rec->org_after = org;
+			strcpy(rec->label, l.label);
+			strcpy(rec->cmd, l.cmd);
+			strcpy(rec->op, l.op);
+			listing_lines.push_back(rec);
 		}
 
 		nextline();
 	}
 }
 
-int assemble (char *text, char* source_name, uint8_t *prg)
+// Multi-pass convergence helpers.
+//
+
+static void snapshot_labels(void)
 {
-	oplink *opl;
+	prev_labels.clear();
+	for (auto it = labels.begin(); it != labels.end(); ++it) {
+		prev_labels.push_back(std::make_pair(std::string((*it)->name), (*it)->orig));
+	}
+}
+
+/// <summary>
+/// Get the value of the label from the previous assembly pass (if any).
+/// During multi-pass assembling forward-referenced labels are not defined yet
+/// at the place of use, so the addressing mode is chosen by the best-known
+/// value from the previous pass, and the operand is patched with the final value.
+/// </summary>
+bool prev_label_value(const char* name, long* out)
+{
+	for (auto it = prev_labels.begin(); it != prev_labels.end(); ++it) {
+		if (!_stricmp(it->first.c_str(), name)) {
+			*out = it->second;
+			return true;
+		}
+	}
+	return false;
+}
+
+static bool labels_changed(void)
+{
+	if (prev_labels.size() != labels.size())
+		return true;
+	auto it2 = prev_labels.begin();
+	for (auto it = labels.begin(); it != labels.end(); ++it, ++it2) {
+		if (it2->first != (*it)->name || it2->second != (*it)->orig)
+			return true;
+	}
+	return false;
+}
+
+// Run a single assembly pass. Returns the pass error count.
+static int run_pass(char* text, char* source_name, uint8_t* prg)
+{
 	PRG = prg;
 	org = 0;
 	stop = 0;
 	errors = 0;
+	force_abs = 0;
 
 	cleanup ();
 
+	source_name_stack.clear();
+	linenum_stack.clear();
 	source_name_stack.push_back(source_name);
-
-	// Add keywords
 	linenum_stack.push_back(0);
-	add_label ("A", KEYWORD);
-	add_label ("X", KEYWORD);
-	add_label ("Y", KEYWORD);
-	opl = optab;
-	while (1) {
-		if ( opl->name == NULL ) break;
-		else add_label (opl->name, KEYWORD);
-		opl++;
-	}
+	add_keywords();
 	nextline();
 
 	assemble_text(text);
 
 	// Patch jump/branch offsets.
 	do_expr_labels();
-	do_patch ();
+	do_patch();
+
+	return errors;
+}
+
+int assemble (char *text, char* source_name, uint8_t *prg)
+{
+	const int MAX_PASSES = 100;
+	int pass;
+
+	prev_labels.clear();
+
+	// Multi-pass: keep assembling until all identifiers, labels and defines
+	// are resolved and the label values stop changing between passes.
+	// The intermediate passes run silently; the last pass reports the errors.
+
+	for (pass = 0; pass < MAX_PASSES; pass++) {
+		silent = 1;
+		run_pass(text, source_name, prg);
+		if (pass > 0 && !labels_changed())
+			break;
+		snapshot_labels();
+	}
+
+	if (pass == MAX_PASSES) {
+		printf("WARNING: assembly did not converge after %d passes\n", MAX_PASSES);
+	}
+
+	// Final reporting pass (also generates the listing).
+	silent = 0;
+	run_pass(text, source_name, prg);
+
+	// The listing is flushed after patching, so it shows the final bytes.
+	if (list_file) {
+		for (auto it = listing_lines.begin(); it != listing_lines.end(); ++it) {
+			listing_line_s* rec = *it;
+			if (!_stricmp(rec->cmd, "ORG")) {
+				fprintf(list_file, "$%04X: org %s\n", rec->org_after, rec->op);
+			}
+			else {
+				int num_bytes = (int)(rec->org_after - rec->org_before);
+				fprintf(list_file, "$%04X: ", rec->org_before);
+				for (int i = 0; i < num_bytes; i++) {
+					fprintf(list_file, "%02X ", PRG[rec->org_before + i]);
+				}
+				for (int i = num_bytes; i < 4; i++) {
+					fprintf(list_file, "   ");
+				}
+				if (rec->label[0]) {
+					fprintf(list_file, "%s:", rec->label);
+					if (rec->cmd[0]) fprintf(list_file, " %s %s", rec->cmd, rec->op);
+				}
+				else {
+					fprintf(list_file, "%s %s", rec->cmd, rec->op);
+				}
+				fprintf(list_file, "\n");
+			}
+			delete rec;
+		}
+		listing_lines.clear();
+	}
 
 #ifdef _DEBUG
 	dump_labels ();

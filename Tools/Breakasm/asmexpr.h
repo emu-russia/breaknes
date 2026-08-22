@@ -63,5 +63,6 @@ struct tree_t
 /// <param name="text">The text of the expression, for example: MyData + 32 * entry_size + 12. Other labels and defines can be identifiers</param>
 /// <param name="debug">Output debugging states during operation</param>
 /// <param name="quiet">Quiet mode, no error generation. Just trying to resolve the expression.</param>
+/// <param name="resolved">Optional out-parameter: set to true if the expression was fully resolved, false if it refers to not-yet-defined identifiers</param>
 /// <returns></returns>
-long eval_expr(char* text, bool debug, bool quiet);
+long eval_expr(char* text, bool debug, bool quiet, bool* resolved = nullptr);

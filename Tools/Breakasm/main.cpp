@@ -7,8 +7,9 @@
 void Usage()
 {
 	printf("Breakasm, ver. %s\n", BREAKASM_VERSION);
-	printf("Use: Breakasm <source.asm> <output.prg>\n");
-	printf("Example: Breakasm test.asm test.prg\n");
+	printf("Use: Breakasm [-l <file.lst>] <source.asm> <output.prg>\n");
+	printf("Example: Breakasm -l test.lst test.asm test.prg\n");
+	printf("The -l option writes an assembly listing (address, bytes, source line) to the given file.\n");
 }
 
 void test_expr_eval()
@@ -23,11 +24,27 @@ void test_expr_eval()
 int main(int argc, char** argv)
 {
 	FILE* f;
+	const char* listing_name = NULL;
+	char* source_name = NULL;
+	char* out_name = NULL;
+
+	// Parse the command line: [-l <file.lst>] <source.asm> <output.prg>
+	for (int i = 1; i < argc; i++) {
+		if (!strcmp(argv[i], "-l") && i + 1 < argc) {
+			listing_name = argv[++i];
+		}
+		else if (!source_name) source_name = argv[i];
+		else if (!out_name) out_name = argv[i];
+		else {
+			Usage();
+			return -1;
+		}
+	}
 
 	//test_expr_eval();
 	//return 0;
 
-	if (argc < 3)
+	if (!source_name || !out_name)
 	{
 		Usage();
 		return -1;
@@ -36,11 +53,24 @@ int main(int argc, char** argv)
 	uint8_t* prg = new uint8_t[PRG_SIZE];
 	memset(prg, 0, PRG_SIZE);
 
+	// Open the listing file, if requested.
+
+	if (listing_name) {
+		list_file = fopen(listing_name, "w");
+		if (!list_file) {
+			delete[] prg;
+			printf("ERROR: Unable to create the listing file %s.\n", listing_name);
+			return -110;
+		}
+		fprintf(list_file, "; Breakasm %s listing: %s -> %s\n", BREAKASM_VERSION, source_name, out_name);
+	}
+
 	// Load Source
 
-	f = fopen(argv[1], "rt");
+	f = fopen(source_name, "rt");
 	if (!f)
 	{
+		if (list_file) { fclose(list_file); list_file = NULL; }
 		delete[] prg;
 		printf("ERROR: Unable to read the source code.\n");
 		return -100;
@@ -60,6 +90,7 @@ int main(int argc, char** argv)
 	if (readSize >= size)
 	{
 		delete[] text;
+		if (list_file) { fclose(list_file); list_file = NULL; }
 		delete[] prg;
 		printf("ERROR: Error loading the source file.\n");
 		return -101;
@@ -67,7 +98,13 @@ int main(int argc, char** argv)
 
 	// Assemble
 
-	int err_count = assemble(text, argv[1], prg);
+	int err_count = assemble(text, source_name, prg);
+
+	if (list_file) {
+		fclose(list_file);
+		list_file = NULL;
+	}
+
 	if (err_count != 0)
 	{
 		delete[] text;
@@ -77,7 +114,7 @@ int main(int argc, char** argv)
 
 	// Save PRG
 
-	f = fopen(argv[2], "wb");
+	f = fopen(out_name, "wb");
 	if (!f)
 	{
 		delete[] text;

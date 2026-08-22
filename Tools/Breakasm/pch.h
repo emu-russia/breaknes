@@ -7,6 +7,7 @@
 #include <cctype>
 #include <list>
 #include <string>
+#include <utility>
 
 #include "asm.h"
 #include "asmops.h"
