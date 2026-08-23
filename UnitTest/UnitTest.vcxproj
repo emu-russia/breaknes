@@ -159,9 +159,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="APUTest.cpp" />
+    <ClCompile Include="ApuInternalsTest.cpp" />
+    <ClCompile Include="BaseLogicLibTest.cpp" />
     <ClCompile Include="CD4021UnitTest.cpp" />
+    <ClCompile Include="CoreInternalsTest.cpp" />
     <ClCompile Include="CoreUnitTest.cpp" />
     <ClCompile Include="EventLog.cpp" />
+    <ClCompile Include="JsonLibTest.cpp" />
+    <ClCompile Include="PpuInternalsTest.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

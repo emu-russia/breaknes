@@ -52,5 +52,54 @@ namespace PPUSimUnitTest
 		/// <param name="desired_clk">Desired cycle rate per second (Hz)</param>
 		/// <returns></returns>
 		bool MegaCyclesTest(size_t desired_clk);
+
+		/// <summary>
+		/// The following tests are implemented in PpuInternalsTest.cpp
+		/// </summary>
+
+		bool TestPPU_API();
+		bool TestPPU_API_DebugMem();
+		bool TestPPU_API_Video();
+		bool TestPPU_API_Misc();
+
+		bool TestBGC_SRBit();
+		bool TestBGCol();
+		bool TestCBBit();
+		bool TestCRAM();
+		bool TestFIFOLane();
+		bool TestFIFO();
+		bool TestFSM();
+		bool TestHVCounterBit();
+		bool TestHVCounter();
+		bool TestHVDecoder();
+		bool TestMux();
+		bool TestOAMCell();
+		bool TestOAMLane();
+		bool TestOAMBufferBit();
+		bool TestOAM();
+		bool TestParBits();
+		bool TestPAR();
+		bool TestTileCounterBit();
+		bool TestTileCnt();
+		bool TestPAMUXBits();
+		bool TestPAMUX();
+		bool TestControlRegs();
+		bool TestSCC_FF();
+		bool TestScrollRegs();
+		bool TestDataReader();
+		bool TestOAMCounterBit();
+		bool TestOAMCmprBit();
+		bool TestOAMPosedgeDFFE();
+		bool TestObjEval();
+		bool TestVideoOutSRBit();
+		bool TestRGB_SEL12x3();
+		bool TestVideoOut();
+		bool TestRB_Bit();
+		bool TestVRAM_Control();
+
+		/// <summary>
+		/// Full-PPU integration test: $2002[7] = 1 during VBlank, read clears the flag.
+		/// </summary>
+		bool TestVBlankRead2002();
 	};
 }
