@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace BaseLogic;
@@ -326,6 +326,16 @@ namespace UnitTest
 			Assert::IsTrue(test.TestSequence(0x5a));
 			Assert::IsTrue(test.TestSequence(0xaa));
 			Assert::IsTrue(test.TestSequence(0x55));
+		}
+
+		TEST_METHOD(TestLS139)
+		{
+			UnitTest::LS139_Test test{};
+			Assert::IsTrue(test.TestHalfTruthTable());
+			Assert::IsTrue(test.TestAllDisabled());
+			Assert::IsTrue(test.TestInternalPullUp());
+			Assert::IsTrue(test.TestNesDecode());
+			Assert::IsTrue(test.TestFamicomDecode());
 		}
 	};
 }

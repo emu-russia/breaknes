@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 // Instead of the signal designations /OE1,2 adopted in the nesdev.com community, we use the official names of these signals /RDP0,1
 
@@ -94,17 +94,20 @@ namespace Breaknes
 
 		// DMX (Bus Master)
 
-		// In real CPU in reset mode M2 goes to `Z` state, it does not suit us
-		// TODO: The pull-up is inside the DMX chip. Soon Famicom will come to disassemble, we will see what is in the chip and make LS139(DMX) properly
-		Pullup(M2);			// HACK
+		// In real CPU in reset mode M2 goes to `Z` state, it does not suit us.
+		// The pull-up for M2 is handled inside the DMX chip (LS139) itself.
+
+		TriState a13 = FromByte((addr_bus >> 13) & 1);
+		TriState a14 = FromByte((addr_bus >> 14) & 1);
+		TriState a15 = FromByte((addr_bus >> 15) & 1);
 
 		DMX.sim(
 			gnd,
 			nY1[1],
 			M2,
-			FromByte((addr_bus >> 15) & 1),
-			FromByte((addr_bus >> 13) & 1),
-			FromByte((addr_bus >> 14) & 1),
+			a15,
+			a13,
+			a14,
 			nY1, nY2 );
 
 		nROMSEL = nY1[3];
