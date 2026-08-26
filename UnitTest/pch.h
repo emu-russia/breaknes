@@ -15,6 +15,8 @@
 
 #include "../IO/CD4021.h"
 
+#include "../Common/BaseBoardLib/LS139.h"
+
 #include "../Common/JsonLib/Json.h"
 #include "EventLog.h"
 
@@ -22,5 +24,6 @@
 #include "APUTest.h"
 #include "PPUTest.h"
 #include "CD4021UnitTest.h"
+#include "LS139UnitTest.h"
 
 #include "CppUnitTest.h"

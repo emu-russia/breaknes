@@ -12,13 +12,24 @@ namespace BaseBoard
 	void LS139::sim(
 		TriState& n_EN1,
 		TriState& n_EN2,
-		TriState A1_0,
-		TriState A1_1,
-		TriState A2_0,
-		TriState A2_1,
+		TriState& A1_0,
+		TriState& A1_1,
+		TriState& A2_0,
+		TriState& A2_1,
 		TriState n_Y1[4],
 		TriState n_Y2[4])
 	{
+		// 74LS139 inputs have internal pull-up resistors, so a floating (Z) input reads as a logic 1.
+		// This matters e.g. for the M2 line, which the CPU drives to Z during reset; the pull-up is
+		// inside this chip, so the caller does not have to pull the net up externally anymore.
+
+		Pullup(n_EN1);
+		Pullup(n_EN2);
+		Pullup(A1_0);
+		Pullup(A1_1);
+		Pullup(A2_0);
+		Pullup(A2_1);
+
 		TriState EN1 = NOT(n_EN1);
 		n_Y1[0] = NAND3(NOT(A1_0), NOT(A1_1), EN1);
 		n_Y1[1] = NAND3(A1_0, NOT(A1_1), EN1);
