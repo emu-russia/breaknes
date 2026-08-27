@@ -44,6 +44,7 @@
 // Cartridge & Mappers
 
 #include "../../Mappers/Mappers.h"
+#include "../../CartPcb/CartPcb.h"
 
 // IO Subsystem
 

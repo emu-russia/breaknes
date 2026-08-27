@@ -119,6 +119,22 @@ namespace CartPcb
 		mapperMirrorNet = net;
 	}
 
+	void Pcb::ApplyPadMirroring(int padH, int padV)
+	{
+		if (mirrorMode != MirrorMode::Hardwired)
+			return;
+
+		// v=1: vertical (VRAM_A10 = PA10), h=1: horizontal (VRAM_A10 = PA11)
+		if (padV == 1)
+		{
+			hardwiredVertical = true;
+		}
+		else if (padH == 1)
+		{
+			hardwiredVertical = false;
+		}
+	}
+
 	void Pcb::SetBoardType(const std::string& type, const std::string& pcb)
 	{
 		boardType = type;

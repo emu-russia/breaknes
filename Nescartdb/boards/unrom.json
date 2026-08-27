@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "board": {
+    "type": "UNROM",
+    "components": {
+      "prg": { "kind": "rom", "bus": "cpu" },
+      "chr": { "kind": "ram", "bus": "ppu", "size": 8192 },
+      "bank": { "kind": "latch" }
+    },
+    "circuit": {
+      "mirroring": { "mode": "hardwired", "h": 1, "v": 0 },
+      "cpu": {
+        "prg_lo": { "chip": "prg", "n_cs": "nROMSEL | cpu_addr[14]", "addr": "bank.Q2..Q0 | cpu_addr[13:0]" },
+        "prg_hi": { "chip": "prg", "n_cs": "nROMSEL | !cpu_addr[14]", "addr": "bank.Q2 | vdd | vdd | cpu_addr[13:0]" },
+        "bank":   { "clk": "nROMSEL", "n_we": "RnW" }
+      },
+      "ppu": {
+        "chr": { "chip": "chr", "n_cs": "!nPA13", "n_oe": "nRD", "n_we": "nWR", "addr": "ppu_addr[12:0]" }
+      },
+      "nets": []
+    }
+  }
+}

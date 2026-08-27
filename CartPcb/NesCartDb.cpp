@@ -170,6 +170,14 @@ namespace CartPcb
 			if (mapper != nullptr && mapper->type == Json::ValueType::Int)
 				rec.ref.mapper = (int)mapper->value.AsInt;
 
+			Json::Value* padH = child->ByName("h");
+			if (padH != nullptr && padH->type == Json::ValueType::Int)
+				rec.ref.padH = (int)padH->value.AsInt;
+
+			Json::Value* padV = child->ByName("v");
+			if (padV != nullptr && padV->type == Json::ValueType::Int)
+				rec.ref.padV = (int)padV->value.AsInt;
+
 			records.push_back(rec);
 		}
 
@@ -183,7 +191,12 @@ namespace CartPcb
 
 		for (auto& rec : records)
 		{
-			if (rec.prgCrc == prgCrc && rec.chrCrc == chrCrc)
+			if (rec.prgCrc != prgCrc)
+				continue;
+
+			// chrCrc == 0 in a record means a PRG-only board (CHR-RAM, e.g.
+			// UNROM/AOROM): it matches any CHR dump.
+			if (rec.chrCrc == 0 || rec.chrCrc == chrCrc)
 			{
 				out.push_back(rec.ref);
 			}

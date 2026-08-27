@@ -46,6 +46,16 @@ extern "C"
 		}
 	}
 
+	DLL_EXPORT void SetNescartdbDir(char* dir)
+	{
+		CartPcb::SetNescartdbDir(dir);
+	}
+
+	DLL_EXPORT void SetUserBoardsDir(char* dir)
+	{
+		CartPcb::SetUserBoardsDir(dir);
+	}
+
 	DLL_EXPORT void EjectCartridge()
 	{
 		if (board != nullptr)

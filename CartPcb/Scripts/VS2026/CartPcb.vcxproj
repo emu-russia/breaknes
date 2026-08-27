@@ -22,6 +22,7 @@
     <ClInclude Include="..\..\CartPcb.h" />
     <ClInclude Include="..\..\CartPcbPort.h" />
     <ClInclude Include="..\..\CartImage.h" />
+    <ClInclude Include="..\..\CartridgeLoader.h" />
     <ClInclude Include="..\..\ChipsAdapter.h" />
     <ClInclude Include="..\..\NesCartDb.h" />
     <ClInclude Include="..\..\Pcb.h" />
@@ -31,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\CartPcbCartridge.cpp" />
+    <ClCompile Include="..\..\CartridgeLoader.cpp" />
     <ClCompile Include="..\..\ChipsAdapter.cpp" />
     <ClCompile Include="..\..\NesCartDb.cpp" />
     <ClCompile Include="..\..\Pcb.cpp" />

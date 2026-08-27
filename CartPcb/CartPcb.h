@@ -10,3 +10,4 @@
 #include "PcbLoader.h"
 #include "NesCartDb.h"
 #include "CartPcbCartridge.h"
+#include "CartridgeLoader.h"

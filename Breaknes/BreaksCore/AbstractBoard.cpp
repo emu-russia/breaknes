@@ -22,8 +22,17 @@ namespace Breaknes
 
 	int Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
 	{
-		Mappers::CartridgeFactory cf(p1_type, nesImage, nesImageSize);
-		cart = cf.GetInstance();
+		// CartPcb path: identify the board by PRG/CHR CRC32 via nescartdb.
+		cart = CartPcb::CreateFromNesImage(p1_type, nesImage, nesImageSize);
+
+		if (!cart)
+		{
+			// Legacy fallback: the iNES mapper path (kept for A/B comparison and
+			// for boards that are not yet defined in Nescartdb/boards/).
+			printf("CartPcb: no nescartdb board match, falling back to iNES mapper path\n");
+			Mappers::CartridgeFactory cf(p1_type, nesImage, nesImageSize);
+			cart = cf.GetInstance();
+		}
 
 		if (!cart)
 			return -1;

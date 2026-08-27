@@ -25,11 +25,25 @@ extern "C"
 	DLL_EXPORT void DestroyBoard();
 
 	/// <summary>
-	/// Insert the cartridge. Cartridge Factory will try to fit .nes ROM into the form factor of the current motherboard's cartridge connector. In addition, a mapper instance will be created if it is supported.
+	/// Insert the cartridge. The CartPcb path identifies the board by the PRG/CHR
+	/// CRC32 via the nescartdb database; on failure it falls back to the legacy
+	/// iNES mapper path. In addition, a mapper instance will be created if it is supported.
 	/// </summary>
 	/// <param name="nesImage">.nes ROM image.</param>
 	/// <param name="size">Image size (bytes)</param>
 	DLL_EXPORT int InsertCartridge(uint8_t* nesImage, size_t size);
+
+	/// <summary>
+	/// Set the Nescartdb data directory (contains index.json and boards/).
+	/// Must be called before InsertCartridge.
+	/// </summary>
+	DLL_EXPORT void SetNescartdbDir(char* dir);
+
+	/// <summary>
+	/// Set a user directory with custom board JSONs (JSONES subset, may be empty).
+	/// Must be called before InsertCartridge.
+	/// </summary>
+	DLL_EXPORT void SetUserBoardsDir(char* dir);
 
 	/// <summary>
 	/// Free the cartridge connector from the ROM/mapper and all resources.

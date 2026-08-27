@@ -68,6 +68,9 @@
     <None Include="..\..\Readme.md" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\CartPcb\Scripts\VS2026\CartPcb.vcxproj">
+      <Project>{34001d61-9c16-4229-b5fc-9bf33c247001}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Chips\M6502Core\Scripts\VS2026\M6502Core.vcxproj">
       <Project>{75210c0a-a812-4246-a179-b50d8a25a121}</Project>
     </ProjectReference>

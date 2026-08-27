@@ -624,6 +624,12 @@ namespace CartPcb
 
 				if (kind == "rom")
 				{
+					// A ROM component without an explicit size takes the size of
+					// the corresponding dump (PRG for the CPU bus, CHR for the PPU bus).
+					if (size == 0)
+					{
+						size = (int)(busEnum == Bus::PPU ? image.chrSize : image.prgSize);
+					}
 					pcb->AddComponent(id, Pcb::Component::Kind::Rom, busEnum, (size_t)size, imageName);
 				}
 				else if (kind == "ram")

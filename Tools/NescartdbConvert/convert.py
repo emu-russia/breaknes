@@ -213,6 +213,12 @@ def convert_board(board_el):
 
 
 def build_index(games):
+    """Flat lookup index: prg_crc/chr_crc -> board type.
+
+    Cartridges with CHR-ROM get a PRG+CHR record; cartridges with CHR-RAM
+    (no <chr> element) get a PRG-only record (chr_crc = null), since
+    identification for those boards is by the PRG dump alone.
+    """
     index = []
     for game in games:
         for cart in game.get('cartridges', []):
@@ -223,17 +229,25 @@ def build_index(games):
             chr = board.get('chr') or {}
             prg_crc = prg.get('crc')
             chr_crc = chr.get('crc')
-            if not prg_crc or not chr_crc:
+            if not prg_crc:
                 continue
             record = {
                 'prg_crc': prg_crc,
-                'chr_crc': chr_crc,
                 'system': cart.get('system'),
                 'type': board.get('type'),
                 'pcb': board.get('pcb'),
             }
+            if chr_crc:
+                record['chr_crc'] = chr_crc
+            else:
+                record['chr_crc'] = None
             if board.get('mapper') is not None:
                 record['mapper'] = board['mapper']
+            pad = board.get('pad') or {}
+            if pad.get('h') is not None:
+                record['h'] = pad['h']
+            if pad.get('v') is not None:
+                record['v'] = pad['v']
             index.append(record)
     return index
 

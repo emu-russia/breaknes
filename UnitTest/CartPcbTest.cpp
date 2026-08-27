@@ -8,6 +8,7 @@
 #include <cstdio>
 
 #include "../CartPcb/CartPcb.h"
+#include "../Mappers/pch.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace BaseLogic;
@@ -108,6 +109,77 @@ namespace UnitTest
 		Pcb* MakePcb(const char* json, const CartImage& image, std::string& error)
 		{
 			return PcbFactory::Create(json, image, error);
+		}
+
+		// One scripted bus state for the parity tests.
+		struct Step
+		{
+			TriState nROMSEL = TriState::One;
+			TriState RnW = TriState::One;
+			TriState nRD = TriState::One;
+			TriState nWR = TriState::One;
+			TriState nPA13 = TriState::One;
+			uint16_t cpu_addr = 0;
+			uint16_t ppu_addr = 0;
+			uint8_t cpu_data = 0;
+			uint8_t ppu_data = 0;
+		};
+
+		// Run the same step through two cartridges and compare every observable.
+		bool ParityStep(Mappers::AbstractCartridge& a, Mappers::AbstractCartridge& b, const Step& s)
+		{
+			TriState in1[(size_t)CartInput::Max]{};
+			TriState in2[(size_t)CartInput::Max]{};
+
+			for (size_t n = 0; n < (size_t)CartInput::Max; n++)
+			{
+				in1[n] = TriState::One;
+				in2[n] = TriState::One;
+			}
+
+			in1[(size_t)CartInput::M2] = TriState::One;
+			in2[(size_t)CartInput::M2] = TriState::One;
+			in1[(size_t)CartInput::nROMSEL] = s.nROMSEL;
+			in2[(size_t)CartInput::nROMSEL] = s.nROMSEL;
+			in1[(size_t)CartInput::RnW] = s.RnW;
+			in2[(size_t)CartInput::RnW] = s.RnW;
+			in1[(size_t)CartInput::nRD] = s.nRD;
+			in2[(size_t)CartInput::nRD] = s.nRD;
+			in1[(size_t)CartInput::nWR] = s.nWR;
+			in2[(size_t)CartInput::nWR] = s.nWR;
+			in1[(size_t)CartInput::nPA13] = s.nPA13;
+			in2[(size_t)CartInput::nPA13] = s.nPA13;
+
+			TriState out1[(size_t)CartOutput::Max]{};
+			TriState out2[(size_t)CartOutput::Max]{};
+
+			// The old implementations normalize uninitialized outputs to Z; start
+			// both sides at Z so the comparison is meaningful.
+			for (size_t n = 0; n < (size_t)CartOutput::Max; n++)
+			{
+				out1[n] = TriState::Z;
+				out2[n] = TriState::Z;
+			}
+
+			uint8_t c1 = s.cpu_data, c2 = s.cpu_data;
+			bool d1 = false, d2 = false;
+			uint8_t p1 = s.ppu_data, p2 = s.ppu_data;
+			bool pd1 = false, pd2 = false;
+			bool e1 = false, e2 = false;
+
+			a.sim(in1, out1, s.cpu_addr, &c1, d1, s.ppu_addr, &p1, pd1, nullptr, nullptr, e1);
+			b.sim(in2, out2, s.cpu_addr, &c2, d2, s.ppu_addr, &p2, pd2, nullptr, nullptr, e2);
+
+			if (c1 != c2 || d1 != d2 || p1 != p2 || pd1 != pd2)
+				return false;
+
+			for (size_t n = 0; n < (size_t)CartOutput::Max; n++)
+			{
+				if (out1[n] != out2[n])
+					return false;
+			}
+
+			return true;
 		}
 	}
 
@@ -382,6 +454,203 @@ namespace UnitTest
 			Assert::IsTrue(out.empty());
 
 			remove(path);
+		}
+	};
+
+	/// <summary>
+	/// A/B parity: the old Mappers implementations vs the new CartPcb boards on
+	/// the same .nes images. The legacy mappers register memory regions with the
+	/// global DebugHub, so a hub instance is provided for the duration of the test.
+	/// </summary>
+	TEST_CLASS(CartPcbParityUnitTest)
+	{
+	public:
+		TEST_METHOD(TestParityNrom)
+		{
+			uint8_t image[16 + 0x8000 + 0x2000];
+			memset(image, 0, sizeof(image));
+
+			image[0] = 'N'; image[1] = 'E'; image[2] = 'S'; image[3] = 0x1A;
+			image[4] = 2;	// 32K PRG
+			image[5] = 1;	// 8K CHR
+			image[6] = 1;	// vertical mirroring
+			image[7] = 0;	// mapper 0
+
+			for (size_t i = 0; i < 0x8000; i++) image[16 + i] = (uint8_t)(i * 7);
+			for (size_t i = 0; i < 0x2000; i++) image[16 + 0x8000 + i] = (uint8_t)(i * 13);
+
+			DebugHub hub;
+			DebugHub* saved = dbg_hub;
+			dbg_hub = &hub;
+
+			{
+				Mappers::NROM old(ConnectorType::FamicomStyle, image, sizeof(image));
+				Assert::IsTrue(old.Valid());
+
+				CartImage ci;
+				ci.prg = image + 16;
+				ci.prgSize = 0x8000;
+				ci.chr = image + 16 + 0x8000;
+				ci.chrSize = 0x2000;
+
+				std::string error;
+				Pcb* pcb = MakePcb(NROM_BOARD, ci, error);
+				Assert::IsTrue(pcb != nullptr);
+				CartPcbCartridge nw(ConnectorType::FamicomStyle, pcb);
+
+				for (int step = 0; step < 64; step++)
+				{
+					Step s;
+					s.nROMSEL = (step & 1) ? TriState::Zero : TriState::One;
+					s.nRD = (step & 1) ? TriState::Zero : TriState::One;
+					s.cpu_addr = (uint16_t)((step * 0x211) & 0x7fff);
+					s.ppu_addr = (uint16_t)((step * 0x137) & 0x3fff);
+					s.nPA13 = (s.ppu_addr & 0x2000) ? TriState::Zero : TriState::One;
+					Assert::IsTrue(ParityStep(old, nw, s));
+				}
+			}
+
+			dbg_hub = saved;
+		}
+
+		TEST_METHOD(TestParityUnrom)
+		{
+			uint8_t image[16 + 0x20000];
+			memset(image, 0, sizeof(image));
+
+			image[0] = 'N'; image[1] = 'E'; image[2] = 'S'; image[3] = 0x1A;
+			image[4] = 8;	// 128K PRG
+			image[5] = 0;	// CHR-RAM (none in the image)
+			image[6] = 0;	// horizontal mirroring
+			image[7] = 2;	// mapper 2
+
+			for (size_t i = 0; i < 0x20000; i++) image[16 + i] = (uint8_t)(i >> 8);
+
+			DebugHub hub;
+			DebugHub* saved = dbg_hub;
+			dbg_hub = &hub;
+
+			{
+				Mappers::UNROM old(ConnectorType::FamicomStyle, image, sizeof(image));
+				Assert::IsTrue(old.Valid());
+
+				CartImage ci;
+				ci.prg = image + 16;
+				ci.prgSize = 0x20000;
+				ci.chr = nullptr;
+				ci.chrSize = 0;
+
+				std::string error;
+				Pcb* pcb = MakePcb(UNROM_BOARD, ci, error);
+				Assert::IsTrue(pcb != nullptr);
+				CartPcbCartridge nw(ConnectorType::FamicomStyle, pcb);
+
+				// Bank writes + reads across the $8000/$C000 windows.
+				// The legacy 74LS161-based implementations latch the bank on the
+				// rising edge of /ROMSEL, so a write is driven as a 3-tick sequence:
+				// active write, rising edge, idle.
+				for (int bank = 0; bank < 8; bank++)
+				{
+					Step w;
+					w.nROMSEL = TriState::Zero;
+					w.RnW = TriState::Zero;
+					w.nRD = TriState::One;
+					w.nWR = TriState::Zero;
+					w.cpu_data = (uint8_t)bank;
+					Assert::IsTrue(ParityStep(old, nw, w));
+
+					Step rise;
+					rise.nROMSEL = TriState::One;
+					rise.RnW = TriState::Zero;
+					rise.nRD = TriState::One;
+					rise.nWR = TriState::Zero;
+					rise.cpu_data = (uint8_t)bank;
+					Assert::IsTrue(ParityStep(old, nw, rise));
+
+					Step idle;
+					Assert::IsTrue(ParityStep(old, nw, idle));
+
+					for (int off = 0; off < 16; off++)
+					{
+						Step r;
+						r.nROMSEL = TriState::Zero;
+						r.cpu_addr = (uint16_t)(off * 0x100);
+						Assert::IsTrue(ParityStep(old, nw, r));
+
+						r.cpu_addr = (uint16_t)(0x4000 + off * 0x100);	// $C000 window
+						Assert::IsTrue(ParityStep(old, nw, r));
+					}
+				}
+			}
+
+			dbg_hub = saved;
+		}
+
+		TEST_METHOD(TestParityAorom)
+		{
+			uint8_t image[16 + 0x40000];
+			memset(image, 0, sizeof(image));
+
+			image[0] = 'N'; image[1] = 'E'; image[2] = 'S'; image[3] = 0x1A;
+			image[4] = 16;	// 256K PRG
+			image[5] = 0;	// CHR-RAM
+			image[6] = 0;
+			image[7] = 7;	// mapper 7
+
+			for (size_t i = 0; i < 0x40000; i++) image[16 + i] = (uint8_t)(i >> 15);
+
+			DebugHub hub;
+			DebugHub* saved = dbg_hub;
+			dbg_hub = &hub;
+
+			{
+				Mappers::AOROM old(ConnectorType::FamicomStyle, image, sizeof(image));
+				Assert::IsTrue(old.Valid());
+
+				CartImage ci;
+				ci.prg = image + 16;
+				ci.prgSize = 0x40000;
+				ci.chr = nullptr;
+				ci.chrSize = 0;
+
+				std::string error;
+				Pcb* pcb = MakePcb(AOROM_BOARD, ci, error);
+				Assert::IsTrue(pcb != nullptr);
+				CartPcbCartridge nw(ConnectorType::FamicomStyle, pcb);
+
+				for (int bank = 0; bank < 8; bank++)
+				{
+					Step w;
+					w.nROMSEL = TriState::Zero;
+					w.RnW = TriState::Zero;
+					w.nRD = TriState::One;
+					w.nWR = TriState::Zero;
+					w.cpu_data = (uint8_t)(bank | 0x10);	// bank + mirroring bit
+					Assert::IsTrue(ParityStep(old, nw, w));
+
+					Step rise;
+					rise.nROMSEL = TriState::One;
+					rise.RnW = TriState::Zero;
+					rise.nRD = TriState::One;
+					rise.nWR = TriState::Zero;
+					rise.cpu_data = (uint8_t)(bank | 0x10);
+					Assert::IsTrue(ParityStep(old, nw, rise));
+
+					Step idle;
+					Assert::IsTrue(ParityStep(old, nw, idle));
+
+					for (int off = 0; off < 16; off++)
+					{
+						Step r;
+						r.nROMSEL = TriState::Zero;
+						r.cpu_addr = (uint16_t)(off * 0x100);
+						r.ppu_addr = (uint16_t)(off * 0x77);
+						Assert::IsTrue(ParityStep(old, nw, r));
+					}
+				}
+			}
+
+			dbg_hub = saved;
 		}
 	};
 }

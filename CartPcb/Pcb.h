@@ -159,6 +159,13 @@ namespace CartPcb
 		void AddNet(const Net& net);
 		void SetHardwiredMirroring(bool vertical);		// true: VRAM_A10 = PA10, false: PA11
 		void SetMapperMirroring(LogicExprPtr net);
+
+		/// <summary>
+		/// Apply the mirroring solder pads of a specific cartridge (from the
+		/// nescartdb record). Only affects hardwired-mirroring boards; the board
+		/// JSON defaults are used when the pads are unknown.
+		/// </summary>
+		void ApplyPadMirroring(int padH, int padV);
 		void SetBoardType(const std::string& type, const std::string& pcb);
 
 		/// <summary>

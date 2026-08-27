@@ -17,6 +17,8 @@ namespace CartPcb
 		std::string type;
 		std::string pcb;
 		int mapper = -1;	// informational only; identification is by CRC, not by iNES mapper
+		int padH = -1;		// mirroring solder pads (-1: unknown)
+		int padV = -1;
 	};
 
 	class NesCartDb

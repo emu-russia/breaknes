@@ -5,6 +5,7 @@
 
 #include <cstdio>
 #include <vector>
+#include <map>
 #include <cstring>
 
 #ifdef _WIN32
@@ -157,6 +158,61 @@ namespace CartPcb
 			return t != nullptr && t->type == Json::ValueType::String &&
 				Narrow(t->value.AsString) == boardType;
 		}
+
+		// Resolve a board type to its built-in definition file via
+		// <builtinDir>/boards/index.json (family mapping: e.g. all NROM variants
+		// map to nrom.json). Cached after the first load.
+		bool ResolveBoardFile(const std::string& builtinDir, const std::string& boardType, std::string& outFile)
+		{
+			static std::map<std::string, std::string> familyMap;
+			static std::string cachedDir;
+			static bool loaded = false;
+
+			if (!loaded || cachedDir != builtinDir)
+			{
+				familyMap.clear();
+				cachedDir = builtinDir;
+				loaded = true;
+
+				std::string indexText;
+				if (ReadFile(builtinDir + "/boards/index.json", indexText))
+				{
+					Json json;
+					try
+					{
+						json.Deserialize((void*)indexText.c_str(), indexText.size());
+					}
+					catch (...)
+					{
+						return false;
+					}
+
+					if (!json.root.children.empty())
+					{
+						Json::Value* root = json.root.children.front();
+						if (root->type == Json::ValueType::Object)
+						{
+							for (auto& child : root->children)
+							{
+								if (child->name != nullptr && child->type == Json::ValueType::String && child->value.AsString != nullptr)
+								{
+									familyMap[child->name] = Narrow(child->value.AsString);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			auto it = familyMap.find(boardType);
+			if (it != familyMap.end())
+			{
+				outFile = builtinDir + "/boards/" + it->second;
+				return true;
+			}
+
+			return false;
+		}
 	}
 
 	bool PcbLoader::LoadBoard(const std::string& boardType, const std::string& builtinDir, const std::string& userDir, std::string& outJson)
@@ -176,6 +232,17 @@ namespace CartPcb
 		// 2. Built-in board definitions.
 		if (!builtinDir.empty())
 		{
+			// 2a. Family mapping via boards/index.json.
+			std::string defFile;
+			if (ResolveBoardFile(builtinDir, boardType, defFile))
+			{
+				if (ReadFile(defFile, outJson))
+				{
+					return true;
+				}
+			}
+
+			// 2b. Direct file: boards/<boardType>.json.
 			std::string path = builtinDir + "/boards/" + boardType + ".json";
 			if (ReadFile(path, outJson))
 			{
