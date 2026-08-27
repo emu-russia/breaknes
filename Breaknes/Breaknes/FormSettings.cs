@@ -65,6 +65,7 @@ namespace Breaknes
 			settings.PPURegdumpDir = "";
 			settings.APURegdump = false;
 			settings.APURegdumpDir = "";
+			settings.NintendulatorLog = false;
 
 			SaveSettings(settings);
 
@@ -160,6 +161,11 @@ namespace Breaknes
 			[DefaultValue("")]
 			[EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
 			public string APURegdumpDir { get; set; } = "";
+
+			[Category("Debug")]
+			[Description("Enable writing the Nintendulator-compatible CPU instruction trace log. The log is written to the Nintendulator.log file in the working directory and can be used to compare this emulator with the Nintendulator emulator.")]
+			[DefaultValue(false)]
+			public bool NintendulatorLog { get; set; }
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid

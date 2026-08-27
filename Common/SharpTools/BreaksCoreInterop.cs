@@ -47,6 +47,9 @@ namespace SharpTools
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void EnableApuRegDump(bool enable, string regdump_dir);
 
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void EnableNintendulatorLog(bool enable);
+
 		[StructLayout(LayoutKind.Explicit)]
 		public struct AudioSignalFeatures
 		{
