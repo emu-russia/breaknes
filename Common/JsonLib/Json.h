@@ -8,7 +8,7 @@ class Json
 	// Foolproof
 	static const int MaxDepth = 255;
 	static const int MaxStringSize = 0x1000;
-	static const int MaxElements = 255;				// Deserialize only
+	static const int MaxElements = 0x4000;				// Deserialize only (enough for the Nescartdb database)
 
 public:
 	class Value;
@@ -100,6 +100,8 @@ private:
 
 	static bool GetLiteral(DeserializeContext* ctx, Token& token);
 	static int FetchCodepoint(DeserializeContext* ctx);
+	static int FetchHex4(DeserializeContext* ctx);
+	static int FetchUnicodeEscape(DeserializeContext* ctx);
 	static bool GetString(DeserializeContext* ctx, Token& token);
 	static bool IsAllowed(uint8_t val, char* allowed);
 	static bool GetFloat(DeserializeContext* ctx, Token& token);

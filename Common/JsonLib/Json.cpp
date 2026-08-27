@@ -95,6 +95,13 @@ void Json::EmitWcharString(SerializeContext* ctx, wchar_t* str, bool sizeOnly)
 	{
 		int cp = (int)*ptr;
 
+		// Combine UTF-16 surrogate pairs into a single codepoint.
+		if (cp >= 0xD800 && cp <= 0xDBFF && ptr[1] >= 0xDC00 && ptr[1] <= 0xDFFF)
+		{
+			cp = 0x10000 + ((cp - 0xD800) << 10) + ((int)ptr[1] - 0xDC00);
+			ptr++;
+		}
+
 		// Escaping
 
 		switch (cp)
@@ -263,6 +270,66 @@ int Json::FetchCodepoint(DeserializeContext* ctx)
 	throw "Invalid codepoint range";
 }
 
+int Json::FetchHex4(DeserializeContext* ctx)
+{
+	if (ctx->offset + 4 > ctx->maxSize)
+	{
+		throw "Invalid \\u escape";
+	}
+
+	int val = 0;
+
+	for (int i = 0; i < 4; i++)
+	{
+		uint8_t c = ctx->ptr[i];
+		int nibble = -1;
+
+		if (c >= '0' && c <= '9') nibble = c - '0';
+		else if (c >= 'a' && c <= 'f') nibble = c - 'a' + 10;
+		else if (c >= 'A' && c <= 'F') nibble = c - 'A' + 10;
+
+		if (nibble < 0)
+		{
+			throw "Invalid \\u escape";
+		}
+
+		val = (val << 4) | nibble;
+	}
+
+	ctx->offset += 4;
+	ctx->ptr += 4;
+	return val;
+}
+
+int Json::FetchUnicodeEscape(DeserializeContext* ctx)
+{
+	// After the 'u' a 4-digit hex code follows. Handles UTF-16 surrogate pairs.
+	int hi = FetchHex4(ctx);
+
+	if (hi >= 0xD800 && hi <= 0xDBFF)
+	{
+		// Expect a low surrogate: \uXXXX
+		if (ctx->offset + 1 < ctx->maxSize && ctx->ptr[0] == '\\' && ctx->ptr[1] == 'u')
+		{
+			ctx->offset += 2;
+			ctx->ptr += 2;
+
+			int lo = FetchHex4(ctx);
+
+			if (lo >= 0xDC00 && lo <= 0xDFFF)
+			{
+				return 0x10000 + ((hi - 0xD800) << 10) + (lo - 0xDC00);
+			}
+
+			throw "Invalid low surrogate";
+		}
+
+		throw "Missing low surrogate";
+	}
+
+	return hi;
+}
+
 bool Json::GetString(DeserializeContext* ctx, Token& token)
 {
 	wchar_t str[MaxStringSize] = { 0, };
@@ -305,12 +372,22 @@ bool Json::GetString(DeserializeContext* ctx, Token& token)
 				case 'n': cp = '\n'; break;
 				case 'r': cp = '\r'; break;
 				case 't': cp = '\t'; break;
-				case 'u': throw "uXXXX not supported";
+				case 'u': cp = FetchUnicodeEscape(ctx); break;
 				default: throw "Invalid escape sequence";
 			}
 		}
 
-		str[strSize++] = (wchar_t)cp;
+		if (cp >= 0x10000)
+		{
+			// Encode astral codepoints as a UTF-16 surrogate pair (wchar_t is 16-bit).
+			int v = cp - 0x10000;
+			str[strSize++] = (wchar_t)(0xD800 + (v >> 10));
+			str[strSize++] = (wchar_t)(0xDC00 + (v & 0x3FF));
+		}
+		else
+		{
+			str[strSize++] = (wchar_t)cp;
+		}
 	}
 
 	return false;
