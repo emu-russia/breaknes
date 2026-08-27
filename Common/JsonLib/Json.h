@@ -3,6 +3,10 @@
 
 #pragma once
 
+#include <cstdint>
+#include <cstddef>
+#include <list>
+
 class Json
 {
 	// Foolproof

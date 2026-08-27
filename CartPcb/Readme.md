@@ -95,7 +95,7 @@ A board is described by a JSON document with two parts:
         "prg": { "chip": "prg", "n_cs": "nROMSEL", "addr": "cpu_addr[13:0]" }
       },
       "ppu": {
-        "chr": { "chip": "chr", "n_cs": "nPA13", "addr": "ppu_addr[12:0]" }
+        "chr": { "chip": "chr", "n_cs": "!nPA13", "addr": "ppu_addr[12:0]" }
       },
       "nets": []
     }
@@ -106,7 +106,7 @@ A board is described by a JSON document with two parts:
 Notes:
 - Sizes are in **bytes** (nescartdb's `"256k"` is converted to `32768` by the conversion tool).
 - `cpu_addr`, `ppu_addr` and the connector signals (`nROMSEL`, `nPA13`, `RnW`, `nRD`, `nWR`, `M2`, ...) are the predefined net sources; the full signal set is defined in §7.2.
-- `prg` with `n_cs = nROMSEL` reproduces the classic NROM PRG decode; the CHR chip is enabled by `nPA13` (PPU `A13`), exactly as in the current `NROM` implementation but expressed as data.
+- `prg` with `n_cs = nROMSEL` reproduces the classic NROM PRG decode; the CHR chip is enabled by `!nPA13` (on NROM boards the CHR `/CE` is tied to PPU `A13`, low for `$0000-$1FFF`; `nPA13 = !A13`), exactly as in the current `NROM` implementation but expressed as data.
 - `kind: rom` components are instantiated as `BaseBoardLib::RomChip` (JEDEC-style), `kind: ram` as `BaseBoardLib::SRAM`. `PcbFactory` loads the PRG/CHR images into the ROM chips; the wiring attaches the chips' pins.
 
 ### 5.2 Example: MMC1-based board (SGROM, mapper 1)
@@ -136,7 +136,7 @@ Notes:
       "ppu": {
         "chr": {
           "chip": "chr",
-          "n_cs": "nPA13",
+          "n_cs": "!nPA13",
           "addr": "ppu_addr[12:0] | mmc1.CHR_A12..CHR_A16"
         }
       },

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>
+#include <cstddef>
+#include <list>
+
 /// <summary>
 /// Types of debugging information to get the internal state of the emulated system.
 /// </summary>

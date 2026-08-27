@@ -2,48 +2,16 @@
 
 #pragma once
 
+#include "../CartPcb/CartPcbPort.h"
+
 namespace Mappers
 {
-	enum class ConnectorType
-	{
-		None = 0,
-		FamicomStyle,
-		NESStyle,
-		Max,
-	};
-
-	enum class CartInput
-	{
-		SYSTEM_CLK,			// NES only
-		M2,
-		nROMSEL,
-		RnW,
-		nRD,
-		nWR,
-		nPA13,
-		CIC_CLK,			// NES only
-		CIC_TO_CART,		// NES only
-		Max,
-	};
-
-	enum class CartOutput
-	{
-		VRAM_A10,
-		VRAM_nCS,
-		nIRQ,
-		CIC_RST,			// NES only
-		CIC_TO_MB,			// NES only
-		Max,
-	};
-
-	/// <summary>
-	/// A software descriptor of the current audio sample from cartridge port.
-	/// Famicom only
-	/// </summary>
-	union CartAudioOutSignal
-	{
-		float normalized;
-	};
+	// The cartridge edge-connector contract moved to CartPcb (issue #509);
+	// these aliases keep the migration builds compiling.
+	using ConnectorType = CartPcb::ConnectorType;
+	using CartInput = CartPcb::CartInput;
+	using CartOutput = CartPcb::CartOutput;
+	using CartAudioOutSignal = CartPcb::CartAudioOutSignal;
 
 	class AbstractCartridge
 	{

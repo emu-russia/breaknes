@@ -1,6 +1,8 @@
 // A debug module that implements the Breaknes debug interface.
 
 #include "pch.h"
+#include "DebugHub.h"
+#include "CoreApi.h"
 
 DebugHub* dbg_hub;
 

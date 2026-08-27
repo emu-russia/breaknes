@@ -161,12 +161,14 @@
     <ClCompile Include="APUTest.cpp" />
     <ClCompile Include="ApuInternalsTest.cpp" />
     <ClCompile Include="BaseLogicLibTest.cpp" />
+    <ClCompile Include="CartPcbTest.cpp" />
     <ClCompile Include="CD4021UnitTest.cpp" />
     <ClCompile Include="CoreInternalsTest.cpp" />
     <ClCompile Include="CoreUnitTest.cpp" />
     <ClCompile Include="EventLog.cpp" />
     <ClCompile Include="JsonLibTest.cpp" />
     <ClCompile Include="LS139UnitTest.cpp" />
+    <ClCompile Include="..\Breaknes\BreaksCore\DebugHub.cpp" />
     <ClCompile Include="..\Breaknes\BreaksCore\NintendulatorLog.cpp" />
     <ClCompile Include="NintendulatorLogTest.cpp" />
     <ClCompile Include="PpuInternalsTest.cpp" />
@@ -189,6 +191,9 @@
     <ClInclude Include="PPUTest.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CartPcb\Scripts\VS2026\CartPcb.vcxproj">
+      <Project>{34001d61-9c16-4229-b5fc-9bf33c247001}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Chips\M6502Core\Scripts\VS2026\M6502Core.vcxproj">
       <Project>{75210c0a-a812-4246-a179-b50d8a25a121}</Project>
     </ProjectReference>
@@ -209,6 +214,9 @@
     </ProjectReference>
     <ProjectReference Include="..\IO\Scripts\VS2026\IO.vcxproj">
       <Project>{ac032844-ae3a-4224-b6ce-451c5dbe80b9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Mappers\Scripts\VS2026\Mappers.vcxproj">
+      <Project>{1ce1efd6-4dbf-4d93-ad3a-94c808ea70ab}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

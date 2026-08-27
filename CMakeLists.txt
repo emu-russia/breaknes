@@ -29,6 +29,7 @@ add_executable (breaknes
 	Common/BaseBoardLib/LS368.cpp
 	Common/BaseBoardLib/LS373.cpp
 	Common/BaseBoardLib/RegDumpProcessor.cpp
+	Common/BaseBoardLib/RomChip.cpp
 	Common/BaseBoardLib/SRAM.cpp
 
 	#Common/JsonLib/Json.cpp
@@ -99,6 +100,15 @@ add_executable (breaknes
 	Mappers/UNROM.cpp
 	Mappers/MMC1.cpp
 	Mappers/MMC1_Based.cpp
+
+	# CartPcb
+
+	CartPcb/Pcb.cpp
+	CartPcb/PcbFactory.cpp
+	CartPcb/PcbLoader.cpp
+	CartPcb/NesCartDb.cpp
+	CartPcb/CartPcbCartridge.cpp
+	CartPcb/ChipsAdapter.cpp
 
 	IO/IO.cpp
 	IO/DendyController.cpp
