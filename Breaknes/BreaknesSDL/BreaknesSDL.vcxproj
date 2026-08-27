@@ -164,6 +164,15 @@
     <ProjectReference Include="..\..\Common\BaseLogicLib\Scripts\VS2026\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\JsonLib\Scripts\VS2026\JsonLib.vcxproj">
+      <Project>{8782459b-4e38-4227-aa98-6e7e8e06659c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CartPcb\Scripts\VS2026\CartPcb.vcxproj">
+      <Project>{34001d61-9c16-4229-b5fc-9bf33c247001}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Chips\MMC1\Scripts\VS2026\MMC1.vcxproj">
+      <Project>{7c38b2ca-4e0e-4d2c-8ada-25d08dec7b34}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
