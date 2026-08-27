@@ -275,9 +275,6 @@ namespace APUSim
 		BaseLogic::TriState PrevPHI_Core = BaseLogic::TriState::X;	// to optimize
 		BaseLogic::TriState PrevPHI_SoundGen = BaseLogic::TriState::X;	// to optimize
 
-		uint8_t Dbg_GetStatus();
-		void Dbg_SetStatus(uint8_t val);
-
 		void sim_CoreIntegration();
 		void sim_SoundGenerators();
 
@@ -367,5 +364,25 @@ namespace APUSim
 		void GetSignalFeatures(AudioSignalFeatures& features);
 
 		BaseLogic::TriState GetPHI2();
+
+		/// <summary>
+		/// Get the current value of the core PHI0 signal.
+		/// </summary>
+		BaseLogic::TriState GetPHI0();
+
+		/// <summary>
+		/// Get the current value of the core SYNC signal (1 during the opcode fetch cycle).
+		/// </summary>
+		BaseLogic::TriState GetSYNC();
+
+		/// <summary>
+		/// Get the value of the CPU-visible APU status register ($4015).
+		/// </summary>
+		uint8_t Dbg_GetStatus();
+
+		/// <summary>
+		/// Set the value of the CPU-visible APU status register ($4015). For debugging.
+		/// </summary>
+		void Dbg_SetStatus(uint8_t val);
 	};
 }

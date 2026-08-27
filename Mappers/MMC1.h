@@ -73,5 +73,11 @@ namespace Mappers
 		~MMC1();
 
 		void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]);
+
+		/// <summary>
+		/// Compute the PRG ROM address for the given CPU bus address using the current
+		/// register state, without simulating the chip.
+		/// </summary>
+		size_t Dbg_GetPRGAddress(size_t cpu_addr);
 	};
 }

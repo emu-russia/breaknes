@@ -330,4 +330,9 @@ namespace PPUSim
 				break;
 		}
 	}
+
+	BaseLogic::TriState PPU::Dbg_GetVBLFlag()
+	{
+		return hv_fsm->get_VBLFlag();
+	}
 }

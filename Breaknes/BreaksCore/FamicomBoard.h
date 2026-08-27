@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 // Historically, the NES board was made first, so the Famicom is partially similar in implementation.
 // Let's try to do without the debugging mechanisms for the sake of purity. If anything, all debugging can be done on the NES board
@@ -112,5 +112,7 @@ namespace Breaknes
 		bool InResetState() override;
 
 		void SampleAudioSignal(float* sample);
+
+		uint8_t ReadWRAM(uint16_t addr) override;
 	};
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "NintendulatorLog.h"
+
 namespace Breaknes
 {
 	struct RGB_Triplet
@@ -52,6 +54,15 @@ namespace Breaknes
 		RegDumper* apu_regdump = nullptr;
 		size_t prev_phi_counter_for_ppuregdump = 0;
 		size_t prev_phi_counter_for_apuregdump = 0;
+
+		// Nintendulator-compatible instruction trace log
+
+		NintendulatorLog* nintendulator_log = nullptr;
+		BaseLogic::TriState prev_phi0_for_nintendulator_log = BaseLogic::TriState::Zero;
+
+		static uint8_t ReadCPUMemCallback(void* opaque, uint16_t addr);
+
+		void TreatCoreForNintendulatorLog(uint16_t addr_bus);
 
 		void TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState phi2, BaseLogic::TriState rnw);
 
@@ -127,6 +138,12 @@ namespace Breaknes
 		/// Enable/disable saving the history of APU register accesses.
 		/// </summary>
 		virtual void EnableApuRegDump(bool enable, char* regdump_dir);
+
+		/// <summary>
+		/// Enable/disable writing the Nintendulator-compatible instruction trace log
+		/// to the "Nintendulator.log" file in the working directory.
+		/// </summary>
+		virtual void EnableNintendulatorLog(bool enable);
 
 		/// <summary>
 		/// Get audio signal settings that help with its rendering on the consumer side.
@@ -208,5 +225,18 @@ namespace Breaknes
 		/// </summary>
 		/// <param name="info"></param>
 		virtual void GetAllCoreDebugInfo(M6502Core::DebugInfo* info);
+
+		/// <summary>
+		/// Side-effect-free read of one byte from the CPU address space. Used by the
+		/// Nintendulator log disassembler. Implemented on top of the debug interfaces,
+		/// so it does not disturb the ongoing simulation.
+		/// </summary>
+		uint8_t ReadCPUMem(uint16_t addr);
+
+		/// <summary>
+		/// Side-effect-free read of one byte from the board WRAM. The address is a
+		/// CPU bus address inside the $0000-$1FFF window.
+		/// </summary>
+		virtual uint8_t ReadWRAM(uint16_t addr);
 	};
 }

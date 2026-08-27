@@ -39,6 +39,12 @@
     <ClCompile Include="LS139UnitTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Breaknes\BreaksCore\NintendulatorLog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NintendulatorLogTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="BaseLogicLibTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

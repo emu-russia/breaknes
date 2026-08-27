@@ -140,4 +140,24 @@ namespace Mappers
 	{
 		return (prev == 0 && cur);
 	}
+
+	size_t MMC1::Dbg_GetPRGAddress(size_t cpu_addr)
+	{
+		// Mirror the PRG bank switching formulas from sim() using the current register state.
+
+		int a14 = (cpu_addr >> 14) & 1;
+
+		int prg_a14 = ((reg[3].b0 || !reg[0].b3 || reg[0].b2) && a14) || (reg[0].b2 && reg[0].b3 && reg[3].b0);
+		int prg_a15 = (((reg[0].b2 || !reg[0].b3) && reg[3].b1) && a14) || ((reg[3].b1 && reg[0].b3) || reg[0].b2);
+		int prg_a16 = (((reg[0].b2 || !reg[0].b3) && reg[3].b2) && a14) || ((reg[3].b2 && reg[0].b3) || reg[0].b2);
+		int prg_a17 = (((!reg[0].b3 && reg[3].b3) || (reg[0].b2 && reg[3].b3)) && !reg[3].b4) ||
+			(((!reg[3].b4 && reg[3].b3) || (!reg[3].b4 && reg[0].b2 && reg[0].b3)) && a14) ||
+			(reg[3].b3 && reg[3].b4);
+
+		return (cpu_addr & 0x3fff) |
+			((size_t)prg_a14 << 14) |
+			((size_t)prg_a15 << 15) |
+			((size_t)prg_a16 << 16) |
+			((size_t)prg_a17 << 17);
+	}
 }

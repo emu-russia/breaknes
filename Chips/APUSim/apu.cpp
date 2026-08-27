@@ -166,4 +166,14 @@ namespace APUSim
 	{
 		return wire.PHI2;
 	}
+
+	TriState APU::GetPHI0()
+	{
+		return wire.PHI0;
+	}
+
+	TriState APU::GetSYNC()
+	{
+		return wire.SYNC;
+	}
 }

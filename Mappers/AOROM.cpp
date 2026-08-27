@@ -198,4 +198,30 @@ namespace Mappers
 			aorom->CHR[addr] = data;
 		}
 	}
+
+	uint8_t AOROM::Dbg_ReadPRGByte(size_t cpu_addr)
+	{
+		if (!valid)
+			return 0;
+
+		// The PRG ROM is enabled only in the $8000-$FFFF window (A15 = 1)
+		if (cpu_addr < 0x8000)
+			return 0;
+
+		// Mirror the bank selection logic from sim(): the whole 32K window is switched
+		// by the 74LS161 counter (Q[2:0] -> A15/A16/A17).
+
+		using namespace BaseLogic;
+
+		TriState Q[4]{};
+		UnpackNibble(counter.getVal(), Q);
+
+		// In sim() the cartridge receives the address with A15 cleared (addr_bus & 0x7fff)
+		size_t prg_address = (cpu_addr & 0x7fff) |
+			((Q[0] == TriState::One ? 1 : 0) << 15) |		// A15
+			((Q[1] == TriState::One ? 1 : 0) << 16) |		// A16
+			((Q[2] == TriState::One ? 1 : 0) << 17);		// A17
+
+		return PRG[prg_address & (PRGSize - 1)];
+	}
 }

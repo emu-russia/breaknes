@@ -73,6 +73,8 @@ namespace Breaknes
 		// Accesses by the embedded core to APU registers are still broadcast to the address bus via the multiplexer.
 		TreatCoreForRegdump(addr_bus, data_bus, apu->GetPHI2(), CPU_RnW);
 
+		TreatCoreForNintendulatorLog(addr_bus);
+
 		nRDP0 = outputs[(size_t)APUSim::APU_Output::n_IN0];
 		nRDP1 = outputs[(size_t)APUSim::APU_Output::n_IN1];
 		OUT_0 = outputs[(size_t)APUSim::APU_Output::OUT_0];
@@ -240,6 +242,11 @@ namespace Breaknes
 				aux.normalized.b /* 12k resistor */ + 
 				cart_snd.normalized /* levels pls, someone? */) / 3.0f;
 		}
+	}
+
+	uint8_t FamicomBoard::ReadWRAM(uint16_t addr)
+	{
+		return wram->Dbg_ReadByte(addr & (wram_size - 1));
 	}
 
 	void FamicomBoard::IOBinding()
