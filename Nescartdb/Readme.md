@@ -34,11 +34,11 @@ The export is a static snapshot (2017-08-21). The conversion is deterministic: t
 Nescartdb/
   Readme.md          <- this file
   nescarts.json      <- the full converted database (generated, committed)
-  index.json         <- flattened lookup index: crc/sha1 -> board type (generated, committed)
+  index.json         <- flattened lookup index: prg_crc/chr_crc -> board type (generated, committed)
 ```
 
 - `nescarts.json` — the full database, faithful to the XML: `game` → `cartridge` → `board` nesting, with all attributes (see §5).
-- `index.json` — a flat array of lookup records (`crc`, `sha1`, `board.type`, `board.pcb`, `mapper`, `system`), generated from `nescarts.json`. The runtime loads this small file to answer "which board types match these PRG/CHR CRCs?" without walking the whole database.
+- `index.json` — a flat array of lookup records (`prg_crc`, `chr_crc`, `board.type`, `board.pcb`, `mapper`, `system`), generated from `nescarts.json`. The runtime loads this small file to answer "which board types match these PRG/CHR CRCs?" without walking the whole database.
 
 Both files are **committed** to the repository so that no network access is needed at build or run time.
 
@@ -88,7 +88,6 @@ Direct mapping of the XML structure:
           "system": "Famicom",
           "revision": null,
           "crc": "836C4FA7",
-          "sha1": "55DC03A493150258E10166CF38ED76DFADE605D6",
           "dump": "ok",
           "dumper": "bootgod",
           "datedumped": "2007-05-06",
@@ -97,8 +96,8 @@ Direct mapping of the XML structure:
             "type": "IREM-NROM-128",
             "pcb": "IREM-01-V",
             "mapper": 0,
-            "prg":  { "name": null, "id": null, "size": 16384, "crc": "D3D248C9", "sha1": "64185EDC4FD64B5F5E565B90B0DDC241592D899C" },
-            "chr":  { "name": null, "id": null, "size": 8192,  "crc": "9C124A53", "sha1": "BEDDF6A65A1A72410CFB1208E8B6B6E0CF5B2E74" },
+            "prg":  { "name": null, "id": null, "size": 16384, "crc": "D3D248C9" },
+            "chr":  { "name": null, "id": null, "size": 8192,  "crc": "9C124A53" },
             "wram": null,
             "vram": null,
             "chips": [],
@@ -119,9 +118,9 @@ Direct mapping of the XML structure:
 |-----|------|-------|
 | `<database>` | `source` | `version`, `conformance`, `agent`, `author`, `timestamp` folded into `source`; the converter adds `export`, `converted_at`, `converter` |
 | `<game>` | `games[]` | `name`, `altname`, `class`, `subclass`, `catalog`, `publisher`, `developer`, `portdeveloper`, `region`, `players`, `date` |
-| `<cartridge>` | `games[].cartridges[]` | `system`, `revision`, `crc`, `sha1`, `dump`, `dumper`, `datedumped`, `prototype` |
+| `<cartridge>` | `games[].cartridges[]` | `system`, `revision`, `crc`, `dump`, `dumper`, `datedumped`, `prototype` (`sha1` intentionally omitted — identification is CRC-only) |
 | `<board>` | `...board` | `type` (board type), `pcb` (board revision), `mapper` (iNES mapper number — informational only, **not** used for identification) |
-| `<prg>` / `<chr>` | `board.prg` / `board.chr` | `name`, `id`, `size` (bytes), `crc`, `sha1` |
+| `<prg>` / `<chr>` | `board.prg` / `board.chr` | `name`, `id`, `size` (bytes), `crc` (`sha1` intentionally omitted) |
 | `<wram>` / `<vram>` | `board.wram` / `board.vram` | `size`, `battery`, `id` |
 | `<chip>` | `board.chips[]` | `type` (e.g. `MMC1A`, `MMC3B`), `battery` |
 | `<cic>` | `board.cic[]` | `type` (e.g. `3193A`, `6113`) |
@@ -133,8 +132,8 @@ Direct mapping of the XML structure:
 ```json
 [
   {
-    "crc": "836C4FA7",
-    "sha1": "55DC03A493150258E10166CF38ED76DFADE605D6",
+    "prg_crc": "D3D248C9",
+    "chr_crc": "9C124A53",
     "system": "Famicom",
     "type": "IREM-NROM-128",
     "pcb": "IREM-01-V",
@@ -143,8 +142,8 @@ Direct mapping of the XML structure:
 ]
 ```
 
-- One record per cartridge with a known `crc`.
-- Identification by **PRG CRC + CHR CRC**: the runtime computes CRC32 of the PRG and CHR dumps and looks up `board.prg.crc` + `board.chr.crc`. (SHA1 is stored for future use when full dumps are available.)
+- One record per cartridge with a known PRG/CHR CRC pair.
+- Identification is by **PRG CRC32 + CHR CRC32** only (SHA1 is not used): the runtime computes CRC32 of the PRG and CHR dumps and looks up `prg_crc` + `chr_crc`.
 - Multiple records may share the same CRCs (same ROMs on different PCBs) — all matches are returned; the caller picks the fit (see `CartPcb/Readme.md` §8).
 
 ## 6. Consumers
