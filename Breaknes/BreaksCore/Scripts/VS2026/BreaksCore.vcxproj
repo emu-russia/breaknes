@@ -90,9 +90,6 @@
     <ProjectReference Include="..\..\..\..\IO\Scripts\VS2026\IO.vcxproj">
       <Project>{ac032844-ae3a-4224-b6ce-451c5dbe80b9}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Mappers\Scripts\VS2026\Mappers.vcxproj">
-      <Project>{1ce1efd6-4dbf-4d93-ad3a-94c808ea70ab}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

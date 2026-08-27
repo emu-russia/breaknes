@@ -86,9 +86,6 @@
     <ProjectReference Include="..\..\..\..\Common\BaseLogicLib\Scripts\VS2026\BaseLogicLib.vcxproj">
       <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Mappers\Scripts\VS2026\Mappers.vcxproj">
-      <Project>{1ce1efd6-4dbf-4d93-ad3a-94c808ea70ab}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

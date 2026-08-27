@@ -148,13 +148,18 @@ namespace CartPcb
 			Json::Value* chrCrc = child->ByName("chr_crc");
 			Json::Value* type = child->ByName("type");
 
-			if (prgCrc == nullptr || chrCrc == nullptr || type == nullptr)
+			if (prgCrc == nullptr || type == nullptr)
 				continue;
-			if (prgCrc->type != Json::ValueType::String || chrCrc->type != Json::ValueType::String)
+			if (prgCrc->type != Json::ValueType::String)
 				continue;
 
 			rec.prgCrc = ParseCrc(prgCrc->value.AsString);
-			rec.chrCrc = ParseCrc(chrCrc->value.AsString);
+
+			// chr_crc may be null for PRG-only boards (CHR-RAM): rec.chrCrc stays 0.
+			if (chrCrc != nullptr && chrCrc->type == Json::ValueType::String)
+			{
+				rec.chrCrc = ParseCrc(chrCrc->value.AsString);
+			}
 
 			rec.ref.type = Narrow(type->value.AsString);
 

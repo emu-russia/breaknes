@@ -1,4 +1,4 @@
-// A dummy device that uses the 6502 as a processor.
+﻿// A dummy device that uses the 6502 as a processor.
 // Contains 64 Kbytes of memory and nothing else.
 
 #pragma once
@@ -57,7 +57,7 @@ namespace Breaknes
 		size_t phi_counter = 0;
 
 	public:
-		BogusBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
+		BogusBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1);
 		virtual ~BogusBoard();
 
 		void Step() override;

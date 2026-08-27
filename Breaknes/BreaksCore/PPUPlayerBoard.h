@@ -1,4 +1,4 @@
-// Module for maintaining a simulated PPU environment.
+﻿// Module for maintaining a simulated PPU environment.
 
 #pragma once
 
@@ -94,7 +94,7 @@ namespace Breaknes
 		uint32_t CPUOpsProcessed = 0;
 
 	public:
-		PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
+		PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1);
 		virtual ~PPUPlayerBoard();
 
 		void Step() override;

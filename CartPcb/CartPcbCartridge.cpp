@@ -8,7 +8,7 @@
 
 namespace CartPcb
 {
-	CartPcbCartridge::CartPcbCartridge(ConnectorType p1, Pcb* _pcb) : Mappers::AbstractCartridge(p1, nullptr, 0)
+	CartPcbCartridge::CartPcbCartridge(ConnectorType p1, Pcb* _pcb) : Cartridge(p1)
 	{
 		pcb = _pcb;
 		valid = (pcb != nullptr);
@@ -29,13 +29,13 @@ namespace CartPcb
 	}
 
 	void CartPcbCartridge::sim(
-		BaseLogic::TriState cart_in[(size_t)Mappers::CartInput::Max],
-		BaseLogic::TriState cart_out[(size_t)Mappers::CartOutput::Max],
+		BaseLogic::TriState cart_in[(size_t)CartInput::Max],
+		BaseLogic::TriState cart_out[(size_t)CartOutput::Max],
 		uint16_t cpu_addr,
 		uint8_t* cpu_data, bool& cpu_data_dirty,
 		uint16_t ppu_addr,
 		uint8_t* ppu_data, bool& ppu_data_dirty,
-		Mappers::CartAudioOutSignal* snd_out,
+		CartAudioOutSignal* snd_out,
 		uint16_t* exp, bool& exp_dirty)
 	{
 		if (!valid)
@@ -100,6 +100,7 @@ namespace CartPcb
 
 		size_t prgSize = pcb->Dbg_GetPRGSize();
 		size_t chrSize = pcb->Dbg_GetCHRSize();
+		size_t wramSize = pcb->Dbg_GetWRAMSize();
 
 		if (prgSize != 0)
 		{
@@ -118,8 +119,6 @@ namespace CartPcb
 			chrRegion->size = (int32_t)chrSize;
 			dbg_hub->AddMemRegion(chrRegion, Dbg_ReadCHRThunk, Dbg_WriteCHRThunk, this, true);
 		}
-
-		size_t wramSize = pcb->Dbg_GetWRAMSize();
 
 		if (wramSize != 0)
 		{

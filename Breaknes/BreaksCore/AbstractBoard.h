@@ -39,8 +39,8 @@ namespace Breaknes
 
 		// The cartridge slot supports hotplugging during simulation.
 
-		Mappers::AbstractCartridge* cart = nullptr;
-		Mappers::ConnectorType p1_type = Mappers::ConnectorType::None;
+		CartPcb::Cartridge* cart = nullptr;
+		CartPcb::ConnectorType p1_type = CartPcb::ConnectorType::None;
 
 		// Pre-calculated PPU palette
 
@@ -67,7 +67,7 @@ namespace Breaknes
 		void TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState phi2, BaseLogic::TriState rnw);
 
 	public:
-		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
+		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1);
 		virtual ~Board();
 
 		/// <summary>

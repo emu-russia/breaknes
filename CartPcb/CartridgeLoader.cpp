@@ -7,7 +7,7 @@
 #include "CartPcbCartridge.h"
 #include "CartImage.h"
 
-#include "../Mappers/NES_Header.h"
+#include "NesHeader.h"
 
 namespace CartPcb
 {
@@ -54,8 +54,8 @@ namespace CartPcb
 		return g_forcedBoardType;
 	}
 
-	Mappers::AbstractCartridge* CreateFromNesImage(
-		Mappers::ConnectorType p1,
+	Cartridge* CreateFromNesImage(
+		ConnectorType p1,
 		uint8_t* nesImage, size_t nesImageSize)
 	{
 		if (nesImage == nullptr || nesImageSize < sizeof(NESHeader))

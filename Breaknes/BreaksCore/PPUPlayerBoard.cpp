@@ -1,4 +1,4 @@
-// A special type of breadboard that contains only PPU. Instead of CPU, a RegDump processor is used, which feeds register operations to the PPU from the dump via CPU I/F.
+﻿// A special type of breadboard that contains only PPU. Instead of CPU, a RegDump processor is used, which feeds register operations to the PPU from the dump via CPU I/F.
 // Module for maintaining a simulated PPU environment.
 
 #include "pch.h"
@@ -7,7 +7,7 @@ using namespace BaseLogic;
 
 namespace Breaknes
 {
-	PPUPlayerBoard::PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
+	PPUPlayerBoard::PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
 	{
 		core = new M6502Core::FakeM6502("PPU", MappedPPUBase, MappedAPUMask);
 		ppu = new PPUSim::PPU(ppu_rev);
@@ -141,15 +141,15 @@ namespace Breaknes
 
 		if (cart != nullptr)
 		{
-			TriState cart_in[(size_t)Mappers::CartInput::Max]{};
-			TriState cart_out[(size_t)Mappers::CartOutput::Max];
+			TriState cart_in[(size_t)CartPcb::CartInput::Max]{};
+			TriState cart_out[(size_t)CartPcb::CartOutput::Max];
 
 			bool unused;
 
-			cart_in[(size_t)Mappers::CartInput::nRD] = n_RD;
-			cart_in[(size_t)Mappers::CartInput::nWR] = n_WR;
-			cart_in[(size_t)Mappers::CartInput::nPA13] = n_PA13;
-			cart_in[(size_t)Mappers::CartInput::nROMSEL] = TriState::One;
+			cart_in[(size_t)CartPcb::CartInput::nRD] = n_RD;
+			cart_in[(size_t)CartPcb::CartInput::nWR] = n_WR;
+			cart_in[(size_t)CartPcb::CartInput::nPA13] = n_PA13;
+			cart_in[(size_t)CartPcb::CartInput::nROMSEL] = TriState::One;
 
 			cart->sim (
 				cart_in,
@@ -161,8 +161,8 @@ namespace Breaknes
 				nullptr,
 				nullptr, unused );
 
-			n_VRAM_CS = cart_out[(size_t)Mappers::CartOutput::VRAM_nCS];
-			VRAM_A10 = cart_out[(size_t)Mappers::CartOutput::VRAM_A10];
+			n_VRAM_CS = cart_out[(size_t)CartPcb::CartOutput::VRAM_nCS];
+			VRAM_A10 = cart_out[(size_t)CartPcb::CartOutput::VRAM_A10];
 		}
 		else
 		{

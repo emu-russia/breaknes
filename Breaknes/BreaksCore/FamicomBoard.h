@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // Historically, the NES board was made first, so the Famicom is partially similar in implementation.
 // Let's try to do without the debugging mechanisms for the sake of purity. If anything, all debugging can be done on the NES board
@@ -40,15 +40,15 @@ namespace Breaknes
 		BaseBoard::LS373 PPUAddrLatch;
 		uint8_t LatchedAddr = 0;
 
-		// Famicom Board specific ⚠️
+		// Famicom Board specific вљ пёЏ
 		// TBD: Expansion port
 		BaseLogic::TriState p2_nirq = BaseLogic::TriState::Z;
 		float p2_sound = 0.0f;
 		BaseLogic::TriState p2_4017_data[4]{};	// 4:1
 		BaseLogic::TriState p2_4016_data{};		// d1
 
-		// Famicom Board specific ⚠️
-		Mappers::CartAudioOutSignal cart_snd{};
+		// Famicom Board specific вљ пёЏ
+		CartPcb::CartAudioOutSignal cart_snd{};
 
 		// PPU Buses
 
@@ -75,7 +75,7 @@ namespace Breaknes
 		BaseLogic::TriState VRAM_nCE = BaseLogic::TriState::X;
 		BaseLogic::TriState PPU_nA13 = BaseLogic::TriState::X;		// To save millions of inverters inside the cartridges
 
-		// Famicom Board specific I/O ⚠️
+		// Famicom Board specific I/O вљ пёЏ
 		float mic_level = 0.0f;
 		BaseBoard::LS368 P4_IO;
 		BaseBoard::LS368 P5_IO;
@@ -102,7 +102,7 @@ namespace Breaknes
 		void CartridgeConnectorSimFailure2();
 
 	public:
-		FamicomBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
+		FamicomBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1);
 		virtual ~FamicomBoard();
 
 		void Step() override;

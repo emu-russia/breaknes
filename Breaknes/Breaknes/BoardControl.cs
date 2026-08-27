@@ -1,5 +1,6 @@
 // Trivial control of the instance of the emulated system. Create a board and plug in a cartridge.
 
+using System.IO;
 using SharpTools;
 
 namespace Breaknes
@@ -18,6 +19,12 @@ namespace Breaknes
 			{
 				if (board.name == name)
 				{
+					// Point the CartPcb path at the Nescartdb data (copied next to
+					// the executable at build time) and the user board dir.
+					string dataDir = System.AppDomain.CurrentDomain.BaseDirectory;
+					BreaksCore.SetNescartdbDir(dataDir);
+					BreaksCore.SetUserBoardsDir(Path.Combine(dataDir, "CustomBoards"));
+
 					BreaksCore.CreateBoard(board.name, board.apu, board.ppu, board.p1);
 					BreaksCore.Reset();
 

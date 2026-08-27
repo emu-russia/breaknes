@@ -1,4 +1,4 @@
-// A special version of the board, which contains a bare APU and Fake6502, which can only read/write APU registers from the dump.
+﻿// A special version of the board, which contains a bare APU and Fake6502, which can only read/write APU registers from the dump.
 
 #pragma once
 
@@ -37,7 +37,7 @@ namespace Breaknes
 		void GetDebugInfo(APUBoardDebugInfo& info);
 
 	public:
-		APUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
+		APUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1);
 		virtual ~APUPlayerBoard();
 
 		void Step() override;

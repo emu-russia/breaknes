@@ -56,6 +56,11 @@ extern "C"
 		CartPcb::SetUserBoardsDir(dir);
 	}
 
+	DLL_EXPORT void SetForcedBoardType(char* type)
+	{
+		CartPcb::SetForcedBoardType(type);
+	}
+
 	DLL_EXPORT void EjectCartridge()
 	{
 		if (board != nullptr)

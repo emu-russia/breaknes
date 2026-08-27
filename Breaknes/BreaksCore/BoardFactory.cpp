@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 
 namespace Breaknes
 {
@@ -112,11 +112,11 @@ namespace Breaknes
 
 		if (p1 == "Fami")
 		{
-			p1_type = Mappers::ConnectorType::FamicomStyle;
+			p1_type = CartPcb::ConnectorType::FamicomStyle;
 		}
 		else if (p1 == "NES")
 		{
-			p1_type = Mappers::ConnectorType::NESStyle;
+			p1_type = CartPcb::ConnectorType::NESStyle;
 		}
 		else
 		{

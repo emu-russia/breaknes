@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <cstddef>
 
-#include "../Mappers/AbstractCartridge.h"
+#include "CartPcbPort.h"
 
 namespace CartPcb
 {
@@ -40,10 +40,9 @@ namespace CartPcb
 	/// <summary>
 	/// Create a cartridge from a .nes image using the CartPcb path:
 	/// CRC32 of the PRG/CHR dumps -> nescartdb board type -> board JSON -> Pcb.
-	/// Returns nullptr if identification or board loading fails (the caller
-	/// falls back to the legacy iNES mapper path).
+	/// Returns nullptr if identification or board loading fails.
 	/// </summary>
-	Mappers::AbstractCartridge* CreateFromNesImage(
-		Mappers::ConnectorType p1,
+	Cartridge* CreateFromNesImage(
+		ConnectorType p1,
 		uint8_t* nesImage, size_t nesImageSize);
 }

@@ -46,6 +46,13 @@ extern "C"
 	DLL_EXPORT void SetUserBoardsDir(char* dir);
 
 	/// <summary>
+	/// Force a board type for every cartridge (JSONES hook for custom PCBs that
+	/// are not in the nescartdb index). Empty string disables the override.
+	/// Must be called before InsertCartridge.
+	/// </summary>
+	DLL_EXPORT void SetForcedBoardType(char* type);
+
+	/// <summary>
 	/// Free the cartridge connector from the ROM/mapper and all resources.
 	/// </summary>
 	DLL_EXPORT void EjectCartridge();

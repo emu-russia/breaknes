@@ -1,19 +1,17 @@
 // CartPcbCartridge - a cartridge that simulates a Pcb.
 //
-// Implements the cartridge-port contract (Mappers::AbstractCartridge during
-// the migration, issue #509) by forwarding the edge-connector signals into the
-// Pcb.
+// Implements the cartridge-port contract (CartPcb::Cartridge) by forwarding the
+// edge-connector signals into the Pcb.
 
 #pragma once
 
 #include "Pcb.h"
 #include "CartImage.h"
-
-#include "../Mappers/AbstractCartridge.h"
+#include "CartPcbPort.h"
 
 namespace CartPcb
 {
-	class CartPcbCartridge : public Mappers::AbstractCartridge
+	class CartPcbCartridge : public Cartridge
 	{
 	public:
 		CartPcbCartridge(ConnectorType p1, Pcb* pcb);
@@ -22,14 +20,14 @@ namespace CartPcb
 		bool Valid() override;
 
 		void sim(
-			BaseLogic::TriState cart_in[(size_t)Mappers::CartInput::Max],
-			BaseLogic::TriState cart_out[(size_t)Mappers::CartOutput::Max],
+			BaseLogic::TriState cart_in[(size_t)CartInput::Max],
+			BaseLogic::TriState cart_out[(size_t)CartOutput::Max],
 			uint16_t cpu_addr,
 			uint8_t* cpu_data, bool& cpu_data_dirty,
 			uint16_t ppu_addr,
 			uint8_t* ppu_data, bool& ppu_data_dirty,
 			// Famicom only
-			Mappers::CartAudioOutSignal* snd_out,
+			CartAudioOutSignal* snd_out,
 			// NES only
 			uint16_t* exp, bool& exp_dirty) override;
 
