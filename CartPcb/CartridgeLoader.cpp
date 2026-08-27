@@ -16,6 +16,32 @@ namespace CartPcb
 		std::string g_nescartdbDir = "Nescartdb";
 		std::string g_userBoardsDir;
 		std::string g_forcedBoardType;
+
+		bool FileExists(const std::string& path)
+		{
+			FILE* f = fopen(path.c_str(), "rb");
+			if (f != nullptr)
+			{
+				fclose(f);
+				return true;
+			}
+			return false;
+		}
+
+		// Accept both a path to the Nescartdb folder itself and a path to its
+		// parent (the application directory containing Nescartdb/).
+		std::string ResolveNescartdbDir(const std::string& dir)
+		{
+			if (FileExists(dir + "/index.json"))
+			{
+				return dir;
+			}
+			if (FileExists(dir + "/Nescartdb/index.json"))
+			{
+				return dir + "/Nescartdb";
+			}
+			return dir;
+		}
 	}
 
 	void SetNescartdbDir(const char* dir)
@@ -93,7 +119,8 @@ namespace CartPcb
 			if (dbDir != GetNescartdbDir())
 			{
 				dbDir = GetNescartdbDir();
-				if (!db.Load(dbDir + "/index.json"))
+
+				if (!db.Load(ResolveNescartdbDir(dbDir) + "/index.json"))
 				{
 					return nullptr;
 				}
@@ -113,7 +140,7 @@ namespace CartPcb
 		{
 			std::string jsonText;
 
-			if (!PcbLoader::LoadBoard(ref.type, GetNescartdbDir(), GetUserBoardsDir(), jsonText))
+			if (!PcbLoader::LoadBoard(ref.type, ResolveNescartdbDir(GetNescartdbDir()), GetUserBoardsDir(), jsonText))
 			{
 				continue;
 			}

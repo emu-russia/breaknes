@@ -19,10 +19,11 @@ namespace Breaknes
 			{
 				if (board.name == name)
 				{
-					// Point the CartPcb path at the Nescartdb data (copied next to
-					// the executable at build time) and the user board dir.
+					// Point the CartPcb path at the Nescartdb data (copied into the
+					// Nescartdb/ subfolder next to the executable at build time) and
+					// at the user board dir.
 					string dataDir = System.AppDomain.CurrentDomain.BaseDirectory;
-					BreaksCore.SetNescartdbDir(dataDir);
+					BreaksCore.SetNescartdbDir(Path.Combine(dataDir, "Nescartdb"));
 					BreaksCore.SetUserBoardsDir(Path.Combine(dataDir, "CustomBoards"));
 
 					BreaksCore.CreateBoard(board.name, board.apu, board.ppu, board.p1);
