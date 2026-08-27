@@ -548,5 +548,83 @@ namespace UnitTest
 			CartPcb::SetForcedBoardType(savedForced.c_str());
 			CartPcb::SetNescartdbDir(savedDir.c_str());
 		}
+
+		/// <summary>
+		/// End-to-end on a real ROM (if present): the full .nes -> identification ->
+		/// board JSON (from disk) -> Pcb -> cartridge flow, including the mirroring
+		/// source (.nes header for hardwired boards).
+		/// </summary>
+		TEST_METHOD(TestBomberNesEndToEnd)
+		{
+			const char* path = "C:\\work\\bomberman-nes\\bomber.nes";
+
+			FILE* f = fopen(path, "rb");
+			if (f == nullptr)
+			{
+				Logger::WriteMessage("bomber.nes not found, skipping");
+				return;
+			}
+
+			fseek(f, 0, SEEK_END);
+			long size = ftell(f);
+			fseek(f, 0, SEEK_SET);
+
+			std::vector<uint8_t> image((size_t)size);
+			fread(image.data(), 1, (size_t)size, f);
+			fclose(f);
+
+			std::string dbDir;
+			for (auto& candidate : { "Nescartdb", "../../../Nescartdb", "../../Nescartdb" })
+			{
+				NesCartDb probe;
+				if (probe.Load(std::string(candidate) + "/index.json"))
+				{
+					dbDir = candidate;
+					break;
+				}
+			}
+			Assert::IsTrue(!dbDir.empty());
+
+			std::string savedDir = CartPcb::GetNescartdbDir();
+			CartPcb::SetNescartdbDir(dbDir.c_str());
+
+			CartPcb::Cartridge* cart = CartPcb::CreateFromNesImage(ConnectorType::FamicomStyle, image.data(), image.size());
+			Logger::WriteMessage(("bomber.nes cart=" + std::string(cart ? "OK" : "NULL")).c_str());
+			Assert::IsTrue(cart != nullptr);
+			Assert::IsTrue(cart->Valid());
+
+			// Mirroring must follow the .nes header (Flags6 bit 0 = 1 -> vertical,
+			// VRAM_A10 = PA10), not the nescartdb pad.
+			Bus b;
+			b.SetDefaults();
+			b.Sim(cart, 0x8000, (1 << 10));
+			Assert::IsTrue(b.out[(size_t)CartOutput::VRAM_A10] == TriState::One);
+
+			b.SetDefaults();
+			b.Sim(cart, 0x8000, (1 << 11));
+			Assert::IsTrue(b.out[(size_t)CartOutput::VRAM_A10] == TriState::Zero);
+
+			// The managed app passes the *parent* of the Nescartdb folder; the
+			// loader must fall back to <dir>/Nescartdb/index.json.
+			std::string parentDir = dbDir;
+			size_t pos = parentDir.rfind("Nescartdb");
+			if (pos != std::string::npos)
+			{
+				parentDir = parentDir.substr(0, pos);
+			}
+			if (parentDir.empty())
+			{
+				parentDir = ".";
+			}
+
+			CartPcb::SetNescartdbDir(parentDir.c_str());
+			CartPcb::Cartridge* cart2 = CartPcb::CreateFromNesImage(ConnectorType::FamicomStyle, image.data(), image.size());
+			Logger::WriteMessage(("bomber.nes cart (parent-dir fallback)=" + std::string(cart2 ? "OK" : "NULL")).c_str());
+			Assert::IsTrue(cart2 != nullptr);
+
+			delete cart2;
+			delete cart;
+			CartPcb::SetNescartdbDir(savedDir.c_str());
+		}
 	};
 }

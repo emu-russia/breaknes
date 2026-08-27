@@ -166,6 +166,13 @@ namespace CartPcb
 		/// JSON defaults are used when the pads are unknown.
 		/// </summary>
 		void ApplyPadMirroring(int padH, int padV);
+
+		/// <summary>
+		/// Apply the mirroring bit from the .nes header (iNES bit 0), which is the
+		/// authoritative source for hardwired-mirroring boards (the behavior of the
+		/// pre-migration implementation). Only affects hardwired-mirroring boards.
+		/// </summary>
+		void ApplyHeaderMirroring(bool vertical);
 		void SetBoardType(const std::string& type, const std::string& pcb);
 
 		/// <summary>

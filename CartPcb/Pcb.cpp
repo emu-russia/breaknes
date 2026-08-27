@@ -138,6 +138,14 @@ namespace CartPcb
 		}
 	}
 
+	void Pcb::ApplyHeaderMirroring(bool vertical)
+	{
+		if (mirrorMode != MirrorMode::Hardwired)
+			return;
+
+		hardwiredVertical = vertical;
+	}
+
 	void Pcb::SetBoardType(const std::string& type, const std::string& pcb)
 	{
 		boardType = type;

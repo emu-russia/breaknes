@@ -159,7 +159,12 @@ namespace CartPcb
 				continue;
 			}
 
-			pcb->ApplyPadMirroring(ref.padH, ref.padV);
+			// Mirroring for hardwired boards follows the .nes header (iNES bit 0),
+			// exactly as the pre-migration implementation did. The nescartdb
+			// solder pads are kept in the index but are not used to override the
+			// header, to avoid regressions on dumps whose header and database
+			// disagree (e.g. some UNROM games).
+			pcb->ApplyHeaderMirroring((head->Flags_6 & 1) != 0);
 
 			return new CartPcbCartridge(p1, pcb);
 		}
