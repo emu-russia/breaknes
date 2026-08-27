@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace Breaknes
 {
@@ -151,5 +151,7 @@ namespace Breaknes
 		void Reset() override;
 
 		bool InResetState() override;
+
+		uint8_t ReadWRAM(uint16_t addr) override;
 	};
 }

@@ -111,5 +111,10 @@ namespace PPUSim
 		void sim_RESCL_early();
 		BaseLogic::TriState get_VB();
 		BaseLogic::TriState get_BLNK(BaseLogic::TriState BLACK);
+
+		/// <summary>
+		/// Get the VBlank status flag (the value that is read as bit 7 of $2002).
+		/// </summary>
+		BaseLogic::TriState get_VBLFlag();
 	};
 }

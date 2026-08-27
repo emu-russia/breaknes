@@ -18,5 +18,10 @@ namespace BaseBoard
 			BaseLogic::TriState P[4],
 			BaseLogic::TriState& RCO,
 			BaseLogic::TriState Q[4] );
+
+		/// <summary>
+		/// Get the current value of the counter without simulating it.
+		/// </summary>
+		uint8_t getVal() { return val; }
 	};
 }

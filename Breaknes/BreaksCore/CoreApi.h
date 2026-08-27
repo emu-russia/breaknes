@@ -88,6 +88,12 @@ extern "C"
 	DLL_EXPORT void EnableApuRegDump(bool enable, char* regdump_dir);
 
 	/// <summary>
+	/// Enable/disable writing the Nintendulator-compatible instruction trace log
+	/// to the "Nintendulator.log" file in the working directory.
+	/// </summary>
+	DLL_EXPORT void EnableNintendulatorLog(bool enable);
+
+	/// <summary>
 	/// Get audio signal settings that help with its rendering on the consumer side.
 	/// </summary>
 	/// <param name="features"></param>

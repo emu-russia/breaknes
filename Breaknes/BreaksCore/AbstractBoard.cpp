@@ -16,6 +16,8 @@ namespace Breaknes
 			delete ppu_regdump;
 		if (apu_regdump)
 			delete apu_regdump;
+		if (nintendulator_log)
+			delete nintendulator_log;
 	}
 
 	int Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
@@ -142,6 +144,143 @@ namespace Breaknes
 
 			printf("APU regdump disabled\n");
 		}
+	}
+
+	void Board::EnableNintendulatorLog(bool enable)
+	{
+		if (enable)
+		{
+			if (nintendulator_log == nullptr)
+			{
+				nintendulator_log = new NintendulatorLog();
+			}
+
+			nintendulator_log->SetReadByteCallback(ReadCPUMemCallback, this);
+			nintendulator_log->Enable();
+		}
+		else
+		{
+			if (nintendulator_log != nullptr)
+			{
+				nintendulator_log->Disable();
+			}
+		}
+	}
+
+	uint8_t Board::ReadCPUMemCallback(void* opaque, uint16_t addr)
+	{
+		Board* board = (Board*)opaque;
+		return board->ReadCPUMem(addr);
+	}
+
+	/// <summary>
+	/// Check whether the core is fetching a new instruction and write one line to the
+	/// Nintendulator log if it is enabled.
+	/// The log has a discretization of 1 CPU cycle, while Step() simulates half-cycles
+	/// (the core is simulated only on the PHI0 edges). The opcode fetch cycle is marked
+	/// by the SYNC signal, so we log exactly once per instruction - on the rising edge
+	/// of PHI0 (start of the PHI2 phase) of the fetch cycle.
+	/// </summary>
+	void Board::TreatCoreForNintendulatorLog(uint16_t addr_bus)
+	{
+		BaseLogic::TriState phi0 = apu->GetPHI0();
+
+		if (nintendulator_log != nullptr && nintendulator_log->Enabled())
+		{
+			if (phi0 == BaseLogic::TriState::One &&
+				prev_phi0_for_nintendulator_log == BaseLogic::TriState::Zero &&
+				apu->GetPHI2() == BaseLogic::TriState::One &&
+				apu->GetSYNC() == BaseLogic::TriState::One)
+			{
+				M6502Core::DebugInfo info{};
+				core->getDebug(&info);
+
+				NintendulatorLog::Entry entry{};
+				entry.pc = addr_bus;		// Address bus holds the opcode address for the whole fetch cycle
+				entry.a = info.AC;
+				entry.x = info.X;
+				entry.y = info.Y;
+				entry.s = info.S;
+				entry.p = (uint8_t)(
+					(info.N_OUT << 7) | (info.V_OUT << 6) | 0x20 |	// The B bit is always 0, as in Nintendulator
+					(info.D_OUT << 3) | (info.I_OUT << 2) | (info.Z_OUT << 1) | info.C_OUT);
+				entry.phi_counter = apu->GetPHICounter();
+				entry.h_counter = ppu->GetHCounter();
+				entry.v_counter = ppu->GetVCounter();
+
+				nintendulator_log->LogInstruction(entry);
+			}
+		}
+
+		prev_phi0_for_nintendulator_log = phi0;
+	}
+
+	uint8_t Board::ReadCPUMem(uint16_t addr)
+	{
+		// CPU address space:
+		//  $0000-$1FFF  WRAM (mirrored)
+		//  $2000-$3FFF  PPU registers (mirrored every 8)
+		//  $4000-$401F  APU & IO registers
+		//  $4020-$FFFF  Cartridge PRG
+
+		if (addr < 0x2000)
+		{
+			return ReadWRAM(addr);
+		}
+		else if (addr < 0x4000)
+		{
+			uint8_t reg = addr & 7;
+
+			switch (reg)
+			{
+				case 0: return (uint8_t)(ppu->Dbg_ReadRegister(offsetof(PPUSim::PPU_Registers, CTRL0)) & 0xff);
+				case 1: return (uint8_t)(ppu->Dbg_ReadRegister(offsetof(PPUSim::PPU_Registers, CTRL1)) & 0xff);
+
+				// $2002 Status: the PPU drives bits 7-5, the rest is the open bus (reads as 1s)
+				case 2:
+				{
+					PPUSim::PPU_Interconnects wires{};
+					ppu->GetDebugInfo_Wires(wires);
+
+					uint8_t val = 0x1f;
+					// The PPU drives bit 7 as the inverted VBlank latch (see FSM::sim_VBlankInt)
+					if (ppu->Dbg_GetVBLFlag() == BaseLogic::TriState::Zero)
+						val |= 0x80;
+					if (wires.n_SPR0HIT == BaseLogic::TriState::Zero)
+						val |= 0x40;
+					if (wires.SPR_OV == BaseLogic::TriState::One)
+						val |= 0x20;
+					return val;
+				}
+
+				case 4: return (uint8_t)(ppu->Dbg_ReadRegister(offsetof(PPUSim::PPU_Registers, OAMBuffer)) & 0xff);
+				case 7: return (uint8_t)(ppu->Dbg_ReadRegister(offsetof(PPUSim::PPU_Registers, ReadBuffer)) & 0xff);
+
+				default:
+					return 0;
+			}
+		}
+		else if (addr < 0x4020)
+		{
+			// APU/IO registers
+			if (addr == 0x4015)
+			{
+				return apu->Dbg_GetStatus();
+			}
+
+			return 0;
+		}
+		else if (cart != nullptr)
+		{
+			return cart->Dbg_ReadPRGByte(addr);
+		}
+
+		return 0;
+	}
+
+	uint8_t Board::ReadWRAM(uint16_t addr)
+	{
+		return 0;
 	}
 
 	/// <summary>

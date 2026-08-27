@@ -57,5 +57,7 @@ namespace Mappers
 			CartAudioOutSignal* snd_out,
 			// NES only
 			uint16_t* exp, bool& exp_dirty);
+
+		uint8_t Dbg_ReadPRGByte(size_t cpu_addr) override;
 	};
 }

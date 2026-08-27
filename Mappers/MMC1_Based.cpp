@@ -206,4 +206,25 @@ namespace Mappers
 			snd_out->normalized = 0.0f;
 		}
 	}
+
+	uint8_t MMC1_Based::Dbg_ReadPRGByte(size_t cpu_addr)
+	{
+		if (!valid)
+			return 0;
+
+		// $6000-$7FFF: battery-backed SRAM window (8K)
+		if (cpu_addr >= 0x6000 && cpu_addr < 0x8000 && RAM != nullptr)
+		{
+			return RAM[cpu_addr & 0x1fff];
+		}
+
+		// $8000-$FFFF: PRG ROM, bank-switched by the MMC1
+		if (cpu_addr >= 0x8000)
+		{
+			size_t prg_address = mmc->Dbg_GetPRGAddress(cpu_addr);
+			return PRG[prg_address & (PRGSize - 1)];
+		}
+
+		return 0;
+	}
 }

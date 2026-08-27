@@ -139,6 +139,14 @@ extern "C"
 		}
 	}
 
+	DLL_EXPORT void EnableNintendulatorLog(bool enable)
+	{
+		if (board != nullptr)
+		{
+			board->EnableNintendulatorLog(enable);
+		}
+	}
+
 	DLL_EXPORT void GetApuSignalFeatures(APUSim::AudioSignalFeatures* features)
 	{
 		if (board != nullptr)

@@ -505,5 +505,10 @@ namespace PPUSim
 
 		uint32_t Dbg_ReadRegister(int ofs);
 		void Dbg_WriteRegister(int ofs, uint32_t val);
+
+		/// <summary>
+		/// Get the VBlank status flag (bit 7 of $2002).
+		/// </summary>
+		BaseLogic::TriState Dbg_GetVBLFlag();
 	};
 }

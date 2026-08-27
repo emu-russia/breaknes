@@ -230,4 +230,31 @@ namespace Mappers
 			unrom->CHR[addr] = data;
 		}
 	}
+
+	uint8_t UNROM::Dbg_ReadPRGByte(size_t cpu_addr)
+	{
+		if (!valid)
+			return 0;
+
+		// The PRG ROM is enabled only in the $8000-$FFFF window (A15 = 1)
+		if (cpu_addr < 0x8000)
+			return 0;
+
+		// Mirror the bank selection logic from sim(): the PRG bank is stored in the
+		// 74LS161 counter (Q[2:0]), and A14 selects the $8000/$C000 window.
+
+		using namespace BaseLogic;
+
+		TriState Q[4]{};
+		UnpackNibble(counter.getVal(), Q);
+
+		uint8_t A14 = (cpu_addr >> 14) & 1;
+
+		size_t prg_address = (cpu_addr & 0x3fff) |
+			(((Q[0] == TriState::One || A14) ? 1 : 0) << 14) |		// Y[1] -> A14
+			(((Q[1] == TriState::One || A14) ? 1 : 0) << 15) |		// Y[0] -> A15
+			((Q[2] == TriState::One ? 1 : 0) << 16);				// Y[3] -> A16
+
+		return PRG[prg_address & (PRGSize - 1)];
+	}
 }

@@ -167,6 +167,8 @@
     <ClCompile Include="EventLog.cpp" />
     <ClCompile Include="JsonLibTest.cpp" />
     <ClCompile Include="LS139UnitTest.cpp" />
+    <ClCompile Include="..\Breaknes\BreaksCore\NintendulatorLog.cpp" />
+    <ClCompile Include="NintendulatorLogTest.cpp" />
     <ClCompile Include="PpuInternalsTest.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

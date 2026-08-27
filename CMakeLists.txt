@@ -118,6 +118,7 @@ add_executable (breaknes
 	Breaknes/BreaksCore/FamicomBoard.cpp
 	Breaknes/BreaksCore/NESBoard.cpp
 	Breaknes/BreaksCore/NESBoardDebug.cpp
+	Breaknes/BreaksCore/NintendulatorLog.cpp
 	Breaknes/BreaksCore/PPUPlayerBoard.cpp
 	Breaknes/BreaksCore/PPUPlayerBoardDebug.cpp
 	Breaknes/BreaksCore/SignalDefs.cpp

@@ -242,6 +242,18 @@ namespace Mappers
 		}
 	}
 
+	uint8_t NROM::Dbg_ReadPRGByte(size_t cpu_addr)
+	{
+		if (!valid)
+			return 0;
+
+		// The PRG ROM is enabled only in the $8000-$FFFF window (A15 = 1)
+		if (cpu_addr < 0x8000)
+			return 0;
+
+		return PRG[cpu_addr & (PRGSize - 1)];
+	}
+
 	void NROM::Dbg_WriteCHRByte(void* opaque, size_t addr, uint8_t data)
 	{
 		NROM* nrom = (NROM*)opaque;

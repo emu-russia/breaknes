@@ -321,4 +321,9 @@ namespace PPUSim
 	{
 		return NAND(NOT(BLNK_FF.get()), NOT(BLACK));
 	}
+
+	TriState FSM::get_VBLFlag()
+	{
+		return INT_FF.get();
+	}
 }
