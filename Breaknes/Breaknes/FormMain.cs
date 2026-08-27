@@ -53,6 +53,10 @@ namespace Breaknes
 			{
 				BreaksCore.EnableApuRegDump(true, settings.APURegdumpDir);
 			}
+			if (settings.NintendulatorLog)
+			{
+				BreaksCore.EnableNintendulatorLog(true);
+			}
 			io = new IOProcessor();
 			backgroundWorker1.RunWorkerAsync();
 		}
@@ -118,6 +122,7 @@ namespace Breaknes
 
 			BreaksCore.EnablePpuRegDump(settings.PPURegdump, settings.PPURegdumpDir);
 			BreaksCore.EnableApuRegDump(settings.APURegdump, settings.APURegdumpDir);
+			BreaksCore.EnableNintendulatorLog(settings.NintendulatorLog);
 		}
 
 		private void openDebuggerToolStripMenuItem_Click(object sender, EventArgs e)
