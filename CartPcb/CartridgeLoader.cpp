@@ -15,6 +15,7 @@ namespace CartPcb
 	{
 		std::string g_nescartdbDir = "Nescartdb";
 		std::string g_userBoardsDir;
+		std::string g_forcedBoardType;
 	}
 
 	void SetNescartdbDir(const char* dir)
@@ -41,6 +42,16 @@ namespace CartPcb
 	const std::string& GetUserBoardsDir()
 	{
 		return g_userBoardsDir;
+	}
+
+	void SetForcedBoardType(const char* type)
+	{
+		g_forcedBoardType = type != nullptr ? type : "";
+	}
+
+	const std::string& GetForcedBoardType()
+	{
+		return g_forcedBoardType;
 	}
 
 	Mappers::AbstractCartridge* CreateFromNesImage(
@@ -71,21 +82,32 @@ namespace CartPcb
 		uint32_t prgCrc = NesCartDb::Crc32(prg, prgSize);
 		uint32_t chrCrc = chrSize != 0 ? NesCartDb::Crc32(chr, chrSize) : 0;
 
-		// The index is loaded once per directory.
-		static NesCartDb db;
-		static std::string dbDir;
-
-		if (dbDir != GetNescartdbDir())
-		{
-			dbDir = GetNescartdbDir();
-			if (!db.Load(dbDir + "/index.json"))
-			{
-				return nullptr;
-			}
-		}
-
 		std::vector<BoardRef> boards;
-		db.FindBoards(prgCrc, chrCrc, boards);
+
+		if (g_forcedBoardType.empty())
+		{
+			// The index is loaded once per directory.
+			static NesCartDb db;
+			static std::string dbDir;
+
+			if (dbDir != GetNescartdbDir())
+			{
+				dbDir = GetNescartdbDir();
+				if (!db.Load(dbDir + "/index.json"))
+				{
+					return nullptr;
+				}
+			}
+
+			db.FindBoards(prgCrc, chrCrc, boards);
+		}
+		else
+		{
+			// JSONES hook: a forced board type skips the identification.
+			BoardRef ref;
+			ref.type = g_forcedBoardType;
+			boards.push_back(ref);
+		}
 
 		for (auto& ref : boards)
 		{

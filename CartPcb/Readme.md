@@ -238,6 +238,7 @@ Any single-cartridge board JSON (§5) can be provided by the user:
 - Location: a user data directory (decided in the implementation issue; candidates: next to the executable, `%APPDATA%`, or a `CustomBoards/` folder passed on the command line).
 - Loading order: built-in `Nescartdb` data first; user JSONs are merged on top (a user file with the same `board.type` overrides the built-in; a user file with a new type is added).
 - Use case: describing unlicensed/undocumented PCBs (krzysiobal's collection, Famiclones, etc.) that cannot be expressed via iNES mapper numbers.
+- Identification bypass: for a board that is not in the nescartdb index (no CRC match possible), the host application can force a board type (`CartPcb::SetForcedBoardType`, exported as `SetForcedBoardType` in the Core API); the board definition is then loaded directly from the built-in/user board JSONs.
 
 ## 7. Simulation model
 

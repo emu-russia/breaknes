@@ -28,6 +28,16 @@ namespace CartPcb
 	const std::string& GetUserBoardsDir();
 
 	/// <summary>
+	/// Force a board type for every cartridge (JSONES hook for custom PCBs that
+	/// are not in the nescartdb index): the nescartdb identification is skipped
+	/// and the board definition is loaded directly from the built-in or user
+	/// board JSONs. Empty string (default) disables the override.
+	/// </summary>
+	void SetForcedBoardType(const char* type);
+
+	const std::string& GetForcedBoardType();
+
+	/// <summary>
 	/// Create a cartridge from a .nes image using the CartPcb path:
 	/// CRC32 of the PRG/CHR dumps -> nescartdb board type -> board JSON -> Pcb.
 	/// Returns nullptr if identification or board loading fails (the caller

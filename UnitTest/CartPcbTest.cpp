@@ -6,6 +6,7 @@
 #include <string>
 #include <cstring>
 #include <cstdio>
+#include <direct.h>
 
 #include "../CartPcb/CartPcb.h"
 #include "../Mappers/pch.h"
@@ -103,6 +104,17 @@ namespace UnitTest
 				exp_dirty = false;
 
 				pcb->sim(in, out, cpu_addr, &cpu_data, cpu_dirty, ppu_addr, &ppu_data, ppu_dirty, nullptr, nullptr, exp_dirty);
+			}
+
+			void Sim(Mappers::AbstractCartridge* cart, uint16_t cpu_addr, uint16_t ppu_addr)
+			{
+				cpu_data = 0;
+				cpu_dirty = false;
+				ppu_data = 0;
+				ppu_dirty = false;
+				exp_dirty = false;
+
+				cart->sim(in, out, cpu_addr, &cpu_data, cpu_dirty, ppu_addr, &ppu_data, ppu_dirty, nullptr, nullptr, exp_dirty);
 			}
 		};
 
@@ -789,6 +801,84 @@ namespace UnitTest
 			}
 
 			dbg_hub = saved;
+		}
+	};
+
+	TEST_CLASS(CartPcbCustomBoardUnitTest)
+	{
+	public:
+		/// <summary>
+		/// Phase 4 (JSONES): a custom PCB that is not in the nescartdb database
+		/// (e.g. an unlicensed board) is provided by the user as a JSONES document
+		/// (game -> cartridge -> board) and loaded via the forced-board-type hook.
+		/// </summary>
+		TEST_METHOD(TestCustomJsonesBoard)
+		{
+			const char* customBoard =
+				"{ \"schemaVersion\" : 1,"
+				"  \"game\" : { \"name\" : \"Custom Unlicensed Game\", \"class\" : \"Unlicensed\","
+				"    \"cartridges\" : [ { \"system\" : \"Dendy\","
+				"      \"board\" : { \"type\" : \"CUSTOM-UNL-PCB\", \"mapper\" : 255,"
+				"        \"components\" : {"
+				"          \"prg\" : { \"kind\" : \"rom\", \"bus\" : \"cpu\" },"
+				"          \"chr\" : { \"kind\" : \"ram\", \"bus\" : \"ppu\", \"size\" : 8192 },"
+				"          \"bank\" : { \"kind\" : \"latch\" } },"
+				"        \"circuit\" : {"
+				"          \"mirroring\" : { \"mode\" : \"hardwired\", \"h\" : 1, \"v\" : 0 },"
+				"          \"cpu\" : {"
+				"            \"prg\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL\", \"addr\" : \"bank.Q2..Q0 | cpu_addr[14:0]\" },"
+				"            \"bank\" : { \"clk\" : \"nROMSEL\", \"n_we\" : \"RnW\" } },"
+				"          \"ppu\" : { \"chr\" : { \"chip\" : \"chr\", \"n_cs\" : \"!nPA13\", \"n_oe\" : \"nRD\", \"n_we\" : \"nWR\", \"addr\" : \"ppu_addr[12:0]\" } },"
+				"          \"nets\" : [] } } } ] } }";
+
+			const char* userDir = "test_user_boards";
+			_mkdir(userDir);
+
+			FILE* f = fopen((std::string(userDir) + "\\custom.json").c_str(), "wb");
+			Assert::IsTrue(f != nullptr);
+			fwrite(customBoard, 1, strlen(customBoard), f);
+			fclose(f);
+
+			// A .nes with mapper 255 in the header: the legacy iNES path cannot
+			// run it, only the CartPcb path (forced board type) can.
+			uint8_t image[16 + 0x20000];
+			memset(image, 0, sizeof(image));
+			image[0] = 'N'; image[1] = 'E'; image[2] = 'S'; image[3] = 0x1A;
+			image[4] = 8;	// 128K PRG
+			image[5] = 0;	// CHR-RAM
+			image[6] = 0;
+			image[7] = 255;	// mapper 255
+
+			for (size_t i = 0; i < 0x20000; i++) image[16 + i] = (uint8_t)(i >> 15);
+
+			CartPcb::SetUserBoardsDir(userDir);
+			CartPcb::SetForcedBoardType("CUSTOM-UNL-PCB");
+
+			Mappers::AbstractCartridge* cart = CartPcb::CreateFromNesImage(ConnectorType::FamicomStyle, image, sizeof(image));
+			Assert::IsTrue(cart != nullptr);
+			Assert::IsTrue(cart->Valid());
+
+			// Banked read: write bank 3, then read $8000+0x123.
+			Bus b;
+			b.SetDefaults();
+			b.in[(size_t)CartInput::RnW] = TriState::Zero;
+			b.in[(size_t)CartInput::nRD] = TriState::One;
+			b.in[(size_t)CartInput::nWR] = TriState::Zero;
+			b.cpu_data = 3;
+			cart->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
+
+			b.SetDefaults();
+			b.Sim(cart, 0x0123, 0x2000);
+			Assert::IsTrue(b.cpu_dirty == true);
+			Assert::IsTrue(b.cpu_data == (uint8_t)((3 * 0x8000 + 0x123) >> 15));
+
+			delete cart;
+
+			CartPcb::SetForcedBoardType("");
+			CartPcb::SetUserBoardsDir("");
+
+			remove((std::string(userDir) + "\\custom.json").c_str());
+			_rmdir(userDir);
 		}
 	};
 }
