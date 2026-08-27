@@ -20,7 +20,7 @@
 #include "NROM.h"
 #include "UNROM.h"
 #include "AOROM.h"
-#include "MMC1.h"
+#include "../Chips/MMC1/MMC1.h"
 #include "MMC1_Based.h"
 // Add new mappers here
 // ...

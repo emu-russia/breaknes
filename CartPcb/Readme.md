@@ -130,14 +130,14 @@ Notes:
         "prg": {
           "chip": "prg",
           "n_cs": "mmc1.PRG_nCE",
-          "addr": "cpu_addr[13:0] | mmc1.PRG_A14..PRG_A17"
+          "addr": "mmc1.PRG_A17..PRG_A14 | cpu_addr[13:0]"
         }
       },
       "ppu": {
         "chr": {
           "chip": "chr",
           "n_cs": "!nPA13",
-          "addr": "ppu_addr[12:0] | mmc1.CHR_A12..CHR_A16"
+          "addr": "mmc1.CHR_A16..CHR_A12 | ppu_addr[11:0]"
         }
       },
       "nets": [
@@ -163,7 +163,7 @@ This is the exact hardware structure the old `MMC1_Based` implemented in C++ —
 
 Because nescartdb only describes the component inventory, CartPcb adds a `circuit` section. Its exact expression language is finalized in the implementation issue; the concepts are:
 
-- **Bus attachments** (`cpu` / `ppu`): for each memory component (a `RomChip` or `SRAM`), the chip-select (`n_cs`), output-enable (`n_oe`), write-enable (`n_we`) and address sources. Address sources can combine bus bits and chip outputs (`cpu_addr[13:0] | mmc1.PRG_A14..PRG_A17`), which is how bank switching is expressed.
+- **Bus attachments** (`cpu` / `ppu`): for each memory component (a `RomChip` or `SRAM`), the chip-select (`n_cs`), output-enable (`n_oe`), write-enable (`n_we`) and address sources. Address sources can combine bus bits and chip outputs (`mmc1.PRG_A17..PRG_A14 | cpu_addr[13:0]`), which is how bank switching is expressed. Concatenation is MSB-first: the left term occupies the highest address bits, so MMC1's `PRG_A17..PRG_A14` (descending) maps `PRG_A14` to address bit 14.
 - **Mirroring**: `hardwired` (from `pad h/v`) or `mapper` (a net driven by a chip output, e.g. `mmc1.VRAM_A10`).
 - **Nets**: named connections between chip pins and bus signals, written as a flat list of `name` / `from` pairs. Any net can be used as `n_cs` / `n_oe` / `n_we` / address source / mirroring source, so arbitrary discrete-logic wiring (e.g. LS139-based decoders, UNROM's `nROMSEL`/`A14` decode) is expressible without new C++.
 

@@ -1,9 +1,13 @@
 // SxROM
 #include "pch.h"
 
+#include "../Chips/MMC1/MMC1.h"
+
 // It's all sad here. The NES format does not determine the connection of MMC1 with the rest of the cartridge components, so you have to "guess" and make dirty hacks.
+// (This is exactly what the CartPcb migration fixes: the MMC1 chip is wired by the board JSON.)
 
 using namespace BaseLogic;
+using namespace Chips;
 
 namespace Mappers
 {
@@ -11,7 +15,7 @@ namespace Mappers
 	{
 		printf("MMC1_Based::MMC1_Based()\n");
 
-		mmc = new MMC1();
+		mmc = new Chips::MMC1();
 
 		NESHeader* head = (NESHeader*)nesImage;
 
@@ -114,7 +118,7 @@ namespace Mappers
 		TriState nRD = cart_in[(size_t)CartInput::nRD];
 		TriState nWR = cart_in[(size_t)CartInput::nWR];
 
-		cart_out[(size_t)CartOutput::VRAM_A10] = mmc1_out[(size_t)MMC1_Output::CIRAM_A10];
+		cart_out[(size_t)CartOutput::VRAM_A10] = mmc1_out[(size_t)MMC1_Output::VRAM_A10];
 
 		// Contains a jumper between `/PA13` and `/VRAM_CS` (? probably, just don't care for now)
 		cart_out[(size_t)CartOutput::VRAM_nCS] = cart_in[(size_t)CartInput::nPA13];
@@ -167,7 +171,9 @@ namespace Mappers
 
 		if (PRG_nCE == TriState::Zero)
 		{
-			uint8_t val = PRG[prg_address];
+			// Mask the address (the MMC1 can produce addresses beyond the PRG size
+			// in the 32K mode; the old code read past the end of the buffer here).
+			uint8_t val = PRG[prg_address & (PRGSize - 1)];
 
 			if (!cpu_data_dirty)
 			{

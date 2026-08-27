@@ -72,20 +72,23 @@ namespace CartPcb
 		{
 			const ChipDesc* desc = c->chip->GetDesc();
 
-			for (size_t n = 0; n < desc->pins.size(); n++)
+			size_t inIdx = 0;
+			size_t outIdx = 0;
+
+			for (auto& pin : desc->pins)
 			{
-				if (desc->pins[n].output)
+				if (pin.output)
 				{
-					c->outputPinIndex[desc->pins[n].name] = n;
+					c->outputPinIndex[pin.name] = outIdx++;
 				}
 				else
 				{
-					c->inputPinIndex[desc->pins[n].name] = n;
+					c->inputPinIndex[pin.name] = inIdx++;
 				}
 			}
 
-			c->chipInputs.resize(c->inputPinIndex.size());
-			c->chipOutputs.resize(c->outputPinIndex.size());
+			c->chipInputs.resize(inIdx);
+			c->chipOutputs.resize(outIdx);
 		}
 
 		components.push_back(std::unique_ptr<Component>(c));

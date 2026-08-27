@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "board": {
+    "type": "SGROM",
+    "components": {
+      "prg": { "kind": "rom", "bus": "cpu" },
+      "chr": { "kind": "rom", "bus": "ppu" },
+      "mmc1": { "kind": "chip", "chip": "MMC1" }
+    },
+    "circuit": {
+      "mirroring": { "mode": "mapper", "net": "mmc1.VRAM_A10" },
+      "cpu": {
+        "prg": { "chip": "prg", "n_cs": "mmc1.PRG_nCE", "addr": "mmc1.PRG_A17..PRG_A14 | cpu_addr[13:0]" }
+      },
+      "ppu": {
+        "chr": { "chip": "chr", "n_cs": "!nPA13", "n_oe": "nRD", "addr": "mmc1.CHR_A16..CHR_A12 | ppu_addr[11:0]" }
+      },
+      "nets": [
+        { "name": "mmc1.M2",      "from": "M2" },
+        { "name": "mmc1.nROMSEL", "from": "nROMSEL" },
+        { "name": "mmc1.CPU_RnW", "from": "RnW" },
+        { "name": "mmc1.CPU_A13", "from": "cpu_addr[13]" },
+        { "name": "mmc1.CPU_A14", "from": "cpu_addr[14]" },
+        { "name": "mmc1.CPU_D0",  "from": "cpu_data[0]" },
+        { "name": "mmc1.CPU_D7",  "from": "cpu_data[7]" },
+        { "name": "mmc1.PPU_A10", "from": "ppu_addr[10]" },
+        { "name": "mmc1.PPU_A11", "from": "ppu_addr[11]" },
+        { "name": "mmc1.PPU_A12", "from": "ppu_addr[12]" }
+      ]
+    }
+  }
+}

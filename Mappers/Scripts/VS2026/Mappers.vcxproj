@@ -23,7 +23,6 @@
     <ClInclude Include="..\..\AOROM.h" />
     <ClInclude Include="..\..\CartridgeFactory.h" />
     <ClInclude Include="..\..\Mappers.h" />
-    <ClInclude Include="..\..\MMC1.h" />
     <ClInclude Include="..\..\MMC1_Based.h" />
     <ClInclude Include="..\..\NES_Header.h" />
     <ClInclude Include="..\..\NROM.h" />
@@ -34,7 +33,6 @@
     <ClCompile Include="..\..\AbstractCartridge.cpp" />
     <ClCompile Include="..\..\AOROM.cpp" />
     <ClCompile Include="..\..\CartridgeFactory.cpp" />
-    <ClCompile Include="..\..\MMC1.cpp" />
     <ClCompile Include="..\..\MMC1_Based.cpp" />
     <ClCompile Include="..\..\NROM.cpp" />
     <ClCompile Include="..\..\pch.cpp">
@@ -48,6 +46,11 @@
   <ItemGroup>
     <None Include="..\..\Readme.md" />
     <None Include="..\..\Readme_ru.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Chips\MMC1\Scripts\VS2026\MMC1.vcxproj">
+      <Project>{7c38b2ca-4e0e-4d2c-8ada-25d08dec7b34}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -98,8 +98,9 @@ add_executable (breaknes
 	Mappers/AOROM.cpp
 	Mappers/NROM.cpp
 	Mappers/UNROM.cpp
-	Mappers/MMC1.cpp
 	Mappers/MMC1_Based.cpp
+
+	Chips/MMC1/MMC1.cpp
 
 	# CartPcb
 

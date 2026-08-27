@@ -2,6 +2,11 @@
 
 #pragma once
 
+namespace Chips
+{
+	class MMC1;
+}
+
 namespace Mappers
 {
 	class MMC1_Based : public AbstractCartridge
@@ -17,7 +22,7 @@ namespace Mappers
 		uint8_t* RAM = nullptr;
 		size_t RAMSize = 0;
 
-		MMC1* mmc = nullptr;
+		Chips::MMC1* mmc = nullptr;
 
 	public:
 		MMC1_Based(ConnectorType p1, uint8_t* nesImage, size_t nesImageSize);

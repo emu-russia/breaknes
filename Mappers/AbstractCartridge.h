@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "../Common/BaseLogicLib/BaseLogic.h"
 #include "../CartPcb/CartPcbPort.h"
 
 namespace Mappers

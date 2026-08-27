@@ -30,5 +30,10 @@
   "HVC-AOROM": "aorom.json",
   "NES-AMROM": "aorom.json",
   "NES-ANROM": "aorom.json",
-  "NES-AOROM": "aorom.json"
+  "NES-AOROM": "aorom.json",
+
+  "HVC-SGROM": "sgrom.json",
+  "NES-SGROM": "sgrom.json",
+  "HVC-SLROM": "sgrom.json",
+  "NES-SLROM": "sgrom.json"
 }

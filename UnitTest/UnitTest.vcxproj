@@ -168,6 +168,7 @@
     <ClCompile Include="EventLog.cpp" />
     <ClCompile Include="JsonLibTest.cpp" />
     <ClCompile Include="LS139UnitTest.cpp" />
+    <ClCompile Include="MMC1Test.cpp" />
     <ClCompile Include="..\Breaknes\BreaksCore\DebugHub.cpp" />
     <ClCompile Include="..\Breaknes\BreaksCore\NintendulatorLog.cpp" />
     <ClCompile Include="NintendulatorLogTest.cpp" />
@@ -196,6 +197,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Chips\M6502Core\Scripts\VS2026\M6502Core.vcxproj">
       <Project>{75210c0a-a812-4246-a179-b50d8a25a121}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Chips\MMC1\Scripts\VS2026\MMC1.vcxproj">
+      <Project>{7c38b2ca-4e0e-4d2c-8ada-25d08dec7b34}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Chips\APUSim\Scripts\VS2026\APUSim.vcxproj">
       <Project>{50e93d78-36dc-46c3-82ea-cab373e18729}</Project>

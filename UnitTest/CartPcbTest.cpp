@@ -111,9 +111,35 @@ namespace UnitTest
 			return PcbFactory::Create(json, image, error);
 		}
 
+		const char* SGROM_BOARD =
+			"{ \"schemaVersion\" : 1,"
+			"  \"board\" : { \"type\" : \"HVC-SGROM\", \"pcb\" : \"HVC-SGROM-03\", \"mapper\" : 1,"
+			"    \"components\" : {"
+			"      \"prg\" : { \"kind\" : \"rom\", \"bus\" : \"cpu\" },"
+			"      \"chr\" : { \"kind\" : \"rom\", \"bus\" : \"ppu\" },"
+			"      \"mmc1\" : { \"kind\" : \"chip\", \"chip\" : \"MMC1\" } },"
+			"    \"circuit\" : {"
+			"      \"mirroring\" : { \"mode\" : \"mapper\", \"net\" : \"mmc1.VRAM_A10\" },"
+			"      \"cpu\" : {"
+			"        \"prg\" : { \"chip\" : \"prg\", \"n_cs\" : \"mmc1.PRG_nCE\", \"addr\" : \"mmc1.PRG_A17..PRG_A14 | cpu_addr[13:0]\" } },"
+			"      \"ppu\" : {"
+			"        \"chr\" : { \"chip\" : \"chr\", \"n_cs\" : \"!nPA13\", \"n_oe\" : \"nRD\", \"addr\" : \"mmc1.CHR_A16..CHR_A12 | ppu_addr[11:0]\" } },"
+			"      \"nets\" : ["
+			"        { \"name\" : \"mmc1.M2\",      \"from\" : \"M2\" },"
+			"        { \"name\" : \"mmc1.nROMSEL\", \"from\" : \"nROMSEL\" },"
+			"        { \"name\" : \"mmc1.CPU_RnW\", \"from\" : \"RnW\" },"
+			"        { \"name\" : \"mmc1.CPU_A13\", \"from\" : \"cpu_addr[13]\" },"
+			"        { \"name\" : \"mmc1.CPU_A14\", \"from\" : \"cpu_addr[14]\" },"
+			"        { \"name\" : \"mmc1.CPU_D0\",  \"from\" : \"cpu_data[0]\" },"
+			"        { \"name\" : \"mmc1.CPU_D7\",  \"from\" : \"cpu_data[7]\" },"
+			"        { \"name\" : \"mmc1.PPU_A10\", \"from\" : \"ppu_addr[10]\" },"
+			"        { \"name\" : \"mmc1.PPU_A11\", \"from\" : \"ppu_addr[11]\" },"
+			"        { \"name\" : \"mmc1.PPU_A12\", \"from\" : \"ppu_addr[12]\" } ] } } }";
+
 		// One scripted bus state for the parity tests.
 		struct Step
 		{
+			TriState M2 = TriState::One;
 			TriState nROMSEL = TriState::One;
 			TriState RnW = TriState::One;
 			TriState nRD = TriState::One;
@@ -137,8 +163,8 @@ namespace UnitTest
 				in2[n] = TriState::One;
 			}
 
-			in1[(size_t)CartInput::M2] = TriState::One;
-			in2[(size_t)CartInput::M2] = TriState::One;
+			in1[(size_t)CartInput::M2] = s.M2;
+			in2[(size_t)CartInput::M2] = s.M2;
 			in1[(size_t)CartInput::nROMSEL] = s.nROMSEL;
 			in2[(size_t)CartInput::nROMSEL] = s.nROMSEL;
 			in1[(size_t)CartInput::RnW] = s.RnW;
@@ -171,12 +197,21 @@ namespace UnitTest
 			b.sim(in2, out2, s.cpu_addr, &c2, d2, s.ppu_addr, &p2, pd2, nullptr, nullptr, e2);
 
 			if (c1 != c2 || d1 != d2 || p1 != p2 || pd1 != pd2)
+			{
+				Logger::WriteMessage(("PARITY DIFF cpu_data=" + std::to_string(c1) + " vs " + std::to_string(c2) +
+					" cpu_dirty=" + std::to_string(d1) + "/" + std::to_string(d2) +
+					" ppu_data=" + std::to_string(p1) + "/" + std::to_string(p2) +
+					" ppu_dirty=" + std::to_string(pd1) + "/" + std::to_string(pd2)).c_str());
 				return false;
+			}
 
 			for (size_t n = 0; n < (size_t)CartOutput::Max; n++)
 			{
 				if (out1[n] != out2[n])
+				{
+					Logger::WriteMessage(("PARITY DIFF out[" + std::to_string(n) + "]=" + std::to_string((int)out1[n]) + " vs " + std::to_string((int)out2[n])).c_str());
 					return false;
+				}
 			}
 
 			return true;
@@ -647,6 +682,109 @@ namespace UnitTest
 						r.ppu_addr = (uint16_t)(off * 0x77);
 						Assert::IsTrue(ParityStep(old, nw, r));
 					}
+				}
+			}
+
+			dbg_hub = saved;
+		}
+
+		/// <summary>
+		/// Drive one 5-bit MMC1 serial register write (MSB first) through both
+		/// cartridges. D7=1 on the first bit resets the shift register, which is
+		/// how real games start a register write.
+		/// </summary>
+		void MMC1SerialWrite(Mappers::AbstractCartridge& a, Mappers::AbstractCartridge& b, uint8_t value, int a13, int a14)
+		{
+			for (int bit = 4; bit >= 0; bit--)
+			{
+				bool bv = (value >> bit) & 1;
+
+				// A CPU write to the MMC1 is signaled by /ROMSEL + RnW; the PPU
+				// strobes nRD/nWR stay inactive (on the real board they are the
+				// PPU's own strobes and are never asserted during CPU access).
+				Step s;
+				s.M2 = TriState::One;
+				s.nROMSEL = TriState::Zero;
+				s.RnW = TriState::Zero;
+				s.nRD = TriState::One;
+				s.nWR = TriState::One;
+				s.cpu_addr = (uint16_t)((a14 << 14) | (a13 << 13));
+				s.cpu_data = (bv ? 1 : 0) | (bit == 4 ? 0x80 : 0);
+				Assert::IsTrue(ParityStep(a, b, s));
+
+				Step s2 = s;
+				s2.M2 = TriState::Zero;
+				Assert::IsTrue(ParityStep(a, b, s2));
+
+				Step s3;
+				s3.M2 = TriState::One;
+				s3.nROMSEL = TriState::One;
+				s3.RnW = TriState::One;
+				Assert::IsTrue(ParityStep(a, b, s3));
+			}
+		}
+
+		TEST_METHOD(TestParitySgrom)
+		{
+			// 256K PRG: with the MMC1 in 32K mode and high banks the PRG address
+			// reaches $3C000, which exceeds a 128K PRG. The legacy implementation
+			// reads past the end of the buffer in that case (a latent bug), so the
+			// test uses a 256K image where both paths stay in bounds.
+			uint8_t image[16 + 0x40000 + 0x2000];
+			memset(image, 0, sizeof(image));
+
+			image[0] = 'N'; image[1] = 'E'; image[2] = 'S'; image[3] = 0x1A;
+			image[4] = 16;	// 256K PRG
+			image[5] = 1;	// 8K CHR
+			image[6] = 0;
+			image[7] = 1;	// mapper 1
+
+			for (size_t i = 0; i < 0x40000; i++) image[16 + i] = (uint8_t)(i >> 14);
+			for (size_t i = 0; i < 0x2000; i++) image[16 + 0x40000 + i] = (uint8_t)(i * 3);
+
+			DebugHub hub;
+			DebugHub* saved = dbg_hub;
+			dbg_hub = &hub;
+
+			{
+				Mappers::MMC1_Based old(ConnectorType::FamicomStyle, image, sizeof(image));
+				Assert::IsTrue(old.Valid());
+
+				CartImage ci;
+				ci.prg = image + 16;
+				ci.prgSize = 0x40000;
+				ci.chr = image + 16 + 0x40000;
+				ci.chrSize = 0x2000;
+
+				std::string error;
+				Pcb* pcb = MakePcb(SGROM_BOARD, ci, error);
+				Assert::IsTrue(pcb != nullptr);
+				CartPcbCartridge nw(ConnectorType::FamicomStyle, pcb);
+
+				// Reset the shift register, then write the PRG bank register (reg3).
+				MMC1SerialWrite(old, nw, 0x00, 0, 0);	// reg0: control (mode 0, D4=0...)
+
+				// reg3: PRG bank
+				for (int bank = 0; bank < 8; bank++)
+				{
+					MMC1SerialWrite(old, nw, (uint8_t)bank, 1, 1);
+
+					for (int off = 0; off < 8; off++)
+					{
+						Step r;
+						r.nROMSEL = TriState::Zero;
+						r.cpu_addr = (uint16_t)(off * 0x100);
+						Assert::IsTrue(ParityStep(old, nw, r));
+
+						r.cpu_addr = (uint16_t)(0x4000 + off * 0x100);
+						Assert::IsTrue(ParityStep(old, nw, r));
+					}
+				}
+
+				// Compare the debug PRG reads too (bank math).
+				for (size_t addr = 0x8000; addr < 0x10000; addr += 0x111)
+				{
+					Assert::IsTrue(old.Dbg_ReadPRGByte(addr) == nw.Dbg_ReadPRGByte(addr));
 				}
 			}
 
