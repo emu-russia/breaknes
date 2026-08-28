@@ -72,14 +72,16 @@ namespace Chips
 
 	class MMC1
 	{
+	private:
 		int div_clock_dff = 0;
 		int div_reset_dff = 0;
+		int d7_settled = 0;
 		int div_dff[4]{};		// Addressed individually for simplification
 		int prev_div_dff[4]{};		// Previous divider DFFs values
 		int cpu_d0_dff = 0;
 		int shifter_dffs = 0;	// 5 bit
 		int decoder_dffs = 0;	// 2 bit (A13+A14)
-		MMC1_Reg reg[4]{};			// All registers are 5 bits each. All bits are latches except bits 2 and 3 for Reg0 (they are DFF+Enable)
+		MMC1_Reg reg[4]{};			// All registers are 5 bits each. All bits are latches except bits 2 and 3 for Reg0 (they are DFFs with async set on the D7 reset write).
 
 		static bool posedge(int prev, int cur);
 

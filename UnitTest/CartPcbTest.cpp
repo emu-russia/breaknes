@@ -31,7 +31,7 @@ namespace UnitTest
 			"      \"chr\" : { \"kind\" : \"rom\", \"bus\" : \"ppu\", \"size\" : 8192 } },"
 			"    \"circuit\" : {"
 			"      \"mirroring\" : { \"mode\" : \"hardwired\", \"h\" : 0, \"v\" : 1 },"
-			"      \"cpu\" : { \"prg\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL\", \"addr\" : \"cpu_addr[13:0]\" } },"
+			"      \"cpu\" : { \"prg\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL\", \"addr\" : \"cpu_addr[14:0]\" } },"
 			"      \"ppu\" : { \"chr\" : { \"chip\" : \"chr\", \"n_cs\" : \"!nPA13\", \"n_oe\" : \"nRD\", \"addr\" : \"ppu_addr[12:0]\" } },"
 			"      \"nets\" : [] } } }";
 
@@ -234,6 +234,7 @@ namespace UnitTest
 			uint8_t prg[32768]{};
 			uint8_t chr[8192]{};
 			prg[0x1234] = 0xAB;
+			prg[0x4234] = 0x5A;	// second 16 KiB of the 32 KiB PRG
 			chr[0x456] = 0xCD;
 
 			CartImage image;
@@ -253,6 +254,13 @@ namespace UnitTest
 			b.Sim(pcb, 0x9234, 0x2000);
 			Assert::IsTrue(b.cpu_dirty == true);
 			Assert::IsTrue(b.cpu_data == 0xAB);
+
+			// CPU read $C234: the second 16 KiB of a 32 KiB NROM-256 PRG
+			// (the full 15-bit address must reach it).
+			b.SetDefaults();
+			b.Sim(pcb, 0xC234, 0x2000);
+			Assert::IsTrue(b.cpu_dirty == true);
+			Assert::IsTrue(b.cpu_data == 0x5A);
 
 			// CPU read below $8000: cartridge does not drive the bus
 			b.SetDefaults();

@@ -9,7 +9,7 @@
     "circuit": {
       "mirroring": { "mode": "hardwired", "h": 0, "v": 1 },
       "cpu": {
-        "prg": { "chip": "prg", "n_cs": "nROMSEL", "addr": "cpu_addr[13:0]" }
+        "prg": { "chip": "prg", "n_cs": "nROMSEL", "addr": "cpu_addr[14:0]" }
       },
       "ppu": {
         "chr": { "chip": "chr", "n_cs": "!nPA13", "n_oe": "nRD", "addr": "ppu_addr[12:0]" }
