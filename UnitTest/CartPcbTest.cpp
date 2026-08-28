@@ -46,7 +46,7 @@ namespace UnitTest
 			"      \"mirroring\" : { \"mode\" : \"hardwired\", \"h\" : 1, \"v\" : 0 },"
 			"      \"cpu\" : {"
 			"        \"prg_lo\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL | cpu_addr[14]\", \"addr\" : \"bank.Q2..Q0 | cpu_addr[13:0]\" },"
-			"        \"prg_hi\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL | !cpu_addr[14]\", \"addr\" : \"bank.Q2 | vdd | vdd | cpu_addr[13:0]\" },"
+			"        \"prg_hi\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL | !cpu_addr[14]\", \"addr\" : \"vdd | vdd | vdd | cpu_addr[13:0]\" },"
 			"        \"bank\" : { \"clk\" : \"nROMSEL\", \"n_we\" : \"RnW\" } },"
 			"      \"ppu\" : { \"chr\" : { \"n_cs\" : \"!nPA13\", \"n_oe\" : \"nRD\", \"addr\" : \"ppu_addr[12:0]\" } },"
 			"      \"nets\" : [] } } }";
@@ -256,9 +256,11 @@ namespace UnitTest
 			uint8_t prg[131072]{};
 			uint8_t chr[8192]{};
 
+			// Fill pattern: the 16 KiB bank index, so banks 3 and 7 (and the
+			// $8000/$C000 windows) are distinguishable.
 			for (size_t n = 0; n < sizeof(prg); n++)
 			{
-				prg[n] = (uint8_t)(n >> 8);		// bank index in the high byte
+				prg[n] = (uint8_t)(n >> 14);
 			}
 
 			CartImage image;
@@ -273,6 +275,12 @@ namespace UnitTest
 
 			Bus b;
 
+			// The $C000-$FFFF window is hardwired to the LAST 16 KiB bank even
+			// before any bank register write (the reset vector lives there).
+			b.SetDefaults();
+			b.Sim(pcb, 0x4100, 0x2000);
+			Assert::IsTrue(b.cpu_data == (uint8_t)((7 * 0x4000 + 0x100) >> 14));
+
 			// Write $8000 with data 5 -> bank register = 5
 			b.SetDefaults();
 			b.in[(size_t)CartInput::RnW] = TriState::Zero;
@@ -285,15 +293,16 @@ namespace UnitTest
 			b.SetDefaults();
 			b.Sim(pcb, 0x0100, 0x2000);
 			Assert::IsTrue(b.cpu_dirty == true);
-			Assert::IsTrue(b.cpu_data == (uint8_t)((5 * 0x4000 + 0x100) >> 8));
+			Assert::IsTrue(b.cpu_data == (uint8_t)((5 * 0x4000 + 0x100) >> 14));
 
-			// Read $C000+0x100 (cart $4100): fixed bank (Q2=1 -> bank 7)
+			// Read $C000+0x100 (cart $4100): still the last bank, independent of Q
 			b.SetDefaults();
 			b.Sim(pcb, 0x4100, 0x2000);
-			Assert::IsTrue(b.cpu_data == (uint8_t)((7 * 0x4000 + 0x100) >> 8));
+			Assert::IsTrue(b.cpu_data == (uint8_t)((7 * 0x4000 + 0x100) >> 14));
 
 			// Dbg_ReadPRGByte must reflect the bank state
-			Assert::IsTrue(pcb->Dbg_ReadPRGByte(0x8100) == (uint8_t)((5 * 0x4000 + 0x100) >> 8));
+			Assert::IsTrue(pcb->Dbg_ReadPRGByte(0x8100) == (uint8_t)((5 * 0x4000 + 0x100) >> 14));
+			Assert::IsTrue(pcb->Dbg_ReadPRGByte(0xC100) == (uint8_t)((7 * 0x4000 + 0x100) >> 14));
 
 			delete pcb;
 		}
