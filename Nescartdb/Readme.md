@@ -156,7 +156,7 @@ Direct mapping of the XML structure:
 | SDL port | Same native path as BreaksCore. |
 | PPUPlayer / APUPlayer | Use the same `Nescartdb` data via the native core or their own copy. |
 
-**Deployment**: the `Nescartdb/` files are copied to the output directory on build (like other data files). Native code locates them relative to the executable; a command-line override (`--nescartdb <path>`) is planned.
+**Deployment**: the `Nescartdb/` files (including `boards/*.json`) are copied to the output directory on build (`Breaknes.csproj` and `BreaknesSDL.vcxproj` copy them next to the executable). Native code locates them relative to the executable: the managed app passes its base directory via `SetNescartdbDir`; the SDL port uses the `Nescartdb` folder next to the executable (override with the `NESCARDB_DIR` environment variable). Custom boards go to the user board directory (`CustomBoards/` next to the executable by default in the managed app, configurable via `SetUserBoardsDir`).
 
 ## 7. Versioning & regeneration policy
 

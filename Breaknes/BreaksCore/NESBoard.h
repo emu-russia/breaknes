@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 namespace Breaknes
 {
@@ -44,10 +44,10 @@ namespace Breaknes
 		BaseBoard::LS373 PPUAddrLatch;
 		uint8_t LatchedAddr = 0;
 
-		// NES Board specific ⚠️
+		// NES Board specific вљ пёЏ
 		// TBD: CIC :=P
 
-		// NES Board specific ⚠️
+		// NES Board specific вљ пёЏ
 		// TBD: Expansion port
 		
 		uint16_t exp_bus = 0;
@@ -76,7 +76,7 @@ namespace Breaknes
 		BaseLogic::TriState VRAM_nCE = BaseLogic::TriState::X;
 		BaseLogic::TriState PPU_nA13 = BaseLogic::TriState::X;		// To save millions of inverters inside the cartridges
 
-		// NES Board specific I/O ⚠️
+		// NES Board specific I/O вљ пёЏ
 		BaseBoard::LS368 P4_IO;
 		BaseBoard::LS368 P5_IO;
 		BaseLogic::TriState nRDP0 = BaseLogic::TriState::X;
@@ -143,7 +143,7 @@ namespace Breaknes
 #pragma endregion "Debug, look away"
 
 	public:
-		NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1);
+		NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1);
 		virtual ~NESBoard();
 
 		void Step() override;

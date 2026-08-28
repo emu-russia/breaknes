@@ -4,27 +4,27 @@ Functional simulation of NES/Famicom/Dendy cartridge **PCBs** (printed circuit b
 
 A cartridge is simulated as a physical board: a set of components (memory chips, mapper chips, discrete logic) and the wires (nets) that connect them to each other and to the cartridge edge connector. The description of a board is data — a JSON document — not C++ code.
 
-CartPcb is the planned successor of the `Mappers` component. It is designed to replace `Mappers` completely and to solve every problem listed in `Mappers/Readme.md`.
+CartPcb is the successor of the retired `Mappers` component (issue #509). It replaced `Mappers` completely and solved every problem listed in the old `Mappers/Readme.md`.
 
 ---
 
 ## 1. Motivation
 
-The `Mappers` component (see `Mappers/Readme.md`) accumulated the following problems, all of which CartPcb is designed to solve:
+The retired `Mappers` component had accumulated the following problems, all of which CartPcb solves:
 
-| # | Problem (from `Mappers/Readme.md`) | How CartPcb solves it |
+| # | Problem (from the old `Mappers/Readme.md`) | How CartPcb solves it |
 |---|-------------------------------------|------------------------|
 | 1 | Working with memory dumps (PRG/CHR) is unclear; the CHR region is called "CHR-ROM", PRG is not supported at all. | CartPcb works with **explicit image dumps**: `CartImage` carries PRG and CHR images, sized and named per the PCB definition. CHR is just the CHR image; nothing is called "CHR-ROM" anymore. |
 | 2 | Emulation of `.nes` mappers is chaotic: translating an iNES mapper number into board components, with no way to express the many hardware variations of the same mapper. | CartPcb is **PCB-centric and data-driven**. A board is a JSON document listing components and wiring. The same mapper chip (e.g. MMC1) wired differently = a different board JSON, not a fork of C++ code. |
 | 3 | No ROM chip support; everything is a raw byte array. | CartPcb uses `RomChip` (JEDEC-style ROM, `Common/BaseBoardLib`) and the reworked `SRAM` (`Common/BaseBoardLib`), with `/CE` / `/OE` / `/WE` / address / data / `dz` semantics. |
-| 4 | MMC1 emulation needs debugging; the divider is likely wrong. | MMC1 is extracted from Mappers into `Chips` as a standalone chip class with its own unit tests. CartPcb only wires chips into boards; it does not implement chips. |
+| 4 | MMC1 emulation needs debugging; the divider is likely wrong. | MMC1 was extracted from Mappers into `Chips` as a standalone chip class with its own unit tests. CartPcb only wires chips into boards; it does not implement chips. |
 
 In addition, the issue #508 specifies these architectural motivations:
 
-- **No iNES dependency for identification.** iNES headers and iNES mapper numbers are rigid and lossy (many real boards share a mapper number but differ electrically). They are kept only as a legacy fallback.
+- **No iNES dependency for identification.** iNES headers and iNES mapper numbers are rigid and lossy (many real boards share a mapper number but differ electrically).
 - **Identification by nescartdb.** Cartridge/PCB type is identified by the CRC32 of the PRG/CHR images using the nescartdb database (converted to JSON, see `Nescartdb/Readme.md`).
 - **JSONES becomes a subset.** A custom, user-authored PCB JSON (single-cartridge format, see §6.5) is a valid CartPcb input, so researchers can describe unlicensed/undocumented PCBs (e.g. krzysiobal's collection) without touching iNES.
-- **`Mappers` is fully retired.** The cartridge-port contract (today's `Mappers::AbstractCartridge`) moves into CartPcb (see §7.5).
+- **`Mappers` is fully retired.** The cartridge-port contract (the former `Mappers::AbstractCartridge`) lives in CartPcb (see §7.5).
 - **MMC1 lives in Chips.** CartPcb is *only* for PCB simulation.
 
 ## 2. Scope
@@ -95,7 +95,7 @@ A board is described by a JSON document with two parts:
         "prg": { "chip": "prg", "n_cs": "nROMSEL", "addr": "cpu_addr[13:0]" }
       },
       "ppu": {
-        "chr": { "chip": "chr", "n_cs": "nPA13", "addr": "ppu_addr[12:0]" }
+        "chr": { "chip": "chr", "n_cs": "!nPA13", "addr": "ppu_addr[12:0]" }
       },
       "nets": []
     }
@@ -106,7 +106,7 @@ A board is described by a JSON document with two parts:
 Notes:
 - Sizes are in **bytes** (nescartdb's `"256k"` is converted to `32768` by the conversion tool).
 - `cpu_addr`, `ppu_addr` and the connector signals (`nROMSEL`, `nPA13`, `RnW`, `nRD`, `nWR`, `M2`, ...) are the predefined net sources; the full signal set is defined in §7.2.
-- `prg` with `n_cs = nROMSEL` reproduces the classic NROM PRG decode; the CHR chip is enabled by `nPA13` (PPU `A13`), exactly as in the current `NROM` implementation but expressed as data.
+- `prg` with `n_cs = nROMSEL` reproduces the classic NROM PRG decode; the CHR chip is enabled by `!nPA13` (on NROM boards the CHR `/CE` is tied to PPU `A13`, low for `$0000-$1FFF`; `nPA13 = !A13`), exactly as in the current `NROM` implementation but expressed as data.
 - `kind: rom` components are instantiated as `BaseBoardLib::RomChip` (JEDEC-style), `kind: ram` as `BaseBoardLib::SRAM`. `PcbFactory` loads the PRG/CHR images into the ROM chips; the wiring attaches the chips' pins.
 
 ### 5.2 Example: MMC1-based board (SGROM, mapper 1)
@@ -130,14 +130,14 @@ Notes:
         "prg": {
           "chip": "prg",
           "n_cs": "mmc1.PRG_nCE",
-          "addr": "cpu_addr[13:0] | mmc1.PRG_A14..PRG_A17"
+          "addr": "mmc1.PRG_A17..PRG_A14 | cpu_addr[13:0]"
         }
       },
       "ppu": {
         "chr": {
           "chip": "chr",
-          "n_cs": "nPA13",
-          "addr": "ppu_addr[12:0] | mmc1.CHR_A12..CHR_A16"
+          "n_cs": "!nPA13",
+          "addr": "mmc1.CHR_A16..CHR_A12 | ppu_addr[11:0]"
         }
       },
       "nets": [
@@ -163,7 +163,7 @@ This is the exact hardware structure the old `MMC1_Based` implemented in C++ —
 
 Because nescartdb only describes the component inventory, CartPcb adds a `circuit` section. Its exact expression language is finalized in the implementation issue; the concepts are:
 
-- **Bus attachments** (`cpu` / `ppu`): for each memory component (a `RomChip` or `SRAM`), the chip-select (`n_cs`), output-enable (`n_oe`), write-enable (`n_we`) and address sources. Address sources can combine bus bits and chip outputs (`cpu_addr[13:0] | mmc1.PRG_A14..PRG_A17`), which is how bank switching is expressed.
+- **Bus attachments** (`cpu` / `ppu`): for each memory component (a `RomChip` or `SRAM`), the chip-select (`n_cs`), output-enable (`n_oe`), write-enable (`n_we`) and address sources. Address sources can combine bus bits and chip outputs (`mmc1.PRG_A17..PRG_A14 | cpu_addr[13:0]`), which is how bank switching is expressed. Concatenation is MSB-first: the left term occupies the highest address bits, so MMC1's `PRG_A17..PRG_A14` (descending) maps `PRG_A14` to address bit 14.
 - **Mirroring**: `hardwired` (from `pad h/v`) or `mapper` (a net driven by a chip output, e.g. `mmc1.VRAM_A10`).
 - **Nets**: named connections between chip pins and bus signals, written as a flat list of `name` / `from` pairs. Any net can be used as `n_cs` / `n_oe` / `n_we` / address source / mirroring source, so arbitrary discrete-logic wiring (e.g. LS139-based decoders, UNROM's `nROMSEL`/`A14` decode) is expressible without new C++.
 
@@ -238,18 +238,19 @@ Any single-cartridge board JSON (§5) can be provided by the user:
 - Location: a user data directory (decided in the implementation issue; candidates: next to the executable, `%APPDATA%`, or a `CustomBoards/` folder passed on the command line).
 - Loading order: built-in `Nescartdb` data first; user JSONs are merged on top (a user file with the same `board.type` overrides the built-in; a user file with a new type is added).
 - Use case: describing unlicensed/undocumented PCBs (krzysiobal's collection, Famiclones, etc.) that cannot be expressed via iNES mapper numbers.
+- Identification bypass: for a board that is not in the nescartdb index (no CRC match possible), the host application can force a board type (`CartPcb::SetForcedBoardType`, exported as `SetForcedBoardType` in the Core API); the board definition is then loaded directly from the built-in/user board JSONs.
 
 ## 7. Simulation model
 
 ### 7.1 Edge-connector contract
 
-Defines the cartridge port — the signal contract of today's `Mappers::AbstractCartridge`, now part of CartPcb:
+Defines the cartridge port — the signal contract of the former `Mappers::AbstractCartridge`, which now lives in CartPcb (`CartPcb::Cartridge`):
 
 - Inputs (`CartInput`): `M2`, `nROMSEL`, `RnW`, `nRD`, `nWR`, `nPA13`, and NES-only `SYSTEM_CLK`, `CIC_CLK`, `CIC_TO_CART`.
 - Outputs (`CartOutput`): `VRAM_A10`, `VRAM_nCS`, `nIRQ`, and NES-only `CIC_RST`, `CIC_TO_MB`.
-- Famicom audio out (`CartAudioOutSignal`) and NES expansion port (`exp`) as today.
+- Famicom audio out (`CartAudioOutSignal`) and NES expansion port (`exp`).
 
-A `CartPcbCartridge` owns a `Pcb` and forwards the edge-connector signals into it. Motherboards (`Breaknes/BreaksCore/NESBoard.cpp`, `FamicomBoard.cpp`) do not change.
+A `CartPcbCartridge` owns a `Pcb` and forwards the edge-connector signals into it. Motherboards (`Breaknes/BreaksCore/NESBoard.cpp`, `FamicomBoard.cpp`) use `CartPcb::Cartridge*`.
 
 ### 7.2 Net sources
 
@@ -285,13 +286,11 @@ The PPU's internal 2 KiB VRAM and its `VRAM_A10` line are simply called **VRAM**
 
 ### 7.5 Relationship to existing components
 
-| Component | Role after migration |
-|-----------|----------------------|
-| `Mappers::AbstractCartridge` | **Retired with `Mappers`.** The cartridge-port contract (inputs/outputs/debug) becomes part of CartPcb (`CartPcbCartridge`). |
-| `Mappers::CartridgeFactory` | Replaced by `PcbFactory` + `NesCartDb` + legacy fallback. The iNES header is parsed only to extract PRG/CHR dumps and for the legacy fallback. |
-| `Mappers` component (entire folder) | **Fully retired.** All files removed; `Mappers/Readme.md` is replaced by this document; build files (`CMakeLists.txt`, VS projects) updated. |
-| `Mappers::NROM/UNROM/AOROM/MMC1_Based` | Deleted once the equivalent boards pass parity tests (see §10). |
-| `Mappers::MMC1` | Moved to `Chips/MMC1` (with unit tests; the divider gets fixed there). |
+| Component | Role |
+|-----------|------|
+| `CartPcb::Cartridge` | The cartridge-port contract (inputs/outputs/debug); the former `Mappers::AbstractCartridge`. `CartPcbCartridge` implements it. |
+| `Mappers` component | **Retired** (issue #509). The whole folder was removed; this document replaces the old `Mappers/Readme.md`; build files (`CMakeLists.txt`, VS projects) updated. |
+| `Chips/MMC1` | The MMC1 chip class (moved from Mappers), with unit tests. |
 | `Chips`, `BaseBoardLib` | Provide chip classes (`MMC1`, `RomChip`, `SRAM`) consumed by CartPcb. |
 | `Common/JsonLib` | JSON parsing for board JSONs and the nescartdb JSON. |
 | `Nescartdb/` | The converted database (identification data). |
@@ -301,35 +300,36 @@ The PPU's internal 2 KiB VRAM and its `VRAM_A10` line are simply called **VRAM**
 - Input: PRG image, CHR image. Identification is by the **CRC32 of the PRG and CHR dumps**; SHA1 is not used.
 - Lookup: build a map from PRG CRC + CHR CRC → cartridge → `board.type` once at load; find all cartridges whose PRG and CHR CRCs match the images.
 - Ambiguity: some dumps match multiple cartridges/boards (same ROMs on different PCBs). `NesCartDb` returns the full candidate list; the caller picks the first match or the one whose `system` fits the motherboard. This ambiguity is a *feature* compared to iNES: the information is surfaced instead of being silently lost.
-- Fallback: if no match, use the legacy iNES mapper path with a log message.
+- If no match is found, the cartridge is not loaded (no legacy iNES path anymore); a board not in the database can still be forced via `SetForcedBoardType` (§6.5).
 
 ## 9. Board coverage plan
 
-Boards are added incrementally, each as: board JSON(s) + unit test + parity test against the old implementation (while it exists):
+Boards are added incrementally, each as: board JSON(s) + unit test + (while the old implementation existed) parity test:
 
-1. **NROM** (`NES-NROM-128/256`, `HVC-NROM-*`, `IREM-NROM-*`, ...) — no mapper chip; PRG + CHR + hardwired mirroring. Covers the current `NROM`.
-2. **UxROM** (`NES-UNROM`, `NES-UOROM`, ...) — discrete logic PRG bank switch (A14), the current `UNROM`.
-3. **AxROM** (`NES-AOROM`, ...) — 1-screen mirroring via mapper writes, the current `AOROM`.
-4. **MMC1 family** (SGROM, SKROM, SLROM, SOROM, SNROM, ...) — `MMC1` chip from `Chips` wired per §5.2. Covers the current `MMC1_Based` and adds the missing MMC1 variants the old code could not express.
-5. **Next candidates**: MMC3 family, discrete logic boards (BxROM, CNROM, ...) — after the core is proven.
+1. **NROM** (`NES-NROM-128/256`, `HVC-NROM-*`, `IREM-NROM-*`, ...) — no mapper chip; PRG + CHR + hardwired mirroring. Replaces the old `NROM`.
+2. **UxROM** (`NES-UNROM`, `NES-UOROM`, ...) — discrete logic PRG bank switch (A14), 8 KiB CHR-RAM. Replaces the old `UNROM`.
+3. **AxROM** (`NES-AOROM`, `NES-ANROM`, ...) — 1-screen mirroring via mapper writes. Replaces the old `AOROM`.
+4. **MMC1 family** (SGROM, SLROM, ...) — `MMC1` chip from `Chips` wired per §5.2. Replaces the old `MMC1_Based`.
+5. **Next candidates**: MMC3 family, discrete logic boards (BxROM, CNROM, ...).
 
 ## 10. Migration checklist (Mappers → CartPcb)
 
-1. The cartridge-port contract (ex-`Mappers::AbstractCartridge`) moves into CartPcb; motherboards keep working unchanged.
-2. `CartImage` replaces raw `uint8_t* nesImage`; PRG and CHR are explicit, named, sized dumps loaded into `RomChip` instances.
-3. `RomChip` (JEDEC-style, in `BaseBoardLib`) and the reworked `SRAM` replace raw byte arrays; `Mappers/Readme.md` problem #3 is closed.
-4. `NesCartDb` (CRC32 only) + `PcbLoader` replace the iNES-mapper `switch` in `CartridgeFactory`; iNES remains only as fallback.
-5. `MMC1` moves to `Chips`; its divider is fixed and unit-tested; `Mappers/Readme.md` problem #4 is closed.
-6. NROM/UNROM/AOROM are re-expressed as board JSONs and pass parity tests; `Mappers/Readme.md` problems #1–2 are closed.
-7. The entire `Mappers` component is removed (including `AbstractCartridge` and `CartridgeFactory`); `Mappers/Readme.md` is replaced by `CartPcb/Readme.md`; build files updated.
-8. All consumers (managed `Breaknes`, SDL port, PPUPlayer, APUPlayer) locate the Nescartdb JSON and custom board dirs per `Nescartdb/Readme.md`.
+Completed in issue #509:
+
+1. The cartridge-port contract (ex-`Mappers::AbstractCartridge`) moved into CartPcb (`CartPcb::Cartridge`).
+2. `CartImage` replaced raw `uint8_t* nesImage`; PRG and CHR are explicit, named, sized dumps loaded into `RomChip` instances.
+3. `RomChip` (JEDEC-style, in `BaseBoardLib`) and the reworked `SRAM` replaced raw byte arrays.
+4. `NesCartDb` (CRC32 only) + `PcbLoader` + `PcbFactory` replaced the iNES-mapper `switch` in the old `CartridgeFactory`.
+5. `MMC1` moved to `Chips` (with unit tests); the legacy unmasked PRG read was fixed.
+6. NROM/UNROM/AOROM/SGROM/SLROM were re-expressed as board JSONs and passed A/B parity tests against the old implementations.
+7. The entire `Mappers` component was removed (including `AbstractCartridge` and `CartridgeFactory`); build files updated.
+8. All consumers locate the Nescartdb JSON and custom board dirs per `Nescartdb/Readme.md`.
 
 ## 11. Debug & testing
 
-- **Memory map**: each board registers its memory regions (PRG, CHR, WRAM, VRAM) as `MemDescriptor`s with per-chip `Dbg_ReadByte`/`Dbg_WriteByte`, preserving today's debugger memory view (and fixing the PRG support that was missing).
+- **Memory map**: each board registers its memory regions (PRG, CHR, WRAM) as `MemDescriptor`s with per-chip `Dbg_ReadByte`/`Dbg_WriteByte`, preserving the debugger memory view (and fixing the PRG support that was missing).
 - **Debug info**: boards expose debug entries per net/chip (category = board type), e.g. current PRG bank, `nROMSEL` state, mirroring mode.
-- **Unit tests** (`UnitTest/`): JSON parse → board instantiation; chip `n_CS`/`n_OE`/`n_WE` behavior; mirroring; bank-switch address math for each supported board.
-- **Parity tests**: while both implementations exist, run the same ROMs through old Mappers and new CartPcb and compare CPU/PPU register dumps and Nintendulator logs.
+- **Unit tests** (`UnitTest/`): JSON parse → board instantiation; chip `/CE`/`/OE`/`/WE` behavior; mirroring; bank-switch address math for each supported board; MMC1 chip tests; JSONES custom board loading.
 - **`Dbg_ReadPRGByte`** stays on the CartPcb cartridge port (used by the debugger and Nintendulator log disassembler); it derives from the PRG chip mapping.
 
 ## 12. Non-goals / future work

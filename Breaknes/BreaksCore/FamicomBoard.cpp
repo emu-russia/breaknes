@@ -1,4 +1,4 @@
-// https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/MB/Famicom.md
+﻿// https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/MB/Famicom.md
 
 // Instead of the signal designations /OE1,2 adopted in the nesdev.com community, we use the official names of these signals /RDP0,1
 
@@ -8,7 +8,7 @@ using namespace BaseLogic;
 
 namespace Breaknes
 {
-	FamicomBoard::FamicomBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
+	FamicomBoard::FamicomBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
 	{
 		// Big chips
 		core = new M6502Core::M6502(true, true);
@@ -121,7 +121,7 @@ namespace Breaknes
 		TriState ppu_outputs[(size_t)PPUSim::OutputPad::Max]{};
 
 		ppu_inputs[(size_t)PPUSim::InputPad::CLK] = CLK;
-		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = vdd;		// Famicom Board specific ⚠️
+		ppu_inputs[(size_t)PPUSim::InputPad::n_RES] = vdd;		// Famicom Board specific вљ пёЏ
 		ppu_inputs[(size_t)PPUSim::InputPad::RnW] = CPU_RnW;
 		ppu_inputs[(size_t)PPUSim::InputPad::RS0] = FromByte((addr_bus >> 0) & 1);
 		ppu_inputs[(size_t)PPUSim::InputPad::RS1] = FromByte((addr_bus >> 1) & 1);
@@ -147,17 +147,17 @@ namespace Breaknes
 
 		if (cart != nullptr)
 		{
-			TriState cart_in[(size_t)Mappers::CartInput::Max]{};
-			TriState cart_out[(size_t)Mappers::CartOutput::Max];
+			TriState cart_in[(size_t)CartPcb::CartInput::Max]{};
+			TriState cart_out[(size_t)CartPcb::CartOutput::Max];
 
 			bool unused;
 
-			cart_in[(size_t)Mappers::CartInput::nRD] = PPU_nRD;
-			cart_in[(size_t)Mappers::CartInput::nWR] = PPU_nWR;
-			cart_in[(size_t)Mappers::CartInput::nPA13] = PPU_nA13;
-			cart_in[(size_t)Mappers::CartInput::M2] = M2;
-			cart_in[(size_t)Mappers::CartInput::nROMSEL] = nROMSEL;
-			cart_in[(size_t)Mappers::CartInput::RnW] = CPU_RnW;
+			cart_in[(size_t)CartPcb::CartInput::nRD] = PPU_nRD;
+			cart_in[(size_t)CartPcb::CartInput::nWR] = PPU_nWR;
+			cart_in[(size_t)CartPcb::CartInput::nPA13] = PPU_nA13;
+			cart_in[(size_t)CartPcb::CartInput::M2] = M2;
+			cart_in[(size_t)CartPcb::CartInput::nROMSEL] = nROMSEL;
+			cart_in[(size_t)CartPcb::CartInput::RnW] = CPU_RnW;
 
 			CartridgeConnectorSimFailure1();
 
@@ -168,14 +168,14 @@ namespace Breaknes
 				&data_bus, data_bus_dirty,
 				ppu_addr,
 				&ad_bus, ADDirty,
-				// Famicom Board specific ⚠️
+				// Famicom Board specific вљ пёЏ
 				&cart_snd,
 				nullptr, unused);
 
 			CartridgeConnectorSimFailure2();
 
-			VRAM_nCE = cart_out[(size_t)Mappers::CartOutput::VRAM_nCS];
-			VRAM_A10 = cart_out[(size_t)Mappers::CartOutput::VRAM_A10];
+			VRAM_nCE = cart_out[(size_t)CartPcb::CartOutput::VRAM_nCS];
+			VRAM_A10 = cart_out[(size_t)CartPcb::CartOutput::VRAM_A10];
 		}
 		else
 		{

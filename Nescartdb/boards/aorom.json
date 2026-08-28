@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "board": {
+    "type": "AOROM",
+    "components": {
+      "prg": { "kind": "rom", "bus": "cpu" },
+      "chr": { "kind": "ram", "bus": "ppu", "size": 8192 },
+      "bank": { "kind": "latch" }
+    },
+    "circuit": {
+      "mirroring": { "mode": "mapper", "net": "bank.Q4" },
+      "cpu": {
+        "prg":  { "chip": "prg", "n_cs": "nROMSEL", "addr": "bank.Q2..Q0 | cpu_addr[14:0]" },
+        "bank": { "clk": "nROMSEL", "n_we": "RnW", "data": "cpu_data[7:0]" }
+      },
+      "ppu": {
+        "chr": { "chip": "chr", "n_cs": "!nPA13", "n_oe": "nRD", "n_we": "nWR", "addr": "ppu_addr[12:0]" }
+      },
+      "nets": []
+    }
+  }
+}

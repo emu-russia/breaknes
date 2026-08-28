@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -23,6 +23,31 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\SharpTools\SharpTools.csproj" />
+    <!-- The native core: builds BreaksCore first and copies BreaksCore.dll next to the executable. -->
+    <ProjectReference Include="..\..\BreaksCore\Scripts\VS2026\BreaksCore.vcxproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <!-- Fallback: make sure the freshly built BreaksCore.dll lands in the output. -->
+  <Target Name="CopyBreaksCoreDll" AfterTargets="Build">
+    <ItemGroup>
+      <BreaksCoreOutput Include="..\BreaksCore\Scripts\VS2026\Build\$(Configuration)\BreaksCore.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BreaksCoreOutput)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" Condition="Exists('@(BreaksCoreOutput)')" />
+  </Target>
+
+  <ItemGroup>
+    <!-- Nescartdb data for the CartPcb identification (copied next to the executable). -->
+    <None Include="..\..\Nescartdb\index.json" Link="Nescartdb\index.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\Nescartdb\nescarts.json" Link="Nescartdb\nescarts.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\Nescartdb\boards\*.json" Link="Nescartdb\boards\%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

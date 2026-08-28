@@ -11,6 +11,7 @@
 #include "LS139.h"
 #include "LS368.h"
 #include "LS373.h"
+#include "RomChip.h"
 #include "SRAM.h"
 #include "Fake6502.h"
 #include "LS32.h"

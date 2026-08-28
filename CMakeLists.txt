@@ -29,9 +29,10 @@ add_executable (breaknes
 	Common/BaseBoardLib/LS368.cpp
 	Common/BaseBoardLib/LS373.cpp
 	Common/BaseBoardLib/RegDumpProcessor.cpp
+	Common/BaseBoardLib/RomChip.cpp
 	Common/BaseBoardLib/SRAM.cpp
 
-	#Common/JsonLib/Json.cpp
+	Common/JsonLib/Json.cpp
 
 	Chips/APUSim/apu.cpp
 	Chips/APUSim/clkgen.cpp
@@ -92,13 +93,18 @@ add_executable (breaknes
 	Chips/M6502Core/regs.cpp
 	Chips/M6502Core/regs_control.cpp
 
-	Mappers/AbstractCartridge.cpp
-	Mappers/CartridgeFactory.cpp
-	Mappers/AOROM.cpp
-	Mappers/NROM.cpp
-	Mappers/UNROM.cpp
-	Mappers/MMC1.cpp
-	Mappers/MMC1_Based.cpp
+
+	Chips/MMC1/MMC1.cpp
+
+	# CartPcb
+
+	CartPcb/Pcb.cpp
+	CartPcb/PcbFactory.cpp
+	CartPcb/PcbLoader.cpp
+	CartPcb/NesCartDb.cpp
+	CartPcb/CartPcbCartridge.cpp
+	CartPcb/CartridgeLoader.cpp
+	CartPcb/ChipsAdapter.cpp
 
 	IO/IO.cpp
 	IO/DendyController.cpp
@@ -126,3 +132,9 @@ add_executable (breaknes
 )
 
 target_link_libraries (breaknes LINK_PUBLIC SDL2)
+
+# Copy the Nescartdb data (identification + board definitions) next to the binary.
+
+add_custom_command(TARGET breaknes POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Nescartdb $<TARGET_FILE_DIR:breaknes>/Nescartdb
+	COMMENT "Copying Nescartdb data")

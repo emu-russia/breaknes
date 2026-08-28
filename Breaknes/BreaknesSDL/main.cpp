@@ -44,6 +44,11 @@ int main(int argc, char ** argv) {
 	CreateBoard ((char *)"NESBoard", (char*)"RP2A03G", (char*)"RP2C02G", (char*)"NES");
 	Reset();
 
+	// CartPcb identification: the Nescartdb data is copied next to the executable
+	// at build time; run the emulator from its own directory (or set NESCARDB_DIR).
+	const char* nescartdb_dir = getenv("NESCARDB_DIR");
+	SetNescartdbDir((char*)(nescartdb_dir ? nescartdb_dir : "Nescartdb"));
+
 	// Make additional settings for emulation in the Breaknes casual environment
 
 	SetOamDecayBehavior(PPUSim::OAMDecayBehavior::Keep);
@@ -69,7 +74,7 @@ int main(int argc, char ** argv) {
 	fclose(f);
 
 	if (InsertCartridge(nes_image, nes_image_size) < 0) {
-		printf("InsertCartridge failed!\n");
+		printf("InsertCartridge failed! The board was not identified in Nescartdb (check that Nescartdb/ is next to the executable).\n");
 		return -4;
 	}
 

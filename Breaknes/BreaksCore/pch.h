@@ -41,9 +41,9 @@
 
 #include "DebugHub.h"
 
-// Cartridge & Mappers
+// Cartridge (CartPcb: functional simulation of cartridge PCBs)
 
-#include "../../Mappers/Mappers.h"
+#include "../../CartPcb/CartPcb.h"
 
 // IO Subsystem
 

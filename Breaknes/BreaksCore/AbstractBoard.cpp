@@ -3,7 +3,7 @@
 
 namespace Breaknes
 {
-	Board::Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, Mappers::ConnectorType p1)
+	Board::Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1)
 	{
 		p1_type = p1;
 		pal = new RGB_Triplet[8 * 64];
@@ -22,8 +22,9 @@ namespace Breaknes
 
 	int Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
 	{
-		Mappers::CartridgeFactory cf(p1_type, nesImage, nesImageSize);
-		cart = cf.GetInstance();
+		// The CartPcb path: identify the board by PRG/CHR CRC32 via the nescartdb
+		// database, then load the board definition (JSON) and build the Pcb.
+		cart = CartPcb::CreateFromNesImage(p1_type, nesImage, nesImageSize);
 
 		if (!cart)
 			return -1;

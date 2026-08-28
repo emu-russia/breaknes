@@ -6,6 +6,7 @@
 #include <cwchar>
 #include <cstring>
 #include <cmath>
+#include <string>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -376,6 +377,143 @@ namespace UnitTest
 			uint8_t buf[0x1000]{};
 			json.Serialize(buf, sizeof(buf), actualSize);
 			Assert::IsTrue(actualSize == 0);
+		}
+
+		/// <summary>
+		/// Arrays with more than the old 255-element limit must deserialize.
+		/// The Nescartdb index.json contains thousands of records.
+		/// </summary>
+		TEST_METHOD(TestLargeArray)
+		{
+			std::string text = "[";
+			for (int i = 0; i < 1000; i++)
+			{
+				if (i != 0)
+				{
+					text += ", ";
+				}
+				text += "{ \"n\" : " + std::to_string(i) + " }";
+			}
+			text += "]";
+
+			Json json;
+			json.Deserialize((void*)text.c_str(), text.size());
+
+			Assert::IsTrue(json.root.children.size() == 1);
+			Json::Value* arr = json.root.children.front();
+			Assert::IsTrue(arr->type == Json::ValueType::Array);
+			Assert::IsTrue(arr->children.size() == 1000);
+			Assert::IsTrue(arr->children.back()->ByName("n")->value.AsInt == 999);
+		}
+
+		/// <summary>
+		/// \uXXXX escapes must deserialize, including astral codepoints as surrogate pairs.
+		/// </summary>
+		TEST_METHOD(TestUnicodeEscapes)
+		{
+			const char* text = "{ \"a\" : \"\\u0041\\u00e9\\u4e09\", \"b\" : \"\\ud83d\\ude00\" }";
+
+			Json json;
+			json.Deserialize((void*)text, strlen(text));
+
+			Json::Value* root = json.root.children.front();
+			Assert::IsTrue(root->type == Json::ValueType::Object);
+
+			Json::Value* a = root->ByName("a");
+			Assert::IsTrue(a != nullptr && a->type == Json::ValueType::String);
+			Assert::IsTrue(wcscmp(a->value.AsString, L"A\x00e9\x4e09") == 0);
+
+			Json::Value* b = root->ByName("b");
+			Assert::IsTrue(b != nullptr && b->type == Json::ValueType::String);
+			Assert::IsTrue(b->value.AsString[0] == 0xD83D && b->value.AsString[1] == 0xDE00);
+			Assert::IsTrue(b->value.AsString[2] == 0);
+		}
+
+		/// <summary>
+		/// The JSON structures the CartPcb loader will consume:
+		/// a Nescartdb board record and a board definition with a circuit.
+		/// </summary>
+		TEST_METHOD(TestNescartdbBoardStructure)
+		{
+			const char* text =
+				"{ \"source\" : { \"name\" : \"NesCartDB\" },"
+				"  \"games\" : [ { \"name\" : \"10-Yard Fight\", \"region\" : \"Japan\", \"players\" : 2,"
+				"    \"cartridges\" : [ { \"system\" : \"Famicom\", \"crc\" : \"836C4FA7\", \"dump\" : \"ok\","
+				"      \"board\" : { \"type\" : \"IREM-NROM-128\", \"pcb\" : \"IREM-01-V\", \"mapper\" : 0,"
+				"        \"prg\" : { \"size\" : 16384, \"crc\" : \"D3D248C9\" },"
+				"        \"chr\" : { \"size\" : 8192, \"crc\" : \"9C124A53\" },"
+				"        \"pad\" : { \"h\" : 0, \"v\" : 1 } } } ] } ] }";
+
+			Json json;
+			json.Deserialize((void*)text, strlen(text));
+
+			Json::Value* root = json.root.children.front();
+			Assert::IsTrue(root->type == Json::ValueType::Object);
+
+			Json::Value* source = root->ByName("source");
+			Assert::IsTrue(source != nullptr);
+			Assert::IsTrue(wcscmp(source->ByName("name")->value.AsString, L"NesCartDB") == 0);
+
+			Json::Value* games = root->ByName("games");
+			Assert::IsTrue(games != nullptr && games->type == Json::ValueType::Array);
+			Assert::IsTrue(games->children.size() == 1);
+
+			Json::Value* game = games->children.front();
+			Assert::IsTrue(wcscmp(game->ByName("name")->value.AsString, L"10-Yard Fight") == 0);
+			Assert::IsTrue(game->ByName("players")->value.AsInt == 2);
+
+			Json::Value* cart = game->ByName("cartridges")->children.front();
+			Assert::IsTrue(wcscmp(cart->ByName("crc")->value.AsString, L"836C4FA7") == 0);
+
+			Json::Value* board = cart->ByName("board");
+			Assert::IsTrue(wcscmp(board->ByName("type")->value.AsString, L"IREM-NROM-128") == 0);
+			Assert::IsTrue(board->ByName("mapper")->value.AsInt == 0);
+			Assert::IsTrue(board->ByName("prg")->ByName("size")->value.AsInt == 16384);
+			Assert::IsTrue(wcscmp(board->ByName("prg")->ByName("crc")->value.AsString, L"D3D248C9") == 0);
+			Assert::IsTrue(board->ByName("pad")->ByName("v")->value.AsInt == 1);
+		}
+
+		/// <summary>
+		/// A CartPcb board definition with a circuit section (the board JSON the
+		/// PcbFactory will consume).
+		/// </summary>
+		TEST_METHOD(TestCartPcbBoardDefinition)
+		{
+			const char* text =
+				"{ \"schemaVersion\" : 1,"
+				"  \"board\" : { \"type\" : \"NES-NROM-256\", \"pcb\" : \"NES-NROM-256-02\", \"mapper\" : 0,"
+				"    \"components\" : {"
+				"      \"prg\" : { \"kind\" : \"rom\", \"bus\" : \"cpu\", \"size\" : 32768 },"
+				"      \"chr\" : { \"kind\" : \"rom\", \"bus\" : \"ppu\", \"size\" : 8192 } },"
+				"    \"circuit\" : {"
+				"      \"mirroring\" : { \"mode\" : \"hardwired\", \"h\" : 0, \"v\" : 1 },"
+				"      \"cpu\" : { \"prg\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL\", \"addr\" : \"cpu_addr[13:0]\" } },"
+				"      \"ppu\" : { \"chr\" : { \"chip\" : \"chr\", \"n_cs\" : \"nPA13\", \"addr\" : \"ppu_addr[12:0]\" } },"
+				"      \"nets\" : [] } } }";
+
+			Json json;
+			json.Deserialize((void*)text, strlen(text));
+
+			Json::Value* root = json.root.children.front();
+			Assert::IsTrue(root->ByName("schemaVersion")->value.AsInt == 1);
+
+			Json::Value* board = root->ByName("board");
+			Assert::IsTrue(wcscmp(board->ByName("type")->value.AsString, L"NES-NROM-256") == 0);
+
+			Json::Value* components = board->ByName("components");
+			Assert::IsTrue(components->ByName("prg")->ByName("size")->value.AsInt == 32768);
+			Assert::IsTrue(wcscmp(components->ByName("chr")->ByName("kind")->value.AsString, L"rom") == 0);
+
+			Json::Value* circuit = board->ByName("circuit");
+			Json::Value* mirroring = circuit->ByName("mirroring");
+			Assert::IsTrue(wcscmp(mirroring->ByName("mode")->value.AsString, L"hardwired") == 0);
+
+			Json::Value* prg = circuit->ByName("cpu")->ByName("prg");
+			Assert::IsTrue(wcscmp(prg->ByName("n_cs")->value.AsString, L"nROMSEL") == 0);
+			Assert::IsTrue(wcscmp(prg->ByName("addr")->value.AsString, L"cpu_addr[13:0]") == 0);
+
+			Json::Value* nets = circuit->ByName("nets");
+			Assert::IsTrue(nets != nullptr && nets->type == Json::ValueType::Array && nets->children.size() == 0);
 		}
 	};
 }

@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using static SharpTools.CoreDebug;
 
 namespace SharpTools
@@ -16,6 +16,15 @@ namespace SharpTools
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int InsertCartridge(byte[] nesImage, int nesImageSize);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetNescartdbDir(string dir);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetUserBoardsDir(string dir);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetForcedBoardType(string type);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void EjectCartridge();

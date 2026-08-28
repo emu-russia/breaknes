@@ -1,5 +1,7 @@
 Temp
 *.pyc
+*.obj
+*.bin
 .vs
 *.vcxproj.user
 

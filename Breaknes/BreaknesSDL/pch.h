@@ -9,6 +9,7 @@
 #include <SDL2/SDL.h>
 #endif
 #include <iostream>
+#include <cstdlib>
 
 #include "../BreaksCore/BreaksCore.h"
 #include "VideoProcessing.h"
