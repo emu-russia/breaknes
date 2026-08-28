@@ -424,11 +424,15 @@ namespace CartPcb
 			TriState clk = EvalLogic(*att->clk, ctx);
 			TriState we = EvalLogic(*att->we, ctx);
 
-			bool active = (clk == TriState::Zero && we == TriState::Zero);
+			bool clk_asserted = (clk == TriState::Zero);	// e.g. nROMSEL == 0
+			bool write = (we == TriState::Zero);			// RnW == 0
 
-			if (active && !c->latch_strobe)
+			// Sample the data bus while the strobe is asserted. On the first
+			// asserted tick the CPU data bus may still hold the previous byte
+			// (the 6502 drives the write data a little later), so the capture
+			// happens on the deassertion edge using the last sampled value.
+			if (clk_asserted)
 			{
-				// Capture the data bits on the edge into the strobe state.
 				AddrExprPtr data = att->data;
 				if (!data)
 				{
@@ -461,12 +465,22 @@ namespace CartPcb
 					}
 					if (valid)
 					{
-						c->latch = val;
+						c->latch_pending = val;
 					}
 				}
+
+				c->latch_was_write = write;
 			}
 
-			c->latch_strobe = active;
+			// Capture on the strobe deassertion edge (nROMSEL 0 -> 1) at the end
+			// of a write access — the same moment the 74LS161 bank register on
+			// the real boards loads.
+			if (c->latch_strobe && !clk_asserted && c->latch_was_write)
+			{
+				c->latch = c->latch_pending;
+			}
+
+			c->latch_strobe = clk_asserted;
 		}
 	}
 

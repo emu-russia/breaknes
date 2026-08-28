@@ -114,6 +114,8 @@ namespace CartPcb
 
 			uint8_t latch = 0;						// Kind::Latch state (Q0..Q7)
 			bool latch_strobe = false;				// current strobe state (edge detection)
+			uint8_t latch_pending = 0;				// data sampled while the strobe is asserted
+			bool latch_was_write = false;			// the access was a write
 
 			std::string chipType;					// Kind::Chip
 			ChipInstance* chip = nullptr;			// Kind::Chip (owned)

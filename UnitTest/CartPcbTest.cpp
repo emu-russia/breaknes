@@ -122,6 +122,37 @@ namespace UnitTest
 			return PcbFactory::Create(json, image, error);
 		}
 
+		// A CPU write to $8000+ latches the bank register on the strobe
+		// DEASSERTION edge (nROMSEL 0 -> 1), like the 74LS161 on the real boards.
+		// Drive the write as: strobe asserted (nROMSEL=0, RnW=0) then deasserted.
+		void WriteBank(Pcb* pcb, uint8_t value)
+		{
+			Bus b;
+			b.SetDefaults();
+			b.in[(size_t)CartInput::RnW] = TriState::Zero;
+			b.in[(size_t)CartInput::nRD] = TriState::One;
+			b.in[(size_t)CartInput::nWR] = TriState::Zero;
+			b.cpu_data = value;
+			pcb->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
+
+			b.in[(size_t)CartInput::nROMSEL] = TriState::One;
+			pcb->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
+		}
+
+		void WriteBank(CartPcb::Cartridge* cart, uint8_t value)
+		{
+			Bus b;
+			b.SetDefaults();
+			b.in[(size_t)CartInput::RnW] = TriState::Zero;
+			b.in[(size_t)CartInput::nRD] = TriState::One;
+			b.in[(size_t)CartInput::nWR] = TriState::Zero;
+			b.cpu_data = value;
+			cart->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
+
+			b.in[(size_t)CartInput::nROMSEL] = TriState::One;
+			cart->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
+		}
+
 	}
 
 	TEST_CLASS(CartPcbFactoryUnitTest)
@@ -282,12 +313,7 @@ namespace UnitTest
 			Assert::IsTrue(b.cpu_data == (uint8_t)((7 * 0x4000 + 0x100) >> 14));
 
 			// Write $8000 with data 5 -> bank register = 5
-			b.SetDefaults();
-			b.in[(size_t)CartInput::RnW] = TriState::Zero;
-			b.in[(size_t)CartInput::nRD] = TriState::One;
-			b.in[(size_t)CartInput::nWR] = TriState::Zero;
-			b.cpu_data = 5;
-			pcb->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
+			WriteBank(pcb, 5);
 
 			// Read $8000+0x100 (cart $0100): bank 5 -> prg[5*0x4000 + 0x100]
 			b.SetDefaults();
@@ -330,12 +356,7 @@ namespace UnitTest
 			Bus b;
 
 			// Write $8000, data = 0b1_0011: bank 3, mirroring bit (D4) = 1
-			b.SetDefaults();
-			b.in[(size_t)CartInput::RnW] = TriState::Zero;
-			b.in[(size_t)CartInput::nRD] = TriState::One;
-			b.in[(size_t)CartInput::nWR] = TriState::Zero;
-			b.cpu_data = 0x13;
-			pcb->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
+			WriteBank(pcb, 0x13);
 
 			// Read $8000+0x123: 32K bank 3 -> prg[3*0x8000 + 0x123]
 			b.SetDefaults();
@@ -462,14 +483,9 @@ namespace UnitTest
 			Assert::IsTrue(cart->Valid());
 
 			// Banked read: write bank 3, then read $8000+0x123.
-			Bus b;
-			b.SetDefaults();
-			b.in[(size_t)CartInput::RnW] = TriState::Zero;
-			b.in[(size_t)CartInput::nRD] = TriState::One;
-			b.in[(size_t)CartInput::nWR] = TriState::Zero;
-			b.cpu_data = 3;
-			cart->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
+			WriteBank(cart, 3);
 
+			Bus b;
 			b.SetDefaults();
 			b.Sim(cart, 0x0123, 0x2000);
 			Assert::IsTrue(b.cpu_dirty == true);
