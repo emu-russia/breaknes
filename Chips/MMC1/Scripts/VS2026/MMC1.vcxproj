@@ -31,11 +31,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\BaseLogicLib\Scripts\VS2026\BaseLogicLib.vcxproj">
-      <Project>{11aad192-46eb-4d5d-b81f-bcee11d6af8e}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
