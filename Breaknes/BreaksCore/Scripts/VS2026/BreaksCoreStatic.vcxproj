@@ -52,6 +52,7 @@
     <ClInclude Include="..\..\AbstractBoard.h" />
     <ClInclude Include="..\..\APUPlayerBoard.h" />
     <ClInclude Include="..\..\BoardFactory.h" />
+    <ClInclude Include="..\..\BoardLog.h" />
     <ClInclude Include="..\..\BogusBoard.h" />
     <ClInclude Include="..\..\BreaksCore.h" />
     <ClInclude Include="..\..\CoreApi.h" />

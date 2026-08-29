@@ -9,6 +9,36 @@ using namespace BaseLogic;
 
 namespace CartPcb
 {
+	static const Log::LogCategoryDesc CartPcbLogCategories[] =
+	{
+		{ Cat_Mem, "Mem" },			// cartridge memory accesses (ROM/RAM reads & writes)
+		{ Cat_Latch, "Latch" },		// latch (bank register) captures
+		{ Cat_Events, "Events" },	// cartridge / component lifecycle events
+	};
+
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count)
+	{
+		count = sizeof(CartPcbLogCategories) / sizeof(CartPcbLogCategories[0]);
+		return CartPcbLogCategories;
+	}
+
+	void Pcb::SetLogMask(uint64_t mask)
+	{
+		Log::SetCategoryMask(Log::Source_CartPcb, mask);
+	}
+
+	void Pcb::SetChipLogMask(uint64_t mask)
+	{
+		// Component -> BreaksCore: the chips are configured through their public methods.
+		for (auto& c : components)
+		{
+			if (c->kind == Component::Kind::Chip && c->chip != nullptr)
+			{
+				c->chip->SetLogMask(mask);
+			}
+		}
+	}
+
 	Pcb::Pcb()
 	{
 	}
@@ -38,6 +68,7 @@ namespace CartPcb
 					bits++;
 				}
 				c->rom = new BaseBoard::RomChip(id.c_str(), bits);
+				LOG_CART(Cat_Events, "Added ROM component '%s' (%zd bytes)", id.c_str(), size);
 				break;
 			}
 			case Component::Kind::Ram:
@@ -49,6 +80,7 @@ namespace CartPcb
 					bits++;
 				}
 				c->ram = new BaseBoard::SRAM(id.c_str(), bits);
+				LOG_CART(Cat_Events, "Added RAM component '%s' (%zd bytes)", id.c_str(), size);
 				break;
 			}
 			default:
@@ -70,6 +102,8 @@ namespace CartPcb
 
 		if (c->chip != nullptr)
 		{
+			LOG_CART(Cat_Events, "Added chip '%s' (%s)", id.c_str(), chipType.c_str());
+
 			const ChipDesc* desc = c->chip->GetDesc();
 
 			size_t inIdx = 0;
@@ -478,6 +512,7 @@ namespace CartPcb
 			if (c->latch_strobe && !clk_asserted && c->latch_was_write)
 			{
 				c->latch = c->latch_pending;
+				LOG_CART(Cat_Latch, "Latch '%s' captured %02X", c->id.c_str(), c->latch);
 			}
 
 			c->latch_strobe = clk_asserted;
@@ -518,6 +553,7 @@ namespace CartPcb
 				if (c->kind == Component::Kind::Ram && c->ram != nullptr)
 				{
 					c->ram->Dbg_WriteByte(addr, *cpu_data);
+					LOG_CART(Cat_Mem, "CPU write %s[$%04zX] = %02X", c->id.c_str(), addr, *cpu_data);
 				}
 			}
 			else if (n_oe == TriState::Zero)
@@ -531,6 +567,8 @@ namespace CartPcb
 					val = c->ram->Dbg_ReadByte(addr);
 				else
 					continue;
+
+				LOG_CART(Cat_Mem, "CPU read %s[$%04zX] = %02X", c->id.c_str(), addr, val);
 
 				if (!cpu_data_dirty)
 				{
@@ -573,6 +611,7 @@ namespace CartPcb
 				if (c->kind == Component::Kind::Ram && c->ram != nullptr)
 				{
 					c->ram->Dbg_WriteByte(addr, *ppu_data);
+					LOG_CART(Cat_Mem, "PPU write %s[$%04zX] = %02X", c->id.c_str(), addr, *ppu_data);
 				}
 			}
 			else if (n_oe == TriState::Zero)
@@ -586,6 +625,8 @@ namespace CartPcb
 					val = c->ram->Dbg_ReadByte(addr);
 				else
 					continue;
+
+				LOG_CART(Cat_Mem, "PPU read %s[$%04zX] = %02X", c->id.c_str(), addr, val);
 
 				if (!ppu_data_dirty)
 				{

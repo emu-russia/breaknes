@@ -54,6 +54,14 @@ namespace APUSim
 			apu->SPR_Addr |= ((spr_lo[n].get() == TriState::One ? 1 : 0) << n);
 			apu->SPR_Addr |= ((spr_hi[n].get() == TriState::One ? 1 : 0) << (8 + n));
 		}
+
+		// OAM DMA start ($4014 write): one line per write strobe.
+
+		if (W4014 == TriState::One && prev_W4014 != TriState::One)
+		{
+			LOG_APU(Cat_DMA, "OAM DMA start: $%02X00", (int)((apu->SPR_Addr >> 8) & 0xFF));
+		}
+		prev_W4014 = W4014;
 	}
 
 	void DMA::sim_DMA_Control()

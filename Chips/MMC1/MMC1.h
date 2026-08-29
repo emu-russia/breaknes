@@ -10,6 +10,21 @@
 
 namespace Chips
 {
+	/// <summary>
+	/// Log categories of the MMC1 (one bit per category, owned by this component).
+	/// </summary>
+	enum LogCategory : uint64_t
+	{
+		Cat_Regs = 1ULL << 0,		// serial register write commits
+		Cat_Events = 1ULL << 1,		// reset (D7) events
+	};
+
+	/// <summary>
+	/// The category list of the MMC1, used by BreaksCore to register the source
+	/// for the user interface (definitions flow Component -> BreaksCore).
+	/// </summary>
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count);
+
 	enum class MMC1_Input
 	{
 		M2 = 0,
@@ -90,6 +105,7 @@ namespace Chips
 		int prev_m2 = -1;
 		int prev_div_ck = -1;
 		int prev_reg0_enable = -1;
+		int prev_reset_write = 0;	// D7 reset write edge detection for logging
 
 	public:
 		MMC1();
@@ -102,5 +118,12 @@ namespace Chips
 		/// register state, without simulating the chip.
 		/// </summary>
 		size_t Dbg_GetPRGAddress(size_t cpu_addr);
+
+		/// <summary>
+		/// Set the log category mask of the MMC1 (one bit per Chips::LogCategory).
+		/// The mask is stored in the global Log manager, so it can be set at any time,
+		/// even before the MMC1 instance exists.
+		/// </summary>
+		void SetLogMask(uint64_t mask);
 	};
 }

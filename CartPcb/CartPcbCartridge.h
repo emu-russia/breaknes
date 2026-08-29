@@ -33,6 +33,16 @@ namespace CartPcb
 
 		uint8_t Dbg_ReadPRGByte(size_t cpu_addr) override;
 
+		/// <summary>
+		/// Set the log category mask of the cartridge (forwarded to the Pcb).
+		/// </summary>
+		void SetLogMask(uint64_t mask) override;
+
+		/// <summary>
+		/// Forward the log category mask to the mapper chips of the cartridge.
+		/// </summary>
+		void SetChipLogMask(uint64_t mask) override;
+
 		Pcb* GetPcb() { return pcb; }
 
 	private:

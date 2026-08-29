@@ -11,6 +11,7 @@
 #include <cstddef>
 
 #include "NintendulatorLog.h"
+#include "BoardLog.h"
 
 namespace
 {
@@ -84,11 +85,11 @@ void NintendulatorLog::Enable()
 
 	if (enabled)
 	{
-		printf("Nintendulator log enabled, writing to Nintendulator.log\n");
+		LOG_BOARD(Breaknes::Cat_Events, "Nintendulator log enabled, writing to Nintendulator.log");
 	}
 	else
 	{
-		printf("Nintendulator log: cannot open Nintendulator.log!\n");
+		LOG_BOARD(Breaknes::Cat_Events, "Nintendulator log: cannot open Nintendulator.log!");
 	}
 }
 
@@ -103,7 +104,7 @@ void NintendulatorLog::Disable()
 
 	if (enabled)
 	{
-		printf("Nintendulator log disabled\n");
+		LOG_BOARD(Breaknes::Cat_Events, "Nintendulator log disabled");
 	}
 
 	enabled = false;

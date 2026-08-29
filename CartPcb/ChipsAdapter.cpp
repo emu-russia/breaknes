@@ -49,6 +49,11 @@ namespace CartPcb
 			{
 				return mmc.Dbg_GetPRGAddress(cpu_addr);
 			}
+
+			void SetLogMask(uint64_t mask) override
+			{
+				mmc.SetLogMask(mask);
+			}
 		};
 	}
 

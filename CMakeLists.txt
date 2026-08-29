@@ -21,6 +21,7 @@ add_executable (breaknes
 	# BreaksCore
 
 	Common/BaseLogicLib/BaseLogic.cpp
+	Common/BaseLogicLib/Log.cpp
 
 	Common/BaseBoardLib/Fake6502.cpp
 	Common/BaseBoardLib/LS32.cpp

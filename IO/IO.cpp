@@ -2,6 +2,18 @@
 
 namespace IO
 {
+	static const Log::LogCategoryDesc IOLogCategories[] =
+	{
+		{ Cat_Ctrl, "Ctrl" },		// controller latch / read events
+		{ Cat_Events, "Events" },	// device attach / detach events
+	};
+
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count)
+	{
+		count = sizeof(IOLogCategories) / sizeof(IOLogCategories[0]);
+		return IOLogCategories;
+	}
+
 	IOSubsystem::IOSubsystem()
 	{
 	}
@@ -108,6 +120,10 @@ namespace IO
 				if (*it == (DeviceID)mapped->device->GetID()) {
 
 					mapped->port = port;
+
+					LOG_IO(Cat_Events, "Attached device '%s' to port %d (handle %d)",
+						mapped->device->GetName().c_str(), port, handle);
+
 					break;
 				}
 			}
@@ -121,6 +137,12 @@ namespace IO
 
 		IOMapped* mapped = GetMappedDeviceByHandle(handle);
 		if (mapped != nullptr) {
+
+			if (mapped->port >= 0)
+			{
+				LOG_IO(Cat_Events, "Detached device '%s' from port %d (handle %d)",
+					mapped->device->GetName().c_str(), mapped->port, handle);
+			}
 
 			mapped->port = -1;
 		}

@@ -4,6 +4,24 @@ using namespace BaseLogic;
 
 namespace APUSim
 {
+	static const Log::LogCategoryDesc ApuLogCategories[] =
+	{
+		{ Cat_Regs, "Regs" },		// APU register accesses ($4000-$401F)
+		{ Cat_DMA, "DMA" },			// OAM DMA activity
+		{ Cat_Events, "Events" },	// reset / IRQ events
+	};
+
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count)
+	{
+		count = sizeof(ApuLogCategories) / sizeof(ApuLogCategories[0]);
+		return ApuLogCategories;
+	}
+
+	void APU::SetLogMask(uint64_t mask)
+	{
+		Log::SetCategoryMask(Log::Source_APU, mask);
+	}
+
 	APU::APU(M6502Core::M6502* _core, Revision _rev, ChipFeature features)
 	{
 		// For ease of integration, the core instance is created by the consumer

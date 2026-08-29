@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Text;
 using static SharpTools.CoreDebug;
 
 namespace SharpTools
@@ -58,6 +59,46 @@ namespace SharpTools
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void EnableNintendulatorLog(bool enable);
+
+		#region "Logging API"
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetLogEnabled(bool enabled);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetLogSourceMask(ulong mask);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern ulong GetLogSourceMask();
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetLogCategoryMask(int source, ulong mask);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern ulong GetLogCategoryMask(int source);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetLogToFile(bool enable, string path);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SetLogToStdout(bool enable);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetLogSourceCount();
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void GetLogSourceName(int source, StringBuilder name, int name_size);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetLogCategoryCount(int source);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern ulong GetLogCategoryBit(int source, int category_index);
+
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void GetLogCategoryName(int source, int category_index, StringBuilder name, int name_size);
+
+		#endregion "Logging API"
 
 		[StructLayout(LayoutKind.Explicit)]
 		public struct AudioSignalFeatures

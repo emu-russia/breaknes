@@ -96,6 +96,13 @@ namespace IO
 		// Pressed button shorts the Px input to ground
 		buttons_state = ~buttons_state;
 
+		// Latch event ($4016 write): one line per latch strobe.
+		if (latch == TriState::One && prev_latch != TriState::One)
+		{
+			LOG_IO(Cat_Ctrl, "NES Controller latch (buttons=0x%02X)", ~buttons_state & 0xFF);
+		}
+		prev_latch = latch;
+
 		sr.sim(clk, latch, TriState::Zero, buttons_state, Q5, Q6, Q7);
 		outputs[0] = Q7;		// pin4 (D0)
 		outputs[1] = TriState::Z;	// pin5 (D4)

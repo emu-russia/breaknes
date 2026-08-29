@@ -30,6 +30,8 @@ namespace APUSim
 		BaseLogic::TriState DOSPR = BaseLogic::TriState::X;		// Latches the OAM DMA start event
 		BaseLogic::TriState sprdma_rdy = BaseLogic::TriState::X;	// aka oamdma_rdy
 
+		BaseLogic::TriState prev_W4014 = BaseLogic::TriState::X;	// W4014 edge detection for logging
+
 		void sim_DMA_Address();
 		void sim_DMA_Control();
 

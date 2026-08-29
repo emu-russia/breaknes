@@ -1,6 +1,7 @@
 #pragma once
 
 #include "NintendulatorLog.h"
+#include "BoardLog.h"
 
 namespace Breaknes
 {
@@ -54,6 +55,7 @@ namespace Breaknes
 		RegDumper* apu_regdump = nullptr;
 		size_t prev_phi_counter_for_ppuregdump = 0;
 		size_t prev_phi_counter_for_apuregdump = 0;
+		size_t prev_phi_counter_for_apulog = 0;		// one APU register log line per CPU cycle
 
 		// Nintendulator-compatible instruction trace log
 
@@ -238,5 +240,12 @@ namespace Breaknes
 		/// CPU bus address inside the $0000-$1FFF window.
 		/// </summary>
 		virtual uint8_t ReadWRAM(uint16_t addr);
+
+		/// <summary>
+		/// Set the log category mask of one subsystem (one bit per subsystem category).
+		/// The chips (core/APU/PPU/MMC1) are configured through their public methods;
+		/// the other sources are configured through the global Log manager.
+		/// </summary>
+		void SetLogMask(Log::Source src, uint64_t mask);
 	};
 }

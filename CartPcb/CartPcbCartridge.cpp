@@ -16,6 +16,9 @@ namespace CartPcb
 		if (valid)
 		{
 			AddCartMemDescriptors();
+
+			LOG_CART(Cat_Events, "Cartridge created: %s (%s)",
+				pcb->GetBoardType().c_str(), pcb->GetBoardPcb().c_str());
 		}
 	}
 
@@ -58,6 +61,22 @@ namespace CartPcb
 			return 0;
 
 		return pcb->Dbg_ReadPRGByte(cpu_addr);
+	}
+
+	void CartPcbCartridge::SetLogMask(uint64_t mask)
+	{
+		if (pcb != nullptr)
+		{
+			pcb->SetLogMask(mask);
+		}
+	}
+
+	void CartPcbCartridge::SetChipLogMask(uint64_t mask)
+	{
+		if (pcb != nullptr)
+		{
+			pcb->SetChipLogMask(mask);
+		}
 	}
 
 	namespace

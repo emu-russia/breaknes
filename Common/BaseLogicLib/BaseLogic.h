@@ -1,5 +1,11 @@
 #pragma once
 
+// The logging facility: compile-time macros (BREAKNES_LOG + per-subsystem
+// overrides) and the runtime Log manager (source/category masks, file/stdout).
+// All subsystems include BaseLogic.h, so the logging is available everywhere.
+
+#include "Log.h"
+
 /// <summary>
 /// Basic logic primitives used in N-MOS chips.
 /// Combinational primitives are implemented using ordinary methods.

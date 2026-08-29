@@ -234,4 +234,73 @@ extern "C"
 	/// Return the IOState name of the device.
 	/// </summary>
 	DLL_EXPORT void IOGetStateName(size_t handle, size_t io_state, char* name, size_t name_size);
+
+	// ---------------------------------------------------------------------
+	// Logging API (issue #517)
+	//
+	// The log sources are controlled by a bitmask (one bit per source); each
+	// source has its own category mask (one bit per category). The names of the
+	// sources and categories are registered when the first board is created and
+	// can be queried for the user interface.
+	// ---------------------------------------------------------------------
+
+	/// <summary>
+	/// Master runtime switch of the logging facility.
+	/// </summary>
+	DLL_EXPORT void SetLogEnabled(bool enabled);
+
+	/// <summary>
+	/// Enable/disable log sources by a bitmask (bit n = Log source n).
+	/// </summary>
+	DLL_EXPORT void SetLogSourceMask(uint64_t mask);
+
+	/// <summary>
+	/// Get the current log source mask.
+	/// </summary>
+	DLL_EXPORT uint64_t GetLogSourceMask();
+
+	/// <summary>
+	/// Set the category mask of one log source (one bit per category of that source).
+	/// </summary>
+	DLL_EXPORT void SetLogCategoryMask(int source, uint64_t mask);
+
+	/// <summary>
+	/// Get the current category mask of one log source.
+	/// </summary>
+	DLL_EXPORT uint64_t GetLogCategoryMask(int source);
+
+	/// <summary>
+	/// Route the log to the given file ("w"). When `enable` is false the log file is closed.
+	/// </summary>
+	DLL_EXPORT void SetLogToFile(bool enable, char* path);
+
+	/// <summary>
+	/// Route the log to stdout.
+	/// </summary>
+	DLL_EXPORT void SetLogToStdout(bool enable);
+
+	/// <summary>
+	/// Get the number of log sources.
+	/// </summary>
+	DLL_EXPORT size_t GetLogSourceCount();
+
+	/// <summary>
+	/// Get the display name of a log source.
+	/// </summary>
+	DLL_EXPORT void GetLogSourceName(int source, char* name, size_t name_size);
+
+	/// <summary>
+	/// Get the number of categories of a log source.
+	/// </summary>
+	DLL_EXPORT size_t GetLogCategoryCount(int source);
+
+	/// <summary>
+	/// Get the category bit of the `category_index`-th category of a log source.
+	/// </summary>
+	DLL_EXPORT uint64_t GetLogCategoryBit(int source, size_t category_index);
+
+	/// <summary>
+	/// Get the display name of the `category_index`-th category of a log source.
+	/// </summary>
+	DLL_EXPORT void GetLogCategoryName(int source, size_t category_index, char* name, size_t name_size);
 };

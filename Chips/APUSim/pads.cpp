@@ -31,6 +31,12 @@ namespace APUSim
 		apu->wire.n_IRQ = inputs[(size_t)APU_Input::n_IRQ];
 		//n_irq.sim(inputs[(size_t)APU_Input::n_IRQ], TriState::One,
 		//	apu->wire.n_IRQ, unused, TriState::One, TriState::Zero);
+
+		if (apu->wire.RES != prev_RES)
+		{
+			LOG_APU(Cat_Events, "RESET %s", apu->wire.RES == TriState::One ? "asserted" : "deasserted");
+			prev_RES = apu->wire.RES;
+		}
 	}
 
 	void Pads::sim_OutputPads(TriState outputs[], uint16_t* addr)

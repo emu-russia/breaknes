@@ -212,6 +212,11 @@ namespace PPUSim
 		edge_vset_latch2.set(edge_vset_latch1.nget(), n_PCLK);
 		TriState setFF = NOR3(n_PCLK, n_VSET, edge_vset_latch2.get());
 
+		if (setFF == TriState::One)
+		{
+			LOG_PPU(Cat_Events, "VBlank NMI set");
+		}
+
 		INT_FF.set(NOR3(NOR(setFF, INT_FF.get()), RESCL, R2_Enable));
 
 		ppu->fsm.INT = NOR(NOT(VBL), NOT(INT_FF.get()));

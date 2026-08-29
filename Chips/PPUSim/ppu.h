@@ -120,6 +120,20 @@ namespace PPUSimUnitTest
 
 namespace PPUSim
 {
+	/// <summary>
+	/// Log categories of the PPU (one bit per category, owned by this component).
+	/// </summary>
+	enum LogCategory : uint64_t
+	{
+		Cat_Regs = 1ULL << 0,		// CPU I/F register accesses ($2000-$2007)
+		Cat_Events = 1ULL << 1,		// reset / VBlank NMI events
+	};
+
+	/// <summary>
+	/// The category list of the PPU, used by BreaksCore to register the source
+	/// for the user interface (definitions flow Component -> BreaksCore).
+	/// </summary>
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count);
 
 	/// <summary>
 	/// Version of the PPU chip, including all known official and pirate variants.
@@ -255,7 +269,7 @@ namespace PPUSim
 			BaseLogic::TriState n_BGCLIP;		// To generate the CLIP_B control signal
 			BaseLogic::TriState n_OBCLIP;		// To generate the CLIP_O control signal
 			BaseLogic::TriState BGE;
-			BaseLogic::TriState BLACK;			// Active when PPU rendering is disabled (see $2001[3] è $2001[4]).
+			BaseLogic::TriState BLACK;			// Active when PPU rendering is disabled (see $2001[3] - $2001[4]).
 			BaseLogic::TriState OBE;
 			BaseLogic::TriState n_TR;			// "Tint Red". Modifying value for Emphasis
 			BaseLogic::TriState n_TG;			// "Tint Green". Modifying value for Emphasis
@@ -386,6 +400,12 @@ namespace PPUSim
 		size_t pclk_counter = 0;
 		BaseLogic::TriState Prev_PCLK = BaseLogic::TriState::X;
 
+		// Edge detection for logging (CPU I/F register accesses, reset).
+
+		BaseLogic::TriState prev_n_WR = BaseLogic::TriState::X;
+		BaseLogic::TriState prev_n_RD = BaseLogic::TriState::X;
+		BaseLogic::TriState prev_RES = BaseLogic::TriState::X;
+
 		ControlRegs* regs = nullptr;
 		HVCounter* h = nullptr;
 		HVCounter* v = nullptr;
@@ -510,5 +530,12 @@ namespace PPUSim
 		/// Get the VBlank status flag (bit 7 of $2002).
 		/// </summary>
 		BaseLogic::TriState Dbg_GetVBLFlag();
+
+		/// <summary>
+		/// Set the log category mask of the PPU (one bit per PPUSim::LogCategory).
+		/// The mask is stored in the global Log manager, so it can be set at any time,
+		/// even before the PPU instance exists.
+		/// </summary>
+		void SetLogMask(uint64_t mask);
 	};
 }

@@ -92,5 +92,17 @@ namespace CartPcb
 		/// <param name="cpu_addr">CPU bus address</param>
 		/// <returns>The byte that would be read, or 0 for unmapped addresses.</returns>
 		virtual uint8_t Dbg_ReadPRGByte(size_t cpu_addr) { return 0; }
+
+		/// <summary>
+		/// Set the log category mask of the cartridge (forwarded to the Pcb).
+		/// One bit per CartPcb::LogCategory.
+		/// </summary>
+		virtual void SetLogMask(uint64_t mask) {}
+
+		/// <summary>
+		/// Forward the log category mask to the mapper chips of the cartridge
+		/// (e.g. the MMC1 chip). Does not touch the CartPcb source mask.
+		/// </summary>
+		virtual void SetChipLogMask(uint64_t mask) {}
 	};
 }

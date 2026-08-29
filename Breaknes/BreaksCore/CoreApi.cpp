@@ -2,6 +2,27 @@
 
 Breaknes::Board* board = nullptr;
 
+// Register the log sources with their categories for the user interface.
+// The definitions are pulled from the components (Component -> BreaksCore).
+
+static void LogInit()
+{
+	static bool initialized = false;
+	if (initialized)
+		return;
+	initialized = true;
+
+	size_t count = 0;
+
+	Log::RegisterSource(Log::Source_Core, "M6502 Core", M6502Core::GetLogCategories(count), count);
+	Log::RegisterSource(Log::Source_APU, "APU", APUSim::GetLogCategories(count), count);
+	Log::RegisterSource(Log::Source_PPU, "PPU", PPUSim::GetLogCategories(count), count);
+	Log::RegisterSource(Log::Source_MMC1, "MMC1", Chips::GetLogCategories(count), count);
+	Log::RegisterSource(Log::Source_CartPcb, "CartPcb", CartPcb::GetLogCategories(count), count);
+	Log::RegisterSource(Log::Source_Board, "Board", Breaknes::GetLogCategories(count), count);
+	Log::RegisterSource(Log::Source_IO, "IO", IO::GetLogCategories(count), count);
+}
+
 extern "C"
 {
 #ifdef _WIN32
@@ -15,7 +36,8 @@ extern "C"
 	{
 		if (board == nullptr)
 		{
-			printf("CreateBoard %s, apu: %s, ppu: %s, cart: %s\n", boardName, apu, ppu, p1);
+			LogInit();
+			LOG_BOARD(Breaknes::Cat_Events, "CreateBoard %s, apu: %s, ppu: %s, cart: %s", boardName, apu, ppu, p1);
 			Breaknes::BoardFactory bf(boardName, apu, ppu, p1);
 			CreateDebugHub(false);
 			board = bf.CreateInstance();
@@ -26,7 +48,7 @@ extern "C"
 	{
 		if (board != nullptr)
 		{
-			printf("DestroyBoard\n");
+			LOG_BOARD(Breaknes::Cat_Events, "DestroyBoard");
 			delete board;
 			board = nullptr;
 			DisposeDebugHub();
@@ -37,7 +59,6 @@ extern "C"
 	{
 		if (board != nullptr)
 		{
-			printf("InsertCartridge: %zi bytes\n", size);
 			return board->InsertCartridge(nesImage, size);
 		}
 		else
@@ -65,7 +86,6 @@ extern "C"
 	{
 		if (board != nullptr)
 		{
-			printf("EjectCartridge\n");
 			board->EjectCartridge();
 		}
 	}
@@ -300,7 +320,7 @@ extern "C"
 		if (board != nullptr && board->io != nullptr)
 		{
 			int handle = board->io->CreateInstance((IO::DeviceID)device_id);
-			printf("IOCreateInstance: 0x%08X, handle: %d\n", device_id, handle);
+			LOG_IO(IO::Cat_Events, "IOCreateInstance: 0x%08X, handle: %d", device_id, handle);
 			return handle;
 		}
 		else {
@@ -312,7 +332,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			printf("IODisposeInstance: %d\n", (int)handle);
+			LOG_IO(IO::Cat_Events, "IODisposeInstance: %d", (int)handle);
 			board->io->DisposeInstance((int)handle);
 		}
 	}
@@ -321,7 +341,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			printf("IOAttach: port: %d, handle: %d\n", (int)port, (int)handle);
+			LOG_IO(IO::Cat_Events, "IOAttach: port: %d, handle: %d", (int)port, (int)handle);
 			board->io->Attach((int)port, (int)handle);
 		}
 	}
@@ -330,7 +350,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			printf("IODetach: port: %d, handle: %d\n", (int)port, (int)handle);
+			LOG_IO(IO::Cat_Events, "IODetach: port: %d, handle: %d", (int)port, (int)handle);
 			board->io->Detach((int)port, (int)handle);
 		}
 	}
@@ -339,7 +359,7 @@ extern "C"
 	{
 		if (board != nullptr && board->io != nullptr)
 		{
-			printf("IOSetState: handle: %d, io_state: %d, value: 0x%08X\n", (int)handle, (int)io_state, value);
+			LOG_IO(IO::Cat_Events, "IOSetState: handle: %d, io_state: %d, value: 0x%08X", (int)handle, (int)io_state, value);
 			board->io->SetState((int)handle, io_state, value);
 		}
 	}
@@ -376,5 +396,101 @@ extern "C"
 				name[state_name.size()] = 0;
 			}
 		}
+	}
+
+	// ---------------------------------------------------------------------
+	// Logging API (issue #517)
+	// ---------------------------------------------------------------------
+
+	DLL_EXPORT void SetLogEnabled(bool enabled)
+	{
+		Log::SetEnabled(enabled);
+	}
+
+	DLL_EXPORT void SetLogSourceMask(uint64_t mask)
+	{
+		LogInit();
+		Log::SetSourceMask(mask);
+	}
+
+	DLL_EXPORT uint64_t GetLogSourceMask()
+	{
+		LogInit();
+		return Log::GetSourceMask();
+	}
+
+	DLL_EXPORT void SetLogCategoryMask(int source, uint64_t mask)
+	{
+		LogInit();
+
+		if (board != nullptr)
+		{
+			// Route through the component public methods where instances exist.
+			board->SetLogMask((Log::Source)source, mask);
+		}
+		else
+		{
+			Log::SetCategoryMask((Log::Source)source, mask);
+		}
+	}
+
+	DLL_EXPORT uint64_t GetLogCategoryMask(int source)
+	{
+		LogInit();
+		return Log::GetCategoryMask((Log::Source)source);
+	}
+
+	DLL_EXPORT void SetLogToFile(bool enable, char* path)
+	{
+		LogInit();
+		Log::SetOutputFile(enable ? path : "");
+	}
+
+	DLL_EXPORT void SetLogToStdout(bool enable)
+	{
+		LogInit();
+		Log::SetOutputStdout(enable);
+	}
+
+	DLL_EXPORT size_t GetLogSourceCount()
+	{
+		LogInit();
+		return Log::GetSourceCount();
+	}
+
+	DLL_EXPORT void GetLogSourceName(int source, char* name, size_t name_size)
+	{
+		LogInit();
+
+		if (name == nullptr || name_size == 0)
+			return;
+
+		const char* src_name = Log::GetSourceName((Log::Source)source);
+		strncpy(name, src_name, name_size - 1);
+		name[name_size - 1] = 0;
+	}
+
+	DLL_EXPORT size_t GetLogCategoryCount(int source)
+	{
+		LogInit();
+		return Log::GetCategoryCount((Log::Source)source);
+	}
+
+	DLL_EXPORT uint64_t GetLogCategoryBit(int source, size_t category_index)
+	{
+		LogInit();
+		return Log::GetCategoryBit((Log::Source)source, category_index);
+	}
+
+	DLL_EXPORT void GetLogCategoryName(int source, size_t category_index, char* name, size_t name_size)
+	{
+		LogInit();
+
+		if (name == nullptr || name_size == 0)
+			return;
+
+		const char* cat_name = Log::GetCategoryName((Log::Source)source, category_index);
+		strncpy(name, cat_name, name_size - 1);
+		name[name_size - 1] = 0;
 	}
 };

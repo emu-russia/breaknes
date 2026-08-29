@@ -26,6 +26,7 @@
 #include "../../Chips/M6502Core/core.h"
 #include "../../Chips/APUSim/apu.h"
 #include "../../Chips/PPUSim/ppu.h"
+#include "../../Chips/MMC1/MMC1.h"
 
 // Board logic
 
