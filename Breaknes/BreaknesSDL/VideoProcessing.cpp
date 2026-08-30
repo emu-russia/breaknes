@@ -150,8 +150,27 @@ void VideoRender::ProcessScanRAW(int tv)
 	st.CurrentScan++;
 	if (st.CurrentScan >= st.ppu_features.ScansPerField)
 	{
-		VisualizeField();
 		st.CurrentScan = 0;
+
+		// Count this TV's completed field. The window (and the field counter) is
+		// updated once per frame, when every TV has finished its field - otherwise
+		// each TV would render the window and increment the counter on its own.
+		if (!st.FieldReady)
+		{
+			st.FieldReady = true;
+			fields_ready_count++;
+		}
+
+		if (fields_ready_count >= tv_count)
+		{
+			VisualizeField();
+
+			for (int t = 0; t < tv_count; t++)
+			{
+				tvs[t].FieldReady = false;
+			}
+			fields_ready_count = 0;
+		}
 	}
 }
 
@@ -166,8 +185,7 @@ void VideoRender::VisualizeField()
 	SDL_FillRect(output_surface, NULL, SDL_MapRGB(output_surface->format, 0, 0, 0));
 
 	// Draw the field of every TV at its place in the window according to the layout.
-	// When all TVs show the same PPU (e.g. the debug "one PPU to two TVs" binding)
-	// their fields are completed synchronously.
+	// Called once per frame, when all TVs have completed their fields.
 	for (int tv = 0; tv < tv_count; tv++)
 	{
 		TvState& st = tvs[tv];

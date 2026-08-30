@@ -36,9 +36,16 @@ class VideoRender
 
 		uint32_t* field = nullptr;
 		int CurrentScan = 0;
+		bool FieldReady = false;		// the field of this TV is complete in the current frame
 	};
 
 	TvState tvs[2];
+
+	/// <summary>
+	/// Number of TVs that have completed their field in the current frame.
+	/// The window is rendered once per frame, when all TVs are ready.
+	/// </summary>
+	int fields_ready_count = 0;
 
 	SDL_Surface* output_surface = nullptr;
 	SDL_Window* output_window = nullptr;
