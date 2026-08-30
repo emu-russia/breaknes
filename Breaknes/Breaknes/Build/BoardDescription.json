@@ -152,7 +152,7 @@
 		},
 
 		{
-			"name": "Debug: one PPU on two TVs (vertical)",
+			"name": "NES Debug: one PPU on two TVs (vertical)",
 			"apu": "RP2A03G",
 			"ppus": [ "RP2C02G" ],
 			"tv_layout": "vertical",

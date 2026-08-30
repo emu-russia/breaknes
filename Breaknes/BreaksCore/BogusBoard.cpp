@@ -7,8 +7,13 @@ using namespace BaseLogic;
 
 namespace Breaknes
 {
-	BogusBoard::BogusBoard(APUSim::Revision apu_rev, std::vector<PPUSim::Revision> ppu_revs, CartPcb::ConnectorType p1) : Board (apu_rev, ppu_revs, p1)
+	BogusBoard::BogusBoard(APUSim::Revision apu_rev, std::vector<PPUSim::Revision> ppu_revs, CartPcb::ConnectorType p1) : Board (apu_rev, {}, p1)
 	{
+		// BogusBoard does not simulate a PPU (Step() does not drive it), so no PPU
+		// instances are created even if a PPU revision was resolved by the factory.
+		// This keeps a misnamed board from silently producing a black picture.
+		(void)ppu_revs;
+
 		core = new M6502Core::M6502(false, false);
 		wram = new BaseBoard::SRAM("WRAM", wram_bits);
 
