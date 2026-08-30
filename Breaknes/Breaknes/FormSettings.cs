@@ -54,7 +54,7 @@ namespace Breaknes
 		{
 			BreaknesSettings settings = new();
 
-			settings.MainBoard = "NES-001 (PCB rev. -01 to -04)";
+			settings.MainBoard = "NES (NES-CPU-07, 1987)";
 			settings.DumpAudio = false;
 			settings.DumpAudioDir = "";
 			settings.DumpVideo = false;

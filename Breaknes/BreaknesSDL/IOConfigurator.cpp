@@ -28,7 +28,8 @@ namespace BreaknesSDL
 		const int kNumDeviceTypes = (int)(sizeof(kDeviceTypes) / sizeof(kDeviceTypes[0]));
 
 		/// <summary>
-		/// The ports of the motherboard created by the SDL2 port (NESBoard).
+		/// The ports of the NES-type motherboard created by the SDL2 port (the default
+		/// board of the BoardDescription.json, see kSDLBoardName).
 		/// Mirrors the core: Breaknes/BreaksCore/NESBoard.cpp, NESBoardIO.
 		/// </summary>
 		struct PortDesc
@@ -44,7 +45,7 @@ namespace BreaknesSDL
 		const int kNumPorts = (int)(sizeof(kPorts) / sizeof(kPorts[0]));
 
 		/// <summary>
-		/// Which device types the NESBoard ports accept (DeviceID), see NESBoardIO::GetPortSupportedDevices.
+		/// Which device types the NES-type board ports accept (DeviceID), see NESBoardIO::GetPortSupportedDevices.
 		/// </summary>
 		static bool IsDeviceSupportedByBoard(uint32_t device_id)
 		{

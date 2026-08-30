@@ -2,83 +2,71 @@
 
 namespace Breaknes
 {
-	static bool ResolvePPURevision(std::string ppu, PPUSim::Revision& rev)
-	{
-		if (ppu == "RP2C02G")
-		{
-			rev = PPUSim::Revision::RP2C02G;
-		}
-		else if (ppu == "RP2C02H")
-		{
-			rev = PPUSim::Revision::RP2C02H;
-		}
-		else if (ppu == "RP2C03B")
-		{
-			rev = PPUSim::Revision::RP2C03B;
-		}
-		else if (ppu == "RP2C03C")
-		{
-			rev = PPUSim::Revision::RP2C03C;
-		}
-		else if (ppu == "RC2C03B")
-		{
-			rev = PPUSim::Revision::RC2C03B;
-		}
-		else if (ppu == "RC2C03C")
-		{
-			rev = PPUSim::Revision::RC2C03C;
-		}
-		else if (ppu == "RP2C04-0001")
-		{
-			rev = PPUSim::Revision::RP2C04_0001;
-		}
-		else if (ppu == "RP2C04-0002")
-		{
-			rev = PPUSim::Revision::RP2C04_0002;
-		}
-		else if (ppu == "RP2C04-0003")
-		{
-			rev = PPUSim::Revision::RP2C04_0003;
-		}
-		else if (ppu == "RP2C04-0004")
-		{
-			rev = PPUSim::Revision::RP2C04_0004;
-		}
-		else if (ppu == "RC2C05-01")
-		{
-			rev = PPUSim::Revision::RC2C05_01;
-		}
-		else if (ppu == "RC2C05-02")
-		{
-			rev = PPUSim::Revision::RC2C05_02;
-		}
-		else if (ppu == "RC2C05-03")
-		{
-			rev = PPUSim::Revision::RC2C05_03;
-		}
-		else if (ppu == "RC2C05-04")
-		{
-			rev = PPUSim::Revision::RC2C05_04;
-		}
-		else if (ppu == "RC2C05-99")
-		{
-			rev = PPUSim::Revision::RC2C05_99;
-		}
-		else if (ppu == "RP2C07-0")
-		{
-			rev = PPUSim::Revision::RP2C07_0;
-		}
-		else if (ppu == "UMC UA6538")
-		{
-			rev = PPUSim::Revision::UMC_UA6538;
-		}
-		else
-		{
-			return false;
-		}
+	// The revision lookup tables (issue #521). The BoardDescription.json lists the
+	// chip markings of the real hardware. Not every marking is implemented in the
+	// chip simulations yet: the entries marked `exact = false` are approximated by
+	// the closest supported revision of the same chip family (the difference is
+	// logged when the board is created).
 
-		return true;
-	}
+	struct APURevisionDesc
+	{
+		const char* name;
+		APUSim::Revision rev;
+		bool exact;
+	};
+
+	static const APURevisionDesc APURevisions[] =
+	{
+		{ "RP2A03",		APUSim::Revision::RP2A03,	false },	// "letterless", launch Famicoms; the sim currently uses the RP2A03G model
+		{ "RP2A03E",	APUSim::Revision::RP2A03G,	false },	// not implemented; approximated by RP2A03G
+		{ "RP2A03G",	APUSim::Revision::RP2A03G,	true },
+		{ "RP2A03H",	APUSim::Revision::RP2A03H,	true },
+		{ "RP2A07",		APUSim::Revision::RP2A07,	true },
+		{ "RP2A07A",	APUSim::Revision::RP2A07,	false },	// not implemented; approximated by RP2A07
+		{ "UA6527P",	APUSim::Revision::UA6527P,	true },
+		{ "TA03NP1",	APUSim::Revision::TA03NP1,	true },
+	};
+
+	struct PPURevisionDesc
+	{
+		const char* name;
+		PPUSim::Revision rev;
+		bool exact;
+	};
+
+	static const PPURevisionDesc PPURevisions[] =
+	{
+		{ "RP2C02",		PPUSim::Revision::RP2C02G,		false },	// "letterless", launch Famicoms; approximated by RP2C02G
+		{ "RP2C02A",	PPUSim::Revision::RP2C02G,		false },	// not implemented; approximated by RP2C02G
+		{ "RP2C02B",	PPUSim::Revision::RP2C02G,		false },	// not implemented; approximated by RP2C02G
+		{ "RP2C02C",	PPUSim::Revision::RP2C02G,		false },	// not implemented; approximated by RP2C02G
+		{ "RC2C02C",	PPUSim::Revision::RP2C02G,		false },	// ceramic package of the -C; approximated by RP2C02G
+		{ "RP2C02D",	PPUSim::Revision::RP2C02G,		false },	// not implemented; approximated by RP2C02G
+		{ "RP2C02D-0",	PPUSim::Revision::RP2C02G,		false },	// not implemented; approximated by RP2C02G
+		{ "RP2C02E",	PPUSim::Revision::RP2C02G,		false },	// not implemented; approximated by RP2C02G
+		{ "RP2C02E-0",	PPUSim::Revision::RP2C02G,		false },	// not implemented; approximated by RP2C02G
+		{ "RP2C02G",	PPUSim::Revision::RP2C02G,		true },
+		{ "RP2C02G-0",	PPUSim::Revision::RP2C02G,		true },	// the "-0" suffix marking; same simulation model
+		{ "RP2C02H",	PPUSim::Revision::RP2C02H,		true },
+		{ "RP2C02H-0",	PPUSim::Revision::RP2C02H,		true },	// the "-0" suffix marking; same simulation model
+		{ "RP2C03B",	PPUSim::Revision::RP2C03B,		true },
+		{ "RP2C03C",	PPUSim::Revision::RP2C03C,		true },
+		{ "RC2C03B",	PPUSim::Revision::RC2C03B,		true },
+		{ "RC2C03C",	PPUSim::Revision::RC2C03C,		true },
+		{ "RP2C04-0001",PPUSim::Revision::RP2C04_0001,	true },
+		{ "RP2C04-0002",PPUSim::Revision::RP2C04_0002,	true },
+		{ "RP2C04-0003",PPUSim::Revision::RP2C04_0003,	true },
+		{ "RP2C04-0004",PPUSim::Revision::RP2C04_0004,	true },
+		{ "RC2C05-01",	PPUSim::Revision::RC2C05_01,	true },
+		{ "RC2C05-02",	PPUSim::Revision::RC2C05_02,	true },
+		{ "RC2C05-03",	PPUSim::Revision::RC2C05_03,	true },
+		{ "RC2C05-04",	PPUSim::Revision::RC2C05_04,	true },
+		{ "RC2C05-99",	PPUSim::Revision::RC2C05_99,	true },
+		{ "RP2C07",		PPUSim::Revision::RP2C07_0,		false },	// not implemented; approximated by RP2C07-0
+		{ "RP2C07-0",	PPUSim::Revision::RP2C07_0,		true },
+		{ "RP2C07A-0",	PPUSim::Revision::RP2C07_0,		false },	// not implemented; approximated by RP2C07-0
+		{ "UMC UA6538",	PPUSim::Revision::UMC_UA6538,	true },
+	};
 
 	BoardFactory::BoardFactory(std::string board, std::string apu, std::vector<std::string> ppus, std::string p1)
 	{
@@ -86,27 +74,22 @@ namespace Breaknes
 
 		// Perform a reflection for APU
 
-		if (apu == "RP2A03G")
+		bool apu_found = false;
+		for (auto& entry : APURevisions)
 		{
-			apu_rev = APUSim::Revision::RP2A03G;
+			if (apu == entry.name)
+			{
+				apu_rev = entry.rev;
+				apu_found = true;
+				if (!entry.exact)
+				{
+					LOG_BOARD(Cat_Events, "APU revision %s is not implemented, using the closest supported model", apu.c_str());
+				}
+				break;
+			}
 		}
-		else if (apu == "RP2A03H")
-		{
-			apu_rev = APUSim::Revision::RP2A03H;
-		}
-		else if (apu == "RP2A07")
-		{
-			apu_rev = APUSim::Revision::RP2A07;
-		}
-		else if (apu == "UA6527P")
-		{
-			apu_rev = APUSim::Revision::UA6527P;
-		}
-		else if (apu == "TA03NP1")
-		{
-			apu_rev = APUSim::Revision::TA03NP1;
-		}
-		else
+
+		if (!apu_found)
 		{
 			board_name = "Bogus";
 		}
@@ -116,7 +99,22 @@ namespace Breaknes
 		for (auto& ppu : ppus)
 		{
 			PPUSim::Revision rev = PPUSim::Revision::Unknown;
-			if (!ResolvePPURevision(ppu, rev))
+			bool ppu_found = false;
+			for (auto& entry : PPURevisions)
+			{
+				if (ppu == entry.name)
+				{
+					rev = entry.rev;
+					ppu_found = true;
+					if (!entry.exact)
+					{
+						LOG_BOARD(Cat_Events, "PPU revision %s is not implemented, using the closest supported model", ppu.c_str());
+					}
+					break;
+				}
+			}
+
+			if (!ppu_found)
 			{
 				board_name = "Bogus";
 				break;

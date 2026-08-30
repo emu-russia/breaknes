@@ -233,6 +233,7 @@ namespace PPUSim
 		switch (ppu->rev)
 		{
 			case Revision::RP2C02G:
+			case Revision::RP2C02H:
 			{
 				TriState V8 = ppu->v->getBit(8);
 				TriState RES = ppu->wire.RES;

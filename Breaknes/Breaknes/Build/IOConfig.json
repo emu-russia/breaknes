@@ -1,4 +1,4 @@
-﻿{
+{
   "info": {
     "descr": "This JSON contains a list of IO devices and their Attach/Detach statuses with Motherboard and Bindings with Input API."
   },
@@ -8,7 +8,7 @@
       "name": "P1",
       "attached": [
         {
-          "board": "HVC-CPU-01",
+          "board": "Famicom (HVC-CPU-01, 1983)",
           "port": 0
         }
       ],
@@ -52,7 +52,7 @@
       "name": "NES P1",
       "attached": [
         {
-          "board": "NES-001 (PCB rev. -01 to -04)",
+          "board": "NES (NES-CPU-07, 1987)",
           "port": 0
         }
       ],
