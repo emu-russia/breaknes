@@ -26,8 +26,20 @@ namespace Breaknes
 					BreaksCore.SetNescartdbDir(Path.Combine(dataDir, "Nescartdb"));
 					BreaksCore.SetUserBoardsDir(Path.Combine(dataDir, "CustomBoards"));
 
-					BreaksCore.CreateBoard(board.name, board.apu, board.ppu, board.p1);
+					// The board may contain several PPUs (up to 2). Each PPU is bound
+					// to its own virtual TV Set by default; the binding can be changed
+					// below according to the BoardDescription.json ("tvs" array).
+					var ppus = board.GetEffectivePpus();
+					BreaksCore.CreateBoardEx(board.name, board.apu, ppus.ToArray(), ppus.Count, board.p1);
 					BreaksCore.Reset();
+
+					// Apply the TV Set binding from the board description (or the default identity binding).
+					int ppuCount = BreaksCore.GetPPUCount();
+					var tvBinding = board.GetEffectiveTvBinding(ppuCount);
+					for (int tv = 0; tv < tvBinding.Count && tv < 2; tv++)
+					{
+						BreaksCore.BindPPUToTV(tvBinding[tv], tv, true);
+					}
 
 					// Make additional settings for emulation in the Breaknes casual environment
 

@@ -2,7 +2,16 @@
 
 For those who like minimalism - Breaknes build using SDL2.
 
-The implementation does not differ from Managed application: the same native part of BreaksCore from DLL is used. Chip revisions and motherboard cannot be selected yet (NESBoard+RP2A03G+RP2C02G is hardcoded in main.cpp).
+The implementation does not differ from Managed application: the same native part of BreaksCore is used. The motherboard and chip revisions are taken from the `BoardDescription.json` (next to the executable, shared with the managed application): the SDL build looks up the board by the name `NESBoard` (the config is required, there is no built-in fallback).
+
+## Two TV Sets (issue #515)
+
+The SDL build renders the video signal of every connected TV Set in one window. Up to 2 TVs are supported; the physical arrangement is controlled by the `tv_layout` property of the board in `BoardDescription.json`:
+
+- `"tv_layout": "horizontal"` - the TVs are placed side by side
+- `"tv_layout": "vertical"` - the TVs are stacked one above the other
+
+The binding of the PPUs to the TVs is described by the `tvs` array (`tvs[i]` = index of the PPU shown on the i-th TV). The default binding is `TV[i]` shows `PPU[i]`; for debugging, one PPU can be bound to both TVs at once (`"tvs": [0, 0]`).
 
 ## IO subsystem
 

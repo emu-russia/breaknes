@@ -18,12 +18,11 @@ namespace BreaknesSDL
 	const char* const kDefaultIOConfigPath = "IOConfigSDL.json";
 
 	/// <summary>
-	/// The motherboard that the SDL2 port always creates (hardcoded in main.cpp).
+	/// The motherboard of the SDL2 port. The board configuration (name, APU, PPUs,
+	/// p1, TV layout and TV<->PPU binding) is read from BoardDescription.json
+	/// (issue #515). The IO settings reference the board by this name.
 	/// </summary>
 	const char* const kSDLBoardName = "NESBoard";
-	const char* const kSDLBoardAPU = "RP2A03G";
-	const char* const kSDLBoardPPU = "RP2C02G";
-	const char* const kSDLBoardP1 = "NES";
 
 	/// <summary>
 	/// Associative binding of a device IOState (actuator) to an input event of the PC.

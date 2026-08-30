@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include "BoardConfig.h"
+
 bool run_worker = false;
 
 VideoRender* vid_out;
@@ -18,9 +20,14 @@ int SDLCALL MainWorker (void* data)
 		if (!InResetState())
 		{
 #if !CONSOLE_ONLY
-			PPUSim::VideoOutSignal sample;
-			SampleVideoSignal(&sample);
-			vid_out->ProcessSample(sample);
+			// Sample and render the video signal of every connected TV Set (issue #515).
+			int tv_count = GetTVCount();
+			for (int tv = 0; tv < tv_count; tv++)
+			{
+				PPUSim::VideoOutSignal sample;
+				SampleVideoSignalEx(tv, &sample);
+				vid_out->ProcessSample(tv, sample);
+			}
 			snd_out->FeedSample();
 #endif
 		}
@@ -74,7 +81,38 @@ int main(int argc, char ** argv) {
 		return -1;
 	}
 
-	CreateBoard ((char*)BreaknesSDL::kSDLBoardName, (char*)BreaknesSDL::kSDLBoardAPU, (char*)BreaknesSDL::kSDLBoardPPU, (char*)BreaknesSDL::kSDLBoardP1);
+	// Board configuration (issue #515): read the BoardDescription.json next to the
+	// executable and look up our board by name (kSDLBoardName). This provides the
+	// board name, the APU/PPU list, the TV layout and the TV<->PPU binding.
+
+	BreaknesSDL::BoardConfig board_config;
+	if (!BreaknesSDL::LoadBoardConfig("BoardDescription.json", board_config))
+	{
+		printf("Cannot load the board configuration: BoardDescription.json with the \"%s\" board entry is required next to the executable.\n", BreaknesSDL::kSDLBoardName);
+		return -5;
+	}
+
+	if (board_config.ppus.empty())
+	{
+		printf("The \"%s\" board entry in BoardDescription.json does not specify any PPU (\"ppus\" array or \"ppu\" string).\n", BreaknesSDL::kSDLBoardName);
+		return -5;
+	}
+
+	std::vector<char*> ppu_names;
+	for (auto& ppu : board_config.ppus)
+	{
+		ppu_names.push_back((char*)ppu.c_str());
+	}
+
+	CreateBoardEx((char*)board_config.name.c_str(), (char*)board_config.apu.c_str(), ppu_names.data(), (int)ppu_names.size(), (char*)board_config.p1.c_str());
+
+	// Apply the TV<->PPU binding from the JSON ("tvs": tvs[i] = PPU of the i-th TV).
+	// The default binding (TV[i] shows PPU[i]) is set up by the core.
+	for (size_t tv = 0; tv < board_config.tvs.size() && tv < 2; tv++)
+	{
+		BindPPUToTV(board_config.tvs[tv], (int)tv, true);
+	}
+
 	Reset();
 
 	// The IO configurator requires a created board (for the actuator enumeration
@@ -134,7 +172,8 @@ int main(int argc, char ** argv) {
 	bool quit = false;
 
 #if !CONSOLE_ONLY
-	vid_out = new VideoRender();
+	// One TV per connected TV Set, in the physical layout from the board description.
+	vid_out = new VideoRender(GetTVCount(), board_config.tv_layout.c_str());
 	snd_out = new SoundOutput();
 #endif
 

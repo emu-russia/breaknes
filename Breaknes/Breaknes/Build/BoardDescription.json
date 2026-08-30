@@ -1,7 +1,7 @@
 {
 	"info":
 	{
-		"descr": "There is a description of the components of the various NES/Famicom models and clones."
+		"descr": "There is a description of the components of the various NES/Famicom models and clones. Each board may contain up to 2 PPUs (the \"ppus\" array). Each PPU is bound to a virtual TV Set; the binding is described by the \"tvs\" array (tvs[i] = index of the PPU shown on the i-th TV) and the physical arrangement of the TVs in the window by \"tv_layout\" (\"horizontal\" or \"vertical\")."
 	},
 
 	"boards":
@@ -9,7 +9,8 @@
 		{
 			"name": "HVC-CPU-01",
 			"apu": "RP2A03G",
-			"ppu": "RP2C02G",
+			"ppus": [ "RP2C02G" ],
+			"tv_layout": "horizontal",
 			"p1": "Fami",
 			"io": [
 				{
@@ -26,7 +27,8 @@
 		{
 			"name": "NES-001 (PCB rev. -01 to -04)",
 			"apu": "RP2A03G",
-			"ppu": "RP2C02G",
+			"ppus": [ "RP2C02G" ],
+			"tv_layout": "horizontal",
 			"p1": "NES",
 			"io": [
 				{
@@ -43,7 +45,8 @@
 		{
 			"name": "NES-001 (PCB rev. -05 to -09)",
 			"apu": "RP2A03G",
-			"ppu": "RP2C02G",
+			"ppus": [ "RP2C02G" ],
+			"tv_layout": "horizontal",
 			"p1": "NES",
 			"io": [
 				{
@@ -60,7 +63,8 @@
 		{
 			"name": "NES-001 (PCB rev. -10 and -11)",
 			"apu": "RP2A03G",
-			"ppu": "RP2C02G",
+			"ppus": [ "RP2C02G" ],
+			"tv_layout": "horizontal",
 			"p1": "NES",
 			"io": [
 				{
@@ -77,7 +81,8 @@
 		{
 			"name": "NES-101 (NESN-101 PCB)",
 			"apu": "RP2A03G",
-			"ppu": "RP2C02G",
+			"ppus": [ "RP2C02G" ],
+			"tv_layout": "horizontal",
 			"p1": "NES",
 			"io": [
 				{
@@ -94,7 +99,8 @@
 		{
 			"name": "NES-101 (NESN-CPU-JIO-01 PCB)",
 			"apu": "RP2A03G",
-			"ppu": "RP2C02G",
+			"ppus": [ "RP2C02G" ],
+			"tv_layout": "horizontal",
 			"p1": "NES",
 			"io": [
 				{
@@ -111,7 +117,46 @@
 		{
 			"name": "NES-101 (NESN-CPU-AV-01 PCB)",
 			"apu": "RP2A03G",
-			"ppu": "RP2C02G",
+			"ppus": [ "RP2C02G" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NESBoard",
+			"apu": "RP2A03G",
+			"ppus": [ "RP2C02G" ],
+			"tv_layout": "horizontal",
+			"tvs": [ 0, 0 ],
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "Debug: one PPU on two TVs (vertical)",
+			"apu": "RP2A03G",
+			"ppus": [ "RP2C02G" ],
+			"tv_layout": "vertical",
+			"tvs": [ 0, 0 ],
 			"p1": "NES",
 			"io": [
 				{

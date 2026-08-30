@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "NintendulatorLog.h"
 #include "BoardLog.h"
 
@@ -20,6 +22,14 @@ namespace Breaknes
 
 		M6502Core::M6502* core = nullptr;
 		APUSim::APU* apu = nullptr;
+
+		/// <summary>
+		/// All PPUs of the motherboard. The primary PPU (the one that is wired into
+		/// the board logic, drives NMI, VRAM, etc.) is ppus[0] and is aliased as `ppu`.
+		/// Additional PPUs are simulated in parallel with the same inputs and buses,
+		/// which allows comparing video output of different PPU revisions side by side.
+		/// </summary>
+		std::vector<PPUSim::PPU*> ppus;
 		PPUSim::PPU* ppu = nullptr;
 
 		const uint16_t MappedAPUBase = 0x4000;
@@ -36,17 +46,29 @@ namespace Breaknes
 		uint16_t addr_bus = 0;
 
 		APUSim::AudioOutSignal aux{};
-		PPUSim::VideoOutSignal vidSample{};
+
+		/// <summary>
+		/// One video sample per PPU (filled by the board Step()).
+		/// </summary>
+		std::vector<PPUSim::VideoOutSignal> vidSamples{};
 
 		// The cartridge slot supports hotplugging during simulation.
 
 		CartPcb::Cartridge* cart = nullptr;
 		CartPcb::ConnectorType p1_type = CartPcb::ConnectorType::None;
 
-		// Pre-calculated PPU palette
+		// Pre-calculated PPU palettes (one per PPU, since the palette depends on the PPU revision)
 
-		RGB_Triplet* pal = nullptr;
-		bool pal_cached = false;
+		std::vector<RGB_Triplet*> pals{};
+		std::vector<bool> pal_cached{};
+
+		/// <summary>
+		/// TV Set binding: tv_binding[tv] = index of the PPU whose video signal is
+		/// displayed on this TV, or -1 if the TV is not connected. Up to 2 TVs are
+		/// supported. By default TV[i] shows PPU[i]; for debugging one PPU can be
+		/// bound to both TVs at once.
+		/// </summary>
+		int tv_binding[2] = { -1, -1 };
 
 		BaseLogic::TriState gnd = BaseLogic::TriState::Zero;
 		BaseLogic::TriState vdd = BaseLogic::TriState::One;
@@ -69,8 +91,13 @@ namespace Breaknes
 		void TreatCoreForRegdump(uint16_t addr_bus, uint8_t data_bus, BaseLogic::TriState phi2, BaseLogic::TriState rnw);
 
 	public:
-		Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1);
+		Board(APUSim::Revision apu_rev, std::vector<PPUSim::Revision> ppu_revs, CartPcb::ConnectorType p1);
 		virtual ~Board();
+
+		/// <summary>
+		/// Create one more PPU instance on the board (the first one is the primary PPU).
+		/// </summary>
+		void AddPPU(PPUSim::Revision rev);
 
 		/// <summary>
 		/// IO Subsystem
@@ -160,10 +187,40 @@ namespace Breaknes
 		virtual size_t GetPCLKCounter();
 
 		/// <summary>
-		/// Get 1 sample of the video signal.
+		/// Get the number of PPUs on the board.
+		/// </summary>
+		/// <returns></returns>
+		size_t GetPPUCount();
+
+		/// <summary>
+		/// Bind the video signal of a PPU to a virtual TV Set (up to 2 TVs).
+		/// `bind == false` disconnects the TV (it shows black).
+		/// By default TV[i] is bound to PPU[i].
+		/// </summary>
+		void BindPPUToTV(size_t ppu_index, size_t tv_index, bool bind);
+
+		/// <summary>
+		/// Get the PPU index currently bound to the TV, or -1 if the TV is disconnected.
+		/// </summary>
+		int GetTVBinding(size_t tv_index);
+
+		/// <summary>
+		/// Get the number of connected (bound) TVs. Unbound trailing TVs are not counted.
+		/// </summary>
+		int GetTVCount();
+
+		/// <summary>
+		/// Get 1 sample of the video signal displayed on the given TV.
+		/// </summary>
+		/// <param name="tv_index">TV index (0..1)</param>
+		/// <param name="sample"></param>
+		void SampleVideoSignal(size_t tv_index, PPUSim::VideoOutSignal* sample);
+
+		/// <summary>
+		/// Get 1 sample of the video signal (of the TV bound to the primary PPU).
 		/// </summary>
 		/// <param name="sample"></param>
-		virtual void SampleVideoSignal(PPUSim::VideoOutSignal* sample);
+		void SampleVideoSignal(PPUSim::VideoOutSignal* sample);
 
 		/// <summary>
 		/// Get the direct value from the PPU H counter.
@@ -186,16 +243,29 @@ namespace Breaknes
 		virtual void RenderAlwaysEnabled(bool enable);
 
 		/// <summary>
-		/// Get video signal settings that help with its rendering on the consumer side.
+		/// Get video signal settings of the given PPU that help with its rendering on the consumer side.
 		/// </summary>
+		/// <param name="ppu_index">PPU index</param>
 		/// <param name="features"></param>
-		virtual void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features);
+		void GetPpuSignalFeatures(size_t ppu_index, PPUSim::VideoSignalFeatures* features);
 
 		/// <summary>
-		/// Convert the raw color to RGB. Can be used for palette generation or PPU video output in RAW mode.
+		/// Get video signal settings of the primary PPU that help with its rendering on the consumer side.
+		/// </summary>
+		/// <param name="features"></param>
+		void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features);
+
+		/// <summary>
+		/// Convert the raw color of the given PPU to RGB. Can be used for palette generation or PPU video output in RAW mode.
 		/// The SYNC level (RAW.Sync) check must be done from the outside.
 		/// </summary>
-		virtual void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b);
+		void ConvertRAWToRGB(size_t ppu_index, uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b);
+
+		/// <summary>
+		/// Convert the raw color of the primary PPU to RGB. Can be used for palette generation or PPU video output in RAW mode.
+		/// The SYNC level (RAW.Sync) check must be done from the outside.
+		/// </summary>
+		void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b);
 
 		/// <summary>
 		/// Use RAW color output. 

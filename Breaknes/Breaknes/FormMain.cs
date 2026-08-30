@@ -10,11 +10,17 @@ namespace Breaknes
 		static extern bool AllocConsole();
 
 		private BoardControl board = new();
-		private VideoRender? vid_out = null;
+		private List<VideoRender> tv_renders = new();
 		private AudioRender? snd_out = null;
 		private IOProcessor? io = null;
 		private string original_title = "";
 		private List<FormDebugger> debuggers = new();
+
+		/// <summary>
+		/// The board description entry selected in the settings (defines the PPU list,
+		/// the TV layout and the TV<->PPU binding).
+		/// </summary>
+		private Board? currentBoard = null;
 
 		public FormMain()
 		{
@@ -44,7 +50,9 @@ namespace Breaknes
 				AllocConsole();
 			}
 			board.onUpdateWaves += OnUpdateWaves;
-			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
+			var boardDesc = BoardDescriptionLoader.Load();
+			currentBoard = boardDesc.boards.FirstOrDefault(b => b.name == settings.MainBoard);
+			board.CreateBoard(boardDesc, settings.MainBoard);
 			if (settings.PPURegdump)
 			{
 				BreaksCore.EnablePpuRegDump(true, settings.PPURegdumpDir);
@@ -78,8 +86,20 @@ namespace Breaknes
 				Text = original_title + " - " + filename;
 				var settings = FormSettings.LoadSettings();
 				var rom_name = Path.GetFileNameWithoutExtension(filename);
-				vid_out = new(OnRenderField, settings.DumpVideo, settings.DumpVideoDir, rom_name);
-				vid_out.SetOutputPictureBox(pictureBox1);
+
+				// Create the TV Set renders: one per connected TV, in the physical layout
+				// described in the BoardDescription.json ("tv_layout", "tvs").
+				int tvCount = BreaksCore.GetTVCount();
+				SetupTvLayout(currentBoard?.tv_layout ?? "horizontal", tvCount);
+
+				tv_renders.Clear();
+				for (int tv = 0; tv < tvCount && tv < 2; tv++)
+				{
+					var vr = new VideoRender(tv, tv == 0 ? OnRenderField : null, settings.DumpVideo, settings.DumpVideoDir, rom_name);
+					vr.SetOutputPictureBox(tv == 0 ? pictureBox1 : pictureBox2);
+					tv_renders.Add(vr);
+				}
+
 				snd_out = new(Handle, settings.DumpAudio, settings.DumpAudioDir, rom_name, settings.IIR, settings.CutoffFrequency);
 
 				if (io != null)
@@ -117,14 +137,92 @@ namespace Breaknes
 				board.Paused = true;
 				board.EjectCartridge();
 				board.DisposeBoard();
-				board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
+
+				var boardDesc = BoardDescriptionLoader.Load();
+				currentBoard = boardDesc.boards.FirstOrDefault(b => b.name == settings.MainBoard);
+				board.CreateBoard(boardDesc, settings.MainBoard);
 				Text = original_title;
+
+				// The old renders refer to the destroyed board; drop them and reset the TV layout.
+				tv_renders.Clear();
+				SetupTvLayout(currentBoard?.tv_layout ?? "horizontal", BreaksCore.GetTVCount());
 			}
 
 			BreaksCore.EnablePpuRegDump(settings.PPURegdump, settings.PPURegdumpDir);
 			BreaksCore.EnableApuRegDump(settings.APURegdump, settings.APURegdumpDir);
 			BreaksCore.EnableNintendulatorLog(settings.NintendulatorLog);
 			ApplyLogSettings(settings);
+		}
+
+		/// <summary>
+		/// Arrange the TV picture boxes in the window according to the physical TV layout
+		/// from the BoardDescription.json ("tv_layout": "horizontal"/"vertical").
+		/// </summary>
+		private void SetupTvLayout(string layout, int tvCount)
+		{
+			tableLayoutPanel1.SuspendLayout();
+			tableLayoutPanel1.Controls.Clear();
+			tableLayoutPanel1.ColumnStyles.Clear();
+			tableLayoutPanel1.RowStyles.Clear();
+
+			if (tvCount > 1)
+			{
+				// Two TV Sets: host them in a single cell and dock the picture boxes.
+				// The edge-docked box keeps a fixed 256x240 area, the second one fills
+				// the rest (Zoom keeps the picture aspect ratio in both).
+				tableLayoutPanel1.ColumnCount = 1;
+				tableLayoutPanel1.RowCount = 1;
+				tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+				tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+
+				pictureBox1.SizeMode = pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+				pictureBox1.BackColor = pictureBox2.BackColor = Color.Black;
+				pictureBox2.Visible = true;
+
+				bool vertical = layout == "vertical";
+
+				if (vertical)
+				{
+					// Vertical: the first TV on top, the second one below it.
+					pictureBox1.Dock = DockStyle.Top;
+					pictureBox2.Dock = DockStyle.Fill;
+					pictureBox1.Height = 240;
+					ClientSize = new Size(256 + 32, 2 * 240 + 72);
+				}
+				else
+				{
+					// Horizontal: the first TV on the left, the second one to its right.
+					pictureBox1.Dock = DockStyle.Left;
+					pictureBox2.Dock = DockStyle.Fill;
+					pictureBox1.Width = 256;
+					ClientSize = new Size(2 * 256 + 32, 240 + 72);
+				}
+
+				// The Fill control goes first, so the edge-docked control takes the strip.
+				tableLayoutPanel1.Controls.Add(pictureBox2);
+				tableLayoutPanel1.Controls.Add(pictureBox1);
+			}
+			else
+			{
+				// Single TV: restore the original centered layout.
+				tableLayoutPanel1.ColumnCount = 3;
+				tableLayoutPanel1.RowCount = 1;
+				tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+				tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+				tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+				tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+
+				pictureBox1.Dock = DockStyle.None;
+				pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
+				pictureBox1.Location = new Point(72, 3);
+				pictureBox1.Size = new Size(256, 240);
+				pictureBox2.Visible = false;
+
+				tableLayoutPanel1.Controls.Add(pictureBox1, 1, 0);
+				ClientSize = new Size(401, 288);
+			}
+
+			tableLayoutPanel1.ResumeLayout();
 		}
 
 		/// <summary>

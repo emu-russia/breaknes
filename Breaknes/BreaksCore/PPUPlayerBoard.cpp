@@ -1,4 +1,4 @@
-﻿// A special type of breadboard that contains only PPU. Instead of CPU, a RegDump processor is used, which feeds register operations to the PPU from the dump via CPU I/F.
+// A special type of breadboard that contains only PPU. Instead of CPU, a RegDump processor is used, which feeds register operations to the PPU from the dump via CPU I/F.
 // Module for maintaining a simulated PPU environment.
 
 #include "pch.h"
@@ -7,10 +7,9 @@ using namespace BaseLogic;
 
 namespace Breaknes
 {
-	PPUPlayerBoard::PPUPlayerBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1) : Board(apu_rev, ppu_rev, p1)
+	PPUPlayerBoard::PPUPlayerBoard(APUSim::Revision apu_rev, std::vector<PPUSim::Revision> ppu_revs, CartPcb::ConnectorType p1) : Board(apu_rev, ppu_revs, p1)
 	{
 		core = new M6502Core::FakeM6502("PPU", MappedPPUBase, MappedAPUMask);
-		ppu = new PPUSim::PPU(ppu_rev);
 		vram = new BaseBoard::SRAM("VRAM", vram_bits);
 
 		AddBoardMemDescriptors();
@@ -19,7 +18,6 @@ namespace Breaknes
 
 	PPUPlayerBoard::~PPUPlayerBoard()
 	{
-		delete ppu;
 		delete vram;
 		delete core;
 	}
@@ -122,7 +120,7 @@ namespace Breaknes
 		ppu_inputs[(size_t)PPUSim::InputPad::RS2] = pendingCpuOperation ? ((ppuRegId & 4) ? TriState::One : TriState::Zero) : TriState::Zero;
 		ppu_inputs[(size_t)PPUSim::InputPad::n_DBE] = pendingCpuOperation ? TriState::Zero : TriState::One;
 
-		ppu->sim(ppu_inputs, ppu_outputs, &ext_bus, &data_bus, &ad_bus, &pa8_13, vidSample);
+		ppu->sim(ppu_inputs, ppu_outputs, &ext_bus, &data_bus, &ad_bus, &pa8_13, vidSamples[0]);
 
 		ALE = ppu_outputs[(size_t)PPUSim::OutputPad::ALE];
 		n_RD = ppu_outputs[(size_t)PPUSim::OutputPad::n_RD];

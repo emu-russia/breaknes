@@ -12,6 +12,12 @@ namespace SharpTools
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void CreateBoard(string boardName, string apu, string ppu, string p1);
 
+		/// <summary>
+		/// Create a board with several PPUs (up to 2). By default TV[i] shows PPU[i].
+		/// </summary>
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void CreateBoardEx(string boardName, string apu, [In, Out][MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)] string[] ppus, int ppuCount, string p1);
+
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void DestroyBoard();
 
@@ -121,6 +127,32 @@ namespace SharpTools
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern long GetPCLKCounter();
 
+		/// <summary>
+		/// Get the number of PPUs on the current board.
+		/// </summary>
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetPPUCount();
+
+		/// <summary>
+		/// Bind the video signal of a PPU to a virtual TV Set (up to 2 TVs).
+		/// `bind == false` disconnects the TV (it shows black).
+		/// By default TV[i] is bound to PPU[i]. For debugging one PPU can be bound to both TVs.
+		/// </summary>
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void BindPPUToTV(int ppu_index, int tv_index, bool bind);
+
+		/// <summary>
+		/// Get the PPU index currently bound to the TV, or -1 if the TV is disconnected.
+		/// </summary>
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetTVBinding(int tv_index);
+
+		/// <summary>
+		/// Get the number of connected (bound) TVs. Unbound trailing TVs are not counted.
+		/// </summary>
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int GetTVCount();
+
 		[StructLayout(LayoutKind.Explicit)]
 		public struct VideoOutSample
 		{
@@ -140,6 +172,12 @@ namespace SharpTools
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SampleVideoSignal(out VideoOutSample sample);
+
+		/// <summary>
+		/// Get 1 sample of the video signal displayed on the given TV.
+		/// </summary>
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SampleVideoSignalEx(int tv_index, out VideoOutSample sample);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int GetHCounter();
@@ -201,8 +239,20 @@ namespace SharpTools
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void GetPpuSignalFeatures(out VideoSignalFeatures features);
 
+		/// <summary>
+		/// Get video signal settings of the given PPU that help with its rendering on the consumer side.
+		/// </summary>
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void GetPpuSignalFeaturesEx(int ppu_index, out VideoSignalFeatures features);
+
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void ConvertRAWToRGB(UInt16 raw, out byte r, out byte g, out byte b);
+
+		/// <summary>
+		/// Convert the raw color of the given PPU to RGB. Can be used for palette generation or PPU video output in RAW mode.
+		/// </summary>
+		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
+		public static extern void ConvertRAWToRGBEx(int ppu_index, UInt16 raw, out byte r, out byte g, out byte b);
 
 		[DllImport("BreaksCore.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetRAWColorMode(bool enable);

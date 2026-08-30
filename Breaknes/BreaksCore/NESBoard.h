@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace Breaknes
 {
@@ -143,7 +143,7 @@ namespace Breaknes
 #pragma endregion "Debug, look away"
 
 	public:
-		NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1);
+		NESBoard(APUSim::Revision apu_rev, std::vector<PPUSim::Revision> ppu_revs, CartPcb::ConnectorType p1);
 		virtual ~NESBoard();
 
 		void Step() override;

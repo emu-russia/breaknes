@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 // Historically, the NES board was made first, so the Famicom is partially similar in implementation.
 // Let's try to do without the debugging mechanisms for the sake of purity. If anything, all debugging can be done on the NES board
@@ -102,7 +102,7 @@ namespace Breaknes
 		void CartridgeConnectorSimFailure2();
 
 	public:
-		FamicomBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1);
+		FamicomBoard(APUSim::Revision apu_rev, std::vector<PPUSim::Revision> ppu_revs, CartPcb::ConnectorType p1);
 		virtual ~FamicomBoard();
 
 		void Step() override;

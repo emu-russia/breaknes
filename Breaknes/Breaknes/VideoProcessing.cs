@@ -7,6 +7,19 @@ namespace Breaknes
 		private BreaksCore.VideoSignalFeatures ppu_features;
 		private int SamplesPerScan;
 
+		/// <summary>
+		/// Index of the TV Set this renderer displays.
+		/// </summary>
+		public int TvIndex => tv_index;
+
+		/// <summary>
+		/// Index of the PPU whose video signal is bound to this TV.
+		/// </summary>
+		public int PpuIndex => ppu_index;
+
+		private readonly int tv_index;
+		private readonly int ppu_index;
+
 		private BreaksCore.VideoOutSample[] ScanBuffer;
 		private int WritePtr = 0;
 		private bool SyncFound = false;
@@ -28,10 +41,13 @@ namespace Breaknes
 		private string dump_video_dir = "";
 		private string dump_rom_name;
 
-		public VideoRender(OnRenderField _onRender, bool dump, string dump_dir, string rom_name)
+		public VideoRender(int _tv_index, OnRenderField _onRender, bool dump, string dump_dir, string rom_name)
 		{
+			tv_index = _tv_index;
+			ppu_index = BreaksCore.GetTVBinding(tv_index);
 			onRenderField = _onRender;
-			BreaksCore.GetPpuSignalFeatures(out ppu_features);
+
+			BreaksCore.GetPpuSignalFeaturesEx(ppu_index, out ppu_features);
 
 			dump_video = dump;
 			dump_video_dir = dump_dir;
@@ -112,7 +128,7 @@ namespace Breaknes
 				if (CurrentScan < 240)
 				{
 					byte r, g, b;
-					BreaksCore.ConvertRAWToRGB(ScanBuffer[ReadPtr].raw, out r, out g, out b);
+					BreaksCore.ConvertRAWToRGBEx(ppu_index, ScanBuffer[ReadPtr].raw, out r, out g, out b);
 
 					field[CurrentScan * 256 + i] = Color.FromArgb(r, g, b);
 
@@ -174,8 +190,9 @@ namespace Breaknes
 		{
 			if (dump_video)
 			{
-				string raw_name = dump_video_dir + "/" + dump_rom_name + "_" + field_counter.ToString("D5") + ".bin";
-				string bmp_name = dump_video_dir + "/" + dump_rom_name + "_" + field_counter.ToString("D5") + ".bmp";
+				string name = dump_rom_name + "_tv" + tv_index + "_" + field_counter.ToString("D5");
+				string raw_name = dump_video_dir + "/" + name + ".bin";
+				string bmp_name = dump_video_dir + "/" + name + ".bmp";
 
 				File.WriteAllBytes(raw_name, raw_field);
 				if (field_pic != null)
