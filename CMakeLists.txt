@@ -17,6 +17,9 @@ add_executable (breaknes
 	Breaknes/BreaknesSDL/main.cpp 
 	Breaknes/BreaknesSDL/VideoProcessing.cpp
 	Breaknes/BreaknesSDL/SoundProcessing.cpp
+	Breaknes/BreaknesSDL/IOConfig.cpp
+	Breaknes/BreaknesSDL/IOProcessing.cpp
+	Breaknes/BreaknesSDL/IOConfigurator.cpp
 
 	# BreaksCore
 
@@ -104,6 +107,7 @@ add_executable (breaknes
 	CartPcb/PcbLoader.cpp
 	CartPcb/NesCartDb.cpp
 	CartPcb/CartPcbCartridge.cpp
+	CartPcb/CartPcbPort.cpp
 	CartPcb/CartridgeLoader.cpp
 	CartPcb/ChipsAdapter.cpp
 

@@ -178,6 +178,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SoundProcessing.cpp" />
     <ClCompile Include="VideoProcessing.cpp" />
+    <ClCompile Include="IOConfig.cpp" />
+    <ClCompile Include="IOProcessing.cpp" />
+    <ClCompile Include="IOConfigurator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <!-- Nescartdb data for the CartPcb identification (copied next to the executable). -->
@@ -195,6 +198,9 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="SoundProcessing.h" />
     <ClInclude Include="VideoProcessing.h" />
+    <ClInclude Include="IOConfig.h" />
+    <ClInclude Include="IOProcessing.h" />
+    <ClInclude Include="IOConfigurator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

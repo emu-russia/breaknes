@@ -755,7 +755,7 @@ void Json::Value::Serialize(SerializeContext* ctx, int depth, bool sizeOnly)
 			Json::EmitText(ctx, value.AsBool ? "true" : "false", sizeOnly);
 			break;
 		case ValueType::Int:
-			swprintf(temp, sizeof(temp) / sizeof(temp[0]) - 1, L"%I64u", value.AsInt);
+			swprintf(temp, sizeof(temp) / sizeof(temp[0]) - 1, L"%llu", (unsigned long long)value.AsInt);
 			EmitWcharString(ctx, temp, sizeOnly);
 			break;
 		case ValueType::Float:
