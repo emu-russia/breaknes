@@ -24,6 +24,7 @@ namespace IO
 		bool start_trace = false;
 		size_t posedge_counter = 0;
 		BaseLogic::TriState prev_clk = BaseLogic::TriState::X;
+		BaseLogic::TriState prev_latch = BaseLogic::TriState::X;	// latch edge detection for logging
 
 		void Trace(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]);
 

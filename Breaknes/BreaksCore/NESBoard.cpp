@@ -204,6 +204,16 @@ namespace Breaknes
 		WRAM_Addr = addr_bus & (wram_size - 1);
 		wram->sim(WRAM_nCE, CPU_RnW, TriState::Zero, &WRAM_Addr, &data_bus, data_bus_dirty);
 
+		// CPU bus cycle trace: one line per CPU cycle (PHI2 phase), after all
+		// bus drivers (cartridge, IO, WRAM) have settled the data bus.
+
+		if (apu->GetPHI2() == TriState::One)
+		{
+			LOG_BOARD(Cat_Bus, "CPU bus %s $%04X = %02X",
+				CPU_RnW == TriState::Zero ? "WR" : "RD",
+				(int)addr_bus, (int)data_bus);
+		}
+
 		// Tick
 
 		CLK = NOT(CLK);
@@ -229,6 +239,8 @@ namespace Breaknes
 
 	void NESBoard::Reset()
 	{
+		LOG_BOARD(Cat_Events, "Reset");
+
 		pendingReset_CPU = true;
 		pendingReset_PPU = true;
 

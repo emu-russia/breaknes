@@ -6,6 +6,23 @@
 
 namespace Chips
 {
+	static const Log::LogCategoryDesc Mmc1LogCategories[] =
+	{
+		{ Cat_Regs, "Regs" },		// serial register write commits
+		{ Cat_Events, "Events" },	// reset (D7) events
+	};
+
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count)
+	{
+		count = sizeof(Mmc1LogCategories) / sizeof(Mmc1LogCategories[0]);
+		return Mmc1LogCategories;
+	}
+
+	void MMC1::SetLogMask(uint64_t mask)
+	{
+		Log::SetCategoryMask(Log::Source_MMC1, mask);
+	}
+
 	MMC1::MMC1()
 	{
 		// Power-up state: the control register is $0C (PRG mode 3, CHR 8K),
@@ -121,8 +138,22 @@ namespace Chips
 		// Regs 0-3
 
 		if (reg_enable >= 0) {
+			int old_val = reg[reg_enable].bitval;
 			reg[reg_enable].bitval = shifter_dffs;
+
+			// One log line per completed serial write that changes the register.
+			if (old_val != shifter_dffs) {
+				LOG_MMC1(Cat_Regs, "Write reg %d = %02X (serial)", reg_enable, shifter_dffs);
+			}
 		}
+
+		// D7 reset write event (one line per reset write).
+		int reset_write = (div_clock_dff != 0 && d7_settled != 0) ? 1 : 0;
+		if (reset_write && !prev_reset_write) {
+			LOG_MMC1(Cat_Events, "Reset write (D7=1)");
+		}
+		prev_reset_write = reset_write;
+
 		// Special processing for bits 2 and 3 of the control register. These bits are set when the divider is reset from the outside.
 		if (div_reset_dff == 0) {
 			reg[0].b2 = 1;

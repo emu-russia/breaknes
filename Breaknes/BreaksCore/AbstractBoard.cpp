@@ -3,6 +3,51 @@
 
 namespace Breaknes
 {
+	static const Log::LogCategoryDesc BoardLogCategories[] =
+	{
+		{ Cat_Events, "Events" },	// board lifecycle events
+		{ Cat_Bus, "Bus" },			// CPU bus cycles
+	};
+
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count)
+	{
+		count = sizeof(BoardLogCategories) / sizeof(BoardLogCategories[0]);
+		return BoardLogCategories;
+	}
+
+	void Board::SetLogMask(Log::Source src, uint64_t mask)
+	{
+		switch (src)
+		{
+			// The chips are configured through their public methods (Component -> BreaksCore).
+
+			case Log::Source_Core:
+				if (core) { core->SetLogMask(mask); return; }
+				break;
+
+			case Log::Source_APU:
+				if (apu) { apu->SetLogMask(mask); return; }
+				break;
+
+			case Log::Source_PPU:
+				if (ppu) { ppu->SetLogMask(mask); return; }
+				break;
+
+			case Log::Source_MMC1:
+				if (cart) { cart->SetChipLogMask(mask); return; }
+				break;
+
+			case Log::Source_CartPcb:
+				if (cart) { cart->SetLogMask(mask); return; }
+				break;
+
+			default:
+				break;
+		}
+
+		Log::SetCategoryMask(src, mask);
+	}
+
 	Board::Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1)
 	{
 		p1_type = p1;
@@ -31,6 +76,7 @@ namespace Breaknes
 
 		if (!cart->Valid())
 		{
+			LOG_BOARD(Cat_Events, "Cartridge rejected: not identified in Nescartdb");
 			delete cart;
 			cart = nullptr;
 
@@ -40,6 +86,8 @@ namespace Breaknes
 			return -2;
 		}
 
+		LOG_BOARD(Cat_Events, "Cartridge inserted (%zi bytes)", nesImageSize);
+
 		return 0;
 	}
 
@@ -47,6 +95,7 @@ namespace Breaknes
 	{
 		if (cart)
 		{
+			LOG_BOARD(Cat_Events, "Cartridge ejected");
 			delete cart;
 			cart = nullptr;
 
@@ -109,7 +158,7 @@ namespace Breaknes
 			ppu_regdump = new RegDumper("PPU", GetPHICounter(), filename);
 			prev_phi_counter_for_ppuregdump = GetPHICounter();
 
-			printf("PPU regdump enabled to file: %s\n", filename);
+			LOG_BOARD(Cat_Events, "PPU regdump enabled to file: %s", filename);
 		}
 		else {
 			if (ppu_regdump) {
@@ -117,7 +166,7 @@ namespace Breaknes
 				ppu_regdump = nullptr;
 			}
 
-			printf("PPU regdump disabled\n");
+			LOG_BOARD(Cat_Events, "PPU regdump disabled");
 		}
 	}
 
@@ -135,7 +184,7 @@ namespace Breaknes
 			apu_regdump = new RegDumper("APU", GetPHICounter(), filename);
 			prev_phi_counter_for_apuregdump = GetPHICounter();
 
-			printf("APU regdump enabled to file: %s\n", filename);
+			LOG_BOARD(Cat_Events, "APU regdump enabled to file: %s", filename);
 		}
 		else {
 			if (apu_regdump) {
@@ -143,7 +192,7 @@ namespace Breaknes
 				apu_regdump = nullptr;
 			}
 
-			printf("APU regdump disabled\n");
+			LOG_BOARD(Cat_Events, "APU regdump disabled");
 		}
 	}
 
@@ -315,6 +364,25 @@ namespace Breaknes
 				else if (rnw == BaseLogic::TriState::Zero)
 					ppu_regdump->LogRegWrite(phi_now, addr_bus & MappedPPUMask, data_bus);
 				prev_phi_counter_for_ppuregdump = phi_now;
+			}
+		}
+
+		// APU register access trace (one line per access, attributed to the APU source).
+		// The PPU register accesses are traced inside PPUSim (CPU I/F strobes).
+
+		if ((addr_bus & ~MappedAPUMask) == MappedAPUBase && phi2 == BaseLogic::TriState::One)
+		{
+			uint64_t phi_now = GetPHICounter();
+			if (prev_phi_counter_for_apulog != phi_now)
+			{
+				uint16_t reg = addr_bus & MappedAPUMask;
+
+				if (rnw == BaseLogic::TriState::One)
+					LOG_APU(APUSim::Cat_Regs, "Read $%04X = %02X", (int)reg, (int)data_bus);
+				else if (rnw == BaseLogic::TriState::Zero)
+					LOG_APU(APUSim::Cat_Regs, "Write $%04X = %02X", (int)reg, (int)data_bus);
+
+				prev_phi_counter_for_apulog = phi_now;
 			}
 		}
 	}

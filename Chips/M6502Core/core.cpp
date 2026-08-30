@@ -4,6 +4,23 @@ using namespace BaseLogic;
 
 namespace M6502Core
 {
+	static const Log::LogCategoryDesc CoreLogCategories[] =
+	{
+		{ Cat_Events, "Events" },	// RES / NMI / IRQ edge events
+		{ Cat_Bus, "Bus" },			// external bus write cycles
+	};
+
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count)
+	{
+		count = sizeof(CoreLogCategories) / sizeof(CoreLogCategories[0]);
+		return CoreLogCategories;
+	}
+
+	void M6502::SetLogMask(uint64_t mask)
+	{
+		Log::SetCategoryMask(Log::Source_Core, mask);
+	}
+
 	M6502::M6502(bool HLE, bool BCD_Hack)
 	{
 		HLE_Mode = HLE;
@@ -63,6 +80,7 @@ namespace M6502Core
 		{
 			nmip_ff.set(NOR(NOR(nmip_ff.get(), AND(NOT(wire.n_NMI), wire.PHI2)), AND(wire.n_NMI, wire.PHI2)));
 			nNMI_Cache = wire.n_NMI;
+			LOG_CORE(Cat_Events, "NMI %s", wire.n_NMI == TriState::Zero ? "asserted" : "deasserted");
 		}
 		wire.n_NMIP = NOT(nmip_ff.get());
 
@@ -70,6 +88,7 @@ namespace M6502Core
 		{
 			irqp_ff.set(NOR(NOR(irqp_ff.get(), AND(NOT(wire.n_IRQ), wire.PHI2)), AND(wire.n_IRQ, wire.PHI2)));
 			nIRQ_Cache = wire.n_IRQ;
+			LOG_CORE(Cat_Events, "IRQ %s", wire.n_IRQ == TriState::Zero ? "asserted" : "deasserted");
 		}
 		irqp_latch.set(irqp_ff.get(), wire.PHI1);
 		wire.n_IRQP = irqp_latch.nget();
@@ -78,6 +97,7 @@ namespace M6502Core
 		{
 			resp_ff.set(NOR(NOR(resp_ff.get(), AND(wire.n_RES, wire.PHI2)), AND(NOT(wire.n_RES), wire.PHI2)));
 			nRES_Cache = wire.n_RES;
+			LOG_CORE(Cat_Events, "RESET %s", wire.n_RES == TriState::Zero ? "asserted" : "deasserted");
 		}
 		resp_latch.set(resp_ff.get(), wire.PHI1);
 		wire.RESP = resp_latch.nget();
@@ -285,5 +305,14 @@ namespace M6502Core
 		sim_Bottom(inputs, outputs, addr_bus, data_bus);
 		sim_Top(inputs, data_bus);
 		sim_Bottom(inputs, outputs, addr_bus, data_bus);
+
+		// External bus write cycle trace: the core drives the address and data
+		// buses during the PHI2 phase of a write cycle. One line per write cycle.
+
+		if (wire.PHI2 == TriState::One &&
+			outputs[(size_t)OutputPad::RnW] == TriState::Zero)
+		{
+			LOG_CORE(Cat_Bus, "Write $%04X = %02X", (int)*addr_bus, (int)*data_bus);
+		}
 	}
 }

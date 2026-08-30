@@ -41,6 +41,8 @@ namespace APUSim
 
 		BaseLogic::TriState unused = BaseLogic::TriState::Z;
 
+		BaseLogic::TriState prev_RES = BaseLogic::TriState::X;	// RES edge detection for logging
+
 		void sim_OutReg();
 
 	public:

@@ -32,6 +32,7 @@ namespace IO
 	class FamiController1 : public IODevice
 	{
 		CD4021 sr{};
+		BaseLogic::TriState prev_latch = BaseLogic::TriState::X;	// latch edge detection for logging
 
 	public:
 		FamiController1();
@@ -51,6 +52,7 @@ namespace IO
 	class FamiController2 : public IODevice
 	{
 		CD4021 sr{};
+		BaseLogic::TriState prev_latch = BaseLogic::TriState::X;	// latch edge detection for logging
 
 	public:
 		FamiController2();

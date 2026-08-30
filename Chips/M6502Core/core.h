@@ -38,6 +38,21 @@ namespace M6502CoreUnitTest
 
 namespace M6502Core
 {
+	/// <summary>
+	/// Log categories of the M6502 core (one bit per category, owned by this component).
+	/// </summary>
+	enum LogCategory : uint64_t
+	{
+		Cat_Events = 1ULL << 0,		// RES / NMI / IRQ edge events
+		Cat_Bus = 1ULL << 1,		// external bus write cycles
+	};
+
+	/// <summary>
+	/// The category list of the core, used by BreaksCore to register the source
+	/// for the user interface (definitions flow Component -> BreaksCore).
+	/// </summary>
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count);
+
 	enum class InputPad
 	{
 		n_NMI = 0,
@@ -266,5 +281,12 @@ namespace M6502Core
 
 		uint8_t getUserRegSingle(int ofs);
 		void setUserRegSingle(int ofs, uint8_t val);
+
+		/// <summary>
+		/// Set the log category mask of the core (one bit per M6502Core::LogCategory).
+		/// The mask is stored in the global Log manager, so it can be set at any time,
+		/// even before the core instance exists.
+		/// </summary>
+		void SetLogMask(uint64_t mask);
 	};
 }

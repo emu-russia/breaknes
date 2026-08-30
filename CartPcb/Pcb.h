@@ -21,6 +21,22 @@
 
 namespace CartPcb
 {
+	/// <summary>
+	/// Log categories of the CartPcb subsystem (one bit per category, owned by this component).
+	/// </summary>
+	enum LogCategory : uint64_t
+	{
+		Cat_Mem = 1ULL << 0,		// cartridge memory accesses (ROM/RAM reads & writes)
+		Cat_Latch = 1ULL << 1,		// latch (bank register) captures
+		Cat_Events = 1ULL << 2,		// cartridge / component lifecycle events
+	};
+
+	/// <summary>
+	/// The category list of the CartPcb subsystem, used by BreaksCore to register
+	/// the source for the user interface (definitions flow Component -> BreaksCore).
+	/// </summary>
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count);
+
 	enum class Bus { None, CPU, PPU };
 
 	// ---------------------------------------------------------------------
@@ -89,6 +105,11 @@ namespace CartPcb
 		/// current chip state, without simulating the chip (debugger support).
 		/// </summary>
 		virtual size_t Dbg_GetPRGAddress(size_t cpu_addr) { return 0; }
+
+		/// <summary>
+		/// Set the log category mask of the chip instance (forwarded to the chip).
+		/// </summary>
+		virtual void SetLogMask(uint64_t mask) {}
 	};
 
 	// Implemented in ChipsAdapter.cpp. Returns nullptr for unknown chip types.
@@ -212,6 +233,18 @@ namespace CartPcb
 
 		const std::string& GetBoardType() const { return boardType; }
 		const std::string& GetBoardPcb() const { return boardPcb; }
+
+		/// <summary>
+		/// Set the log category mask of the CartPcb source (one bit per CartPcb::LogCategory).
+		/// The mask is stored in the global Log manager, so it can be set at any time.
+		/// </summary>
+		void SetLogMask(uint64_t mask);
+
+		/// <summary>
+		/// Forward the log category mask to the mapper chip instances of this Pcb
+		/// (e.g. the MMC1 chip). Does not touch the CartPcb source mask.
+		/// </summary>
+		void SetChipLogMask(uint64_t mask);
 
 	private:
 		struct SimContext

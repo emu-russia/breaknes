@@ -135,6 +135,22 @@ namespace APUSimUnitTest
 
 namespace APUSim
 {
+	/// <summary>
+	/// Log categories of the APU (one bit per category, owned by this component).
+	/// </summary>
+	enum LogCategory : uint64_t
+	{
+		Cat_Regs = 1ULL << 0,		// APU register accesses ($4000-$401F)
+		Cat_DMA = 1ULL << 1,		// OAM DMA activity
+		Cat_Events = 1ULL << 2,		// reset / IRQ events
+	};
+
+	/// <summary>
+	/// The category list of the APU, used by BreaksCore to register the source
+	/// for the user interface (definitions flow Component -> BreaksCore).
+	/// </summary>
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count);
+
 	class APU
 	{
 		friend APUSimUnitTest::UnitTest;
@@ -384,5 +400,12 @@ namespace APUSim
 		/// Set the value of the CPU-visible APU status register ($4015). For debugging.
 		/// </summary>
 		void Dbg_SetStatus(uint8_t val);
+
+		/// <summary>
+		/// Set the log category mask of the APU (one bit per APUSim::LogCategory).
+		/// The mask is stored in the global Log manager, so it can be set at any time,
+		/// even before the APU instance exists.
+		/// </summary>
+		void SetLogMask(uint64_t mask);
 	};
 }

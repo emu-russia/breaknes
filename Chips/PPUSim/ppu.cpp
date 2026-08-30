@@ -6,6 +6,23 @@ using namespace BaseLogic;
 
 namespace PPUSim
 {
+	static const Log::LogCategoryDesc PpuLogCategories[] =
+	{
+		{ Cat_Regs, "Regs" },		// CPU I/F register accesses ($2000-$2007)
+		{ Cat_Events, "Events" },	// reset / VBlank NMI events
+	};
+
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count)
+	{
+		count = sizeof(PpuLogCategories) / sizeof(PpuLogCategories[0]);
+		return PpuLogCategories;
+	}
+
+	void PPU::SetLogMask(uint64_t mask)
+	{
+		Log::SetCategoryMask(Log::Source_PPU, mask);
+	}
+
 	/// <summary>
 	/// Constructor. Creates all PPU modules.
 	/// </summary>
@@ -77,6 +94,12 @@ namespace PPUSim
 		regs->sim_RWDecoder();
 
 		wire.RES = NOT(inputs[(size_t)InputPad::n_RES]);
+
+		if (wire.RES != prev_RES)
+		{
+			LOG_PPU(Cat_Events, "RESET %s", wire.RES == TriState::One ? "asserted" : "deasserted");
+			prev_RES = wire.RES;
+		}
 
 		if (wire.RES == TriState::One)
 		{
@@ -189,7 +212,15 @@ namespace PPUSim
 		if (wire.n_WR == TriState::Zero)
 		{
 			DB = *data_bus;
+
+			// CPU I/F register write: one line per write access ($2000-$2007).
+			if (prev_n_WR != TriState::Zero)
+			{
+				size_t reg = (size_t)wire.RS[0] | ((size_t)wire.RS[1] << 1) | ((size_t)wire.RS[2] << 2);
+				LOG_PPU(Cat_Regs, "Write $200%X = %02X", (int)reg, (int)DB);
+			}
 		}
+		prev_n_WR = wire.n_WR;
 
 		PD = *ad_bus;
 	}
@@ -232,7 +263,15 @@ namespace PPUSim
 		if (wire.n_RD == TriState::Zero)
 		{
 			*data_bus = DB;
+
+			// CPU I/F register read: one line per read access ($2000-$2007).
+			if (prev_n_RD != TriState::Zero)
+			{
+				size_t reg = (size_t)wire.RS[0] | ((size_t)wire.RS[1] << 1) | ((size_t)wire.RS[2] << 2);
+				LOG_PPU(Cat_Regs, "Read $200%X = %02X", (int)reg, (int)DB);
+			}
 		}
+		prev_n_RD = wire.n_RD;
 
 		if (wire.RD == TriState::Zero)
 		{

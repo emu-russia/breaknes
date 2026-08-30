@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace Breaknes
@@ -66,6 +67,12 @@ namespace Breaknes
 			settings.APURegdump = false;
 			settings.APURegdumpDir = "";
 			settings.NintendulatorLog = false;
+			settings.LogEnabled = false;
+			settings.LogToFile = false;
+			settings.LogFile = "breaknes.log";
+			settings.LogToStdout = false;
+			settings.LogSourceMask = 0;
+			settings.LogCategoryMasks = "";
 
 			SaveSettings(settings);
 
@@ -93,6 +100,51 @@ namespace Breaknes
 			{
 				Close();
 			}
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			BreaknesSettings settings = (BreaknesSettings)propertyGrid1.SelectedObject!;
+			FormLogging dlg = new FormLogging(settings);
+			dlg.ShowDialog(this);
+			propertyGrid1.Refresh();
+		}
+
+		/// <summary>
+		/// Get the stored category mask of one log source from the
+		/// "source:mask;source:mask;..." string of the settings.
+		/// </summary>
+		public static ulong GetLogCategoryMask(BreaknesSettings settings, int source)
+		{
+			if (settings.LogCategoryMasks == null)
+				return 0;
+
+			foreach (var part in settings.LogCategoryMasks.Split(';', StringSplitOptions.RemoveEmptyEntries))
+			{
+				var kv = part.Split(':');
+				if (kv.Length == 2 && int.TryParse(kv[0].Trim(), out int s) && s == source && ulong.TryParse(kv[1].Trim(), out ulong mask))
+					return mask;
+			}
+
+			return 0;
+		}
+
+		/// <summary>
+		/// Store the category masks of all sources in the "source:mask;source:mask;..."
+		/// format of the settings.
+		/// </summary>
+		public static void SetLogCategoryMasks(BreaknesSettings settings, Dictionary<int, ulong> masks)
+		{
+			var sb = new StringBuilder();
+
+			foreach (var kv in masks)
+			{
+				if (sb.Length != 0)
+					sb.Append(';');
+				sb.Append(kv.Key).Append(':').Append(kv.Value);
+			}
+
+			settings.LogCategoryMasks = sb.ToString();
 		}
 
 		public class BreaknesSettings
@@ -166,6 +218,37 @@ namespace Breaknes
 			[Description("Enable writing the Nintendulator-compatible CPU instruction trace log. The log is written to the Nintendulator.log file in the working directory and can be used to compare this emulator with the Nintendulator emulator.")]
 			[DefaultValue(false)]
 			public bool NintendulatorLog { get; set; }
+
+			[Category("Logging")]
+			[Description("Master switch of the logging facility (issue #517). The sources and their categories are configured in the Logging dialog.")]
+			[DefaultValue(false)]
+			public bool LogEnabled { get; set; }
+
+			[Category("Logging")]
+			[Description("Write the log to a file.")]
+			[DefaultValue(false)]
+			public bool LogToFile { get; set; }
+
+			[Category("Logging")]
+			[Description("The log file path. The file is truncated on every start.")]
+			[DefaultValue("")]
+			[EditorAttribute(typeof(System.Windows.Forms.Design.FileNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
+			public string LogFile { get; set; } = "breaknes.log";
+
+			[Category("Logging")]
+			[Description("Also write the log to stdout (requires the debug console, see AllocConsole).")]
+			[DefaultValue(false)]
+			public bool LogToStdout { get; set; }
+
+			[Category("Logging")]
+			[Description("Log source mask: bit n enables the log source n (0 = no sources). Managed by the Logging dialog.")]
+			[DefaultValue(0)]
+			public ulong LogSourceMask { get; set; }
+
+			[Category("Logging")]
+			[Description("Per-source category masks in the \"source:mask;source:mask;...\" format. Managed by the Logging dialog.")]
+			[DefaultValue("")]
+			public string LogCategoryMasks { get; set; } = "";
 		}
 
 		// https://stackoverflow.com/questions/24503462/how-to-show-drop-down-control-in-property-grid

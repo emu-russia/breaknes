@@ -57,6 +57,7 @@ namespace Breaknes
 			{
 				BreaksCore.EnableNintendulatorLog(true);
 			}
+			ApplyLogSettings(settings);
 			io = new IOProcessor();
 			backgroundWorker1.RunWorkerAsync();
 		}
@@ -123,6 +124,25 @@ namespace Breaknes
 			BreaksCore.EnablePpuRegDump(settings.PPURegdump, settings.PPURegdumpDir);
 			BreaksCore.EnableApuRegDump(settings.APURegdump, settings.APURegdumpDir);
 			BreaksCore.EnableNintendulatorLog(settings.NintendulatorLog);
+			ApplyLogSettings(settings);
+		}
+
+		/// <summary>
+		/// Apply the logging settings to the native side (issue #517).
+		/// </summary>
+		private static void ApplyLogSettings(FormSettings.BreaknesSettings settings)
+		{
+			BreaksCore.SetLogEnabled(settings.LogEnabled);
+			BreaksCore.SetLogSourceMask(settings.LogSourceMask);
+
+			int sourceCount = BreaksCore.GetLogSourceCount();
+			for (int src = 0; src < sourceCount; src++)
+			{
+				BreaksCore.SetLogCategoryMask(src, FormSettings.GetLogCategoryMask(settings, src));
+			}
+
+			BreaksCore.SetLogToFile(settings.LogToFile, settings.LogFile ?? "");
+			BreaksCore.SetLogToStdout(settings.LogToStdout);
 		}
 
 		private void openDebuggerToolStripMenuItem_Click(object sender, EventArgs e)

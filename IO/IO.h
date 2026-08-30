@@ -3,6 +3,21 @@
 namespace IO
 {
 	/// <summary>
+	/// Log categories of the IO subsystem (one bit per category, owned by this component).
+	/// </summary>
+	enum LogCategory : uint64_t
+	{
+		Cat_Ctrl = 1ULL << 0,		// controller latch / read events
+		Cat_Events = 1ULL << 1,		// device attach / detach events
+	};
+
+	/// <summary>
+	/// The category list of the IO subsystem, used by BreaksCore to register the
+	/// source for the user interface (definitions flow Component -> BreaksCore).
+	/// </summary>
+	const Log::LogCategoryDesc* GetLogCategories(size_t& count);
+
+	/// <summary>
 	/// A unique device identifier that completely defines the device model and logic.
 	/// </summary>
 	enum class DeviceID
