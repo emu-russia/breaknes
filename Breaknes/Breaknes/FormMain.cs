@@ -11,6 +11,7 @@ namespace Breaknes
 
 		private BoardControl board = new();
 		private List<VideoRender> tv_renders = new();
+		private TvWall? tv_wall = null;
 		private AudioRender? snd_out = null;
 		private IOProcessor? io = null;
 		private string original_title = "";
@@ -87,16 +88,29 @@ namespace Breaknes
 				var settings = FormSettings.LoadSettings();
 				var rom_name = Path.GetFileNameWithoutExtension(filename);
 
-				// Create the TV Set renders: one per connected TV, in the physical layout
-				// described in the BoardDescription.json ("tv_layout", "tvs").
+				// Create the TV Set renders: one per connected TV. With several TVs
+				// the fields are composited by TvWall into one window bitmap, in the
+				// physical layout from the BoardDescription.json ("tv_layout", "tvs").
 				int tvCount = BreaksCore.GetTVCount();
 				SetupTvLayout(currentBoard?.tv_layout ?? "horizontal", tvCount);
 
 				tv_renders.Clear();
+				tv_wall = null;
+				if (tvCount > 1)
+				{
+					tv_wall = new TvWall(currentBoard?.tv_layout ?? "horizontal", tvCount, pictureBox1);
+				}
 				for (int tv = 0; tv < tvCount && tv < 2; tv++)
 				{
 					var vr = new VideoRender(tv, tv == 0 ? OnRenderField : null, settings.DumpVideo, settings.DumpVideoDir, rom_name);
-					vr.SetOutputPictureBox(tv == 0 ? pictureBox1 : pictureBox2);
+					if (tv_wall != null)
+					{
+						vr.SetTvWall(tv_wall);
+					}
+					else
+					{
+						vr.SetOutputPictureBox(pictureBox1);
+					}
 					tv_renders.Add(vr);
 				}
 
@@ -145,6 +159,7 @@ namespace Breaknes
 
 				// The old renders refer to the destroyed board; drop them and reset the TV layout.
 				tv_renders.Clear();
+				tv_wall = null;
 				SetupTvLayout(currentBoard?.tv_layout ?? "horizontal", BreaksCore.GetTVCount());
 			}
 
@@ -155,8 +170,10 @@ namespace Breaknes
 		}
 
 		/// <summary>
-		/// Arrange the TV picture boxes in the window according to the physical TV layout
+		/// Arrange the TV display in the window according to the physical TV layout
 		/// from the BoardDescription.json ("tv_layout": "horizontal"/"vertical").
+		/// With several TVs the whole picture is composited by TvWall into a single
+		/// canvas shown in pictureBox1, so no per-TV picture boxes are needed.
 		/// </summary>
 		private void SetupTvLayout(string layout, int tvCount)
 		{
@@ -167,44 +184,34 @@ namespace Breaknes
 
 			if (tvCount > 1)
 			{
-				// Two TV Sets: host them in a single cell and dock the picture boxes.
-				// The edge-docked box keeps a fixed 256x240 area, the second one fills
-				// the rest (Zoom keeps the picture aspect ratio in both).
+				// A single cell hosts the picture box that displays the whole picture
+				// (the TvWall canvas with all TVs at fixed pixel offsets).
 				tableLayoutPanel1.ColumnCount = 1;
 				tableLayoutPanel1.RowCount = 1;
 				tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 				tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
 
-				pictureBox1.SizeMode = pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-				pictureBox1.BackColor = pictureBox2.BackColor = Color.Black;
-				pictureBox2.Visible = true;
+				pictureBox1.Dock = DockStyle.Fill;
+				pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+				pictureBox1.BackColor = Color.Black;
+				pictureBox2.Visible = false;
 
-				bool vertical = layout == "vertical";
+				tableLayoutPanel1.Controls.Add(pictureBox1);
 
-				if (vertical)
+				if (layout == "vertical")
 				{
-					// Vertical: the first TV on top, the second one below it.
-					pictureBox1.Dock = DockStyle.Top;
-					pictureBox2.Dock = DockStyle.Fill;
-					pictureBox1.Height = 240;
+					// Vertical: the TVs are stacked one above the other.
 					ClientSize = new Size(256 + 32, 2 * 240 + 72);
 				}
 				else
 				{
-					// Horizontal: the first TV on the left, the second one to its right.
-					pictureBox1.Dock = DockStyle.Left;
-					pictureBox2.Dock = DockStyle.Fill;
-					pictureBox1.Width = 256;
+					// Horizontal: the TVs are placed side by side.
 					ClientSize = new Size(2 * 256 + 32, 240 + 72);
 				}
-
-				// The Fill control goes first, so the edge-docked control takes the strip.
-				tableLayoutPanel1.Controls.Add(pictureBox2);
-				tableLayoutPanel1.Controls.Add(pictureBox1);
 			}
 			else
 			{
-				// Single TV: restore the original centered layout.
+				// Single TV: the original centered layout (pictureBox1 in the middle column).
 				tableLayoutPanel1.ColumnCount = 3;
 				tableLayoutPanel1.RowCount = 1;
 				tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));

@@ -2,6 +2,84 @@ using SharpTools;
 
 namespace Breaknes
 {
+	/// <summary>
+	/// Composites the fields of several TV Sets into a single window bitmap.
+	/// The managed analogue of the SDL2 VideoRender: one canvas, the TVs are
+	/// placed at fixed pixel offsets according to the physical layout
+	/// ("horizontal": side by side, "vertical": one above the other).
+	/// </summary>
+	public class TvWall
+	{
+		private readonly string layout;
+		private readonly int tv_count;
+		private readonly PictureBox output;
+		private readonly Color[][] tv_fields;
+		private int fields_ready = 0;
+
+		public TvWall(string _layout, int _tv_count, PictureBox _output)
+		{
+			layout = _layout;
+			tv_count = _tv_count;
+			output = _output;
+
+			tv_fields = new Color[tv_count][];
+			for (int i = 0; i < tv_count; i++)
+			{
+				tv_fields[i] = new Color[256 * 240];
+			}
+		}
+
+		/// <summary>
+		/// Called by a TV renderer when its field is complete. The window is
+		/// redrawn once per frame, when every TV has finished its field.
+		/// </summary>
+		public void OnFieldReady(int tv, Color[] field)
+		{
+			if (tv < 0 || tv >= tv_count)
+				return;
+
+			Array.Copy(field, tv_fields[tv], 256 * 240);
+
+			fields_ready++;
+			if (fields_ready >= tv_count)
+			{
+				fields_ready = 0;
+				Render();
+			}
+		}
+
+		private void Render()
+		{
+			if (output == null)
+				return;
+
+			int w = layout == "vertical" ? 256 : 256 * tv_count;
+			int h = layout == "vertical" ? 240 * tv_count : 240;
+
+			Bitmap pic = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			Graphics gr = Graphics.FromImage(pic);
+
+			for (int tv = 0; tv < tv_count; tv++)
+			{
+				int x = layout == "vertical" ? 0 : tv * 256;
+				int y = layout == "vertical" ? tv * 240 : 0;
+
+				Color[] field = tv_fields[tv];
+				for (int yy = 0; yy < 240; yy++)
+				{
+					for (int xx = 0; xx < 256; xx++)
+					{
+						gr.FillRectangle(new SolidBrush(field[yy * 256 + xx]), x + xx, y + yy, 1, 1);
+					}
+				}
+			}
+
+			gr.Dispose();
+
+			output.Image = pic;
+		}
+	}
+
 	public class VideoRender
 	{
 		private BreaksCore.VideoSignalFeatures ppu_features;
@@ -31,6 +109,7 @@ namespace Breaknes
 
 		private Bitmap? field_pic = null;
 		private PictureBox? output_picture_box = null;
+		private TvWall? tv_wall = null;
 
 		private OnRenderField? onRenderField = null;
 		public delegate void OnRenderField();
@@ -65,9 +144,21 @@ namespace Breaknes
 			GC.Collect();
 		}
 
+		/// <summary>
+		/// Single-TV mode: the field bitmap is shown directly in this picture box.
+		/// </summary>
 		public void SetOutputPictureBox (PictureBox pictureBox)
 		{
 			output_picture_box = pictureBox;
+		}
+
+		/// <summary>
+		/// Multi-TV mode: the completed field is handed to the wall, which
+		/// composites all TVs into one window bitmap.
+		/// </summary>
+		public void SetTvWall (TvWall wall)
+		{
+			tv_wall = wall;
 		}
 
 		public void ProcessSample (BreaksCore.VideoOutSample sample)
@@ -156,10 +247,7 @@ namespace Breaknes
 			int w = 256;
 			int h = 240;
 
-			//if (field_pic == null)
-			{
-				field_pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			}
+			field_pic = new(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
 			Bitmap pic = field_pic;
 			Graphics gr = Graphics.FromImage(pic);
@@ -175,8 +263,14 @@ namespace Breaknes
 
 			DumpVideo();
 
-			if (output_picture_box != null)
+			if (tv_wall != null)
 			{
+				// Multi-TV mode: the wall composites all TVs into one window bitmap.
+				tv_wall.OnFieldReady(tv_index, field);
+			}
+			else if (output_picture_box != null)
+			{
+				// Single-TV mode: show the field directly.
 				output_picture_box.Image = field_pic;
 			}
 			gr.Dispose();
