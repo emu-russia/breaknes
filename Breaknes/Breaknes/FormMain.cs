@@ -172,8 +172,9 @@ namespace Breaknes
 		/// <summary>
 		/// Arrange the TV display in the window according to the physical TV layout
 		/// from the BoardDescription.json ("tv_layout": "horizontal"/"vertical").
-		/// With several TVs the whole picture is composited by TvWall into a single
-		/// canvas shown in pictureBox1, so no per-TV picture boxes are needed.
+		/// One picture box fills the window; it shows either the single TV field or
+		/// the TvWall canvas with all TVs at fixed pixel offsets. SizeMode.Zoom
+		/// scales the picture to fit the window in both cases.
 		/// </summary>
 		private void SetupTvLayout(string layout, int tvCount)
 		{
@@ -182,50 +183,32 @@ namespace Breaknes
 			tableLayoutPanel1.ColumnStyles.Clear();
 			tableLayoutPanel1.RowStyles.Clear();
 
-			if (tvCount > 1)
+			// A single cell hosts the picture box that displays the whole picture.
+			tableLayoutPanel1.ColumnCount = 1;
+			tableLayoutPanel1.RowCount = 1;
+			tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+
+			pictureBox1.Dock = DockStyle.Fill;
+			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+			pictureBox1.BackColor = Color.Black;
+			pictureBox2.Visible = false;
+
+			tableLayoutPanel1.Controls.Add(pictureBox1);
+
+			if (tvCount > 1 && layout == "vertical")
 			{
-				// A single cell hosts the picture box that displays the whole picture
-				// (the TvWall canvas with all TVs at fixed pixel offsets).
-				tableLayoutPanel1.ColumnCount = 1;
-				tableLayoutPanel1.RowCount = 1;
-				tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-				tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-
-				pictureBox1.Dock = DockStyle.Fill;
-				pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-				pictureBox1.BackColor = Color.Black;
-				pictureBox2.Visible = false;
-
-				tableLayoutPanel1.Controls.Add(pictureBox1);
-
-				if (layout == "vertical")
-				{
-					// Vertical: the TVs are stacked one above the other.
-					ClientSize = new Size(256 + 32, 2 * 240 + 72);
-				}
-				else
-				{
-					// Horizontal: the TVs are placed side by side.
-					ClientSize = new Size(2 * 256 + 32, 240 + 72);
-				}
+				// Vertical: the TVs are stacked one above the other.
+				ClientSize = new Size(256 + 32, 2 * 240 + 72);
+			}
+			else if (tvCount > 1)
+			{
+				// Horizontal: the TVs are placed side by side.
+				ClientSize = new Size(2 * 256 + 32, 240 + 72);
 			}
 			else
 			{
-				// Single TV: the original centered layout (pictureBox1 in the middle column).
-				tableLayoutPanel1.ColumnCount = 3;
-				tableLayoutPanel1.RowCount = 1;
-				tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-				tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-				tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-				tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-
-				pictureBox1.Dock = DockStyle.None;
-				pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
-				pictureBox1.Location = new Point(72, 3);
-				pictureBox1.Size = new Size(256, 240);
-				pictureBox2.Visible = false;
-
-				tableLayoutPanel1.Controls.Add(pictureBox1, 1, 0);
+				// Single TV.
 				ClientSize = new Size(401, 288);
 			}
 
