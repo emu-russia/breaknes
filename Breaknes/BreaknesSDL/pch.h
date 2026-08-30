@@ -14,3 +14,7 @@
 #include "../BreaksCore/BreaksCore.h"
 #include "VideoProcessing.h"
 #include "SoundProcessing.h"
+
+#include "IOConfig.h"
+#include "IOProcessing.h"
+#include "IOConfigurator.h"
