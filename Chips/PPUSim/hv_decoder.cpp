@@ -18,6 +18,7 @@ namespace PPUSim
 		switch (ppu->rev)
 		{
 			case Revision::RP2C02G:
+			case Revision::RP2C02H:
 			case Revision::RP2C04_0003:
 				vpla_outputs = 9;
 				break;
@@ -46,6 +47,7 @@ namespace PPUSim
 		switch (ppu->rev)
 		{
 			case Revision::RP2C02G:
+			case Revision::RP2C02H:
 			case Revision::RP2C04_0003:
 			{
 				static size_t RP2C02G_HDecoder[] = {		// Undefined behavior in GCC if you do not specify static

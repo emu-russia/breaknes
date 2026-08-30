@@ -48,6 +48,14 @@
     <None Include="..\..\Nescartdb\boards\*.json" Link="Nescartdb\boards\%(Filename)%(Extension)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- Board and IO descriptions (the tracked sources live in the Build folder
+         next to the outputs; copied next to the executable like the SDL project does). -->
+    <None Include="Build\BoardDescription.json" Link="BoardDescription.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Build\IOConfig.json" Link="IOConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

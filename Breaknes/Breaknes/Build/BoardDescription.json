@@ -1,13 +1,85 @@
 {
 	"info":
 	{
-		"descr": "There is a description of the components of the various NES/Famicom models and clones. Each board may contain up to 2 PPUs (the \"ppus\" array). Each PPU is bound to a virtual TV Set; the binding is described by the \"tvs\" array (tvs[i] = index of the PPU shown on the i-th TV) and the physical arrangement of the TVs in the window by \"tv_layout\" (\"horizontal\" or \"vertical\")."
+		"descr": "There is a description of the components of the various NES/Famicom models and clones, compiled from the research: https://github.com/emu-russia/breaks/blob/master/Docs/NES_Famicom_Board_Revisions.md. Each board may contain up to 2 PPUs (the \"ppus\" array). Each PPU is bound to a virtual TV Set; the binding is described by the \"tvs\" array (tvs[i] = index of the PPU shown on the i-th TV) and the physical arrangement of the TVs in the window by \"tv_layout\" (\"horizontal\" or \"vertical\"). The \"apu\" and \"ppus\" values are the chip markings of the real hardware. Not every chip revision is implemented in the emulator yet: a board whose revision is not supported is still listed with the correct marking, but the closest supported model is used in the simulation (e.g. RP2A03E and RP2C02E are approximated by RP2A03G and RP2C02G). Boards whose chip set is not documented in the research (HVC-CPU-02, HVC-CPU-04) are omitted. The two \"NES Debug\" boards render the picture of one PPU on both TV Sets to test the \"tv_layout\"."
 	},
 
 	"boards":
 	[
 		{
-			"name": "HVC-CPU-01",
+			"name": "Famicom (HVC-CPU-01, 1983)",
+			"apu": "RP2A03",
+			"ppus": [ "RP2C02A" ],
+			"tv_layout": "horizontal",
+			"p1": "Fami",
+			"io": [
+				{
+					"name": "Famicom Controller Port1",
+					"devices": [ 1, 65537 ]
+				},
+				{
+					"name": "Famicom Controller Port2",
+					"devices": [ 2, 65538 ]
+				}
+			]
+		},
+
+		{
+			"name": "Famicom (HVC-CPU-03, 1983)",
+			"apu": "RP2A03",
+			"ppus": [ "RP2C02A" ],
+			"tv_layout": "horizontal",
+			"p1": "Fami",
+			"io": [
+				{
+					"name": "Famicom Controller Port1",
+					"devices": [ 1, 65537 ]
+				},
+				{
+					"name": "Famicom Controller Port2",
+					"devices": [ 2, 65538 ]
+				}
+			]
+		},
+
+		{
+			"name": "Famicom (HVC-CPU-05, 1984)",
+			"apu": "RP2A03E",
+			"ppus": [ "RP2C02D" ],
+			"tv_layout": "horizontal",
+			"p1": "Fami",
+			"io": [
+				{
+					"name": "Famicom Controller Port1",
+					"devices": [ 1, 65537 ]
+				},
+				{
+					"name": "Famicom Controller Port2",
+					"devices": [ 2, 65538 ]
+				}
+			]
+		},
+
+		{
+			"name": "Famicom (HVC-CPU-06, 1984)",
+			"apu": "RP2A03E",
+			"ppus": [ "RP2C02E" ],
+			"tv_layout": "horizontal",
+			"p1": "Fami",
+			"io": [
+				{
+					"name": "Famicom Controller Port1",
+					"devices": [ 1, 65537 ]
+				},
+				{
+					"name": "Famicom Controller Port2",
+					"devices": [ 2, 65538 ]
+				}
+			]
+		},
+
+		{
+			"name": "Famicom (HVC-CPU-07, 1984-1988)",
 			"apu": "RP2A03G",
 			"ppus": [ "RP2C02G" ],
 			"tv_layout": "horizontal",
@@ -25,7 +97,259 @@
 		},
 
 		{
-			"name": "NES-001 (PCB rev. -01 to -04)",
+			"name": "Famicom (HVC-CPU-08, 1984-1985)",
+			"apu": "RP2A03E",
+			"ppus": [ "RP2C02D" ],
+			"tv_layout": "horizontal",
+			"p1": "Fami",
+			"io": [
+				{
+					"name": "Famicom Controller Port1",
+					"devices": [ 1, 65537 ]
+				},
+				{
+					"name": "Famicom Controller Port2",
+					"devices": [ 2, 65538 ]
+				}
+			]
+		},
+
+		{
+			"name": "Famicom (HVC-CPU-GPM-01, 1988)",
+			"apu": "RP2A03G",
+			"ppus": [ "RP2C02G" ],
+			"tv_layout": "horizontal",
+			"p1": "Fami",
+			"io": [
+				{
+					"name": "Famicom Controller Port1",
+					"devices": [ 1, 65537 ]
+				},
+				{
+					"name": "Famicom Controller Port2",
+					"devices": [ 2, 65538 ]
+				}
+			]
+		},
+
+		{
+			"name": "Famicom (HVC-CPU-GPM-02, 1989-1993)",
+			"apu": "RP2A03G",
+			"ppus": [ "RP2C02G-0" ],
+			"tv_layout": "horizontal",
+			"p1": "Fami",
+			"io": [
+				{
+					"name": "Famicom Controller Port1",
+					"devices": [ 1, 65537 ]
+				},
+				{
+					"name": "Famicom Controller Port2",
+					"devices": [ 2, 65538 ]
+				}
+			]
+		},
+
+		{
+			"name": "Famicom AV (HVCN-CPU-01, 1993-1995)",
+			"apu": "RP2A03H",
+			"ppus": [ "RP2C02H-0" ],
+			"tv_layout": "horizontal",
+			"p1": "Fami",
+			"io": [
+				{
+					"name": "Famicom Controller Port1",
+					"devices": [ 1, 65537 ]
+				},
+				{
+					"name": "Famicom Controller Port2",
+					"devices": [ 2, 65538 ]
+				}
+			]
+		},
+
+		{
+			"name": "Famicom AV (HVCN-CPU-02, 1995-2003)",
+			"apu": "RP2A03H",
+			"ppus": [ "RP2C02H-0" ],
+			"tv_layout": "horizontal",
+			"p1": "Fami",
+			"io": [
+				{
+					"name": "Famicom Controller Port1",
+					"devices": [ 1, 65537 ]
+				},
+				{
+					"name": "Famicom Controller Port2",
+					"devices": [ 2, 65538 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-CPU-01, 1985)",
+			"apu": "RP2A03E",
+			"ppus": [ "RP2C02E" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-CPU-02, 1985)",
+			"apu": "RP2A03E",
+			"ppus": [ "RP2C02E-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-CPU-03, 1985)",
+			"apu": "RP2A03E",
+			"ppus": [ "RP2C02E-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-CPU-04, 1986)",
+			"apu": "RP2A03E",
+			"ppus": [ "RP2C02E-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-CPU-05, 1986)",
+			"apu": "RP2A03G",
+			"ppus": [ "RP2C02G-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-CPU-06, 1987)",
+			"apu": "RP2A03G",
+			"ppus": [ "RP2C02G-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-CPU-07, 1987)",
+			"apu": "RP2A03G",
+			"ppus": [ "RP2C02G-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-CPU-08, 1989)",
+			"apu": "RP2A03G",
+			"ppus": [ "RP2C02G-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-CPU-09, 1987-1990)",
+			"apu": "RP2A03G",
+			"ppus": [ "RP2C02G-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-CPU-10, 1987-1990)",
 			"apu": "RP2A03G",
 			"ppus": [ "RP2C02G" ],
 			"tv_layout": "horizontal",
@@ -43,7 +367,7 @@
 		},
 
 		{
-			"name": "NES-001 (PCB rev. -05 to -09)",
+			"name": "NES (NES-CPU-11, 1990-1993)",
 			"apu": "RP2A03G",
 			"ppus": [ "RP2C02G" ],
 			"tv_layout": "horizontal",
@@ -61,7 +385,115 @@
 		},
 
 		{
-			"name": "NES-001 (PCB rev. -10 and -11)",
+			"name": "NES-101 (NESN-CPU-01, 1993-1994)",
+			"apu": "RP2A03G",
+			"ppus": [ "RP2C02G-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES-101 (NESN-CPU-JIO-01, 1994-1995)",
+			"apu": "RP2A03H",
+			"ppus": [ "RP2C02H-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES-101 (NESN-CPU-AV-01, 1994)",
+			"apu": "RP2A03H",
+			"ppus": [ "RP2C02H-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES-101 (NESN-CPU-JIO-02, PAL, 1994-1995)",
+			"apu": "RP2A07",
+			"ppus": [ "RP2C07-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NESE-001, PAL, 1987-1993)",
+			"apu": "RP2A07",
+			"ppus": [ "RP2C07-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NESA-001, PAL, 1987-1993)",
+			"apu": "RP2A07",
+			"ppus": [ "RP2C07-0" ],
+			"tv_layout": "horizontal",
+			"p1": "NES",
+			"io": [
+				{
+					"name": "NES Controller Port1",
+					"devices": [ 3, 65539 ]
+				},
+				{
+					"name": "NES Controller Port2",
+					"devices": [ 3, 65539 ]
+				}
+			]
+		},
+
+		{
+			"name": "NES (NES-001 KOR Comboy, NTSC)",
 			"apu": "RP2A03G",
 			"ppus": [ "RP2C02G" ],
 			"tv_layout": "horizontal",
@@ -79,7 +511,7 @@
 		},
 
 		{
-			"name": "NES-101 (NESN-101 PCB)",
+			"name": "NES (NES-001 BRA, PAL-M, 1994)",
 			"apu": "RP2A03G",
 			"ppus": [ "RP2C02G" ],
 			"tv_layout": "horizontal",
@@ -97,43 +529,7 @@
 		},
 
 		{
-			"name": "NES-101 (NESN-CPU-JIO-01 PCB)",
-			"apu": "RP2A03G",
-			"ppus": [ "RP2C02G" ],
-			"tv_layout": "horizontal",
-			"p1": "NES",
-			"io": [
-				{
-					"name": "NES Controller Port1",
-					"devices": [ 3, 65539 ]
-				},
-				{
-					"name": "NES Controller Port2",
-					"devices": [ 3, 65539 ]
-				}
-			]
-		},
-
-		{
-			"name": "NES-101 (NESN-CPU-AV-01 PCB)",
-			"apu": "RP2A03G",
-			"ppus": [ "RP2C02G" ],
-			"tv_layout": "horizontal",
-			"p1": "NES",
-			"io": [
-				{
-					"name": "NES Controller Port1",
-					"devices": [ 3, 65539 ]
-				},
-				{
-					"name": "NES Controller Port2",
-					"devices": [ 3, 65539 ]
-				}
-			]
-		},
-
-		{
-			"name": "NESBoard",
+			"name": "NES Debug: one PPU on two TVs (horizontal)",
 			"apu": "RP2A03G",
 			"ppus": [ "RP2C02G" ],
 			"tv_layout": "horizontal",

@@ -6,10 +6,10 @@ The implementation does not differ from Managed application: the same native par
 
 ## Selecting the board
 
-By default the `NESBoard` entry of the `BoardDescription.json` is used. Any other board from the same file can be selected on the command line:
+By default the `NES (NES-CPU-07, 1987)` entry of the `BoardDescription.json` is used. Any other board from the same file can be selected on the command line:
 
 ```
-breaknes --board "NES-001 (PCB rev. -01 to -04)" game.nes
+breaknes --board "NES-101 (NESN-CPU-JIO-01, 1994-1995)" game.nes
 ```
 
 ## Two TV Sets (issue #515)

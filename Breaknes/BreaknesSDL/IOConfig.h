@@ -21,8 +21,10 @@ namespace BreaknesSDL
 	/// The motherboard of the SDL2 port. The board configuration (name, APU, PPUs,
 	/// p1, TV layout and TV<->PPU binding) is read from BoardDescription.json
 	/// (issue #515). The IO settings reference the board by this name.
+	/// By default a real NES board is used (issue #521); the debug boards
+	/// ("NES Debug: ...") can be selected on the command line with --board.
 	/// </summary>
-	const char* const kSDLBoardName = "NESBoard";
+	const char* const kSDLBoardName = "NES (NES-CPU-07, 1987)";
 
 	/// <summary>
 	/// Associative binding of a device IOState (actuator) to an input event of the PC.
