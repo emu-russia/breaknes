@@ -10,5 +10,6 @@ namespace BreaknesSDL
 	/// Requires a created motherboard (for the actuator enumeration via BreaksCore).
 	/// </summary>
 	/// <param name="config_path">Path of the IO settings file (IOConfigSDL.json by default).</param>
-	void RunIOConfigurator(const char* config_path);
+	/// <param name="board_name">Name of the board the Attach/Detach refers to.</param>
+	void RunIOConfigurator(const char* config_path, const char* board_name);
 }

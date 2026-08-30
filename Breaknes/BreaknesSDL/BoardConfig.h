@@ -7,13 +7,14 @@ namespace BreaknesSDL
 {
 	/// <summary>
 	/// The board configuration read from the BoardDescription.json (issue #515).
-	/// The SDL application looks up the board by its own name (kSDLBoardName);
-	/// the configuration is required - there is no built-in fallback.
+	/// The SDL application looks up the board by name (kSDLBoardName by default,
+	/// or the board selected on the command line via --board); the configuration
+	/// is required - there is no built-in fallback.
 	/// </summary>
 	struct BoardConfig
 	{
 		/// <summary>
-		/// Board name (equals kSDLBoardName).
+		/// Board name (the one used for the lookup).
 		/// </summary>
 		std::string name;
 
@@ -40,8 +41,8 @@ namespace BreaknesSDL
 
 	/// <summary>
 	/// Load the board description from BoardDescription.json (next to the executable).
-	/// Looks up the board by name (kSDLBoardName). Returns false when the file is
-	/// missing or the board entry is not found.
+	/// Looks up the board by `board_name` (default: kSDLBoardName). Returns false when
+	/// the file is missing or the board entry is not found.
 	/// </summary>
-	bool LoadBoardConfig(const char* path, BoardConfig& out);
+	bool LoadBoardConfig(const char* path, const char* board_name, BoardConfig& out);
 }

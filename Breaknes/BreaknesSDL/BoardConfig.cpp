@@ -43,9 +43,12 @@ namespace BreaknesSDL
 		}
 	}
 
-	bool LoadBoardConfig(const char* path, BoardConfig& out)
+	bool LoadBoardConfig(const char* path, const char* board_name, BoardConfig& out)
 	{
 		BoardConfig config;
+
+		if (board_name == nullptr)
+			return false;
 
 		FILE* f = fopen(path, "rb");
 		if (f == nullptr)
@@ -84,7 +87,7 @@ namespace BreaknesSDL
 			if (boards_value == nullptr || boards_value->type != Json::ValueType::Array)
 				return false;
 
-			// Find the board entry by our own board name.
+			// Find the board entry by name (--board on the command line, or the default).
 			for (auto it = boards_value->children.begin(); it != boards_value->children.end(); ++it)
 			{
 				Json::Value* board = *it;
@@ -95,7 +98,7 @@ namespace BreaknesSDL
 				if (!GetStringValue(board, "name", name))
 					continue;
 
-				if (name != kSDLBoardName)
+				if (name != board_name)
 					continue;
 
 				// The board entry found: use its APU/PPU/p1 and the TV settings.

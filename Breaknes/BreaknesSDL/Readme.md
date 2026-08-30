@@ -2,7 +2,15 @@
 
 For those who like minimalism - Breaknes build using SDL2.
 
-The implementation does not differ from Managed application: the same native part of BreaksCore is used. The motherboard and chip revisions are taken from the `BoardDescription.json` (next to the executable, shared with the managed application): the SDL build looks up the board by the name `NESBoard` (the config is required, there is no built-in fallback).
+The implementation does not differ from Managed application: the same native part of BreaksCore is used. The motherboard and chip revisions are taken from the `BoardDescription.json` (next to the executable, shared with the managed application): the SDL build looks up the board by name, the config is required (there is no built-in fallback).
+
+## Selecting the board
+
+By default the `NESBoard` entry of the `BoardDescription.json` is used. Any other board from the same file can be selected on the command line:
+
+```
+breaknes --board "NES-001 (PCB rev. -01 to -04)" game.nes
+```
 
 ## Two TV Sets (issue #515)
 

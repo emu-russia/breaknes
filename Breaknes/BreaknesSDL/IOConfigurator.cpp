@@ -106,22 +106,22 @@ namespace BreaknesSDL
 			return out;
 		}
 
-		static bool IsAttachedToPort(const IOConfigDevice& device, int port)
+		static bool IsAttachedToPort(const IOConfigDevice& device, int port, const char* board_name)
 		{
 			for (auto it = device.attached.begin(); it != device.attached.end(); ++it)
 			{
-				if (it->board == kSDLBoardName && it->port == port)
+				if (it->board == board_name && it->port == port)
 					return true;
 			}
 			return false;
 		}
 
-		static void RemovePort(IOConfigDevice& device, int port)
+		static void RemovePort(IOConfigDevice& device, int port, const char* board_name)
 		{
 			std::vector<IOConfigPort> remaining;
 			for (auto it = device.attached.begin(); it != device.attached.end(); ++it)
 			{
-				if (!(it->board == kSDLBoardName && it->port == port))
+				if (!(it->board == board_name && it->port == port))
 					remaining.push_back(*it);
 			}
 			device.attached = remaining;
@@ -423,7 +423,7 @@ namespace BreaknesSDL
 			return changed;
 		}
 
-		static bool AttachDevice(IOConfig& config, int index)
+		static bool AttachDevice(IOConfig& config, int index, const char* board_name)
 		{
 			if (index < 0 || index >= (int)config.devices.size())
 			{
@@ -441,7 +441,7 @@ namespace BreaknesSDL
 			if (!IsDeviceSupportedByBoard(device.device_id))
 			{
 				printf("The %s cannot be attached to the %s: only NES Controller and Virtual NES Controller are supported by its ports.\n",
-					IOConfigManager::DeviceIDToString(device.device_id).c_str(), kSDLBoardName);
+					IOConfigManager::DeviceIDToString(device.device_id).c_str(), board_name);
 				return false;
 			}
 
@@ -450,11 +450,11 @@ namespace BreaknesSDL
 
 			while (!back)
 			{
-				printf("\nBoard: %s\n", kSDLBoardName);
+				printf("\nBoard: %s\n", board_name);
 
 				for (int i = 0; i < kNumPorts; i++)
 				{
-					bool attached = IsAttachedToPort(device, kPorts[i].port);
+					bool attached = IsAttachedToPort(device, kPorts[i].port, board_name);
 					printf("  [%d] %-22s attached: %s\n", kPorts[i].port, kPorts[i].name, attached ? "yes" : "no");
 				}
 
@@ -490,15 +490,15 @@ namespace BreaknesSDL
 							continue;
 						}
 
-						if (IsAttachedToPort(device, port))
+						if (IsAttachedToPort(device, port, board_name))
 						{
-							RemovePort(device, port);
+							RemovePort(device, port, board_name);
 							printf("Detached from port %d.\n", port);
 						}
 						else
 						{
 							IOConfigPort port_entry;
-							port_entry.board = kSDLBoardName;
+							port_entry.board = board_name;
 							port_entry.port = port;
 							device.attached.push_back(port_entry);
 							printf("Attached to port %d.\n", port);
@@ -527,7 +527,7 @@ namespace BreaknesSDL
 		}
 	}
 
-	void RunIOConfigurator(const char* config_path)
+	void RunIOConfigurator(const char* config_path, const char* board_name)
 	{
 		printf("\n=== BreaknesSDL IO Configurator ===\n\n");
 
@@ -614,7 +614,7 @@ namespace BreaknesSDL
 					{
 						printf("Use: p <index>\n");
 					}
-					else if (AttachDevice(config, index))
+					else if (AttachDevice(config, index, board_name))
 					{
 						modified = true;
 					}
