@@ -12,12 +12,25 @@ extern "C"
 {
 	/// <summary>
 	/// Creates a motherboard instance with all the hardware (APU/PPU/cartridge connector). The cartridge defaults to the Ejected state.
+	/// The board contains one PPU (see CreateBoardEx for several PPUs).
 	/// </summary>
 	/// <param name="boardName">Revision name of the motherboard. If the board is not supported, a `BogusBoard` will be created.</param>
 	/// <param name="apu">APU revision</param>
 	/// <param name="ppu">PPU revision</param>
 	/// <param name="p1">The form factor of the cartridge connector.</param>
 	DLL_EXPORT void CreateBoard(char* boardName, char* apu, char* ppu, char* p1);
+
+	/// <summary>
+	/// Creates a motherboard instance with the hardware (APU/PPUs/cartridge connector). The cartridge defaults to the Ejected state.
+	/// The board may contain several PPUs (up to 2), each of which is bound to its own
+	/// virtual TV Set by default (TV[i] shows PPU[i]). The binding can be changed via BindPPUToTV.
+	/// </summary>
+	/// <param name="boardName">Revision name of the motherboard. If the board is not supported, a `BogusBoard` will be created.</param>
+	/// <param name="apu">APU revision</param>
+	/// <param name="ppus">Array of PPU revision names (one per PPU on the board)</param>
+	/// <param name="ppuCount">Number of PPUs</param>
+	/// <param name="p1">The form factor of the cartridge connector.</param>
+	DLL_EXPORT void CreateBoardEx(char* boardName, char* apu, char** ppus, int ppuCount, char* p1);
 
 	/// <summary>
 	/// Destroys the motherboard instance and all the resources it occupies.
@@ -127,7 +140,43 @@ extern "C"
 	DLL_EXPORT size_t GetPCLKCounter();
 
 	/// <summary>
-	/// Get 1 sample of the video signal.
+	/// Get the number of PPUs on the current board.
+	/// </summary>
+	/// <returns></returns>
+	DLL_EXPORT int GetPPUCount();
+
+	/// <summary>
+	/// Bind the video signal of a PPU to a virtual TV Set (up to 2 TVs).
+	/// `bind == false` disconnects the TV (it shows black).
+	/// By default TV[i] is bound to PPU[i]. For debugging one PPU can be bound to both TVs.
+	/// </summary>
+	/// <param name="ppu_index">PPU index on the board</param>
+	/// <param name="tv_index">TV index (0..1)</param>
+	/// <param name="bind">true: connect, false: disconnect</param>
+	DLL_EXPORT void BindPPUToTV(int ppu_index, int tv_index, bool bind);
+
+	/// <summary>
+	/// Get the PPU index currently bound to the TV, or -1 if the TV is disconnected.
+	/// </summary>
+	/// <param name="tv_index">TV index (0..1)</param>
+	/// <returns></returns>
+	DLL_EXPORT int GetTVBinding(int tv_index);
+
+	/// <summary>
+	/// Get the number of connected (bound) TVs. Unbound trailing TVs are not counted.
+	/// </summary>
+	/// <returns></returns>
+	DLL_EXPORT int GetTVCount();
+
+	/// <summary>
+	/// Get 1 sample of the video signal displayed on the given TV.
+	/// </summary>
+	/// <param name="tv_index">TV index (0..1)</param>
+	/// <param name="sample"></param>
+	DLL_EXPORT void SampleVideoSignalEx(int tv_index, PPUSim::VideoOutSignal* sample);
+
+	/// <summary>
+	/// Get 1 sample of the video signal (of the TV bound to the primary PPU).
 	/// </summary>
 	/// <param name="sample"></param>
 	DLL_EXPORT void SampleVideoSignal(PPUSim::VideoOutSignal* sample);
@@ -153,13 +202,27 @@ extern "C"
 	DLL_EXPORT void RenderAlwaysEnabled(bool enable);
 
 	/// <summary>
-	/// Get video signal settings that help with its rendering on the consumer side.
+	/// Get video signal settings of the given PPU that help with its rendering on the consumer side.
+	/// </summary>
+	/// <param name="ppu_index">PPU index</param>
+	/// <param name="features"></param>
+	DLL_EXPORT void GetPpuSignalFeaturesEx(int ppu_index, PPUSim::VideoSignalFeatures* features);
+
+	/// <summary>
+	/// Get video signal settings of the primary PPU that help with its rendering on the consumer side.
 	/// </summary>
 	/// <param name="features"></param>
 	DLL_EXPORT void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features);
 
 	/// <summary>
-	/// Convert the raw color to RGB. Can be used for palette generation or PPU video output in RAW mode.
+	/// Convert the raw color of the given PPU to RGB. Can be used for palette generation or PPU video output in RAW mode.
+	/// The SYNC level (RAW.Sync) check must be done from the outside.
+	/// </summary>
+	/// <param name="ppu_index">PPU index</param>
+	DLL_EXPORT void ConvertRAWToRGBEx(int ppu_index, uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b);
+
+	/// <summary>
+	/// Convert the raw color of the primary PPU to RGB. Can be used for palette generation or PPU video output in RAW mode.
 	/// The SYNC level (RAW.Sync) check must be done from the outside.
 	/// </summary>
 	DLL_EXPORT void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b);

@@ -25,9 +25,13 @@ namespace Breaknes
 
 				if (!BreaksCore.InResetState())
 				{
-					BreaksCore.VideoOutSample sample;
-					BreaksCore.SampleVideoSignal(out sample);
-					vid_out.ProcessSample(sample);
+					// Sample and render the video signal of every connected TV Set.
+					foreach (var vr in tv_renders)
+					{
+						BreaksCore.VideoOutSample sample;
+						BreaksCore.SampleVideoSignalEx(vr.TvIndex, out sample);
+						vr.ProcessSample(sample);
+					}
 
 					if (snd_out != null)
 						snd_out.FeedSample();

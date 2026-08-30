@@ -16,6 +16,7 @@ find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 add_executable (breaknes 
 	Breaknes/BreaknesSDL/main.cpp 
 	Breaknes/BreaknesSDL/VideoProcessing.cpp
+	Breaknes/BreaknesSDL/BoardConfig.cpp
 	Breaknes/BreaknesSDL/SoundProcessing.cpp
 	Breaknes/BreaknesSDL/IOConfig.cpp
 	Breaknes/BreaknesSDL/IOProcessing.cpp
@@ -143,3 +144,9 @@ target_link_libraries (breaknes LINK_PUBLIC SDL2)
 add_custom_command(TARGET breaknes POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Nescartdb $<TARGET_FILE_DIR:breaknes>/Nescartdb
 	COMMENT "Copying Nescartdb data")
+
+# Copy the board description (board/PPU/TV configuration) next to the binary.
+
+add_custom_command(TARGET breaknes POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/Breaknes/Breaknes/Build/BoardDescription.json $<TARGET_FILE_DIR:breaknes>/BoardDescription.json
+	COMMENT "Copying BoardDescription.json")

@@ -34,11 +34,39 @@ extern "C"
 
 	DLL_EXPORT void CreateBoard(char* boardName, char* apu, char* ppu, char* p1)
 	{
+		char* ppus[1] = { ppu };
+		CreateBoardEx(boardName, apu, ppus, 1, p1);
+	}
+
+	DLL_EXPORT void CreateBoardEx(char* boardName, char* apu, char** ppus, int ppuCount, char* p1)
+	{
 		if (board == nullptr)
 		{
 			LogInit();
-			LOG_BOARD(Breaknes::Cat_Events, "CreateBoard %s, apu: %s, ppu: %s, cart: %s", boardName, apu, ppu, p1);
-			Breaknes::BoardFactory bf(boardName, apu, ppu, p1);
+
+			if (ppuCount < 1)
+			{
+				// A board without PPUs is allowed (e.g. BogusBoard), but the TV binding
+				// logic expects at least a default; create a "no PPU" board anyway.
+				ppuCount = 0;
+			}
+
+			std::vector<std::string> ppu_names;
+			for (int i = 0; i < ppuCount; i++)
+			{
+				ppu_names.push_back(ppus[i]);
+			}
+
+			std::string ppu_list;
+			for (auto& n : ppu_names)
+			{
+				if (!ppu_list.empty())
+					ppu_list += ", ";
+				ppu_list += n;
+			}
+
+			LOG_BOARD(Breaknes::Cat_Events, "CreateBoard %s, apu: %s, ppus: [%s], cart: %s", boardName, apu, ppu_list.c_str(), p1);
+			Breaknes::BoardFactory bf(boardName, apu, ppu_names, p1);
 			CreateDebugHub(false);
 			board = bf.CreateInstance();
 		}
@@ -202,6 +230,58 @@ extern "C"
 		}
 	}
 
+	DLL_EXPORT int GetPPUCount()
+	{
+		if (board != nullptr)
+		{
+			return (int)board->GetPPUCount();
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	DLL_EXPORT void BindPPUToTV(int ppu_index, int tv_index, bool bind)
+	{
+		if (board != nullptr)
+		{
+			board->BindPPUToTV((size_t)ppu_index, (size_t)tv_index, bind);
+		}
+	}
+
+	DLL_EXPORT int GetTVBinding(int tv_index)
+	{
+		if (board != nullptr)
+		{
+			return board->GetTVBinding((size_t)tv_index);
+		}
+		else
+		{
+			return -1;
+		}
+	}
+
+	DLL_EXPORT int GetTVCount()
+	{
+		if (board != nullptr)
+		{
+			return board->GetTVCount();
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	DLL_EXPORT void SampleVideoSignalEx(int tv_index, PPUSim::VideoOutSignal* sample)
+	{
+		if (board != nullptr)
+		{
+			board->SampleVideoSignal((size_t)tv_index, sample);
+		}
+	}
+
 	DLL_EXPORT void SampleVideoSignal(PPUSim::VideoOutSignal* sample)
 	{
 		if (board != nullptr)
@@ -242,11 +322,11 @@ extern "C"
 		}
 	}
 
-	DLL_EXPORT void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features)
+	DLL_EXPORT void GetPpuSignalFeaturesEx(int ppu_index, PPUSim::VideoSignalFeatures* features)
 	{
-		if (board != nullptr)
+		if (board != nullptr && ppu_index >= 0 && (size_t)ppu_index < board->GetPPUCount())
 		{
-			board->GetPpuSignalFeatures(features);
+			board->GetPpuSignalFeatures((size_t)ppu_index, features);
 		}
 		else
 		{
@@ -263,16 +343,26 @@ extern "C"
 		}
 	}
 
-	DLL_EXPORT void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	DLL_EXPORT void GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features)
 	{
-		if (board != nullptr)
+		GetPpuSignalFeaturesEx(0, features);
+	}
+
+	DLL_EXPORT void ConvertRAWToRGBEx(int ppu_index, uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	{
+		if (board != nullptr && ppu_index >= 0 && (size_t)ppu_index < board->GetPPUCount())
 		{
-			board->ConvertRAWToRGB(raw, r, g, b);
+			board->ConvertRAWToRGB((size_t)ppu_index, raw, r, g, b);
 		}
 		else
 		{
 			*r = *g = *b = 0;
 		}
+	}
+
+	DLL_EXPORT void ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	{
+		ConvertRAWToRGBEx(0, raw, r, g, b);
 	}
 
 	DLL_EXPORT void SetRAWColorMode(bool enable)

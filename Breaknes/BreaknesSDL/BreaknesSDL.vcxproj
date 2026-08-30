@@ -178,6 +178,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SoundProcessing.cpp" />
     <ClCompile Include="VideoProcessing.cpp" />
+    <ClCompile Include="BoardConfig.cpp" />
     <ClCompile Include="IOConfig.cpp" />
     <ClCompile Include="IOProcessing.cpp" />
     <ClCompile Include="IOConfigurator.cpp" />
@@ -193,11 +194,16 @@
     <Content Include="..\..\Nescartdb\boards\*.json" Link="Nescartdb\boards\%(Filename)%(Extension)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- Board description (the board/PPU/TV configuration, shared with the managed app). -->
+    <Content Include="..\Breaknes\Build\BoardDescription.json" Link="BoardDescription.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="SoundProcessing.h" />
     <ClInclude Include="VideoProcessing.h" />
+    <ClInclude Include="BoardConfig.h" />
     <ClInclude Include="IOConfig.h" />
     <ClInclude Include="IOProcessing.h" />
     <ClInclude Include="IOConfigurator.h" />

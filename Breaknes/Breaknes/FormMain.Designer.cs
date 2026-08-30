@@ -1,4 +1,4 @@
-﻿namespace Breaknes
+namespace Breaknes
 {
 	partial class FormMain
 	{
@@ -42,9 +42,11 @@
             openFileDialog1 = new OpenFileDialog();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             pictureBox1 = new PictureBox();
+            pictureBox2 = new PictureBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -143,6 +145,15 @@
             pictureBox1.TabIndex = 1;
             pictureBox1.TabStop = false;
             // 
+            // pictureBox2
+            // 
+            pictureBox2.Location = new Point(72, 3);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(256, 240);
+            pictureBox2.TabIndex = 3;
+            pictureBox2.TabStop = false;
+            pictureBox2.Visible = false;
+            // 
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.ColumnCount = 3;
@@ -173,6 +184,7 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -191,6 +203,7 @@
 		private OpenFileDialog openFileDialog1;
 		private System.ComponentModel.BackgroundWorker backgroundWorker1;
 		private PictureBox pictureBox1;
+		private PictureBox pictureBox2;
 		private ToolStripMenuItem debugToolStripMenuItem;
 		private ToolStripMenuItem openDebuggerToolStripMenuItem;
 		private ToolStripMenuItem iOSettingsToolStripMenuItem;

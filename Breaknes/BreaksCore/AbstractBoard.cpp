@@ -48,21 +48,49 @@ namespace Breaknes
 		Log::SetCategoryMask(src, mask);
 	}
 
-	Board::Board(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1)
+	Board::Board(APUSim::Revision apu_rev, std::vector<PPUSim::Revision> ppu_revs, CartPcb::ConnectorType p1)
 	{
 		p1_type = p1;
-		pal = new RGB_Triplet[8 * 64];
+
+		for (auto rev : ppu_revs)
+		{
+			AddPPU(rev);
+		}
+
+		// Default TV Set binding: TV[i] shows PPU[i].
+		for (size_t tv = 0; tv < 2 && tv < ppus.size(); tv++)
+		{
+			tv_binding[tv] = (int)tv;
+		}
 	}
 
 	Board::~Board()
 	{
-		delete pal;
+		for (auto p : ppus)
+			delete p;
+
+		for (auto p : pals)
+			delete[] p;
+
 		if (ppu_regdump)
 			delete ppu_regdump;
 		if (apu_regdump)
 			delete apu_regdump;
 		if (nintendulator_log)
 			delete nintendulator_log;
+	}
+
+	void Board::AddPPU(PPUSim::Revision rev)
+	{
+		PPUSim::PPU* p = new PPUSim::PPU(rev);
+		ppus.push_back(p);
+
+		if (ppu == nullptr)
+			ppu = p;
+
+		vidSamples.push_back({});
+		pals.push_back(new RGB_Triplet[8 * 64]);
+		pal_cached.push_back(false);
 	}
 
 	int Board::InsertCartridge(uint8_t* nesImage, size_t nesImageSize)
@@ -399,12 +427,65 @@ namespace Breaknes
 		return ppu->GetPCLKCounter();
 	}
 
+	size_t Board::GetPPUCount()
+	{
+		return ppus.size();
+	}
+
+	void Board::BindPPUToTV(size_t ppu_index, size_t tv_index, bool bind)
+	{
+		if (tv_index >= 2)
+			return;
+
+		if (bind && ppu_index < ppus.size())
+		{
+			tv_binding[tv_index] = (int)ppu_index;
+		}
+		else
+		{
+			tv_binding[tv_index] = -1;
+		}
+
+		LOG_BOARD(Cat_Events, "BindPPUToTV: ppu: %d -> tv: %d, bind: %d", (int)ppu_index, (int)tv_index, bind ? 1 : 0);
+	}
+
+	int Board::GetTVBinding(size_t tv_index)
+	{
+		if (tv_index >= 2)
+			return -1;
+
+		return tv_binding[tv_index];
+	}
+
+	int Board::GetTVCount()
+	{
+		int count = 0;
+		for (int tv = 0; tv < 2; tv++)
+		{
+			if (tv_binding[tv] >= 0)
+				count = tv + 1;
+		}
+		return count;
+	}
+
+	void Board::SampleVideoSignal(size_t tv_index, PPUSim::VideoOutSignal* sample)
+	{
+		if (sample == nullptr)
+			return;
+
+		if (tv_index >= 2 || tv_binding[tv_index] < 0)
+		{
+			// A disconnected TV shows black.
+			memset(sample, 0, sizeof(PPUSim::VideoOutSignal));
+			return;
+		}
+
+		*sample = vidSamples[tv_binding[tv_index]];
+	}
+
 	void Board::SampleVideoSignal(PPUSim::VideoOutSignal* sample)
 	{
-		if (sample != nullptr)
-		{
-			*sample = vidSample;
-		}
+		SampleVideoSignal(0, sample);
 	}
 
 	size_t Board::GetHCounter()
@@ -422,16 +503,27 @@ namespace Breaknes
 		ppu->Dbg_RenderAlwaysEnabled(enable);
 	}
 
-	void Board::GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features)
+	void Board::GetPpuSignalFeatures(size_t ppu_index, PPUSim::VideoSignalFeatures* features)
 	{
 		PPUSim::VideoSignalFeatures feat{};
-		ppu->GetSignalFeatures(feat);
+		ppus[ppu_index]->GetSignalFeatures(feat);
 		*features = feat;
 	}
 
-	void Board::ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	void Board::GetPpuSignalFeatures(PPUSim::VideoSignalFeatures* features)
 	{
-		if (!pal_cached)
+		GetPpuSignalFeatures(0, features);
+	}
+
+	void Board::ConvertRAWToRGB(size_t ppu_index, uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	{
+		if (ppu_index >= ppus.size())
+		{
+			*r = *g = *b = 0;
+			return;
+		}
+
+		if (!pal_cached[ppu_index])
 		{
 			PPUSim::VideoOutSignal rawIn{}, rgbOut{};
 
@@ -440,40 +532,49 @@ namespace Breaknes
 			for (size_t n = 0; n < (8 * 64); n++)
 			{
 				rawIn.RAW.raw = (uint16_t)n;
-				ppu->ConvertRAWToRGB(rawIn, rgbOut);
-				pal[n].r = rgbOut.RGB.RED;
-				pal[n].g = rgbOut.RGB.GREEN;
-				pal[n].b = rgbOut.RGB.BLUE;
+				ppus[ppu_index]->ConvertRAWToRGB(rawIn, rgbOut);
+				pals[ppu_index][n].r = rgbOut.RGB.RED;
+				pals[ppu_index][n].g = rgbOut.RGB.GREEN;
+				pals[ppu_index][n].b = rgbOut.RGB.BLUE;
 			}
 
-			pal_cached = true;
+			pal_cached[ppu_index] = true;
 		}
 
 		size_t n = raw & 0b111'11'1111;
 
-		*r = pal[n].r;
-		*g = pal[n].g;
-		*b = pal[n].b;
+		*r = pals[ppu_index][n].r;
+		*g = pals[ppu_index][n].g;
+		*b = pals[ppu_index][n].b;
+	}
+
+	void Board::ConvertRAWToRGB(uint16_t raw, uint8_t* r, uint8_t* g, uint8_t* b)
+	{
+		ConvertRAWToRGB(0, raw, r, g, b);
 	}
 
 	void Board::SetRAWColorMode(bool enable)
 	{
-		ppu->SetRAWOutput(enable);
+		for (auto p : ppus)
+			p->SetRAWOutput(enable);
 	}
 
 	void Board::SetOamDecayBehavior(PPUSim::OAMDecayBehavior behavior)
 	{
-		ppu->SetOamDecayBehavior(behavior);
+		for (auto p : ppus)
+			p->SetOamDecayBehavior(behavior);
 	}
 
 	void Board::SetNoiseLevel(float volts)
 	{
-		ppu->SetCompositeNoise(volts);
+		for (auto p : ppus)
+			p->SetCompositeNoise(volts);
 	}
 
 	void Board::PpuUseExternalDacLevels(bool use, PPUSim::DacLevels& tab)
 	{
-		ppu->UseExternalDacLevels(use, tab);
+		for (auto p : ppus)
+			p->UseExternalDacLevels(use, tab);
 	}
 
 	void Board::GetAllCoreDebugInfo(M6502Core::DebugInfo* info)

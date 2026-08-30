@@ -1,4 +1,6 @@
-﻿#pragma once
+#pragma once
+
+#include <vector>
 
 namespace Breaknes
 {
@@ -6,11 +8,11 @@ namespace Breaknes
 	{
 		std::string board_name = "Bogus";
 		APUSim::Revision apu_rev = APUSim::Revision::Unknown;
-		PPUSim::Revision ppu_rev = PPUSim::Revision::Unknown;
+		std::vector<PPUSim::Revision> ppu_revs;
 		CartPcb::ConnectorType p1_type = CartPcb::ConnectorType::None;
 
 	public:
-		BoardFactory(std::string board, std::string apu, std::string ppu, std::string p1);
+		BoardFactory(std::string board, std::string apu, std::vector<std::string> ppus, std::string p1);
 		~BoardFactory();
 
 		Board* CreateInstance();

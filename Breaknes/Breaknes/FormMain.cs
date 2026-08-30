@@ -10,11 +10,18 @@ namespace Breaknes
 		static extern bool AllocConsole();
 
 		private BoardControl board = new();
-		private VideoRender? vid_out = null;
+		private List<VideoRender> tv_renders = new();
+		private TvWall? tv_wall = null;
 		private AudioRender? snd_out = null;
 		private IOProcessor? io = null;
 		private string original_title = "";
 		private List<FormDebugger> debuggers = new();
+
+		/// <summary>
+		/// The board description entry selected in the settings (defines the PPU list,
+		/// the TV layout and the TV<->PPU binding).
+		/// </summary>
+		private Board? currentBoard = null;
 
 		public FormMain()
 		{
@@ -44,7 +51,9 @@ namespace Breaknes
 				AllocConsole();
 			}
 			board.onUpdateWaves += OnUpdateWaves;
-			board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
+			var boardDesc = BoardDescriptionLoader.Load();
+			currentBoard = boardDesc.boards.FirstOrDefault(b => b.name == settings.MainBoard);
+			board.CreateBoard(boardDesc, settings.MainBoard);
 			if (settings.PPURegdump)
 			{
 				BreaksCore.EnablePpuRegDump(true, settings.PPURegdumpDir);
@@ -78,8 +87,33 @@ namespace Breaknes
 				Text = original_title + " - " + filename;
 				var settings = FormSettings.LoadSettings();
 				var rom_name = Path.GetFileNameWithoutExtension(filename);
-				vid_out = new(OnRenderField, settings.DumpVideo, settings.DumpVideoDir, rom_name);
-				vid_out.SetOutputPictureBox(pictureBox1);
+
+				// Create the TV Set renders: one per connected TV. With several TVs
+				// the fields are composited by TvWall into one window bitmap, in the
+				// physical layout from the BoardDescription.json ("tv_layout", "tvs").
+				int tvCount = BreaksCore.GetTVCount();
+				SetupTvLayout(currentBoard?.tv_layout ?? "horizontal", tvCount);
+
+				tv_renders.Clear();
+				tv_wall = null;
+				if (tvCount > 1)
+				{
+					tv_wall = new TvWall(currentBoard?.tv_layout ?? "horizontal", tvCount, pictureBox1);
+				}
+				for (int tv = 0; tv < tvCount && tv < 2; tv++)
+				{
+					var vr = new VideoRender(tv, tv == 0 ? OnRenderField : null, settings.DumpVideo, settings.DumpVideoDir, rom_name);
+					if (tv_wall != null)
+					{
+						vr.SetTvWall(tv_wall);
+					}
+					else
+					{
+						vr.SetOutputPictureBox(pictureBox1);
+					}
+					tv_renders.Add(vr);
+				}
+
 				snd_out = new(Handle, settings.DumpAudio, settings.DumpAudioDir, rom_name, settings.IIR, settings.CutoffFrequency);
 
 				if (io != null)
@@ -117,14 +151,68 @@ namespace Breaknes
 				board.Paused = true;
 				board.EjectCartridge();
 				board.DisposeBoard();
-				board.CreateBoard(BoardDescriptionLoader.Load(), settings.MainBoard);
+
+				var boardDesc = BoardDescriptionLoader.Load();
+				currentBoard = boardDesc.boards.FirstOrDefault(b => b.name == settings.MainBoard);
+				board.CreateBoard(boardDesc, settings.MainBoard);
 				Text = original_title;
+
+				// The old renders refer to the destroyed board; drop them and reset the TV layout.
+				tv_renders.Clear();
+				tv_wall = null;
+				SetupTvLayout(currentBoard?.tv_layout ?? "horizontal", BreaksCore.GetTVCount());
 			}
 
 			BreaksCore.EnablePpuRegDump(settings.PPURegdump, settings.PPURegdumpDir);
 			BreaksCore.EnableApuRegDump(settings.APURegdump, settings.APURegdumpDir);
 			BreaksCore.EnableNintendulatorLog(settings.NintendulatorLog);
 			ApplyLogSettings(settings);
+		}
+
+		/// <summary>
+		/// Arrange the TV display in the window according to the physical TV layout
+		/// from the BoardDescription.json ("tv_layout": "horizontal"/"vertical").
+		/// One picture box fills the window; it shows either the single TV field or
+		/// the TvWall canvas with all TVs at fixed pixel offsets. SizeMode.Zoom
+		/// scales the picture to fit the window in both cases.
+		/// </summary>
+		private void SetupTvLayout(string layout, int tvCount)
+		{
+			tableLayoutPanel1.SuspendLayout();
+			tableLayoutPanel1.Controls.Clear();
+			tableLayoutPanel1.ColumnStyles.Clear();
+			tableLayoutPanel1.RowStyles.Clear();
+
+			// A single cell hosts the picture box that displays the whole picture.
+			tableLayoutPanel1.ColumnCount = 1;
+			tableLayoutPanel1.RowCount = 1;
+			tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+
+			pictureBox1.Dock = DockStyle.Fill;
+			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+			pictureBox1.BackColor = Color.Black;
+			pictureBox2.Visible = false;
+
+			tableLayoutPanel1.Controls.Add(pictureBox1);
+
+			if (tvCount > 1 && layout == "vertical")
+			{
+				// Vertical: the TVs are stacked one above the other.
+				ClientSize = new Size(256 + 32, 2 * 240 + 72);
+			}
+			else if (tvCount > 1)
+			{
+				// Horizontal: the TVs are placed side by side.
+				ClientSize = new Size(2 * 256 + 32, 240 + 72);
+			}
+			else
+			{
+				// Single TV.
+				ClientSize = new Size(401, 288);
+			}
+
+			tableLayoutPanel1.ResumeLayout();
 		}
 
 		/// <summary>

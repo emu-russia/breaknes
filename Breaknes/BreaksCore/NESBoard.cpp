@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 // Instead of the signal designations /OE1,2 adopted in the nesdev.com community, we use the official names of these signals /RDP0,1
 
@@ -6,12 +6,11 @@ using namespace BaseLogic;
 
 namespace Breaknes
 {
-	NESBoard::NESBoard(APUSim::Revision apu_rev, PPUSim::Revision ppu_rev, CartPcb::ConnectorType p1) : Board (apu_rev, ppu_rev, p1)
+	NESBoard::NESBoard(APUSim::Revision apu_rev, std::vector<PPUSim::Revision> ppu_revs, CartPcb::ConnectorType p1) : Board (apu_rev, ppu_revs, p1)
 	{
-		// Big chips
+		// Big chips. The PPUs (including the primary one) are created by the base class.
 		core = new M6502Core::M6502(true, true);
 		apu = new APUSim::APU(core, apu_rev);
-		ppu = new PPUSim::PPU(ppu_rev);
 
 		// Memory
 		wram = new BaseBoard::SRAM("WRAM", wram_bits);
@@ -36,7 +35,6 @@ namespace Breaknes
 		delete io;
 		delete vram;
 		delete wram;
-		delete ppu;
 		delete apu;
 		delete core;
 	}
@@ -131,7 +129,9 @@ namespace Breaknes
 		ppu_inputs[(size_t)PPUSim::InputPad::RS2] = FromByte((addr_bus >> 2) & 1);
 		ppu_inputs[(size_t)PPUSim::InputPad::n_DBE] = PPU_nCE;
 
-		ppu->sim(ppu_inputs, ppu_outputs, &ext_bus, &data_bus, &ad_bus, &pa8_13, vidSample);
+		// Only the primary PPU is wired into the NES/Famicom board logic; multiple
+		// PPUs on one board are planned for future boards (NES-based arcade machines).
+		ppu->sim(ppu_inputs, ppu_outputs, &ext_bus, &data_bus, &ad_bus, &pa8_13, vidSamples[0]);
 
 		PPU_ALE = ppu_outputs[(size_t)PPUSim::OutputPad::ALE];
 		PPU_nRD = ppu_outputs[(size_t)PPUSim::OutputPad::n_RD];

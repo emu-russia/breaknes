@@ -1,16 +1,23 @@
 #include "pch.h"
 
-VideoRender::VideoRender()
+VideoRender::VideoRender(int _tv_count, const char* layout)
 {
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
 		printf("SDL video could not initialize! SDL_Error: %s\n", SDL_GetError());
 		return;
 	}
 
+	tv_count = _tv_count < 1 ? 1 : (_tv_count > 2 ? 2 : _tv_count);
+	tv_layout = (layout != nullptr && strcmp(layout, "vertical") == 0) ? TvLayout::Vertical : TvLayout::Horizontal;
+
+	// The window size depends on the number of TVs and their physical layout.
+	int window_w = SCREEN_WIDTH * ScaleFactor * (tv_layout == TvLayout::Horizontal ? tv_count : 1);
+	int window_h = SCREEN_HEIGHT * ScaleFactor * (tv_layout == TvLayout::Vertical ? tv_count : 1);
+
 	SDL_Window* window = SDL_CreateWindow(
 		"Breaknes",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		SCREEN_WIDTH * ScaleFactor, SCREEN_HEIGHT * ScaleFactor,
+		window_w, window_h,
 		0);
 
 	if (window == NULL) {
@@ -26,38 +33,56 @@ VideoRender::VideoRender()
 	}
 
 	// Initialize window to all black
-	//SDL_FillSurfaceRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
 	SDL_UpdateWindowSurface(window);
 
 	output_window = window;
 	output_surface = surface;
 
-	GetPpuSignalFeatures(&ppu_features);
+	// Initialize one renderer state per TV. The signal features (and the palette)
+	// come from the PPU the TV is bound to.
+	for (int tv = 0; tv < tv_count; tv++)
+	{
+		TvState& st = tvs[tv];
 
-	SamplesPerScan = ppu_features.PixelsPerScan * ppu_features.SamplesPerPCLK;
-	ScanBuffer = new PPUSim::VideoOutSignal[2 * SamplesPerScan];
-	memset(ScanBuffer, 0, 2 * SamplesPerScan * sizeof(PPUSim::VideoOutSignal));
-	WritePtr = 0;
+		st.ppu_index = GetTVBinding(tv);
+		if (st.ppu_index < 0)
+			st.ppu_index = 0;
 
-	SyncFound = false;
-	SyncPos = -1;
-	CurrentScan = 0;
+		GetPpuSignalFeaturesEx(st.ppu_index, &st.ppu_features);
 
-	field = new uint32_t[SCREEN_WIDTH * SCREEN_HEIGHT];
-	memset(field, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(uint32_t));
+		st.SamplesPerScan = st.ppu_features.PixelsPerScan * st.ppu_features.SamplesPerPCLK;
+		st.ScanBuffer = new PPUSim::VideoOutSignal[2 * st.SamplesPerScan];
+		memset(st.ScanBuffer, 0, 2 * st.SamplesPerScan * sizeof(PPUSim::VideoOutSignal));
+		st.WritePtr = 0;
+
+		st.SyncFound = false;
+		st.SyncPos = -1;
+		st.CurrentScan = 0;
+
+		st.field = new uint32_t[SCREEN_WIDTH * SCREEN_HEIGHT];
+		memset(st.field, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(uint32_t));
+	}
 }
 
 VideoRender::~VideoRender()
 {
 	SDL_DestroyWindow(output_window);
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
-	delete[] ScanBuffer;
-	delete[] field;
+
+	for (int tv = 0; tv < tv_count; tv++)
+	{
+		delete[] tvs[tv].ScanBuffer;
+		delete[] tvs[tv].field;
+	}
 }
 
-void VideoRender::ProcessSample(PPUSim::VideoOutSignal& sample)
+void VideoRender::ProcessSample(int tv, PPUSim::VideoOutSignal& sample)
 {
-	ScanBuffer[WritePtr] = sample;
+	if (tv < 0 || tv >= tv_count)
+		return;
+
+	TvState& st = tvs[tv];
+	st.ScanBuffer[st.WritePtr] = sample;
 
 	// Check that the sample is HSync.
 
@@ -66,66 +91,86 @@ void VideoRender::ProcessSample(PPUSim::VideoOutSignal& sample)
 
 	// If the beginning of HSync is found - remember its offset in the input buffer.
 
-	if (sync && !SyncFound)
+	if (sync && !st.SyncFound)
 	{
-		SyncPos = WritePtr;
-		SyncFound = true;
+		st.SyncPos = st.WritePtr;
+		st.SyncFound = true;
 	}
 
 	// Advance write pointer
 
-	WritePtr++;
+	st.WritePtr++;
 
 	// If HSync is found and the number of samples is more than enough, process the scan.
 
-	if (SyncFound && (SyncPos + WritePtr) >= SamplesPerScan)
+	if (st.SyncFound && (st.SyncPos + st.WritePtr) >= st.SamplesPerScan)
 	{
-		ProcessScanRAW();
+		ProcessScanRAW(tv);
 
-		SyncFound = false;
-		WritePtr = 0;
+		st.SyncFound = false;
+		st.WritePtr = 0;
 	}
 
-	if (WritePtr >= 2 * SamplesPerScan)
+	if (st.WritePtr >= 2 * st.SamplesPerScan)
 	{
-		SyncFound = false;
-		WritePtr = 0;
+		st.SyncFound = false;
+		st.WritePtr = 0;
 	}
 }
 
-void VideoRender::ProcessScanRAW()
+void VideoRender::ProcessScanRAW(int tv)
 {
-	int ReadPtr = SyncPos;
+	TvState& st = tvs[tv];
+	int ReadPtr = st.SyncPos;
 
 	// Skip HSync and Back Porch
 
-	while (ScanBuffer[ReadPtr].RAW.Sync != 0)
+	while (st.ScanBuffer[ReadPtr].RAW.Sync != 0)
 	{
 		ReadPtr++;
 	}
 
-	ReadPtr += ppu_features.BackPorchSize * ppu_features.SamplesPerPCLK;
+	ReadPtr += st.ppu_features.BackPorchSize * st.ppu_features.SamplesPerPCLK;
 
 	// Output the visible part of the signal
 
 	for (int i = 0; i < SCREEN_WIDTH; i++)
 	{
-		if (CurrentScan < SCREEN_HEIGHT)
+		if (st.CurrentScan < SCREEN_HEIGHT)
 		{
 			uint8_t r, g, b;
-			ConvertRAWToRGB(ScanBuffer[ReadPtr].RAW.raw, &r, &g, &b);
+			ConvertRAWToRGBEx(st.ppu_index, st.ScanBuffer[ReadPtr].RAW.raw, &r, &g, &b);
 
-			field[CurrentScan * SCREEN_WIDTH + i] = SDL_MapRGB(output_surface->format, r, g, b);
+			st.field[st.CurrentScan * SCREEN_WIDTH + i] = SDL_MapRGB(output_surface->format, r, g, b);
 		}
 
-		ReadPtr += ppu_features.SamplesPerPCLK;
+		ReadPtr += st.ppu_features.SamplesPerPCLK;
 	}
 
-	CurrentScan++;
-	if (CurrentScan >= ppu_features.ScansPerField)
+	st.CurrentScan++;
+	if (st.CurrentScan >= st.ppu_features.ScansPerField)
 	{
-		VisualizeField();
-		CurrentScan = 0;
+		st.CurrentScan = 0;
+
+		// Count this TV's completed field. The window (and the field counter) is
+		// updated once per frame, when every TV has finished its field - otherwise
+		// each TV would render the window and increment the counter on its own.
+		if (!st.FieldReady)
+		{
+			st.FieldReady = true;
+			fields_ready_count++;
+		}
+
+		if (fields_ready_count >= tv_count)
+		{
+			VisualizeField();
+
+			for (int t = 0; t < tv_count; t++)
+			{
+				tvs[t].FieldReady = false;
+			}
+			fields_ready_count = 0;
+		}
 	}
 }
 
@@ -136,15 +181,27 @@ void VideoRender::VisualizeField()
 
 	Uint32* const pixels = (Uint32*)output_surface->pixels;
 
-	for (int y = 0; y < h; y++)
-	{
-		for (int x = 0; x < w; x++)
-		{
-			Uint32 color = field[w * y + x];
+	// Clear the whole surface first (letterboxing between the TVs / aspect margins).
+	SDL_FillRect(output_surface, NULL, SDL_MapRGB(output_surface->format, 0, 0, 0));
 
-			for (int s = 0; s < ScaleFactor; s++) {
-				for (int t = 0; t < ScaleFactor; t++) {
-					pixels[ScaleFactor * x + s + ((ScaleFactor * y + t) * output_surface->w)] = color;
+	// Draw the field of every TV at its place in the window according to the layout.
+	// Called once per frame, when all TVs have completed their fields.
+	for (int tv = 0; tv < tv_count; tv++)
+	{
+		TvState& st = tvs[tv];
+		int base_x = (tv_layout == TvLayout::Horizontal) ? tv * w * ScaleFactor : 0;
+		int base_y = (tv_layout == TvLayout::Vertical) ? tv * h * ScaleFactor : 0;
+
+		for (int y = 0; y < h; y++)
+		{
+			for (int x = 0; x < w; x++)
+			{
+				Uint32 color = st.field[w * y + x];
+
+				for (int s = 0; s < ScaleFactor; s++) {
+					for (int t = 0; t < ScaleFactor; t++) {
+						pixels[base_x + ScaleFactor * x + s + ((base_y + ScaleFactor * y + t) * output_surface->w)] = color;
+					}
 				}
 			}
 		}
