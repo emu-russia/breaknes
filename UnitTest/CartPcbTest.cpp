@@ -619,6 +619,99 @@ namespace UnitTest
 	{
 	public:
 		/// <summary>
+		/// Issue #527: the NAMCOT-3305 board (The Tower of Druaga, Pac-Land) is
+		/// electrically an NROM-256 (2x16K PRG + 8K CHR, no mapper logic) with the
+		/// H-scroll jumper hardwired (iNES "vertical mirroring"). It must resolve
+		/// to nrom.json through the family index, otherwise the carts fail to load.
+		/// </summary>
+		TEST_METHOD(TestNamcot3305Board)
+		{
+			// Locate the committed Nescartdb data (same probing as above).
+			std::string dbDir;
+			for (auto& candidate : { "Nescartdb", "../../../Nescartdb", "../../Nescartdb" })
+			{
+				NesCartDb probe;
+				if (probe.Load(std::string(candidate) + "/index.json"))
+				{
+					dbDir = candidate;
+					break;
+				}
+			}
+			Assert::IsTrue(!dbDir.empty());
+
+			// 1. The Tower of Druaga (PRG AF6E8571, CHR 6DC7E8EA) is identified
+			// as NAMCOT-3305.
+			NesCartDb db;
+			Assert::IsTrue(db.Load(dbDir + "/index.json"));
+
+			std::vector<BoardRef> out;
+			db.FindBoards(0xAF6E8571u, 0x6DC7E8EAu, out);
+			bool foundNamcot = false;
+			for (auto& r : out)
+			{
+				if (r.type == "NAMCOT-3305")
+					foundNamcot = true;
+			}
+			Assert::IsTrue(foundNamcot);
+
+			// 2. The NAMCOT-3305 family mapping must resolve to the built-in
+			// NROM board definition.
+			std::string jsonText;
+			Assert::IsTrue(PcbLoader::LoadBoard("NAMCOT-3305", dbDir, "", jsonText));
+			Assert::IsTrue(!jsonText.empty());
+
+			// 3. End-to-end on the real ROM (if present): the full .nes ->
+			// identification -> nrom.json -> Pcb -> cartridge flow. The scroll
+			// jumper must follow the .nes header (Flags6 bit 0 = 1, iNES
+			// "vertical mirroring" -> H Scroll, VRAM_A10 = PA10) and the boot
+			// sentinel "YAMAMO" must be readable at $8044-$8049 (issue #527).
+			const char* path = "C:\\Roms\\NES\\Druaga no Tou (Japan).nes";
+
+			FILE* f = fopen(path, "rb");
+			if (f == nullptr)
+			{
+				Logger::WriteMessage("Druaga no Tou (Japan).nes not found, skipping end-to-end part");
+				return;
+			}
+
+			fseek(f, 0, SEEK_END);
+			long size = ftell(f);
+			fseek(f, 0, SEEK_SET);
+
+			std::vector<uint8_t> image((size_t)size);
+			fread(image.data(), 1, (size_t)size, f);
+			fclose(f);
+
+			std::string savedDir = CartPcb::GetNescartdbDir();
+			CartPcb::SetNescartdbDir(dbDir.c_str());
+
+			CartPcb::Cartridge* cart = CartPcb::CreateFromNesImage(ConnectorType::FamicomStyle, image.data(), image.size());
+			Logger::WriteMessage(("Druaga no Tou cart=" + std::string(cart ? "OK" : "NULL")).c_str());
+			Assert::IsTrue(cart != nullptr);
+			Assert::IsTrue(cart->Valid());
+
+			// The sentinel the boot code compares RAM $0002-$0007 against.
+			char sentinel[7] = {};
+			for (int i = 0; i < 6; i++)
+				sentinel[i] = (char)cart->Dbg_ReadPRGByte(0x8044 + i);
+			Logger::WriteMessage(("Druaga no Tou sentinel @ $8044 = \"" + std::string(sentinel) + "\"").c_str());
+			Assert::IsTrue(memcmp(sentinel, "YAMAMO", 6) == 0);
+
+			// The scroll jumper: H Scroll (VRAM_A10 = PA10).
+			Bus b;
+			b.SetDefaults();
+			b.Sim(cart, 0x8000, (1 << 10));
+			Assert::IsTrue(b.out[(size_t)CartOutput::VRAM_A10] == TriState::One);
+
+			b.SetDefaults();
+			b.Sim(cart, 0x8000, (1 << 11));
+			Assert::IsTrue(b.out[(size_t)CartOutput::VRAM_A10] == TriState::Zero);
+
+			delete cart;
+			CartPcb::SetNescartdbDir(savedDir.c_str());
+		}
+
+		/// <summary>
 		/// Phase 6: the real converted Nescartdb data (committed in the repo) must
 		/// load and identify dumps, and the real board definitions must load from
 		/// disk through the family index (boards/index.json).

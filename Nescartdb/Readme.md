@@ -165,7 +165,7 @@ Direct mapping of the XML structure:
 
 The `boards/` folder contains the board JSONs that `PcbLoader` resolves a board type to:
 
-- `index.json` — the family mapping: board type → board definition file (e.g. all `*-NROM-*` types map to `nrom.json`).
+- `index.json` — the family mapping: board type → board definition file (e.g. all `*-NROM-*` types map to `nrom.json`). The Namco `NAMCOT-3305` board (The Tower of Druaga, Pac-Land) is electrically an NROM-256 (2x16K PRG + 8K CHR, no mapper logic, hardwired H-scroll) and maps to `nrom.json` too (issue #527).
 - `nrom.json`, `unrom.json`, `aorom.json`, `sgrom.json` — the built-in board definitions for the NROM/UxROM/AxROM/MMC1 families (the UNROM and AOROM definitions include the real 74LS161/74LS32 glue logic, see `CartPcb/Readme.md` §5.3).
 - `cnrom.json`, `shrom.json` — boards added for the iNES fallback of "wild" dumps (issue #514): mapper 3 (CNROM, latch-based CHR bank switch) and mapper 1 with CHR-RAM (SHROM-style MMC1 wiring).
 

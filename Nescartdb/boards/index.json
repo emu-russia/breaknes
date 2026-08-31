@@ -7,6 +7,7 @@
   "IREM-NROM-256": "nrom.json",
   "KONAMI-NROM-128": "nrom.json",
   "NAMCOT-NROM-128": "nrom.json",
+  "NAMCOT-3305": "nrom.json",
   "NES-NROM-128": "nrom.json",
   "NES-NROM-256": "nrom.json",
   "SACHEN-NROM": "nrom.json",
