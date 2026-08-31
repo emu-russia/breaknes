@@ -1,4 +1,4 @@
-// Presettable synchronous 4-bit binary counter; asynchronous reset
+// 74LS161: presettable synchronous 4-bit binary counter with asynchronous reset.
 
 #include "pch.h"
 
@@ -18,13 +18,37 @@ namespace BaseBoard
 		TriState& RCO,
 		TriState Q[4])
 	{
-		if (nLD == TriState::Zero && CLK == TriState::Zero /*nROMSEL :P */ )
+		// Asynchronous reset has the highest priority.
+		if (nRST == TriState::Zero)
 		{
-			val = PackNibble(P);
+			val = 0;
 		}
+		else
+		{
+			// Synchronous operation on the rising edge of CLK.
+			bool clkHigh = (CLK == TriState::One);
+			bool rising = clkHigh && prev_CLK != TriState::One;
+
+			if (rising)
+			{
+				if (nLD == TriState::Zero)
+				{
+					// Parallel load (e.g. the UNROM bank register: data bus -> P).
+					val = PackNibble(P);
+				}
+				else if (EN_T == TriState::One && EN_P == TriState::One)
+				{
+					// Count up.
+					val = (uint8_t)((val + 1) & 0xF);
+				}
+			}
+		}
+
+		prev_CLK = CLK;
 
 		UnpackNibble(val, Q);
 
-		// TBD: So far, crooked, some of the signals are not used at all because they are not needed
+		// RCO = EN_T & Q0 & Q1 & Q2 & Q3
+		RCO = (EN_T == TriState::One && val == 0xF) ? TriState::One : TriState::Zero;
 	}
 }

@@ -9,5 +9,6 @@
 #include "PcbFactory.h"
 #include "PcbLoader.h"
 #include "NesCartDb.h"
+#include "InesTranslator.h"
 #include "CartPcbCartridge.h"
 #include "CartridgeLoader.h"

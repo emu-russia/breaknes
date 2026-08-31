@@ -35,5 +35,8 @@
   "HVC-SGROM": "sgrom.json",
   "NES-SGROM": "sgrom.json",
   "HVC-SLROM": "sgrom.json",
-  "NES-SLROM": "sgrom.json"
+  "NES-SLROM": "sgrom.json",
+
+  "HVC-SHROM": "shrom.json",
+  "NES-CNROM": "cnrom.json"
 }

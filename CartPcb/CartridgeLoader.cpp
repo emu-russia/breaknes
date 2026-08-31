@@ -6,6 +6,7 @@
 #include "PcbFactory.h"
 #include "CartPcbCartridge.h"
 #include "CartImage.h"
+#include "InesTranslator.h"
 
 #include "NesHeader.h"
 
@@ -127,6 +128,21 @@ namespace CartPcb
 			}
 
 			db.FindBoards(prgCrc, chrCrc, boards);
+
+			if (boards.empty())
+			{
+				// "Wild" dump fallback (issue #514): the PRG/CHR CRCs are not in
+				// nescartdb (homebrew, undocumented dumps), so infer the board
+				// type from the iNES header (mapper number + sizes). The dump
+				// then runs through the same CartPcb board path as any other.
+				BoardRef ref;
+				if (TryTranslateInesHeader(head, prgSize, chrSize, ref))
+				{
+					LOG_CART(Cat_Events, "PRG/CHR CRC not in nescartdb; iNES fallback: mapper %d -> %s",
+						ref.mapper, ref.type.c_str());
+					boards.push_back(ref);
+				}
+			}
 		}
 		else
 		{
@@ -159,12 +175,13 @@ namespace CartPcb
 				continue;
 			}
 
-			// Mirroring for hardwired boards follows the .nes header (iNES bit 0),
-			// exactly as the pre-migration implementation did. The nescartdb
-			// solder pads are kept in the index but are not used to override the
-			// header, to avoid regressions on dumps whose header and database
-			// disagree (e.g. some UNROM games).
-			pcb->ApplyHeaderMirroring((head->Flags_6 & 1) != 0);
+			// The scroll jumper of scroll-jumper boards follows the .nes header
+			// (iNES Flags6 bit 0), exactly as the pre-migration implementation did:
+			// bit 0 = 1 (iNES "vertical mirroring") means the board's jumper is set
+			// to H Scroll (VRAM_A10 = PA10). The nescartdb solder pads are kept in
+			// the index but are not used to override the header, to avoid regressions
+			// on dumps whose header and database disagree (e.g. some UNROM games).
+			pcb->ApplyScrollFromHeader((head->Flags_6 & 1) != 0);
 
 			return new CartPcbCartridge(p1, pcb);
 		}

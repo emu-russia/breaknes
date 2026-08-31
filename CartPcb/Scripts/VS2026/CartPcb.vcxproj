@@ -24,6 +24,7 @@
     <ClInclude Include="..\..\CartImage.h" />
     <ClInclude Include="..\..\CartridgeLoader.h" />
     <ClInclude Include="..\..\ChipsAdapter.h" />
+    <ClInclude Include="..\..\InesTranslator.h" />
     <ClInclude Include="..\..\NesCartDb.h" />
     <ClInclude Include="..\..\NesHeader.h" />
     <ClInclude Include="..\..\Pcb.h" />
@@ -36,6 +37,7 @@
     <ClCompile Include="..\..\CartPcbPort.cpp" />
     <ClCompile Include="..\..\CartridgeLoader.cpp" />
     <ClCompile Include="..\..\ChipsAdapter.cpp" />
+    <ClCompile Include="..\..\InesTranslator.cpp" />
     <ClCompile Include="..\..\NesCartDb.cpp" />
     <ClCompile Include="..\..\Pcb.cpp" />
     <ClCompile Include="..\..\PcbFactory.cpp" />

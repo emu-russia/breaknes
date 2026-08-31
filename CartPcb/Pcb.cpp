@@ -144,10 +144,15 @@ namespace CartPcb
 		nets.push_back(net);
 	}
 
-	void Pcb::SetHardwiredMirroring(bool vertical)
+	void Pcb::SetScrollJumper()
 	{
-		mirrorMode = MirrorMode::Hardwired;
-		hardwiredVertical = vertical;
+		mirrorMode = MirrorMode::Scroll;
+	}
+
+	void Pcb::SetScrollMode(ScrollMode _scroll)
+	{
+		mirrorMode = MirrorMode::Scroll;
+		scroll = _scroll;
 	}
 
 	void Pcb::SetMapperMirroring(LogicExprPtr net)
@@ -156,28 +161,32 @@ namespace CartPcb
 		mapperMirrorNet = net;
 	}
 
-	void Pcb::ApplyPadMirroring(int padH, int padV)
+	void Pcb::ApplyPadScroll(int padH, int padV)
 	{
-		if (mirrorMode != MirrorMode::Hardwired)
+		if (mirrorMode != MirrorMode::Scroll)
 			return;
 
-		// v=1: vertical (VRAM_A10 = PA10), h=1: horizontal (VRAM_A10 = PA11)
+		// The nescartdb pads use the iNES mirroring terms: pad v=1 means iNES
+		// "vertical mirroring" == H Scroll (VRAM_A10 = PA10); pad h=1 means
+		// iNES "horizontal mirroring" == V Scroll (VRAM_A10 = PA11).
 		if (padV == 1)
 		{
-			hardwiredVertical = true;
+			scroll = ScrollMode::H;
 		}
 		else if (padH == 1)
 		{
-			hardwiredVertical = false;
+			scroll = ScrollMode::V;
 		}
 	}
 
-	void Pcb::ApplyHeaderMirroring(bool vertical)
+	void Pcb::ApplyScrollFromHeader(bool iNesVerticalMirroring)
 	{
-		if (mirrorMode != MirrorMode::Hardwired)
+		if (mirrorMode != MirrorMode::Scroll)
 			return;
 
-		hardwiredVertical = vertical;
+		// iNES Flags6 bit 0 (1 = "vertical mirroring") is the inverse of the
+		// PCB scroll term: vertical (iNES) == H Scroll (VRAM_A10 = PA10).
+		scroll = iNesVerticalMirroring ? ScrollMode::H : ScrollMode::V;
 	}
 
 	void Pcb::SetBoardType(const std::string& type, const std::string& pcb)
@@ -657,28 +666,35 @@ namespace CartPcb
 		ctx.ppu_addr = ppu_addr;
 		ctx.cpu_data = cpu_data;
 
-		// 1. Evaluate the nets
-		for (auto& net : nets)
+		// 1. Evaluate the nets and simulate the chips. Two passes let chip
+		// outputs propagate through nets into other chips in the same tick
+		// (e.g. the UNROM wiring: ls161.Q1 -> ls32.A0). Chip simulators are
+		// idempotent within a tick — their edge detectors compare against the
+		// previous tick's state, so re-simulating with the same inputs is a no-op.
+		for (int pass = 0; pass < 2; pass++)
 		{
-			net.value = EvalLogic(*net.from, ctx);
+			for (auto& net : nets)
+			{
+				net.value = EvalLogic(*net.from, ctx);
+			}
+			SimulateChips(ctx);
 		}
 
-		// 2. Simulate the mapper chips
-		SimulateChips(ctx);
-
-		// 3. Simulate the latches
+		// 2. Simulate the latches
 		SimulateLatches(ctx);
 
-		// 4. Memory
+		// 3. Memory
 		SimulateMemory(ctx, cart_out, cpu_data, cpu_data_dirty, ppu_data, ppu_data_dirty);
 
-		// 5. Mirroring
+		// 4. Mirroring
 
 		switch (mirrorMode)
 		{
-			case MirrorMode::Hardwired:
+			case MirrorMode::Scroll:
+				// The scroll solder jumper (issue #525): H Scroll = VRAM_A10 from PA10,
+				// V Scroll = VRAM_A10 from PA11.
 				cart_out[(size_t)CartOutput::VRAM_A10] =
-					hardwiredVertical ? FromByte((ppu_addr >> 10) & 1) : FromByte((ppu_addr >> 11) & 1);
+					(scroll == ScrollMode::H) ? FromByte((ppu_addr >> 10) & 1) : FromByte((ppu_addr >> 11) & 1);
 				break;
 
 			case MirrorMode::Mapper:
@@ -716,13 +732,18 @@ namespace CartPcb
 		ctx.cart_in[(size_t)CartInput::nWR] = TriState::One;
 		ctx.cart_in[(size_t)CartInput::nPA13] = TriState::One;
 
-		// Evaluate the nets, chips and latches so that latch-based boards
-		// (UNROM/AOROM) reflect the current bank state.
-		for (auto& net : nets)
+		// Evaluate the nets and chips (two passes, see Pcb::sim) plus the latches
+		// so that latch/chip-based boards (UNROM/AOROM) reflect the current bank
+		// state. Note: the LS161 is clocked by nROMSEL, and a read is not a write
+		// (RnW = 1), so this debug evaluation never modifies the bank register.
+		for (int pass = 0; pass < 2; pass++)
 		{
-			net.value = EvalLogic(*net.from, ctx);
+			for (auto& net : nets)
+			{
+				net.value = EvalLogic(*net.from, ctx);
+			}
+			SimulateChips(ctx);
 		}
-		SimulateChips(ctx);
 		SimulateLatches(ctx);
 
 		for (auto& att : cpuAttachments)

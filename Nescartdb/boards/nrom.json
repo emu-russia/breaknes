@@ -7,7 +7,7 @@
       "chr": { "kind": "rom", "bus": "ppu" }
     },
     "circuit": {
-      "mirroring": { "mode": "hardwired", "h": 0, "v": 1 },
+      "mirroring": { "mode": "scroll" },
       "cpu": {
         "prg": { "chip": "prg", "n_cs": "nROMSEL", "addr": "cpu_addr[14:0]" }
       },

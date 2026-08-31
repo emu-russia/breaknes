@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "board": {
+    "type": "CNROM",
+    "components": {
+      "prg": { "kind": "rom", "bus": "cpu" },
+      "chr": { "kind": "rom", "bus": "ppu" },
+      "bank": { "kind": "latch" }
+    },
+    "circuit": {
+      "mirroring": { "mode": "scroll" },
+      "cpu": {
+        "prg":  { "chip": "prg", "n_cs": "nROMSEL", "addr": "cpu_addr[14:0]" },
+        "bank": { "clk": "nROMSEL", "n_we": "RnW", "data": "cpu_data[1:0]" }
+      },
+      "ppu": {
+        "chr": { "chip": "chr", "n_cs": "!nPA13", "n_oe": "nRD", "addr": "bank.Q1..Q0 | ppu_addr[12:0]" }
+      },
+      "nets": []
+    }
+  }
+}

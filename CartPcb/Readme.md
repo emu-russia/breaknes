@@ -90,7 +90,7 @@ A board is described by a JSON document with two parts:
       "chr": { "kind": "rom", "bus": "ppu", "size": 8192 }
     },
     "circuit": {
-      "mirroring": { "mode": "hardwired", "h": 0, "v": 1 },
+      "mirroring": { "mode": "scroll" },
       "cpu": {
         "prg": { "chip": "prg", "n_cs": "nROMSEL", "addr": "cpu_addr[13:0]" }
       },
@@ -108,6 +108,7 @@ Notes:
 - `cpu_addr`, `ppu_addr` and the connector signals (`nROMSEL`, `nPA13`, `RnW`, `nRD`, `nWR`, `M2`, ...) are the predefined net sources; the full signal set is defined in §7.2.
 - `prg` with `n_cs = nROMSEL` reproduces the classic NROM PRG decode; the CHR chip is enabled by `!nPA13` (on NROM boards the CHR `/CE` is tied to PPU `A13`, low for `$0000-$1FFF`; `nPA13 = !A13`), exactly as in the current `NROM` implementation but expressed as data.
 - `kind: rom` components are instantiated as `BaseBoardLib::RomChip` (JEDEC-style), `kind: ram` as `BaseBoardLib::SRAM`. `PcbFactory` loads the PRG/CHR images into the ROM chips; the wiring attaches the chips' pins.
+- `"mirroring": { "mode": "scroll" }` declares that the board has a **scroll solder jumper** (see §5.3 and §7.4): the concrete scroll value (H or V) is a parameter of the *cartridge instance*, not of the board. The loader derives it from the `.nes` header (iNES Flags6 bit 0).
 
 ### 5.2 Example: MMC1-based board (SGROM, mapper 1)
 
@@ -159,12 +160,72 @@ Notes:
 
 This is the exact hardware structure the old `MMC1_Based` implemented in C++ — now it is *data*: a chip instance (`MMC1` from `Chips`) wired to the CPU/PPU buses, with the resulting address lines feeding the ROM chips.
 
-### 5.3 The `circuit` section (CartPcb extension)
+### 5.3 Example: UNROM with its glue logic (74LS161 + 74LS32)
+
+Issue #525: the board description is as close to the real PCB as possible — the bank register is a **74LS161** chip and the PRG address multiplexer is a **74LS32** quad OR gate (exactly the wiring of the old `Mappers::UNROM`):
+
+```json
+{
+  "schemaVersion": 1,
+  "board": {
+    "type": "UNROM",
+    "components": {
+      "prg": { "kind": "rom", "bus": "cpu" },
+      "chr": { "kind": "ram", "bus": "ppu", "size": 8192 },
+      "ls161": { "kind": "chip", "chip": "LS161" },
+      "ls32": { "kind": "chip", "chip": "LS32" }
+    },
+    "circuit": {
+      "mirroring": { "mode": "scroll" },
+      "cpu": {
+        "prg": {
+          "chip": "prg",
+          "n_cs": "nROMSEL",
+          "addr": "ls32.Y3 | ls32.Y0 | ls32.Y1 | cpu_addr[13:0]"
+        }
+      },
+      "ppu": {
+        "chr": { "chip": "chr", "n_cs": "!nPA13", "n_oe": "nRD", "n_we": "nWR", "addr": "ppu_addr[12:0]" }
+      },
+      "nets": [
+        { "name": "ls161.CLK",  "from": "nROMSEL" },
+        { "name": "ls161.nRST", "from": "vdd" },
+        { "name": "ls161.nLD",  "from": "RnW" },
+        { "name": "ls161.EN_T", "from": "gnd" },
+        { "name": "ls161.EN_P", "from": "gnd" },
+        { "name": "ls161.P0",   "from": "cpu_data[0]" },
+        { "name": "ls161.P1",   "from": "cpu_data[1]" },
+        { "name": "ls161.P2",   "from": "cpu_data[2]" },
+        { "name": "ls161.P3",   "from": "gnd" },
+        { "name": "ls32.A0",    "from": "ls161.Q1" },
+        { "name": "ls32.B0",    "from": "cpu_addr[14]" },
+        { "name": "ls32.A1",    "from": "ls161.Q0" },
+        { "name": "ls32.B1",    "from": "cpu_addr[14]" },
+        { "name": "ls32.A2",    "from": "gnd" },
+        { "name": "ls32.B2",    "from": "gnd" },
+        { "name": "ls32.A3",    "from": "cpu_addr[14]" },
+        { "name": "ls32.B3",    "from": "ls161.Q2" }
+      ]
+    }
+  }
+}
+```
+
+Notes:
+- The `LS161` is clocked by `/ROMSEL` with `/LD = R/W`: a CPU write to `$8000-$FFFF` loads the data bus into the bank register at the `/ROMSEL` rising edge — the same moment the current latch-based model captured the bank.
+- The `LS32` ORs the bank bits with CPU `A14` (the classic UxROM trick): in the `$8000` window the bank bits reach the PRG address unchanged, and in the `$C000` window the OR with `A14 = 1` saturates the bank bits to the **last** 16 KiB bank.
+- The generic `latch` component kind is still supported as a simplification for user-authored (JSONES) boards, but the built-in UxROM/AxROM boards now use the real chips.
+
+### 5.4 The `circuit` section (CartPcb extension)
 
 Because nescartdb only describes the component inventory, CartPcb adds a `circuit` section. Its exact expression language is finalized in the implementation issue; the concepts are:
 
 - **Bus attachments** (`cpu` / `ppu`): for each memory component (a `RomChip` or `SRAM`), the chip-select (`n_cs`), output-enable (`n_oe`), write-enable (`n_we`) and address sources. Address sources can combine bus bits and chip outputs (`mmc1.PRG_A17..PRG_A14 | cpu_addr[13:0]`), which is how bank switching is expressed. Concatenation is MSB-first: the left term occupies the highest address bits, so MMC1's `PRG_A17..PRG_A14` (descending) maps `PRG_A14` to address bit 14.
-- **Mirroring**: `hardwired` (from `pad h/v`) or `mapper` (a net driven by a chip output, e.g. `mmc1.VRAM_A10`).
+- **Mirroring (Scroll)**: there is no "Mirroring" attribute of a board (issue #525). A board either
+  - has a **scroll solder jumper** — `"mirroring": { "mode": "scroll" }` — a physical jumper that selects H Scroll (`VRAM_A10 = PA10`) or V Scroll (`VRAM_A10 = PA11`). The scroll value is a *cartridge instance* parameter, extracted from the `.nes` header (iNES Flags6 bit 0, inverted) or the nescartdb pads; or
+  - drives `VRAM_A10` from a **mapper chip** output — `"mirroring": { "mode": "mapper", "net": "mmc1.VRAM_A10" }` — and needs no Scroll parameter; or
+  - leaves mirroring unspecified (boards without VRAM wiring).
+  The legacy `"mode": "hardwired"` (with `h`/`v` fields) is accepted as a compatibility alias for `"scroll"`; its `h`/`v` become the factory default.
 - **Nets**: named connections between chip pins and bus signals, written as a flat list of `name` / `from` pairs. Any net can be used as `n_cs` / `n_oe` / `n_we` / address source / mirroring source, so arbitrary discrete-logic wiring (e.g. LS139-based decoders, UNROM's `nROMSEL`/`A14` decode) is expressible without new C++.
 
 Memory images are loaded into the ROM chips; the bus attachments describe how each ROM chip's pins (JEDEC: `A0..An`, `/CE`, `/OE`, `D0..D7`) connect to the bus and to chip outputs.
@@ -182,11 +243,12 @@ CartPcb/                     (new top-level component, C++/native)
   PcbFactory.h/.cpp          JSON -> Pcb
   PcbLoader.h/.cpp           locate & parse PCB JSON (built-in Nescartdb + user dir)
   NesCartDb.h/.cpp           CRC32 -> board type lookup (nescartdb index)
+  InesTranslator.h/.cpp      iNES-header fallback for "wild" dumps (issue #514)
   CartImage.h                PRG/CHR dumps + battery RAM
   Readme.md                  this specification
 ```
 
-Dependencies: `Common/BaseLogicLib` (TriState), `Common/JsonLib` (JSON parsing), `Common/BaseBoardLib` (`RomChip` — JEDEC-style ROM, `SRAM` — static RAM), `Nescartdb/` (data), and `Chips/` for mapper-chip classes.
+Dependencies: `Common/BaseLogicLib` (TriState), `Common/JsonLib` (JSON parsing), `Common/BaseBoardLib` (`RomChip` — JEDEC-style ROM, `SRAM` — static RAM, `LS161`/`LS32` glue logic), `Nescartdb/` (data), and `Chips/` for mapper-chip classes.
 
 ### 6.2 Key classes
 
@@ -194,6 +256,7 @@ Dependencies: `Common/BaseLogicLib` (TriState), `Common/JsonLib` (JSON parsing),
 - **`PcbFactory`** — builds a `Pcb` from a board JSON + a `CartImage` (allocates chips, wires nets, validates the image sizes against the components).
 - **`PcbLoader`** — resolves a board type to a JSON document: built-in `Nescartdb` data first, then user JSONs (which may add or override).
 - **`NesCartDb`** — loads the converted nescartdb JSON once and answers "given PRG/CHR images, which board type(s) match?" by the CRC32 of the PRG and CHR dumps. This is the component that translates PRG/CHR CRCs into a PCB type.
+- **`InesTranslator`** — the "wild dump" fallback (issue #514): when the PRG/CHR CRCs are not in nescartdb, translates the iNES header (mapper number + PRG/CHR sizes) into a board type so homebrew runs through the same board path.
 - **`RomChip`** — in `Common/BaseBoardLib`, not CartPcb. A JEDEC-style ROM chip: pins `A0..An`, `D0..D7`, `/CE`, `/OE`; a ROM ignores `/WE` writes. `PcbFactory` loads the PRG/CHR images into the `RomChip` instances.
 - **RAM** — `BaseBoardLib::SRAM`, reworked so it is clearly a simulator of typical 80s–90s static RAM chips (standard pin functions, `n_CS`/`n_WE`/`n_OE` semantics, power-up state). Used for WRAM/VRAM components, including battery-backed ones.
 - **`CartImage`** — the explicit PRG/CHR dumps (plus battery RAM content), loaded into the ROM chips by `PcbFactory`. Replaces the raw `uint8_t* nesImage` + iNES-header parsing inside cartridge classes.
@@ -228,7 +291,7 @@ PcbFactory.Create(board JSON, CartImage)  -->  Pcb
 CartPcbCartridge (CartPcb cartridge port)  -->  Board::InsertCartridge
 ```
 
-If no nescartdb match is found, a legacy fallback (iNES mapper number → board) is used with a warning, so old ROMs keep working during migration.
+If no nescartdb match is found and no board type is forced, the **iNES fallback** (§8) translates the dump from its header — the iNES mapper number and the PRG/CHR sizes — so homebrew and other "wild" dumps run through the same board path (issue #514).
 
 ### 6.5 Custom PCB JSONs (JSONES subset)
 
@@ -276,10 +339,19 @@ Derived expressions (`|` for concatenation, `&`/`|`/`!` boolean operators) form 
 - Address width is derived from the component `size` (e.g. 32 KiB → `A0..A14`).
 - Debug: `Dbg_ReadByte` / `Dbg_WriteByte` / `Dbg_GetSize` per chip, exposed through the board's debug interface.
 
-### 7.4 Mirroring
+### 7.4 Mirroring → Scroll
 
-- `hardwired`: `VRAM_A10` derived from `pad` h/v — same logic as today's NROM (`ppu_addr[10]` vs `ppu_addr[11]`).
-- `mapper`: `VRAM_A10` is driven by a net (e.g. `mmc1.VRAM_A10`), exactly like MMC1 boards.
+There is no "Mirroring" definition for a declarative PCB description (issue #525). The term "Mirroring" belongs to the iNES header; on the board there is only a solder jumper and the scrolling arrangement it selects (nesdev "arrangement"):
+
+| PCB jumper (Scroll) | Wiring | iNES header (Flags6 bit 0) |
+|---------------------|--------|----------------------------|
+| **H Scroll** | `VRAM_A10 = PA10` | `1` ("vertical mirroring") |
+| **V Scroll** | `VRAM_A10 = PA11` | `0` ("horizontal mirroring") |
+
+The two terms are mutually exclusive: H Scroll (PCB) == vertical mirroring (iNES).
+
+- `"mode": "scroll"`: the board has a scroll jumper. The concrete scroll value is a **cartridge instance** parameter, applied by the loader from the `.nes` header (`Pcb::ApplyScrollFromHeader`, bit 0 = 1 → H Scroll) or from the nescartdb pads (`ApplyPadScroll`). Boards that drive `VRAM_A10` from a mapper chip output have **no** Scroll parameter.
+- `"mode": "mapper"`: `VRAM_A10` is driven by a net (e.g. `mmc1.VRAM_A10`), exactly like MMC1 boards.
 - Boards without VRAM wiring (e.g. some discrete boards) can leave mirroring unspecified.
 
 The PPU's internal 2 KiB VRAM and its `VRAM_A10` line are simply called **VRAM**.
@@ -291,7 +363,7 @@ The PPU's internal 2 KiB VRAM and its `VRAM_A10` line are simply called **VRAM**
 | `CartPcb::Cartridge` | The cartridge-port contract (inputs/outputs/debug); the former `Mappers::AbstractCartridge`. `CartPcbCartridge` implements it. |
 | `Mappers` component | **Retired** (issue #509). The whole folder was removed; this document replaces the old `Mappers/Readme.md`; build files (`CMakeLists.txt`, VS projects) updated. |
 | `Chips/MMC1` | The MMC1 chip class (moved from Mappers), with unit tests. |
-| `Chips`, `BaseBoardLib` | Provide chip classes (`MMC1`, `RomChip`, `SRAM`) consumed by CartPcb. |
+| `Chips`, `BaseBoardLib` | Provide chip classes (`MMC1`, `RomChip`, `SRAM`, `LS161`, `LS32`) consumed by CartPcb. |
 | `Common/JsonLib` | JSON parsing for board JSONs and the nescartdb JSON. |
 | `Nescartdb/` | The converted database (identification data). |
 
@@ -300,17 +372,18 @@ The PPU's internal 2 KiB VRAM and its `VRAM_A10` line are simply called **VRAM**
 - Input: PRG image, CHR image. Identification is by the **CRC32 of the PRG and CHR dumps**; SHA1 is not used.
 - Lookup: build a map from PRG CRC + CHR CRC → cartridge → `board.type` once at load; find all cartridges whose PRG and CHR CRCs match the images.
 - Ambiguity: some dumps match multiple cartridges/boards (same ROMs on different PCBs). `NesCartDb` returns the full candidate list; the caller picks the first match or the one whose `system` fits the motherboard. This ambiguity is a *feature* compared to iNES: the information is surfaced instead of being silently lost.
-- If no match is found, the cartridge is not loaded (no legacy iNES path anymore); a board not in the database can still be forced via `SetForcedBoardType` (§6.5).
+- If no match is found, the **iNES fallback** (`InesTranslator`, issue #514) translates the dump from its header: the iNES mapper number (Flags6/7) and the PRG/CHR sizes select a board type (mapper 0 → NROM-128/256 by PRG size, 1 → MMC1 (SGROM for CHR-ROM / SHROM for CHR-RAM), 2 → UNROM, 3 → CNROM, 7 → AOROM). The translated dump runs through the same `PcbLoader` → `PcbFactory` path, with a warning logged. Unknown mappers (e.g. MMC3 until the chip is implemented) are not loaded. A board not in the database can still be forced via `SetForcedBoardType` (§6.5).
 
 ## 9. Board coverage plan
 
 Boards are added incrementally, each as: board JSON(s) + unit test + (while the old implementation existed) parity test:
 
-1. **NROM** (`NES-NROM-128/256`, `HVC-NROM-*`, `IREM-NROM-*`, ...) — no mapper chip; PRG + CHR + hardwired mirroring. Replaces the old `NROM`.
-2. **UxROM** (`NES-UNROM`, `NES-UOROM`, ...) — discrete logic PRG bank switch (A14), 8 KiB CHR-RAM. Replaces the old `UNROM`.
-3. **AxROM** (`NES-AOROM`, `NES-ANROM`, ...) — 1-screen mirroring via mapper writes. Replaces the old `AOROM`.
+1. **NROM** (`NES-NROM-128/256`, `HVC-NROM-*`, `IREM-NROM-*`, ...) — no mapper chip; PRG + CHR + a scroll jumper. Replaces the old `NROM`.
+2. **UxROM** (`NES-UNROM`, `NES-UOROM`, ...) — discrete logic PRG bank switch (A14), 8 KiB CHR-RAM. Described with the real glue logic: a **74LS161** bank register and a **74LS32** address multiplexer (issue #525). Replaces the old `UNROM`.
+3. **AxROM** (`NES-AOROM`, `NES-ANROM`, ...) — 1-screen mirroring via the **74LS161** bank register (Q3 → `VRAM_A10`). Replaces the old `AOROM`.
 4. **MMC1 family** (SGROM, SLROM, ...) — `MMC1` chip from `Chips` wired per §5.2. Replaces the old `MMC1_Based`.
-5. **Next candidates**: MMC3 family, discrete logic boards (BxROM, CNROM, ...).
+5. **Fallback boards** (issue #514): `CNROM` (latch-based CHR bank switch) and `SHROM` (MMC1 + CHR-RAM) exist so the iNES fallback can translate mapper 3 and mapper-1-CHR-RAM dumps.
+6. **Next candidates**: MMC3 family, discrete logic boards (BxROM, ...).
 
 ## 10. Migration checklist (Mappers → CartPcb)
 
@@ -328,7 +401,7 @@ Completed in issue #509:
 ## 11. Debug & testing
 
 - **Memory map**: each board registers its memory regions (PRG, CHR, WRAM) as `MemDescriptor`s with per-chip `Dbg_ReadByte`/`Dbg_WriteByte`, preserving the debugger memory view (and fixing the PRG support that was missing).
-- **Debug info**: boards expose debug entries per net/chip (category = board type), e.g. current PRG bank, `nROMSEL` state, mirroring mode.
+- **Debug info**: boards expose debug entries per net/chip (category = board type), e.g. current PRG bank, `nROMSEL` state, scroll mode.
 - **Unit tests** (`UnitTest/`): JSON parse → board instantiation; chip `/CE`/`/OE`/`/WE` behavior; mirroring; bank-switch address math for each supported board; MMC1 chip tests; JSONES custom board loading.
 - **`Dbg_ReadPRGByte`** stays on the CartPcb cartridge port (used by the debugger and Nintendulator log disassembler); it derives from the PRG chip mapping.
 

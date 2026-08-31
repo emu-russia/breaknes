@@ -5,18 +5,27 @@
     "components": {
       "prg": { "kind": "rom", "bus": "cpu" },
       "chr": { "kind": "ram", "bus": "ppu", "size": 8192 },
-      "bank": { "kind": "latch" }
+      "ls161": { "kind": "chip", "chip": "LS161" }
     },
     "circuit": {
-      "mirroring": { "mode": "mapper", "net": "bank.Q4" },
+      "mirroring": { "mode": "mapper", "net": "ls161.Q3" },
       "cpu": {
-        "prg":  { "chip": "prg", "n_cs": "nROMSEL", "addr": "bank.Q2..Q0 | cpu_addr[14:0]" },
-        "bank": { "clk": "nROMSEL", "n_we": "RnW", "data": "cpu_data[7:0]" }
+        "prg": { "chip": "prg", "n_cs": "nROMSEL", "addr": "ls161.Q2 | ls161.Q1 | ls161.Q0 | cpu_addr[14:0]" }
       },
       "ppu": {
         "chr": { "chip": "chr", "n_cs": "!nPA13", "n_oe": "nRD", "n_we": "nWR", "addr": "ppu_addr[12:0]" }
       },
-      "nets": []
+      "nets": [
+        { "name": "ls161.CLK",  "from": "nROMSEL" },
+        { "name": "ls161.nRST", "from": "vdd" },
+        { "name": "ls161.nLD",  "from": "RnW" },
+        { "name": "ls161.EN_T", "from": "gnd" },
+        { "name": "ls161.EN_P", "from": "gnd" },
+        { "name": "ls161.P0",   "from": "cpu_data[0]" },
+        { "name": "ls161.P1",   "from": "cpu_data[1]" },
+        { "name": "ls161.P2",   "from": "cpu_data[2]" },
+        { "name": "ls161.P3",   "from": "cpu_data[4]" }
+      ]
     }
   }
 }
