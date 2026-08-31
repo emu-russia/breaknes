@@ -47,6 +47,9 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="breaknes_icon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="SoundProcessing.h">
       <Filter>Header Files</Filter>
     </ClInclude>

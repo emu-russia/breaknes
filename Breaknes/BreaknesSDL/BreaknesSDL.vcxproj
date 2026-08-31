@@ -201,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="breaknes_icon.h" />
     <ClInclude Include="SoundProcessing.h" />
     <ClInclude Include="VideoProcessing.h" />
     <ClInclude Include="BoardConfig.h" />

@@ -26,6 +26,13 @@ namespace Breaknes
 		public FormMain()
 		{
 			InitializeComponent();
+
+			// The Breaknes icon (Artwork/breaknes.ico, embedded as "Breaknes.breaknes.ico").
+			using (var stream = typeof(FormMain).Assembly.GetManifestResourceStream("Breaknes.breaknes.ico"))
+			{
+				if (stream != null)
+					Icon = new Icon(stream);
+			}
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
