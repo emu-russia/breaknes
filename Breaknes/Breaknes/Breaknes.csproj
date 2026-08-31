@@ -13,6 +13,8 @@
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <!-- The Breaknes icon: exe/taskbar/Explorer icon (Artwork/breaknes.ico). -->
+    <ApplicationIcon>..\..\Artwork\breaknes.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -56,6 +58,8 @@
     <None Include="Build\IOConfig.json" Link="IOConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- The project icon, embedded as "Breaknes.breaknes.ico" (used by FormMain). -->
+    <EmbeddedResource Include="..\..\Artwork\breaknes.ico" LogicalName="Breaknes.breaknes.ico" />
   </ItemGroup>
 
   <ItemGroup>

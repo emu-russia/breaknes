@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include "breaknes_icon.h"
+
 VideoRender::VideoRender(int _tv_count, const char* layout)
 {
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
@@ -23,6 +25,15 @@ VideoRender::VideoRender(int _tv_count, const char* layout)
 	if (window == NULL) {
 		printf("SDL_CreateWindow failed: %s\n", SDL_GetError());
 		return;
+	}
+
+	// Set the Breaknes window icon (64x64 RGBA embedded in breaknes_icon.h,
+	// no SDL_image required; works on Windows and Linux).
+	SDL_Surface* icon_surface = BreaknesCreateIconSurface();
+	if (icon_surface != nullptr)
+	{
+		SDL_SetWindowIcon(window, icon_surface);
+		SDL_FreeSurface(icon_surface);
 	}
 
 	SDL_Surface* surface = SDL_GetWindowSurface(window);

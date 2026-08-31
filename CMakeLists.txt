@@ -22,6 +22,9 @@ add_executable (breaknes
 	Breaknes/BreaknesSDL/IOProcessing.cpp
 	Breaknes/BreaknesSDL/IOConfigurator.cpp
 
+	# Embedded window icon (breaknes_icon.h is included by VideoProcessing.cpp)
+	Breaknes/BreaknesSDL/breaknes_icon.h
+
 	# BreaksCore
 
 	Common/BaseLogicLib/BaseLogic.cpp
