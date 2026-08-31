@@ -666,13 +666,27 @@ namespace CartPcb
 				std::string mode;
 				GetStr(mirroring, "mode", mode);
 
-				if (mode == "hardwired")
+				if (mode == "scroll" || mode == "hardwired")
 				{
-					int h = 0;
-					int v = 0;
-					GetInt(mirroring, "h", h);
-					GetInt(mirroring, "v", v);
-					pcb->SetHardwiredMirroring(v == 1);
+					// "scroll" (issue #525): the board has a scroll solder jumper
+					// (H Scroll: VRAM_A10 = PA10, V Scroll: VRAM_A10 = PA11). The
+					// concrete scroll value is an instance parameter applied after
+					// creation (iNES header bit 0 / nescartdb pads); the factory
+					// default is ScrollMode::H.
+					//
+					// "hardwired" is the pre-#525 name for the same thing; its
+					// legacy h/v fields (iNES mirroring terms) become the factory
+					// default so old board JSONs keep their behavior.
+					pcb->SetScrollJumper();
+
+					if (mode == "hardwired")
+					{
+						int h = 0;
+						int v = 0;
+						GetInt(mirroring, "h", h);
+						GetInt(mirroring, "v", v);
+						pcb->SetScrollMode(v == 1 ? ScrollMode::H : ScrollMode::V);
+					}
 				}
 				else if (mode == "mapper")
 				{

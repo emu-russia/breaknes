@@ -39,6 +39,23 @@ namespace CartPcb
 
 	enum class Bus { None, CPU, PPU };
 
+	/// <summary>
+	/// The Scroll parameter of a cartridge instance (issue #525).
+	///
+	/// "Scroll" is the solder jumper on the PCB that selects which PPU address
+	/// line drives VRAM A10 — the scrolling arrangement of the board in nesdev
+	/// terms:
+	///   H Scroll: VRAM A10 = PA10
+	///   V Scroll: VRAM A10 = PA11
+	///
+	/// The iNES header calls the same information "mirroring" with the opposite
+	/// meaning: iNES "vertical mirroring" == H Scroll, iNES "horizontal
+	/// mirroring" == V Scroll. There is no "mirroring" attribute of a board —
+	/// only a jumper and the arrangement it selects. Boards that drive VRAM A10
+	/// from a mapper chip output (e.g. MMC1) have no Scroll parameter.
+	/// </summary>
+	enum class ScrollMode { H, V };
+
 	// ---------------------------------------------------------------------
 	// Expressions
 	// ---------------------------------------------------------------------
@@ -180,22 +197,39 @@ namespace CartPcb
 		void AddCpuAttachment(Attachment att);
 		void AddPpuAttachment(Attachment att);
 		void AddNet(const Net& net);
-		void SetHardwiredMirroring(bool vertical);		// true: VRAM_A10 = PA10, false: PA11
+
+		/// <summary>
+		/// Declare that the board has a scroll solder jumper (issue #525):
+		/// H Scroll = VRAM_A10 driven from PA10, V Scroll = VRAM_A10 from PA11.
+		/// The scroll value of a concrete cartridge is an *instance* parameter,
+		/// applied later via ApplyScrollFromHeader / ApplyPadScroll; before that
+		/// the factory default ScrollMode::H is used.
+		/// </summary>
+		void SetScrollJumper();
+
+		/// <summary>
+		/// Set the scroll parameter of the cartridge instance directly.
+		/// </summary>
+		void SetScrollMode(ScrollMode scroll);
+
 		void SetMapperMirroring(LogicExprPtr net);
 
 		/// <summary>
-		/// Apply the mirroring solder pads of a specific cartridge (from the
-		/// nescartdb record). Only affects hardwired-mirroring boards; the board
-		/// JSON defaults are used when the pads are unknown.
+		/// Apply the scroll solder pads of a specific cartridge (from the nescartdb
+		/// record: pad v=1 means the cartridge was built with the V pad wired, i.e.
+		/// iNES "vertical mirroring" == H Scroll). Only affects scroll-jumper boards;
+		/// the board JSON defaults are used when the pads are unknown.
 		/// </summary>
-		void ApplyPadMirroring(int padH, int padV);
+		void ApplyPadScroll(int padH, int padV);
 
 		/// <summary>
-		/// Apply the mirroring bit from the .nes header (iNES bit 0), which is the
-		/// authoritative source for hardwired-mirroring boards (the behavior of the
-		/// pre-migration implementation). Only affects hardwired-mirroring boards.
+		/// Apply the mirroring bit from the .nes header (iNES Flags6 bit 0), which is
+		/// the authoritative source for scroll-jumper boards (the behavior of the
+		/// pre-migration implementation). The iNES term is the inverse of the PCB
+		/// term: iNES "vertical mirroring" (bit 0 = 1) == H Scroll (VRAM_A10 = PA10).
+		/// Only affects scroll-jumper boards.
 		/// </summary>
-		void ApplyHeaderMirroring(bool vertical);
+		void ApplyScrollFromHeader(bool iNesVerticalMirroring);
 		void SetBoardType(const std::string& type, const std::string& pcb);
 
 		/// <summary>
@@ -263,9 +297,9 @@ namespace CartPcb
 		std::vector<Attachment> ppuAttachments;
 		std::vector<Net> nets;
 
-		enum class MirrorMode { None, Hardwired, Mapper };
+		enum class MirrorMode { None, Scroll, Mapper };
 		MirrorMode mirrorMode = MirrorMode::None;
-		bool hardwiredVertical = false;
+		ScrollMode scroll = ScrollMode::H;	// used when mirrorMode == Scroll (factory default)
 		LogicExprPtr mapperMirrorNet;
 
 		// Evaluation helpers

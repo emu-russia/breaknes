@@ -110,6 +110,7 @@ add_executable (breaknes
 	CartPcb/PcbFactory.cpp
 	CartPcb/PcbLoader.cpp
 	CartPcb/NesCartDb.cpp
+	CartPcb/InesTranslator.cpp
 	CartPcb/CartPcbCartridge.cpp
 	CartPcb/CartPcbPort.cpp
 	CartPcb/CartridgeLoader.cpp

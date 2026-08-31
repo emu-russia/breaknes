@@ -35,12 +35,14 @@ Nescartdb/
   Readme.md          <- this file
   nescarts.json      <- the full converted database (generated, committed)
   index.json         <- flattened lookup index: prg_crc/chr_crc -> board type (generated, committed)
+  boards/            <- board definitions (authored, not generated) + the family index
 ```
 
 - `nescarts.json` — the full database, faithful to the XML: `game` → `cartridge` → `board` nesting, with all attributes (see §5).
 - `index.json` — a flat array of lookup records (`prg_crc`, `chr_crc`, `board.type`, `board.pcb`, `mapper`, `system`), generated from `nescarts.json`. The runtime loads this small file to answer "which board types match these PRG/CHR CRCs?" without walking the whole database.
+- `boards/` — the board JSON definitions (`nrom.json`, `unrom.json`, `aorom.json`, `sgrom.json`, plus `cnrom.json`/`shrom.json` for the iNES fallback) and `index.json`, the family mapping board type → definition file (see §6.1).
 
-Both files are **committed** to the repository so that no network access is needed at build or run time.
+The generated files are **committed** to the repository so that no network access is needed at build or run time.
 
 ## 4. Conversion pipeline
 
@@ -145,6 +147,7 @@ Direct mapping of the XML structure:
 - One record per cartridge with a known PRG/CHR CRC pair.
 - Identification is by **PRG CRC32 + CHR CRC32** only (SHA1 is not used): the runtime computes CRC32 of the PRG and CHR dumps and looks up `prg_crc` + `chr_crc`.
 - Multiple records may share the same CRCs (same ROMs on different PCBs) — all matches are returned; the caller picks the fit (see `CartPcb/Readme.md` §8).
+- Records may carry the mirroring solder pads as `"h"`/`"v"` (informational). The pads use the **iNES mirroring terms** — the inverse of the PCB scroll term (issue #525): `v=1` (iNES "vertical mirroring") means the cartridge's scroll jumper is set to **H Scroll** (`VRAM_A10 = PA10`), `h=1` means **V Scroll** (`VRAM_A10 = PA11`). The runtime does not use the pads to override the `.nes` header; the scroll of scroll-jumper boards always follows the header.
 
 ## 6. Consumers
 
@@ -157,6 +160,16 @@ Direct mapping of the XML structure:
 | PPUPlayer / APUPlayer | Use the same `Nescartdb` data via the native core or their own copy. |
 
 **Deployment**: the `Nescartdb/` files (including `boards/*.json`) are copied to the output directory on build (`Breaknes.csproj` and `BreaknesSDL.vcxproj` copy them next to the executable). Native code locates them relative to the executable: the managed app passes its base directory via `SetNescartdbDir`; the SDL port uses the `Nescartdb` folder next to the executable (override with the `NESCARDB_DIR` environment variable). Custom boards go to the user board directory (`CustomBoards/` next to the executable by default in the managed app, configurable via `SetUserBoardsDir`).
+
+### 6.1 Board definitions (`boards/`)
+
+The `boards/` folder contains the board JSONs that `PcbLoader` resolves a board type to:
+
+- `index.json` — the family mapping: board type → board definition file (e.g. all `*-NROM-*` types map to `nrom.json`).
+- `nrom.json`, `unrom.json`, `aorom.json`, `sgrom.json` — the built-in board definitions for the NROM/UxROM/AxROM/MMC1 families (the UNROM and AOROM definitions include the real 74LS161/74LS32 glue logic, see `CartPcb/Readme.md` §5.3).
+- `cnrom.json`, `shrom.json` — boards added for the iNES fallback of "wild" dumps (issue #514): mapper 3 (CNROM, latch-based CHR bank switch) and mapper 1 with CHR-RAM (SHROM-style MMC1 wiring).
+
+Board definitions are authored (not generated from the XML): nescartdb describes the component inventory, CartPcb adds the wiring (`circuit`). New board types referenced by the converter output or by the iNES fallback must be added here by hand.
 
 ## 7. Versioning & regeneration policy
 
@@ -174,4 +187,5 @@ Direct mapping of the XML structure:
 
 - `Nescartdb/` provides **identification** (which PCB is this dump?) — see `CartPcb/Readme.md` §8.
 - `CartPcb` provides **simulation** of the identified PCB — the board JSON format is defined in `CartPcb/Readme.md` §5.
+- **"Wild" dumps** (issue #514): when the PRG/CHR CRCs of a dump are not in `index.json` (homebrew, undocumented dumps), `CartPcb::InesTranslator` falls back to the iNES header (mapper number + PRG/CHR sizes) and maps it to one of the board types above; the dump then runs through the same board path. This is a translation, not an identification: the header is rigid and lossy, so the fallback only covers the common simple mappers.
 - **JSONES** (issue #189) is a subset of the CartPcb board format: a single-cartridge JSON with `game` → `cartridge` → `board` nesting, usable as a custom board definition in addition to the built-in nescartdb data (`CartPcb/Readme.md` §6.5).

@@ -30,41 +30,71 @@ namespace UnitTest
 			"      \"prg\" : { \"kind\" : \"rom\", \"bus\" : \"cpu\", \"size\" : 32768 },"
 			"      \"chr\" : { \"kind\" : \"rom\", \"bus\" : \"ppu\", \"size\" : 8192 } },"
 			"    \"circuit\" : {"
-			"      \"mirroring\" : { \"mode\" : \"hardwired\", \"h\" : 0, \"v\" : 1 },"
+			"      \"mirroring\" : { \"mode\" : \"scroll\" },"
 			"      \"cpu\" : { \"prg\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL\", \"addr\" : \"cpu_addr[14:0]\" } },"
 			"      \"ppu\" : { \"chr\" : { \"chip\" : \"chr\", \"n_cs\" : \"!nPA13\", \"n_oe\" : \"nRD\", \"addr\" : \"ppu_addr[12:0]\" } },"
 			"      \"nets\" : [] } } }";
 
+		// The UNROM board with its real glue logic: a 74LS161 bank register and a
+		// 74LS32 address multiplexer (the old Mappers implementation wired exactly
+		// this: A15 = Q1|A14, A14 = Q0|A14, A16 = A14|Q2). The $C000 window is
+		// forced to the last bank because the OR with A14 saturates the bank bits.
 		const char* UNROM_BOARD =
 			"{ \"schemaVersion\" : 1,"
 			"  \"board\" : { \"type\" : \"NES-UNROM\", \"pcb\" : \"NES-UNROM-10\", \"mapper\" : 2,"
 			"    \"components\" : {"
 			"      \"prg\" : { \"kind\" : \"rom\", \"bus\" : \"cpu\", \"size\" : 131072 },"
 			"      \"chr\" : { \"kind\" : \"rom\", \"bus\" : \"ppu\", \"size\" : 8192 },"
-			"      \"bank\" : { \"kind\" : \"latch\" } },"
+			"      \"ls161\" : { \"kind\" : \"chip\", \"chip\" : \"LS161\" },"
+			"      \"ls32\" : { \"kind\" : \"chip\", \"chip\" : \"LS32\" } },"
 			"    \"circuit\" : {"
-			"      \"mirroring\" : { \"mode\" : \"hardwired\", \"h\" : 1, \"v\" : 0 },"
+			"      \"mirroring\" : { \"mode\" : \"scroll\" },"
 			"      \"cpu\" : {"
-			"        \"prg_lo\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL | cpu_addr[14]\", \"addr\" : \"bank.Q2..Q0 | cpu_addr[13:0]\" },"
-			"        \"prg_hi\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL | !cpu_addr[14]\", \"addr\" : \"vdd | vdd | vdd | cpu_addr[13:0]\" },"
-			"        \"bank\" : { \"clk\" : \"nROMSEL\", \"n_we\" : \"RnW\" } },"
-			"      \"ppu\" : { \"chr\" : { \"n_cs\" : \"!nPA13\", \"n_oe\" : \"nRD\", \"addr\" : \"ppu_addr[12:0]\" } },"
-			"      \"nets\" : [] } } }";
+			"        \"prg\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL\", \"addr\" : \"ls32.Y3 | ls32.Y0 | ls32.Y1 | cpu_addr[13:0]\" } },"
+			"      \"ppu\" : { \"chr\" : { \"chip\" : \"chr\", \"n_cs\" : \"!nPA13\", \"n_oe\" : \"nRD\", \"addr\" : \"ppu_addr[12:0]\" } },"
+			"      \"nets\" : ["
+			"        { \"name\" : \"ls161.CLK\",  \"from\" : \"nROMSEL\" },"
+			"        { \"name\" : \"ls161.nRST\", \"from\" : \"vdd\" },"
+			"        { \"name\" : \"ls161.nLD\",  \"from\" : \"RnW\" },"
+			"        { \"name\" : \"ls161.EN_T\", \"from\" : \"gnd\" },"
+			"        { \"name\" : \"ls161.EN_P\", \"from\" : \"gnd\" },"
+			"        { \"name\" : \"ls161.P0\",   \"from\" : \"cpu_data[0]\" },"
+			"        { \"name\" : \"ls161.P1\",   \"from\" : \"cpu_data[1]\" },"
+			"        { \"name\" : \"ls161.P2\",   \"from\" : \"cpu_data[2]\" },"
+			"        { \"name\" : \"ls161.P3\",   \"from\" : \"gnd\" },"
+			"        { \"name\" : \"ls32.A0\",    \"from\" : \"ls161.Q1\" },"
+			"        { \"name\" : \"ls32.B0\",    \"from\" : \"cpu_addr[14]\" },"
+			"        { \"name\" : \"ls32.A1\",    \"from\" : \"ls161.Q0\" },"
+			"        { \"name\" : \"ls32.B1\",    \"from\" : \"cpu_addr[14]\" },"
+			"        { \"name\" : \"ls32.A2\",    \"from\" : \"gnd\" },"
+			"        { \"name\" : \"ls32.B2\",    \"from\" : \"gnd\" },"
+			"        { \"name\" : \"ls32.A3\",    \"from\" : \"cpu_addr[14]\" },"
+			"        { \"name\" : \"ls32.B3\",    \"from\" : \"ls161.Q2\" } ] } } }";
 
+		// AOROM with its real bank register: a 74LS161 whose Q3 (loaded from
+		// CPU data bit 4) drives VRAM A10 (one-screen mirroring).
 		const char* AOROM_BOARD =
 			"{ \"schemaVersion\" : 1,"
 			"  \"board\" : { \"type\" : \"NES-AOROM\", \"pcb\" : \"NES-AOROM-01\", \"mapper\" : 7,"
 			"    \"components\" : {"
 			"      \"prg\" : { \"kind\" : \"rom\", \"bus\" : \"cpu\", \"size\" : 262144 },"
 			"      \"chr\" : { \"kind\" : \"ram\", \"bus\" : \"ppu\", \"size\" : 8192 },"
-			"      \"bank\" : { \"kind\" : \"latch\" } },"
+			"      \"ls161\" : { \"kind\" : \"chip\", \"chip\" : \"LS161\" } },"
 			"    \"circuit\" : {"
-			"      \"mirroring\" : { \"mode\" : \"mapper\", \"net\" : \"bank.Q4\" },"
+			"      \"mirroring\" : { \"mode\" : \"mapper\", \"net\" : \"ls161.Q3\" },"
 			"      \"cpu\" : {"
-			"        \"prg\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL\", \"addr\" : \"bank.Q2..Q0 | cpu_addr[14:0]\" },"
-			"        \"bank\" : { \"clk\" : \"nROMSEL\", \"n_we\" : \"RnW\", \"data\" : \"cpu_data[7:0]\" } },"
-			"      \"ppu\" : { \"chr\" : { \"n_cs\" : \"!nPA13\", \"n_oe\" : \"nRD\", \"n_we\" : \"nWR\", \"addr\" : \"ppu_addr[12:0]\" } },"
-			"      \"nets\" : [] } } }";
+			"        \"prg\" : { \"chip\" : \"prg\", \"n_cs\" : \"nROMSEL\", \"addr\" : \"ls161.Q2 | ls161.Q1 | ls161.Q0 | cpu_addr[14:0]\" } },"
+			"      \"ppu\" : { \"chr\" : { \"chip\" : \"chr\", \"n_cs\" : \"!nPA13\", \"n_oe\" : \"nRD\", \"n_we\" : \"nWR\", \"addr\" : \"ppu_addr[12:0]\" } },"
+			"      \"nets\" : ["
+			"        { \"name\" : \"ls161.CLK\",  \"from\" : \"nROMSEL\" },"
+			"        { \"name\" : \"ls161.nRST\", \"from\" : \"vdd\" },"
+			"        { \"name\" : \"ls161.nLD\",  \"from\" : \"RnW\" },"
+			"        { \"name\" : \"ls161.EN_T\", \"from\" : \"gnd\" },"
+			"        { \"name\" : \"ls161.EN_P\", \"from\" : \"gnd\" },"
+			"        { \"name\" : \"ls161.P0\",   \"from\" : \"cpu_data[0]\" },"
+			"        { \"name\" : \"ls161.P1\",   \"from\" : \"cpu_data[1]\" },"
+			"        { \"name\" : \"ls161.P2\",   \"from\" : \"cpu_data[2]\" },"
+			"        { \"name\" : \"ls161.P3\",   \"from\" : \"cpu_data[4]\" } ] } } }";
 
 		// A test bus with distinct state for the CPU/PPU/expansion buses.
 		struct Bus
@@ -124,7 +154,9 @@ namespace UnitTest
 
 		// A CPU write to $8000+ latches the bank register on the strobe
 		// DEASSERTION edge (nROMSEL 0 -> 1), like the 74LS161 on the real boards.
-		// Drive the write as: strobe asserted (nROMSEL=0, RnW=0) then deasserted.
+		// Drive the write as: strobe asserted (nROMSEL=0, RnW=0) then deasserted,
+		// keeping the write data on the bus through the whole cycle (the 6502
+		// holds it until the next cycle, so the LS161 samples it at the edge).
 		void WriteBank(Pcb* pcb, uint8_t value)
 		{
 			Bus b;
@@ -136,6 +168,7 @@ namespace UnitTest
 			pcb->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
 
 			b.in[(size_t)CartInput::nROMSEL] = TriState::One;
+			b.cpu_data = value;
 			pcb->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
 		}
 
@@ -150,6 +183,7 @@ namespace UnitTest
 			cart->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
 
 			b.in[(size_t)CartInput::nROMSEL] = TriState::One;
+			b.cpu_data = value;
 			cart->sim(b.in, b.out, 0x0000, &b.cpu_data, b.cpu_dirty, 0x2000, &b.ppu_data, b.ppu_dirty, nullptr, nullptr, b.exp_dirty);
 		}
 
@@ -274,9 +308,24 @@ namespace UnitTest
 			Assert::IsTrue(b.ppu_dirty == true);
 			Assert::IsTrue(b.ppu_data == 0xCD);
 
-			// Mirroring: hardwired vertical (v=1) -> VRAM_A10 = ppu_addr[10]
+			// Scroll jumper (issue #525): the .nes header bit 0 = 1 ("vertical
+			// mirroring" in iNES terms) selects H Scroll -> VRAM_A10 = ppu_addr[10].
+			pcb->ApplyScrollFromHeader(true);
+
 			b.SetDefaults();
 			b.Sim(pcb, 0x8000, (1 << 10));
+			Assert::IsTrue(b.out[(size_t)CartOutput::VRAM_A10] == TriState::One);
+
+			b.SetDefaults();
+			b.Sim(pcb, 0x8000, 0);
+			Assert::IsTrue(b.out[(size_t)CartOutput::VRAM_A10] == TriState::Zero);
+
+			// .nes header bit 0 = 0 ("horizontal mirroring") selects V Scroll ->
+			// VRAM_A10 = ppu_addr[11].
+			pcb->ApplyScrollFromHeader(false);
+
+			b.SetDefaults();
+			b.Sim(pcb, 0x8000, (1 << 11));
 			Assert::IsTrue(b.out[(size_t)CartOutput::VRAM_A10] == TriState::One);
 
 			b.SetDefaults();
@@ -371,7 +420,7 @@ namespace UnitTest
 			b.Sim(pcb, 0x0123, 0x2000);
 			Assert::IsTrue(b.cpu_data == (uint8_t)((3 * 0x8000 + 0x123) >> 15));
 
-			// Mirroring: VRAM_A10 = Q4 = 1 (one-screen)
+			// Mirroring: VRAM_A10 = ls161.Q3 = 1 (one-screen, data bit 4)
 			Assert::IsTrue(b.out[(size_t)CartOutput::VRAM_A10] == TriState::One);
 
 			// CHR-RAM write then read
@@ -433,6 +482,63 @@ namespace UnitTest
 			Assert::IsTrue(out.empty());
 
 			remove(path);
+		}
+	};
+
+	TEST_CLASS(CartPcbInesTranslatorUnitTest)
+	{
+	public:
+		/// <summary>
+		/// Issue #514: the iNES-header fallback that translates a "wild" dump
+		/// (unknown PRG/CHR CRCs) into a board type.
+		/// </summary>
+		TEST_METHOD(TestTranslateInesHeader)
+		{
+			NESHeader head{};
+			head.Sign[0] = 'N'; head.Sign[1] = 'E'; head.Sign[2] = 'S'; head.Sign[3] = 0x1A;
+
+			BoardRef ref;
+
+			// Mapper 0 (NROM): the PRG size picks 128 (16 KiB) vs 256 (32 KiB).
+			head.Flags_6 = 0; head.Flags_7 = 0;
+			Assert::IsTrue(TryTranslateInesHeader(&head, 0x4000, 0x2000, ref));
+			Assert::IsTrue(ref.type == "NES-NROM-128");
+			Assert::IsTrue(ref.mapper == 0);
+			Assert::IsTrue(TryTranslateInesHeader(&head, 0x8000, 0x2000, ref));
+			Assert::IsTrue(ref.type == "NES-NROM-256");
+
+			// Mapper 1 (MMC1): CHR-ROM -> SGROM wiring, CHR-RAM -> SHROM wiring.
+			head.Flags_6 = 0x10; head.Flags_7 = 0;
+			Assert::IsTrue(TryTranslateInesHeader(&head, 0x8000, 0x2000, ref));
+			Assert::IsTrue(ref.type == "HVC-SGROM");
+			Assert::IsTrue(TryTranslateInesHeader(&head, 0x8000, 0, ref));
+			Assert::IsTrue(ref.type == "HVC-SHROM");
+
+			// Mapper 2 (UNROM).
+			head.Flags_6 = 0x20; head.Flags_7 = 0;
+			Assert::IsTrue(TryTranslateInesHeader(&head, 0x40000, 0, ref));
+			Assert::IsTrue(ref.type == "NES-UNROM");
+
+			// Mapper 3 (CNROM).
+			head.Flags_6 = 0x30; head.Flags_7 = 0;
+			Assert::IsTrue(TryTranslateInesHeader(&head, 0x8000, 0x8000, ref));
+			Assert::IsTrue(ref.type == "NES-CNROM");
+
+			// Mapper 7 (AOROM).
+			head.Flags_6 = 0x70; head.Flags_7 = 0;
+			Assert::IsTrue(TryTranslateInesHeader(&head, 0x80000, 0, ref));
+			Assert::IsTrue(ref.type == "NES-AOROM");
+
+			// Mapper 4 (MMC3) is not translated yet (no MMC3 chip simulation).
+			head.Flags_6 = 0x40; head.Flags_7 = 0;
+			Assert::IsTrue(!TryTranslateInesHeader(&head, 0x40000, 0x20000, ref));
+
+			// Mapper 255 (upper nibble of Flags_7) is unknown.
+			head.Flags_6 = 0xF0; head.Flags_7 = 0xF0;
+			Assert::IsTrue(!TryTranslateInesHeader(&head, 0x40000, 0, ref));
+
+			// A null header must not crash.
+			Assert::IsTrue(!TryTranslateInesHeader(nullptr, 0x4000, 0x2000, ref));
 		}
 	};
 
@@ -626,8 +732,9 @@ namespace UnitTest
 			Assert::IsTrue(cart != nullptr);
 			Assert::IsTrue(cart->Valid());
 
-			// Mirroring must follow the .nes header (Flags6 bit 0 = 1 -> vertical,
-			// VRAM_A10 = PA10), not the nescartdb pad.
+			// The scroll jumper must follow the .nes header (Flags6 bit 0 = 1,
+			// iNES "vertical mirroring" -> H Scroll, VRAM_A10 = PA10), not the
+			// nescartdb pad.
 			Bus b;
 			b.SetDefaults();
 			b.Sim(cart, 0x8000, (1 << 10));
@@ -657,6 +764,76 @@ namespace UnitTest
 
 			delete cart2;
 			delete cart;
+			CartPcb::SetNescartdbDir(savedDir.c_str());
+		}
+
+		/// <summary>
+		/// Issue #514: a "wild" dump whose PRG/CHR CRCs are not in nescartdb must
+		/// still load through the iNES-header fallback (mapper -> board type) and
+		/// run on the same CartPcb board path.
+		/// </summary>
+		TEST_METHOD(TestWildDumpFallback)
+		{
+			// Locate the committed Nescartdb data (same probing as above).
+			std::string dbDir;
+			for (auto& candidate : { "Nescartdb", "../../../Nescartdb", "../../Nescartdb" })
+			{
+				NesCartDb probe;
+				if (probe.Load(std::string(candidate) + "/index.json"))
+				{
+					dbDir = candidate;
+					break;
+				}
+			}
+			Assert::IsTrue(!dbDir.empty());
+
+			// A homebrew-style UNROM dump: 128K PRG, CHR-RAM, mapper 2. The PRG
+			// content is a synthetic pattern that is (with overwhelming
+			// probability) not in nescartdb.
+			uint8_t image[16 + 0x40000];
+			memset(image, 0, sizeof(image));
+			image[0] = 'N'; image[1] = 'E'; image[2] = 'S'; image[3] = 0x1A;
+			image[4] = 8;			// 128K PRG
+			image[5] = 0;			// CHR-RAM
+			image[6] = 0x20;		// mapper 2 (UNROM)
+			image[7] = 0;
+			for (size_t i = 0; i < 0x40000; i++)
+			{
+				image[16 + i] = (uint8_t)((i * 7 + 3) & 0xFF);	// synthetic pattern
+			}
+
+			NesCartDb db;
+			Assert::IsTrue(db.Load(dbDir + "/index.json"));
+
+			// Sanity: the synthetic PRG CRC is really unknown to nescartdb.
+			uint32_t prgCrc = NesCartDb::Crc32(image + 16, 0x40000);
+			std::vector<BoardRef> out;
+			db.FindBoards(prgCrc, 0, out);
+			Assert::IsTrue(out.empty());
+
+			std::string savedDir = CartPcb::GetNescartdbDir();
+			std::string savedForced = CartPcb::GetForcedBoardType();
+
+			CartPcb::SetForcedBoardType("");			// no JSONES override
+			CartPcb::SetNescartdbDir(dbDir.c_str());
+
+			CartPcb::Cartridge* cart = CartPcb::CreateFromNesImage(ConnectorType::FamicomStyle, image, sizeof(image));
+			Assert::IsTrue(cart != nullptr);
+			Assert::IsTrue(cart->Valid());
+
+			// The UNROM board from the fallback must bank-switch correctly
+			// (write bank 5, then read $8000+0x100).
+			WriteBank(cart, 5);
+
+			Bus b;
+			b.SetDefaults();
+			b.Sim(cart, 0x0100, 0x2000);
+			Assert::IsTrue(b.cpu_dirty == true);
+			Assert::IsTrue(b.cpu_data == (uint8_t)(image[16 + 5 * 0x4000 + 0x100]));
+
+			delete cart;
+
+			CartPcb::SetForcedBoardType(savedForced.c_str());
 			CartPcb::SetNescartdbDir(savedDir.c_str());
 		}
 	};
