@@ -127,7 +127,15 @@ namespace Breaknes
 		ppu_inputs[(size_t)PPUSim::InputPad::RS0] = FromByte((addr_bus >> 0) & 1);
 		ppu_inputs[(size_t)PPUSim::InputPad::RS1] = FromByte((addr_bus >> 1) & 1);
 		ppu_inputs[(size_t)PPUSim::InputPad::RS2] = FromByte((addr_bus >> 2) & 1);
-		ppu_inputs[(size_t)PPUSim::InputPad::n_DBE] = PPU_nCE;
+		// The PPU /CS (its n_DBE input) is the LS139 decode of the CPU address. The
+		// read data must be driven during PHI1 (the CPU samples it at the start of
+		// the next PHI2), so reads keep the whole-cycle /CS. Register writes, on the
+		// other hand, must sample the data bus only during the CPU's PHI2 phase:
+		// during PHI1 the bus still holds the previous read's value, and a level-
+		// sensitive write would latch it (a $2000 write right after an operand read
+		// latches the operand byte, glitching CTRL0[7] and re-arming the NMI line -
+		// issue #527).
+		ppu_inputs[(size_t)PPUSim::InputPad::n_DBE] = OR(PPU_nCE, AND(NOT(CPU_RnW), NOT(apu->GetPHI2())));
 
 		// Only the primary PPU is wired into the NES/Famicom board logic; multiple
 		// PPUs on one board are planned for future boards (NES-based arcade machines).
