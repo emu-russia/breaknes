@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools — assembler, debugger, players — Breaknes docs</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Toggle theme"
+        data-label-light="Switch to dark theme" data-label-dark="Switch to light theme">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index.html">← Breaknes</a> · Docs</span>
+    <span class="lang"><b>English</b> · <a href="tools_ru.html">Русский</a></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Tools</h1>
+      <p class="lede">Utilities around the emulator: the Breakasm assembler, the BreaksDebug inspector, PPU/APU players and the demo programs</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      Utilities around the emulator: from the simplest possible 6502 assembler to the inspector of the
+      gate-level core and the players of the PPU/APU register dumps.
+    </p>
+
+    <p>
+      This page describes the programs in the <code>Tools/</code> folder of the repository: the assembler
+      <strong>Breakasm</strong>, which the debugger uses to assemble the entered source; the
+      <strong>Breaks Debugger</strong>, a GUI for checking the 6502 core; the replay tools
+      <strong>PPU Player</strong> and <strong>APU Player</strong>; the speed profiling demos
+      <strong>PpuPumpkin</strong> and <strong>ApuPumpkin</strong>; the audio playback utility
+      <strong>Slooow Plaaayer</strong>; and the demo programs <strong>SignalPlotDemo</strong> and
+      <strong>InfernoColormap</strong> for the custom WinForms controls.
+    </p>
+
+    <h2 id="breakasm">Breakasm</h2>
+    <img src="assets/img/breakasm_logo.png" alt="Breakasm logo">
+    <p>As simple and dumb assembler as possible, to generate code.</p>
+    <p>To run:</p>
+    <pre><code>Breakasm [-l &lt;file.lst&gt;] &lt;source.asm&gt; &lt;output.prg&gt;
+Example: Breakasm -l test.lst test.asm test.prg</code></pre>
+    <p>The <code>-l &lt;file.lst&gt;</code> option writes an assembly listing (address, emitted bytes and the source line) to the given file.</p>
+    <p>There is also a Python port with the same behaviour and command line:</p>
+    <pre><code>python breakasm.py [-l &lt;file.lst&gt;] &lt;source.asm&gt; &lt;output.prg&gt;</code></pre>
+    <p>PRG file is always 64 Kbytes (the size of 6502 address space). The current assembly pointer (<code>ORG</code>) can be set anywhere in the PRG.</p>
+
+    <h3>Syntax</h3>
+    <p>The source text is split into lines of the following format:</p>
+    <pre><code>[LABEL:] COMMAND [OPERAND1, OPERAND2, OPERAND3] ; Comments</code></pre>
+    <p>The label (<code>LABEL</code>) is optional. The command (<code>COMMAND</code>) contains 6502 instruction or one of the assebmler directives. The operands depend on the command.</p>
+
+    <h3>Expressions</h3>
+    <p>All operands are evaluated with the built-in expression engine. Labels, defines and complex expressions are supported in every operand position:</p>
+    <pre><code>LDA     MyData + 32 * entry_size + 12
+STA     (Base &lt;&lt; 4) | 1
+BYTE    Table + 2</code></pre>
+    <p>Supported operations (from high to low priority):</p>
+    <pre><code>()      grouping
+! ~     logical not, bitwise not (unary)
+* / %   multiply, divide, modulo
++ -     add, subtract
+&lt;&lt; &gt;&gt;   shift left, shift right
+&lt;&lt;&lt; &gt;&gt;&gt; rotate left, rotate right
+&gt; &gt;= &lt; &lt;=  comparisons (result: 0 or 1)
+== !=   equality (result: 0 or 1)
+&amp; | ^   bitwise and, or, xor</code></pre>
+    <p>Numbers can be decimal (<code>12</code>), hexadecimal (<code>$12</code>, <code>#$12</code>) or binary via defines. An immediate operand starts with <code>#</code> (<code>LDA #5</code>). A whole operand wrapped in parentheses is indirect addressing (<code>JMP (addr)</code>), while parentheses inside an expression are grouping only.</p>
+
+    <h3>Multi-pass assembling</h3>
+    <p>Breakasm assembles the source in several passes until all identifiers, labels and defines are resolved. This also resolves the Zero Page / Absolute ambiguity: if a forward-referenced label turns out to be below <code>$100</code>, the assembler automatically uses the shorter zero page opcode (unless the <code>ABS</code> directive forces the absolute one).</p>
+
+    <h3>Embedded Directives</h3>
+    <table>
+      <thead><tr><th>Directive</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>ORG</td><td>Set the current PRG assembly position.</td></tr>
+        <tr><td>INCLUDE</td><td>Process a nested source file</td></tr>
+        <tr><td>DEFINE</td><td>Define a simple constant</td></tr>
+        <tr><td>BYTE</td><td>Output a byte or string</td></tr>
+        <tr><td>WORD</td><td>Output uint16_t in little-endian order. You can use both numbers as well as labels and addresses.</td></tr>
+        <tr><td>END</td><td>Finish the assembling</td></tr>
+        <tr><td>PROCESSOR</td><td>Defines type of processor for informational purposes</td></tr>
+        <tr><td>ABS</td><td>Hint: the next instruction with a Zero Page / Absolute ambiguity (address below <code>$100</code>) must use the absolute opcode</td></tr>
+      </tbody>
+    </table>
+    <p>Example of the <code>ABS</code> directive:</p>
+    <pre><code>        ABS
+        LDA     $10         ; uses AD 10 00 (absolute), not A5 10 (zero page)
+        LDA     $20         ; the hint is consumed by the previous instruction: A5 20 (zero page)</code></pre>
+
+    <h3>Example Source Code</h3>
+    <p>Not to write too much, I will just show you an example of the source code. Do it the same way and it should work.</p>
+    <pre><code>; Test program
+
+LABEL1:
+
+    PROCESSOR 6502
+;    ORG     $100
+
+    DEFINE  KONST   #5
+
+    LDX     KONST
+
+AGAIN:
+    NOP
+    LDA     SOMEDATA, X         ; Load some data
+    JSR     ADDSOME             ; Call sub
+    STA     $12, X
+    CLC
+    BCC     AGAIN               ; Test branch logic
+
+ADDSOME:                        ; Test ALU
+    ADC     KONST
+    PHP                         ; Test flags in/out
+    PLP
+    RTS
+
+    ASL     A
+
+SOMEDATA:
+    BYTE    12, $FF, "Hello, world" 
+    WORD    AGAIN
+
+END</code></pre>
+
+    <h3>Support for NES and mappers</h3>
+    <p>Dragging some NES and mapper prisserans into a generalized assembler is a bad idea.</p>
+    <p>Build multiple PRG files and compile a .nes file from them yourself if you need to.</p>
+
+    <h2 id="breaksdebug">Breaks Debugger</h2>
+    <img src="assets/img/breaksdebug_logo.png" alt="Breaks Debugger logo">
+    <p>A simple GUI for checking the operation of the 6502 Core component (<code>M6502Core</code>).</p>
+    <img src="assets/img/concept.jpg" alt="BreaksDebug screenshot">
+    <p>The PropertyGrids shows signals, registers and rest of DebugInfo of the 6502 core. Buttons above are manual control of the respective pins. The CPU Memory tab displays the HexDump of the memory. The Assembler tab shows a TextBox with the source, which will be assembled with the built-in Breakasm and loaded immediately into memory.</p>
+    <p>Breakasm and M6502Core are in their respective Interop DLLs.</p>
+
+    <h3>Build</h3>
+    <p>You must use Debug/Release x86/x64 configuration to build. AnyCPU is not suitable because it uses native code in Interop DLLs.</p>
+    <p>Just don't forget to switch back to Any CPU when you need to edit forms. Microsoft has a problem with this.</p>
+    <p>It is also necessary to install all packages using NuGet (see packages.config).</p>
+
+    <h3>Processor State Dump for Wiki</h3>
+    <p>To enable a detailed dump of all internals directly in Markdown and with pictures, you need to create the <code>WikiMarkdown</code> folder.</p>
+    <p>The state of the processor will be dumped every half-cycle. The dump will include the state of the internals as a Markdown table and a picture of what is going on at the bottom of the processor (connecting registers and internal buses).</p>
+    <p>About that:</p>
+
+    <h4>JSR (0x20), T1 (PHI1)</h4>
+    <table>
+      <thead><tr><th>Component/Signal</th><th>State</th></tr></thead>
+      <tbody>
+        <tr><td>Dispatcher</td><td>T0: 0, /T0: 1, /T1X: 0, 0/IR: 1, FETCH: 0, /ready: 0, WR: 0, ACRL1: 0, ACRL2: 1, T5: 0, T6: 0, ENDS: 1, ENDX: 1, TRES1: 1, TRESX: 0</td></tr>
+        <tr><td>Interrupts</td><td>/NMIP: 1, /IRQP: 1, RESP: 0, BRK6E: 0, BRK7: 1, DORES: 0, /DONMI: 1</td></tr>
+        <tr><td>Extra Cycle Counter</td><td>T1: 1, TRES2: 1, /T2: 1, /T3: 1, /T4: 1, /T5: 1</td></tr>
+        <tr><td>Decoder</td><td>95: JSR (TX), 121: /IR6, 126: /IR7</td></tr>
+        <tr><td>Commands</td><td>S_ADL, SB_S, DB_ADD, Z_ADD, SUMS, ADD_SB7, ADD_SB06, ADH_PCH, ADL_PCL, ADH_ABH, ADL_ABL, DL_ADH, DL_DB</td></tr>
+        <tr><td>ALU Carry In</td><td>0</td></tr>
+        <tr><td>DAA</td><td>0</td></tr>
+        <tr><td>DSA</td><td>0</td></tr>
+        <tr><td>Increment PC</td><td>1</td></tr>
+        <tr><th colspan="2">Regs</th></tr>
+        <tr><td>IR</td><td>0x20</td></tr>
+        <tr><td>PD</td><td>0x00</td></tr>
+        <tr><td>Y</td><td>0x00</td></tr>
+        <tr><td>X</td><td>0x05</td></tr>
+        <tr><td>S</td><td>0x0E</td></tr>
+        <tr><td>AI</td><td>0x00</td></tr>
+        <tr><td>BI</td><td>0xC0</td></tr>
+        <tr><td>ADD</td><td>0xFB</td></tr>
+        <tr><td>AC</td><td>0x6C</td></tr>
+        <tr><td>PCL</td><td>0x09</td></tr>
+        <tr><td>PCH</td><td>0xC0</td></tr>
+        <tr><td>ABL</td><td>0x0E</td></tr>
+        <tr><td>ABH</td><td>0xC0</td></tr>
+        <tr><td>DL</td><td>0xC0</td></tr>
+        <tr><td>DOR</td><td>0xC0</td></tr>
+        <tr><td>Flags</td><td>C: 1, Z: 0, I: 1, D: 0, B: 1, V: 0, N: 0</td></tr>
+        <tr><th colspan="2">Buses</th></tr>
+        <tr><td>SB</td><td>0xFB</td></tr>
+        <tr><td>DB</td><td>0xC0</td></tr>
+        <tr><td>ADL</td><td>0x0E</td></tr>
+        <tr><td>ADH</td><td>0xC0</td></tr>
+      </tbody>
+    </table>
+    <img src="assets/img/20_JSR_T1_PHI1.jpg" alt="Processor state at JSR (0x20), T1 (PHI1)">
+
+    <h3>UnitTest</h3>
+    <p>To run the debugger in unit test mode, you need to create a JSON like this:</p>
+    <pre><code>{
+	"CompileFromSource": true,
+	"MemDumpInput": "mem.bin",
+	"AsmSource": "Test.asm",
+	"RunUntilBrk": true,
+	"RunCycleAmount": true,
+	"CycleMax": 10000,
+	"RunUntilPC": true,
+	"PC": "0x3469",
+	"TraceMemOps": false,
+	"TraceCLK": true,
+	"DumpMem": true,
+	"JsonResult": "res.json",
+	"MemDumpOutput": "mem2.bin"
+}</code></pre>
+    <p>And run with parameter: <code>BreaksDebugger Test.json</code>.</p>
+    <p>As input code, you can use 64 Kbytes memory dump (MemDumpInput) or assembly language source (AsmSource).</p>
+    <p>Simulator will run until it encounters instruction <code>BRK</code> (RunUntilBrk) or specified number of cycles (RunCycleAmount, CycleMax) (These are cycles, not half-cycles).</p>
+    <p>The output will be a memory dump after simulation (MemDumpOutput) and JSON with simulation results (JsonResult).</p>
+
+    <h2 id="ppuplayer">PPU Player</h2>
+    <p>Workflow:</p>
+    <img src="assets/img/PPU_Player_Diag_Eng.png" alt="PPU Player workflow diagram">
+    <img src="assets/img/PPU_Player.png" alt="PPU Player screenshot">
+
+    <h3>How to get PPU register dumps</h3>
+    <p>You can use the main emulator (breaknes). In the settings you need to enable PPURegump=True and select the folder where regdump will be saved.</p>
+    <p>Don't forget to set the correct CPU divider in the PPUPlayer settings to match the CPU with which the regdump was obtained.</p>
+    <p>Regdump entries format:</p>
+    <pre><code>#pragma pack(push, 1)
+struct RegDumpEntry
+{
+	uint32_t	clkDelta;	// Delta of previous CLK counter (CPU Core clock cycles) value at the time of accessing to the register
+	uint8_t 	reg; 		// Register index + Flag (msb - 0: write, 1: read)
+	uint8_t 	value;		// Written value. Not used for reading.
+	uint16_t	padding;	// Not used (yet?)
+};
+#pragma pack(pop)</code></pre>
+
+    <h3>CPU I/F Timing</h3>
+    <p>This section describes when (and for how long) to use the CPU I/F to read/write the PPU register.</p>
+    <p>No 6502 load/store instruction can technically execute faster than a single PCLK.</p>
+    <p>So we will make the assumption that the CPU I/F (signal <code>/DBE</code> and others) will be active for the entire PCLK cycle (<code>/PCLK</code> + <code>PCLK</code>).</p>
+    <p>If this does not work, we will do some more research on how to do it better.</p>
+    <p>EDIT: This model works if you use a correct regdump that writes to PPU registers correctly. If you write to PPU registers at the wrong moment (e.g. not during VBlank), visual artifacts may appear.</p>
+
+    <h2 id="apuplayer">APU Player</h2>
+    <p>About image by u/ThatPixelArtDude.</p>
+
+    <h3>How to get APU register dumps</h3>
+    <p>You can use the main emulator (breaknes). In the settings you need to enable APURegump=True and select the folder where regdump will be saved.</p>
+    <p>Regdump entries format:</p>
+    <pre><code>#pragma pack(push, 1)
+struct RegDumpEntry
+{
+	uint32_t	clkDelta;	// Delta of previous CLK counter (CPU Core clock cycles) value at the time of accessing to the register
+	uint8_t 	reg; 		// Register index + Flag (msb - 0: write, 1: read)
+	uint8_t 	value;		// Written value. Not used for reading.
+	uint16_t	padding;	// Not used (yet?)
+};
+#pragma pack(pop)</code></pre>
+
+    <h2 id="ppupumpkin">PpuPumpkin</h2>
+    <p>A demo for profiling the speed of PPUSim in order to optimize it.</p>
+    <pre><code>PPU executed 21477272 cycles in real 20375 msec
+You're 20.38 times slower :(</code></pre>
+    <img src="assets/img/ppusim_profiler.png" alt="PPUSim profiler output screenshot">
+
+    <h2 id="apupumpkin">ApuPumpkin</h2>
+    <p>A demo for profiling the speed of APUSim in order to optimize it.</p>
+    <pre><code>APU+Core executed 21477272 cycles in real 63266 msec
+You're 63.27 times slower :(</code></pre>
+
+    <h2 id="slooowplaaayer">Slooow Plaaayer</h2>
+    <img src="assets/img/SlooowPlaaayer.png" alt="Slooow Plaaayer screenshot">
+    <p>Utility for playing audio samples that were obtained from a slow source (such as APUSim).</p>
+    <p>Sample sources:</p>
+    <ul>
+      <li>Debug vibrato sound (Debug menu)</li>
+      <li>Data from a .wav file</li>
+    </ul>
+
+    <h3>Principle of operation</h3>
+    <p>The Background Worker runs in the background and collects samples from the source (<code>SourceSamples</code>) into an intermediate buffer (<code>SampleBuf</code>) with a slight delay.</p>
+    <p>Once every (real) second, statistics are updated and a signal graph is plotted.</p>
+    <p>If the source samples run out, the worker falls asleep until it gets a new source.</p>
+
+    <h2 id="signalplotdemo">SignalPlotDemo</h2>
+    <img src="assets/img/SignalPlotDemo.png" alt="SignalPlotDemo screenshot">
+    <p>Demonstration of the custom WinForms SignalPlotControl.</p>
+    <p>In the menu you can select two types of signals: normalized noise and sine wave (kinda).</p>
+
+    <h2 id="infernocolormap">InfernoColormap</h2>
+    <img src="assets/img/InfernoColormap.png" alt="InfernoColormap demo screenshot">
+    <p>Demo to test the inferno palette from Matplotlib (<a href="https://matplotlib.org/stable/gallery/color/colormap_reference.html#sphx-glr-gallery-color-colormap-reference-py">https://matplotlib.org/stable/gallery/color/colormap_reference.html</a>)</p>
+    <p>TBD: Make a procedural generation of ints array, because it looks sad.</p>
+
+  </main>
+
+  <footer>
+    <div>Source: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Tools/*/Readme.md</div>
+    <div class="prs">Docs: <a href="about.html">About</a> · <a href="cartpcb.html">CartPcb</a> · <a href="nescartdb.html">Nescartdb</a> · <a href="io.html">IO</a> · <a href="chips.html">Chips</a> · <a href="common.html">Common</a> · <a href="breakscore.html">BreaksCore</a> · <a href="unittest.html">UnitTest</a> · <a href="tools.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

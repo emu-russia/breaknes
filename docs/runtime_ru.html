@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Жизненный цикл эмулятора — документация Breaknes</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="runtime.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Жизненный цикл эмулятора</h1>
+      <p class="lede">Вехи жизненного цикла эмулятора и то, что происходит на каждой из них</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p>В процессе работы эмулятор переживает следующие события:</p>
+    <ul>
+      <li><a href="#onload">OnLoad</a></li>
+      <li><a href="#savesettings">SaveSettings</a></li>
+      <li><a href="#loadrom">LoadROM</a></li>
+      <li><a href="#step">Step</a></li>
+      <li><a href="#exit">Exit</a></li>
+    </ul>
+
+    <h2 id="onload">OnLoad</h2>
+    <p>Пользователь запускает эмулятор.</p>
+    <p>После запуска приложения загружаются настройки и в BreaksCore создаётся материнская плата, указанная в настройках:</p>
+    <ul>
+      <li><code>CoreApi::CreateBoard</code></li>
+    </ul>
+    <p>При создании плата сама добавляет все необходимые DebugInfo и MemLayout.</p>
+    <p>Состояние симуляции — на паузе.</p>
+
+    <h2 id="savesettings">SaveSettings</h2>
+    <p>Если при сохранении текущая плата была изменена, экземпляр материнской платы пересоздаётся — так же, как при запуске приложения:</p>
+    <ul>
+      <li><code>CoreApi::DestroyBoard</code></li>
+      <li><code>CoreApi::CreateBoard</code></li>
+    </ul>
+
+    <h2 id="loadrom">LoadROM</h2>
+    <p>Пользователь выбирает дамп <code>.nes</code> для запуска:</p>
+    <ul>
+      <li><code>CoreApi::EjectCartridge</code></li>
+      <li><code>CoreApi::InsertCartridge</code></li>
+    </ul>
+    <p>Плата при этом не пересоздаётся — имитируется нажатие кнопки <code>RESET</code> на консоли.</p>
+    <p>Симуляция запускается автоматически.</p>
+
+    <h2 id="step">Step</h2>
+    <p><code>CoreApi::Step</code> вызывается в цикле, пока пользователь не выйдет из приложения или не выберет другой образ <code>.nes</code>.</p>
+
+    <h2 id="exit">Exit</h2>
+    <p>Пользователь завершает приложение.</p>
+    <p>Если симуляция шла, она останавливается.</p>
+    <p>Вызывается <code>CoreApi::DestroyBoard</code>.</p>
+
+    <p class="note">Источник: <code>Wiki/Runtime.md</code> · ещё материалы: <a href="about_ru.html">О проекте</a>, <a href="manual_ru.html">Руководство пользователя</a></p>
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

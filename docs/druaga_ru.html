@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Расследование: The Tower of Druaga — документация Breaknes</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="druaga.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Расследование: The Tower of Druaga</h1>
+      <p class="lede">Кейс: проверка поведения игры на реальном картридже и починка в Breaknes — issue #527</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p>Задача: <a href="https://github.com/emu-russia/breaknes/issues/527">issue #527</a> — проверить особенности
+      работы игры, описанные в чате nesdev Discord, и проверить работоспособность игры в Breaknes.</p>
+
+    <p>Итог:</p>
+
+    <ol>
+      <li>Игра <strong>не загружалась</strong> в Breaknes: тип платы <code>NAMCOT-3305</code> отсутствовал в семейном индексе
+        <code>Nescartdb/boards/index.json</code>, <code>PcbLoader</code> не мог разрешить его в определение платы.
+        Добавлено отображение <code>NAMCOT-3305 → nrom.json</code> — картридж загружается.</li>
+      <li>После фикса игра <strong>загружается и проходит свою загрузочную последовательность</strong> (сторожевая
+        строка <code>"YAMAMO"</code>, флаг первой загрузки <code>$26</code>), <strong>но не выводит титульный экран</strong>:
+        обработчик NMI игры повторно входит в себя по 5 раз за кадр, переполняя стек.
+        Причина — ошибка тайминга записи <code>$2000</code> в PPUSim (см. §4): бит <code>$2000[7]</code> (разрешение NMI)
+        кратковременно сбрасывается во время записи, из-за чего линия NMI дёргается и 6502 повторно
+        принимает NMI в середине обработчика.</li>
+      <li>Механизм глитча из nesdev Discord (порча RAM, обходящая проверку первой загрузки)
+        подтверждён и воспроизводится принудительной записью сторожевой строки в RAM до запуска.</li>
+    </ol>
+
+    <h2>1. Идентификация картриджа</h2>
+    <p>Дамп идентичен записи nescartdb (MD5 <code>b63a55584796c106bcfd3e2c08ea1e3c</code>; PRG CRC32
+      <code>AF6E8571</code>, CHR <code>6DC7E8EA</code>, суммарный CRC <code>EB764567</code>):</p>
+
+    <table>
+      <thead><tr><th>Параметр</th><th>Значение</th></tr></thead>
+      <tbody>
+        <tr><td>Игра</td><td>The Tower of Druaga (Namco, Famicom, 1985-08-06)</td></tr>
+        <tr><td>Плата</td><td><strong>NAMCOT-3305</strong> (PCB 3305), класс NAMCOT-3305</td></tr>
+        <tr><td>iNES Mapper</td><td>0</td></tr>
+        <tr><td>PRG</td><td>32 КБ (2×16K)</td></tr>
+        <tr><td>CHR</td><td>8 КБ</td></tr>
+        <tr><td>Зеркалирование</td><td>вертикальное (заголовок iNES бит 0 = 1; профиль nescartdb "Mirroring: Vertical"; паяные площадки платы <code>h=1</code> = H Scroll, <code>VRAM_A10 = PA10</code>)</td></tr>
+        <tr><td>CIC</td><td>отсутствует</td></tr>
+      </tbody>
+    </table>
+
+    <p><code>NAMCOT-3305</code> электрически эквивалентен NROM-256: на плате только два масочных ПЗУ
+      (PRG Fujitsu MB83256, CHR Sharp LH2367), без дополнительной логики. Та же плата у
+      <strong>Pac-Land</strong>. Зеркалирование согласуется по трём источникам; в Breaknes перемычка скролла
+      следует за заголовком iNES (<code>ApplyScrollFromHeader</code>), что совпадает с реальной платой.</p>
+
+    <h2>2. Механизм "первой загрузки" (сторожевая строка)</h2>
+    <p>Загрузочный код по вектору <code>$8000</code> (подтверждено дизассемблированием и эмуляцией):</p>
+
+<pre><code>$801E-$8031  очистка $0500-$07FF (косвенная запись STA ($00),Y; $0000-$04FF не трогается)
+$8033-$8040  проверка: RAM $0002-$0007 == ROM $8044-$8049 ("YAMAMO"), 6 байт
+$803B        BNE $804A  -&gt; не совпало: первая загрузка
+$8042        BEQ $8072  -&gt; совпало:   "тёплый" сброс (продолжение состояния из RAM)
+$8044-$8049  данные: "YAMAMO"
+$804A-$8052  [первая загрузка] очистка нулевой страницы $0000-$00FF
+$8054-$805A  [первая загрузка] JSR $91A2, JSR $938D, JSR $91B4 (инициализация)
+$8061-$806C  [первая загрузка] копирование "YAMAMO" из $8044 в $0002-$0007
+$806E-$8070  [первая загрузка] $26 = 1 (флаг первой загрузки)
+$8072+       общий путь: JSR $A120, инициализация скролла/рекордов и т.д.</code></pre>
+
+    <p>Если в RAM при старте уже лежит <code>"YAMAMO"</code> в <code>$0002-$0007</code>, игра считает это продолжением
+      (сброс без выключения питания) и восстанавливает состояние из RAM — ровно то, что описал
+      ykst в nesdev Discord.</p>
+
+    <p>В Breaknes: при питании SRAM обнуляется (<code>BaseBoard::SRAM</code>, "all memory cells read as 0") —
+      детерминированный выбор эмулятора; у реальных SRAM состояние при включении не определено.
+      Для этой игры нулевая RAM даёт корректную первую загрузку. При сбросе (<code>Board::Reset</code>)
+      SRAM <strong>не</strong> очищается, поэтому повторный сброс находит сторожевую строку → "тёплый сброс",
+      что соответствует реальному поведению.</p>
+
+    <h2>3. Глитч (RAM corruption, nesdev Discord)</h2>
+    <p>Быстрое выключение/включение питания частично портит RAM. Если сторожевая строка сохранилась,
+      а остальное состояние испорчено, игра идёт по ветке "тёплого сброса" с повреждёнными данными:
+      неверный рекорд, сигнал (возможен вход в отладочный режим), обилие экипировки на 1-м этаже,
+      вплоть до мгновенной концовки.</p>
+
+    <p>Воспроизведение в Breaknes: записать в RAM <code>$0002-$0007</code> строку <code>"YAMAMO"</code> и испортить остальную
+      RAM (DebugHub <code>memMap</code> / отладчик), затем запустить — игра уходит в ветку <code>$8072</code> без
+      инициализации первой загрузки (флаг <code>$26</code> остаётся мусорным, нулевая страница не очищается).
+      Проверено headless-сборкой (режим <code>--glitch</code> тестового харнесса, см. <code>Temp/boottest.cpp</code>).</p>
+
+    <h2>4. Проблема с выводом титульного экрана (NMI storm)</h2>
+    <p>После загрузки игра входит в холостой цикл <code>$80E1</code> (ожидание <code>$0C</code>) с включённым NMI.
+      Обработчик NMI (<code>$828E</code>) в самом начале выполняет OAM DMA (<code>STA $4014 = $05</code>, 513 циклов),
+      затем пишет <code>$2000 = $B4</code> (<code>$82A3</code>) и только потом, в <code>$82FD</code>, читает <code>$2002</code> (сброс флага
+      VBlank). В Breaknes это приводит к следующему:</p>
+
+    <ul>
+      <li>Пока флаг VBlank установлен, линия NMI низкая. Запись <code>$2000</code> в обработчике вызывает
+        <strong>кратковременный (4 такта) сброс бита <code>$2000[7]</code></strong> (разрешение NMI / <code>wire.VBL</code>) —
+        линия NMI дёргается вверх-вниз, и детектор фронта 6502 получает новый фронт.</li>
+      <li>6502 повторно принимает NMI <strong>в середине обработчика</strong> (I=1 не блокирует NMI): ещё одна
+        OAM DMA (513 циклов) и ещё 7 байт стека. Обработчик так и не доходит до <code>$82FD</code>,
+        флаг не сбрасывается — шторм повторяется на V=241, 245, 250, 255, 260 (5 вхождений за кадр).</li>
+      <li>Стек переполняется, игра зависает с чёрным экраном (титул не рисуется).</li>
+    </ul>
+
+    <p><strong>Доказательства</strong> (headless-сборка, плата Famicom/HVC):</p>
+
+    <ol>
+      <li>Трассировка Nintendulator: 5 вхождений в NMI за кадр (V=241, 245, 250, 255, 260),
+        стек монотонно убывает (S: F8→F1→EA→E3→DC→...), обработчик прерывается на <code>$82A8</code>.</li>
+      <li><code>$2002</code> показывает vb=1 почти постоянно; при чтении <code>$2002</code> вне обработчика флаг чист.</li>
+      <li>Патч ROM "убрать <code>STA $2000</code> из обработчика NMI" — шторм исчезает (3 вхождения за 4 кадра
+        вместо 10), игра работает.</li>
+      <li>Патч ROM "читать <code>$2002</code> сразу после DMA в обработчике" — шторм также исчезает.</li>
+      <li>Для сравнения: SMB (обработчик NMI которого рано снимает линию NMI) работает корректно;
+        DK (не использует NMI) — корректно.</li>
+    </ol>
+
+    <p><strong>Вывод и исправление</strong>: корневая причина — формирование <code>/DBE</code> (входа <code>n_DBE</code> PPU) на плате.
+      <code>/CS</code> PPU (выход LS139, стробируемый <code>M2</code>) активен не только в фазе PHI2, но и в 3 тактах
+      PHI1 перед ней (M2 опережает PHI2). Регистры PPU сэмплируют шину данных по уровню, пока
+      активен строб записи — а в этих 3 тактах PHI1 на шине ещё лежит значение предыдущего чтения
+      (например, старший байт операнда <code>STA</code>). Поэтому запись <code>$2000 = $B4</code> сразу после чтения
+      операнда кратковременно сбрасывает бит <code>CTRL0[7]</code> (NMI enable) в 0. Из-за задержки в один
+      такт (PPU обновляет выход NMI после того, как ядро сэмплирует вход) детектор фронта 6502
+      видит ложное снятие/установку линии NMI и повторно принимает прерывание.</p>
+
+    <p>При этом для <strong>чтений</strong> <code>/CS</code> обязан оставаться активным всю фазу PHI1: ядро 6502
+      сэмплирует шину данных в начале PHI2, поэтому PPU должен выставить данные чтения заранее
+      (в PHI1). Гейтирование всего <code>/CS</code> фазой PHI2 ломает чтения.</p>
+
+    <p><strong>Исправление</strong> (только на плате, сигналы интерфейса PPU не меняются): <code>/CS</code> остаётся
+      активным весь цикл для чтений, но для записей стробируется фазой PHI2:</p>
+
+<pre><code>// NESBoard.cpp / FamicomBoard.cpp
+ppu_inputs[PPUSim::InputPad::n_DBE] = OR(PPU_nCE, AND(NOT(CPU_RnW), NOT(apu-&gt;GetPHI2())));</code></pre>
+
+    <ul>
+      <li>чтение (<code>RnW = 1</code>): <code>/DBE</code> активен весь цикл → PPU выставляет данные заранее → чтения
+        работают как раньше;</li>
+      <li>запись (<code>RnW = 0</code>): <code>/DBE</code> активен только в PHI2 (данные на шине валидны) → PPU не
+        сэмплирует устаревшие данные PHI1 → глитч <code>CTRL0[7]</code> исчезает → шторм NMI прекращается.</li>
+    </ul>
+
+    <p>После исправления игра <strong>загружается, проходит загрузочную последовательность и выводит
+      титульный экран</strong> (проверено headless-сборкой: 1 NMI за кадр, <code>"YAMAMO"</code> в <code>$0002-$0007</code>,
+      <code>$26 = 1</code>, OAM DMA работает). SMB и Donkey Kong работают как раньше.</p>
+
+    <h2>5. Изменения в репозитории</h2>
+    <ul>
+      <li><code>Nescartdb/boards/index.json</code>: <code>NAMCOT-3305 → nrom.json</code> (плата электрически NROM-256).</li>
+      <li><code>Breaknes/BreaksCore/NESBoard.cpp</code>, <code>Breaknes/BreaksCore/FamicomBoard.cpp</code>: исправление
+        формирования <code>/DBE</code> PPU (гейтирование записей фазой PHI2) — устранён NMI-шторм, из-за
+        которого игра не выводила титульный экран.</li>
+      <li><code>UnitTest/CartPcbTest.cpp</code>: регрессионный тест <code>TestNamcot3305Board</code> (идентификация по CRC,
+        разрешение семейства, end-to-end загрузка реального дампа, сторожевая строка, зеркалирование).</li>
+      <li><code>Nescartdb/Readme.md</code>: упоминание NAMCOT-3305 в описании семейного индекса.</li>
+    </ul>
+
+    <p>Временный headless-харнесс для проверки: <code>Temp/boottest.cpp</code> (не коммитится, папка <code>Temp</code> в
+      <code>.gitignore</code>).</p>
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Wiki/research/TowerOfDruagaRus.md</div>
+    <div class="prs">Документация: <a href="about_ru.html">О проекте</a> · <a href="cartpcb_ru.html">CartPcb</a> · <a href="nescartdb_ru.html">Nescartdb</a> · <a href="io_ru.html">IO</a> · <a href="chips_ru.html">Chips</a> · <a href="common_ru.html">Common</a> · <a href="breakscore_ru.html">BreaksCore</a> · <a href="unittest_ru.html">UnitTest</a> · <a href="tools_ru.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

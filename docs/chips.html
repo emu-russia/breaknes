@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chips — gate-level simulators — Breaknes docs</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Toggle theme"
+        data-label-light="Switch to dark theme" data-label-dark="Switch to light theme">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index.html">← Breaknes</a> · Docs</span>
+    <span class="lang"><b>English</b> · <a href="chips_ru.html">Русский</a></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Chips</h1>
+      <p class="lede">The gate-level chip simulators: M6502Core (6502), APUSim (2A03/2A07 CPU+audio), PPUSim (2C02/2C07 PPU) and MMC1</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      This is where the functional simulators of large chips and cores are located.
+    </p>
+
+    <h2 id="m6502core">M6502Core</h2>
+    <p>MOS 6502 processor core emulator on the gate level.</p>
+    <p>Yeah, it's that simple. We take the 6502 logic circuits from Wiki and just duplicate them in C++.</p>
+    <p>To understand what's going on here, it's enough to understand how circuits work. The code simply repeats their work.</p>
+
+    <h3>Approaches to simulation</h3>
+    <p>Some modules are simulated immediately with output values. And for some, simulation and output values are separated for convenience.</p>
+    <p>In general, the source code is a bit like Verilog, but unlike the latter, we choose the sequence of execution of circuit elements ourselves, thereby imitating the propagation delay that we have in real circuits.</p>
+    <p>If the module has few inputs/outputs, they are passed as parameters. If there are a lot of inputs/outputs, an array indexed by enum definitions is used as a parameter.</p>
+
+    <h3>Combinatorial and sequential circuits</h3>
+    <p>As you know, there are two types of circuits: simple unidirectional gate cascades (NOR, NAND) and cyclic (sequential) Flip/flops circuits.</p>
+    <p>Combinatorial circuits are simulated simply by repeating the operation of the gates. No gimmicks.</p>
+    <p>The following approach is applied to sequential circuits (FF's):</p>
+    <ul>
+      <li>The input stage uses the stored FF value (<code>ff.get</code>)</li>
+      <li>The output stage updates the current FF value (<code>ff.set</code>)</li>
+      <li>This makes no difference between which elements the FF is based on. It can be 2 closed inverters, 2 closed NOR or any other cyclic closure</li>
+      <li>The "storage" location of FF on the cyclic circuit is chosen arbitrarily, but usually closer to the FF output</li>
+    </ul>
+    <p>It should be noted that the 6502 has quite a few hidden and quite twisted loops, for example:</p>
+    <img src="assets/img/t1_ff.jpg" alt="Hidden twisted loops in the 6502 (t1_ff)">
+
+    <h3>Buses</h3>
+    <p>Modules connected to internal buses require a special approach and a certain order of execution, as written here: <a href="https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/6502/context_control.md">https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/6502/context_control.md</a></p>
+    <p>You should also consider the case when several sources (e.g. registers) put their values on the same bus at the same time. To solve such situations ("bus conflicts") it is necessary to use the "Ground wins" rule.</p>
+    <p>This takes into account the 6502 feature where buses are "precharged" during PHI2. This is required to form constants (e.g. stack address, interrupt address). Charging is done at the very beginning of the simulation.</p>
+
+    <h3>Optimization</h3>
+    <p>The M6502Core can, with some stretch, be called suitable for real-time applications.</p>
+    <p>The following approaches are used for optimization:</p>
+    <ul>
+      <li>Separation of PHI1/PHI2 phases by if/else</li>
+      <li>Precomputing combinatorial logic with tables (see e.g. predecode.cpp).</li>
+      <li>Packing of bus and register bits into uint8_t, avoids for loops on all bits</li>
+      <li>High level logic circuits simulation (see e.g. alu.cpp).</li>
+    </ul>
+    <p>The bottleneck is random logic, which consumes 50-60% of computing time.</p>
+    <p>Besides, now both parts are simulated 2 times every half cycle, to stabilize latches.</p>
+
+    <h2 id="apusim">APUSim</h2>
+    <p>APU simulator at the gate level.</p>
+    <p>Note: In the Breaks project, the term APU refers to the entire CPU chip (2A03/2A07), which includes the 6502 core and the APU itself. Therefore, here APU and CPU are synonymous.</p>
+
+    <h3>Simulation Approaches</h3>
+    <p>In general, all approaches are tried on the M6502Core, in terms of APU nothing particularly new. We take the circuit and repeat its work in C++. In the beginning somehow, and then we try to optimize it.</p>
+    <p>All of the APU schematics can be found here: <a href="https://github.com/emu-russia/breaks/tree/master/BreakingNESWiki_DeepL/APU">https://github.com/emu-russia/breaks/tree/master/BreakingNESWiki_DeepL/APU</a></p>
+    <p>To simplify understanding, the following image shows the "layers" in which the individual parts of the APU are simulated:</p>
+    <img src="assets/img/apu_layers.png" alt="Layers of the APU simulation (apu_layers)">
+
+    <h2 id="ppusim">PPUSim</h2>
+    <p>PPU simulator at the gate level.</p>
+
+    <h3>Simulation Approaches</h3>
+    <p>In general, all approaches are tried on the M6502Core, in terms of PPU nothing particularly new. We take the circuit and repeat its work in C++. In the beginning somehow, and then we try to optimize it.</p>
+    <p>All of the PPU schematics can be found here: <a href="https://github.com/emu-russia/breaks/tree/master/BreakingNESWiki_DeepL/PPU">https://github.com/emu-russia/breaks/tree/master/BreakingNESWiki_DeepL/PPU</a></p>
+    <p>To simplify understanding, the following image shows the "layers" in which the individual parts of the PPU are simulated:</p>
+    <img src="assets/img/ppu_layers.png" alt="Layers of the PPU simulation (ppu_layers)">
+
+  </main>
+
+  <footer>
+    <div>Source: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Chips/*/Readme.md</div>
+    <div class="prs">Docs: <a href="about.html">About</a> · <a href="cartpcb.html">CartPcb</a> · <a href="nescartdb.html">Nescartdb</a> · <a href="io.html">IO</a> · <a href="chips.html">Chips</a> · <a href="common.html">Common</a> · <a href="breakscore.html">BreaksCore</a> · <a href="unittest.html">UnitTest</a> · <a href="tools.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

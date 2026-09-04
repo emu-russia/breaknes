@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About Breaknes — docs</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Toggle theme"
+        data-label-light="Switch to dark theme" data-label-dark="Switch to light theme">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index.html">← Breaknes</a> · Docs</span>
+    <span class="lang"><b>English</b> · <a href="about_ru.html">Русский</a></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>About Breaknes</h1>
+      <p class="lede">Gate-level NES / Famicom / Dendy emulation — the emulator part of the <a href="https://github.com/emu-russia/breaks">breaks</a> chip-reversing project</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      Breaknes is an NES/Famicom/Dendy emulator <b>at the gate level</b>. The chips are not emulated
+      “by behavior”: the logic circuits reconstructed from the real dies are duplicated in C++, so the
+      emulated 6502 behaves the same way the real one does — same gates, same flip-flops, same buses,
+      same quirks.
+    </p>
+
+    <h2 id="what">What is inside</h2>
+    <p>
+      The repository contains the emulator itself, gate-level chip simulators, a data-driven cartridge PCB
+      simulator, the converted cartridge database, unit tests, and a set of tools. The emulator has two
+      front-ends that share the native core: a managed WinForms application and an SDL2 port that builds on
+      Windows and Linux.
+    </p>
+
+    <h2 id="structure">Repository structure</h2>
+    <table>
+      <thead><tr><th>Folder</th><th>What’s inside</th></tr></thead>
+      <tbody>
+        <tr><td><code>Breaknes/</code></td><td>The emulator itself: managed GUI (<code>Breaknes/Breaknes</code>), SDL2 port (<code>Breaknes/BreaknesSDL</code>), and the native core <code>BreaksCore</code> shared by both.</td></tr>
+        <tr><td><code>Chips/</code></td><td>Gate-level simulators of the chips: <code>M6502Core</code> (6502), <code>APUSim</code> (2A03/2A07 CPU+audio), <code>PPUSim</code> (2C02 PPU), <code>MMC1</code>.</td></tr>
+        <tr><td><code>CartPcb/</code></td><td>Functional simulation of cartridge PCBs. A board is data — a JSON document with components and wiring, not C++ code.</td></tr>
+        <tr><td><code>Common/</code></td><td>Shared code: <code>BaseLogicLib</code> (logic primitives), <code>BaseBoardLib</code> (motherboard components: LS139, LS373, SRAM, RomChip…), <code>JsonLib</code>, <code>SharpTools</code> (C# debugger controls).</td></tr>
+        <tr><td><code>IO/</code></td><td>I/O devices: NES/Famicom/Dendy controllers, virtual controllers, CD4021, UM6582.</td></tr>
+        <tr><td><code>Nescartdb/</code></td><td>The converted nescartdb database (JSON) — identifies a cartridge by the CRC32 of its PRG/CHR dumps.</td></tr>
+        <tr><td><code>Tools/</code></td><td>Utilities (assembler, debugger GUI, PPU/APU players, demos…).</td></tr>
+        <tr><td><code>UnitTest/</code></td><td>Unit tests for the chips and cores.</td></tr>
+        <tr><td><code>Wiki/</code></td><td>Design documentation — partially republished on this site.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="components">Simulation components</h2>
+    <ul>
+      <li><strong>BreaksCore</strong> — the native (C++) core: motherboards (NES, Famicom), chip wiring, and a debug hub for monitoring signals and internal state.</li>
+      <li><strong>M6502Core</strong> — MOS 6502 processor core at the gate level.</li>
+      <li><strong>APUSim</strong> — the whole CPU chip (2A03/2A07): 6502 core + APU sound.</li>
+      <li><strong>PPUSim</strong> — the PPU (2C02/2C07) at the gate level.</li>
+      <li><strong>MMC1</strong> — the MMC1 mapper chip.</li>
+      <li><strong>CartPcb</strong> — cartridge PCB simulation: board descriptions are JSON, chips are wired with nets, cartridges are identified by nescartdb CRCs.</li>
+      <li><strong>IO</strong> — input/output devices for NES/Famicom/Dendy, virtual controllers and accompanying chips.</li>
+    </ul>
+
+    <h2 id="tools">Tools</h2>
+    <table>
+      <thead><tr><th>Tool</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>Breakasm</code></td><td>The simplest possible 6502 assembler (C++ + Python port).</td></tr>
+        <tr><td><code>BreaksDebug</code></td><td>GUI to inspect the 6502 core: signals, registers, memory, disassembly.</td></tr>
+        <tr><td><code>PPUPlayer</code></td><td>Replays PPU register dumps recorded in the emulator.</td></tr>
+        <tr><td><code>APUPlayer</code></td><td>Replays APU register dumps recorded in the emulator.</td></tr>
+        <tr><td><code>PpuPumpkin</code> / <code>ApuPumpkin</code></td><td>Speed profiling demos for PPUSim / APUSim.</td></tr>
+        <tr><td><code>SlooowPlaaayer</code></td><td>Plays audio captured from slow sources.</td></tr>
+        <tr><td><code>SignalPlotDemo</code>, <code>FurryPlotDemo</code>, <code>InfernoColormap</code></td><td>Demos of the custom WinForms controls.</td></tr>
+        <tr><td><code>DumpRegdump</code> / <code>NescartdbConvert</code></td><td>Python scripts: regdump dump / nescartdb XML→JSON conversion.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="build">Building</h2>
+    <p><strong>Windows:</strong> VS2026 — open <code>Breaknes.sln</code> and build. .NET 6.0 Desktop runtime is required. For a minimal build use the SDL2 port (<code>Breaknes/BreaknesSDL</code>).</p>
+    <p><strong>Linux:</strong> typical CMake flow (<code>cmake ..</code> + <code>make</code> in a <code>build/</code> folder), produces the SDL2 binary.</p>
+
+    <p class="note">Source: <code>Readme.md</code>, <code>Wiki/Readme.md</code> · this page is part of the <a href="index.html">docs site</a>.</p>
+
+  </main>
+
+  <footer>
+    <div>Source: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a></div>
+    <div class="prs">Docs: <a href="about.html">About</a> · <a href="cartpcb.html">CartPcb</a> · <a href="nescartdb.html">Nescartdb</a> · <a href="io.html">IO</a> · <a href="chips.html">Chips</a> · <a href="common.html">Common</a> · <a href="breakscore.html">BreaksCore</a> · <a href="unittest.html">UnitTest</a> · <a href="tools.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

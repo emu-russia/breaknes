@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emulator life cycle — Breaknes docs</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Toggle theme"
+        data-label-light="Switch to dark theme" data-label-dark="Switch to light theme">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index.html">← Breaknes</a> · Docs</span>
+    <span class="lang"><b>English</b> · <a href="runtime_ru.html">Русский</a></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Emulator life cycle</h1>
+      <p class="lede">The milestones of the emulator’s lifecycle and what happens at each of them</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p>During its operation the emulator experiences the following events:</p>
+    <ul>
+      <li><a href="#onload">OnLoad</a></li>
+      <li><a href="#savesettings">SaveSettings</a></li>
+      <li><a href="#loadrom">LoadROM</a></li>
+      <li><a href="#step">Step</a></li>
+      <li><a href="#exit">Exit</a></li>
+    </ul>
+
+    <h2 id="onload">OnLoad</h2>
+    <p>The user starts the emulator.</p>
+    <p>After the application starts, the settings are loaded and a motherboard is created in BreaksCore, which is specified in the settings:</p>
+    <ul>
+      <li><code>CoreApi::CreateBoard</code></li>
+    </ul>
+    <p>When created, the board itself adds all the necessary DebugInfo and MemLayout.</p>
+    <p>The simulation state is paused.</p>
+
+    <h2 id="savesettings">SaveSettings</h2>
+    <p>If the current board was changed when saving, the motherboard instance is recreated, just like when you run the application:</p>
+    <ul>
+      <li><code>CoreApi::DestroyBoard</code></li>
+      <li><code>CoreApi::CreateBoard</code></li>
+    </ul>
+
+    <h2 id="loadrom">LoadROM</h2>
+    <p>The user selects the <code>.nes</code> dump to run:</p>
+    <ul>
+      <li><code>CoreApi::EjectCartridge</code></li>
+      <li><code>CoreApi::InsertCartridge</code></li>
+    </ul>
+    <p>This does not recreate the board, but simulates pressing the <code>RESET</code> button on the console.</p>
+    <p>The simulation starts automatically.</p>
+
+    <h2 id="step">Step</h2>
+    <p><code>CoreApi::Step</code> is called in a loop until the user exits the application or selects another <code>.nes</code> image.</p>
+
+    <h2 id="exit">Exit</h2>
+    <p>The user terminates the application.</p>
+    <p>If the simulation was running, it stops.</p>
+    <p><code>CoreApi::DestroyBoard</code> is called.</p>
+
+    <p class="note">Source: <code>Wiki/Runtime.md</code> · more docs: <a href="about.html">About</a>, <a href="manual.html">User manual</a></p>
+
+  </main>
+
+  <footer>
+    <div>Source: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

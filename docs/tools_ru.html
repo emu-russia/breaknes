@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools — ассемблер, отладчик, плееры — документация Breaknes</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="tools.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Tools</h1>
+      <p class="lede">Утилиты вокруг эмулятора: ассемблер Breakasm, инспектор BreaksDebug, PPU/APU-плееры и демо-программы</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      Утилиты вокруг эмулятора: от максимально простого ассемблера 6502 до инспектора ядра на уровне
+      вентилей и плееров дампов регистров PPU/APU.
+    </p>
+
+    <p>
+      Эта страница описывает программы из папки <code>Tools/</code> репозитория: ассемблер
+      <strong>Breakasm</strong>, которым отладчик собирает введённый исходник; <strong>Breaks Debugger</strong> —
+      GUI для проверки ядра 6502; инструменты воспроизведения <strong>PPU Player</strong> и
+      <strong>APU Player</strong>; демо профилирования скорости <strong>PpuPumpkin</strong> и
+      <strong>ApuPumpkin</strong>; утилиту воспроизведения аудио <strong>Slooow Plaaayer</strong>; а также
+      демо-программы <strong>SignalPlotDemo</strong> и <strong>InfernoColormap</strong> для самодельных
+      WinForms-контролов.
+    </p>
+
+    <h2 id="breakasm">Breakasm</h2>
+    <img src="assets/img/breakasm_logo.png" alt="Логотип Breakasm">
+    <p>Ассемблер, настолько простой и «тупой», насколько это возможно, — чтобы генерировать код.</p>
+    <p>Для запуска:</p>
+    <pre><code>Breakasm [-l &lt;file.lst&gt;] &lt;source.asm&gt; &lt;output.prg&gt;
+Example: Breakasm -l test.lst test.asm test.prg</code></pre>
+    <p>Опция <code>-l &lt;file.lst&gt;</code> записывает листинг ассемблирования (адрес, сгенерированные байты и строку исходника) в указанный файл.</p>
+    <p>Есть также Python-порт с тем же поведением и той же командной строкой:</p>
+    <pre><code>python breakasm.py [-l &lt;file.lst&gt;] &lt;source.asm&gt; &lt;output.prg&gt;</code></pre>
+    <p>PRG-файл всегда занимает 64 Кбайт (размер адресного пространства 6502). Текущий указатель ассемблирования (<code>ORG</code>) может быть установлен в любом месте PRG.</p>
+
+    <h3>Синтаксис</h3>
+    <p>Исходный текст разбивается на строки следующего формата:</p>
+    <pre><code>[LABEL:] COMMAND [OPERAND1, OPERAND2, OPERAND3] ; Comments</code></pre>
+    <p>Метка (<code>LABEL</code>) необязательна. Команда (<code>COMMAND</code>) — это инструкция 6502 или одна из директив ассемблера. Операнды зависят от команды.</p>
+
+    <h3>Выражения</h3>
+    <p>Все операнды вычисляются встроенным движком выражений. Метки, define-константы и сложные выражения поддерживаются на месте любого операнда:</p>
+    <pre><code>LDA     MyData + 32 * entry_size + 12
+STA     (Base &lt;&lt; 4) | 1
+BYTE    Table + 2</code></pre>
+    <p>Поддерживаемые операции (от высшего приоритета к низшему):</p>
+    <pre><code>()      grouping
+! ~     logical not, bitwise not (unary)
+* / %   multiply, divide, modulo
++ -     add, subtract
+&lt;&lt; &gt;&gt;   shift left, shift right
+&lt;&lt;&lt; &gt;&gt;&gt; rotate left, rotate right
+&gt; &gt;= &lt; &lt;=  comparisons (result: 0 or 1)
+== !=   equality (result: 0 or 1)
+&amp; | ^   bitwise and, or, xor</code></pre>
+    <p>Числа могут быть десятичными (<code>12</code>), шестнадцатеричными (<code>$12</code>, <code>#$12</code>) или двоичными — через define-константы. Непосредственный операнд начинается с <code>#</code> (<code>LDA #5</code>). Операнд, целиком заключённый в скобки, означает косвенную адресацию (<code>JMP (addr)</code>), тогда как скобки внутри выражения — только группировка.</p>
+
+    <h3>Многопроходная сборка</h3>
+    <p>Breakasm собирает исходник за несколько проходов, пока не будут разрешены все идентификаторы, метки и define-константы. Заодно снимается неоднозначность Zero Page / Absolute: если метка, на которую ссылаются вперёд, оказывается ниже <code>$100</code>, ассемблер автоматически использует более короткий опкод zero page (если только директива <code>ABS</code> не принуждает использовать абсолютный).</p>
+
+    <h3>Встроенные директивы</h3>
+    <table>
+      <thead><tr><th>Директива</th><th>Описание</th></tr></thead>
+      <tbody>
+        <tr><td>ORG</td><td>Устанавливает текущую позицию ассемблирования в PRG.</td></tr>
+        <tr><td>INCLUDE</td><td>Обрабатывает вложенный исходный файл</td></tr>
+        <tr><td>DEFINE</td><td>Определяет простую константу</td></tr>
+        <tr><td>BYTE</td><td>Выводит байт или строку</td></tr>
+        <tr><td>WORD</td><td>Выводит uint16_t в порядке little-endian. Можно использовать как числа, так и метки и адреса.</td></tr>
+        <tr><td>END</td><td>Завершает ассемблирование</td></tr>
+        <tr><td>PROCESSOR</td><td>Определяет тип процессора в информационных целях</td></tr>
+        <tr><td>ABS</td><td>Подсказка: следующая инструкция с неоднозначностью Zero Page / Absolute (адрес ниже <code>$100</code>) должна использовать абсолютный опкод</td></tr>
+      </tbody>
+    </table>
+    <p>Пример директивы <code>ABS</code>:</p>
+    <pre><code>        ABS
+        LDA     $10         ; uses AD 10 00 (absolute), not A5 10 (zero page)
+        LDA     $20         ; the hint is consumed by the previous instruction: A5 20 (zero page)</code></pre>
+
+    <h3>Пример исходного кода</h3>
+    <p>Чтобы не расписывать слишком много, я просто покажу пример исходного кода. Делайте так же — и всё заработает.</p>
+    <pre><code>; Test program
+
+LABEL1:
+
+    PROCESSOR 6502
+;    ORG     $100
+
+    DEFINE  KONST   #5
+
+    LDX     KONST
+
+AGAIN:
+    NOP
+    LDA     SOMEDATA, X         ; Load some data
+    JSR     ADDSOME             ; Call sub
+    STA     $12, X
+    CLC
+    BCC     AGAIN               ; Test branch logic
+
+ADDSOME:                        ; Test ALU
+    ADC     KONST
+    PHP                         ; Test flags in/out
+    PLP
+    RTS
+
+    ASL     A
+
+SOMEDATA:
+    BYTE    12, $FF, "Hello, world" 
+    WORD    AGAIN
+
+END</code></pre>
+
+    <h3>Поддержка NES и мапперов</h3>
+    <p>Приделывать какие-то NES- и мапперные приблуды к обобщённому ассемблеру — плохая идея.</p>
+    <p>Соберите несколько PRG-файлов и, если нужно, сами скомпилируйте из них .nes-файл.</p>
+
+    <h2 id="breaksdebug">Breaks Debugger</h2>
+    <img src="assets/img/breaksdebug_logo.png" alt="Логотип Breaks Debugger">
+    <p>Простой GUI для проверки работы компонента ядра 6502 (<code>M6502Core</code>).</p>
+    <img src="assets/img/concept.jpg" alt="Скриншот BreaksDebug">
+    <p>PropertyGrid-ы показывают сигналы, регистры и остальную DebugInfo ядра 6502. Кнопки сверху — ручное управление соответствующими выводами. Вкладка CPU Memory показывает HexDump памяти. Вкладка Assembler показывает TextBox с исходником, который будет ассемблирован встроенным Breakasm и сразу загружен в память.</p>
+    <p>Breakasm и M6502Core находятся в соответствующих Interop DLL.</p>
+
+    <h3>Сборка</h3>
+    <p>Собирать нужно обязательно в конфигурации Debug/Release x86/x64. AnyCPU не подходит, потому что используется нативный код в Interop DLL.</p>
+    <p>Только не забудьте переключиться обратно на Any CPU, когда нужно редактировать формы. У Microsoft с этим проблема.</p>
+    <p>Также необходимо установить все пакеты через NuGet (см. packages.config).</p>
+
+    <h3>Дамп состояния процессора для Wiki</h3>
+    <p>Чтобы включить подробный дамп всех внутренностей прямо в Markdown и с картинками, нужно создать папку <code>WikiMarkdown</code>.</p>
+    <p>Состояние процессора будет дампиться каждые полтакта. Дамп включает состояние внутренностей в виде Markdown-таблицы и картинку того, что происходит в нижней части процессора (соединения регистров и внутренних шин).</p>
+    <p>Об этом:</p>
+
+    <h4>JSR (0x20), T1 (PHI1)</h4>
+    <table>
+      <thead><tr><th>Компонент/Сигнал</th><th>Состояние</th></tr></thead>
+      <tbody>
+        <tr><td>Dispatcher</td><td>T0: 0, /T0: 1, /T1X: 0, 0/IR: 1, FETCH: 0, /ready: 0, WR: 0, ACRL1: 0, ACRL2: 1, T5: 0, T6: 0, ENDS: 1, ENDX: 1, TRES1: 1, TRESX: 0</td></tr>
+        <tr><td>Interrupts</td><td>/NMIP: 1, /IRQP: 1, RESP: 0, BRK6E: 0, BRK7: 1, DORES: 0, /DONMI: 1</td></tr>
+        <tr><td>Extra Cycle Counter</td><td>T1: 1, TRES2: 1, /T2: 1, /T3: 1, /T4: 1, /T5: 1</td></tr>
+        <tr><td>Decoder</td><td>95: JSR (TX), 121: /IR6, 126: /IR7</td></tr>
+        <tr><td>Commands</td><td>S_ADL, SB_S, DB_ADD, Z_ADD, SUMS, ADD_SB7, ADD_SB06, ADH_PCH, ADL_PCL, ADH_ABH, ADL_ABL, DL_ADH, DL_DB</td></tr>
+        <tr><td>ALU Carry In</td><td>0</td></tr>
+        <tr><td>DAA</td><td>0</td></tr>
+        <tr><td>DSA</td><td>0</td></tr>
+        <tr><td>Increment PC</td><td>1</td></tr>
+        <tr><th colspan="2">Regs</th></tr>
+        <tr><td>IR</td><td>0x20</td></tr>
+        <tr><td>PD</td><td>0x00</td></tr>
+        <tr><td>Y</td><td>0x00</td></tr>
+        <tr><td>X</td><td>0x05</td></tr>
+        <tr><td>S</td><td>0x0E</td></tr>
+        <tr><td>AI</td><td>0x00</td></tr>
+        <tr><td>BI</td><td>0xC0</td></tr>
+        <tr><td>ADD</td><td>0xFB</td></tr>
+        <tr><td>AC</td><td>0x6C</td></tr>
+        <tr><td>PCL</td><td>0x09</td></tr>
+        <tr><td>PCH</td><td>0xC0</td></tr>
+        <tr><td>ABL</td><td>0x0E</td></tr>
+        <tr><td>ABH</td><td>0xC0</td></tr>
+        <tr><td>DL</td><td>0xC0</td></tr>
+        <tr><td>DOR</td><td>0xC0</td></tr>
+        <tr><td>Flags</td><td>C: 1, Z: 0, I: 1, D: 0, B: 1, V: 0, N: 0</td></tr>
+        <tr><th colspan="2">Buses</th></tr>
+        <tr><td>SB</td><td>0xFB</td></tr>
+        <tr><td>DB</td><td>0xC0</td></tr>
+        <tr><td>ADL</td><td>0x0E</td></tr>
+        <tr><td>ADH</td><td>0xC0</td></tr>
+      </tbody>
+    </table>
+    <img src="assets/img/20_JSR_T1_PHI1.jpg" alt="Состояние процессора на JSR (0x20), T1 (PHI1)">
+
+    <h3>UnitTest</h3>
+    <p>Чтобы запустить отладчик в режиме юнит-теста, нужно создать JSON примерно такого вида:</p>
+    <pre><code>{
+	"CompileFromSource": true,
+	"MemDumpInput": "mem.bin",
+	"AsmSource": "Test.asm",
+	"RunUntilBrk": true,
+	"RunCycleAmount": true,
+	"CycleMax": 10000,
+	"RunUntilPC": true,
+	"PC": "0x3469",
+	"TraceMemOps": false,
+	"TraceCLK": true,
+	"DumpMem": true,
+	"JsonResult": "res.json",
+	"MemDumpOutput": "mem2.bin"
+}</code></pre>
+    <p>И запустить с параметром: <code>BreaksDebugger Test.json</code>.</p>
+    <p>В качестве входного кода можно использовать дамп памяти на 64 Кбайт (MemDumpInput) или исходник на языке ассемблера (AsmSource).</p>
+    <p>Симулятор будет работать, пока не встретит инструкцию <code>BRK</code> (RunUntilBrk) или не пройдёт указанное количество циклов (RunCycleAmount, CycleMax) — это циклы, а не полутакты.</p>
+    <p>На выходе — дамп памяти после симуляции (MemDumpOutput) и JSON с результатами симуляции (JsonResult).</p>
+
+    <h2 id="ppuplayer">PPU Player</h2>
+    <p>Схема работы:</p>
+    <img src="assets/img/PPU_Player_Diag_Eng.png" alt="Диаграмма работы PPU Player">
+    <img src="assets/img/PPU_Player.png" alt="Скриншот PPU Player">
+
+    <h3>Как получить дампы регистров PPU</h3>
+    <p>Можно использовать основной эмулятор (breaknes). В настройках нужно включить PPURegump=True и выбрать папку, куда будет сохраняться regdump.</p>
+    <p>Не забудьте выставить в настройках PPUPlayer правильный делитель CPU, соответствующий тому CPU, с которым получен regdump.</p>
+    <p>Формат записей regdump:</p>
+    <pre><code>#pragma pack(push, 1)
+struct RegDumpEntry
+{
+	uint32_t	clkDelta;	// Delta of previous CLK counter (CPU Core clock cycles) value at the time of accessing to the register
+	uint8_t 	reg; 		// Register index + Flag (msb - 0: write, 1: read)
+	uint8_t 	value;		// Written value. Not used for reading.
+	uint16_t	padding;	// Not used (yet?)
+};
+#pragma pack(pop)</code></pre>
+
+    <h3>Тайминги CPU I/F</h3>
+    <p>В этом разделе описывается, когда (и как долго) использовать CPU I/F для чтения/записи регистра PPU.</p>
+    <p>Технически ни одна инструкция загрузки/сохранения 6502 не может выполниться быстрее одного PCLK.</p>
+    <p>Поэтому мы принимаем допущение, что CPU I/F (сигнал <code>/DBE</code> и остальные) активен в течение всего такта PCLK (<code>/PCLK</code> + <code>PCLK</code>).</p>
+    <p>Если это не сработает, мы проведём дополнительные исследования, как сделать лучше.</p>
+    <p>EDIT: эта модель работает, если использовать корректный regdump, который правильно пишет в регистры PPU. Если писать в регистры PPU в неверный момент (например, не во время VBlank), могут появиться визуальные артефакты.</p>
+
+    <h2 id="apuplayer">APU Player</h2>
+    <p>Автор изображения — u/ThatPixelArtDude.</p>
+
+    <h3>Как получить дампы регистров APU</h3>
+    <p>Можно использовать основной эмулятор (breaknes). В настройках нужно включить APURegump=True и выбрать папку, куда будет сохраняться regdump.</p>
+    <p>Формат записей regdump:</p>
+    <pre><code>#pragma pack(push, 1)
+struct RegDumpEntry
+{
+	uint32_t	clkDelta;	// Delta of previous CLK counter (CPU Core clock cycles) value at the time of accessing to the register
+	uint8_t 	reg; 		// Register index + Flag (msb - 0: write, 1: read)
+	uint8_t 	value;		// Written value. Not used for reading.
+	uint16_t	padding;	// Not used (yet?)
+};
+#pragma pack(pop)</code></pre>
+
+    <h2 id="ppupumpkin">PpuPumpkin</h2>
+    <p>Демо для профилирования скорости PPUSim с целью его оптимизации.</p>
+    <pre><code>PPU executed 21477272 cycles in real 20375 msec
+You're 20.38 times slower :(</code></pre>
+    <img src="assets/img/ppusim_profiler.png" alt="Скриншот профилировщика PPUSim">
+
+    <h2 id="apupumpkin">ApuPumpkin</h2>
+    <p>Демо для профилирования скорости APUSim с целью его оптимизации.</p>
+    <pre><code>APU+Core executed 21477272 cycles in real 63266 msec
+You're 63.27 times slower :(</code></pre>
+
+    <h2 id="slooowplaaayer">Slooow Plaaayer</h2>
+    <img src="assets/img/SlooowPlaaayer.png" alt="Скриншот Slooow Plaaayer">
+    <p>Утилита для проигрывания аудиосэмплов, полученных с медленного источника (например, APUSim).</p>
+    <p>Источники сэмплов:</p>
+    <ul>
+      <li>Отладочный вибрато-звук (меню Debug)</li>
+      <li>Данные из .wav-файла</li>
+    </ul>
+
+    <h3>Принцип работы</h3>
+    <p>Background Worker работает в фоне и собирает сэмплы из источника (<code>SourceSamples</code>) в промежуточный буфер (<code>SampleBuf</code>) с небольшой задержкой.</p>
+    <p>Раз в (реальную) секунду обновляется статистика и строится график сигнала.</p>
+    <p>Если сэмплы в источнике закончились, worker засыпает, пока не получит новый источник.</p>
+
+    <h2 id="signalplotdemo">SignalPlotDemo</h2>
+    <img src="assets/img/SignalPlotDemo.png" alt="Скриншот SignalPlotDemo">
+    <p>Демонстрация самодельного WinForms-контрола SignalPlotControl.</p>
+    <p>В меню можно выбрать два типа сигналов: нормализованный шум и синусоиду (вроде того).</p>
+
+    <h2 id="infernocolormap">InfernoColormap</h2>
+    <img src="assets/img/InfernoColormap.png" alt="Скриншот демо InfernoColormap">
+    <p>Демо для проверки палитры inferno из Matplotlib (<a href="https://matplotlib.org/stable/gallery/color/colormap_reference.html#sphx-glr-gallery-color-colormap-reference-py">https://matplotlib.org/stable/gallery/color/colormap_reference.html</a>)</p>
+    <p>TBD: сделать процедурную генерацию массива ints, потому что сейчас это выглядит уныло.</p>
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Tools/*/Readme.md</div>
+    <div class="prs">Документация: <a href="about_ru.html">О проекте</a> · <a href="cartpcb_ru.html">CartPcb</a> · <a href="nescartdb_ru.html">Nescartdb</a> · <a href="io_ru.html">IO</a> · <a href="chips_ru.html">Chips</a> · <a href="common_ru.html">Common</a> · <a href="breakscore_ru.html">BreaksCore</a> · <a href="unittest_ru.html">UnitTest</a> · <a href="tools_ru.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

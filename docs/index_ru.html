@@ -62,7 +62,86 @@
   </div>
 
   <section class="materials">
-    <h2>Материалы <span class="hint">— обзоры изменений, заметки</span></h2>
+    <h2>Документация <span class="hint">— статьи и описания компонентов</span></h2>
+
+    <h3 class="sec">О проекте</h3>
+    <div class="tiles">
+      <div class="tile">
+        <span class="tag">Обзор</span>
+        <h3><a href="about_ru.html">О Breaknes</a></h3>
+        <p>Эмулятор вкратце: что внутри, структура репозитория, компоненты симуляции, инструменты, сборка.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Руководство</span>
+        <h3><a href="manual_ru.html">Руководство пользователя</a></h3>
+        <p>Главное окно и настройки управляемого приложения.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Устройство</span>
+        <h3><a href="runtime_ru.html">Жизненный цикл эмулятора</a></h3>
+        <p>Что происходит на событиях OnLoad, SaveSettings, LoadROM, Step и Exit.</p>
+      </div>
+    </div>
+
+    <h3 class="sec">Из Wiki</h3>
+    <div class="tiles">
+      <div class="tile">
+        <span class="tag">Руководство</span>
+        <h3><a href="video-dump_ru.html">Дамп видеосигнала в PPUPlayer</a></h3>
+        <p>Как получить дамп видеосигнала PPU с помощью PPUPlayer и Nintendulator — включая формат RAW-дампа пикселей.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Исследование</span>
+        <h3><a href="druaga_ru.html">Расследование: The Tower of Druaga</a></h3>
+        <p>Кейс: проверка поведения игры на реальном картридже и починка в Breaknes (issue #527).</p>
+      </div>
+    </div>
+
+    <h3 class="sec">Компоненты</h3>
+    <div class="tiles">
+      <div class="tile">
+        <span class="tag">Компонент</span>
+        <h3><a href="cartpcb_ru.html">CartPcb</a></h3>
+        <p>Функциональная симуляция картриджных PCB: плата — JSON-документ из компонентов и соединений, а не код на C++.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Компонент</span>
+        <h3><a href="nescartdb_ru.html">Nescartdb</a></h3>
+        <p>Конвертированная в JSON база картриджей — опознание PCB по CRC32 дампов PRG/CHR.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Компонент</span>
+        <h3><a href="io_ru.html">IO-подсистема</a></h3>
+        <p>Контроллеры и устройства для NES, Famicom и Dendy и архитектура их привязки к материнской плате.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Компонент</span>
+        <h3><a href="chips_ru.html">Chips</a></h3>
+        <p>Симуляторы на уровне вентилей: M6502Core (6502), APUSim (2A03/2A07), PPUSim (2C02/2C07), MMC1.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Компонент</span>
+        <h3><a href="common_ru.html">Common</a></h3>
+        <p>Общие библиотеки: BaseLogicLib, BaseBoardLib (LS139, LS373, SRAM, RomChip…), JsonLib, SharpTools.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Компонент</span>
+        <h3><a href="breakscore_ru.html">BreaksCore</a></h3>
+        <p>Нативное ядро — материнские платы, разводка чипов, debug-хаб — и два фронтенда.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Тесты</span>
+        <h3><a href="unittest_ru.html">UnitTest</a></h3>
+        <p>Автоматические тесты чипов, ядер и общих библиотек.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Инструменты</span>
+        <h3><a href="tools_ru.html">Tools</a></h3>
+        <p>Breakasm, BreaksDebug, PPU/APU-плееры, профилировщики и демо-программы.</p>
+      </div>
+    </div>
+
+    <h3 class="sec">Журнал изменений</h3>
     <div class="tiles">
       <div class="tile">
         <span class="tag">Дайджест</span>
@@ -82,6 +161,7 @@
 
   <footer>
     <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · эмуляция NES на уровне вентилей, часть проекта breaks</div>
+    <div class="prs">English version: <a href="index.html">index.html</a></div>
   </footer>
 
 </div>

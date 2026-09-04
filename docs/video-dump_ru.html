@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дамп видеосигнала в PPUPlayer — документация Breaknes</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="video-dump.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Дамп видеосигнала в PPUPlayer</h1>
+      <p class="lede">Как получить дамп видеосигнала PPU с помощью PPUPlayer и Nintendulator</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p><strong>Требования:</strong></p>
+    <ul>
+      <li>PPUPlayer 2.2+ (<a href="https://github.com/emu-russia/breaknes/releases/">релизы</a>)</li>
+      <li>Nintendulator (<a href="https://www.qmtpro.com/~nes/nintendulator/">qmtpro.com</a>)</li>
+    </ul>
+
+    <h2 id="first-run">Первый запуск PPUPlayer</h2>
+    <p>Запустить PPUPlayer:</p>
+    <img src="assets/img/dump_video_001.png" alt="Первый запуск PPUPlayer">
+    <p>Выбрать в настройках ревизию PPU, для которой нужно получить дамп видеосигнала:</p>
+    <img src="assets/img/dump_video_002.png" alt="Выбор ревизии PPU">
+    <p>Запустить PPUPlayer в «свободный полёт» (<em>Run PPU</em>). Перейти на вкладку <em>Current Scan</em> и убедиться, что PPU живой:</p>
+    <img src="assets/img/dump_video_003.png" alt="Вкладка Current Scan">
+
+    <h2 id="nintendulator">Дамп состояния PPU в Nintendulator</h2>
+    <p>Запустить какую-нибудь игру в Nintendulator, желательно без сложного маппера.</p>
+    <p>Открыть отладчик и сдампить всю память PPU:</p>
+    <img src="assets/img/dump_video_004.png" alt="Сохранение памяти PPU в Nintendulator">
+    <p>Получится файл с расширением <code>.ppumem</code>, который можно найти где-то в недрах вашей папки <code>Users/AppData</code>.</p>
+
+    <h2 id="loading">Загружаем состояние PPU в PPUPlayer</h2>
+    <p>В меню <em>PPU Dumps</em> выбрать пункт <em>Load Nintendulator PPU Dump</em> и загрузить полученный в Nintendulator дамп памяти PPU.</p>
+    <p>Получится примерно такое:</p>
+    <img src="assets/img/dump_video_005.png" alt="Состояние PPU загружено">
+    <p>Но упс. Что-то не так.</p>
+    <p>Дело в том, что Nintendulator сохраняет только память PPU, но не сохраняет текущие значения регистров <code>$2000</code> и <code>$2001</code>.</p>
+    <p>Особенно важен регистр <code>$2000</code>, в котором задаются адреса pattern table и размер спрайтов.</p>
+    <p>Чтобы это исправить, переходим на вкладку <em>Debug</em> и меняем значение регистра <code>$2000</code> (для Contra нужно установить значение <code>0x30</code>):</p>
+    <img src="assets/img/dump_video_006.png" alt="Установка регистра $2000">
+    <p>Получилось такое:</p>
+    <img src="assets/img/dump_video_007.png" alt="Исправленная картинка">
+
+    <h2 id="start-dump">Включить дамп видеосигнала</h2>
+    <p>Осталось за малым.</p>
+    <p>В меню <em>PPU Dumps</em> нужно выбрать пункт <em>Start video signal dump</em>, указать файл — и после этого автоматически начнётся дамп в файл видеовыхода микросхемы PPU.</p>
+    <ul>
+      <li>Для «композитных» PPU (2C02/2C07) производится дамп массива <code>float</code> — каждое значение представляет собой напряжение (уровень сигнала).</li>
+      <li>Для RGB PPU дампится 4 байта (в очерёдности R, G, B, SYNC), которые соответствуют выходам RGB PPU.</li>
+    </ul>
+
+    <h2 id="raw">RAW-дамп</h2>
+    <p>Есть возможность вместо видеосигнала PPU получать значение пикселей до схемы ЦАП:</p>
+    <img src="assets/img/dump_video_008.png" alt="Опция RAW-дампа">
+    <p>В этом случае будут дампиться значения <code>uint16_t</code> следующего формата:</p>
+<pre><code>/// &lt;summary&gt;
+/// Raw PPU color, which is obtained from the PPU circuits BEFORE the video signal generator.
+/// The user can switch the PPUSim video output to use "raw" color, instead of the original (Composite/RGB).
+/// &lt;/summary&gt;
+union RAWOut
+{
+    struct
+    {
+        unsigned CC0 : 1;   // Chroma (CB[0-3])
+        unsigned CC1 : 1;
+        unsigned CC2 : 1;
+        unsigned CC3 : 1;
+        unsigned LL0 : 1;   // Luma (CB[4-5])
+        unsigned LL1 : 1;
+        unsigned TR : 1;    // "Tint Red", $2001[5]
+        unsigned TG : 1;    // "Tint Green", $2001[6]
+        unsigned TB : 1;    // "Tint Blue", $2001[7]
+        unsigned Sync : 1;  // 1: Sync level
+    };
+    uint16_t raw;
+} RAW;</code></pre>
+
+    <h2 id="summary">Заключение</h2>
+    <p>PPUPlayer стал мощным инструментом в изучении PPU. Внутри него живёт настоящий живой PPU.</p>
+    <p>Не стесняйтесь тыкать разные кнопочки в PPUPlayer и экспериментировать. Если что — имеется также презентация.</p>
+
+    <p class="note">Источник: <code>Wiki/DumpVideoSignalRus.md</code> · по теме: <a href="tools_ru.html">Инструменты</a>, <a href="chips_ru.html">PPUSim</a></p>
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

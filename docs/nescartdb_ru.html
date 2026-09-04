@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nescartdb — база идентификации картриджей — документация Breaknes</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="nescartdb.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Nescartdb</h1>
+      <p class="lede">Конвертированная в JSON база nescartdb — определяет тип картриджной PCB по CRC32 дампов PRG/CHR</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      База <strong>nescartdb</strong>, конвертированная в формат JSON, используется для определения типа PCB
+      картриджей NES/Famicom по содержимому их дампов PRG/CHR.
+    </p>
+    <p>
+      Эта папка — единственный источник данных об идентификации картриджей для всех потребителей Breaknes: нативного
+      ядра (BreaksCore), управляемого приложения (Breaknes), SDL-порта и инструментов (PPUPlayer, APUPlayer).
+    </p>
+
+    <hr>
+
+    <h2 id="why">1. Зачем нужна эта папка</h2>
+    <p>
+      Старый компонент <code>Mappers</code> определяет картриджи по заголовку iNES и номеру маппера iNES.
+      Для функционального симулятора это плохо подходит:
+    </p>
+    <ul>
+      <li>Один и тот же номер маппера iNES покрывает много электрически разных плат.</li>
+      <li>Заголовок не говорит, какие микросхемы стоят на плате и как они соединены.</li>
+      <li>Нелицензионные платы и платы Famiclone часто вообще нельзя выразить средствами iNES.</li>
+    </ul>
+    <p>
+      Решение (issue #508) — определять картриджи по <strong>типу платы</strong>, используя базу nescartdb, которая
+      описывает фактическую PCB каждого дампированного картриджа (компоненты, размеры, CRC, зеркалирование).
+    </p>
+    <p>
+      В нативном коде нет XML-движка, поэтому XML nescartdb один раз конвертируется в JSON, хранится здесь и
+      используется всеми.
+    </p>
+
+    <h2 id="data-source">2. Источник данных</h2>
+    <table>
+      <thead><tr><th></th><th></th></tr></thead>
+      <tbody>
+        <tr><td>База данных</td><td><a href="https://nescartdb.com">nescartdb</a> (bootgod / brizzo)</td></tr>
+        <tr><td>Используемый экспорт</td><td><code>forum.nesdev.org - tepples/NesCarts (2017-08-21).utf8.xml</code> из зеркала <a href="https://github.com/MetaFight/NesCartDB">MetaFight/NesCartDB</a></td></tr>
+        <tr><td>Содержимое</td><td>~3179 записей картриджей, 273 различных типа плат, для всех регионов (NES-NTSC, NES-PAL, Famicom, Dendy, ...)</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Экспорт — это статический снимок (2017-08-21). Конвертация детерминирована: один и тот же XML всегда даёт один
+      и тот же JSON, поэтому JSON можно в любой момент перегенерировать.
+    </p>
+
+    <h2 id="files">3. Файлы в этой папке</h2>
+    <pre><code>Nescartdb/
+  Readme.md          &lt;- this file
+  nescarts.json      &lt;- the full converted database (generated, committed)
+  index.json         &lt;- flattened lookup index: prg_crc/chr_crc -&gt; board type (generated, committed)
+  boards/            &lt;- board definitions (authored, not generated) + the family index
+</code></pre>
+    <ul>
+      <li><code>nescarts.json</code> — полная база, точно соответствующая XML: вложенность <code>game</code> → <code>cartridge</code> → <code>board</code> со всеми атрибутами (см. §5).</li>
+      <li><code>index.json</code> — плоский массив записей для поиска (<code>prg_crc</code>, <code>chr_crc</code>, <code>board.type</code>, <code>board.pcb</code>, <code>mapper</code>, <code>system</code>), сгенерированный из <code>nescarts.json</code>. Во время выполнения загружается этот небольшой файл, чтобы отвечать на вопрос «какие типы плат соответствуют этим CRC PRG/CHR?», не обходя всю базу.</li>
+      <li><code>boards/</code> — JSON-определения плат (<code>nrom.json</code>, <code>unrom.json</code>, <code>aorom.json</code>, <code>sgrom.json</code>, плюс <code>cnrom.json</code>/<code>shrom.json</code> для iNES-фолбэка) и <code>index.json</code> — отображение семейств «тип платы → файл определения» (см. §6.1).</li>
+    </ul>
+    <p>
+      Сгенерированные файлы <strong>коммитятся</strong> в репозиторий, чтобы ни при сборке, ни во время выполнения
+      не требовался доступ к сети.
+    </p>
+
+    <h2 id="conversion">4. Конвейер конвертации</h2>
+    <pre><code>Tools/NescartdbConvert/convert.py
+   XML (tepples export)  ---&gt;  nescarts.json  ---&gt;  index.json
+</code></pre>
+    <ul>
+      <li>Конвертер — небольшой Python-скрипт (вроде <code>Tools/DumpRegdump/DumpRegdump.py</code>), лежит в <code>Tools/NescartdbConvert/</code>.</li>
+      <li>Он запускается вручную (или в CI), когда обновляется исходный XML; его результат коммитится.</li>
+      <li>Конвертер нормализует данные для нативного потребления:
+        <ul>
+          <li>размеры: <code>"256k"</code> → байты (<code>262144</code>), <code>"8k"</code> → <code>8192</code> и т. д.;</li>
+          <li>булевы значения: <code>battery</code> → <code>true</code>/<code>false</code>, <code>prototype</code> → <code>true</code>/<code>false</code>;</li>
+          <li>имена атрибутов сохраняются 1:1, где это возможно (см. таблицу соответствия в §5).</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2 id="schema">5. JSON-схема (<code>nescarts.json</code>)</h2>
+    <p>Прямое отображение структуры XML:</p>
+    <pre><code>{
+  "source": {
+    "name": "NesCartDB",
+    "agent": "NesCartDB",
+    "author": "BootGod",
+    "export": "forum.nesdev.org - tepples/NesCarts (2017-08-21).utf8.xml",
+    "converted_at": "2026-09-01T00:00:00Z",
+    "converter": "Tools/NescartdbConvert/convert.py"
+  },
+  "games": [
+    {
+      "name": "10-Yard Fight",
+      "altname": "１０ヤードファイト",
+      "class": "Licensed",
+      "subclass": "3rd-Party",
+      "catalog": "IF-02",
+      "publisher": "Irem",
+      "developer": "Irem",
+      "portdeveloper": null,
+      "region": "Japan",
+      "players": 2,
+      "date": "1985-08-30",
+      "cartridges": [
+        {
+          "system": "Famicom",
+          "revision": null,
+          "crc": "836C4FA7",
+          "dump": "ok",
+          "dumper": "bootgod",
+          "datedumped": "2007-05-06",
+          "prototype": false,
+          "board": {
+            "type": "IREM-NROM-128",
+            "pcb": "IREM-01-V",
+            "mapper": 0,
+            "prg":  { "name": null, "id": null, "size": 16384, "crc": "D3D248C9" },
+            "chr":  { "name": null, "id": null, "size": 8192,  "crc": "9C124A53" },
+            "wram": null,
+            "vram": null,
+            "chips": [],
+            "cic":   [],
+            "pad":   { "h": 0, "v": 1 },
+            "peripherals": []
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+
+    <h3 id="mapping">5.1 Отображение XML → JSON</h3>
+    <table>
+      <thead><tr><th>XML</th><th>JSON</th><th>Примечания</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;database&gt;</code></td><td><code>source</code></td><td><code>version</code>, <code>conformance</code>, <code>agent</code>, <code>author</code>, <code>timestamp</code> свёрнуты в <code>source</code>; конвертер добавляет <code>export</code>, <code>converted_at</code>, <code>converter</code></td></tr>
+        <tr><td><code>&lt;game&gt;</code></td><td><code>games[]</code></td><td><code>name</code>, <code>altname</code>, <code>class</code>, <code>subclass</code>, <code>catalog</code>, <code>publisher</code>, <code>developer</code>, <code>portdeveloper</code>, <code>region</code>, <code>players</code>, <code>date</code></td></tr>
+        <tr><td><code>&lt;cartridge&gt;</code></td><td><code>games[].cartridges[]</code></td><td><code>system</code>, <code>revision</code>, <code>crc</code>, <code>dump</code>, <code>dumper</code>, <code>datedumped</code>, <code>prototype</code> (<code>sha1</code> намеренно опущен — идентификация только по CRC)</td></tr>
+        <tr><td><code>&lt;board&gt;</code></td><td><code>...board</code></td><td><code>type</code> (тип платы), <code>pcb</code> (ревизия платы), <code>mapper</code> (номер маппера iNES — только для информации, <strong>не</strong> используется для идентификации)</td></tr>
+        <tr><td><code>&lt;prg&gt;</code> / <code>&lt;chr&gt;</code></td><td><code>board.prg</code> / <code>board.chr</code></td><td><code>name</code>, <code>id</code>, <code>size</code> (байты), <code>crc</code> (<code>sha1</code> намеренно опущен)</td></tr>
+        <tr><td><code>&lt;wram&gt;</code> / <code>&lt;vram&gt;</code></td><td><code>board.wram</code> / <code>board.vram</code></td><td><code>size</code>, <code>battery</code>, <code>id</code></td></tr>
+        <tr><td><code>&lt;chip&gt;</code></td><td><code>board.chips[]</code></td><td><code>type</code> (например, <code>MMC1A</code>, <code>MMC3B</code>), <code>battery</code></td></tr>
+        <tr><td><code>&lt;cic&gt;</code></td><td><code>board.cic[]</code></td><td><code>type</code> (например, <code>3193A</code>, <code>6113</code>)</td></tr>
+        <tr><td><code>&lt;pad&gt;</code></td><td><code>board.pad</code></td><td><code>h</code>, <code>v</code> (зеркалирование)</td></tr>
+        <tr><td><code>&lt;peripherals&gt;</code>/<code>&lt;device&gt;</code>/<code>&lt;pin&gt;</code></td><td><code>board.peripherals[]</code></td><td>сквозная передача сырых данных о пинах</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="index">5.2 Поисковый индекс (<code>index.json</code>)</h3>
+    <pre><code>[
+  {
+    "prg_crc": "D3D248C9",
+    "chr_crc": "9C124A53",
+    "system": "Famicom",
+    "type": "IREM-NROM-128",
+    "pcb": "IREM-01-V",
+    "mapper": 0
+  }
+]
+</code></pre>
+    <ul>
+      <li>По одной записи на каждый картридж с известной парой CRC PRG/CHR.</li>
+      <li>Идентификация только по <strong>CRC32 PRG + CRC32 CHR</strong> (SHA1 не используется): во время выполнения вычисляется CRC32 дампов PRG и CHR и выполняется поиск по <code>prg_crc</code> + <code>chr_crc</code>.</li>
+      <li>Несколько записей могут иметь одинаковые CRC (одни и те же ROM на разных PCB) — возвращаются все совпадения, а подходящее выбирает вызывающий код (см. <code>CartPcb/Readme.md</code> §8).</li>
+      <li>Записи могут содержать паяльные перемычки зеркалирования <code>"h"</code>/<code>"v"</code> (информационно). Перемычки используют <strong>термины зеркалирования iNES</strong> — обратные термину scroll PCB (issue #525): <code>v=1</code> (iNES «вертикальное зеркалирование») означает, что джампер scroll картриджа установлен в <strong>H Scroll</strong> (<code>VRAM_A10 = PA10</code>), а <code>h=1</code> — в <strong>V Scroll</strong> (<code>VRAM_A10 = PA11</code>). Во время выполнения перемычки не используются для переопределения заголовка <code>.nes</code>: scroll плат с джампером scroll всегда следует за заголовком.</li>
+    </ul>
+
+    <h2 id="consumers">6. Потребители</h2>
+    <table>
+      <thead><tr><th>Потребитель</th><th>Как использует эту папку</th></tr></thead>
+      <tbody>
+        <tr><td>BreaksCore (native)</td><td><code>CartPcb::NesCartDb</code> загружает <code>index.json</code> для поиска «CRC → тип платы».</td></tr>
+        <tr><td>CartPcb (native)</td><td>Board JSON, на которые ссылается индекс (встроенные определения + пользовательские переопределения).</td></tr>
+        <tr><td>Управляемое приложение Breaknes</td><td>Ищет JSON рядом с исполняемым файлом (копируется при сборке) и может разбирать его напрямую для нужд UI (тип платы показывается пользователю).</td></tr>
+        <tr><td>SDL-порт</td><td>Тот же нативный путь, что и у BreaksCore.</td></tr>
+        <tr><td>PPUPlayer / APUPlayer</td><td>Используют те же данные <code>Nescartdb</code> через нативное ядро или собственную копию.</td></tr>
+      </tbody>
+    </table>
+    <p>
+      <strong>Развёртывание</strong>: файлы из <code>Nescartdb/</code> (включая <code>boards/*.json</code>) при сборке
+      копируются в выходной каталог (<code>Breaknes.csproj</code> и <code>BreaknesSDL.vcxproj</code> копируют их рядом
+      с исполняемым файлом). Нативный код ищет их относительно исполняемого файла: управляемое приложение передаёт свой
+      базовый каталог через <code>SetNescartdbDir</code>; SDL-порт использует папку <code>Nescartdb</code> рядом
+      с исполняемым файлом (можно переопределить переменной окружения <code>NESCARDB_DIR</code>). Пользовательские
+      платы попадают в пользовательский каталог плат (по умолчанию в управляемом приложении это <code>CustomBoards/</code>
+      рядом с исполняемым файлом, настраивается через <code>SetUserBoardsDir</code>).
+    </p>
+
+    <h3 id="boards">6.1 Определения плат (<code>boards/</code>)</h3>
+    <p>Папка <code>boards/</code> содержит board JSON, в которые <code>PcbLoader</code> преобразует тип платы:</p>
+    <ul>
+      <li><code>index.json</code> — отображение семейств: тип платы → файл определения платы (например, все типы <code>*-NROM-*</code> отображаются на <code>nrom.json</code>). Плата Namco <code>NAMCOT-3305</code> (The Tower of Druaga, Pac-Land) электрически является NROM-256 (2x16K PRG + 8K CHR, без логики маппера, жёстко заданный H-scroll) и тоже отображается на <code>nrom.json</code> (issue #527).</li>
+      <li><code>nrom.json</code>, <code>unrom.json</code>, <code>aorom.json</code>, <code>sgrom.json</code> — встроенные определения плат для семейств NROM/UxROM/AxROM/MMC1 (определения UNROM и AOROM включают реальную клеевую логику 74LS161/74LS32, см. <code>CartPcb/Readme.md</code> §5.3).</li>
+      <li><code>cnrom.json</code>, <code>shrom.json</code> — платы, добавленные для iNES-фолбэка «диких» дампов (issue #514): маппер 3 (CNROM, переключение банков CHR на защёлках) и маппер 1 с CHR-RAM (разводка MMC1 в стиле SHROM).</li>
+    </ul>
+    <p>
+      Определения плат пишутся вручную (не генерируются из XML): nescartdb описывает перечень компонентов, а CartPcb
+      добавляет разводку (<code>circuit</code>). Новые типы плат, на которые ссылаются вывод конвертера или iNES-фолбэк,
+      нужно добавлять здесь вручную.
+    </p>
+
+    <h2 id="versioning">7. Политика версионирования и регенерации</h2>
+    <ul>
+      <li><code>nescarts.json</code> и <code>index.json</code> — генерируемые артефакты, но они <strong>коммитятся</strong> (нет сети во время выполнения, история различима через diff).</li>
+      <li>Когда исходный XML обновляется: заново запустите <code>Tools/NescartdbConvert/convert.py</code>, закоммитьте перегенерированный JSON и поднимите метку времени <code>source.converted_at</code>.</li>
+      <li>Схема JSON версионируется через <code>source.version</code>; ломающие изменения схемы поднимают версию и согласуются с загрузчиком <code>CartPcb</code>.</li>
+    </ul>
+
+    <h2 id="licensing">8. Лицензирование и атрибуция</h2>
+    <ul>
+      <li>Данные — это база nescartdb от <strong>bootgod</strong> (сайт ведут bootgod и brizzo), зеркало — <a href="https://github.com/MetaFight/NesCartDB">MetaFight/NesCartDB</a>.</li>
+      <li>В вышестоящем зеркале <strong>нет явной лицензии</strong>, поэтому с данными нужно обращаться как с защищёнными всеми правами: сохраняйте атрибуцию (блок <code>source</code> в JSON и <code>Nescartdb/Readme.md</code>) и проверяйте условия распространения перед любой упаковкой релиза.</li>
+      <li>Сам XML-экспорт происходит из поста на forum.nesdev.org от <strong>tepples</strong> (2017-08-21); авторство сохранено в <code>source.export</code>.</li>
+    </ul>
+
+    <h2 id="jsones">9. Связь с CartPcb и JSONES</h2>
+    <ul>
+      <li><code>Nescartdb/</code> обеспечивает <strong>идентификацию</strong> (какая это PCB?) — см. <code>CartPcb/Readme.md</code> §8.</li>
+      <li><code>CartPcb</code> обеспечивает <strong>симуляцию</strong> опознанной PCB — формат board JSON определён в <code>CartPcb/Readme.md</code> §5.</li>
+      <li><strong>«Дикие» дампы</strong> (issue #514): когда CRC PRG/CHR дампа нет в <code>index.json</code> (homebrew, недокументированные дампы), <code>CartPcb::InesTranslator</code> откатывается к заголовку iNES (номер маппера + размеры PRG/CHR) и сопоставляет его с одним из типов плат выше; дальше дамп проходит по тому же пути платы. Это трансляция, а не идентификация: заголовок жёсткий и теряет данные, поэтому фолбэк покрывает только распространённые простые мапперы.</li>
+      <li><strong>JSONES</strong> (issue #189) — подмножество формата плат CartPcb: JSON одного картриджа с вложенностью <code>game</code> → <code>cartridge</code> → <code>board</code>, пригодный в качестве пользовательского определения платы в дополнение к встроенным данным nescartdb (<code>CartPcb/Readme.md</code> §6.5).</li>
+    </ul>
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Nescartdb/Readme.md</div>
+    <div class="prs">Документация: <a href="about_ru.html">О проекте</a> · <a href="cartpcb_ru.html">CartPcb</a> · <a href="nescartdb_ru.html">Nescartdb</a> · <a href="io_ru.html">IO</a> · <a href="chips_ru.html">Chips</a> · <a href="common_ru.html">Common</a> · <a href="breakscore_ru.html">BreaksCore</a> · <a href="unittest_ru.html">UnitTest</a> · <a href="tools_ru.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

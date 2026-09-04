@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UnitTest — автоматические тесты — документация Breaknes</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="unittest.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>UnitTest</h1>
+      <p class="lede">Юнит-тесты чипов и ядер: сверка с эталонными значениями по документированному поведению и полное покрытие общих библиотек</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <img src="assets/img/UnitTest.jpg" alt="UnitTest">
+
+    <p>Каждый класс эмулируемого чипа содержит дружественный класс, имеющий доступ ко всем его внутренностям.</p>
+    <ul>
+      <li><code>M6502Core</code>: <code>M6502CoreUnitTest::UnitTest</code></li>
+      <li><code>APUSim</code>: <code>APUSimUnitTest::UnitTest</code></li>
+      <li><code>PPUSim</code>: <code>PPUSimUnitTest::UnitTest</code></li>
+    </ul>
+
+    <h2 id="megacycles">MegaCycles</h2>
+    <p>В настоящее время есть три теста, которые не завершаются успешно. Они используются для измерения производительности ядра 6502, APU и PPU.</p>
+    <p>Текущая производительность:</p>
+
+    <pre><code>Core executed 1789772 cycles in real 2282 msec
+You're 2.28 times slower :(
+
+APU+Core executed 21477272 cycles in real 18297 msec
+You're 18.30 times slower :(
+
+PPU executed 21477272 cycles in real 21828 msec
+You're 21.83 times slower :(</code></pre>
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · UnitTest/Readme.md</div>
+    <div class="prs">Документация: <a href="about_ru.html">О проекте</a> · <a href="cartpcb_ru.html">CartPcb</a> · <a href="nescartdb_ru.html">Nescartdb</a> · <a href="io_ru.html">IO</a> · <a href="chips_ru.html">Chips</a> · <a href="common_ru.html">Common</a> · <a href="breakscore_ru.html">BreaksCore</a> · <a href="unittest_ru.html">UnitTest</a> · <a href="tools_ru.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

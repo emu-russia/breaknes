@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CartPcb — симуляция картриджных PCB — документация Breaknes</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="cartpcb.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>CartPcb</h1>
+      <p class="lede">Функциональная симуляция картриджных PCB NES/Famicom/Dendy: плата — это JSON-документ из компонентов и соединений, а не код на C++</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      Функциональная симуляция картриджных <strong>PCB</strong> (печатных плат) NES/Famicom/Dendy.
+    </p>
+    <p>
+      Картридж симулируется как физическая плата: набор компонентов (чипы памяти, чипы-мапперы,
+      дискретная логика) и проводов (сетей, nets), соединяющих их друг с другом и с краевым разъёмом
+      картриджа (edge connector). Описание платы — это данные, JSON-документ, а не код на C++.
+    </p>
+    <p>
+      CartPcb — преемник выведенного из эксплуатации компонента <code>Mappers</code> (issue #509). Он
+      полностью заменил <code>Mappers</code> и решил все проблемы, перечисленные в старом
+      <code>Mappers/Readme.md</code>.
+    </p>
+
+    <hr>
+
+    <h2 id="motivation">1. Мотивация</h2>
+    <p>
+      У выведенного из эксплуатации компонента <code>Mappers</code> накопились следующие проблемы, и все их
+      CartPcb решает:
+    </p>
+    <table>
+      <thead><tr><th>#</th><th>Проблема (из старого <code>Mappers/Readme.md</code>)</th><th>Как это решает CartPcb</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Работа с дампами памяти (PRG/CHR) непонятна: область CHR называется «CHR-ROM», а PRG вообще не поддерживается.</td><td>CartPcb работает с <strong>явными дампами образов</strong>: <code>CartImage</code> несёт образы PRG и CHR с размерами и именами из определения PCB. CHR — это просто образ CHR; «CHR-ROM» больше ничем не называется.</td></tr>
+        <tr><td>2</td><td>Эмуляция <code>.nes</code>-мапперов хаотична: перевод номера iNES-маппера в компоненты платы без возможности выразить множество аппаратных вариаций одного и того же маппера.</td><td>CartPcb <strong>ориентирован на PCB и управляется данными</strong>. Плата — это JSON-документ со списком компонентов и разводки. Один и тот же чип-маппер (например, MMC1), разведённый иначе, — это другой board JSON, а не форк кода на C++.</td></tr>
+        <tr><td>3</td><td>Нет поддержки чипов ROM — всё это сырой байтовый массив.</td><td>CartPcb использует <code>RomChip</code> (ROM в стиле JEDEC, <code>Common/BaseBoardLib</code>) и переработанный <code>SRAM</code> (<code>Common/BaseBoardLib</code>) с семантикой <code>/CE</code> / <code>/OE</code> / <code>/WE</code> / адрес / данные / <code>dz</code>.</td></tr>
+        <tr><td>4</td><td>Эмуляцию MMC1 нужно отлаживать; делитель, вероятно, неверен.</td><td>MMC1 был выделен из Mappers в <code>Chips</code> как самостоятельный класс чипа со своими юнит-тестами. CartPcb только разводит чипы на платах; он не реализует чипы.</td></tr>
+      </tbody>
+    </table>
+
+    <p>Кроме того, issue #508 задаёт следующие архитектурные мотивы:</p>
+    <ul>
+      <li><strong>Никакой зависимости от iNES для идентификации.</strong> Заголовки iNES и номера iNES-мапперов жёсткие и теряют информацию (у многих реальных плат общий номер маппера, но разная электрика).</li>
+      <li><strong>Идентификация через nescartdb.</strong> Тип картриджа/PCB определяется по CRC32 образов PRG/CHR через базу nescartdb (сконвертирована в JSON; см. <code>Nescartdb/Readme.md</code>).</li>
+      <li><strong>JSONES становится подмножеством.</strong> Пользовательский PCB JSON (формат одного картриджа, см. §6.5) — валидный вход CartPcb, поэтому исследователи могут описывать нелицензионные и недокументированные PCB (например, коллекцию krzysiobal), не касаясь iNES.</li>
+      <li><strong><code>Mappers</code> полностью выведен из эксплуатации.</strong> Контракт картриджного порта (бывший <code>Mappers::AbstractCartridge</code>) теперь живёт в CartPcb (см. §7.5).</li>
+      <li><strong>MMC1 живёт в Chips.</strong> CartPcb предназначен <em>только</em> для симуляции PCB.</li>
+    </ul>
+
+    <h2 id="scope">2. Охват</h2>
+    <h3>Что входит в охват</h3>
+    <ul>
+      <li>Загрузка описания платы (JSON) и создание экземпляра платы: компоненты + разводка.</li>
+      <li>Симуляция чипов памяти на шинах CPU и PPU (ROM и RAM — с батарейным питанием или без).</li>
+      <li>Разводка дискретной логики и чипов-мапперов (реализованных в другом месте, например в <code>Chips</code>) на плату.</li>
+      <li>Mirroring (жёсткая разводка или управление от маппера), гейтинг WRAM, конфликты шин — там, где они выразимы.</li>
+      <li>Интерфейс edge-коннектора картриджа (сигнальный контракт нынешнего <code>Mappers::AbstractCartridge</code>, теперь — часть CartPcb).</li>
+      <li>Идентификация: компонент <code>NesCartDb</code>, сопоставляющий CRC образов PRG/CHR с типом PCB.</li>
+      <li>Поддержка отладки: дескрипторы карты памяти и провайдеры отладочной информации для каждой платы (как и раньше).</li>
+    </ul>
+
+    <h3>Вне охвата (осознанно)</h3>
+    <ul>
+      <li>Реализация крупных чипов (MMC1, MMC3 и т.д.) — это работа <code>Chips</code>. CartPcb потребляет чипы.</li>
+      <li>Чипы звукового расширения изначально вне охвата (разъём по-прежнему несёт звуковую линию Famicom; авторы плат могут добавить простую сквозную разводку).</li>
+      <li>Электрическое поведение каждой экзотической платы с точностью до цикла. CartPcb моделирует <em>функциональную</em> схему; платы добавляются постепенно.</li>
+    </ul>
+
+    <h2 id="terminology">3. Терминология</h2>
+    <ul>
+      <li><strong>PCB / board</strong> — печатная плата картриджа; объект симуляции.</li>
+      <li><strong>Component</strong> — деталь на плате: чип ROM, чип RAM, чип-маппер, CIC, подтяжка и т.п.</li>
+      <li><strong>Pin</strong> — точка подключения компонента (именованная, например <code>n_CS</code>, <code>A13</code>, <code>D0</code>).</li>
+      <li><strong>Net</strong> — провод, соединяющий выводы (пины) между собой. Сети несут значения <code>TriState</code>.</li>
+      <li><strong>Edge connector</strong> — интерфейс картриджного порта с материнской платой (шина CPU, шина PPU, управляющие сигналы, звук, порт расширения).</li>
+      <li><strong>CartImage</strong> — сырые дампы, загружаемые в чипы ROM: образ PRG, образ CHR (и опционально батарейная RAM).</li>
+      <li><strong>ROM chip</strong> — микросхема постоянной памяти; большинство NES-ROM — устройства стандарта JEDEC или аналогичные (например, семейство EPROM 27xx). Моделируется классом <code>RomChip</code> в <code>Common/BaseBoardLib</code>.</li>
+      <li><strong>JEDEC</strong> — индустриальное семейство распиновок микросхем памяти (<code>A0..An</code>, <code>D0..D7</code>, <code>/CE</code>, <code>/OE</code>, опциональный <code>/WE</code>); <code>RomChip</code> и <code>SRAM</code> ему следуют.</li>
+      <li><strong>Board type</strong> — имя платы в nescartdb, например <code>HVC-SGROM</code>, <code>NES-NROM-256</code>, <code>NES-UNROM</code>.</li>
+      <li><strong>nescartdb</strong> — база картриджей bootgod (см. <code>Nescartdb/Readme.md</code>).</li>
+      <li><strong>JSONES</strong> — JSON-формат метаинформации одного картриджа (issue #189); подмножество формата плат CartPcb.</li>
+    </ul>
+
+    <h2 id="principles">4. Принципы проектирования</h2>
+    <ol>
+      <li><strong>Данные вместо кода.</strong> Семейство плат описывается один раз, в JSON. Добавление новой ревизии PCB не должно требовать изменений в C++.</li>
+      <li><strong>Компоненты — это чипы; платы — это разводка.</strong> CartPcb реализует модель сетей и сборку плат. Чипы памяти (<code>RomChip</code>, <code>SRAM</code>) живут в <code>BaseBoardLib</code>; всё остальное (MMC1, ...) — классы чипов, инжектируемые из <code>Chips</code>.</li>
+      <li><strong>Явные образы.</strong> PRG и CHR — именованные области <code>CartImage</code> с заданным размером. Образы загружаются в экземпляры <code>RomChip</code>, а разводка платы подключает эти чипы ROM к шинам — и никогда «байтовый массив CHR-ROM».</li>
+      <li><strong>Идентификация по содержимому, а не по заголовку.</strong> CRC32 образов PRG/CHR выбирают плату через nescartdb.</li>
+      <li><strong>Расширяемость пользователем.</strong> Небольшие JSON-файлы в пользовательском каталоге дополняют или переопределяют встроенные платы (путь JSONES).</li>
+      <li><strong>Один контракт симуляции.</strong> Сигнальный интерфейс edge-коннектора такой же, как у нынешнего <code>AbstractCartridge</code>, поэтому материнские платы (<code>NESBoard</code>, <code>FamicomBoard</code>) продолжают работать без изменений.</li>
+    </ol>
+
+    <h2 id="format">5. Формат описания PCB (CartPcb JSON)</h2>
+    <p>Плата описывается JSON-документом из двух частей:</p>
+    <ul>
+      <li><strong><code>components</code></strong> — состав компонентов (соответствие 1:1 содержимому платы в nescartdb: <code>prg</code>, <code>chr</code>, <code>wram</code>, <code>vram</code>, <code>chip</code>, <code>cic</code>, <code>pad</code>).</li>
+      <li><strong><code>circuit</code></strong> — расширение CartPcb: как компоненты разведены на шины и друг с другом. nescartdb не описывает разводку, поэтому эту часть пишут вручную (см. §5.3).</li>
+    </ul>
+
+    <h3>5.1 Пример: NROM-256</h3>
+    <pre><code>{
+  "schemaVersion": 1,
+  "board": {
+    "type": "NES-NROM-256",
+    "pcb": "NES-NROM-256-02",
+    "mapper": 0,
+    "system": ["NES-NTSC", "NES-PAL"],
+    "components": {
+      "prg": { "kind": "rom", "bus": "cpu", "size": 32768 },
+      "chr": { "kind": "rom", "bus": "ppu", "size": 8192 }
+    },
+    "circuit": {
+      "mirroring": { "mode": "scroll" },
+      "cpu": {
+        "prg": { "chip": "prg", "n_cs": "nROMSEL", "addr": "cpu_addr[13:0]" }
+      },
+      "ppu": {
+        "chr": { "chip": "chr", "n_cs": "!nPA13", "addr": "ppu_addr[12:0]" }
+      },
+      "nets": []
+    }
+  }
+}</code></pre>
+
+    <p>Примечания:</p>
+    <ul>
+      <li>Размеры задаются в <strong>байтах</strong> (<code>"256k"</code> из nescartdb конвертируется в <code>32768</code> инструментом конвертации).</li>
+      <li><code>cpu_addr</code>, <code>ppu_addr</code> и сигналы разъёма (<code>nROMSEL</code>, <code>nPA13</code>, <code>RnW</code>, <code>nRD</code>, <code>nWR</code>, <code>M2</code>, ...) — предопределённые источники сетей; полный набор сигналов определён в §7.2.</li>
+      <li><code>prg</code> с <code>n_cs = nROMSEL</code> воспроизводит классическую NROM-дешифрацию PRG; чип CHR включается сигналом <code>!nPA13</code> (на платах NROM <code>/CE</code> чипа CHR подключён к <code>A13</code> PPU — низкий уровень для <code>$0000-$1FFF</code>; <code>nPA13 = !A13</code>) — ровно как в текущей реализации <code>NROM</code>, но выражено данными.</li>
+      <li>Компоненты с <code>kind: rom</code> инстанцируются как <code>BaseBoardLib::RomChip</code> (в стиле JEDEC), а с <code>kind: ram</code> — как <code>BaseBoardLib::SRAM</code>. <code>PcbFactory</code> загружает образы PRG/CHR в чипы ROM; разводка подключает выводы чипов.</li>
+      <li><code>"mirroring": { "mode": "scroll" }</code> объявляет, что на плате есть <strong>паяная перемычка scroll</strong> (см. §5.3 и §7.4): конкретное значение scroll (H или V) — параметр <em>экземпляра картриджа</em>, а не платы. Загрузчик выводит его из заголовка <code>.nes</code> (iNES Flags6, бит 0).</li>
+    </ul>
+
+    <h3>5.2 Пример: плата на MMC1 (SGROM, маппер 1)</h3>
+    <pre><code>{
+  "schemaVersion": 1,
+  "board": {
+    "type": "HVC-SGROM",
+    "pcb": "HVC-SGROM-03",
+    "mapper": 1,
+    "system": ["Famicom"],
+    "components": {
+      "prg": { "kind": "rom", "bus": "cpu", "size": 262144 },
+      "chr": { "kind": "rom", "bus": "ppu", "size": 8192 },
+      "mmc1": { "kind": "chip", "chip": "MMC1" }
+    },
+    "circuit": {
+      "mirroring": { "mode": "mapper", "net": "mmc1.VRAM_A10" },
+      "cpu": {
+        "prg": {
+          "chip": "prg",
+          "n_cs": "mmc1.PRG_nCE",
+          "addr": "mmc1.PRG_A17..PRG_A14 | cpu_addr[13:0]"
+        }
+      },
+      "ppu": {
+        "chr": {
+          "chip": "chr",
+          "n_cs": "!nPA13",
+          "addr": "mmc1.CHR_A16..CHR_A12 | ppu_addr[11:0]"
+        }
+      },
+      "nets": [
+        { "name": "mmc1.M2",       "from": "M2" },
+        { "name": "mmc1.nROMSEL",  "from": "nROMSEL" },
+        { "name": "mmc1.CPU_RnW",  "from": "RnW" },
+        { "name": "mmc1.CPU_A13",  "from": "cpu_addr[13]" },
+        { "name": "mmc1.CPU_A14",  "from": "cpu_addr[14]" },
+        { "name": "mmc1.CPU_D0",   "from": "cpu_data[0]" },
+        { "name": "mmc1.CPU_D7",   "from": "cpu_data[7]" },
+        { "name": "mmc1.PPU_A10",  "from": "ppu_addr[10]" },
+        { "name": "mmc1.PPU_A11",  "from": "ppu_addr[11]" },
+        { "name": "mmc1.PPU_A12",  "from": "ppu_addr[12]" }
+      ]
+    }
+  }
+}</code></pre>
+
+    <p>
+      Это ровно та аппаратная структура, которую старый <code>MMC1_Based</code> реализовывал на C++ —
+      теперь это <em>данные</em>: экземпляр чипа (<code>MMC1</code> из <code>Chips</code>), разведённый на
+      шины CPU/PPU, а результирующие линии адреса питают чипы ROM.
+    </p>
+
+    <h3>5.3 Пример: UNROM со своей клейкой логикой (74LS161 + 74LS32)</h3>
+    <p>
+      Issue #525: описание платы максимально приближено к реальной PCB — регистр банка — это чип
+      <strong>74LS161</strong>, а мультиплексор адреса PRG — <strong>74LS32</strong>, счетверённый элемент
+      ИЛИ (ровно та разводка, что была в старом <code>Mappers::UNROM</code>):
+    </p>
+    <pre><code>{
+  "schemaVersion": 1,
+  "board": {
+    "type": "UNROM",
+    "components": {
+      "prg": { "kind": "rom", "bus": "cpu" },
+      "chr": { "kind": "ram", "bus": "ppu", "size": 8192 },
+      "ls161": { "kind": "chip", "chip": "LS161" },
+      "ls32": { "kind": "chip", "chip": "LS32" }
+    },
+    "circuit": {
+      "mirroring": { "mode": "scroll" },
+      "cpu": {
+        "prg": {
+          "chip": "prg",
+          "n_cs": "nROMSEL",
+          "addr": "ls32.Y3 | ls32.Y0 | ls32.Y1 | cpu_addr[13:0]"
+        }
+      },
+      "ppu": {
+        "chr": { "chip": "chr", "n_cs": "!nPA13", "n_oe": "nRD", "n_we": "nWR", "addr": "ppu_addr[12:0]" }
+      },
+      "nets": [
+        { "name": "ls161.CLK",  "from": "nROMSEL" },
+        { "name": "ls161.nRST", "from": "vdd" },
+        { "name": "ls161.nLD",  "from": "RnW" },
+        { "name": "ls161.EN_T", "from": "gnd" },
+        { "name": "ls161.EN_P", "from": "gnd" },
+        { "name": "ls161.P0",   "from": "cpu_data[0]" },
+        { "name": "ls161.P1",   "from": "cpu_data[1]" },
+        { "name": "ls161.P2",   "from": "cpu_data[2]" },
+        { "name": "ls161.P3",   "from": "gnd" },
+        { "name": "ls32.A0",    "from": "ls161.Q1" },
+        { "name": "ls32.B0",    "from": "cpu_addr[14]" },
+        { "name": "ls32.A1",    "from": "ls161.Q0" },
+        { "name": "ls32.B1",    "from": "cpu_addr[14]" },
+        { "name": "ls32.A2",    "from": "gnd" },
+        { "name": "ls32.B2",    "from": "gnd" },
+        { "name": "ls32.A3",    "from": "cpu_addr[14]" },
+        { "name": "ls32.B3",    "from": "ls161.Q2" }
+      ]
+    }
+  }
+}</code></pre>
+
+    <p>Примечания:</p>
+    <ul>
+      <li><code>LS161</code> тактируется сигналом <code>/ROMSEL</code> при <code>/LD = R/W</code>: запись CPU в <code>$8000-$FFFF</code> загружает шину данных в регистр банка по нарастающему фронту <code>/ROMSEL</code> — в тот же момент, когда текущая модель на latch захватывала банк.</li>
+      <li><code>LS32</code> собирает биты банка с <code>A14</code> CPU (классический трюк UxROM): в окне <code>$8000</code> биты банка доходят до адреса PRG без изменений, а в окне <code>$C000</code> операция ИЛИ с <code>A14 = 1</code> переводит биты банка в «все единицы», то есть выбирает <strong>последний</strong> 16-КиБ банк.</li>
+      <li>Обобщённый вид компонента <code>latch</code> по-прежнему поддерживается как упрощение для пользовательских (JSONES) плат, но встроенные платы UxROM/AxROM теперь используют настоящие чипы.</li>
+    </ul>
+
+    <h3>5.4 Секция <code>circuit</code> (расширение CartPcb)</h3>
+    <p>
+      Так как nescartdb описывает только состав компонентов, CartPcb добавляет секцию <code>circuit</code>.
+      Её точный язык выражений финализируется в issue по реализации; концепции таковы:
+    </p>
+    <ul>
+      <li><strong>Подключения к шинам</strong> (<code>cpu</code> / <code>ppu</code>): для каждого компонента памяти (<code>RomChip</code> или <code>SRAM</code>) задаются источники chip-select (<code>n_cs</code>), output-enable (<code>n_oe</code>), write-enable (<code>n_we</code>) и адреса. Источники адреса могут комбинировать биты шины и выходы чипов (<code>mmc1.PRG_A17..PRG_A14 | cpu_addr[13:0]</code>) — так выражается переключение банков. Конкатенация идёт от старших битов (MSB-first): левый операнд занимает самые старшие биты адреса, поэтому <code>PRG_A17..PRG_A14</code> MMC1 (по убыванию) отображает <code>PRG_A14</code> на бит адреса 14.</li>
+      <li><strong>Mirroring (Scroll)</strong>: у платы нет атрибута «Mirroring» (issue #525). Плата либо
+        <ul>
+          <li>имеет <strong>паяную перемычку scroll</strong> — <code>"mirroring": { "mode": "scroll" }</code> — физическую перемычку, выбирающую H Scroll (<code>VRAM_A10 = PA10</code>) или V Scroll (<code>VRAM_A10 = PA11</code>). Значение scroll — параметр <em>экземпляра картриджа</em>, извлекаемый из заголовка <code>.nes</code> (iNES Flags6, бит 0, инвертированный) или из контактных площадок nescartdb; либо</li>
+          <li>ведёт <code>VRAM_A10</code> с выхода <strong>чипа-маппера</strong> — <code>"mirroring": { "mode": "mapper", "net": "mmc1.VRAM_A10" }</code> — и параметр Scroll ей не нужен; либо</li>
+          <li>оставляет mirroring незаданным (платы без разводки VRAM).</li>
+        </ul>
+        Устаревший <code>"mode": "hardwired"</code> (с полями <code>h</code>/<code>v</code>) принимается как алиас совместимости для <code>"scroll"</code>; его <code>h</code>/<code>v</code> становятся значением по умолчанию фабрики.</li>
+      <li><strong>Nets</strong>: именованные соединения выводов чипов с сигналами шин — плоский список пар <code>name</code> / <code>from</code>. Любая сеть может использоваться как источник <code>n_cs</code> / <code>n_oe</code> / <code>n_we</code> / адреса / mirroring, поэтому произвольная дискретная логика (например, дешифраторы на LS139, дешифрация <code>nROMSEL</code>/<code>A14</code> в UNROM) выразима без нового кода на C++.</li>
+    </ul>
+    <p>
+      Образы памяти загружаются в чипы ROM; подключения к шинам описывают, как выводы каждого чипа ROM
+      (JEDEC: <code>A0..An</code>, <code>/CE</code>, <code>/OE</code>, <code>D0..D7</code>) соединяются с
+      шиной и выходами чипов.
+    </p>
+    <p>
+      Модель списка соединений намеренно проста (сети несут <code>TriState</code>; тайминги фронтов
+      posedge/negedge живут внутри классов чипов). Это сохраняет описания плат декларативными, а тайминги
+      чипов — в симуляторах чипов.
+    </p>
+
+    <h2 id="runtime">6. Архитектура выполнения</h2>
+    <h3>6.1 Модули</h3>
+    <pre><code>CartPcb/                     (new top-level component, C++/native)
+  CartPcb.h                  public header
+  Pcb.h / Pcb.cpp            the simulated board
+  PcbFactory.h/.cpp          JSON -&gt; Pcb
+  PcbLoader.h/.cpp           locate &amp; parse PCB JSON (built-in Nescartdb + user dir)
+  NesCartDb.h/.cpp           CRC32 -&gt; board type lookup (nescartdb index)
+  InesTranslator.h/.cpp      iNES-header fallback for "wild" dumps (issue #514)
+  CartImage.h                PRG/CHR dumps + battery RAM
+  Readme.md                  this specification</code></pre>
+    <p>
+      Зависимости: <code>Common/BaseLogicLib</code> (TriState), <code>Common/JsonLib</code> (разбор JSON),
+      <code>Common/BaseBoardLib</code> (<code>RomChip</code> — ROM в стиле JEDEC, <code>SRAM</code> —
+      статическая RAM, клейкая логика <code>LS161</code>/<code>LS32</code>), <code>Nescartdb/</code>
+      (данные) и <code>Chips/</code> — для классов чипов-мапперов.
+    </p>
+
+    <h3>6.2 Ключевые классы</h3>
+    <ul>
+      <li><strong><code>Pcb</code></strong> — владеет экземплярами компонентов и картой сетей; <code>sim()</code> ведёт все компоненты от входов edge-коннектора и выдаёт выходы. Тот же стиль «подай сигналы на вход — что-то произойдёт», что и в остальном эмуляторе.</li>
+      <li><strong><code>PcbFactory</code></strong> — собирает <code>Pcb</code> из board JSON и <code>CartImage</code> (выделяет чипы, разводит сети, проверяет размеры образов на соответствие компонентам).</li>
+      <li><strong><code>PcbLoader</code></strong> — находит JSON-документ по типу платы: сначала встроенные данные <code>Nescartdb</code>, затем пользовательские JSON (которые могут дополнять или переопределять).</li>
+      <li><strong><code>NesCartDb</code></strong> — один раз загружает сконвертированный JSON nescartdb и отвечает на вопрос «по данным образам PRG/CHR, какие типы плат подходят?» по CRC32 дампов PRG и CHR. Это тот компонент, который переводит CRC образов PRG/CHR в тип PCB.</li>
+      <li><strong><code>InesTranslator</code></strong> — fallback для «диких» дампов (issue #514): когда CRC образов PRG/CHR нет в nescartdb, переводит заголовок iNES (номер маппера + размеры PRG/CHR) в тип платы, чтобы homebrew шёл тем же путём плат.</li>
+      <li><strong><code>RomChip</code></strong> — находится в <code>Common/BaseBoardLib</code>, а не в CartPcb. ROM-чип в стиле JEDEC: выводы <code>A0..An</code>, <code>D0..D7</code>, <code>/CE</code>, <code>/OE</code>; запись по <code>/WE</code> ROM игнорирует. <code>PcbFactory</code> загружает образы PRG/CHR в экземпляры <code>RomChip</code>.</li>
+      <li><strong>RAM</strong> — <code>BaseBoardLib::SRAM</code>, переработанный так, чтобы быть явным симулятором типичных статических RAM-чипов 80–90-х (стандартные функции выводов, семантика <code>n_CS</code>/<code>n_WE</code>/<code>n_OE</code>, состояние после включения питания). Используется для компонентов WRAM/VRAM, в том числе с батарейным питанием.</li>
+      <li><strong><code>CartImage</code></strong> — явные дампы PRG/CHR (плюс содержимое батарейной RAM), загружаемые в чипы ROM через <code>PcbFactory</code>. Заменяет сырой <code>uint8_t* nesImage</code> и разбор заголовка iNES внутри классов картриджей.</li>
+    </ul>
+
+    <h3>6.3 Интерфейс чипа для инжектируемых чипов</h3>
+    <p>
+      Чипы-мапперы (например, <code>MMC1</code>) — это обычные классы чипов, следующие образцу сегодняшнего
+      <code>Mappers::MMC1</code>:
+    </p>
+    <pre><code>class MMC1 {
+    void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[]);
+};</code></pre>
+    <p>
+      Список <code>nets</code> в board JSON определяет, какие выводы существуют и что ими управляет; класс
+      чипа на C++ должен предоставлять согласованную карту выводов (имя ↔ индекс входа/выхода). Контракт
+      имён выводов между JSON и классами чипов — часть issue по реализации.
+    </p>
+
+    <h3>6.4 Поток загрузки и поиска</h3>
+    <pre><code>CartImage (PRG/CHR dumps loaded into ROM chips)
+   |
+   v
+NesCartDb.FindBoard(crc32(PRG), crc32(CHR))  --&gt;  board type (e.g. "HVC-SGROM")
+   |
+   v
+PcbLoader.Load(board type)  --&gt;  board JSON  (built-in Nescartdb, or user override)
+   |
+   v
+PcbFactory.Create(board JSON, CartImage)  --&gt;  Pcb
+   |
+   v
+CartPcbCartridge (CartPcb cartridge port)  --&gt;  Board::InsertCartridge</code></pre>
+    <p>
+      Если совпадения в nescartdb нет и тип платы не принуждён, <strong>iNES-fallback</strong> (§8)
+      переводит дамп из его заголовка — номер iNES-маппера и размеры PRG/CHR, — чтобы homebrew и прочие
+      «дикие» дампы проходили тем же путём плат (issue #514).
+    </p>
+
+    <h3>6.5 Пользовательские PCB JSON (подмножество JSONES)</h3>
+    <p>Пользователь может предоставить любой board JSON одного картриджа (§5):</p>
+    <ul>
+      <li>Формат — ровно формат плат CartPcb («JSONES»-файл — это просто board JSON с добавленной метаинформацией <code>game</code>/<code>cartridge</code>, повторяющей вложенность nescartdb <code>game</code> → <code>cartridge</code> → <code>board</code>).</li>
+      <li>Расположение: пользовательский каталог данных (решается в issue по реализации; кандидаты: рядом с исполняемым файлом, <code>%APPDATA%</code> или папка <code>CustomBoards/</code>, переданная через командную строку).</li>
+      <li>Порядок загрузки: сначала встроенные данные <code>Nescartdb</code>; пользовательские JSON объединяются поверх (файл пользователя с тем же <code>board.type</code> переопределяет встроенный; файл с новым типом добавляется).</li>
+      <li>Сценарий использования: описание нелицензионных и недокументированных PCB (коллекция krzysiobal, Famiclone'ы и т.п.), которые нельзя выразить через номера iNES-мапперов.</li>
+      <li>Обход идентификации: для платы, которой нет в индексе nescartdb (совпадение по CRC невозможно), хост-приложение может принудительно задать тип платы (<code>CartPcb::SetForcedBoardType</code>, в Core API экспортируется как <code>SetForcedBoardType</code>); тогда определение платы загружается напрямую из встроенных или пользовательских board JSON.</li>
+    </ul>
+
+    <h2 id="model">7. Модель симуляции</h2>
+    <h3>7.1 Контракт edge-коннектора</h3>
+    <p>
+      Определяет картриджный порт — сигнальный контракт бывшего <code>Mappers::AbstractCartridge</code>,
+      который теперь живёт в CartPcb (<code>CartPcb::Cartridge</code>):
+    </p>
+    <ul>
+      <li>Входы (<code>CartInput</code>): <code>M2</code>, <code>nROMSEL</code>, <code>RnW</code>, <code>nRD</code>, <code>nWR</code>, <code>nPA13</code>, а также только для NES — <code>SYSTEM_CLK</code>, <code>CIC_CLK</code>, <code>CIC_TO_CART</code>.</li>
+      <li>Выходы (<code>CartOutput</code>): <code>VRAM_A10</code>, <code>VRAM_nCS</code>, <code>nIRQ</code>, а также только для NES — <code>CIC_RST</code>, <code>CIC_TO_MB</code>.</li>
+      <li>Звуковой выход Famicom (<code>CartAudioOutSignal</code>) и порт расширения NES (<code>exp</code>).</li>
+    </ul>
+    <p>
+      <code>CartPcbCartridge</code> владеет <code>Pcb</code> и пробрасывает в него сигналы edge-коннектора.
+      Материнские платы (<code>Breaknes/BreaksCore/NESBoard.cpp</code>, <code>FamicomBoard.cpp</code>)
+      используют <code>CartPcb::Cartridge*</code>.
+    </p>
+
+    <h3>7.2 Источники сетей</h3>
+    <p>Предопределённые источники, доступные board JSON:</p>
+    <table>
+      <thead><tr><th>Источник</th><th>Значение</th></tr></thead>
+      <tbody>
+        <tr><td><code>cpu_addr[n]</code>, <code>cpu_addr[a:b]</code></td><td>биты шины адреса CPU</td></tr>
+        <tr><td><code>ppu_addr[n]</code>, <code>ppu_addr[a:b]</code></td><td>биты шины адреса PPU</td></tr>
+        <tr><td><code>cpu_data[n]</code></td><td>биты шины данных CPU</td></tr>
+        <tr><td><code>M2</code>, <code>nROMSEL</code>, <code>RnW</code>, <code>nRD</code>, <code>nWR</code>, <code>nPA13</code></td><td>управляющие сигналы edge-коннектора</td></tr>
+        <tr><td><code>&lt;chip&gt;.&lt;PIN&gt;</code></td><td>любой выходной вывод чипа (например, <code>mmc1.PRG_A14</code>, <code>mmc1.VRAM_A10</code>)</td></tr>
+        <tr><td><code>gnd</code>, <code>vdd</code></td><td>константы</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Производные выражения (<code>|</code> — конкатенация, булевы операторы <code>&amp;</code>/<code>|</code>/<code>!</code>)
+      формируют линии адреса и chip-select'ы.
+    </p>
+
+    <h3>7.3 Семантика чипов памяти</h3>
+    <p>
+      <code>RomChip</code> (в стиле JEDEC) и <code>SRAM</code> следуют классическому протоколу микросхем
+      памяти (<code>/CE</code> — chip enable, <code>/OE</code> — output enable, <code>/WE</code> — write
+      enable, <code>A0..An</code>, <code>D0..D7</code>):
+    </p>
+    <ul>
+      <li>Чтение: <code>/CE == 0 &amp;&amp; /OE == 0</code> → выставить данные на шину (обработка <code>dz</code> идентична SRAM).</li>
+      <li>Запись (только RAM): <code>/CE == 0 &amp;&amp; /WE == 0</code> → захват данных. ROM игнорирует <code>/WE</code>; на платах с CHR-RAM вместо ROM на шине PPU используется <code>SRAM</code>.</li>
+      <li>Ширина адреса выводится из <code>size</code> компонента (например, 32 КиБ → <code>A0..A14</code>).</li>
+      <li>Отладка: <code>Dbg_ReadByte</code> / <code>Dbg_WriteByte</code> / <code>Dbg_GetSize</code> для каждого чипа, доступные через отладочный интерфейс платы.</li>
+    </ul>
+
+    <h3>7.4 Mirroring → Scroll</h3>
+    <p>
+      Для декларативного описания PCB не существует определения «Mirroring» (issue #525). Термин «Mirroring»
+      принадлежит заголовку iNES; на плате есть только паяная перемычка и выбираемая ею scroll-схема
+      (nesdev «arrangement»):
+    </p>
+    <table>
+      <thead><tr><th>Перемычка PCB (Scroll)</th><th>Разводка</th><th>Заголовок iNES (Flags6, бит 0)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>H Scroll</strong></td><td><code>VRAM_A10 = PA10</code></td><td><code>1</code> («vertical mirroring»)</td></tr>
+        <tr><td><strong>V Scroll</strong></td><td><code>VRAM_A10 = PA11</code></td><td><code>0</code> («horizontal mirroring»)</td></tr>
+      </tbody>
+    </table>
+    <p>Эти два термина взаимоисключающие: H Scroll (PCB) == vertical mirroring (iNES).</p>
+    <ul>
+      <li><code>"mode": "scroll"</code>: плата имеет перемычку scroll. Конкретное значение scroll — параметр <strong>экземпляра картриджа</strong>, применяемый загрузчиком из заголовка <code>.nes</code> (<code>Pcb::ApplyScrollFromHeader</code>, бит 0 = 1 → H Scroll) или из контактных площадок nescartdb (<code>ApplyPadScroll</code>). Платы, ведущие <code>VRAM_A10</code> с выхода чипа-маппера, параметра Scroll <strong>не имеют</strong>.</li>
+      <li><code>"mode": "mapper"</code>: <code>VRAM_A10</code> ведётся сетью (например, <code>mmc1.VRAM_A10</code>) — ровно как на платах MMC1.</li>
+      <li>Платы без разводки VRAM (например, некоторые дискретные) могут оставить mirroring незаданным.</li>
+    </ul>
+    <p>Внутренние 2 КиБ видеопамяти PPU вместе с её линией <code>VRAM_A10</code> называются просто <strong>VRAM</strong>.</p>
+
+    <h3>7.5 Связь с существующими компонентами</h3>
+    <table>
+      <thead><tr><th>Компонент</th><th>Роль</th></tr></thead>
+      <tbody>
+        <tr><td><code>CartPcb::Cartridge</code></td><td>Контракт картриджного порта (входы/выходы/отладка); бывший <code>Mappers::AbstractCartridge</code>. Реализуется классом <code>CartPcbCartridge</code>.</td></tr>
+        <tr><td>компонент <code>Mappers</code></td><td><strong>Выведен из эксплуатации</strong> (issue #509). Вся папка удалена; этот документ заменяет старый <code>Mappers/Readme.md</code>; файлы сборки (<code>CMakeLists.txt</code>, VS-проекты) обновлены.</td></tr>
+        <tr><td><code>Chips/MMC1</code></td><td>Класс чипа MMC1 (перенесён из Mappers), с юнит-тестами.</td></tr>
+        <tr><td><code>Chips</code>, <code>BaseBoardLib</code></td><td>Предоставляют классы чипов (<code>MMC1</code>, <code>RomChip</code>, <code>SRAM</code>, <code>LS161</code>, <code>LS32</code>), которые потребляет CartPcb.</td></tr>
+        <tr><td><code>Common/JsonLib</code></td><td>Разбор JSON для board JSON и JSON nescartdb.</td></tr>
+        <tr><td><code>Nescartdb/</code></td><td>Сконвертированная база (данные идентификации).</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="identification">8. Идентификация (NesCartDb)</h2>
+    <ul>
+      <li>Вход: образ PRG, образ CHR. Идентификация — по <strong>CRC32 дампов PRG и CHR</strong>; SHA1 не используется.</li>
+      <li>Поиск: при загрузке один раз строится карта PRG CRC + CHR CRC → картридж → <code>board.type</code>; находятся все картриджи, чьи CRC образов PRG и CHR совпадают.</li>
+      <li>Неоднозначность: некоторые дампы соответствуют нескольким картриджам/платам (одинаковые ROM на разных PCB). <code>NesCartDb</code> возвращает полный список кандидатов; вызывающий берёт первое совпадение или то, чья <code>system</code> подходит материнской плате. Эта неоднозначность — <em>фича</em> по сравнению с iNES: информация выводится наружу, а не молча теряется.</li>
+      <li>Если совпадений нет, <strong>iNES-fallback</strong> (<code>InesTranslator</code>, issue #514) переводит дамп из его заголовка: номер iNES-маппера (Flags6/7) и размеры PRG/CHR выбирают тип платы (маппер 0 → NROM-128/256 по размеру PRG, 1 → MMC1 (SGROM для CHR-ROM / SHROM для CHR-RAM), 2 → UNROM, 3 → CNROM, 7 → AOROM). Переведённый дамп проходит тем же путём <code>PcbLoader</code> → <code>PcbFactory</code>, в лог пишется предупреждение. Неизвестные мапперы (например, MMC3, пока чип не реализован) не загружаются. Плату, которой нет в базе, можно принудить через <code>SetForcedBoardType</code> (§6.5).</li>
+    </ul>
+
+    <h2 id="coverage">9. План покрытия плат</h2>
+    <p>
+      Платы добавляются постепенно, каждая как: board JSON + юнит-тест + (пока существовала старая
+      реализация) parity-тест:
+    </p>
+    <ol>
+      <li><strong>NROM</strong> (<code>NES-NROM-128/256</code>, <code>HVC-NROM-*</code>, <code>IREM-NROM-*</code>, ...) — без чипа-маппера: PRG + CHR + перемычка scroll. Заменяет старый <code>NROM</code>.</li>
+      <li><strong>UxROM</strong> (<code>NES-UNROM</code>, <code>NES-UOROM</code>, ...) — дискретное переключение банков PRG (A14), 8 КиБ CHR-RAM. Описывается реальной клейкой логикой: регистр банка <strong>74LS161</strong> и адресный мультиплексор <strong>74LS32</strong> (issue #525). Заменяет старый <code>UNROM</code>.</li>
+      <li><strong>AxROM</strong> (<code>NES-AOROM</code>, <code>NES-ANROM</code>, ...) — одноэкранный mirroring через регистр банка <strong>74LS161</strong> (Q3 → <code>VRAM_A10</code>). Заменяет старый <code>AOROM</code>.</li>
+      <li><strong>Семейство MMC1</strong> (SGROM, SLROM, ...) — чип <code>MMC1</code> из <code>Chips</code>, разведённый по §5.2. Заменяет старый <code>MMC1_Based</code>.</li>
+      <li><strong>Запасные платы</strong> (issue #514): <code>CNROM</code> (переключение банков CHR на latch) и <code>SHROM</code> (MMC1 + CHR-RAM) существуют, чтобы iNES-fallback мог переводить дампы маппера 3 и маппер-1 с CHR-RAM.</li>
+      <li><strong>Следующие кандидаты</strong>: семейство MMC3, платы дискретной логики (BxROM, ...).</li>
+    </ol>
+
+    <h2 id="migration">10. Чек-лист миграции (Mappers → CartPcb)</h2>
+    <p>Выполнено в issue #509:</p>
+    <ol>
+      <li>Контракт картриджного порта (бывший <code>Mappers::AbstractCartridge</code>) переехал в CartPcb (<code>CartPcb::Cartridge</code>).</li>
+      <li><code>CartImage</code> заменил сырой <code>uint8_t* nesImage</code>; PRG и CHR — явные именованные дампы заданного размера, загружаемые в экземпляры <code>RomChip</code>.</li>
+      <li><code>RomChip</code> (в стиле JEDEC, в <code>BaseBoardLib</code>) и переработанный <code>SRAM</code> заменили сырые байтовые массивы.</li>
+      <li><code>NesCartDb</code> (только CRC32) + <code>PcbLoader</code> + <code>PcbFactory</code> заменили <code>switch</code> по iNES-мапперам в старом <code>CartridgeFactory</code>.</li>
+      <li><code>MMC1</code> переехал в <code>Chips</code> (с юнит-тестами); исправлено устаревшее чтение PRG без маски.</li>
+      <li>NROM/UNROM/AOROM/SGROM/SLROM перевыражены как board JSON и прошли A/B parity-тесты против старых реализаций.</li>
+      <li>Весь компонент <code>Mappers</code> удалён (включая <code>AbstractCartridge</code> и <code>CartridgeFactory</code>); файлы сборки обновлены.</li>
+      <li>Все потребители ищут JSON nescartdb и каталоги пользовательских плат согласно <code>Nescartdb/Readme.md</code>.</li>
+    </ol>
+
+    <h2 id="debug">11. Отладка и тестирование</h2>
+    <ul>
+      <li><strong>Карта памяти</strong>: каждая плата регистрирует свои области памяти (PRG, CHR, WRAM) как <code>MemDescriptor</code> с почиповыми <code>Dbg_ReadByte</code>/<code>Dbg_WriteByte</code>, сохраняя вид памяти в отладчике (и добавляя поддержку PRG, которой не хватало).</li>
+      <li><strong>Отладочная информация</strong>: платы публикуют отладочные записи по каждой сети/чипу (категория = тип платы), например текущий банк PRG, состояние <code>nROMSEL</code>, режим scroll.</li>
+      <li><strong>Юнит-тесты</strong> (<code>UnitTest/</code>): разбор JSON → инстанцирование платы; поведение чипов <code>/CE</code>/<code>/OE</code>/<code>/WE</code>; mirroring; адресная математика переключения банков для каждой поддерживаемой платы; тесты чипа MMC1; загрузка пользовательских плат JSONES.</li>
+      <li><strong><code>Dbg_ReadPRGByte</code></strong> остаётся на картриджном порту CartPcb (используется отладчиком и дизассемблером лога Nintendulator); он выводится из разметки чипа PRG.</li>
+    </ul>
+
+    <h2 id="future">12. Не-цели / дальнейшая работа</h2>
+    <ul>
+      <li>Попиновые тайминги и задержки распространения в v1 не моделируются: сети комбинаторные, тайминги живут в классах чипов.</li>
+      <li>Сложные платы дискретной логики выразимы через сети, но будут добавляться по мере развития языка списка соединений.</li>
+      <li>Звуковое расширение Famicom (VRC6, FDS, ...) — тема на потом; разъём уже несёт звуковую линию.</li>
+    </ul>
+
+    <p class="note">Источник: <code>CartPcb/Readme.md</code> · страница входит в <a href="index_ru.html">сайт документации</a>.</p>
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · CartPcb/Readme.md</div>
+    <div class="prs">Документация: <a href="about_ru.html">О проекте</a> · <a href="cartpcb_ru.html">CartPcb</a> · <a href="nescartdb_ru.html">Nescartdb</a> · <a href="io_ru.html">IO</a> · <a href="chips_ru.html">Chips</a> · <a href="common_ru.html">Common</a> · <a href="breakscore_ru.html">BreaksCore</a> · <a href="unittest_ru.html">UnitTest</a> · <a href="tools_ru.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

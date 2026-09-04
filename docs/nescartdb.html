@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nescartdb — cartridge identification database — Breaknes docs</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Toggle theme"
+        data-label-light="Switch to dark theme" data-label-dark="Switch to light theme">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index.html">← Breaknes</a> · Docs</span>
+    <span class="lang"><b>English</b> · <a href="nescartdb_ru.html">Русский</a></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Nescartdb</h1>
+      <p class="lede">The nescartdb database converted to JSON — identifies cartridge PCBs by the CRC32 of their PRG/CHR dumps</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      Converted <strong>nescartdb</strong> database in JSON format, used to identify NES/Famicom cartridge PCBs by
+      the content of their PRG/CHR dumps.
+    </p>
+    <p>
+      This folder is the single source of cartridge-identification data for every Breaknes consumer: the native core
+      (BreaksCore), the managed application (Breaknes), the SDL port, and the tools (PPUPlayer, APUPlayer).
+    </p>
+
+    <hr>
+
+    <h2 id="why">1. Why this folder exists</h2>
+    <p>
+      The old <code>Mappers</code> component identifies cartridges by the iNES header and the iNES mapper number.
+      That is a poor fit for a functional simulator:
+    </p>
+    <ul>
+      <li>The same iNES mapper number covers many electrically different boards.</li>
+      <li>The header does not say what chips are on the board or how they are connected.</li>
+      <li>Unlicensed/Famiclone boards often cannot be expressed with iNES at all.</li>
+    </ul>
+    <p>
+      The solution (issue #508) is to identify cartridges by <strong>board type</strong> using the nescartdb database,
+      which describes the actual PCB of every dumped cartridge (components, sizes, CRCs, mirroring).
+    </p>
+    <p>
+      The native code has no XML engine, so the nescartdb XML is converted to JSON once, stored here, and consumed by
+      everyone.
+    </p>
+
+    <h2 id="data-source">2. Data source</h2>
+    <table>
+      <thead><tr><th></th><th></th></tr></thead>
+      <tbody>
+        <tr><td>Database</td><td><a href="https://nescartdb.com">nescartdb</a> (bootgod / brizzo)</td></tr>
+        <tr><td>Export used</td><td><code>forum.nesdev.org - tepples/NesCarts (2017-08-21).utf8.xml</code> from the <a href="https://github.com/MetaFight/NesCartDB">MetaFight/NesCartDB</a> mirror</td></tr>
+        <tr><td>Contents</td><td>~3179 cartridge entries, 273 distinct board types, for all regions (NES-NTSC, NES-PAL, Famicom, Dendy, ...)</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The export is a static snapshot (2017-08-21). The conversion is deterministic: the same XML always produces the
+      same JSON, so the JSON can be regenerated at any time.
+    </p>
+
+    <h2 id="files">3. Files in this folder</h2>
+    <pre><code>Nescartdb/
+  Readme.md          &lt;- this file
+  nescarts.json      &lt;- the full converted database (generated, committed)
+  index.json         &lt;- flattened lookup index: prg_crc/chr_crc -&gt; board type (generated, committed)
+  boards/            &lt;- board definitions (authored, not generated) + the family index
+</code></pre>
+    <ul>
+      <li><code>nescarts.json</code> — the full database, faithful to the XML: <code>game</code> → <code>cartridge</code> → <code>board</code> nesting, with all attributes (see §5).</li>
+      <li><code>index.json</code> — a flat array of lookup records (<code>prg_crc</code>, <code>chr_crc</code>, <code>board.type</code>, <code>board.pcb</code>, <code>mapper</code>, <code>system</code>), generated from <code>nescarts.json</code>. The runtime loads this small file to answer “which board types match these PRG/CHR CRCs?” without walking the whole database.</li>
+      <li><code>boards/</code> — the board JSON definitions (<code>nrom.json</code>, <code>unrom.json</code>, <code>aorom.json</code>, <code>sgrom.json</code>, plus <code>cnrom.json</code>/<code>shrom.json</code> for the iNES fallback) and <code>index.json</code>, the family mapping board type → definition file (see §6.1).</li>
+    </ul>
+    <p>
+      The generated files are <strong>committed</strong> to the repository so that no network access is needed at build
+      or run time.
+    </p>
+
+    <h2 id="conversion">4. Conversion pipeline</h2>
+    <pre><code>Tools/NescartdbConvert/convert.py
+   XML (tepples export)  ---&gt;  nescarts.json  ---&gt;  index.json
+</code></pre>
+    <ul>
+      <li>The converter is a small Python script (like <code>Tools/DumpRegdump/DumpRegdump.py</code>), kept in <code>Tools/NescartdbConvert/</code>.</li>
+      <li>It is run manually (or in CI) when the source XML is updated; its output is committed.</li>
+      <li>The converter normalizes data for native consumption:
+        <ul>
+          <li>sizes: <code>"256k"</code> → bytes (<code>262144</code>), <code>"8k"</code> → <code>8192</code>, etc.;</li>
+          <li>booleans: <code>battery</code> → <code>true</code>/<code>false</code>, <code>prototype</code> → <code>true</code>/<code>false</code>;</li>
+          <li>attribute names are preserved 1:1 where possible (see the mapping table in §5).</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2 id="schema">5. JSON schema (<code>nescarts.json</code>)</h2>
+    <p>Direct mapping of the XML structure:</p>
+    <pre><code>{
+  "source": {
+    "name": "NesCartDB",
+    "agent": "NesCartDB",
+    "author": "BootGod",
+    "export": "forum.nesdev.org - tepples/NesCarts (2017-08-21).utf8.xml",
+    "converted_at": "2026-09-01T00:00:00Z",
+    "converter": "Tools/NescartdbConvert/convert.py"
+  },
+  "games": [
+    {
+      "name": "10-Yard Fight",
+      "altname": "１０ヤードファイト",
+      "class": "Licensed",
+      "subclass": "3rd-Party",
+      "catalog": "IF-02",
+      "publisher": "Irem",
+      "developer": "Irem",
+      "portdeveloper": null,
+      "region": "Japan",
+      "players": 2,
+      "date": "1985-08-30",
+      "cartridges": [
+        {
+          "system": "Famicom",
+          "revision": null,
+          "crc": "836C4FA7",
+          "dump": "ok",
+          "dumper": "bootgod",
+          "datedumped": "2007-05-06",
+          "prototype": false,
+          "board": {
+            "type": "IREM-NROM-128",
+            "pcb": "IREM-01-V",
+            "mapper": 0,
+            "prg":  { "name": null, "id": null, "size": 16384, "crc": "D3D248C9" },
+            "chr":  { "name": null, "id": null, "size": 8192,  "crc": "9C124A53" },
+            "wram": null,
+            "vram": null,
+            "chips": [],
+            "cic":   [],
+            "pad":   { "h": 0, "v": 1 },
+            "peripherals": []
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+
+    <h3 id="mapping">5.1 XML → JSON mapping</h3>
+    <table>
+      <thead><tr><th>XML</th><th>JSON</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;database&gt;</code></td><td><code>source</code></td><td><code>version</code>, <code>conformance</code>, <code>agent</code>, <code>author</code>, <code>timestamp</code> folded into <code>source</code>; the converter adds <code>export</code>, <code>converted_at</code>, <code>converter</code></td></tr>
+        <tr><td><code>&lt;game&gt;</code></td><td><code>games[]</code></td><td><code>name</code>, <code>altname</code>, <code>class</code>, <code>subclass</code>, <code>catalog</code>, <code>publisher</code>, <code>developer</code>, <code>portdeveloper</code>, <code>region</code>, <code>players</code>, <code>date</code></td></tr>
+        <tr><td><code>&lt;cartridge&gt;</code></td><td><code>games[].cartridges[]</code></td><td><code>system</code>, <code>revision</code>, <code>crc</code>, <code>dump</code>, <code>dumper</code>, <code>datedumped</code>, <code>prototype</code> (<code>sha1</code> intentionally omitted — identification is CRC-only)</td></tr>
+        <tr><td><code>&lt;board&gt;</code></td><td><code>...board</code></td><td><code>type</code> (board type), <code>pcb</code> (board revision), <code>mapper</code> (iNES mapper number — informational only, <strong>not</strong> used for identification)</td></tr>
+        <tr><td><code>&lt;prg&gt;</code> / <code>&lt;chr&gt;</code></td><td><code>board.prg</code> / <code>board.chr</code></td><td><code>name</code>, <code>id</code>, <code>size</code> (bytes), <code>crc</code> (<code>sha1</code> intentionally omitted)</td></tr>
+        <tr><td><code>&lt;wram&gt;</code> / <code>&lt;vram&gt;</code></td><td><code>board.wram</code> / <code>board.vram</code></td><td><code>size</code>, <code>battery</code>, <code>id</code></td></tr>
+        <tr><td><code>&lt;chip&gt;</code></td><td><code>board.chips[]</code></td><td><code>type</code> (e.g. <code>MMC1A</code>, <code>MMC3B</code>), <code>battery</code></td></tr>
+        <tr><td><code>&lt;cic&gt;</code></td><td><code>board.cic[]</code></td><td><code>type</code> (e.g. <code>3193A</code>, <code>6113</code>)</td></tr>
+        <tr><td><code>&lt;pad&gt;</code></td><td><code>board.pad</code></td><td><code>h</code>, <code>v</code> (mirroring)</td></tr>
+        <tr><td><code>&lt;peripherals&gt;</code>/<code>&lt;device&gt;</code>/<code>&lt;pin&gt;</code></td><td><code>board.peripherals[]</code></td><td>passthrough of the raw pin data</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="index">5.2 Lookup index (<code>index.json</code>)</h3>
+    <pre><code>[
+  {
+    "prg_crc": "D3D248C9",
+    "chr_crc": "9C124A53",
+    "system": "Famicom",
+    "type": "IREM-NROM-128",
+    "pcb": "IREM-01-V",
+    "mapper": 0
+  }
+]
+</code></pre>
+    <ul>
+      <li>One record per cartridge with a known PRG/CHR CRC pair.</li>
+      <li>Identification is by <strong>PRG CRC32 + CHR CRC32</strong> only (SHA1 is not used): the runtime computes CRC32 of the PRG and CHR dumps and looks up <code>prg_crc</code> + <code>chr_crc</code>.</li>
+      <li>Multiple records may share the same CRCs (same ROMs on different PCBs) — all matches are returned; the caller picks the fit (see <code>CartPcb/Readme.md</code> §8).</li>
+      <li>Records may carry the mirroring solder pads as <code>"h"</code>/<code>"v"</code> (informational). The pads use the <strong>iNES mirroring terms</strong> — the inverse of the PCB scroll term (issue #525): <code>v=1</code> (iNES “vertical mirroring”) means the cartridge’s scroll jumper is set to <strong>H Scroll</strong> (<code>VRAM_A10 = PA10</code>), <code>h=1</code> means <strong>V Scroll</strong> (<code>VRAM_A10 = PA11</code>). The runtime does not use the pads to override the <code>.nes</code> header; the scroll of scroll-jumper boards always follows the header.</li>
+    </ul>
+
+    <h2 id="consumers">6. Consumers</h2>
+    <table>
+      <thead><tr><th>Consumer</th><th>How it uses this folder</th></tr></thead>
+      <tbody>
+        <tr><td>BreaksCore (native)</td><td><code>CartPcb::NesCartDb</code> loads <code>index.json</code> for CRC → board type lookup.</td></tr>
+        <tr><td>CartPcb (native)</td><td>Board JSONs referenced by the index (built-in definitions + user overrides).</td></tr>
+        <tr><td>Managed Breaknes app</td><td>Locates the JSON next to the executable (copied at build time) and can also parse it directly for UI purposes (board type shown to the user).</td></tr>
+        <tr><td>SDL port</td><td>Same native path as BreaksCore.</td></tr>
+        <tr><td>PPUPlayer / APUPlayer</td><td>Use the same <code>Nescartdb</code> data via the native core or their own copy.</td></tr>
+      </tbody>
+    </table>
+    <p>
+      <strong>Deployment</strong>: the <code>Nescartdb/</code> files (including <code>boards/*.json</code>) are copied to
+      the output directory on build (<code>Breaknes.csproj</code> and <code>BreaknesSDL.vcxproj</code> copy them next to
+      the executable). Native code locates them relative to the executable: the managed app passes its base directory via
+      <code>SetNescartdbDir</code>; the SDL port uses the <code>Nescartdb</code> folder next to the executable (override
+      with the <code>NESCARDB_DIR</code> environment variable). Custom boards go to the user board directory
+      (<code>CustomBoards/</code> next to the executable by default in the managed app, configurable via
+      <code>SetUserBoardsDir</code>).
+    </p>
+
+    <h3 id="boards">6.1 Board definitions (<code>boards/</code>)</h3>
+    <p>The <code>boards/</code> folder contains the board JSONs that <code>PcbLoader</code> resolves a board type to:</p>
+    <ul>
+      <li><code>index.json</code> — the family mapping: board type → board definition file (e.g. all <code>*-NROM-*</code> types map to <code>nrom.json</code>). The Namco <code>NAMCOT-3305</code> board (The Tower of Druaga, Pac-Land) is electrically an NROM-256 (2x16K PRG + 8K CHR, no mapper logic, hardwired H-scroll) and maps to <code>nrom.json</code> too (issue #527).</li>
+      <li><code>nrom.json</code>, <code>unrom.json</code>, <code>aorom.json</code>, <code>sgrom.json</code> — the built-in board definitions for the NROM/UxROM/AxROM/MMC1 families (the UNROM and AOROM definitions include the real 74LS161/74LS32 glue logic, see <code>CartPcb/Readme.md</code> §5.3).</li>
+      <li><code>cnrom.json</code>, <code>shrom.json</code> — boards added for the iNES fallback of “wild” dumps (issue #514): mapper 3 (CNROM, latch-based CHR bank switch) and mapper 1 with CHR-RAM (SHROM-style MMC1 wiring).</li>
+    </ul>
+    <p>
+      Board definitions are authored (not generated from the XML): nescartdb describes the component inventory, CartPcb
+      adds the wiring (<code>circuit</code>). New board types referenced by the converter output or by the iNES fallback
+      must be added here by hand.
+    </p>
+
+    <h2 id="versioning">7. Versioning &amp; regeneration policy</h2>
+    <ul>
+      <li><code>nescarts.json</code> and <code>index.json</code> are generated artifacts, but they are <strong>committed</strong> (no network at run time, diffable history).</li>
+      <li>When the source XML is updated: re-run <code>Tools/NescartdbConvert/convert.py</code>, commit the regenerated JSON, bump the <code>source.converted_at</code> timestamp.</li>
+      <li>The JSON schema is versioned via <code>source.version</code>; breaking changes to the schema bump the version and are coordinated with <code>CartPcb</code>’s loader.</li>
+    </ul>
+
+    <h2 id="licensing">8. Licensing &amp; attribution</h2>
+    <ul>
+      <li>The data is the nescartdb database by <strong>bootgod</strong> (site run by bootgod and brizzo), mirrored at <a href="https://github.com/MetaFight/NesCartDB">MetaFight/NesCartDB</a>.</li>
+      <li>The upstream mirror ships <strong>no explicit license</strong>, so the data must be treated as all-rights-reserved: keep the attribution (<code>source</code> block in the JSON and the <code>Nescartdb/Readme.md</code>), and verify redistribution terms before any release packaging.</li>
+      <li>The XML export itself originates from a forum.nesdev.org post by <strong>tepples</strong> (2017-08-21); credit is kept in <code>source.export</code>.</li>
+    </ul>
+
+    <h2 id="jsones">9. Relationship to CartPcb and JSONES</h2>
+    <ul>
+      <li><code>Nescartdb/</code> provides <strong>identification</strong> (which PCB is this dump?) — see <code>CartPcb/Readme.md</code> §8.</li>
+      <li><code>CartPcb</code> provides <strong>simulation</strong> of the identified PCB — the board JSON format is defined in <code>CartPcb/Readme.md</code> §5.</li>
+      <li><strong>“Wild” dumps</strong> (issue #514): when the PRG/CHR CRCs of a dump are not in <code>index.json</code> (homebrew, undocumented dumps), <code>CartPcb::InesTranslator</code> falls back to the iNES header (mapper number + PRG/CHR sizes) and maps it to one of the board types above; the dump then runs through the same board path. This is a translation, not an identification: the header is rigid and lossy, so the fallback only covers the common simple mappers.</li>
+      <li><strong>JSONES</strong> (issue #189) is a subset of the CartPcb board format: a single-cartridge JSON with <code>game</code> → <code>cartridge</code> → <code>board</code> nesting, usable as a custom board definition in addition to the built-in nescartdb data (<code>CartPcb/Readme.md</code> §6.5).</li>
+    </ul>
+
+  </main>
+
+  <footer>
+    <div>Source: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Nescartdb/Readme.md</div>
+    <div class="prs">Docs: <a href="about.html">About</a> · <a href="cartpcb.html">CartPcb</a> · <a href="nescartdb.html">Nescartdb</a> · <a href="io.html">IO</a> · <a href="chips.html">Chips</a> · <a href="common.html">Common</a> · <a href="breakscore.html">BreaksCore</a> · <a href="unittest.html">UnitTest</a> · <a href="tools.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

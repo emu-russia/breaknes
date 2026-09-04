@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IO-подсистема — контроллеры и устройства — документация Breaknes</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="io.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>IO-подсистема</h1>
+      <p class="lede">Устройства ввода-вывода для NES, Famicom и Dendy: реальные и виртуальные контроллеры и архитектура их привязки к материнской плате</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      Данный раздел содержит реализацию логики различных устройств ввода/вывода для
+      NES/Famicom/Dendy, портов расширения и сопроводительных чипов.
+    </p>
+
+    <p>TBD: порты расширения пока не реализованы и не рассматриваются.</p>
+
+    <h2 id="overview">Обзор</h2>
+    <p>Как может показаться - что может быть сложного в обычном контроллере? Однако...</p>
+    <ul>
+      <li>Соединение контроллеров различается у NES/Famicom/Dendy. NES/Dendy использует соединение через порты. В Famicom контроллеры неразъёмно соединены с основным юнитом.</li>
+      <li>На втором контроллере Famicom есть микрофон (да, такой вот wtf из 90-х).</li>
+      <li>На контроллерах Dendy есть Turbo-кнопки</li>
+      <li>Количество портов, их тип и реализация I/O на материнской плате различается между всеми консолями</li>
+    </ul>
+    <p>И как всё это красиво обобщить? :-)</p>
+
+    <h2 id="architecture">Архитектура IO-подсистемы</h2>
+    <ul>
+      <li>Реализация логики устройств находится в нативном коде</li>
+      <li>Каждое устройство ввода снабжается уникальным идентификатором, полностью определяющим его модель и реализацию (<code>DeviceID</code>); список всех идентификаторов в <code>io.h</code></li>
+      <li>Описание материнской платы в <code>BoardDescription.json</code> содержит список портов (<code>IOPort</code>). Каждый порт содержит список ID устройств, которые можно к нему подключить (<code>Attach</code> / <code>Detach</code>)</li>
+      <li>IO-подсистема содержит фабрику для создания устройств по их <code>DeviceID</code>. Созданное устройство определяется описателем, целым числом &gt;= 0 (<code>Handle</code>)</li>
+      <li>Каждое устройство предоставляет список своих контролов ввода/вывода (<code>IOState</code>). Каждый <code>IOState</code> определяется целым числом &gt;= 0</li>
+      <li>Устройство содержит метод <code>SetState</code>, с помощью которого потребитель может устанавливать состояния контролов <code>IOState</code></li>
+    </ul>
+
+    <h2 id="configuring">Настройка IO-устройств</h2>
+    <p>Со стороны эмулятора настройка сводится к привязке <code>IOState</code> к какому-то API для работы с устройствами ввода на стороне ПК. Затем ассоциативная связь используется для установки <code>SetState</code> подключённого устройства.</p>
+    <p>Эмулятор содержит пул зарегистрированных устройств с указанием <code>DeviceID</code> (устройства добавляет и удаляет пользователь).</p>
+    <p>Далее каждое устройство можно настроить (грубо говоря, сделать привязку <code>IOState</code> к DirectInput/XInput или ещё какому-то API). У каждого типа устройств свой диалог привязки кнопок/прочих актуаторов.</p>
+    <p>После настройки устройство можно подключить или отключить к указанной модели материнской платы (<code>Attach</code> / <code>Detach</code>). После запуска эмуляции для IO-подсистемы будут созданы экземпляры подключённых устройств, подключены к портам, и далее эмулятор может вызывать со своей стороны <code>SetState</code>, чтобы нативная реализация преобразовывала <code>IOState</code> в конкретные сигналы для портов ввода/вывода.</p>
+    <p>Опять же, описание весьма абстрактное — по ходу работ оно кристаллизуется в конкретные классы/методы.</p>
+
+    <h2 id="abstract-device">Абстрактное устройство</h2>
+    <p><code>DeviceID</code>: <code>0x00000000</code></p>
+    <p>Не содержит никаких <code>IOState</code>.</p>
+
+    <h2 id="famicom-controller-port1">Famicom Controller (Port1)</h2>
+    <img src="assets/img/famicom_controller1.png" alt="Контроллер Famicom (Port1)">
+    <p><code>DeviceID</code>: <code>0x00000001</code></p>
+    <table>
+      <thead><tr><th>IOState</th><th>Actuator</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>Up</td><td>0/1</td></tr>
+        <tr><td>1</td><td>Down</td><td>0/1</td></tr>
+        <tr><td>2</td><td>Left</td><td>0/1</td></tr>
+        <tr><td>3</td><td>Right</td><td>0/1</td></tr>
+        <tr><td>4</td><td>Select</td><td>0/1</td></tr>
+        <tr><td>5</td><td>Start</td><td>0/1</td></tr>
+        <tr><td>6</td><td>B</td><td>0/1</td></tr>
+        <tr><td>7</td><td>A</td><td>0/1</td></tr>
+      </tbody>
+    </table>
+    <p>Контроллеры Famicom, хотя внешне и несъёмные, но внутри корпуса их всё же можно отсоединить, поэтому для унификации кода будем считать их съёмными.</p>
+
+    <h2 id="famicom-controller-port2">Famicom Controller (Port2)</h2>
+    <img src="assets/img/famicom_controller2.png" alt="Контроллер Famicom (Port2)">
+    <p><code>DeviceID</code>: <code>0x00000002</code></p>
+    <table>
+      <thead><tr><th>IOState</th><th>Actuator</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>Up</td><td>0/1</td></tr>
+        <tr><td>1</td><td>Down</td><td>0/1</td></tr>
+        <tr><td>2</td><td>Left</td><td>0/1</td></tr>
+        <tr><td>3</td><td>Right</td><td>0/1</td></tr>
+        <tr><td>4</td><td>B</td><td>0/1</td></tr>
+        <tr><td>5</td><td>A</td><td>0/1</td></tr>
+        <tr><td>6</td><td>Volume</td><td>0...255</td></tr>
+        <tr><td>7</td><td>MicLevel</td><td>0...255</td></tr>
+      </tbody>
+    </table>
+    <p>Значения громкости и уровня микрофона пока в диапазоне <code>UInt8</code> — посмотрим, насколько хороша эта модель в процессе.</p>
+
+    <h2 id="nes-controller">NES Controller (Port1/2)</h2>
+    <img src="assets/img/nes_controller.png" alt="Контроллер NES (Port1/2)">
+    <p><code>DeviceID</code>: <code>0x00000003</code></p>
+    <table>
+      <thead><tr><th>IOState</th><th>Actuator</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>Up</td><td>0/1</td></tr>
+        <tr><td>1</td><td>Down</td><td>0/1</td></tr>
+        <tr><td>2</td><td>Left</td><td>0/1</td></tr>
+        <tr><td>3</td><td>Right</td><td>0/1</td></tr>
+        <tr><td>4</td><td>Select</td><td>0/1</td></tr>
+        <tr><td>5</td><td>Start</td><td>0/1</td></tr>
+        <tr><td>6</td><td>B</td><td>0/1</td></tr>
+        <tr><td>7</td><td>A</td><td>0/1</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="dendy-turbo-controller">Dendy Turbo Controller (Port1/2)</h2>
+    <img src="assets/img/dendy_controller.png" alt="Контроллер Dendy Turbo (Port1/2)">
+    <p><code>DeviceID</code>: <code>0x00000004</code></p>
+    <table>
+      <thead><tr><th>IOState</th><th>Actuator</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>Up</td><td>0/1</td></tr>
+        <tr><td>1</td><td>Down</td><td>0/1</td></tr>
+        <tr><td>2</td><td>Left</td><td>0/1</td></tr>
+        <tr><td>3</td><td>Right</td><td>0/1</td></tr>
+        <tr><td>4</td><td>Select</td><td>0/1</td></tr>
+        <tr><td>5</td><td>Start</td><td>0/1</td></tr>
+        <tr><td>6</td><td>TurboB</td><td>0/1</td></tr>
+        <tr><td>7</td><td>TurboA</td><td>0/1</td></tr>
+        <tr><td>8</td><td>B</td><td>0/1</td></tr>
+        <tr><td>9</td><td>A</td><td>0/1</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="virtual-famicom-controller-port1">Virtual Famicom Controller (Port1)</h2>
+    <img src="assets/img/virt_famicom_controller1.png" alt="Виртуальный контроллер Famicom (Port1)">
+    <p><code>DeviceID</code>: <code>0x00010001</code></p>
+    <table>
+      <thead><tr><th>IOState</th><th>Actuator</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>Up</td><td>0/1</td></tr>
+        <tr><td>1</td><td>Down</td><td>0/1</td></tr>
+        <tr><td>2</td><td>Left</td><td>0/1</td></tr>
+        <tr><td>3</td><td>Right</td><td>0/1</td></tr>
+        <tr><td>4</td><td>Select</td><td>0/1</td></tr>
+        <tr><td>5</td><td>Start</td><td>0/1</td></tr>
+        <tr><td>6</td><td>B</td><td>0/1</td></tr>
+        <tr><td>7</td><td>A</td><td>0/1</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="virtual-famicom-controller-port2">Virtual Famicom Controller (Port2)</h2>
+    <img src="assets/img/virt_famicom_controller2.png" alt="Виртуальный контроллер Famicom (Port2)">
+    <p><code>DeviceID</code>: <code>0x00010002</code></p>
+    <table>
+      <thead><tr><th>IOState</th><th>Actuator</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>Up</td><td>0/1</td></tr>
+        <tr><td>1</td><td>Down</td><td>0/1</td></tr>
+        <tr><td>2</td><td>Left</td><td>0/1</td></tr>
+        <tr><td>3</td><td>Right</td><td>0/1</td></tr>
+        <tr><td>4</td><td>B</td><td>0/1</td></tr>
+        <tr><td>5</td><td>A</td><td>0/1</td></tr>
+        <tr><td>6</td><td>Volume</td><td>0...255</td></tr>
+        <tr><td>7</td><td>MicLevel</td><td>0...255</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="virtual-nes-controller">Virtual NES Controller (Port1/2)</h2>
+    <img src="assets/img/virt_nes_controller.png" alt="Виртуальный контроллер NES (Port1/2)">
+    <p><code>DeviceID</code>: <code>0x00010003</code></p>
+    <table>
+      <thead><tr><th>IOState</th><th>Actuator</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>Up</td><td>0/1</td></tr>
+        <tr><td>1</td><td>Down</td><td>0/1</td></tr>
+        <tr><td>2</td><td>Left</td><td>0/1</td></tr>
+        <tr><td>3</td><td>Right</td><td>0/1</td></tr>
+        <tr><td>4</td><td>Select</td><td>0/1</td></tr>
+        <tr><td>5</td><td>Start</td><td>0/1</td></tr>
+        <tr><td>6</td><td>B</td><td>0/1</td></tr>
+        <tr><td>7</td><td>A</td><td>0/1</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="virtual-dendy-turbo-controller">Virtual Dendy Turbo Controller (Port1/2)</h2>
+    <img src="assets/img/virt_dendy_controller.png" alt="Виртуальный контроллер Dendy Turbo (Port1/2)">
+    <p><code>DeviceID</code>: <code>0x00010004</code></p>
+    <table>
+      <thead><tr><th>IOState</th><th>Actuator</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>Up</td><td>0/1</td></tr>
+        <tr><td>1</td><td>Down</td><td>0/1</td></tr>
+        <tr><td>2</td><td>Left</td><td>0/1</td></tr>
+        <tr><td>3</td><td>Right</td><td>0/1</td></tr>
+        <tr><td>4</td><td>Select</td><td>0/1</td></tr>
+        <tr><td>5</td><td>Start</td><td>0/1</td></tr>
+        <tr><td>6</td><td>TurboB</td><td>0/1</td></tr>
+        <tr><td>7</td><td>TurboA</td><td>0/1</td></tr>
+        <tr><td>8</td><td>B</td><td>0/1</td></tr>
+        <tr><td>9</td><td>A</td><td>0/1</td></tr>
+      </tbody>
+    </table>
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · IO/Readme.md</div>
+    <div class="prs">Документация: <a href="about_ru.html">О проекте</a> · <a href="cartpcb_ru.html">CartPcb</a> · <a href="nescartdb_ru.html">Nescartdb</a> · <a href="io_ru.html">IO</a> · <a href="chips_ru.html">Chips</a> · <a href="common_ru.html">Common</a> · <a href="breakscore_ru.html">BreaksCore</a> · <a href="unittest_ru.html">UnitTest</a> · <a href="tools_ru.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

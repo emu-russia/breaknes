@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Investigating The Tower of Druaga — Breaknes docs</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Toggle theme"
+        data-label-light="Switch to dark theme" data-label-dark="Switch to light theme">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index.html">← Breaknes</a> · Docs</span>
+    <span class="lang"><b>English</b> · <a href="druaga_ru.html">Русский</a></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Investigating The Tower of Druaga</h1>
+      <p class="lede">A case study: verifying the game's behaviour against a real cartridge and fixing it in Breaknes — issue #527</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p>Task: <a href="https://github.com/emu-russia/breaknes/issues/527">issue #527</a> — verify the game's
+      behaviour described in the nesdev Discord chat and check that the game works in Breaknes.</p>
+
+    <p>Summary:</p>
+
+    <ol>
+      <li>The game <strong>did not load</strong> in Breaknes: the <code>NAMCOT-3305</code> board type was missing from the
+        family index <code>Nescartdb/boards/index.json</code>, so <code>PcbLoader</code> could not resolve it to a board
+        definition. Added the <code>NAMCOT-3305 → nrom.json</code> mapping — the cartridge loads now.</li>
+      <li>After that fix the game <strong>loads and runs its boot sequence</strong> (the <code>"YAMAMO"</code> sentinel, the
+        first-boot flag <code>$26</code>), <strong>but did not show the title screen</strong>: the game's NMI handler
+        re-entered itself 5 times per frame, overflowing the stack. The cause was a timing bug in
+        the <code>$2000</code> write path (see §4): bit <code>$2000[7]</code> (NMI enable) briefly reset during the write,
+        which made the NMI line glitch and the 6502 re-take the NMI mid-handler.</li>
+      <li>The glitch from the nesdev Discord chat (RAM corruption bypassing the first-boot check) was
+        confirmed and reproduced by pre-loading the sentinel string into RAM before startup.</li>
+    </ol>
+
+    <h2>1. Cartridge identification</h2>
+    <p>The dump matches the nescartdb record (MD5 <code>b63a55584796c106bcfd3e2c08ea1e3c</code>; PRG CRC32
+      <code>AF6E8571</code>, CHR <code>6DC7E8EA</code>, combined CRC <code>EB764567</code>):</p>
+
+    <table>
+      <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Game</td><td>The Tower of Druaga (Namco, Famicom, 1985-08-06)</td></tr>
+        <tr><td>Board</td><td><strong>NAMCOT-3305</strong> (PCB 3305), class NAMCOT-3305</td></tr>
+        <tr><td>iNES mapper</td><td>0</td></tr>
+        <tr><td>PRG</td><td>32 KB (2×16K)</td></tr>
+        <tr><td>CHR</td><td>8 KB</td></tr>
+        <tr><td>Mirroring</td><td>vertical (iNES header bit 0 = 1; nescartdb profile "Mirroring: Vertical"; board solder pads <code>h=1</code> = H Scroll, <code>VRAM_A10 = PA10</code>)</td></tr>
+        <tr><td>CIC</td><td>none</td></tr>
+      </tbody>
+    </table>
+
+    <p><code>NAMCOT-3305</code> is electrically an NROM-256: the board carries only two mask ROMs (PRG Fujitsu
+      MB83256, CHR Sharp LH2367) and no extra logic. <strong>Pac-Land</strong> uses the same board. The mirroring
+      agrees across all three sources; in Breaknes the scroll jumper follows the iNES header
+      (<code>ApplyScrollFromHeader</code>), which matches the real board.</p>
+
+    <h2>2. The "first boot" mechanism (sentinel string)</h2>
+    <p>The boot code at the <code>$8000</code> vector (confirmed by disassembly and emulation):</p>
+
+<pre><code>$801E-$8031  clear $0500-$07FF (indirect STA ($00),Y; $0000-$04FF untouched)
+$8033-$8040  check: RAM $0002-$0007 == ROM $8044-$8049 ("YAMAMO"), 6 bytes
+$803B        BNE $804A  -&gt; mismatch: first boot
+$8042        BEQ $8072  -&gt; match:    warm reset (continue state from RAM)
+$8044-$8049  data: "YAMAMO"
+$804A-$8052  [first boot] clear zero page $0000-$00FF
+$8054-$805A  [first boot] JSR $91A2, JSR $938D, JSR $91B4 (initialisation)
+$8061-$806C  [first boot] copy "YAMAMO" from $8044 to $0002-$0007
+$806E-$8070  [first boot] $26 = 1 (first-boot flag)
+$8072+       common path: JSR $A120, scroll/high-score initialisation, etc.</code></pre>
+
+    <p>If <code>"YAMAMO"</code> is already present in RAM at <code>$0002-$0007</code> at startup, the game treats it as a
+      continuation (a reset without power loss) and restores its state from RAM — exactly what ykst
+      described in the nesdev Discord chat.</p>
+
+    <p>In Breaknes: SRAM is zeroed on power-up (<code>BaseBoard::SRAM</code>, "all memory cells read as 0") — a
+      deterministic emulator choice; real SRAMs have an undefined power-up state. For this game a
+      zeroed RAM yields the correct first boot. On reset (<code>Board::Reset</code>) the SRAM is <strong>not</strong> cleared,
+      so a subsequent reset finds the sentinel → "warm reset", matching the real behaviour.</p>
+
+    <h2>3. The glitch (RAM corruption, nesdev Discord)</h2>
+    <p>Rapid power-off/on partially corrupts the RAM. If the sentinel string survives while the rest of
+      the state is corrupted, the game takes the "warm reset" branch with damaged data: wrong high
+      score, a beep (possibly entering debug mode), lots of equipment on floor 1, up to an instant
+      ending.</p>
+
+    <p>Reproduction in Breaknes: write <code>"YAMAMO"</code> to RAM <code>$0002-$0007</code> and corrupt the rest of the RAM
+      (DebugHub <code>memMap</code> / the debugger), then start — the game goes to the <code>$8072</code> branch without the
+      first-boot initialisation (the <code>$26</code> flag stays garbage, the zero page is not cleared). Verified
+      with a headless build (the <code>--glitch</code> mode of the test harness, see <code>Temp/boottest.cpp</code>).</p>
+
+    <h2>4. The title screen problem (NMI storm)</h2>
+    <p>After booting, the game enters its idle loop <code>$80E1</code> (waiting for <code>$0C</code>) with NMI enabled. The
+      NMI handler (<code>$828E</code>) starts with an OAM DMA (<code>STA $4014 = $05</code>, 513 cycles), then writes
+      <code>$2000 = $B4</code> (<code>$82A3</code>) and only later, at <code>$82FD</code>, reads <code>$2002</code> (clearing the VBlank flag).
+      In Breaknes this caused:</p>
+
+    <ul>
+      <li>While the VBlank flag is set, the NMI line is low. The <code>$2000</code> write in the handler caused a
+        <strong>brief (4 steps) reset of bit <code>$2000[7]</code></strong> (NMI enable / <code>wire.VBL</code>) — the NMI line glitched
+        high and low, giving the 6502 edge detector a fresh edge.</li>
+      <li>The 6502 re-took the NMI <strong>mid-handler</strong> (I=1 does not block NMI): another OAM DMA
+        (513 cycles) and 7 more stack bytes per re-entry. The handler never reached <code>$82FD</code>, the flag
+        was never cleared — the storm repeated at V=241, 245, 250, 255, 260 (5 entries per frame).</li>
+      <li>The stack overflowed and the game hung on a black screen (no title).</li>
+    </ul>
+
+    <p><strong>Evidence</strong> (headless build, Famicom/HVC board):</p>
+
+    <ol>
+      <li>Nintendulator trace: 5 NMI entries per frame (V=241, 245, 250, 255, 260), the stack
+        monotonically decreased (S: F8→F1→EA→E3→DC→...), the handler was interrupted at <code>$82A8</code>.</li>
+      <li><code>$2002</code> showed vb=1 almost constantly; reads of <code>$2002</code> outside the handler saw the flag clear.</li>
+      <li>ROM patch "remove <code>STA $2000</code> from the NMI handler" — the storm disappeared (3 entries in 4
+        frames instead of 10), the game worked.</li>
+      <li>ROM patch "read <code>$2002</code> right after the DMA in the handler" — the storm also disappeared.</li>
+      <li>For comparison: SMB (whose NMI handler deasserts the NMI line early) works correctly;
+        DK (no NMI use) works correctly.</li>
+    </ol>
+
+    <p><strong>Conclusion and fix</strong>: the root cause is the <code>/DBE</code> formation (the PPU's <code>n_DBE</code> input) on the
+      board. The PPU <code>/CS</code> (the LS139 output, gated by <code>M2</code>) is active not only during PHI2 but also
+      during the 3 PHI1 steps that precede it (M2 leads PHI2). The PPU registers sample the data bus
+      level-sensitively while the write strobe is active — and during those 3 PHI1 steps the bus still
+      holds the value of the previous read (e.g. the high operand byte of the <code>STA</code>). So a
+      <code>STA $2000 = $B4</code> right after an operand read briefly resets <code>CTRL0[7]</code> (NMI enable) to 0.
+      Because of the one-step delay (the PPU updates the NMI output after the core samples its input),
+      the 6502 edge detector sees a false deassert/assert of the NMI line and re-takes the interrupt.</p>
+
+    <p>At the same time, for <strong>reads</strong> the <code>/CS</code> must stay active for the whole PHI1 phase: the 6502
+      core samples the data bus at the start of PHI2, so the PPU has to drive the read data early
+      (during PHI1). Gating the whole <code>/CS</code> with PHI2 breaks reads.</p>
+
+    <p><strong>Fix</strong> (board only, the PPU interface is unchanged): the <code>/CS</code> stays active the whole cycle for
+      reads, but for writes it is gated with the PHI2 phase:</p>
+
+<pre><code>// NESBoard.cpp / FamicomBoard.cpp
+ppu_inputs[PPUSim::InputPad::n_DBE] = OR(PPU_nCE, AND(NOT(CPU_RnW), NOT(apu-&gt;GetPHI2())));</code></pre>
+
+    <ul>
+      <li>read (<code>RnW = 1</code>): <code>/DBE</code> active the whole cycle → the PPU drives the data early → reads work
+        as before;</li>
+      <li>write (<code>RnW = 0</code>): <code>/DBE</code> active only during PHI2 (when the data bus is valid) → the PPU no
+        longer samples the stale PHI1 data → the <code>CTRL0[7]</code> glitch disappears → the NMI storm stops.</li>
+    </ul>
+
+    <p>After the fix the game <strong>loads, runs its boot sequence and shows its title screen</strong> (verified
+      with a headless build: 1 NMI per frame, <code>"YAMAMO"</code> at <code>$0002-$0007</code>, <code>$26 = 1</code>, the OAM DMA
+      works). SMB and Donkey Kong are unaffected.</p>
+
+    <h2>5. Repository changes</h2>
+    <ul>
+      <li><code>Nescartdb/boards/index.json</code>: <code>NAMCOT-3305 → nrom.json</code> (the board is electrically an
+        NROM-256).</li>
+      <li><code>Breaknes/BreaksCore/NESBoard.cpp</code>, <code>Breaknes/BreaksCore/FamicomBoard.cpp</code>: fixed the PPU
+        <code>/DBE</code> formation (writes gated with the PHI2 phase) — eliminated the NMI storm that kept the
+        game from showing its title screen.</li>
+      <li><code>UnitTest/CartPcbTest.cpp</code>: regression test <code>TestNamcot3305Board</code> (CRC identification, family
+        resolution, end-to-end load of the real dump, sentinel string, mirroring).</li>
+      <li><code>Nescartdb/Readme.md</code>: NAMCOT-3305 mentioned in the family index description.</li>
+    </ul>
+
+    <p>Temporary headless harness used for verification: <code>Temp/boottest.cpp</code> (not committed; the <code>Temp</code>
+      folder is in <code>.gitignore</code>).</p>
+
+  </main>
+
+  <footer>
+    <div>Source: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Wiki/research/TowerOfDruagaEng.md</div>
+    <div class="prs">Docs: <a href="about.html">About</a> · <a href="cartpcb.html">CartPcb</a> · <a href="nescartdb.html">Nescartdb</a> · <a href="io.html">IO</a> · <a href="chips.html">Chips</a> · <a href="common.html">Common</a> · <a href="breakscore.html">BreaksCore</a> · <a href="unittest.html">UnitTest</a> · <a href="tools.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

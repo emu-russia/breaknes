@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chips — симуляторы на уровне вентилей — документация Breaknes</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="chips.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Chips</h1>
+      <p class="lede">Симуляторы чипов на уровне вентилей: M6502Core (6502), APUSim (2A03/2A07 CPU+звук), PPUSim (2C02/2C07 PPU) и MMC1</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      Здесь расположены функциональные симуляторы больших микросхем и ядер.
+    </p>
+
+    <h2 id="m6502core">M6502Core</h2>
+    <p>Эмулятор процессорного ядра MOS 6502 на уровне вентилей.</p>
+    <p>Да, всё так просто. Мы берём логические схемы 6502 из Wiki и просто повторяем их на C++.</p>
+    <p>Чтобы понять, что здесь происходит, достаточно понимать, как работают схемы. Код просто повторяет их работу.</p>
+
+    <h3>Подходы к симуляции</h3>
+    <p>Некоторые модули симулируются сразу с выдачей значений на выходах. А для некоторых симуляция и выдача значений разделены для удобства.</p>
+    <p>В целом исходный код немного похож на Verilog, но, в отличие от последнего, мы сами выбираем последовательность исполнения элементов схемы, имитируя тем самым задержку распространения, которая есть в реальных схемах.</p>
+    <p>Если у модуля мало входов/выходов, они передаются как параметры. Если входов/выходов много, в качестве параметра используется массив, индексируемый определениями enum.</p>
+
+    <h3>Комбинационные и последовательные схемы</h3>
+    <p>Как известно, схемы бывают двух типов: простые однонаправленные каскады вентилей (NOR, NAND) и циклические (последовательные) схемы на триггерах (Flip/flops).</p>
+    <p>Комбинационные схемы симулируются просто повторением работы вентилей. Без всяких хитростей.</p>
+    <p>К последовательным схемам (триггерам, FF) применяется следующий подход:</p>
+    <ul>
+      <li>Входная стадия использует сохранённое значение триггера (<code>ff.get</code>)</li>
+      <li>Выходная стадия обновляет текущее значение триггера (<code>ff.set</code>)</li>
+      <li>При этом неважно, на каких элементах построен триггер. Это могут быть 2 замкнутых инвертора, 2 замкнутых NOR или любое другое циклическое замыкание</li>
+      <li>Место «хранения» триггера в циклической схеме выбирается произвольно, но обычно ближе к выходу триггера</li>
+    </ul>
+    <p>Следует отметить, что в 6502 довольно много скрытых и довольно запутанных циклов, например:</p>
+    <img src="assets/img/t1_ff.jpg" alt="Скрытые запутанные циклы в 6502 (t1_ff)">
+
+    <h3>Шины</h3>
+    <p>Модули, подключённые к внутренним шинам, требуют особого подхода и определённого порядка исполнения, как написано здесь: <a href="https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/6502/context_control.md">https://github.com/emu-russia/breaks/blob/master/BreakingNESWiki_DeepL/6502/context_control.md</a></p>
+    <p>Следует также учитывать случай, когда несколько источников (например, регистры) одновременно выставляют свои значения на одну и ту же шину. Для решения таких ситуаций («конфликтов шины») необходимо использовать правило «Ground wins».</p>
+    <p>Здесь учитывается особенность 6502, при которой шины «предзаряжаются» во время PHI2. Это требуется для формирования констант (например, адреса стека, адреса прерывания). Зарядка выполняется в самом начале симуляции.</p>
+
+    <h3>Оптимизация</h3>
+    <p>M6502Core с некоторой натяжкой можно назвать пригодным для приложений реального времени.</p>
+    <p>Для оптимизации используются следующие подходы:</p>
+    <ul>
+      <li>Разделение фаз PHI1/PHI2 через if/else</li>
+      <li>Предвычисление комбинационной логики с помощью таблиц (см., например, predecode.cpp).</li>
+      <li>Упаковка битов шин и регистров в uint8_t — позволяет избежать циклов по всем битам</li>
+      <li>Симуляция логических схем высокого уровня (см., например, alu.cpp).</li>
+    </ul>
+    <p>Узким местом является random logic, на которую уходит 50–60 % времени вычислений.</p>
+    <p>Кроме того, сейчас обе части симулируются по 2 раза за каждый полутакт, чтобы стабилизировать защёлки (latches).</p>
+
+    <h2 id="apusim">APUSim</h2>
+    <p>Симулятор APU на уровне вентилей.</p>
+    <p>Примечание: в проекте Breaks термин APU относится ко всей микросхеме CPU (2A03/2A07), которая включает ядро 6502 и сам APU. Поэтому здесь APU и CPU — синонимы.</p>
+
+    <h3>Подходы к симуляции</h3>
+    <p>В целом все подходы обкатываются на M6502Core, в плане APU ничего особенно нового нет. Мы берём схему и повторяем её работу на C++. Сначала как-нибудь, а потом стараемся оптимизировать.</p>
+    <p>Все схемы APU можно найти здесь: <a href="https://github.com/emu-russia/breaks/tree/master/BreakingNESWiki_DeepL/APU">https://github.com/emu-russia/breaks/tree/master/BreakingNESWiki_DeepL/APU</a></p>
+    <p>Чтобы упростить понимание, на следующем изображении показаны «слои», в которых симулируются отдельные части APU:</p>
+    <img src="assets/img/apu_layers.png" alt="Слои симуляции APU (apu_layers)">
+
+    <h2 id="ppusim">PPUSim</h2>
+    <p>Симулятор PPU на уровне вентилей.</p>
+
+    <h3>Подходы к симуляции</h3>
+    <p>В целом все подходы обкатываются на M6502Core, в плане PPU ничего особенно нового нет. Мы берём схему и повторяем её работу на C++. Сначала как-нибудь, а потом стараемся оптимизировать.</p>
+    <p>Все схемы PPU можно найти здесь: <a href="https://github.com/emu-russia/breaks/tree/master/BreakingNESWiki_DeepL/PPU">https://github.com/emu-russia/breaks/tree/master/BreakingNESWiki_DeepL/PPU</a></p>
+    <p>Чтобы упростить понимание, на следующем изображении показаны «слои», в которых симулируются отдельные части PPU:</p>
+    <img src="assets/img/ppu_layers.png" alt="Слои симуляции PPU (ppu_layers)">
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Chips/*/Readme.md</div>
+    <div class="prs">Документация: <a href="about_ru.html">О проекте</a> · <a href="cartpcb_ru.html">CartPcb</a> · <a href="nescartdb_ru.html">Nescartdb</a> · <a href="io_ru.html">IO</a> · <a href="chips_ru.html">Chips</a> · <a href="common_ru.html">Common</a> · <a href="breakscore_ru.html">BreaksCore</a> · <a href="unittest_ru.html">UnitTest</a> · <a href="tools_ru.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

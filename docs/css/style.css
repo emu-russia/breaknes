@@ -14,6 +14,8 @@ html { scroll-behavior: smooth; }
   --accent: #a8321c;
   --border: #e4e2dc;
   --chip: #efede8;
+  --zebra: #f8f7f4;
+  --pre-bg: #f0efe9;
   --shadow: 0 1px 2px rgba(0, 0, 0, .05), 0 10px 26px rgba(0, 0, 0, .05);
   --font-slab: 'Roboto Slab', Georgia, 'Times New Roman', serif;
   --font-body: 'Inter', -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -27,6 +29,8 @@ html[data-theme="dark"] {
   --accent: #e2674c;
   --border: #2a2b31;
   --chip: #222329;
+  --zebra: #1b1c21;
+  --pre-bg: #0c0d10;
   --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 26px rgba(0, 0, 0, .35);
 }
 
@@ -261,3 +265,82 @@ footer .prs { margin-top: 6px; }
   .page-head { gap: 12px; }
   .logo { width: 48px; height: 48px; }
 }
+
+/* ---------- documentation pages ---------- */
+.doc { margin-top: 24px; min-width: 0; }
+.doc > p { margin: 10px 0; }
+.doc h2 {
+  font-size: 23px; line-height: 1.3;
+  margin: 44px 0 12px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: 20px;
+}
+.doc h2:first-of-type { margin-top: 6px; }
+.doc h3 { font-size: 17px; margin: 28px 0 8px; scroll-margin-top: 20px; }
+.doc h4 { font-size: 15px; margin: 20px 0 6px; }
+.doc ul, .doc ol { margin: 8px 0; padding-left: 24px; }
+.doc li { margin: 5px 0; }
+.doc li > ul, .doc li > ol { margin: 4px 0; }
+.doc strong { font-weight: 600; }
+.doc table {
+  border-collapse: collapse; width: 100%;
+  margin: 16px 0; font-size: 14px;
+}
+.doc th, .doc td {
+  border: 1px solid var(--border);
+  padding: 7px 12px; text-align: left; vertical-align: top;
+}
+.doc th { background: var(--chip); font-weight: 600; }
+.doc tbody tr:nth-child(odd) { background: var(--zebra); }
+.doc img {
+  max-width: 100%; height: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  margin: 12px 0;
+}
+.doc pre {
+  background: var(--pre-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  overflow-x: auto;
+  font-size: 13px; line-height: 1.55;
+  margin: 14px 0;
+}
+.doc pre code {
+  background: none; border: none; padding: 0;
+  color: var(--text);
+  font-size: 13px;
+}
+.doc blockquote {
+  margin: 14px 0; padding: 4px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  background: var(--chip);
+  color: var(--muted);
+}
+.doc blockquote p { margin: 6px 0; }
+.doc hr { border: none; border-top: 1px solid var(--border); margin: 26px 0; }
+.doc .kbd, .doc kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .85em;
+  background: var(--chip);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 0 5px;
+}
+.doc .note {
+  font-size: 13px; color: var(--muted);
+  margin: 18px 0 4px;
+}
+.doc .lead { font-size: 16.5px; color: var(--muted); }
+@media (max-width: 640px) {
+  .doc h2 { font-size: 19px; }
+}
+
+/* landing: section labels + clickable tile titles */
+.tiles h3.sec, .materials h3.sec { margin: 26px 0 10px; }
+.tile h3 a { color: var(--text); text-decoration: none; }
+.tile h3 a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }

@@ -61,7 +61,86 @@
   </div>
 
   <section class="materials">
-    <h2>Materials <span class="hint">— changelogs, notes</span></h2>
+    <h2>Documentation <span class="hint">— articles and component guides</span></h2>
+
+    <h3 class="sec">Project overview</h3>
+    <div class="tiles">
+      <div class="tile">
+        <span class="tag">Overview</span>
+        <h3><a href="about.html">About Breaknes</a></h3>
+        <p>The emulator at a glance: what is inside, repository map, simulation components, tools, build.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Guide</span>
+        <h3><a href="manual.html">User manual</a></h3>
+        <p>Main window and settings of the managed application.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Design</span>
+        <h3><a href="runtime.html">Emulator life cycle</a></h3>
+        <p>What happens at OnLoad, SaveSettings, LoadROM, Step and Exit.</p>
+      </div>
+    </div>
+
+    <h3 class="sec">From the Wiki</h3>
+    <div class="tiles">
+      <div class="tile">
+        <span class="tag">Guide</span>
+        <h3><a href="video-dump.html">PPUPlayer video dump</a></h3>
+        <p>Capturing the PPU video signal with PPUPlayer and Nintendulator — including the RAW pixel dump format.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Research</span>
+        <h3><a href="druaga.html">Investigating The Tower of Druaga</a></h3>
+        <p>A case study: verifying the game against the real cartridge and fixing it in Breaknes (issue #527).</p>
+      </div>
+    </div>
+
+    <h3 class="sec">Components</h3>
+    <div class="tiles">
+      <div class="tile">
+        <span class="tag">Component</span>
+        <h3><a href="cartpcb.html">CartPcb</a></h3>
+        <p>Functional simulation of cartridge PCBs: a board is a JSON document of components and wiring, not C++ code.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Component</span>
+        <h3><a href="nescartdb.html">Nescartdb</a></h3>
+        <p>The converted cartridge database in JSON — PCB identification by the CRC32 of PRG/CHR dumps.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Component</span>
+        <h3><a href="io.html">IO subsystem</a></h3>
+        <p>Controllers and devices for NES, Famicom and Dendy, and the architecture binding them to the motherboard.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Component</span>
+        <h3><a href="chips.html">Chips</a></h3>
+        <p>Gate-level simulators: M6502Core (6502), APUSim (2A03/2A07), PPUSim (2C02/2C07), MMC1.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Component</span>
+        <h3><a href="common.html">Common</a></h3>
+        <p>Shared libraries: BaseLogicLib, BaseBoardLib (LS139, LS373, SRAM, RomChip…), JsonLib, SharpTools.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Component</span>
+        <h3><a href="breakscore.html">BreaksCore</a></h3>
+        <p>The native core — motherboards, chip wiring, debug hub — and the two front-ends.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Testing</span>
+        <h3><a href="unittest.html">UnitTest</a></h3>
+        <p>Automated tests for the chips, cores and shared libraries.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">Tools</span>
+        <h3><a href="tools.html">Tools</a></h3>
+        <p>Breakasm, BreaksDebug, PPU/APU players, profilers and demo programs.</p>
+      </div>
+    </div>
+
+    <h3 class="sec">Change log</h3>
     <div class="tiles">
       <div class="tile">
         <span class="tag">Digest</span>
@@ -81,6 +160,7 @@
 
   <footer>
     <div>Source: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · gate-level NES emulation, part of the breaks project</div>
+    <div class="prs">Русская версия: <a href="index_ru.html">index_ru.html</a></div>
   </footer>
 
 </div>

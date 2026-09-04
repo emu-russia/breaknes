@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BreaksCore — the native core — Breaknes docs</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Toggle theme"
+        data-label-light="Switch to dark theme" data-label-dark="Switch to light theme">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index.html">← Breaknes</a> · Docs</span>
+    <span class="lang"><b>English</b> · <a href="breakscore_ru.html">Русский</a></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>BreaksCore</h1>
+      <p class="lede">The native C++ core: motherboards, chip wiring and a debug hub — plus the two front-ends: the WinForms app and the SDL2 port</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      <b>BreaksCore</b> is the native part of the emulator, the gate-level NES/Famicom/Dendy
+      emulator that both front-ends are built on. On top of the native core sit two applications:
+      the managed WinForms application (<b>Breaknes</b>) and, for those who like minimalism, a
+      Breaknes build using SDL2 (<b>BreaknesSDL</b>).
+    </p>
+
+    <h2 id="breakscore">BreaksCore</h2>
+    <p>The native part of the emulator.</p>
+
+    <h3 id="abstract-board">Abstract Board</h3>
+    <p>The abstract motherboard is used as a base class for all other NES/Famicom/Dendy variations.</p>
+    <p>The Board Factory is used to instantiate the motherboard:</p>
+    <ul>
+      <li>The parent application tells the factory what board to create (by name).</li>
+      <li>This creates a class for the corresponding motherboard (<code>NESBoard.cpp</code>, <code>FamicomBoard.cpp</code>).</li>
+    </ul>
+    <p>So far it's a bit abstract, but later we will make the links between classes.</p>
+
+    <h3 id="boards">Boards</h3>
+    <p>List of supported boards.</p>
+
+    <h4 id="famicom">Famicom</h4>
+    <p>The plan is to simulate the Generic Famicom board as follows:</p>
+    <img src="assets/img/fami_logisim.jpg" alt="Famicom board — Logisim diagram">
+
+    <h4 id="nes">NES</h4>
+    <p>The plan is to simulate the Generic NES board as follows:</p>
+    <img src="assets/img/nes.png" alt="Generic NES board">
+
+    <h4 id="dendy">Dendy/Subor/Phantom/Whatever</h4>
+    <p>TBD.</p>
+
+    <h4 id="bogus-board">Bogus Board</h4>
+    <p>BogusBoard is a default motherboard if BreaksCore did not recognize the board type when it created the instances or other erroneous parameters.</p>
+    <img src="assets/img/BogusBoard.jpg" alt="BogusBoard">
+    <p>This system contains 64 KBytes of RAM, a 6502 processor core and nothing else.</p>
+    <p>In other words, it's a minimal computing system to check if anything is ticking in the emulator.</p>
+
+    <h4 id="ppuplayer-board">PPUPlayer Board</h4>
+    <p>A special debug board for the PPUPlayer.</p>
+    <img src="assets/img/PPUPlayer_All.png" alt="PPUPlayer board">
+    <p>The board contains the PPU, adjacent logic (Address Latch, VRAM) and partial support for the cartridge connector (only the PPU/CHR pins are used).</p>
+
+    <h4 id="apuplayer-board">APUPlayer Board</h4>
+    <p>Another debug board for "playing" the APU register dump.</p>
+    <img src="assets/img/APUPlayer.jpg" alt="APUPlayer board">
+    <p>It is roughly the same as PPUPlayer, but simpler in that the APU does not require a cartridge connector and additional bindings associated with it.</p>
+    <p>The DPCM samples are loaded into the extended up to 64 Kbytes memory (WRAM).</p>
+
+    <h3 id="debug-hub">Debug Hub</h3>
+    <p>Breaknes debug infrastructure.</p>
+    <blockquote><p><strong>Warning:</strong> The current implementation is based on string associative lists and cannot be considered superfast.</p></blockquote>
+    <p>Since Breaknes is a gate-level emulator, the main focus of debugging is monitoring various signals, buses and other internal states of the emulated system.</p>
+    <p>Debug entities are divided into the following categories:</p>
+    <ul>
+      <li><code>DebugInfo</code>: get/set internal state</li>
+      <li><code>MemLayout</code>: read/write memory dumps</li>
+    </ul>
+    <img src="assets/img/debug.jpg" alt="Debug Hub">
+
+    <h4 id="debuginfo">DebugInfo</h4>
+    <p>From the GUI side, <code>DebugInfo</code> is displayed as PropertyGrid. The PropertyGrid is filled in dynamically, based on debugging information entries returned by the native Breaknes core.</p>
+    <p>Debug Information Types (DebugInfoType):</p>
+    <ul>
+      <li><code>DebugInfoType_Core</code>: Get the internal state of the M6502Core</li>
+      <li><code>DebugInfoType_CoreRegs</code>: Get the state of the 6502 registers</li>
+      <li><code>DebugInfoType_APU</code>: Get the internal state of the APU components</li>
+      <li><code>DebugInfoType_APURegs</code>: Get the state of APU registers</li>
+      <li><code>DebugInfoType_PPU</code>: Get the internal state of the PPU components</li>
+      <li><code>DebugInfoType_PPURegs</code>: Get the state of the PPU registers</li>
+      <li><code>DebugInfoType_Board</code>: Get the internal state of the motherboard components</li>
+      <li><code>DebugInfoType_Cart</code>: Get the internal state of the cartridge and mapper components</li>
+    </ul>
+    <p>Methods:</p>
+    <ul>
+      <li><code>GetDebugInfoEntryCount</code>: Get the number of debug entries of the specified type</li>
+      <li><code>GetDebugInfo</code>: Get all entries of the specified type. Managed application must first know the number of records and allocate an array to retrieve them.</li>
+      <li><code>GetDebugInfoByName</code>: Get one DebugInfo record with the specified name</li>
+      <li><code>SetDebugInfoByName</code>: Set one DebugInfo record with the specified name</li>
+    </ul>
+
+    <h4 id="memlayout">MemLayout</h4>
+    <p>The different pieces of memory within the emulated system are described by the <code>MemDesrciptor</code> structure.</p>
+    <p>Methods:</p>
+    <ul>
+      <li><code>GetMemLayout</code>: Get the number of memory descriptors that are registered in the DebugHub</li>
+      <li><code>GetMemDescriptor</code>: Get information about a memory block</li>
+      <li><code>DumpMem</code>: Get the whole memory block. We are emulating NES here, so dump sizes will be small and it won't make sense to dump in parts.</li>
+      <li><code>WriteMem</code>: Set the entire memory block</li>
+    </ul>
+
+    <h2 id="managed">The managed app (Breaknes)</h2>
+    <p>NES/Famicom/Dendy emulator at the gate level.</p>
+
+    <h3 id="two-tv-sets">Two TV Sets (issue #515)</h3>
+    <p>The emulator supports up to 2 virtual TV Sets. The video signal of each PPU of the motherboard is bound to a TV Set; the binding is configured in the <code>BoardDescription.json</code>:</p>
+    <ul>
+      <li><code>ppus</code> — the PPU revisions of the board (array, up to 2). The legacy single <code>ppu</code> field is still supported.</li>
+      <li><code>tvs</code> — the TV binding: <code>tvs[i]</code> is the index of the PPU whose signal is displayed on the i-th TV. The default binding is <code>TV[i]</code> shows <code>PPU[i]</code>. For debugging, one PPU can be bound to both TVs at once (<code>"tvs": [0, 0]</code>).</li>
+      <li><code>tv_layout</code> — the physical arrangement of the TVs in the window: <code>"horizontal"</code> (side by side) or <code>"vertical"</code> (one above the other).</li>
+    </ul>
+    <p>Select a debug board ("NES Debug: one PPU on two TVs (horizontal)" or "NES Debug: one PPU on two TVs (vertical)") in the settings to see the two-TV window in action.</p>
+
+    <h3 id="build">Build</h3>
+    <p>Use VS2022.</p>
+    <p>To make the generation of the native and managed parts in the same Build folder, you need to use this:</p>
+    <p><a href="https://docs.microsoft.com/en-us/answers/questions/202445/output-path-ignored-with-net-5-c-classes-lib.html">https://docs.microsoft.com/en-us/answers/questions/202445/output-path-ignored-with-net-5-c-classes-lib.html</a></p>
+
+    <h2 id="sdl">The SDL2 port (BreaknesSDL)</h2>
+    <p>For those who like minimalism — Breaknes build using SDL2.</p>
+    <p>The implementation does not differ from Managed application: the same native part of BreaksCore is used. The motherboard and chip revisions are taken from the <code>BoardDescription.json</code> (next to the executable, shared with the managed application): the SDL build looks up the board by name, the config is required (there is no built-in fallback).</p>
+
+    <h3 id="selecting-the-board">Selecting the board</h3>
+    <p>By default the <code>NES (NES-CPU-07, 1987)</code> entry of the <code>BoardDescription.json</code> is used. Any other board from the same file can be selected on the command line:</p>
+<pre><code>breaknes --board "NES-101 (NESN-CPU-JIO-01, 1994-1995)" game.nes
+</code></pre>
+
+    <h3 id="sdl-two-tv-sets">Two TV Sets (issue #515)</h3>
+    <p>The SDL build renders the video signal of every connected TV Set in one window. Up to 2 TVs are supported; the physical arrangement is controlled by the <code>tv_layout</code> property of the board in <code>BoardDescription.json</code>:</p>
+    <ul>
+      <li><code>"tv_layout": "horizontal"</code> — the TVs are placed side by side</li>
+      <li><code>"tv_layout": "vertical"</code> — the TVs are stacked one above the other</li>
+    </ul>
+    <p>The binding of the PPUs to the TVs is described by the <code>tvs</code> array (<code>tvs[i]</code> = index of the PPU shown on the i-th TV). The default binding is <code>TV[i]</code> shows <code>PPU[i]</code>; for debugging, one PPU can be bound to both TVs at once (<code>"tvs": [0, 0]</code>).</p>
+
+    <h3 id="io-subsystem">IO subsystem</h3>
+    <p>The IO subsystem is integrated into the SDL build (issue #516). SDL2 Input is used as the source of input events:</p>
+    <ul>
+      <li><strong>Keyboard</strong> — SDL key names (<code>Up</code>, <code>Down</code>, <code>Left</code>, <code>Right</code>, <code>A</code>, <code>S</code>, <code>Z</code>, <code>X</code>, <code>Return</code>, <code>Space</code>, ...)</li>
+      <li><strong>Game controllers</strong> (if available) — <code>Controller&lt;slot&gt;_ButtonA</code>, <code>Controller&lt;slot&gt;_DPadUp</code>, <code>Controller&lt;slot&gt;_ButtonStart</code>, ...; the analog sticks are mapped to digital events <code>Controller&lt;slot&gt;_AxisLeftX-</code>/<code>_AxisLeftX+</code>, etc.; the analog triggers to <code>Controller&lt;slot&gt;_TriggerLeft</code>/<code>_TriggerRight</code>.</li>
+    </ul>
+    <p>The devices (Famicom/NES/Dendy controllers, virtual controllers), their bindings of IOState to input events and the Attach/Detach status to the motherboard ports are configured interactively:</p>
+<pre><code>breaknes --ioconfig [config_path]
+</code></pre>
+    <p>The logic of the configurator is based on the IO settings dialog of the managed application (<code>Breaknes/FormIOConfig.cs</code>): the device pool (add/remove), the bindings (IOState &lt;-&gt; input event) and the Attach/Detach to ports.</p>
+    <p>The IO settings are stored separately from the managed application (<code>IOConfigSDL.json</code> by default, the managed application uses its own <code>IOConfig.json</code>), so the settings never overlap. At startup the emulator loads the settings from the same file and attaches the configured devices.</p>
+    <p>Note: virtual controllers have no on-screen dialogs in the SDL build; they are driven by the bound keyboard/game controller events like ordinary controllers.</p>
+
+    <p class="note">Source: <code>Breaknes/BreaksCore/Readme.md</code>, <code>Breaknes/Breaknes/Readme.md</code>, <code>Breaknes/BreaknesSDL/Readme.md</code> · this page is part of the <a href="index.html">docs site</a>.</p>
+
+  </main>
+
+  <footer>
+    <div>Source: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Breaknes/BreaksCore, Breaknes/Breaknes, Breaknes/BreaknesSDL</div>
+    <div class="prs">Docs: <a href="about.html">About</a> · <a href="cartpcb.html">CartPcb</a> · <a href="nescartdb.html">Nescartdb</a> · <a href="io.html">IO</a> · <a href="chips.html">Chips</a> · <a href="common.html">Common</a> · <a href="breakscore.html">BreaksCore</a> · <a href="unittest.html">UnitTest</a> · <a href="tools.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

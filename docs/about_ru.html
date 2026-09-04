@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>О Breaknes — документация</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="about.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>О Breaknes</h1>
+      <p class="lede">Эмуляция NES / Famicom / Dendy на уровне вентилей — эмуляторная часть проекта <a href="https://github.com/emu-russia/breaks">breaks</a> по реверс-инжинирингу микросхем</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      Breaknes — эмулятор NES/Famicom/Dendy <b>на уровне вентилей</b>. Чипы эмулируются не «по поведению»:
+      логические схемы, восстановленные с реальных кристаллов, повторены на C++, поэтому эмулированный 6502
+      ведёт себя так же, как настоящий, — те же вентили, те же триггеры, те же шины, те же особенности.
+    </p>
+
+    <h2 id="what">Что внутри</h2>
+    <p>
+      Репозиторий содержит сам эмулятор, симуляторы чипов на уровне вентилей, управляемый данными симулятор
+      картриджных плат, конвертированную базу картриджей, юнит-тесты и набор инструментов. У эмулятора два
+      фронтенда на общем нативном ядре: управляемое приложение WinForms и SDL2-порт, собираемый под Windows
+      и Linux.
+    </p>
+
+    <h2 id="structure">Структура репозитория</h2>
+    <table>
+      <thead><tr><th>Папка</th><th>Что внутри</th></tr></thead>
+      <tbody>
+        <tr><td><code>Breaknes/</code></td><td>Сам эмулятор: управляемый GUI (<code>Breaknes/Breaknes</code>), SDL2-порт (<code>Breaknes/BreaknesSDL</code>) и общее нативное ядро <code>BreaksCore</code>.</td></tr>
+        <tr><td><code>Chips/</code></td><td>Симуляторы чипов на уровне вентилей: <code>M6502Core</code> (6502), <code>APUSim</code> (2A03/2A07 CPU+звук), <code>PPUSim</code> (2C02 PPU), <code>MMC1</code>.</td></tr>
+        <tr><td><code>CartPcb/</code></td><td>Функциональная симуляция картриджных PCB. Плата — это данные: JSON-документ с компонентами и соединениями, а не код на C++.</td></tr>
+        <tr><td><code>Common/</code></td><td>Общий код: <code>BaseLogicLib</code> (логические примитивы), <code>BaseBoardLib</code> (компоненты материнских плат: LS139, LS373, SRAM, RomChip…), <code>JsonLib</code>, <code>SharpTools</code> (C#-контролы отладчика).</td></tr>
+        <tr><td><code>IO/</code></td><td>Устройства ввода-вывода: контроллеры NES/Famicom/Dendy, виртуальные контроллеры, CD4021, UM6582.</td></tr>
+        <tr><td><code>Nescartdb/</code></td><td>Конвертированная база nescartdb (JSON) — опознаёт картридж по CRC32 дампов PRG/CHR.</td></tr>
+        <tr><td><code>Tools/</code></td><td>Утилиты (ассемблер, GUI-отладчик, PPU/APU-плееры, демо…).</td></tr>
+        <tr><td><code>UnitTest/</code></td><td>Юнит-тесты чипов и ядер.</td></tr>
+        <tr><td><code>Wiki/</code></td><td>Дизайн-документация — частично переиздана на этом сайте.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="components">Компоненты симуляции</h2>
+    <ul>
+      <li><strong>BreaksCore</strong> — нативное (C++) ядро: материнские платы (NES, Famicom), разводка чипов и debug-хаб для контроля сигналов и внутреннего состояния.</li>
+      <li><strong>M6502Core</strong> — процессорное ядро MOS 6502 на уровне вентилей.</li>
+      <li><strong>APUSim</strong> — вся микросхема CPU (2A03/2A07): ядро 6502 + звук APU.</li>
+      <li><strong>PPUSim</strong> — PPU (2C02/2C07) на уровне вентилей.</li>
+      <li><strong>MMC1</strong> — чип-маппер MMC1.</li>
+      <li><strong>CartPcb</strong> — симуляция картриджных PCB: описания плат в JSON, чипы соединены сетями, картриджи опознаются по CRC из nescartdb.</li>
+      <li><strong>IO</strong> — устройства ввода-вывода для NES/Famicom/Dendy, виртуальные контроллеры и сопутствующие чипы.</li>
+    </ul>
+
+    <h2 id="tools">Инструменты</h2>
+    <table>
+      <thead><tr><th>Инструмент</th><th>Что делает</th></tr></thead>
+      <tbody>
+        <tr><td><code>Breakasm</code></td><td>Максимально простой ассемблер 6502 (C++ и Python-порт).</td></tr>
+        <tr><td><code>BreaksDebug</code></td><td>GUI для изучения ядра 6502: сигналы, регистры, память, дизассемблер.</td></tr>
+        <tr><td><code>PPUPlayer</code></td><td>Проигрывает дампы регистров PPU, записанные в эмуляторе.</td></tr>
+        <tr><td><code>APUPlayer</code></td><td>Проигрывает дампы регистров APU, записанные в эмуляторе.</td></tr>
+        <tr><td><code>PpuPumpkin</code> / <code>ApuPumpkin</code></td><td>Демо профилирования скорости PPUSim / APUSim.</td></tr>
+        <tr><td><code>SlooowPlaaayer</code></td><td>Проигрывает аудио, захваченное с медленных источников.</td></tr>
+        <tr><td><code>SignalPlotDemo</code>, <code>FurryPlotDemo</code>, <code>InfernoColormap</code></td><td>Демо самодельных WinForms-контролов.</td></tr>
+        <tr><td><code>DumpRegdump</code> / <code>NescartdbConvert</code></td><td>Python-скрипты: дамп regdump / конвертация nescartdb XML→JSON.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="build">Сборка</h2>
+    <p><strong>Windows:</strong> VS2026 — откройте <code>Breaknes.sln</code> и соберите. Требуется .NET 6.0 Desktop Runtime. Для минимальной сборки используйте SDL2-порт (<code>Breaknes/BreaknesSDL</code>).</p>
+    <p><strong>Linux:</strong> обычный CMake-процесс (<code>cmake ..</code> + <code>make</code> в папке <code>build/</code>), на выходе — SDL2-бинарник.</p>
+
+    <p class="note">Источник: <code>Readme.md</code>, <code>Wiki/Readme.md</code> · страница входит в <a href="index_ru.html">сайт документации</a>.</p>
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a></div>
+    <div class="prs">Документация: <a href="about_ru.html">О проекте</a> · <a href="cartpcb_ru.html">CartPcb</a> · <a href="nescartdb_ru.html">Nescartdb</a> · <a href="io_ru.html">IO</a> · <a href="chips_ru.html">Chips</a> · <a href="common_ru.html">Common</a> · <a href="breakscore_ru.html">BreaksCore</a> · <a href="unittest_ru.html">UnitTest</a> · <a href="tools_ru.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

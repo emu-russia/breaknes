@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BreaksCore — нативное ядро — документация Breaknes</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index_ru.html">← На главную</a> · Документация</span>
+    <span class="lang"><a href="breakscore.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>BreaksCore</h1>
+      <p class="lede">Нативное C++-ядро: материнские платы, разводка чипов и debug-хаб — плюс два фронтенда: приложение WinForms и SDL2-порт</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      <b>BreaksCore</b> — нативная часть эмулятора: эмулятор NES/Famicom/Dendy на уровне
+      вентилей, на котором построены оба фронтенда. Поверх нативного ядра расположены два
+      приложения: управляемое приложение WinForms (<b>Breaknes</b>) и, для тех, кто любит
+      минимализм, сборка Breaknes на SDL2 (<b>BreaknesSDL</b>).
+    </p>
+
+    <h2 id="breakscore">BreaksCore</h2>
+    <p>Нативная часть эмулятора.</p>
+
+    <h3 id="abstract-board">Абстрактная плата</h3>
+    <p>Абстрактная материнская плата используется как базовый класс для всех остальных вариантов NES/Famicom/Dendy.</p>
+    <p>Для создания экземпляра материнской платы используется Board Factory:</p>
+    <ul>
+      <li>Родительское приложение сообщает фабрике, какую плату создать (по имени).</li>
+      <li>Создаётся класс соответствующей материнской платы (<code>NESBoard.cpp</code>, <code>FamicomBoard.cpp</code>).</li>
+    </ul>
+    <p>Пока это немного абстрактно, но позже мы свяжем классы между собой.</p>
+
+    <h3 id="boards">Платы</h3>
+    <p>Список поддерживаемых плат.</p>
+
+    <h4 id="famicom">Famicom</h4>
+    <p>Планируется симулировать плату Generic Famicom следующим образом:</p>
+    <img src="assets/img/fami_logisim.jpg" alt="Плата Famicom — схема в Logisim">
+
+    <h4 id="nes">NES</h4>
+    <p>Планируется симулировать плату Generic NES следующим образом:</p>
+    <img src="assets/img/nes.png" alt="Плата Generic NES">
+
+    <h4 id="dendy">Dendy/Subor/Phantom/Whatever</h4>
+    <p>TBD.</p>
+
+    <h4 id="bogus-board">Bogus Board</h4>
+    <p>BogusBoard — материнская плата по умолчанию, если BreaksCore не распознал тип платы при создании экземпляров или были переданы другие ошибочные параметры.</p>
+    <img src="assets/img/BogusBoard.jpg" alt="BogusBoard">
+    <p>Эта система содержит 64 Кбайт ОЗУ, процессорное ядро 6502 и больше ничего.</p>
+    <p>Иными словами, это минимальная вычислительная система, позволяющая проверить, тикает ли что-нибудь в эмуляторе.</p>
+
+    <h4 id="ppuplayer-board">Плата PPUPlayer</h4>
+    <p>Специальная debug-плата для PPUPlayer.</p>
+    <img src="assets/img/PPUPlayer_All.png" alt="Плата PPUPlayer">
+    <p>Плата содержит PPU, окружающую логику (Address Latch, VRAM) и частичную поддержку картриджного разъёма (используются только выводы PPU/CHR).</p>
+
+    <h4 id="apuplayer-board">Плата APUPlayer</h4>
+    <p>Ещё одна debug-плата для «проигрывания» дампа регистров APU.</p>
+    <img src="assets/img/APUPlayer.jpg" alt="Плата APUPlayer">
+    <p>Она примерно такая же, как PPUPlayer, но проще: APU не требует картриджного разъёма и дополнительных привязок, связанных с ним.</p>
+    <p>Сэмплы DPCM загружаются в расширенную память объёмом до 64 Кбайт (WRAM).</p>
+
+    <h3 id="debug-hub">Debug Hub</h3>
+    <p>Отладочная инфраструктура Breaknes.</p>
+    <blockquote><p><strong>Предупреждение:</strong> текущая реализация основана на строковых ассоциативных списках и не может считаться сверхбыстрой.</p></blockquote>
+    <p>Поскольку Breaknes — эмулятор на уровне вентилей, главный фокус отладки — наблюдение за различными сигналами, шинами и другими внутренними состояниями эмулируемой системы.</p>
+    <p>Сущности отладки разделены на следующие категории:</p>
+    <ul>
+      <li><code>DebugInfo</code>: получение/установка внутреннего состояния</li>
+      <li><code>MemLayout</code>: чтение/запись дампов памяти</li>
+    </ul>
+    <img src="assets/img/debug.jpg" alt="Debug Hub">
+
+    <h4 id="debuginfo">DebugInfo</h4>
+    <p>Со стороны GUI <code>DebugInfo</code> отображается как PropertyGrid. PropertyGrid заполняется динамически на основе записей отладочной информации, возвращаемых нативным ядром Breaknes.</p>
+    <p>Типы отладочной информации (DebugInfoType):</p>
+    <ul>
+      <li><code>DebugInfoType_Core</code>: получить внутреннее состояние M6502Core</li>
+      <li><code>DebugInfoType_CoreRegs</code>: получить состояние регистров 6502</li>
+      <li><code>DebugInfoType_APU</code>: получить внутреннее состояние компонентов APU</li>
+      <li><code>DebugInfoType_APURegs</code>: получить состояние регистров APU</li>
+      <li><code>DebugInfoType_PPU</code>: получить внутреннее состояние компонентов PPU</li>
+      <li><code>DebugInfoType_PPURegs</code>: получить состояние регистров PPU</li>
+      <li><code>DebugInfoType_Board</code>: получить внутреннее состояние компонентов материнской платы</li>
+      <li><code>DebugInfoType_Cart</code>: получить внутреннее состояние картриджа и компонентов маппера</li>
+    </ul>
+    <p>Методы:</p>
+    <ul>
+      <li><code>GetDebugInfoEntryCount</code>: получить количество debug-записей указанного типа</li>
+      <li><code>GetDebugInfo</code>: получить все записи указанного типа. Управляемое приложение должно сначала узнать число записей и выделить массив для их получения.</li>
+      <li><code>GetDebugInfoByName</code>: получить одну запись DebugInfo с указанным именем</li>
+      <li><code>SetDebugInfoByName</code>: установить одну запись DebugInfo с указанным именем</li>
+    </ul>
+
+    <h4 id="memlayout">MemLayout</h4>
+    <p>Различные области памяти внутри эмулируемой системы описываются структурой <code>MemDesrciptor</code>.</p>
+    <p>Методы:</p>
+    <ul>
+      <li><code>GetMemLayout</code>: получить количество дескрипторов памяти, зарегистрированных в DebugHub</li>
+      <li><code>GetMemDescriptor</code>: получить информацию о блоке памяти</li>
+      <li><code>DumpMem</code>: получить весь блок памяти целиком. Мы эмулируем здесь NES, поэтому размеры дампов будут небольшими, и дробить дамп на части не имеет смысла.</li>
+      <li><code>WriteMem</code>: установить весь блок памяти</li>
+    </ul>
+
+    <h2 id="managed">Управляемое приложение (Breaknes)</h2>
+    <p>Эмулятор NES/Famicom/Dendy на уровне вентилей.</p>
+
+    <h3 id="two-tv-sets">Два телевизора (issue #515)</h3>
+    <p>Эмулятор поддерживает до 2 виртуальных телевизоров. Видеосигнал каждого PPU материнской платы привязан к телевизору; привязка настраивается в <code>BoardDescription.json</code>:</p>
+    <ul>
+      <li><code>ppus</code> — ревизии PPU платы (массив, до 2). Устаревшее одиночное поле <code>ppu</code> по-прежнему поддерживается.</li>
+      <li><code>tvs</code> — привязка телевизоров: <code>tvs[i]</code> — это индекс PPU, чей сигнал отображается на i-м телевизоре. Привязка по умолчанию: <code>TV[i]</code> показывает <code>PPU[i]</code>. Для отладки один PPU можно привязать сразу к обоим телевизорам (<code>"tvs": [0, 0]</code>).</li>
+      <li><code>tv_layout</code> — физическое расположение телевизоров в окне: <code>"horizontal"</code> (рядом) или <code>"vertical"</code> (один над другим).</li>
+    </ul>
+    <p>Выберите в настройках debug-плату («NES Debug: one PPU on two TVs (horizontal)» или «NES Debug: one PPU on two TVs (vertical)»), чтобы увидеть окно с двумя телевизорами в действии.</p>
+
+    <h3 id="build">Сборка</h3>
+    <p>Используйте VS2022.</p>
+    <p>Чтобы нативная и управляемая части генерировались в одну папку Build, нужно воспользоваться этим:</p>
+    <p><a href="https://docs.microsoft.com/en-us/answers/questions/202445/output-path-ignored-with-net-5-c-classes-lib.html">https://docs.microsoft.com/en-us/answers/questions/202445/output-path-ignored-with-net-5-c-classes-lib.html</a></p>
+
+    <h2 id="sdl">SDL2-порт (BreaknesSDL)</h2>
+    <p>Для тех, кто любит минимализм — сборка Breaknes на SDL2.</p>
+    <p>Реализация не отличается от управляемого приложения: используется та же нативная часть BreaksCore. Ревизии материнской платы и чипов берутся из <code>BoardDescription.json</code> (рядом с исполняемым файлом — файл общий с управляемым приложением): SDL-сборка ищет плату по имени, конфиг обязателен (встроенного запасного варианта нет).</p>
+
+    <h3 id="selecting-the-board">Выбор платы</h3>
+    <p>По умолчанию используется запись <code>NES (NES-CPU-07, 1987)</code> из <code>BoardDescription.json</code>. Любую другую плату из того же файла можно выбрать в командной строке:</p>
+<pre><code>breaknes --board "NES-101 (NESN-CPU-JIO-01, 1994-1995)" game.nes
+</code></pre>
+
+    <h3 id="sdl-two-tv-sets">Два телевизора (issue #515)</h3>
+    <p>SDL-сборка отображает видеосигнал каждого подключённого телевизора в одном окне. Поддерживается до 2 телевизоров; физическое расположение управляется свойством <code>tv_layout</code> платы в <code>BoardDescription.json</code>:</p>
+    <ul>
+      <li><code>"tv_layout": "horizontal"</code> — телевизоры располагаются рядом</li>
+      <li><code>"tv_layout": "vertical"</code> — телевизоры располагаются один над другим</li>
+    </ul>
+    <p>Привязка PPU к телевизорам описывается массивом <code>tvs</code> (<code>tvs[i]</code> = индекс PPU, показываемого на i-м телевизоре). Привязка по умолчанию: <code>TV[i]</code> показывает <code>PPU[i]</code>; для отладки один PPU можно привязать сразу к обоим телевизорам (<code>"tvs": [0, 0]</code>).</p>
+
+    <h3 id="io-subsystem">Подсистема ввода-вывода</h3>
+    <p>Подсистема ввода-вывода встроена в SDL-сборку (issue #516). В качестве источника событий ввода используется SDL2 Input:</p>
+    <ul>
+      <li><strong>Клавиатура</strong> — имена клавиш SDL (<code>Up</code>, <code>Down</code>, <code>Left</code>, <code>Right</code>, <code>A</code>, <code>S</code>, <code>Z</code>, <code>X</code>, <code>Return</code>, <code>Space</code>, ...)</li>
+      <li><strong>Геймпады</strong> (если доступны) — <code>Controller&lt;slot&gt;_ButtonA</code>, <code>Controller&lt;slot&gt;_DPadUp</code>, <code>Controller&lt;slot&gt;_ButtonStart</code>, ...; аналоговые стики сопоставляются с цифровыми событиями <code>Controller&lt;slot&gt;_AxisLeftX-</code>/<code>_AxisLeftX+</code> и т.д.; аналоговые триггеры — с <code>Controller&lt;slot&gt;_TriggerLeft</code>/<code>_TriggerRight</code>.</li>
+    </ul>
+    <p>Устройства (контроллеры Famicom/NES/Dendy, виртуальные контроллеры), их привязки IOState к событиям ввода и статус Attach/Detach к портам материнской платы настраиваются интерактивно:</p>
+<pre><code>breaknes --ioconfig [config_path]
+</code></pre>
+    <p>Логика конфигуратора основана на диалоге настроек IO управляемого приложения (<code>Breaknes/FormIOConfig.cs</code>): пул устройств (добавление/удаление), привязки (IOState &lt;-&gt; событие ввода) и Attach/Detach к портам.</p>
+    <p>Настройки IO хранятся отдельно от управляемого приложения (по умолчанию — <code>IOConfigSDL.json</code>, управляемое приложение использует собственный <code>IOConfig.json</code>), поэтому настройки никогда не пересекаются. При запуске эмулятор загружает настройки из того же файла и подключает настроенные устройства.</p>
+    <p>Примечание: в SDL-сборке у виртуальных контроллеров нет экранных диалогов; ими управляют привязанные события клавиатуры/геймпада, как обычными контроллерами.</p>
+
+    <p class="note">Источник: <code>Breaknes/BreaksCore/Readme.md</code>, <code>Breaknes/Breaknes/Readme.md</code>, <code>Breaknes/BreaknesSDL/Readme.md</code> · страница входит в <a href="index_ru.html">сайт документации</a>.</p>
+
+  </main>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Breaknes/BreaksCore, Breaknes/Breaknes, Breaknes/BreaknesSDL</div>
+    <div class="prs">Документация: <a href="about_ru.html">О проекте</a> · <a href="cartpcb_ru.html">CartPcb</a> · <a href="nescartdb_ru.html">Nescartdb</a> · <a href="io_ru.html">IO</a> · <a href="chips_ru.html">Chips</a> · <a href="common_ru.html">Common</a> · <a href="breakscore_ru.html">BreaksCore</a> · <a href="unittest_ru.html">UnitTest</a> · <a href="tools_ru.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

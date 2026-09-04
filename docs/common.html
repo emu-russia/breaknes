@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Common — shared libraries — Breaknes docs</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Toggle theme"
+        data-label-light="Switch to dark theme" data-label-dark="Switch to light theme">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="index.html">← Breaknes</a> · Docs</span>
+    <span class="lang"><b>English</b> · <a href="common_ru.html">Русский</a></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Common — shared libraries</h1>
+      <p class="lede">Shared code used across the project: BaseLogicLib (logic primitives), BaseBoardLib (motherboard components), JsonLib and SharpTools</p>
+    </div>
+  </header>
+
+  <main class="doc">
+
+    <p class="lead">
+      The four libraries below — <code>BaseLogicLib</code>, <code>BaseBoardLib</code>, <code>JsonLib</code> and
+      <code>SharpTools</code> — live in the <code>Common/</code> folder of the repository and contain the code shared
+      across the project: <code>BaseLogicLib</code> provides the basic logic primitives used in N-MOS chips,
+      <code>BaseBoardLib</code> contains the components that are found on the simulated motherboards,
+      <code>JsonLib</code> is a general-purpose library for working with JSON, and <code>SharpTools</code> collects
+      the remaining shared tools of the project.
+    </p>
+
+    <h2 id="base-logic">Base Logic</h2>
+    <p>Basic logic primitives used in N-MOS chips.</p>
+    <p>The implementation principles are similar to SystemC, but without using SystemC :)</p>
+
+    <h3 id="edge-simulation">Edge Simulation</h3>
+    <p>In the literal sense, the edge is not simulated (in the sense of the time interval).</p>
+    <p>Instead an approach with comparison of the previous CLK value and the current one is used.</p>
+    <p>
+      Specifically for emulation purposes (<code>M6502Core</code>, <code>APUSim</code>, <code>PPUSim</code>) this
+      technique is not applied, because most of the circuits of these chips are made using NMOS technology with
+      dynamic logic on latches (<code>DLatch</code>).
+    </p>
+    <p>
+      If you suddenly need to simulate an edge, the library has two calls (<code>IsPosedge</code> and
+      <code>IsNegedge</code>).
+    </p>
+
+    <h2 id="baseboardlib">BaseBoardLib</h2>
+    <p>This library contains components that are found on the simulated motherboards.</p>
+    <p>
+      These are not necessarily actual chips, they can be some special debugging components, e.g.
+      <code>Fake6502</code>.
+    </p>
+
+    <h3 id="40h368">40H368 - IO Binding</h3>
+    <img src="assets/img/40H368.jpg" alt="40H368">
+    <p>
+      An array of <code>notif0</code> elements (in Verilog terms) used to bind IO ports. The connection of external
+      ports and CPU differs between Famicom/NES.
+    </p>
+
+    <h3 id="ls139">LS139 - Famicom/NES "North Bridge"</h3>
+    <img src="assets/img/LS139.jpg" alt="LS139">
+    <p>
+      This paired decoder is used to select the address space of the PPU register interface, internal S-RAM
+      ("Work RAM"), or external ROM.
+    </p>
+    <p>The distinguishing feature is that the output from one half is fed to the same chip :-)</p>
+
+    <h3 id="ls373">LS373 - PPU VRAM Address Latch</h3>
+    <img src="assets/img/LS373.jpg" alt="LS373">
+    <p>
+      Used for PPU Address/Data bus multiplexing. "Memorizes" the lower 8 bits of the PPU address bus when PPU ALE=1.
+    </p>
+
+    <h3 id="sram">SRAM - Typical S-RAM from 90's</h3>
+    <img src="assets/img/SRAM.jpg" alt="SRAM">
+    <p>Well, that's easy.</p>
+
+    <h2 id="jsonlib">JsonLib</h2>
+    <p>A general-purpose library for working with JSON.</p>
+
+    <h2 id="sharptools">SharpTools</h2>
+    <p>The <code>Readme.md</code> of this library is only a stub — it has no content beyond the title.</p>
+
+  </main>
+
+  <footer>
+    <div>Source: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · Common/*/Readme.md</div>
+    <div class="prs">Docs: <a href="about.html">About</a> · <a href="cartpcb.html">CartPcb</a> · <a href="nescartdb.html">Nescartdb</a> · <a href="io.html">IO</a> · <a href="chips.html">Chips</a> · <a href="common.html">Common</a> · <a href="breakscore.html">BreaksCore</a> · <a href="unittest.html">UnitTest</a> · <a href="tools.html">Tools</a></div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>
