@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breaknes — эмулятор NES / Famicom / Dendy на уровне вентилей</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Переключить тему"
+        data-label-light="Включить тёмную тему" data-label-dark="Включить светлую тему">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="https://github.com/emu-russia/breaknes">emu-russia/breaknes</a> на GitHub</span>
+    <span class="lang"><a href="index.html">English</a> · <b>Русский</b></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Breaknes</h1>
+      <p class="lede">Эмуляторная часть проекта <a href="https://github.com/emu-russia/breaks">breaks</a> по реверс-инжинирингу микросхем</p>
+    </div>
+  </header>
+
+  <section class="hero">
+    <p class="tagline">Эмулятор NES / Famicom / Dendy на уровне вентилей.</p>
+    <p class="desc">
+      Чипы эмулируются не «по поведению»: логические схемы, восстановленные с реальных кристаллов,
+      повторены на C++, поэтому эмулированный 6502 ведёт себя так же, как настоящий, — <b>те же вентили,
+      те же триггеры, те же шины, те же особенности</b>.
+    </p>
+  </section>
+
+  <div class="feat">
+    <div class="feat-card">
+      <h3>Чипы на уровне вентилей</h3>
+      <p>6502 (M6502Core), 2A03/2A07 CPU+звук (APUSim) и PPU 2C02 (PPUSim) исполняют логику,
+      восстановленную с реальных кристаллов, — вплоть до внутренних сигналов и тайминговых аномалий.
+      MMC1 моделируется как чип.</p>
+    </div>
+    <div class="feat-card">
+      <h3>Картриджи как данные</h3>
+      <p>Плата — это JSON-документ из компонентов и соединений (CartPcb), а не код на C++. Картриджи
+      опознаются по CRC32 дампов PRG/CHR через базу, полученную из nescartdb.</p>
+    </div>
+    <div class="feat-card">
+      <h3>Два фронтенда</h3>
+      <p>Управляемое приложение WinForms и SDL2-порт, собираемый под Windows и Linux, — с юнит-тестами,
+      отладочными инструментами и IO-подсистемой для контроллеров NES, Famicom и Dendy.</p>
+    </div>
+  </div>
+
+  <section class="materials">
+    <h2>Материалы <span class="hint">— обзоры изменений, заметки</span></h2>
+    <div class="tiles">
+      <div class="tile">
+        <span class="tag">Дайджест</span>
+        <h3>Дайджест изменений · PR #518–#526</h3>
+        <p>Шесть pull request'ов, влитых 30–31 августа 2026 года: единая система журналирования, перенос
+        IO-подсистемы в SDL2-порт, до двух экранов с привязкой PPU⇄TV, приведение базы плат к реальным
+        ревизиям материнских плат, иконка проекта и переработка CartPcb (scroll-перемычка, клеевая логика
+        чипами, фолбэк по iNES).</p>
+        <div class="tile-meta">30–31 августа 2026</div>
+        <div class="tile-links">
+          <a class="primary" href="breaknes_digest1_ru.html">Читать на русском</a>
+          <a href="breaknes_digest1_en.html">Read in English</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Исходники: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · эмуляция NES на уровне вентилей, часть проекта breaks</div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

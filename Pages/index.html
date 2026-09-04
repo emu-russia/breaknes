@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breaknes — gate-level NES / Famicom / Dendy emulator</title>
+<link rel="icon" type="image/x-icon" href="assets/breaknes.ico">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button id="themeToggle" type="button" aria-label="Toggle theme"
+        data-label-light="Switch to dark theme" data-label-dark="Switch to light theme">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+
+<div class="wrap">
+
+  <nav class="topline">
+    <span><a href="https://github.com/emu-russia/breaknes">emu-russia/breaknes</a> on GitHub</span>
+    <span class="lang"><b>English</b> · <a href="index_ru.html">Русский</a></span>
+  </nav>
+
+  <header class="page-head">
+    <img class="logo" src="assets/breaknes.png" alt="Breaknes">
+    <div>
+      <h1>Breaknes</h1>
+      <p class="lede">The emulator part of the <a href="https://github.com/emu-russia/breaks">breaks</a> chip-reversing project</p>
+    </div>
+  </header>
+
+  <section class="hero">
+    <p class="tagline">A gate-level NES / Famicom / Dendy emulator.</p>
+    <p class="desc">
+      The chips are not emulated “by behavior”: the logic circuits reconstructed from the real dies are
+      duplicated in C++, so the emulated 6502 behaves the same way the real one does — <b>same gates, same
+      flip-flops, same buses, same quirks</b>.
+    </p>
+  </section>
+
+  <div class="feat">
+    <div class="feat-card">
+      <h3>Gate-level chips</h3>
+      <p>The 6502 (M6502Core), the 2A03/2A07 CPU+audio (APUSim) and the 2C02 PPU (PPUSim) run the logic
+      recovered from the real dies — down to internal signals and timing anomalies. MMC1 is modeled as a chip too.</p>
+    </div>
+    <div class="feat-card">
+      <h3>Cartridges as data</h3>
+      <p>A board is a JSON document of components and wiring (CartPcb), not C++ code. ROMs are identified by
+      the CRC32 of their PRG/CHR dumps against the nescartdb-derived database.</p>
+    </div>
+    <div class="feat-card">
+      <h3>Two front-ends</h3>
+      <p>A WinForms managed app and an SDL2 port that builds on Windows and Linux — with unit tests, debug
+      tools and an IO subsystem for NES, Famicom and Dendy controllers.</p>
+    </div>
+  </div>
+
+  <section class="materials">
+    <h2>Materials <span class="hint">— changelogs, notes</span></h2>
+    <div class="tiles">
+      <div class="tile">
+        <span class="tag">Digest</span>
+        <h3>Change digest · PR #518–#526</h3>
+        <p>Six pull requests merged on August 30–31, 2026: a unified logging facility, the IO subsystem
+        ported to SDL2, up to two TV Sets with PPU⇄TV binding, the board database aligned with real
+        motherboard revisions, the project icon, and the CartPcb rework (scroll jumper, glue logic as
+        chips, iNES fallback).</p>
+        <div class="tile-meta">August 30–31, 2026</div>
+        <div class="tile-links">
+          <a class="primary" href="breaknes_digest1_en.html">Read in English</a>
+          <a href="breaknes_digest1_ru.html">Читать на русском</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Source: <a href="https://github.com/emu-russia/breaknes">github.com/emu-russia/breaknes</a> · gate-level NES emulation, part of the breaks project</div>
+  </footer>
+
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>
