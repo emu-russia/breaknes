@@ -220,7 +220,12 @@ namespace PPUSim
 		INT_FF.set(NOR3(NOR(setFF, INT_FF.get()), RESCL, R2_Enable));
 
 		ppu->fsm.INT = NOR(NOT(VBL), NOT(INT_FF.get()));
-		db_latch.set(INT_FF.get(), NOT(R2_Enable));
+
+		// The $2002[7] read buffer stores the *inverted* flag (die node /vbl_flag_read_buffer):
+		// the schematic has an inverter on the latch D input, and its inverting output drives the
+		// D7 pad driver, plus one more inverter to the pad. Two inversions => true polarity on DB7.
+		// See HDL/PPU/fsm.v (VBlankInt): dlatch db_latch(.d(~int_ff_q), ...), DB7Out = ... db_latch_nq.
+		db_latch.set(NOT(INT_FF.get()), NOT(R2_Enable));
 		TriState DB7 = MUX(R2_Enable, TriState::Z, db_latch.nget());
 		ppu->SetDBBit(7, DB7);
 	}
