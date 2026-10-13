@@ -72,3 +72,11 @@ make
 ```
 
 If something doesn't work, you do it. You have red eyes for a reason. :penguin:
+
+## AI Usage Policy 👾
+
+Hand-drawn portraits ceased to exist around 1850, with the arrival of the camera. Hand-written programming ceased to exist around December 2025.
+
+If you have a problem with that, walk on by. AI is used in this project both to implement features from specs (Spec Driven Development) and to fix bugs with the help of a harness that the agent builds while fixing them.
+
+This time I won't write anything about Luddites and the like: in our case we don't even have to forbid peeking into other emulators, since we have taken the Famicom apart down to the molecules. Now just enjoy it and have fun with the process. AI will do all the mechanical work. 👾
