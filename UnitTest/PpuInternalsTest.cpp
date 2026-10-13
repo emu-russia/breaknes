@@ -2649,6 +2649,8 @@ namespace PPUSimUnitTest
 
 		// Now read $2002: RS=010, RnW=1, n_DBE=0.
 		// The VBlank flag must be visible on the data bus bit 7.
+		// DB7 is only driven a few half-clocks after n_DBE falls, so the /DBE window must be
+		// wider than a single half-clock.
 
 		inputs[(size_t)InputPad::RS0] = TriState::Zero;
 		inputs[(size_t)InputPad::RS1] = TriState::One;
@@ -2657,41 +2659,48 @@ namespace PPUSimUnitTest
 		inputs[(size_t)InputPad::n_DBE] = TriState::Zero;
 
 		data_bus = 0;
-		inputs[(size_t)InputPad::CLK] = TriState::Zero;
-		ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
-		inputs[(size_t)InputPad::CLK] = TriState::One;
-		ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
+		for (size_t n = 0; n < 8; n++)
+		{
+			inputs[(size_t)InputPad::CLK] = (n & 1) ? TriState::One : TriState::Zero;
+			ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
+		}
 
 		sprintf_s(text, sizeof(text), "$2002 read in VBlank: DB=0x%02X (bit7=%d)\n", data_bus, (data_bus >> 7) & 1);
 		Logger::WriteMessage(text);
 
 		// Documented: $2002[7] = 1 during VBlank
 
-		if ((data_bus & 0x80) == 0)
+		PUIT_CHECK((data_bus & 0x80) != 0, "$2002 bit7 is 1 during VBlank");
+
+		// Release /DBE for a whole PCLK. The read buffer latch is transparent while $2002 is not
+		// being read, so it re-samples the flag that the read has just cleared.
+		// (The FSM is only evaluated once per PCLK, so a shorter window would not update it.)
+
+		inputs[(size_t)InputPad::n_DBE] = TriState::One;
+		for (size_t n = 0; n < 8; n++)
 		{
-			Logger::WriteMessage("BUG: $2002 bit7 is 0 during VBlank (should be 1)!\n");
+			inputs[(size_t)InputPad::CLK] = (n & 1) ? TriState::One : TriState::Zero;
+			ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
 		}
 
 		// Reading $2002 clears the VBlank flag: a second read must give bit7=0.
 
+		inputs[(size_t)InputPad::n_DBE] = TriState::Zero;
 		data_bus = 0;
-		inputs[(size_t)InputPad::CLK] = TriState::Zero;
-		ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
-		inputs[(size_t)InputPad::CLK] = TriState::One;
-		ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
+		for (size_t n = 0; n < 8; n++)
+		{
+			inputs[(size_t)InputPad::CLK] = (n & 1) ? TriState::One : TriState::Zero;
+			ppu->sim(inputs, outputs, &ext, &data_bus, &ad_bus, &addrHi_bus, vout);
+		}
 
 		sprintf_s(text, sizeof(text), "$2002 read after clear: DB=0x%02X (bit7=%d)\n", data_bus, (data_bus >> 7) & 1);
 		Logger::WriteMessage(text);
 
-		if ((data_bus & 0x80) != 0)
-		{
-			Logger::WriteMessage("BUG: $2002 bit7 not cleared after read!\n");
-		}
-
 		// The documented behavior is bit7=1 in VBlank and 0 after the read.
-		// (Reported as diagnostics; the assertion enforces the documented behavior.)
 
-		return (data_bus & 0x80) == 0;
+		PUIT_CHECK((data_bus & 0x80) == 0, "$2002 bit7 is 0 after the read cleared it");
+
+		return true;
 	}
 }
 
