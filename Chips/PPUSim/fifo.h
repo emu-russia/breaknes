@@ -6,6 +6,7 @@ namespace PPUSim
 {
 	class FIFO_CounterBit
 	{
+		friend PPUSimUnitTest::UnitTest;
 		BaseLogic::FF keep_ff;
 		BaseLogic::DLatch step_latch;
 
@@ -19,6 +20,7 @@ namespace PPUSim
 
 	class FIFO_SRBit
 	{
+		friend PPUSimUnitTest::UnitTest;
 		BaseLogic::DLatch in_latch;
 		BaseLogic::DLatch out_latch;
 

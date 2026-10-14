@@ -2,6 +2,8 @@
 
 #pragma once
 
+namespace APUSimUnitTest { class UnitTest; }
+
 namespace APUSim
 {
 	class RegisterBit
@@ -39,6 +41,7 @@ namespace APUSim
 
 	class CounterBit
 	{
+		friend APUSimUnitTest::UnitTest;
 		BaseLogic::DLatch transp_latch{};
 		BaseLogic::DLatch cg_latch{};
 
@@ -57,6 +60,7 @@ namespace APUSim
 
 	class DownCounterBit
 	{
+		friend APUSimUnitTest::UnitTest;
 		BaseLogic::DLatch transp_latch{};
 		BaseLogic::DLatch cg_latch{};
 

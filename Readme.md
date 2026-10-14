@@ -25,6 +25,7 @@ Breaknes is the emulator part of the [breaks](https://github.com/emu-russia/brea
 - **M6502Core** — MOS 6502 processor core at the gate level.
 - **APUSim** — the whole CPU chip (2A03/2A07): 6502 core + APU sound.
 - **PPUSim** — the PPU (2C02) at the gate level.
+- **APUSimFast / PPUSimFast** — optional fast siblings with packed counter/latch banks.
 - **MMC1** — the MMC1 mapper chip.
 - **CartPcb** — cartridge PCB simulation: board descriptions are JSON, chips are wired with nets, cartridges are identified by nescartdb CRCs.
 
