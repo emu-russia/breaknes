@@ -16,7 +16,7 @@ using namespace BaseLogic;
 
 M6502Core::M6502* core = nullptr;
 #if FAST_APU
-FastAPU::FastAPU* apu = nullptr;
+APUSimFast::APU* apu = nullptr;
 #else
 APUSim::APU* apu = nullptr;
 #endif
@@ -94,7 +94,7 @@ int main()
 {
 	core = new M6502Core::M6502(true, true);
 #if FAST_APU
-	apu = new FastAPU::FastAPU(core, APUSim::Revision::RP2A03G);
+	apu = new APUSimFast::APU(core, APUSim::Revision::RP2A03G);
 #else
 	apu = new APUSim::APU(core, APUSim::Revision::RP2A03G);
 #endif

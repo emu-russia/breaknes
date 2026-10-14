@@ -1,6 +1,6 @@
 #pragma once
 
-#define FAST_APU 0
+#define FAST_APU 1
 
 #include <iostream>
 #include <cstdint>
@@ -14,7 +14,7 @@
 #include "../../Chips/M6502Core/core.h"
 
 #if FAST_APU
-#include "../../private/Chips/FastAPU/apu.h"
+#include "../../Chips/APUSimFast/apu.h"
 #else
 #include "../../Chips/APUSim/apu.h"
 #endif

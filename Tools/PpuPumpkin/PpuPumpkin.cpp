@@ -3,7 +3,11 @@
 #include "pch.h"
 
 using namespace BaseLogic;
+#if FAST_PPU
+using namespace PPUSimFast;
+#else
 using namespace PPUSim;
+#endif
 
 #define ONE_SECOND 21'477272		// 2C02-G
 
@@ -15,7 +19,11 @@ using namespace PPUSim;
 #define SIMULATE_MSEC 1000
 #endif
 
+#if FAST_PPU
+PPUSimFast::PPU* ppu = nullptr;
+#else
 PPUSim::PPU* ppu = nullptr;
+#endif
 
 static bool PpuMegaCyclesTest(size_t desired_clk)
 {
@@ -74,7 +82,11 @@ static bool PpuMegaCyclesTest(size_t desired_clk)
 
 int main()
 {
+#if FAST_PPU
+	ppu = new PPUSimFast::PPU(PPUSim::Revision::RP2C02G);
+#else
 	ppu = new PPUSim::PPU(PPUSim::Revision::RP2C02G);
+#endif
 
 	size_t clks = (ONE_SECOND / 1000) * SIMULATE_MSEC;
 

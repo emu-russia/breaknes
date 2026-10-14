@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.5.33502.453
+# Visual Studio Version 18
+VisualStudioVersion = 18.11.12306.390 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PpuPumpkin", "PpuPumpkin.vcxproj", "{FF6C1A38-9927-4198-9C90-F373BE5E0BC4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLogicLib", "..\..\Common\BaseLogicLib\Scripts\VS2026\BaseLogicLib.vcxproj", "{11AAD192-46EB-4D5D-B81F-BCEE11D6AF8E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PPUSim", "..\..\Chips\PPUSim\Scripts\VS2026\PPUSim.vcxproj", "{EBD9B3EB-3C04-43ED-B454-E9442B21F5A0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PPUSimFast", "..\..\Chips\PPUSimFast\Scripts\VS2026\PPUSimFast.vcxproj", "{D9F61BF2-623D-49F4-95E0-E2289A3EE509}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,14 @@ Global
 		{EBD9B3EB-3C04-43ED-B454-E9442B21F5A0}.Release|x64.Build.0 = Release|x64
 		{EBD9B3EB-3C04-43ED-B454-E9442B21F5A0}.Release|x86.ActiveCfg = Release|Win32
 		{EBD9B3EB-3C04-43ED-B454-E9442B21F5A0}.Release|x86.Build.0 = Release|Win32
+		{D9F61BF2-623D-49F4-95E0-E2289A3EE509}.Debug|x64.ActiveCfg = Debug|x64
+		{D9F61BF2-623D-49F4-95E0-E2289A3EE509}.Debug|x64.Build.0 = Debug|x64
+		{D9F61BF2-623D-49F4-95E0-E2289A3EE509}.Debug|x86.ActiveCfg = Debug|Win32
+		{D9F61BF2-623D-49F4-95E0-E2289A3EE509}.Debug|x86.Build.0 = Debug|Win32
+		{D9F61BF2-623D-49F4-95E0-E2289A3EE509}.Release|x64.ActiveCfg = Release|x64
+		{D9F61BF2-623D-49F4-95E0-E2289A3EE509}.Release|x64.Build.0 = Release|x64
+		{D9F61BF2-623D-49F4-95E0-E2289A3EE509}.Release|x86.ActiveCfg = Release|Win32
+		{D9F61BF2-623D-49F4-95E0-E2289A3EE509}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
