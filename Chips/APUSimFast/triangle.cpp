@@ -15,14 +15,14 @@ namespace APUSimFast
 	{
 	}
 
-	void TriangleChan::sim()
+	uint32_t TriangleChan::sim()
 	{
 		sim_Control();
 		sim_LinearReg();
 		sim_LinearCounter();
 		sim_FreqReg();
 		sim_FreqCounter();
-		sim_Output();
+		return sim_Output();
 	}
 
 	void TriangleChan::sim_Control()
@@ -77,12 +77,11 @@ namespace APUSimFast
 		fout_latch.set(freq_cnt.get_carry(), apu->wire.PHI1);
 	}
 
-	void TriangleChan::sim_Output()
+	uint32_t TriangleChan::sim_Output()
 	{
 		out_cnt.sim(apu->wire.RES, apu->wire.W401A, TSTEP, apu->wire.PHI1, apu->DB);
 		const unsigned value = out_cnt.get();
-		const unsigned triangle = (value & 16) != 0 ? (value & 15) : ((~value) & 15);
-		for (unsigned n = 0; n < 4; ++n) apu->TRI_Out[n] = ((triangle >> n) & 1) ? TriState::One : TriState::Zero;
+		return (value & 16) != 0 ? (value & 15) : ((~value) & 15);
 	}
 
 	TriState TriangleChan::get_LC()

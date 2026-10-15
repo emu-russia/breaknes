@@ -1,8 +1,13 @@
 #pragma once
 
+#ifdef M6502_PASS2_STATS
+#include <vector>
+#endif
+
 namespace M6502Core
 {
 	class M6502;
+	class RandomLogic;
 }
 
 // An external class that has access to all core internals. Use for unit testing.
@@ -10,9 +15,11 @@ namespace M6502Core
 namespace M6502CoreUnitTest
 {
 	class UnitTest;
+	class PackedProof;
 }
 
 #include "decoder.h"
+#include "packed_decoder.h"
 #include "ir.h"
 #include "predecode.h"
 #include "extra_counter.h"
@@ -39,6 +46,43 @@ namespace M6502CoreUnitTest
 namespace M6502Core
 {
 	/// <summary>
+	/// Compile-time phase of an ExactPacked kernel. 0 = generic: the phase is read from the wires at
+	/// run time (the reference schedule; also used for a non-binary PHI0 pad). 1 = PHI0 is Zero
+	/// (PHI1 high), 2 = PHI0 is One (PHI2 high). For a binary PHI0, PHI1 = NOT(PHI0) and PHI2 = PHI0
+	/// are exactly {Zero, One}, so every latch enable and phase test below is a constant per phase;
+	/// the generic instantiation keeps the original run-time expressions verbatim.
+	/// </summary>
+	template<int Phase> struct Phi
+	{
+		static constexpr bool Generic = Phase == 0;
+		static constexpr bool Is1 = Phase == 1;
+		static constexpr bool Is2 = Phase == 2;
+		// The conditions below are constexpr, so every branch folds at compile time; plain `if` keeps
+		// this public header usable by the existing C++14 consumers.
+		// DLatch::set(value, PHI1) / DLatch::set(value, PHI2)
+		static inline void Set1(BaseLogic::DLatch& latch, BaseLogic::TriState value, BaseLogic::TriState PHI1)
+		{
+			if (Generic) latch.set(value, PHI1);
+			else if (Is1) latch.set(value, BaseLogic::TriState::One);
+		}
+		static inline void Set2(BaseLogic::DLatch& latch, BaseLogic::TriState value, BaseLogic::TriState PHI2)
+		{
+			if (Generic) latch.set(value, PHI2);
+			else if (Is2) latch.set(value, BaseLogic::TriState::One);
+		}
+		// `PHI2 == One`, `PHI1 == One`, `if (PHI2)` (non-zero), `if (PHI1)` (non-zero)
+		static inline bool Phi2One(BaseLogic::TriState PHI2) { return Generic ? PHI2 == BaseLogic::TriState::One : Is2; }
+		static inline bool Phi1One(BaseLogic::TriState PHI1) { return Generic ? PHI1 == BaseLogic::TriState::One : Is1; }
+		static inline bool Phi2(BaseLogic::TriState PHI2) { return Generic ? PHI2 != BaseLogic::TriState::Zero : Is2; }
+		static inline bool Phi1(BaseLogic::TriState PHI1) { return Generic ? PHI1 != BaseLogic::TriState::Zero : Is1; }
+		// NOR(a, PHI2) for a binary a: Zero in PHI2, NOT(a) in PHI1 (the generic form keeps the X/Z quirks)
+		static inline BaseLogic::TriState NorPhi2(BaseLogic::TriState a, BaseLogic::TriState PHI2)
+		{
+			return Generic ? BaseLogic::NOR(a, PHI2) : (Is2 ? BaseLogic::TriState::Zero : BaseLogic::NOT(a));
+		}
+	};
+
+	/// <summary>
 	/// Log categories of the M6502 core (one bit per category, owned by this component).
 	/// </summary>
 	enum LogCategory : uint64_t
@@ -52,6 +96,8 @@ namespace M6502Core
 	/// for the user interface (definitions flow Component -> BreaksCore).
 	/// </summary>
 	const Log::LogCategoryDesc* GetLogCategories(size_t& count);
+
+	enum class ExecutionBackend { Reference, ExactPacked };
 
 	enum class InputPad
 	{
@@ -76,6 +122,7 @@ namespace M6502Core
 	class M6502
 	{
 		friend M6502CoreUnitTest::UnitTest;
+		friend M6502CoreUnitTest::PackedProof;
 		friend IR;
 		friend PreDecode;
 		friend ExtraCounter;
@@ -116,6 +163,8 @@ namespace M6502Core
 		bool ADL_Dirty = false;
 		bool ADH_Dirty = false;
 
+		ExecutionBackend execution_backend = ExecutionBackend::Reference;
+		const PackedDecoderRow* packed_decoder = nullptr;
 		Decoder* decoder = nullptr;
 		PreDecode* predecode = nullptr;
 		IR* ir = nullptr;
@@ -134,8 +183,31 @@ namespace M6502Core
 		size_t TxBits = 0;		// Used to optimize table indexing
 
 		void sim_Top(BaseLogic::TriState inputs[], uint8_t* data_bus);
+		template<bool Packed, int Phase = 0> void sim_TopImpl(BaseLogic::TriState inputs[], uint8_t* data_bus, bool second_pass = false);
 
 		void sim_Bottom(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint16_t* addr_bus, uint8_t* data_bus);
+		template<bool Packed, int Phase = 0> void sim_BottomImpl(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint16_t* addr_bus, uint8_t* data_bus);
+		// PHI1 only: the second Bottom traversal is a proven no-op when the controls Bottom reads
+		// did not change in the second Top traversal and the command pattern has none of the four
+		// PHI1 feedback paths (see sim()). Signature of the controls captured after a Top traversal.
+		struct BottomControls { uint64_t cmd; BaseLogic::TriState WR, T1, BRK6E, B_OUT; };
+		BottomControls CaptureBottomControls();
+		static bool Phi1BottomIdempotent(uint64_t cmd);
+		// PHI2 only: the second Top traversal recomputes only what the first traversal left unsettled
+		// (see the proof at the definition); the generic phase and PHI1 run the full traversal.
+		void sim_Phi2TopSettle(uint8_t* data_bus);
+		// PHI1 only: the second Top traversal re-runs the blocks downstream of the re-selected decoder
+		// row and settles the rest (see the proof at the definition).
+		void sim_Phi1TopSettle(uint8_t* data_bus);
+		// PHI2 only: the second Bottom traversal runs only its bus-driver steps (see the proof at the
+		// definition).
+		void sim_Phi2BottomSettle(uint8_t* data_bus);
+#ifdef FASTSIM_SKIP_ORACLE
+		void sim_Phi1BottomOracle(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint16_t* addr_bus, uint8_t* data_bus);
+		void sim_Phi2TopOracle(BaseLogic::TriState inputs[], uint8_t* data_bus);
+		void sim_Phi1TopOracle(BaseLogic::TriState inputs[], uint8_t* data_bus);
+		void sim_Phi2BottomOracle(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint16_t* addr_bus, uint8_t* data_bus);
+#endif
 
 		BaseLogic::TriState nNMI_Cache = BaseLogic::TriState::Z;
 		BaseLogic::TriState nIRQ_Cache = BaseLogic::TriState::Z;
@@ -265,9 +337,21 @@ namespace M6502Core
 			uint64_t raw;
 		} cmd{};
 
+		// ExactPacked: the latches of the five command evaluators, one bit each (the latch's g), in
+		// the bank of their enable phase; layout and bit helpers in random_logic.h.
+		uint64_t cmd_latch2 = 0;	// enabled by PHI2
+		uint64_t cmd_latch1 = 0;	// enabled by PHI1
+
 	public:
 		M6502() {}
 		M6502(bool HLE, bool BCD_Hack);
+		M6502(bool HLE, bool BCD_Hack, ExecutionBackend backend);
+		ExecutionBackend GetExecutionBackend() const { return execution_backend; }
+#ifdef M6502_PASS2_STATS
+		// v4 Phase 1 instrumentation: byte images of the core and every sub-object, used to count
+		// how often the second settling traversal changes anything (plan item N5).
+		std::vector<std::vector<uint8_t>> SnapshotState() const;
+#endif
 		~M6502();
 
 		virtual void sim(BaseLogic::TriState inputs[], BaseLogic::TriState outputs[], uint16_t *addr_bus, uint8_t* data_bus);

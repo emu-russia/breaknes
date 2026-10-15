@@ -74,14 +74,14 @@ namespace PPUSimFast
 		BaseLogic::TriState O = BaseLogic::TriState::X;
 		BaseLogic::TriState VINV = BaseLogic::TriState::X;
 
-		void sim_Control();
-		void sim_VInv();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_Control(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_VInv(const EdgeContextT<Phase>& c);
 
 	public:
 		PAR(PPU* parent);
 		~PAR();
 
-		void sim();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim(const EdgeContextT<Phase>& c);
 		uint16_t get_address() const { return address; }
 	};
 }

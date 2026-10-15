@@ -19,6 +19,7 @@ namespace APUSimFast
 	class CoreBinding
 	{
 		friend APUSimUnitTest::UnitTest;
+		friend APU;		// the idle call steps the divider banks in place
 
 		APU* apu = nullptr;
 
@@ -34,5 +35,10 @@ namespace APUSimFast
 		~CoreBinding();
 
 		void sim();
+
+		// v4 idle path: PHI0 after the next divider step, computed without committing it. The
+		// divider output bank only moves on the n_CLK != 0 half, exactly as sim_DividerBeforeCore.
+		bool PeekPhi0Edge() const;
+		bool core_called = false;
 	};
 }

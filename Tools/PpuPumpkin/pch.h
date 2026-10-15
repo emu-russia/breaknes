@@ -1,6 +1,6 @@
 #pragma once
 
-#define FAST_PPU 0
+#define FAST_PPU 1
 
 #include <iostream>
 #include <cstdint>

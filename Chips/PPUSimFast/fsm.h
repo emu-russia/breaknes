@@ -9,51 +9,9 @@ namespace PPUSimFast
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
-		BaseLogic::DLatch h_latch1[6];
-		BaseLogic::DLatch h_latch2[6];
-
-		BaseLogic::DLatch fp_latch1;
-		BaseLogic::DLatch fp_latch2;
-		BaseLogic::DLatch sev_latch1;
-		BaseLogic::DLatch sev_latch2;
-		BaseLogic::DLatch clip_latch1;
-		BaseLogic::DLatch clip_latch2;
-		BaseLogic::DLatch clpo_latch;
-		BaseLogic::DLatch clpb_latch;
-		BaseLogic::DLatch hpos_latch1;
-		BaseLogic::DLatch hpos_latch2;
-		BaseLogic::DLatch eval_latch1;
-		BaseLogic::DLatch eval_latch2;
-		BaseLogic::DLatch eev_latch1;
-		BaseLogic::DLatch eev_latch2;
-		BaseLogic::DLatch ioam_latch1;
-		BaseLogic::DLatch ioam_latch2;
-		BaseLogic::DLatch objrd_latch1;
-		BaseLogic::DLatch objrd_latch2;
-		BaseLogic::DLatch nvis_latch1;
-		BaseLogic::DLatch nvis_latch2;
-		BaseLogic::DLatch fnt_latch1;
-		BaseLogic::DLatch fnt_latch2;
-		BaseLogic::DLatch ftb_latch1;
-		BaseLogic::DLatch ftb_latch2;
-		BaseLogic::DLatch fta_latch1;
-		BaseLogic::DLatch fta_latch2;
-		BaseLogic::DLatch fo_latch1;
-		BaseLogic::DLatch fo_latch2;
-		BaseLogic::DLatch fo_latch3;
-		BaseLogic::DLatch fat_latch1;
-		BaseLogic::DLatch bp_latch1;
-		BaseLogic::DLatch bp_latch2;
-		BaseLogic::DLatch hb_latch1;
-		BaseLogic::DLatch hb_latch2;
-		BaseLogic::DLatch cb_latch1;
-		BaseLogic::DLatch cb_latch2;
-		BaseLogic::DLatch sync_latch1;
-		BaseLogic::DLatch sync_latch2;
-		BaseLogic::FF FPORCH_FF;
-		BaseLogic::FF BPORCH_FF;
-		BaseLogic::FF HBLANK_FF;
-		BaseLogic::FF BURST_FF;
+		uint8_t delayed_h_input = 0, delayed_h_output = 0;
+		uint32_t horizontal_input = 0, horizontal_output = 0;
+		uint8_t horizontal_sr = 0;
 
 		BaseLogic::DLatch vsync_latch1;
 		BaseLogic::DLatch pic_latch1;
@@ -85,16 +43,19 @@ namespace PPUSimFast
 		BaseLogic::DLatch ctrl_latch1;
 		BaseLogic::DLatch ctrl_latch2;
 
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_DelayedH(EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_HPosLogic(uint32_t HPLA, uint16_t VPLA, EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_VSYNCEarly(uint16_t VPLA, EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_VPosLogic(uint16_t VPLA, EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_VBlankInt(EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_EvenOdd(uint32_t HPLA, uint16_t VPLA, EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_CountersControl(uint32_t HPLA, uint16_t VPLA, EdgeContextT<Phase>& c);
+		// Field-driven entry points for the kernel tests: capture the context from the stored wires.
 		void sim_DelayedH();
-		void sim_HPosLogic(BaseLogic::TriState* HPLA, BaseLogic::TriState* VPLA);
-		void sim_VSYNCEarly(BaseLogic::TriState* VPLA);
-		void sim_VPosLogic(BaseLogic::TriState* VPLA);
-		void sim_VBlankInt();
-		void sim_EvenOdd(BaseLogic::TriState* HPLA, BaseLogic::TriState* VPLA);
-		void sim_CountersControl(BaseLogic::TriState* HPLA, BaseLogic::TriState* VPLA);
+		void sim_HPosLogic(uint32_t HPLA, uint16_t VPLA);
 
-		BaseLogic::TriState* prev_hpla = nullptr;
-		BaseLogic::TriState* prev_vpla = nullptr;
+		uint32_t prev_hpla = 0;
+		uint16_t prev_vpla = 0;
 
 		BaseLogic::TriState Prev_n_OBCLIP = BaseLogic::TriState::X;
 		BaseLogic::TriState Prev_n_BGCLIP = BaseLogic::TriState::X;
@@ -104,7 +65,9 @@ namespace PPUSimFast
 		FSM(PPU *parent);
 		~FSM();
 
-		void sim(BaseLogic::TriState *HPLA, BaseLogic::TriState *VPLA);
+		// Produces the FSM commands, delayed-H lines, Even/Odd and counter controls into `c`
+		// (and into PPU::fsm / PPU::wire for the debug accessors); RESCL is taken from `c`.
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim(uint32_t HPLA, uint16_t VPLA, EdgeContextT<Phase>& c);
 
 		// These methods are called BEFORE the FSM simulation, by consumer circuits.
 

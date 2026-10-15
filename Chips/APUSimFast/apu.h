@@ -34,6 +34,13 @@ namespace APUSimUnitTest
 	class UnitTest;
 }
 
+// Keeps the full-call body out of the public sim() frame so the idle class pays no prologue.
+#if defined(_MSC_VER)
+#define APUSIMFAST_NOINLINE __declspec(noinline)
+#else
+#define APUSIMFAST_NOINLINE __attribute__((noinline))
+#endif
+
 #include "common.h"
 #include "debug.h"
 #include "clkgen.h"
@@ -108,12 +115,12 @@ namespace APUSimFast
 			BaseLogic::TriState RD;				// To DataBus pads
 			BaseLogic::TriState WR;				// To DataBus pads
 			BaseLogic::TriState SYNC;			// From core
-			
+
 			BaseLogic::TriState n_DMC_AB;
 			BaseLogic::TriState RUNDMC;
 			BaseLogic::TriState DMCINT;
 			BaseLogic::TriState DMCRDY;
-			
+
 			// RegOps
 			BaseLogic::TriState n_R4015;
 			BaseLogic::TriState n_R4016;
@@ -166,7 +173,13 @@ namespace APUSimFast
 		// Instances of internal APU modules, including the core
 
 		M6502Core::M6502* core = nullptr;
-		CoreBinding* core_int = nullptr;
+		// The blocks every call touches (divider, OAM buffer, pads) are members by value so the
+		// hot paths address them at fixed offsets; the pointers remain as aliases for the shared
+		// friend tests and the cold paths. The other blocks keep their original allocation.
+		CoreBinding core_binding;
+		DMA dma_block;
+		Pads pads_block;
+		CoreBinding* core_int = &core_binding;
 		CLKGen* clkgen = nullptr;
 		RegsDecoder* regs = nullptr;
 		LengthCounter* lc[4]{};
@@ -174,8 +187,8 @@ namespace APUSimFast
 		NoiseChan* noise = nullptr;
 		SquareChan* square[2]{};
 		TriangleChan* tri = nullptr;
-		DMA* dma = nullptr;
-		Pads* pads = nullptr;
+		DMA* dma = &dma_block;
+		Pads* pads = &pads_block;
 		DAC* dac = nullptr;
 
 		// Internal buses.
@@ -190,7 +203,8 @@ namespace APUSimFast
 		uint16_t CPU_Addr{};		// Core to mux & regs predecoder
 		uint16_t Ax{};				// Mux to pads & regs decoder
 
-		// DAC Inputs
+		// DAC Inputs. The four generator channels return their output bits as nibbles packed into
+		// audio_word; the SQA/SQB/TRI/RND arrays are retained for the shared friend tests only.
 
 		BaseLogic::TriState SQA_Out[4]{};
 		BaseLogic::TriState SQB_Out[4]{};
@@ -209,6 +223,25 @@ namespace APUSimFast
 
 		void sim_CoreIntegration();
 		void sim_SoundGenerators();
+
+		// v4 idle-call path (plan N2-N4). Armed at the end of a full call when every guarded block
+		// is settled, no register strobe is active, the core was not invoked, and RES/DBG are low;
+		// per call the live conditions (RES, DBG, no PHI0 edge about to happen) are re-checked, and
+		// every public mutation (debug wire/register/status setters) disarms it. The idle call then
+		// advances only the master divider and re-drives the pads, data bus and audio objects; the
+		// pads other than M2 are the block the arming call published (idle_pads).
+		bool idle_armed = false;
+		BaseLogic::TriState idle_pads[(size_t)APU_Output::Max]{};
+		// The audio sample the arming call published (audio_word and the output mode cannot change
+		// while the idle class holds; the DAC mode setters disarm).
+		bool idle_audio_raw = false;
+		float idle_aux_a = 0, idle_aux_b = 0;
+		bool AnyStrobe() const;
+		APUSIMFAST_NOINLINE void sim_FullCall(BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr, AudioOutSignal& AUX);
+		void sim_IdleCall(BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr, AudioOutSignal& AUX);
+#ifdef FASTSIM_SKIP_ORACLE
+		void sim_IdleOracle(BaseLogic::TriState outputs[], uint8_t* data, uint16_t* addr, AudioOutSignal& AUX);
+#endif
 
 	public:
 		APU(M6502Core::M6502 *core, Revision rev, ChipFeature features=ChipFeature::ByRevision);
@@ -235,7 +268,7 @@ namespace APUSimFast
 		/// Get the APU internal signal value
 		/// </summary>
 		uint8_t GetDebugInfo_Wire(int ofs);
-		
+
 		/// <summary>
 		/// Set the internal APU signal value
 		/// </summary>
@@ -247,7 +280,7 @@ namespace APUSimFast
 		/// <param name="ofs"></param>
 		/// <returns></returns>
 		uint32_t GetDebugInfo_Reg(int ofs);
-		
+
 		/// <summary>
 		/// Set APU register/counter value
 		/// </summary>

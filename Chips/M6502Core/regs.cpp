@@ -6,13 +6,19 @@ namespace M6502Core
 {
 	void Regs::sim_LoadSB()
 	{
+		sim_LoadSBImpl<0>();
+	}
+
+	template<int Phase> void Regs::sim_LoadSBImpl()
+	{
+		using P = Phi<Phase>;
 		TriState PHI2 = core->wire.PHI2;
 		bool SB_Y = core->cmd.SB_Y;
 		bool SB_X = core->cmd.SB_X;
 		bool SB_S = core->cmd.SB_S;
 		bool S_S = core->cmd.S_S;
 
-		if (PHI2 == TriState::One)
+		if (P::Phi2One(PHI2))
 		{
 			S_out = ~S_in;
 		}
@@ -42,12 +48,18 @@ namespace M6502Core
 
 	void Regs::sim_StoreSB()
 	{
+		sim_StoreSBImpl<0>();
+	}
+
+	template<int Phase> void Regs::sim_StoreSBImpl()
+	{
+		using P = Phi<Phase>;
 		TriState PHI2 = core->wire.PHI2;
 		bool Y_SB = core->cmd.Y_SB;
 		bool X_SB = core->cmd.X_SB;
 		bool S_SB = core->cmd.S_SB;
 
-		if (PHI2)
+		if (P::Phi2(PHI2))
 		{
 			S_out = ~S_in;
 		}
@@ -91,6 +103,13 @@ namespace M6502Core
 			}
 		}
 	}
+
+	template void Regs::sim_LoadSBImpl<0>();
+	template void Regs::sim_LoadSBImpl<1>();
+	template void Regs::sim_LoadSBImpl<2>();
+	template void Regs::sim_StoreSBImpl<0>();
+	template void Regs::sim_StoreSBImpl<1>();
+	template void Regs::sim_StoreSBImpl<2>();
 
 	void Regs::sim_StoreOldS()
 	{

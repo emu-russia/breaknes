@@ -40,19 +40,24 @@ namespace M6502Core
 
 	void AddressBus::sim_Output(uint16_t* addr_bus)
 	{
+		sim_OutputImpl<0>(addr_bus);
+	}
+
+	template<int Phase> void AddressBus::sim_OutputImpl(uint16_t* addr_bus)
+	{
+		using P = Phi<Phase>;
 		TriState PHI1 = core->wire.PHI1;
-		TriState PHI2 = core->wire.PHI2;
 		bool ADL_ABL = core->cmd.ADL_ABL;
 		bool ADH_ABH = core->cmd.ADH_ABH;
 
 		// The address bus is set during PHI1 only
 
-		if (PHI1 == TriState::One && ADL_ABL)
+		if (P::Phi1One(PHI1) && ADL_ABL)
 		{
 			ABL = core->ADL;
 		}
 
-		if (PHI1 == TriState::One && ADH_ABH)
+		if (P::Phi1One(PHI1) && ADH_ABH)
 		{
 			ABH = core->ADH;
 		}
@@ -60,6 +65,9 @@ namespace M6502Core
 		uint16_t addr = ((uint16_t)ABH << 8) | ABL;
 		*addr_bus = addr;
 	}
+	template void AddressBus::sim_OutputImpl<0>(uint16_t*);
+	template void AddressBus::sim_OutputImpl<1>(uint16_t*);
+	template void AddressBus::sim_OutputImpl<2>(uint16_t*);
 
 	uint8_t AddressBus::getABL()
 	{

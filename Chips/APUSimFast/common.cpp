@@ -55,7 +55,7 @@ namespace APUSimFast
 
 	void RegisterBitRes2::sim(TriState ACLK1, TriState Enable, TriState Value, TriState Res1, TriState Res2)
 	{
-		TriState d = 
+		TriState d =
 			MUX(ACLK1,
 				MUX(Enable, TriState::Z, Value),
 				NOT(transp_latch.nget()));
@@ -82,13 +82,13 @@ namespace APUSimFast
 
 	TriState CounterBit::sim(TriState Carry, TriState Clear, TriState Load, TriState Step, TriState ACLK1, TriState val)
 	{
-		TriState latch_in = 
-			MUX(Load, 
-				MUX(Clear, 
-					MUX(Step, 
+		TriState latch_in =
+			MUX(Load,
+				MUX(Clear,
+					MUX(Step,
 						MUX(ACLK1, TriState::Z, NOT(transp_latch.nget())),
-						cg_latch.nget()), 
-					TriState::Zero), 
+						cg_latch.nget()),
+					TriState::Zero),
 				val);
 
 		transp_latch.set(latch_in, TriState::One);

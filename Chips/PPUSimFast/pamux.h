@@ -58,16 +58,16 @@ namespace PPUSimFast
 
 		uint16_t AT_ADR = 0, NT_ADR = 0, PAT_ADR = 0;
 
-		void sim_Control();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_Control(const EdgeContextT<Phase>& c);
 
 	public:
 		PAMUX(PPU* parent);
 		~PAMUX();
 
-		void sim();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim(const EdgeContextT<Phase>& c);
 
-		void sim_MuxInputs();
-		void sim_MuxOutputs();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_MuxInputs(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_MuxOutputs(const EdgeContextT<Phase>& c);
 		uint16_t get_n_address() const { return pipeline.output; }
 	};
 }

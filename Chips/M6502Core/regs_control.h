@@ -18,6 +18,9 @@ namespace M6502Core
 
 	class RegsControl
 	{
+		friend M6502;
+		friend RandomLogic;
+		friend M6502CoreUnitTest::PackedProof;
 		BaseLogic::DLatch nready_latch{};
 
 		BaseLogic::DLatch ysb_latch{};
@@ -31,14 +34,18 @@ namespace M6502Core
 
 		M6502* core = nullptr;
 
-		RegsControl_TempWire temp_tab[0x10000]{};
+		RegsControl_TempWire* temp_tab = nullptr;
 		RegsControl_TempWire prev_temp;
 
 		RegsControl_TempWire PreCalc(uint8_t ir, bool n_T0, bool n_T1X, bool n_T2, bool n_T3, bool n_T4, bool n_T5, bool n_ready, bool n_ready_latch);
 
+		// Packed: b1/b2 are the PHI1/PHI2 command-latch banks (random_logic.h); the reference form ignores them.
+		template<bool Packed, int Phase = 0> void simImpl(uint64_t& command_word, uint64_t& b1, uint64_t& b2);
+
 	public:
 
 		RegsControl(M6502* parent);
+		~RegsControl() { delete[] temp_tab; }
 
 		void sim ();
 	};

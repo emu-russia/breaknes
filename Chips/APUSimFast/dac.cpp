@@ -41,8 +41,9 @@ namespace APUSimFast
 		AUX.AUX.b = cached_b;
 	}
 
-	void DAC::SetRAWOutput(bool enable) { raw_mode = enable; cached = false; }
-	void DAC::SetNormalizedOutput(bool enable) { norm_mode = enable; cached = false; }
+	// Output-mode changes also disarm the idle class, which re-drives the published sample.
+	void DAC::SetRAWOutput(bool enable) { raw_mode = enable; cached = false; apu->idle_armed = false; }
+	void DAC::SetNormalizedOutput(bool enable) { norm_mode = enable; cached = false; apu->idle_armed = false; }
 
 	void DAC::gen_DACTabs()
 	{

@@ -26,30 +26,35 @@ namespace PPUSimFast
 	{
 	}
 
-	void BGCol::sim()
+	template<int Phase> void BGCol::sim(const EdgeContextT<Phase>& c)
 	{
-		sim_Control();
 #if PPUSIM_FAST_BG_PHASE
-		sim_BGC0();
-		sim_BGC1();
-		sim_BGC2();
-		sim_BGC3();
-		sim_Output();
+		Unpack3(ppu->data_reader->sccx->get_FH(), ppu->wire.FH);
+		ppu->wire.THO[1] = static_cast<TriState>((ppu->data_reader->tilecnt->get_TH() >> 1) & 1);
+		ppu->wire.TVO[1] = static_cast<TriState>((ppu->data_reader->tilecnt->get_TV() >> 1) & 1);
+		sim_Control(c);
+		sim_BGC0(); sim_BGC1(); sim_BGC2(); sim_BGC3(); sim_Output();
 #else
-		sim_Packed();
+		if (c.PCLK == TriState::One)
+		{
+			fat_latch.set(NOT(c.FAT), TriState::One);
+			tho1_latch.set(static_cast<TriState>((ppu->data_reader->tilecnt->get_TH() >> 1) & 1), TriState::One);
+		}
+		else sim_Control(c);
+		sim_Packed(c);
 #endif
 	}
 
-	void BGCol::sim_Control()
+	template<int Phase> void BGCol::sim_Control(const EdgeContextT<Phase>& c)
 	{
-		TriState PCLK = ppu->wire.PCLK;
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState H0_DD = ppu->wire.H0_Dash2;
-		TriState F_TA = ppu->fsm.FTA;
-		TriState F_TB = ppu->fsm.FTB;
-		TriState n_FO = ppu->fsm.nFO;
-		TriState F_AT = ppu->fsm.FAT;
-		TriState THO1 = ppu->wire.THO[1];
+		TriState PCLK = c.PCLK;
+		TriState n_PCLK = c.n_PCLK;
+		TriState H0_DD = c.H0_Dash2;
+		TriState F_TA = c.FTA;
+		TriState F_TB = c.FTB;
+		TriState n_FO = c.nFO;
+		TriState F_AT = c.FAT;
+		TriState THO1 = static_cast<TriState>((ppu->data_reader->tilecnt->get_TH() >> 1) & 1);
 
 		fat_latch.set(NOT(F_AT), PCLK);
 		tho1_latch.set(THO1, PCLK);
@@ -175,6 +180,7 @@ namespace PPUSimFast
 		ppu->wire.BGC[1] = NOR(bgc1_latch[1].get(), clip);
 		ppu->wire.BGC[2] = NOR(bgc2_latch[1].get(), clip);
 		ppu->wire.BGC[3] = NOR(bgc3_latch[1].get(), clip);
+		visible_pixel = PackNibble(ppu->wire.BGC);
 	}
 
 	void BGC_SRBit::sim(TriState shift_in, TriState val_in,
@@ -201,34 +207,58 @@ namespace PPUSimFast
 		Unpack(sim_Packed(Pack(val), sin, Load, Step, Next), sout);
 	}
 
-	void BGCol::sim_Packed()
+	template<int Phase> void BGCol::sim_Packed(const EdgeContextT<Phase>& c)
 	{
-		const uint8_t data = ppu->PD;
-		const unsigned fine_x = Pack3(ppu->wire.FH);
-		if (PD_SR == TriState::One) captured_pattern = data;
-		if (PD_SEL == TriState::One) captured_attribute = data;
-		const uint8_t tile0 = BGC0_SR1.sim_Packed(Reverse(static_cast<uint8_t>(~captured_pattern)), TriState::One, SRLOAD, STEP, NEXT);
-		const uint8_t pixels0 = BGC0_SR2.sim_Packed(0, static_cast<TriState>(tile0 & 1), TriState::Zero, STEP2, NEXT);
-		const uint8_t tile1 = BGC1_SR1.sim_Packed(Reverse(data), TriState::One, SRLOAD, STEP, NEXT);
-		const uint8_t pixels1 = BGC1_SR2.sim_Packed(0, static_cast<TriState>(tile1 & 1), TriState::Zero, STEP2, NEXT);
-		const unsigned quadrant = (H01 == TriState::One ? 1U : 0U) | (ppu->wire.TVO[1] == TriState::One ? 2U : 0U);
-		TriState shift2, shift3;
-		BGC2_SRBit1.sim(TriState::Z, static_cast<TriState>(((captured_attribute >> (2 * quadrant)) & 1) ^ 1), SRLOAD, TriState::Zero, NEXT, shift2);
-		BGC3_SRBit1.sim(TriState::Z, static_cast<TriState>(((captured_attribute >> (2 * quadrant + 1)) & 1) ^ 1), SRLOAD, TriState::Zero, NEXT, shift3);
-		const uint8_t pixels2 = BGC2_SR1.sim_Packed(0, shift2, TriState::Zero, STEP2, NEXT);
-		const uint8_t pixels3 = BGC3_SR1.sim_Packed(0, shift3, TriState::Zero, STEP2, NEXT);
-		if (ppu->wire.PCLK == TriState::One)
+		// The controller makes STEP/LOAD mutually exclusive, and NEXT is
+		// exactly the high phase. Prepared and published banks stay distinct,
+		// including repeated high/low invocations caused by reset.
+		const bool high = c.PCLK == TriState::One;
+		const unsigned fine_x = ppu->data_reader->sccx->get_FH();
+		if (high)
 		{
-			clpb_latch.set(ppu->wire.n_CLPB, TriState::One);
-			pixel_output = static_cast<uint8_t>(~pixel_input) & 0x0f;
+			bank_output = ~bank_input;
+			attribute_output = uint8_t(~attribute_input) & 3;
+			clpb_latch.set(c.n_CLPB, TriState::One);
+			pixel_output = uint8_t(~pixel_input) & 15;
 		}
 		else
 		{
-			pixel_input = static_cast<uint8_t>((((pixels0 >> fine_x) & 1) ^ 1) |
-				(((pixels1 >> fine_x) & 1) << 1) | ((((pixels2 >> fine_x) & 1) ^ 1) << 2) |
-				((((pixels3 >> fine_x) & 1) ^ 1) << 3));
+			const uint8_t data = ppu->PD;
+			if (PD_SR == TriState::One) captured_pattern = data;
+			if (PD_SEL == TriState::One) captured_attribute = data;
+			const unsigned quadrant = (H01 == TriState::One ? 1U : 0U) |
+				(ppu->data_reader->tilecnt->get_TV() & 2);
+			if (SRLOAD == TriState::One)
+			{
+				bank_input = (bank_input & ~UINT64_C(0x0000000000ff00ff)) |
+					Reverse(uint8_t(~captured_pattern)) | (uint64_t(Reverse(data)) << 16);
+				attribute_input = uint8_t(~(captured_attribute >> (2 * quadrant))) & 3;
+			}
+			if (STEP == TriState::One)
+			{
+				const uint64_t shift = ((~bank_output >> 1) & UINT64_C(0x00000000007f007f)) | UINT64_C(0x0000000000800080);
+				bank_input = (bank_input & ~UINT64_C(0x0000000000ff00ff)) | shift;
+			}
+			if (STEP2 == TriState::One)
+			{
+				const uint64_t old = ~bank_output;
+				const uint64_t incoming = ((old & 1) << 15) | (((old >> 16) & 1) << 31) |
+					(uint64_t((attribute_output & 1) ^ 1) << 39) | (uint64_t(((attribute_output >> 1) & 1) ^ 1) << 47);
+				const uint64_t mask = UINT64_C(0x0000ffffff00ff00);
+				bank_input = (bank_input & ~mask) | ((old >> 1) & UINT64_C(0x00007f7f7f007f00)) | incoming;
+			}
+			const uint64_t pixels = ~bank_output;
+			pixel_input = uint8_t((((pixels >> (8 + fine_x)) & 1) ^ 1) |
+				(((pixels >> (24 + fine_x)) & 1) << 1) |
+				((((pixels >> (32 + fine_x)) & 1) ^ 1) << 2) |
+				((((pixels >> (40 + fine_x)) & 1) ^ 1) << 3));
 		}
-		const uint8_t pixel = clpb_latch.get() == TriState::One ? static_cast<uint8_t>(~pixel_output) & 0x0f : 0;
-		for (size_t n = 0; n < 4; n++) ppu->wire.BGC[n] = static_cast<TriState>((pixel >> n) & 1);
+		const uint8_t pixel = clpb_latch.get() == TriState::One ? uint8_t(~pixel_output) & 15 : 0;
+		visible_pixel = pixel;
 	}
+
+	void BGCol::sim() { sim(CaptureEdge(*ppu)); }
+
+	template void BGCol::sim<0>(const EdgeContextT<0>&);
+	template void BGCol::sim<1>(const EdgeContextT<1>&);
 }

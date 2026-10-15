@@ -258,6 +258,12 @@ namespace M6502Core
 
 	void ALU::sim_HLE()
 	{
+		sim_HLEImpl<0>();
+	}
+
+	template<int Phase> void ALU::sim_HLEImpl()
+	{
+		using P = Phi<Phase>;
 		if (!BCD_Hack)
 		{
 			sim();
@@ -273,7 +279,7 @@ namespace M6502Core
 		bool SB_AC = core->cmd.SB_AC;
 		TriState n_ACIN = core->cmd.n_ACIN ? TriState::One : TriState::Zero;
 
-		if (PHI2 == TriState::One)
+		if (P::Phi2One(PHI2))
 		{
 			int resInt = 0;
 			uint8_t res = 0;
@@ -313,9 +319,9 @@ namespace M6502Core
 
 			// ACR, AVR
 
-			DCLatch.set(TriState::Zero, PHI2);
-			ACLatch.set((resInt >> 8) != 0 ? TriState::One : TriState::Zero, PHI2);
-			AVRLatch.set((~(AI ^ BI) & (AI ^ resInt) & 0x80) != 0 ? TriState::Zero : TriState::One, PHI2);
+			P::Set2(DCLatch, TriState::Zero, PHI2);
+			P::Set2(ACLatch, (resInt >> 8) != 0 ? TriState::One : TriState::Zero, PHI2);
+			P::Set2(AVRLatch, (~(AI ^ BI) & (AI ^ resInt) & 0x80) != 0 ? TriState::Zero : TriState::One, PHI2);
 		}
 		else
 		{
@@ -325,6 +331,9 @@ namespace M6502Core
 			}
 		}
 	}
+	template void ALU::sim_HLEImpl<0>();
+	template void ALU::sim_HLEImpl<1>();
+	template void ALU::sim_HLEImpl<2>();
 
 	void ALU::sim_BusMux()
 	{

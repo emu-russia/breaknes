@@ -6,7 +6,15 @@ namespace M6502Core
 {
 	void BranchLogic::sim()
 	{
-		TriState* d = core->decoder_out;
+		if (core->GetExecutionBackend() == ExecutionBackend::ExactPacked) simImpl<true>();
+		else simImpl<false>();
+	}
+
+	template<bool Packed, int Phase> void BranchLogic::simImpl()
+	{
+		static_assert(Packed || Phase == 0, "the reference schedule is the generic phase");
+		using P = Phi<Phase>;
+		DecoderView<Packed> d(core->decoder_out,core->packed_decoder);
 		TriState PHI1 = core->wire.PHI1;
 		TriState PHI2 = core->wire.PHI2;
 		TriState n_IR5 = core->wire.n_IR5;
@@ -37,9 +45,9 @@ namespace M6502Core
 		// BRFW
 
 		TriState n_DB7 = DB7 == TriState::Z ? TriState::One : NOT(DB7);
-		brfw_latch1.set(NOT(MUX(br2_latch.get(), brfw_latch2.get(), n_DB7)), PHI1);
-		br2_latch.set(BR2, PHI2);
-		brfw_latch2.set(brfw_latch1.nget(), PHI2);
+		P::Set1(brfw_latch1, NOT(MUX(br2_latch.get(), brfw_latch2.get(), n_DB7)), PHI1);
+		P::Set2(br2_latch, BR2, PHI2);
+		P::Set2(brfw_latch2, brfw_latch1.nget(), PHI2);
 		TriState BRFW = NOT(brfw_latch1.nget());
 
 		core->wire.n_BRTAKEN = n_BRTAKEN;
@@ -50,4 +58,10 @@ namespace M6502Core
 	{
 		return NOT(brfw_latch1.nget());
 	}
+	// Out-of-line specializations also serve the typed CPU execution path.
+	template void BranchLogic::simImpl<false, 0>();
+	template void BranchLogic::simImpl<true, 0>();
+	template void BranchLogic::simImpl<true, 1>();
+	template void BranchLogic::simImpl<true, 2>();
+
 }

@@ -20,7 +20,7 @@ namespace APUSimFast
 		apu->wire.n_CLK = NOT(inputs[(size_t)APU_Input::CLK]);
 		apu->wire.DBG = inputs[(size_t)APU_Input::DBG];
 		apu->wire.RES = NOT(inputs[(size_t)APU_Input::n_RES]);
-		
+
 		// In the original #NMI and #IRQ terminals overuse the BIDIR terminal circuit.
 		// In order to avoid all sorts of gimmicks, let's just do a pass-through.
 
@@ -55,12 +55,12 @@ namespace APUSimFast
 
 		sim_OutReg();
 
-		n_in[0].sim(unused, apu->wire.n_R4016, unused, outputs[(size_t)APU_Output::n_IN0], apu->wire.RES, TriState::One);
-		n_in[1].sim(unused, apu->wire.n_R4017, unused, outputs[(size_t)APU_Output::n_IN1], apu->wire.RES, TriState::One);
-
-		out[0].sim(unused, OUT_Signal[0], unused, outputs[(size_t)APU_Output::OUT_0], apu->wire.RES, TriState::One);
-		out[1].sim(unused, OUT_Signal[1], unused, outputs[(size_t)APU_Output::OUT_1], apu->wire.RES, TriState::One);
-		out[2].sim(unused, OUT_Signal[2], unused, outputs[(size_t)APU_Output::OUT_2], apu->wire.RES, TriState::One);
+		const bool drive = apu->wire.RES == TriState::Zero;
+		outputs[(size_t)APU_Output::n_IN0] = drive ? apu->wire.n_R4016 : TriState::Z;
+		outputs[(size_t)APU_Output::n_IN1] = drive ? apu->wire.n_R4017 : TriState::Z;
+		outputs[(size_t)APU_Output::OUT_0] = drive ? TriState(out_latch & 1u) : TriState::Z;
+		outputs[(size_t)APU_Output::OUT_1] = drive ? TriState((out_latch >> 1) & 1u) : TriState::Z;
+		outputs[(size_t)APU_Output::OUT_2] = drive ? TriState((out_latch >> 2) & 1u) : TriState::Z;
 	}
 
 	/// <summary>
@@ -84,17 +84,8 @@ namespace APUSimFast
 
 	void Pads::sim_OutReg()
 	{
-		TriState nACLK2 = apu->wire.nACLK2;
-		TriState ACLK1 = apu->wire.ACLK1;
-		TriState W4016 = apu->wire.W4016;
-		TriState ACLK5 = NOT(nACLK2);
-
-		for (size_t n = 0; n < 3; n++)
-		{
-			out_reg[n].sim(ACLK1, W4016, apu->GetDBBit(n));
-			out_latch[n].set(out_reg[n].get(), ACLK5);
-			OUT_Signal[n] = NOT(out_latch[n].nget());
-		}
+		if ((apu->wire.ACLK1 & 1u) == 0 && (apu->wire.W4016 & 1u) != 0) out_reg = apu->DB & 7u;
+		if (apu->wire.nACLK2 == TriState::Zero) out_latch = out_reg;
 	}
 
 	void BIDIR::sim(TriState pad_in, TriState to_pad,
@@ -177,13 +168,7 @@ namespace APUSimFast
 
 	uint32_t Pads::Get_OutReg()
 	{
-		TriState val[4]{};
-		for (size_t n = 0; n < 3; n++)
-		{
-			val[n] = out_latch[n].get();
-		}
-		val[3] = TriState::Zero;
-		return PackNibble(val);
+		return out_latch;
 	}
 
 	void Pads::Set_DBOutputLatch(uint32_t value)
@@ -198,12 +183,7 @@ namespace APUSimFast
 
 	void Pads::Set_OutReg(uint32_t value)
 	{
-		TriState val[4]{};
-		UnpackNibble(value, val);
-		for (size_t n = 0; n < 3; n++)
-		{
-			out_latch[n].set(val[n], TriState::One);
-		}
+		out_latch = uint8_t(value) & 7u;
 	}
 
 #pragma endregion "Debug"

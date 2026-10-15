@@ -26,21 +26,13 @@ namespace APUSimFast
 	class Pads
 	{
 		friend APUSimUnitTest::UnitTest;
+		friend APU;		// the idle call drives the data bus in place
 
 		APU* apu = nullptr;
 
-		BIDIR n_irq{};
-		BIDIR n_nmi{};
 		uint8_t input_byte = 0;
 		uint8_t output_byte = 0;
-		BIDIR n_in[2]{};
-		BIDIR out[3]{};
-
-		BaseLogic::TriState OUT_Signal[3]{};
-		RegisterBit out_reg[3]{};
-		BaseLogic::DLatch out_latch[3]{};
-
-		BaseLogic::TriState unused = BaseLogic::TriState::Z;
+		uint8_t out_reg = 0, out_latch = 0;
 
 		BaseLogic::TriState prev_RES = BaseLogic::TriState::X;	// RES edge detection for logging
 

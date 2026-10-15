@@ -16,6 +16,7 @@ namespace M6502Core
 		void sim_ConstGen();
 
 		void sim_Output(uint16_t *addr_bus);
+		template<int Phase> void sim_OutputImpl(uint16_t *addr_bus);
 
 		uint8_t getABL();
 		uint8_t getABH();

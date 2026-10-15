@@ -6,14 +6,28 @@ namespace M6502Core
 {
 	void DataBus::sim_SetExternalBus(uint8_t* data_bus)
 	{
+		sim_SetExternalBusImpl<0>(data_bus);
+	}
+
+	// RD = NOT(NOR(NOT(PHI2), rd_latch.nget())): One while PHI2 is Zero, rd_latch.nget() while PHI2 is One.
+	template<int Phase> static inline TriState ReadStrobe(TriState PHI2, DLatch& rd_latch)
+	{
+		using P = Phi<Phase>;
+		if (P::Generic) return NOT(NOR(NOT(PHI2), rd_latch.nget()));
+		return P::Is1 ? TriState::One : rd_latch.nget();
+	}
+
+	template<int Phase> void DataBus::sim_SetExternalBusImpl(uint8_t* data_bus)
+	{
+		using P = Phi<Phase>;
 		TriState PHI1 = core->wire.PHI1;
 		TriState PHI2 = core->wire.PHI2;
 		TriState WR = core->wire.WR;
 
-		rd_latch.set(WR, PHI1);
-		TriState RD = NOT(NOR(NOT(PHI2), rd_latch.nget()));
+		P::Set1(rd_latch, WR, PHI1);
+		TriState RD = ReadStrobe<Phase>(PHI2, rd_latch);
 
-		if (PHI1)
+		if (P::Phi1(PHI1))
 		{
 			DOR = ~(core->DB);
 		}
@@ -23,9 +37,18 @@ namespace M6502Core
 			*data_bus = ~DOR;
 		}
 	}
+	template void DataBus::sim_SetExternalBusImpl<0>(uint8_t*);
+	template void DataBus::sim_SetExternalBusImpl<1>(uint8_t*);
+	template void DataBus::sim_SetExternalBusImpl<2>(uint8_t*);
 
 	void DataBus::sim_GetExternalBus(uint8_t* data_bus)
 	{
+		sim_GetExternalBusImpl<0>(data_bus);
+	}
+
+	template<int Phase> void DataBus::sim_GetExternalBusImpl(uint8_t* data_bus)
+	{
+		using P = Phi<Phase>;
 		TriState PHI1 = core->wire.PHI1;
 		TriState PHI2 = core->wire.PHI2;
 		TriState WR = core->wire.WR;
@@ -33,15 +56,16 @@ namespace M6502Core
 		bool DL_ADH = core->cmd.DL_ADH;
 		bool DL_DB = core->cmd.DL_DB;
 
-		rd_latch.set(WR, PHI1);
-		TriState RD = NOT(NOR(NOT(PHI2), rd_latch.nget()));
+		P::Set1(rd_latch, WR, PHI1);
+		TriState RD = ReadStrobe<Phase>(PHI2, rd_latch);
+		(void)RD;
 
-		if (PHI2 == TriState::One)
+		if (P::Phi2One(PHI2))
 		{
 			DL = ~(*data_bus);
 		}
 
-		if (PHI1 == TriState::One)
+		if (P::Phi1One(PHI1))
 		{
 			if (DL_ADL)
 			{
@@ -83,6 +107,10 @@ namespace M6502Core
 			}
 		}
 	}
+
+	template void DataBus::sim_GetExternalBusImpl<0>(uint8_t*);
+	template void DataBus::sim_GetExternalBusImpl<1>(uint8_t*);
+	template void DataBus::sim_GetExternalBusImpl<2>(uint8_t*);
 
 	uint8_t DataBus::getDL()
 	{

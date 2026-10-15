@@ -4,6 +4,8 @@ namespace M6502Core
 {
 	class Dispatcher
 	{
+		friend M6502;
+		friend RandomLogic;
 		BaseLogic::DLatch acr_latch1{};
 		BaseLogic::DLatch acr_latch2{};
 
@@ -47,6 +49,17 @@ namespace M6502Core
 		BaseLogic::DLatch ipc_latch3{};
 
 		M6502* core = nullptr;
+
+		template<int Phase> void sim_BeforeDecoderImpl();
+		template<bool Packed, int Phase = 0> void sim_BeforeRandomLogicImpl();
+		template<bool Packed, int Phase = 0> void sim_AfterRandomLogicImpl();
+		// ExactPacked, PHI2 second traversal: the parts of the two blocks that can differ from the
+		// first traversal (see M6502::sim_Phi2TopSettle).
+		void sim_SettlePhi2BeforeDecoder();
+		void sim_SettlePhi2AfterRandomLogic();
+		// ExactPacked, PHI1 second traversal: the part of sim_BeforeDecoder that can differ from the
+		// first traversal (see M6502::sim_Phi1TopSettle).
+		void sim_SettlePhi1BeforeDecoder();
 
 	public:
 

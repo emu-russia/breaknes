@@ -9,11 +9,8 @@ namespace PPUSimFast
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
-		BaseLogic::DLatch step1[4];
-		BaseLogic::DLatch step2[4];
-		BaseLogic::DLatch step3[4];
-		BaseLogic::DLatch dir_color[4];
-
+		uint8_t step1 = 0, step2 = 0, step3 = 0, dir_color = 0;
+		uint8_t palette_address = 0;
 		BaseLogic::DLatch zprio_latch;
 		BaseLogic::DLatch bgc_latch;
 		BaseLogic::DLatch zcol_latch;
@@ -30,12 +27,13 @@ namespace PPUSimFast
 		BaseLogic::TriState EXT = BaseLogic::TriState::X;
 
 		void sim_MuxControl();
-		void sim_Spr0Hit();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_Spr0Hit(const EdgeContextT<Phase>& c);
 
 	public:
 		Mux(PPU* parent) { ppu = parent; }
 		~Mux() {}
 
-		void sim();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim(const EdgeContextT<Phase>& c);
+		uint8_t get_Address() const { return palette_address; }
 	};
 }

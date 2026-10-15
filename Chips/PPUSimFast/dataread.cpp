@@ -26,14 +26,17 @@ namespace PPUSimFast
 		delete bgcol;
 	}
 
-	void DataReader::sim()
+	template<int Phase> void DataReader::sim(const EdgeContextT<Phase>& c)
 	{
 		sccx->sim();
-		pamux->sim();
-		tilecnt->sim();
-		par->sim();
-		pamux->sim_MuxInputs();
-		pamux->sim_MuxOutputs();
-		bgcol->sim();
+		pamux->sim(c);
+		tilecnt->sim(c);
+		par->sim(c);
+		pamux->sim_MuxInputs(c);
+		pamux->sim_MuxOutputs(c);
+		bgcol->sim(c);
 	}
+
+	template void DataReader::sim<0>(const EdgeContextT<0>&);
+	template void DataReader::sim<1>(const EdgeContextT<1>&);
 }

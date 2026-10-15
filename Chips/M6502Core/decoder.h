@@ -33,7 +33,10 @@ namespace M6502Core
 
 	class Decoder
 	{
+		friend class PackedDecoder;
 		BaseLogic::PLA* pla = nullptr;
+		// Shared original product terms, most-significant input first.
+		static size_t* Matrix();
 
 	public:
 		static const size_t inputs_count = 21;

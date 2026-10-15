@@ -214,6 +214,7 @@ namespace APUSimFast
 	void APU::SetDebugInfo_Wire(int ofs, uint8_t val)
 	{
 		++mutation_epoch;
+		idle_armed = false;
 		switch (ofs)
 		{
 			case offsetof(APU_Interconnects, n_CLK): wire.n_CLK = FromByte(val); break;
@@ -348,6 +349,7 @@ namespace APUSimFast
 	void APU::SetDebugInfo_Reg(int ofs, uint32_t val)
 	{
 		++mutation_epoch;
+		idle_armed = false;
 		switch (ofs)
 		{
 			case offsetof(APU_Registers, DBOutputLatch): pads->Set_DBOutputLatch(val); break;
@@ -417,6 +419,7 @@ namespace APUSimFast
 	void APU::Dbg_SetStatus(uint8_t val)
 	{
 		++mutation_epoch;
+		idle_armed = false;
 		lc[0]->Debug_SetEnable(((val >> 0) & 1) != 0);
 		lc[1]->Debug_SetEnable(((val >> 1) & 1) != 0);
 		lc[2]->Debug_SetEnable(((val >> 2) & 1) != 0);

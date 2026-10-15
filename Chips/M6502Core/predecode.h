@@ -19,5 +19,6 @@ namespace M6502Core
 		uint8_t n_PD = 0xff;
 
 		void sim(uint8_t *data_bus);
+		template<int Phase> void simImpl(uint8_t *data_bus);
 	};
 }

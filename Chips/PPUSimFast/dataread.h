@@ -19,6 +19,6 @@ namespace PPUSimFast
 		DataReader(PPU* parent);
 		~DataReader();
 
-		void sim();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim(const EdgeContextT<Phase>& c);
 	};
 }

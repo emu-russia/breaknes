@@ -8,9 +8,6 @@ namespace PPUSimFast
 {
 	HVDecoder::HVDecoder(PPU* parent)
 	{
-		char hplaName[0x20] = { 0 };
-		char vplaName[0x20] = { 0 };
-
 		ppu = parent;
 
 		// Select the number of outputs. Among the PPUs studied there are some that differ in the number of outputs.
@@ -28,16 +25,6 @@ namespace PPUSimFast
 				vpla_outputs = 10;
 				break;
 		}
-
-		// Generate PLA dump name according to the PPU revision.
-
-		sprintf(hplaName, "HPLA_%s.bin", ppu->RevisionToStr(ppu->rev));
-		sprintf(vplaName, "VPLA_%s.bin", ppu->RevisionToStr(ppu->rev));
-
-		// Create PLA instances
-
-		hpla = new PLA(hpla_inputs, hpla_outputs, hplaName);
-		vpla = new PLA(vpla_inputs, vpla_outputs, vplaName);
 
 		// Set matrix
 
@@ -191,75 +178,46 @@ namespace PPUSimFast
 			// TBD: Add PLA for the rest of the PPU studied.
 		}
 
-		if (h_bitmask != nullptr)
+		// SetMatrix reverses each literal's bits before evaluating its NOR cone.
+		auto reversed = [](size_t value, unsigned count) {
+			uint32_t result = 0;
+			for (unsigned n = 0; n < count; n++) result = (result << 1) | ((value >> n) & 1);
+			return result;
+		};
+		uint32_t hm[24]{}, vm[10]{};
+		for (unsigned n = 0; n < 24; n++) hm[n] = h_bitmask ? reversed(h_bitmask[n], 20) : 0;
+		for (unsigned n = 0; n < vpla_outputs; n++) vm[n] = v_bitmask ? reversed(v_bitmask[n], 18) : 0;
+		for (unsigned counter = 0; counter < 512; counter++)
 		{
-			hpla->SetMatrix(h_bitmask);
-		}
-
-		if (v_bitmask != nullptr)
-		{
-			vpla->SetMatrix(v_bitmask);
+			uint32_t rails = 0;
+			for (unsigned n = 0; n < 9; n++) rails |= ((counter >> n) & 1 ? 1U : 2U) << (2 * (8 - n));
+			for (unsigned context = 0; context < 4; context++)
+			{
+				const uint32_t input = rails | (context << 18);
+				uint32_t events = 0;
+				for (unsigned n = 0; n < 24; n++) if ((input & hm[n]) == 0) events |= 1U << n;
+				h_events[counter | (context << 9)] = events;
+			}
+			for (unsigned n = 0; n < vpla_outputs; n++) if ((rails & vm[n]) == 0) v_events[counter] |= uint16_t(1U << n);
 		}
 	}
 
-	HVDecoder::~HVDecoder()
+	HVDecoder::~HVDecoder() {}
+	uint32_t HVDecoder::sim_HDecoderPacked(TriState VB, TriState BLNK)
 	{
-		delete hpla;
-		delete vpla;
+		return h_events[ppu->h->get() | (VB == TriState::One ? 512 : 0) | (BLNK == TriState::One ? 1024 : 0)];
 	}
-
+	uint16_t HVDecoder::sim_VDecoderPacked() { return v_events[ppu->v->get()]; }
 	void HVDecoder::sim_HDecoder(TriState VB, TriState BLNK, TriState** outputs)
 	{
-		HDecoderInput input{};
-
-		input.H8 = ppu->h->getBit(8);
-		input.n_H8 = NOT(ppu->h->getBit(8));
-		input.H7 = ppu->h->getBit(7);
-		input.n_H7 = NOT(ppu->h->getBit(7));
-		input.H6 = ppu->h->getBit(6);
-		input.n_H6 = NOT(ppu->h->getBit(6));
-		input.H5 = ppu->h->getBit(5);
-		input.n_H5 = NOT(ppu->h->getBit(5));
-		input.H4 = ppu->h->getBit(4);
-		input.n_H4 = NOT(ppu->h->getBit(4));
-		input.H3 = ppu->h->getBit(3);
-		input.n_H3 = NOT(ppu->h->getBit(3));
-		input.H2 = ppu->h->getBit(2);
-		input.n_H2 = NOT(ppu->h->getBit(2));
-		input.H1 = ppu->h->getBit(1);
-		input.n_H1 = NOT(ppu->h->getBit(1));
-		input.H0 = ppu->h->getBit(0);
-		input.n_H0 = NOT(ppu->h->getBit(0));
-
-		input.VB = VB == TriState::One ? 1 : 0;
-		input.BLNK = BLNK == TriState::One ? 1 : 0;
-
-		hpla->sim(input.packed_bits, outputs);
+		const auto events = sim_HDecoderPacked(VB, BLNK);
+		for (unsigned n = 0; n < 24; n++) h_legacy[n] = static_cast<TriState>((events >> n) & 1);
+		*outputs = h_legacy;
 	}
-
 	void HVDecoder::sim_VDecoder(TriState** outputs)
 	{
-		VDecoderInput input{};
-
-		input.V8 = ppu->v->getBit(8);
-		input.n_V8 = NOT(ppu->v->getBit(8));
-		input.V7 = ppu->v->getBit(7);
-		input.n_V7 = NOT(ppu->v->getBit(7));
-		input.V6 = ppu->v->getBit(6);
-		input.n_V6 = NOT(ppu->v->getBit(6));
-		input.V5 = ppu->v->getBit(5);
-		input.n_V5 = NOT(ppu->v->getBit(5));
-		input.V4 = ppu->v->getBit(4);
-		input.n_V4 = NOT(ppu->v->getBit(4));
-		input.V3 = ppu->v->getBit(3);
-		input.n_V3 = NOT(ppu->v->getBit(3));
-		input.V2 = ppu->v->getBit(2);
-		input.n_V2 = NOT(ppu->v->getBit(2));
-		input.V1 = ppu->v->getBit(1);
-		input.n_V1 = NOT(ppu->v->getBit(1));
-		input.V0 = ppu->v->getBit(0);
-		input.n_V0 = NOT(ppu->v->getBit(0));
-
-		vpla->sim(input.packed_bits, outputs);
+		const auto events = sim_VDecoderPacked();
+		for (unsigned n = 0; n < vpla_outputs; n++) v_legacy[n] = static_cast<TriState>((events >> n) & 1);
+		*outputs = v_legacy;
 	}
 }

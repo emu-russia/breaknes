@@ -31,6 +31,7 @@ namespace M6502Core
 		Flags(M6502* parent) { core = parent; }
 
 		void sim_Load();
+		template<int Phase> void sim_LoadImpl();
 
 		void sim_Store();
 

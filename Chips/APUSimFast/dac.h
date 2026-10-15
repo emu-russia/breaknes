@@ -6,6 +6,7 @@ namespace APUSimFast
 {
 	class DAC
 	{
+		friend APU;		// the arming call records the output mode for the idle class
 		APU* apu = nullptr;
 
 		bool raw_mode = false;

@@ -32,7 +32,7 @@ namespace APUSimFast
 	class AdderBit
 	{
 	public:
-		void sim(BaseLogic::TriState F, BaseLogic::TriState nF, BaseLogic::TriState S, BaseLogic::TriState nS, BaseLogic::TriState C, BaseLogic::TriState nC, 
+		void sim(BaseLogic::TriState F, BaseLogic::TriState nF, BaseLogic::TriState S, BaseLogic::TriState nS, BaseLogic::TriState C, BaseLogic::TriState nC,
 			BaseLogic::TriState& cout, BaseLogic::TriState& n_cout, BaseLogic::TriState& n_sum);
 	};
 
@@ -83,13 +83,14 @@ namespace APUSimFast
 		void sim_FreqCounter();
 		void sim_Sweep(BaseLogic::TriState WR1, BaseLogic::TriState NOSQ);
 		void sim_Duty(BaseLogic::TriState WR0, BaseLogic::TriState WR3);
-		void sim_Output(BaseLogic::TriState NOSQ, BaseLogic::TriState* SQ_Out);
+		uint32_t sim_Output(BaseLogic::TriState NOSQ);
 
 	public:
 		SquareChan(APU* parent, SquareChanCarryIn carry_routing);
 		~SquareChan();
 
-		void sim(BaseLogic::TriState WR0, BaseLogic::TriState WR1, BaseLogic::TriState WR2, BaseLogic::TriState WR3, BaseLogic::TriState NOSQ, BaseLogic::TriState* SQ_Out);
+		// Returns the 4-bit channel output (the original SQ_Out bits).
+		uint32_t sim(BaseLogic::TriState WR0, BaseLogic::TriState WR1, BaseLogic::TriState WR2, BaseLogic::TriState WR3, BaseLogic::TriState NOSQ);
 		BaseLogic::TriState get_LC();
 
 		uint32_t Get_FreqReg();

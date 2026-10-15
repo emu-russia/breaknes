@@ -19,17 +19,18 @@ namespace PPUSimFast
 	{
 		sim_RegularRegOps();
 		sim_W56RegOps();
-		sim_FirstSecond_SCCX_Write();
-
-		sim_RegFFs();
-
-		switch (ppu->rev)
+		const bool active = ppu->wire.n_DBE == TriState::Zero;
+		// An inactive CPU port reaches a fixed point after its release call.
+		// PAL BLACK is a live PCLK pipeline and continues on every master call.
+		if (active || cpu_port_pending || config_dirty || ppu->wire.RC == TriState::One)
 		{
-			case Revision::RP2C07_0:
-			case Revision::UMC_UA6538:
-				sim_PalBLACK();
-				break;
+			sim_FirstSecond_SCCX_Write();
+			sim_RegFFs();
+			cpu_port_pending = active;
+			config_dirty = false;
 		}
+		else ppu->wire.BLACK = base_black;
+		if (ppu->rev == Revision::RP2C07_0 || ppu->rev == Revision::UMC_UA6538) sim_PalBLACK();
 	}
 
 	void ControlRegs::sim_RWDecoder()
@@ -125,12 +126,12 @@ namespace PPUSimFast
 	/// <summary>
 	/// The CLPB/CLPO signal acquisition simulation should be done after the FSM.
 	/// </summary>
-	void ControlRegs::sim_CLP()
+	template<int Phase> void ControlRegs::sim_CLP(EdgeContextT<Phase>& c)
 	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState n_VIS = ppu->fsm.nVIS;
-		TriState CLIP_B = ppu->fsm.CLIP_B;
-		TriState CLIP_O = ppu->fsm.CLIP_O;
+		TriState n_PCLK = c.n_PCLK;
+		TriState n_VIS = c.nVIS;
+		TriState CLIP_B = c.CLIP_B;
+		TriState CLIP_O = c.CLIP_O;
 		TriState BGE = ppu->wire.BGE;
 		TriState OBE = ppu->wire.OBE;
 
@@ -138,18 +139,18 @@ namespace PPUSimFast
 		clipb_latch.set(CLIP_B, n_PCLK);
 		clipo_latch.set(NOR3(nvis_latch.get(), CLIP_O, NOT(OBE)), n_PCLK);
 
-		ppu->wire.n_CLPB = NOR3(nvis_latch.get(), clipb_latch.get(), NOT(BGE));
-		ppu->wire.CLPO = clipo_latch.nget();
+		c.n_CLPB = ppu->wire.n_CLPB = NOR3(nvis_latch.get(), clipb_latch.get(), NOT(BGE));
+		c.CLPO = ppu->wire.CLPO = clipo_latch.nget();
 	}
 
 	void ControlRegs::Debug_RenderAlwaysEnabled(bool enable)
 	{
-		RenderAlwaysEnabled = enable;
+		RenderAlwaysEnabled = enable; config_dirty = true;
 	}
 
 	void ControlRegs::Debug_ClippingAlwaysDisabled(bool enable)
 	{
-		ClippingAlwaysDisabled = enable;
+		ClippingAlwaysDisabled = enable; config_dirty = true;
 	}
 
 	uint8_t ControlRegs::Debug_GetCTRL0()
@@ -162,9 +163,9 @@ namespace PPUSimFast
 	{
 		ppu->data_reader->sccx->set_NTH(static_cast<TriState>(value & 1));
 		ppu->data_reader->sccx->set_NTV(static_cast<TriState>((value >> 1) & 1));
-		ctrl0 = value & 0xfc;
+		ctrl0 = value & 0xfc; config_dirty = true;
 	}
-	void ControlRegs::Debug_SetCTRL1(uint8_t value) { ctrl1 = value; }
+	void ControlRegs::Debug_SetCTRL1(uint8_t value) { ctrl1 = value; config_dirty = true; }
 
 	/// <summary>
 	/// The `/SLAVE` signal is used for EXT input terminals.
@@ -189,4 +190,7 @@ namespace PPUSimFast
 		black_latch2.set(black_latch1.nget(), n_PCLK);
 		ppu->wire.BLACK = black_latch2.nget();
 	}
+
+	template void ControlRegs::sim_CLP<0>(EdgeContextT<0>&);
+	template void ControlRegs::sim_CLP<1>(EdgeContextT<1>&);
 }

@@ -24,41 +24,27 @@ namespace APUSimFast
 		BaseLogic::TriState get_sout();
 	};
 
+	// The stability snapshot (StablePhase) covers exactly the state that survives from one
+	// evaluation to the next: the latch/flip-flop cells, registers and counters, and the six
+	// temporaries that an evaluation reads before it rewrites them (ED1 in IntControl, SOUT in
+	// EnableControl, BLOAD/PCM/DMC1/DOUT in SampleBufferControl). Every other temporary is
+	// written before it is read on every evaluation (see sim_Evaluate), so its value at the start
+	// of an evaluation is dead: an evaluation that leaves this struct unchanged is a replay of the
+	// previous one, and skipping it cannot change any output (FASTSIM_SKIP_ORACLE re-runs it).
 	struct DpcmChanState
 	{
-		BaseLogic::TriState LOOPMode = BaseLogic::TriState::X;	// 1: DPCM looped playback
-		BaseLogic::TriState n_IRQEN = BaseLogic::TriState::X;	// 0: Enable interrupt from DPCM
-		BaseLogic::TriState DSLOAD = BaseLogic::TriState::X;	// Load value into Sample Counter and simultaneously into DPCM Address Counter
-		BaseLogic::TriState DSSTEP = BaseLogic::TriState::X;	// Perform Sample Counter decrement and DPCM Address Counter increment simultaneously
-		BaseLogic::TriState BLOAD = BaseLogic::TriState::X;		// Load value into Sample Buffer
-		BaseLogic::TriState BSTEP = BaseLogic::TriState::X;		// Perform a Sample Buffer bit shift
-		BaseLogic::TriState NSTEP = BaseLogic::TriState::X;		// Perform Sample Bit Counter increment
-		BaseLogic::TriState DSTEP = BaseLogic::TriState::X;		// Increment/decrement the DPCM Output counter
-		BaseLogic::TriState PCM = BaseLogic::TriState::X;		// Load new sample value into Sample Buffer. The signal is active when PHI1 = 0 and the address bus is captured (imitating CPU reading)
-		BaseLogic::TriState DOUT = BaseLogic::TriState::X;		// DPCM Out counter has finished counting
-		BaseLogic::TriState n_NOUT = BaseLogic::TriState::X;	// 0: Sample Bit Counter has finished counting
-		BaseLogic::TriState SOUT = BaseLogic::TriState::X;		// Sample Counter has finished counting
-		BaseLogic::TriState DFLOAD = BaseLogic::TriState::X;	// Frequency LFSR finished counting and reloaded itself
-		BaseLogic::TriState n_BOUT = BaseLogic::TriState::X;	// The next bit value pushed out of the Sample Buffer shift register (inverted value)
-		BaseLogic::TriState Fx[4]{};
-		BaseLogic::TriState FR[9]{};
-
 		BaseLogic::TriState ED1 = BaseLogic::TriState::X;		// 1: Assert interrupt
-		BaseLogic::TriState ED2 = BaseLogic::TriState::X;		// 1: DMC enable ($4015[4])
+		BaseLogic::TriState SOUT = BaseLogic::TriState::X;		// Sample Counter has finished counting
+		BaseLogic::TriState BLOAD = BaseLogic::TriState::X;		// Load value into Sample Buffer
+		BaseLogic::TriState PCM = BaseLogic::TriState::X;		// Load new sample value into Sample Buffer. The signal is active when PHI1 = 0 and the address bus is captured (imitating CPU reading)
 		BaseLogic::TriState DMC1 = BaseLogic::TriState::X;		// 1: PCM (DMA fetch) done
-		BaseLogic::TriState DMC2 = BaseLogic::TriState::X;		// 1: DMC finish
-		BaseLogic::TriState CTRL1 = BaseLogic::TriState::X;		// 0: Stop DMA
-		BaseLogic::TriState CTRL2 = BaseLogic::TriState::X;		// 0: DMC enable delay
-
-		BaseLogic::TriState ACLK2 = BaseLogic::TriState::X;
+		BaseLogic::TriState DOUT = BaseLogic::TriState::X;		// DPCM Out counter has finished counting
 
 		BaseLogic::FF int_ff{};
 		BaseLogic::DLatch sout_latch{};
 		RegisterBitRes2 ena_ff{};
-		BaseLogic::DLatch run_latch1{};
-		BaseLogic::DLatch run_latch2{};
-		BaseLogic::FF start_ff{};
-		BaseLogic::FF rdy_ff{};
+		// run_latch1, run_latch2, start_ff, rdy_ff, in original order.
+		uint8_t dma_control = 0;
 		BaseLogic::DLatch en_latch1{};
 		BaseLogic::DLatch en_latch2{};
 		BaseLogic::DLatch en_latch3{};
@@ -93,12 +79,37 @@ namespace APUSimFast
 
 		APU* apu = nullptr;
 
-		StablePhase<DpcmChanState, 14> phase;
+		StablePhase<DpcmChanState, uint32_t> phase;
+
+		// Temporaries written before they are read on every evaluation (outside the snapshot).
+		BaseLogic::TriState LOOPMode = BaseLogic::TriState::X;	// 1: DPCM looped playback
+		BaseLogic::TriState n_IRQEN = BaseLogic::TriState::X;	// 0: Enable interrupt from DPCM
+		BaseLogic::TriState DSLOAD = BaseLogic::TriState::X;	// Load value into Sample Counter and simultaneously into DPCM Address Counter
+		BaseLogic::TriState DSSTEP = BaseLogic::TriState::X;	// Perform Sample Counter decrement and DPCM Address Counter increment simultaneously
+		BaseLogic::TriState BSTEP = BaseLogic::TriState::X;		// Perform a Sample Buffer bit shift
+		BaseLogic::TriState NSTEP = BaseLogic::TriState::X;		// Perform Sample Bit Counter increment
+		BaseLogic::TriState DSTEP = BaseLogic::TriState::X;		// Increment/decrement the DPCM Output counter
+		BaseLogic::TriState n_NOUT = BaseLogic::TriState::X;	// 0: Sample Bit Counter has finished counting
+		BaseLogic::TriState DFLOAD = BaseLogic::TriState::X;	// Frequency LFSR finished counting and reloaded itself
+		BaseLogic::TriState n_BOUT = BaseLogic::TriState::X;	// The next bit value pushed out of the Sample Buffer shift register (inverted value)
+		uint16_t frequency_reload = 0;
+		BaseLogic::TriState ED2 = BaseLogic::TriState::X;		// 1: DMC enable ($4015[4])
+		BaseLogic::TriState DMC2 = BaseLogic::TriState::X;		// 1: DMC finish
+		BaseLogic::TriState CTRL1 = BaseLogic::TriState::X;		// 0: Stop DMA
+		BaseLogic::TriState CTRL2 = BaseLogic::TriState::X;		// 0: DMC enable delay
+		BaseLogic::TriState ACLK2 = BaseLogic::TriState::X;
+
+		// Returns true when a replay of this evaluation with the same inputs would be the identity.
+		bool sim_Evaluate();
+#ifdef FASTSIM_SKIP_ORACLE
+		void sim_SkipOracle(uint8_t bus);
+#endif
 
 		void sim_ControlReg();
 		void sim_IntControl();
 		void sim_EnableControl();
-		void sim_DMAControl();
+		// Returns true when the binary transition path was taken (false on the X/Z scalar path).
+		bool sim_DMAControl();
 		void sim_SampleCounterControl();
 		void sim_SampleBufferControl();
 
@@ -143,5 +154,6 @@ namespace APUSimFast
 
 		bool GetDpcmEnable();
 		void SetDpcmEnable(bool enable);
+		bool IsStable() const { return phase.IsStable(); }
 	};
 }

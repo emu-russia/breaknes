@@ -12,6 +12,36 @@ call's clock/register signals; the CPU and sound channels keep their original
 PHI-edge scheduling. A stable master phase never triggers several settling
 passes inside a single API call.
 
+## Third-pass representation
+
+The third pass makes all addresses outside the APU register window share one
+inactive decoder key, and produces the selected read/write strobes directly.
+CPU high-address qualification remains separate from the low address selected
+by DMA. Debug lock and live debug-register bus drives still execute in order.
+
+DPCM and OAM DMA arbitration were tested as bounded transition tables, including
+the intermediate values consumed later in the same call. Their speed difference
+from direct equations was below the selection threshold; the direct equations
+remain the simpler default. The frame controller stores ten
+feedback bits in a word, retains the separate fifteen-bit LFSR banks, and uses
+a scalar dependency key and explicit feedback comparison. GPIO has three-bit
+input/output banks; register transfers and debug bus reads use packed bytes.
+The DPCM period ROM remains packed through its frequency-control consumer.
+
+The standalone harness can pair this APU with the opt-in
+`M6502Core::ExecutionBackend::ExactPacked` CPU. Existing application constructors
+still select the reference CPU. The
+[joined benchmark](../../UnitTest/FastSim/Readme.md#joined-third-pass-performance-acceptance)
+counts the CPU once, consumes analog audio and composite video on every master
+half-call, and checks the combined timing target separately from correctness.
+
+The final [v3 component comparison](../../UnitTest/FastSim/results/appleclang21-arm64-v3-components.json)
+uses nine full-second pairs per workload. Including the selected CPU, active
+time falls from 2196.535 to 1293.874 ms (1.6938x median paired speedup); legacy
+time falls from 2178.398 to 1281.967 ms (1.6993x). All checksums agree and every
+pair is faster. These are component measurements; the combined target has its
+own [joined report](../../UnitTest/FastSim/results/appleclang21-arm64-v3-joined.json).
+
 ## Packed kernels and arithmetic
 
 - The six-stage CPU divider and fifteen-stage frame sequencer retain separate
@@ -96,8 +126,10 @@ CPU-address qualification and square register/barrel/dual-rail arithmetic.
 A held-phase probe varies live DB and control inputs and exercises public debug
 invalidation. Full chip comparisons cover CPU integration, real OAM/DMC activity,
 natural DMC address wrap, frame IRQ, physical DBG, held clocks, short reset and
-FakeM6502 playback. The independent integrated NROM fixture compares all four
-slow/fast chip combinations.
+FakeM6502 playback. The independent integrated NROM fixture compares all eight
+reference/packed CPU and slow/fast APU/PPU combinations, plus a paired composite
+video trace. Third-pass kernel proofs also cover complete controller table
+domains, future transitions, GPIO hidden banks and fresh debug-read bus storage.
 
 The final [archived-ROM comparisons](../../UnitTest/FastSim/results/appleclang21-arm64-roms.json)
 used seven mapper-0 images from [nes-test-roms commit 95d8f62](https://github.com/christopherpow/nes-test-roms/commit/95d8f621ae55cee0d09b91519a8989ae0e64753b).
@@ -150,3 +182,58 @@ passed at 2.4545x legacy and 2.4510x active speedup over the frozen first pass.
 Each workload won all nine pairs with matching checksums; each timed sample
 covered 21,477,272 master clocks. Full Release, Debug and ASan+UBSan checks passed
 on the final source snapshot. Native Windows execution remains unverified.
+
+## Fourth pass (v4, 2026-10-14): idle class, settledness and the fixed-point rules
+
+The fourth pass changed what a half-call *does*, not what it computes. Three exactness mechanisms were added
+and every omission is re-run in `FASTSIM_SKIP_ORACLE` builds (`APU::sim_IdleOracle` and the guard oracles
+evaluate the skipped work from the same pre-state and abort on any difference; the full suite runs in that
+build as a gate).
+
+**Idle class (round 1).** A call is idle when the divider peeks no PHI0 edge, no register strobe is decoded,
+RES and DBG are low and every guarded block is settled; the call then only steps the divider banks, performs
+the PHI2 buffer capture / SPR_PPU drive and the WR data output in place, copies the seven pads published by the
+arming call (M2 recomputed from n_M2) and re-publishes the DAC sample (RAW fields or the two floats). Every
+public mutator (`SetRAWOutput`, `SetNormalizedOutput`, the debug setters) disarms, so the next call takes the
+full path. `sim()` is a thin dispatcher; the full body is out of line (`sim_FullCall`), so the idle call has
+no frame. The noise channel is packed into words (16-entry period ROM generated from the NOR term lists,
+11-bit frequency LFSR and 15-bit random LFSR with load-over-step priority and the ACLK1 input/output banks
+kept as in the gate netlist; bounded kernel proof against the cell netlist). CoreBinding, DMA and Pads are
+by-value members. Idle call 11.0 → 3.3 ns including the harness; legacy/active −15%/−13%.
+
+**Live-state snapshots (round 2).** `StablePhase` compares, before and after an evaluation, only the state
+that survives it: cells, registers, counters and the temporaries an evaluation reads before rewriting them
+(DPCM: ED1, SOUT, BLOAD, PCM, DMC1, DOUT; DMA: prev_W4014). Temporaries that are written before they are read
+on every evaluation (ACLK2, LOOPMode, n_IRQEN, DFLOAD, the step/load strobes, SPRE/SPRS/NOSPR/DOSPR,
+sprdma_rdy, …) are dead at the start of an evaluation; a changing dead temporary used to keep a block
+"unsettled" for extra calls.
+
+**Fixed-point settledness (round 2).** A replay of an evaluation with the same inputs can differ from the
+first only through state the evaluation changed and then re-read. Each block declares when its evaluation is
+provably the identity: CLKGen with ACLK1 low (no read-before-write temporary; `sim_ACLK` updates one bit per
+phase and reads the other; every transparent latch opens only while ACLK1 is high; the IRQ and Z flip-flops
+are OR-absorbing; the LFSR input bank is a function of the frozen output bank), and with ACLK1 high when Z1
+already equals Z and the six product terms of the new LFSR output equal the stored PLA decode (nACLK2 must be
+high; PHI1/PHI2 not both high); OAM DMA on the binary transition path (frozen nospr/carry banks, absorbing
+controller equations); DPCM when ACLK2 is low (no counter loads or steps, the shifter only recopies). X/Z
+inputs never claim a fixed point. Two kernel proofs (`FrameFixedPointProof`, `DpcmDmaFixedPointProof`) replay
+the blocks from recorded states. Result: each guarded block evaluates once per PHI0 edge instead of three to
+four times per ACLK period; full calls −27%; legacy/active incl. CPU −13%. The idle-class arming additionally
+requires `CLKGen::ClockChanged == false` and `RegsDecoder::StrobesChanged == false` for the arming call,
+because the blocks and the WR driver consume moved clocks and changed strobes one call later (the first
+reachable stale-WR case was found by the idle oracle).
+
+**Rejected by measurement** (patches kept under `emu/artifacts/fastsim-v4/round2/rejected-patches/`):
+hand-packed envelope/length/square latches (−1.4%), the exact quiescent skip of envelope units and length
+counters (−2.8% in round 1, −1.9/−1.4% in round 2: that work is overlapped with the core and removing it buys
+little), DPCM control packing (−0.2/−0.4%; an ablation bounds all DPCM-body work at 12–14% and places the
+cost in the counters, LFSR and buffer chains), by-value flattening of the remaining blocks and a 64-state
+divider table (≈1% each).
+
+**Invariants a future change must keep.** Any new public setter must disarm the idle class. Any new producer
+that the blocks consume one call later must set `ClockChanged`/`StrobesChanged` (or disarm). The fixed-point
+predicates and the proofs bind to private members; a change to a block's evaluation order needs its predicate
+re-derived and its proof re-run. The skip oracles compare whole block objects including dead temporaries,
+which is exact for DPCM/DMA/CLKGen because every dead temporary derives from keyed inputs; a block whose dead
+temporary derived from an unkeyed input would need a narrower oracle (the length-counter `reload` case in the
+rejected quiescent skip). Numbers and commands: `emu/artifacts/fastsim-v4/track-reports/apu-*track-report.json`.

@@ -49,19 +49,21 @@ namespace PPUSimFast
 
 		uint8_t read_buffer = 0;
 
-		void sim_RD();
-		void sim_WR();
-		void sim_ALE();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_RD(EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_WR(EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_ALE(const EdgeContextT<Phase>& c);
 
 	public:
 		VRAM_Control(PPU* parent);
 		~VRAM_Control();
 
-		void sim();
+		// Produces DB_PAR, TSTEP and PD_RB into the context (and the wires).
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim(EdgeContextT<Phase>& c);
 
-		void sim_TH_MUX();
+		// Produces TH_MUX and XRB into the context (and the wires).
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_TH_MUX(EdgeContextT<Phase>& c);
 
-		void sim_ReadBuffer();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_ReadBuffer(const EdgeContextT<Phase>& c);
 
 		uint8_t Debug_GetRB();
 		void Debug_SetRB(uint8_t value);

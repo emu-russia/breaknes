@@ -77,25 +77,30 @@ namespace PPUSimFast
 		BaseLogic::TriState THIN = BaseLogic::TriState::X;
 		BaseLogic::TriState Z_TV = BaseLogic::TriState::X;
 
+		uint8_t th = 0, tv = 0, fv = 0, nth = 0, ntv = 0;
+		uint8_t n_th = 0, n_tv = 0, n_fv = 0;
 		BaseLogic::TriState NTHO = BaseLogic::TriState::X;
 		BaseLogic::TriState NTVO = BaseLogic::TriState::X;
 
-		void sim_CountersControl();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_CountersControl(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_CountersCarry(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_FVCounter(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_NTCounters(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_TVCounter(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_THCounter(const EdgeContextT<Phase>& c);
+		// Field-driven entry point for the kernel tests.
 		void sim_CountersCarry();
-		void sim_FVCounter();
-		void sim_NTCounters();
-		void sim_TVCounter();
-		void sim_THCounter();
 
 	public:
 		TileCnt(PPU* parent);
 		~TileCnt();
 
-		void sim();
-		uint8_t get_TH() const { return THCounter.main; }
-		uint8_t get_TV() const { return Z_TV == BaseLogic::Zero ? TVCounter.main : 0; }
-		uint8_t get_FV() const { return FVCounter.main; }
-		uint8_t get_NTH() const { return NTHCounter.main; }
-		uint8_t get_NTV() const { return NTVCounter.main; }
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim(const EdgeContextT<Phase>& c);
+		uint8_t get_n_FV() const { return n_fv; }
+		uint8_t get_TH() const { return th; }
+		uint8_t get_TV() const { return tv; }
+		uint8_t get_FV() const { return fv; }
+		uint8_t get_NTH() const { return nth; }
+		uint8_t get_NTV() const { return ntv; }
 	};
 }

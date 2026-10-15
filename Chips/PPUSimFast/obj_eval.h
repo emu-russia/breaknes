@@ -57,7 +57,7 @@ namespace PPUSimFast
 		PPU* ppu = nullptr;
 
 		struct CounterBank { uint8_t keep=0, latch=0; } main_counter, temp_counter;
-		uint8_t latched_y = 0;
+		uint8_t latched_y = 0, row = 0, address = 0xff;
 
 		BaseLogic::TriState OAM_x[8]{};
 		BaseLogic::TriState OAM_Temp[5]{};
@@ -107,16 +107,20 @@ namespace PPUSimFast
 
 		// The blocks are simulated in the signal propagation order as the developers intended or we think they intended.
 
-		void sim_StepJohnson();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_StepJohnson(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_Comparator(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_ComparisonFSM(EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_MainCounterControl(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_MainCounter(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_TempCounterControlBeforeCounter(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_TempCounter(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_TempCounterControlAfterCounter(EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_SpriteOVF(EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_OAMAddress(EdgeContextT<Phase>& c);
+		// Field-driven entry points for the kernel tests.
 		void sim_Comparator();
-		void sim_ComparisonFSM();
-		void sim_MainCounterControl();
 		void sim_MainCounter();
-		void sim_TempCounterControlBeforeCounter();
 		void sim_TempCounter();
-		void sim_TempCounterControlAfterCounter();
-		void sim_SpriteOVF();
-		void sim_OAMAddress();
 
 		// These auxiliary methods are needed to retrieve old values of signals that have not yet been simulated (`uroboros` signals).
 
@@ -126,7 +130,11 @@ namespace PPUSimFast
 		ObjEval(PPU* parent);
 		~ObjEval();
 
-		void sim();
+		// Consumes the FSM commands, delayed H, OFETCH and the previous OAM buffer; produces OAM8,
+		// OAMCTR2, SPR_OV, /SPR0_EV and PD/FIFO into the context (and the wires).
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim(EdgeContextT<Phase>& c);
+		uint8_t get_Row() const { return row; }
+		uint8_t get_Address() const { return address; }
 
 		uint32_t Debug_GetMainCounter();
 		uint32_t Debug_GetTempCounter();

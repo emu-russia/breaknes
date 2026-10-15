@@ -91,46 +91,48 @@ namespace PPUSimFast
 		friend PPUSimUnitTest::UnitTest;
 		PPU* ppu = nullptr;
 
-		FIFOLane* lane[8];
+		// Eight byte lanes in each word. Control and attribute bits are lane masks.
+		uint64_t counter_keep = 0, counter_prepared = 0;
+		uint64_t shift_input[2]{}, shift_output[2]{};
+		uint8_t attr_input[3]{}, attr_output[3]{};
+		uint8_t selected = 0, zero_position = 0, enabled = 0;
+		uint8_t captured_pd = 0;
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_PackedLanes(const EdgeContextT<Phase>& c);
+		// Field-driven entry points for the kernel tests.
+		void sim_PackedLanes();
+		void sim_Prio();
 
 		BaseLogic::DLatch zh_latch1;
 		BaseLogic::DLatch zh_latch2;
 		BaseLogic::DLatch zh_latch3;
 
 		BaseLogic::FF HINV_FF;
-		BaseLogic::DLatch tout_latch[8];
-		BaseLogic::TriState n_TX[8]{};
 		uint8_t packed_nTX = 0;
 
-		BaseLogic::DLatch sh2_latch;
-		BaseLogic::DLatch sh3_latch;
-		BaseLogic::DLatch sh5_latch;
-		BaseLogic::DLatch sh7_latch;
+		uint8_t sprite_reads = 0;
 
 		BaseLogic::DLatch s0_latch;
 		BaseLogic::DLatch col2_latch;
 		BaseLogic::DLatch col3_latch;
 		BaseLogic::DLatch prio_latch;
 
-		FIFOLaneOutput LaneOut[8]{};
 
-		void sim_HInv();
-		void sim_Lanes();
-		void sim_Prio();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_HInv(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_Lanes(const EdgeContextT<Phase>& c);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_Prio(EdgeContextT<Phase>& c);
 
-		BaseLogic::TriState get_nZCOL0(size_t lane);
-		BaseLogic::TriState get_nZCOL1(size_t lane);
-		BaseLogic::TriState get_nxEN(size_t lane);
 
 	public:
 		FIFO(PPU* parent);
 		~FIFO();
 
-		void sim();
+		// Consumes the FSM commands, delayed H, PD/FIFO and the /OBJ_RD strobes; produces /ZH, the
+		// Z colour/priority lanes and /SPR0HIT into the context (and the wires).
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim(EdgeContextT<Phase>& c);
 
 		/// <summary>
-		/// You can call right after the FSM.
+		/// You can call right after the FSM. Produces the four /OBJ_RD strobes into the context (and the wires).
 		/// </summary>
-		void sim_SpriteH();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_SpriteH(EdgeContextT<Phase>& c);
 	};
 }

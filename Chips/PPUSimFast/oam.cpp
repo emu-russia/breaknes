@@ -38,17 +38,17 @@ namespace PPUSimFast
 		cell.timeout = 1000000;
 	}
 
-	void OAM::sim()
+	template<int Phase> void OAM::sim(const EdgeContextT<Phase>& c)
 	{
-		const bool high = ppu->wire.PCLK == TriState::One;
-		const bool blank = ppu->fsm.BLNK == TriState::One;
-		const uint8_t address = static_cast<uint8_t>(~Pack(ppu->wire.n_OAM));
-		const size_t col = ppu->wire.OAM8 == TriState::One ? 8 : address & 7;
+		const bool high = c.PCLK == TriState::One;
+		const bool blank = c.BLNK == TriState::One;
+		const uint8_t address = ppu->eval->get_Address();
+		const size_t col = c.OAM8 == TriState::One ? 8 : address & 7;
 		const size_t row = address >> 3;
 		const bool ob_to_oam = high && !blank;
-		const bool secondary_write = !blank && ppu->wire.SPR_OV == TriState::Zero && !high &&
-			ppu->wire.H0_Dash2 == TriState::One && ppu->wire.OAMCTR2 == TriState::Zero && ppu->fsm.nVIS == TriState::Zero;
-		ppu->wire.n_WE = ppu->wire.OFETCH == TriState::Zero && !secondary_write ? TriState::One : TriState::Zero;
+		const bool secondary_write = !blank && c.SPR_OV == TriState::Zero && !high &&
+			c.H0_Dash2 == TriState::One && c.OAMCTR2 == TriState::Zero && c.nVIS == TriState::Zero;
+		const TriState n_WE = ppu->wire.n_WE = c.OFETCH == TriState::Zero && !secondary_write ? TriState::One : TriState::Zero;
 
 		if (high)
 		{
@@ -61,36 +61,36 @@ namespace PPUSimFast
 			uint8_t driven;
 			const uint8_t value = Read(col, row, driven);
 			input_ff = static_cast<uint8_t>((input_ff & ~driven) | (value & driven));
-			ob_ff = ppu->fsm.IOAM2 == TriState::One ? 0xff : input_ff;
+			ob_ff = c.IOAM2 == TriState::One ? 0xff : input_ff;
 		}
-		Unpack(ob_ff, ppu->wire.OB);
+		published_ob = ob_ff;
 		if (ppu->rev != Revision::RP2C04_0003 && ppu->wire.n_R4 == TriState::Zero && ppu->wire.n_DBE == TriState::Zero)
 			ppu->DB = r4_latch;
 		if (blank) out_latch = ppu->DB;
 		else if (ob_to_oam) out_latch = ob_ff;
-		if (!high && ppu->wire.n_WE == TriState::Zero) Write(col, row, out_latch);
+		if (!high && n_WE == TriState::Zero) Write(col, row, out_latch);
 	}
 
-	void OAM::sim_OFETCH()
+	template<int Phase> void OAM::sim_OFETCH(EdgeContextT<Phase>& c)
 	{
 		switch (ppu->rev)
 		{
 			// TBD: Find out how the rest of the RGB PPUs are doing
 
 			case Revision::RP2C04_0003:
-				sim_OFETCH_RGB_PPU();
+				sim_OFETCH_RGB_PPU(c);
 				break;
 
 			default:
-				sim_OFETCH_Default();
+				sim_OFETCH_Default(c);
 				break;
 		}
 	}
 
-	void OAM::sim_OFETCH_Default()
+	template<int Phase> void OAM::sim_OFETCH_Default(EdgeContextT<Phase>& c)
 	{
-		TriState PCLK = ppu->wire.PCLK;
-		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState PCLK = c.PCLK;
+		TriState n_PCLK = c.n_PCLK;
 		TriState n_W4 = ppu->wire.n_W4;
 		TriState n_DBE = ppu->wire.n_DBE;
 		auto W4_Enable = NOR(n_W4, n_DBE);
@@ -100,7 +100,7 @@ namespace PPUSimFast
 		latch[2].set(latch[1].nget(), n_PCLK);
 		latch[3].set(latch[2].nget(), PCLK);
 
-		ppu->wire.OFETCH = NOR(latch[1].nget(), latch[3].get());
+		c.OFETCH = ppu->wire.OFETCH = NOR(latch[1].nget(), latch[3].get());
 
 		W4_FF.set(NOR(W4_Enable, NOR(W4_FF.get(), latch[2].nget())));
 
@@ -109,20 +109,20 @@ namespace PPUSimFast
 		OFETCH_FF.set(MUX(PCLK, NOT(NOT(OFETCH_FF.get())), NOR(W4_Enable, W4_FF.get())));
 	}
 
-	void OAM::sim_OFETCH_RGB_PPU()
+	template<int Phase> void OAM::sim_OFETCH_RGB_PPU(EdgeContextT<Phase>& c)
 	{
-		TriState PCLK = ppu->wire.PCLK;
-		TriState n_PCLK = ppu->wire.n_PCLK;
+		TriState PCLK = c.PCLK;
+		TriState n_PCLK = c.n_PCLK;
 		TriState n_W4 = ppu->wire.n_W4;
 		TriState n_DBE = ppu->wire.n_DBE;
 		auto W4_Enable = NOR(n_W4, n_DBE);
 
 		// The number of latches is 2 less. W4_FF is missing.
-		
+
 		latch[2].set(OFETCH_FF.nget(), n_PCLK);
 		latch[3].set(latch[2].nget(), PCLK);
 
-		ppu->wire.OFETCH = NOR(OFETCH_FF.nget(), latch[3].get());
+		c.OFETCH = ppu->wire.OFETCH = NOR(OFETCH_FF.nget(), latch[3].get());
 
 		OFETCH_FF.set(MUX(PCLK, NOT(NOT(OFETCH_FF.get())), W4_Enable));
 	}
@@ -142,4 +142,9 @@ namespace PPUSimFast
 	}
 	void OAM::Dbg_OAMWriteByte(size_t addr, uint8_t val) { Write(addr & 7, addr >> 3, val); }
 	void OAM::Dbg_TempOAMWriteByte(size_t addr, uint8_t val) { Write(8, addr, val); }
+
+	template void OAM::sim<0>(const EdgeContextT<0>&);
+	template void OAM::sim<1>(const EdgeContextT<1>&);
+	template void OAM::sim_OFETCH<0>(EdgeContextT<0>&);
+	template void OAM::sim_OFETCH<1>(EdgeContextT<1>&);
 }

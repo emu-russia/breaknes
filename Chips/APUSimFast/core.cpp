@@ -10,17 +10,26 @@ namespace APUSimFast
 	{
 		apu = parent;
 	}
-	
+
 	CoreBinding::~CoreBinding()
 	{
 	}
 
+	bool CoreBinding::PeekPhi0Edge() const
+	{
+		const uint8_t next_output = apu->wire.n_CLK == TriState::Zero ? divider_output : divider_input;
+		const TriState new_phi = (next_output & 0x20) != 0 ? TriState::Zero : TriState::One;
+		return new_phi != apu->PrevPHI_Core;
+	}
+
 	void CoreBinding::sim()
 	{
+		core_called = false;
 		sim_DividerBeforeCore();
 
 		if (apu->wire.PHI0 != apu->PrevPHI_Core)
 		{
+			core_called = true;
 			TriState inputs[(size_t)M6502Core::InputPad::Max]{};
 			TriState outputs[(size_t)M6502Core::OutputPad::Max];
 

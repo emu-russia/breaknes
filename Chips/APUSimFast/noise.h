@@ -4,26 +4,6 @@
 
 namespace APUSimFast
 {
-	class FreqLFSRBit
-	{
-		BaseLogic::DLatch in_latch{};
-		BaseLogic::DLatch out_latch{};
-
-	public:
-		void sim(BaseLogic::TriState ACLK1, BaseLogic::TriState load, BaseLogic::TriState step, BaseLogic::TriState val, BaseLogic::TriState shift_in);
-		BaseLogic::TriState get_sout();
-	};
-
-	class RandomLFSRBit
-	{
-		RegisterBit in_reg{};
-		BaseLogic::DLatch out_latch{};
-
-	public:
-		void sim(BaseLogic::TriState ACLK1, BaseLogic::TriState load, BaseLogic::TriState shift_in);
-		BaseLogic::TriState get_sout();
-	};
-
 	class NoiseChan
 	{
 		friend APUSimUnitTest::UnitTest;
@@ -31,22 +11,23 @@ namespace APUSimFast
 
 		APU* apu = nullptr;
 
-		BaseLogic::TriState NNF[11]{};
+		// Packed representation of the original cells. Each LFSR keeps the transparent input
+		// bank and the ACLK1-clocked output bank; the output bank stores the logical sout values
+		// (inverted output latches), like CLKGen and DpcmChan. Startup values are the original
+		// latch initialization: in=0, out=0 -> sout=1.
+		uint8_t freq_reg = 0;								// $400E[3:0], four RegisterBitRes cells
+		uint8_t rmod = 0;									// $400E[7], one RegisterBit cell
+		uint16_t nnf = 0;									// decoded period word, combinational
+		uint16_t flfsr_input = 0, flfsr_output = 0x7ff;		// 11-bit frequency LFSR banks
+		uint16_t rlfsr_input = 0, rlfsr_output = 0x7fff;	// 15-bit random LFSR banks
 		BaseLogic::TriState RSTEP = BaseLogic::TriState::X;
 		BaseLogic::TriState RNDOUT = BaseLogic::TriState::X;
 		BaseLogic::TriState Vol[4]{};
-		BaseLogic::TriState Dec1_out[16]{};
 
-		RegisterBitRes freq_reg[4]{};
-		FreqLFSRBit freq_lfsr[11]{};
-		RegisterBit rmod_reg{};
-		RandomLFSRBit rnd_lfsr[15]{};
 		EnvelopeUnit *env_unit = nullptr;
 
 		void sim_FreqReg();
-		void sim_Decoder1();
-		void sim_Decoder1_Calc(BaseLogic::TriState *F, BaseLogic::TriState *nF);
-		void sim_Decoder2();
+		void sim_Decoder();
 		void sim_FreqLFSR();
 		void sim_RandomLFSR();
 
@@ -54,7 +35,8 @@ namespace APUSimFast
 		NoiseChan(APU* parent);
 		~NoiseChan();
 
-		void sim();
+		// Returns the 4-bit channel output (the original RND_Out bits).
+		uint32_t sim();
 		BaseLogic::TriState get_LC();
 
 		uint32_t Get_FreqReg();

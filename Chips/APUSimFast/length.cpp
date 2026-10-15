@@ -34,9 +34,9 @@ namespace APUSimFast
 		TriState ACLK4 = NOT(nACLK2);
 		TriState LCDIS;
 
-		reg_enable_latch.set( 
-			MUX(ACLK1, 
-				MUX(W4015, 
+		reg_enable_latch.set(
+			MUX(ACLK1,
+				MUX(W4015,
 					MUX(RES, TriState::Z, TriState::Zero),
 					apu->GetDBBit(bit_ena)),
 				NOT(reg_enable_latch.nget())), TriState::One);

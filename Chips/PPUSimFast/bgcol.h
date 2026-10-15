@@ -24,7 +24,7 @@ namespace PPUSimFast
 	public:
 		uint8_t sim_Packed(uint8_t value, BaseLogic::TriState sin, BaseLogic::TriState Load, BaseLogic::TriState Step, BaseLogic::TriState Next);
 
-		void sim(BaseLogic::TriState val[8], BaseLogic::TriState sin, 
+		void sim(BaseLogic::TriState val[8], BaseLogic::TriState sin,
 			BaseLogic::TriState Load, BaseLogic::TriState Step, BaseLogic::TriState Next,
 			BaseLogic::TriState sout[8]);
 	};
@@ -53,8 +53,10 @@ namespace PPUSimFast
 
 		BaseLogic::DLatch BGC0_Latch[8]{};
 		uint8_t captured_pattern = 0, captured_attribute = 0;
-		uint8_t pixel_input = 0, pixel_output = 0;
-		void sim_Packed();
+		uint8_t pixel_input = 0, pixel_output = 0, visible_pixel = 0;
+		uint64_t bank_input = 0, bank_output = 0;
+		uint8_t attribute_input = 0, attribute_output = 0;
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_Packed(const EdgeContextT<Phase>& c);
 		BGC_SR8 BGC0_SR1;
 		BGC_SR8 BGC0_SR2;
 
@@ -76,7 +78,7 @@ namespace PPUSimFast
 
 		BaseLogic::TriState unused[8]{};
 
-		void sim_Control();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_Control(const EdgeContextT<Phase>& c);
 		void sim_BGC0();
 		void sim_BGC1();
 		void sim_BGC2();
@@ -87,6 +89,9 @@ namespace PPUSimFast
 		BGCol(PPU* parent);
 		~BGCol();
 
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim(const EdgeContextT<Phase>& c);
+		// Field-driven entry point for the kernel tests.
 		void sim();
+		uint8_t get_Pixel() const { return visible_pixel; }
 	};
 }

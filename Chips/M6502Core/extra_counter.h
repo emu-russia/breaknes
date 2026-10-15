@@ -27,5 +27,6 @@ namespace M6502Core
 		void sim();
 
 		void sim_HLE();
+		template<int Phase> void sim_HLEImpl();
 	};
 }

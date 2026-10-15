@@ -47,17 +47,23 @@ namespace M6502Core
 
 	void PreDecode::sim(uint8_t* data_bus)
 	{
+		simImpl<0>(data_bus);
+	}
+
+	template<int Phase> void PreDecode::simImpl(uint8_t* data_bus)
+	{
+		using P = Phi<Phase>;
 		TriState PHI2 = core->wire.PHI2;
 		TriState Z_IR = core->wire.Z_IR;
 
-		if (PHI2 != TriState::One)
+		if (!P::Phi2One(PHI2))
 		{
 			PD = Z_IR ? 0 : ~pd_latch;
 			n_PD = ~PD;
 			return;
 		}
 
-		if (PHI2)
+		if (P::Phi2(PHI2))
 		{
 			pd_latch = ~(*data_bus);
 		}
@@ -68,4 +74,7 @@ namespace M6502Core
 		core->wire.n_TWOCYCLE = precalc_n_TWOCYCLE[PD];
 		core->wire.n_IMPLIED = precalc_n_IMPLIED[PD];
 	}
+	template void PreDecode::simImpl<0>(uint8_t*);
+	template void PreDecode::simImpl<1>(uint8_t*);
+	template void PreDecode::simImpl<2>(uint8_t*);
 }

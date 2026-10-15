@@ -96,10 +96,16 @@ namespace M6502Core
 
 	void ProgramCounter::sim_HLE()
 	{
+		sim_HLEImpl<0>();
+	}
+
+	template<int Phase> void ProgramCounter::sim_HLEImpl()
+	{
+		using P = Phi<Phase>;
 		TriState PHI2 = core->wire.PHI2;
 		TriState n_1PC = core->wire.n_1PC;
 
-		if (PHI2 == TriState::One)
+		if (P::Phi2One(PHI2))
 		{
 			uint16_t pc = ((uint16_t)PackedPCHS << 8) | PackedPCLS;
 
@@ -112,6 +118,9 @@ namespace M6502Core
 			PackedPCH = pc >> 8;
 		}
 	}
+	template void ProgramCounter::sim_HLEImpl<0>();
+	template void ProgramCounter::sim_HLEImpl<1>();
+	template void ProgramCounter::sim_HLEImpl<2>();
 
 	void ProgramCounter::sim_Load()
 	{

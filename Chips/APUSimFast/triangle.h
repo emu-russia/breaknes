@@ -34,13 +34,14 @@ namespace APUSimFast
 		void sim_LinearCounter();
 		void sim_FreqReg();
 		void sim_FreqCounter();
-		void sim_Output();
+		uint32_t sim_Output();
 
 	public:
 		TriangleChan(APU* parent);
 		~TriangleChan();
 
-		void sim();
+		// Returns the 4-bit channel output (the original TRI_Out bits).
+		uint32_t sim();
 		BaseLogic::TriState get_LC();
 
 		uint32_t Get_LinearReg();

@@ -39,7 +39,7 @@ namespace PPUSimFast
 		HVCounter(PPU* parent, size_t bits);
 		~HVCounter();
 
-		void sim(BaseLogic::TriState Carry, BaseLogic::TriState CLR);
+		PPUSIM_FAST_EDGE_INLINE void sim(BaseLogic::TriState Carry, BaseLogic::TriState CLR);
 
 		size_t get();
 		void set(size_t val);

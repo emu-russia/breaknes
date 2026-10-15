@@ -15,8 +15,10 @@ namespace M6502Core
 		DataBus(M6502* parent) { core = parent; }
 
 		void sim_SetExternalBus(uint8_t* data_bus);
+		template<int Phase> void sim_SetExternalBusImpl(uint8_t* data_bus);
 
 		void sim_GetExternalBus(uint8_t* data_bus);
+		template<int Phase> void sim_GetExternalBusImpl(uint8_t* data_bus);
 
 		uint8_t getDL();
 		uint8_t getDOR();

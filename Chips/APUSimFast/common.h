@@ -15,11 +15,11 @@ namespace APUSimFast
 	// subsequent API calls until its stored state stops changing. Never settle
 	// multiple passes in one call: a delayed latch transition belongs to the
 	// next master half-call in the reference simulator.
-	template <typename State, size_t KeySize>
+	template <typename State, typename Key>
 	class StablePhase
 	{
 		static_assert(std::is_trivially_copyable<State>::value, "phase state must be copyable");
-		std::array<uint8_t, KeySize> key{};
+		Key key{};
 		std::array<unsigned char, sizeof(State)> before{};
 		uint64_t epoch = 0;
 		bool stable = false;
@@ -28,9 +28,9 @@ namespace APUSimFast
 #endif
 	public:
 #ifdef APUSIMFAST_PHASE_STATS
-		~StablePhase() { std::fprintf(stderr, "phase state_bytes=%zu key_bytes=%zu calls=%llu evaluations=%llu\n", sizeof(State), KeySize, (unsigned long long)calls, (unsigned long long)evaluations); }
+		~StablePhase() { std::fprintf(stderr, "phase state_bytes=%zu key_bytes=%zu calls=%llu evaluations=%llu\n", sizeof(State), sizeof(Key), (unsigned long long)calls, (unsigned long long)evaluations); }
 #endif
-		bool begin(const State& state, const std::array<uint8_t, KeySize>& next, uint64_t generation)
+		bool begin(const State& state, Key next, uint64_t generation)
 		{
 #ifdef APUSIMFAST_PHASE_STATS
 			++calls;
@@ -50,6 +50,15 @@ namespace APUSimFast
 		{
 			stable = std::memcmp(before.data(), &state, sizeof(State)) == 0;
 		}
+		// `fixed_point`: the block proved that a replay of this evaluation with the same inputs
+		// would leave its state and outputs unchanged (round 2), so the next call with the same
+		// key may skip it even though this evaluation changed the state.
+		void end(const State& state, bool fixed_point)
+		{
+			stable = fixed_point || std::memcmp(before.data(), &state, sizeof(State)) == 0;
+		}
+		// True when the last evaluation left the stored state unchanged (no settling pending).
+		bool IsStable() const { return stable; }
 	};
 
 	// These counters retain both banks of the scalar bit cells. Main is updated

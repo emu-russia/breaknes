@@ -62,23 +62,17 @@ namespace PPUSimFast
 	{
 		PPU* ppu = nullptr;
 
-		// The number of inputs is fixed in all known PPU revisions studied.
-
-		const size_t hpla_inputs = 20;
-		const size_t vpla_inputs = 18;
-
-		// The number of HPLA outputs is fixed, and the VPLA outputs differ slightly between NTSC-like and PAL-like PPU revisions.
-
-		const size_t hpla_outputs = 24;
+		uint32_t h_events[2048]{};
+		uint16_t v_events[512]{};
+		BaseLogic::TriState h_legacy[24]{}, v_legacy[10]{};
 		size_t vpla_outputs = 0;
-
-		BaseLogic::PLA* hpla = nullptr;
-		BaseLogic::PLA* vpla = nullptr;
 
 	public:
 		HVDecoder(PPU* parent);
 		~HVDecoder();
 
+		uint32_t sim_HDecoderPacked(BaseLogic::TriState VB, BaseLogic::TriState BLNK);
+		uint16_t sim_VDecoderPacked();
 		void sim_HDecoder(BaseLogic::TriState VB, BaseLogic::TriState BLNK, BaseLogic::TriState** outputs);
 		void sim_VDecoder(BaseLogic::TriState** outputs);
 	};

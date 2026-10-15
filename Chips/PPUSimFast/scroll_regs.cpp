@@ -35,11 +35,8 @@ namespace PPUSimFast
 			else if (ppu->wire.n_W6_2 == TriState::Zero)
 				address = static_cast<uint16_t>((address & 0x7f00) | data);
 		}
-		Unpack3(fine_x, ppu->wire.FH);
-		Unpack3(static_cast<uint8_t>(address >> 12), ppu->wire.FV);
-		ppu->wire.NTH = get_NTH(); ppu->wire.NTV = get_NTV();
-		Unpack5(static_cast<uint8_t>(address), ppu->wire.TH);
-		Unpack5(static_cast<uint8_t>(address >> 5), ppu->wire.TV);
+		published_fine_x = fine_x;
+		published_address = address;
 	}
 
 	void SCC_FF::sim(TriState val_in, TriState n_DBE, TriState RC, TriState & val_out)

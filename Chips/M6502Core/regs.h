@@ -16,8 +16,10 @@ namespace M6502Core
 		Regs(M6502* parent) { core = parent; }
 
 		void sim_LoadSB();
+		template<int Phase> void sim_LoadSBImpl();
 
 		void sim_StoreSB();
+		template<int Phase> void sim_StoreSBImpl();
 
 		void sim_StoreOldS();
 

@@ -38,6 +38,7 @@ namespace M6502Core
 
 		void sim();
 		void sim_HLE();
+		template<int Phase> void sim_HLEImpl();
 
 		uint8_t getPCL();
 		uint8_t getPCH();

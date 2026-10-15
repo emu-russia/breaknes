@@ -8,20 +8,25 @@ namespace M6502Core
 	{
 		core = parent;
 
-		size_t maxVal = 1ULL << 16;
-		for (size_t n = 0; n < maxVal; n++)
+		if (core->GetExecutionBackend() == ExecutionBackend::Reference)
 		{
-			uint8_t ir = n & 0xff;
-			bool n_T0 = (n >> 8) & 1;
-			bool n_T1X = (n >> 9) & 1;
-			bool n_T2 = (n >> 10) & 1;
-			bool n_T3 = (n >> 11) & 1;
-			bool n_T4 = (n >> 12) & 1;
-			bool n_T5 = (n >> 13) & 1;
-			bool n_ready = (n >> 14) & 1;
-			bool n_ready_latch = (n >> 15) & 1;
+			temp_tab = new RegsControl_TempWire[0x10000];
+			size_t maxVal = 1ULL << 16;
+			for (size_t n = 0; n < maxVal; n++)
+			{
+				uint8_t ir = n & 0xff;
+				bool n_T0 = (n >> 8) & 1;
+				bool n_T1X = (n >> 9) & 1;
+				bool n_T2 = (n >> 10) & 1;
+				bool n_T3 = (n >> 11) & 1;
+				bool n_T4 = (n >> 12) & 1;
+				bool n_T5 = (n >> 13) & 1;
+				bool n_ready = (n >> 14) & 1;
+				bool n_ready_latch = (n >> 15) & 1;
 
-			temp_tab[n] = PreCalc(ir, n_T0, n_T1X, n_T2, n_T3, n_T4, n_T5, n_ready, n_ready_latch);
+				temp_tab[n] = PreCalc(ir, n_T0, n_T1X, n_T2, n_T3, n_T4, n_T5, n_ready, n_ready_latch);
+			}
+
 		}
 
 		prev_temp.bits = 0xff;
@@ -29,65 +34,112 @@ namespace M6502Core
 
 	void RegsControl::sim()
 	{
-		TriState* d = core->decoder_out;
+		if (core->GetExecutionBackend() == ExecutionBackend::ExactPacked) simImpl<true>(core->cmd.raw, core->cmd_latch1, core->cmd_latch2);
+		else simImpl<false>(core->cmd.raw, core->cmd_latch1, core->cmd_latch2);
+	}
+
+	template<bool Packed, int Phase> void RegsControl::simImpl(uint64_t& command_word, uint64_t& b1, uint64_t& b2)
+	{
+		static_assert(Packed || Phase == 0, "the reference schedule is the generic phase");
+		using P = Phi<Phase>;
+		DecoderView<Packed> d(core->decoder_out,core->packed_decoder);
 		TriState PHI1 = core->wire.PHI1;
 		TriState PHI2 = core->wire.PHI2;
 		TriState n_ready = core->wire.n_ready;
 
-		nready_latch.set(n_ready, PHI1);
-
-		// Register control commands and auxiliary signals for other parts of the random logic
-
-		if (PHI2 == TriState::One)
+		if constexpr (Packed)
 		{
-			bool nready_latch_val = nready_latch.get();
+			// Bit-bank form of the latches (random_logic.h): the eight PHI2 latches are cmd_latch2 bits 0..7, the
+			// command bits they drive; nready_latch is cmd_latch1 bit L1_REGS_NREADY. Every bank write below
+			// happens under the same enable, with the same value, as the DLatch write of the reference form.
 
-			size_t n = 0;
-			n |= core->ir->IROut;
-			n |= ((size_t)core->TxBits << 8);
-			n |= ((size_t)n_ready << 14);
-			n |= ((size_t)nready_latch_val << 15);
+			if (P::Phi1One(PHI1)) b1 = (b1 & ~RegsL1Mask) | LatchBit(n_ready, L1_REGS_NREADY);
 
-			RegsControl_TempWire temp = temp_tab[n];
+			// Register control commands and auxiliary signals for other parts of the random logic
 
-			if (prev_temp.bits != temp.bits)
+			if (P::Phi2One(PHI2))
 			{
-				ysb_latch.set(temp.n_Y_SB ? TriState::One : TriState::Zero, PHI2);
-				xsb_latch.set(temp.n_X_SB ? TriState::One : TriState::Zero, PHI2);
-				sbx_latch.set(temp.n_SB_X ? TriState::One : TriState::Zero, PHI2);
-				sby_latch.set(temp.n_SB_Y ? TriState::One : TriState::Zero, PHI2);
-				sbs_latch.set(temp.n_SB_S ? TriState::One : TriState::Zero, PHI2);
-				ss_latch.set(NOT(temp.n_SB_S ? TriState::One : TriState::Zero), PHI2);
-				sadl_latch.set(temp.n_S_ADL ? TriState::One : TriState::Zero, PHI2);
+				RegsControl_TempWire temp{};
+				temp.bits = core->packed_decoder->RegisterControls(n_ready != Zero, LatchGet(b1, L1_REGS_NREADY) != Zero);
+
+				// The seven descriptor latches always hold the descriptor last written (nothing else writes them),
+				// so the reference form's unchanged-descriptor guard is a no-op here; prev_temp stays updated.
 				prev_temp.bits = temp.bits;
+				const TriState n_SB_S = temp.n_SB_S ? TriState::One : TriState::Zero;
+				const uint64_t w2 = LatchBit(temp.n_Y_SB ? TriState::One : TriState::Zero, L2_YSB) |
+					LatchBit(temp.n_X_SB ? TriState::One : TriState::Zero, L2_XSB) |
+					LatchBit(temp.n_SB_X ? TriState::One : TriState::Zero, L2_SBX) |
+					LatchBit(temp.n_SB_Y ? TriState::One : TriState::Zero, L2_SBY) |
+					LatchBit(n_SB_S, L2_SBS) | LatchBit(NOT(n_SB_S), L2_SS) |
+					LatchBit(temp.n_S_ADL ? TriState::One : TriState::Zero, L2_SADL) |
+					LatchBit(NOT(d[17]), L2_SSB);
+				b2 = (b2 & ~RegsL2Mask) | w2;
 			}
 
-			ssb_latch.set(NOT(d[17]), PHI2);
-		}
+			// Outputs: Y_SB, SB_Y, X_SB, SB_X, SB_S and S_S are NOT(latch) in PHI1 and zero in PHI2; S_ADL and S_SB
+			// are the latch's nget() in both phases.
 
-		// Outputs
-
-		if (PHI2 == TriState::One)
-		{
-			core->cmd.Y_SB = 0;
-			core->cmd.X_SB = 0;
-			core->cmd.SB_X = 0;
-			core->cmd.SB_Y = 0;
-			core->cmd.SB_S = 0;
-			core->cmd.S_S = 0;
+			const uint64_t commands = ~b2 & (P::Phi2One(PHI2) ? (LatchMask(L2_SADL) | LatchMask(L2_SSB)) : RegsL2Mask);
+			command_word = (command_word & ~RegsL2Mask) | commands;
 		}
 		else
 		{
-			core->cmd.Y_SB = NOT(ysb_latch.get());
-			core->cmd.X_SB = NOT(xsb_latch.get());
-			core->cmd.SB_X = NOT(sbx_latch.get());
-			core->cmd.SB_Y = NOT(sby_latch.get());
-			core->cmd.SB_S = NOT(sbs_latch.get());
-			core->cmd.S_S = NOT(ss_latch.get());
-		}
+			(void)b1; (void)b2;
+			P::Set1(nready_latch, n_ready, PHI1);
 
-		core->cmd.S_SB = ssb_latch.nget();
-		core->cmd.S_ADL = sadl_latch.nget();
+			// Register control commands and auxiliary signals for other parts of the random logic
+
+			if (P::Phi2One(PHI2))
+			{
+				bool nready_latch_val = nready_latch.get();
+
+				size_t n = 0;
+				n |= core->ir->IROut;
+				n |= ((size_t)core->TxBits << 8);
+				n |= ((size_t)n_ready << 14);
+				n |= ((size_t)nready_latch_val << 15);
+
+				RegsControl_TempWire temp = temp_tab[n];
+
+				if (prev_temp.bits != temp.bits)
+				{
+					P::Set2(ysb_latch, temp.n_Y_SB ? TriState::One : TriState::Zero, PHI2);
+					P::Set2(xsb_latch, temp.n_X_SB ? TriState::One : TriState::Zero, PHI2);
+					P::Set2(sbx_latch, temp.n_SB_X ? TriState::One : TriState::Zero, PHI2);
+					P::Set2(sby_latch, temp.n_SB_Y ? TriState::One : TriState::Zero, PHI2);
+					P::Set2(sbs_latch, temp.n_SB_S ? TriState::One : TriState::Zero, PHI2);
+					P::Set2(ss_latch, NOT(temp.n_SB_S ? TriState::One : TriState::Zero), PHI2);
+					P::Set2(sadl_latch, temp.n_S_ADL ? TriState::One : TriState::Zero, PHI2);
+					prev_temp.bits = temp.bits;
+				}
+
+				P::Set2(ssb_latch, NOT(d[17]), PHI2);
+			}
+
+			// Outputs
+
+			if (P::Phi2One(PHI2))
+			{
+				core->cmd.Y_SB = 0;
+				core->cmd.X_SB = 0;
+				core->cmd.SB_X = 0;
+				core->cmd.SB_Y = 0;
+				core->cmd.SB_S = 0;
+				core->cmd.S_S = 0;
+			}
+			else
+			{
+				core->cmd.Y_SB = NOT(ysb_latch.get());
+				core->cmd.X_SB = NOT(xsb_latch.get());
+				core->cmd.SB_X = NOT(sbx_latch.get());
+				core->cmd.SB_Y = NOT(sby_latch.get());
+				core->cmd.SB_S = NOT(sbs_latch.get());
+				core->cmd.S_S = NOT(ss_latch.get());
+			}
+
+			core->cmd.S_SB = ssb_latch.nget();
+			core->cmd.S_ADL = sadl_latch.nget();
+		}
 	}
 
 	RegsControl_TempWire RegsControl::PreCalc(uint8_t ir, bool n_T0, bool n_T1X, bool n_T2, bool n_T3, bool n_T4, bool n_T5, bool n_ready, bool n_ready_latch)
@@ -185,4 +237,10 @@ namespace M6502Core
 
 		return temp;
 	}
+	// Out-of-line specializations also serve the typed CPU execution path.
+	template void RegsControl::simImpl<false, 0>(uint64_t&, uint64_t&, uint64_t&);
+	template void RegsControl::simImpl<true, 0>(uint64_t&, uint64_t&, uint64_t&);
+	template void RegsControl::simImpl<true, 1>(uint64_t&, uint64_t&, uint64_t&);
+	template void RegsControl::simImpl<true, 2>(uint64_t&, uint64_t&, uint64_t&);
+
 }

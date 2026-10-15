@@ -15,28 +15,28 @@ namespace PPUSimFast
 	{
 	}
 
-	void PAMUX::sim()
+	template<int Phase> void PAMUX::sim(const EdgeContextT<Phase>& c)
 	{
-		sim_Control();
+		sim_Control(c);
 	}
 
-	void PAMUX::sim_Control()
+	template<int Phase> void PAMUX::sim_Control(const EdgeContextT<Phase>& c)
 	{
-		TriState nH2_D = ppu->wire.nH2_Dash;
-		TriState BLNK = ppu->fsm.BLNK;
-		TriState F_AT = ppu->fsm.FAT;
-		TriState DB_PAR = ppu->wire.DB_PAR;
+		TriState nH2_D = c.nH2_Dash;
+		TriState BLNK = c.BLNK;
+		TriState F_AT = c.FAT;
+		TriState DB_PAR = c.DB_PAR;
 
 		PARR = NOR(nH2_D, BLNK);
 		PAH = NOR(PARR, F_AT);
 		PAL = NOR(NOT(PAH), DB_PAR);
 	}
 
-	void PAMUX::sim_MuxInputs()
+	template<int Phase> void PAMUX::sim_MuxInputs(const EdgeContextT<Phase>& c)
 	{
 		const auto* tile = ppu->data_reader->tilecnt;
 		const unsigned th = tile->get_TH(), tv = tile->get_TV(), fv = tile->get_FV();
-		const bool blank = ppu->fsm.BLNK == TriState::One;
+		const bool blank = c.BLNK == TriState::One;
 		const unsigned common = (unsigned(tile->get_NTH()) << 10) | (unsigned(tile->get_NTV()) << 11) |
 			(((fv & 1) != 0 && blank) << 12) | (((fv & 2) != 0 || !blank) << 13);
 		AT_ADR = uint16_t(common | 0x3c0 | (th >> 2) | ((tv >> 2) << 3));
@@ -44,9 +44,9 @@ namespace PPUSimFast
 		PAT_ADR = ppu->data_reader->par->get_address();
 	}
 
-	void PAMUX::sim_MuxOutputs()
+	template<int Phase> void PAMUX::sim_MuxOutputs(const EdgeContextT<Phase>& c)
 	{
-		pipeline.sim(ppu->wire.PCLK, PARR, ppu->wire.DB_PAR, PAL, PAH, ppu->fsm.FAT,
+		pipeline.sim(c.PCLK, PARR, c.DB_PAR, PAL, PAH, c.FAT,
 			AT_ADR, NT_ADR, PAT_ADR, ppu->DB);
 	}
 
@@ -72,4 +72,11 @@ namespace PPUSimFast
 		out_latch.set(in_latch.nget(), PCLK);
 		n_PAx = out_latch.get();
 	}
+
+	template void PAMUX::sim<0>(const EdgeContextT<0>&);
+	template void PAMUX::sim<1>(const EdgeContextT<1>&);
+	template void PAMUX::sim_MuxInputs<0>(const EdgeContextT<0>&);
+	template void PAMUX::sim_MuxInputs<1>(const EdgeContextT<1>&);
+	template void PAMUX::sim_MuxOutputs<0>(const EdgeContextT<0>&);
+	template void PAMUX::sim_MuxOutputs<1>(const EdgeContextT<1>&);
 }

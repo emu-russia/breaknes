@@ -75,7 +75,11 @@ namespace M6502Core
 		info->ACR = ToByte(alu->getACR());
 		info->AVR = ToByte(alu->getAVR());
 
-		if (decoder_out != nullptr)
+		if (packed_decoder != nullptr)
+		{
+			for (size_t n=0;n<Decoder::outputs_count;++n) info->decoder_out[n] = (*packed_decoder)[n];
+		}
+		else if (decoder_out != nullptr)
 		{
 			for (size_t n = 0; n < Decoder::outputs_count; n++)
 			{

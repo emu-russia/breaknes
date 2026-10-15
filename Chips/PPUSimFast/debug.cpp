@@ -77,15 +77,15 @@ namespace PPUSimFast
 			wires.n_EXT_Out[n] = ToByte(wire.n_EXT_Out[n]);
 		}
 
-		wires.OB = Pack (wire.OB);			// Packed
+		wires.OB = oam == nullptr ? 0 : oam->get_PublishedOB();			// Packed
 		wires.n_SPR0_EV = ToByte(wire.n_SPR0_EV);
 		wires.OFETCH = ToByte(wire.OFETCH);
 		wires.SPR_OV = ToByte(wire.SPR_OV);
 		wires.OAMCTR2 = ToByte(wire.OAMCTR2);
-		wires.n_OAM = Pack(wire.n_OAM);		// Packed
+		wires.n_OAM = eval == nullptr ? 0 : uint8_t(~eval->get_Address());		// Packed
 		wires.OAM8 = ToByte(wire.OAM8);
 		wires.PD_FIFO = ToByte(wire.PD_FIFO);
-		wires.OV = Pack(wire.OV);			// Packed
+		wires.OV = eval == nullptr ? 0 : eval->get_Row();			// Packed
 		wires.n_WE = ToByte(wire.n_WE);
 
 		wires.n_CLPB = ToByte(wire.n_CLPB);
@@ -103,41 +103,41 @@ namespace PPUSimFast
 		}
 		for (size_t n = 0; n < 4; n++)
 		{
-			wires.BGC[n] = ToByte(wire.BGC[n]);
+			wires.BGC[n] = (data_reader == nullptr ? 0 : data_reader->bgcol->get_Pixel() >> n) & 1;
 		}
 		for (size_t n = 0; n < 3; n++)
 		{
-			wires.FH[n] = ToByte(wire.FH[n]);
+			wires.FH[n] = (data_reader == nullptr ? 0 : data_reader->sccx->get_FH() >> n) & 1;
 		}
 		for (size_t n = 0; n < 3; n++)
 		{
-			wires.FV[n] = ToByte(wire.FV[n]);
+			wires.FV[n] = (data_reader == nullptr ? 0 : data_reader->sccx->get_FV() >> n) & 1;
 		}
-		wires.NTV = ToByte(wire.NTV);
-		wires.NTH = ToByte(wire.NTH);
+		wires.NTV = data_reader->sccx->get_PublishedNTV();
+		wires.NTH = data_reader->sccx->get_PublishedNTH();
 		for (size_t n = 0; n < 5; n++)
 		{
-			wires.TV[n] = ToByte(wire.TV[n]);
-		}
-		for (size_t n = 0; n < 5; n++)
-		{
-			wires.TH[n] = ToByte(wire.TH[n]);
+			wires.TV[n] = (data_reader == nullptr ? 0 : data_reader->sccx->get_TV() >> n) & 1;
 		}
 		for (size_t n = 0; n < 5; n++)
 		{
-			wires.THO[n] = ToByte(wire.THO[n]);
+			wires.TH[n] = (data_reader == nullptr ? 0 : data_reader->sccx->get_TH() >> n) & 1;
 		}
 		for (size_t n = 0; n < 5; n++)
 		{
-			wires.TVO[n] = ToByte(wire.TVO[n]);
+			wires.THO[n] = (data_reader == nullptr ? 0 : data_reader->tilecnt->get_TH() >> n) & 1;
+		}
+		for (size_t n = 0; n < 5; n++)
+		{
+			wires.TVO[n] = (data_reader == nullptr ? 0 : data_reader->tilecnt->get_TV() >> n) & 1;
 		}
 		for (size_t n = 0; n < 3; n++)
 		{
-			wires.FVO[n] = ToByte(wire.FVO[n]);
+			wires.FVO[n] = (data_reader == nullptr ? 0 : data_reader->tilecnt->get_FV() >> n) & 1;
 		}
 		for (size_t n = 0; n < 3; n++)
 		{
-			wires.n_FVO[n] = ToByte(wire.n_FVO[n]);
+			wires.n_FVO[n] = (data_reader == nullptr ? 0 : data_reader->tilecnt->get_n_FV() >> n) & 1;
 		}
 
 		wires.n_CB_DB = ToByte(wire.n_CB_DB);
@@ -145,11 +145,11 @@ namespace PPUSimFast
 		wires.n_DB_CB = ToByte(wire.n_DB_CB);
 		for (size_t n = 0; n < 5; n++)
 		{
-			wires.CGA[n] = ToByte(wire.CGA[n]);
+			wires.CGA[n] = (mux == nullptr ? 0 : mux->get_Address() >> n) & 1;
 		}
 		for (size_t n = 0; n < 4; n++)
 		{
-			wires.n_CC[n] = ToByte(wire.n_CC[n]);
+			wires.n_CC[n] = (cram == nullptr ? 0 : cram->get_n_Chroma() >> n) & 1;
 		}
 		for (size_t n = 0; n < 2; n++)
 		{
@@ -207,12 +207,12 @@ namespace PPUSimFast
 		regs.TempOAMCounter = eval->Debug_GetTempCounter();
 		regs.OAMBuffer = oam->Dbg_Get_OAMBuffer();		// $2004
 		regs.ReadBuffer = vram_ctrl->Debug_GetRB();			// $2007
-		regs.SCC_FH = Pack3(wire.FH);		// $2005/2006
-		regs.SCC_FV = Pack3(wire.FV);
-		regs.SCC_NTV = wire.NTV;
-		regs.SCC_NTH = wire.NTH;
-		regs.SCC_TV = Pack5(wire.TV);
-		regs.SCC_TH = Pack5(wire.TH);
+		regs.SCC_FH = data_reader->sccx->get_FH();		// $2005/2006
+		regs.SCC_FV = data_reader->sccx->get_FV();
+		regs.SCC_NTV = data_reader->sccx->get_PublishedNTV();
+		regs.SCC_NTH = data_reader->sccx->get_PublishedNTH();
+		regs.SCC_TV = data_reader->sccx->get_TV();
+		regs.SCC_TH = data_reader->sccx->get_TH();
 	}
 
 	uint8_t PPU::Dbg_OAMReadByte(size_t addr)
@@ -228,11 +228,13 @@ namespace PPUSimFast
 	void PPU::Dbg_OAMWriteByte(size_t addr, uint8_t val)
 	{
 		oam->Dbg_OAMWriteByte(addr, val);
+		Disarm();
 	}
 
 	void PPU::Dbg_TempOAMWriteByte(size_t addr, uint8_t val)
 	{
 		oam->Dbg_TempOAMWriteByte(addr, val);
+		Disarm();
 	}
 
 	uint8_t PPU::Dbg_CRAMReadByte(size_t addr)
@@ -243,17 +245,10 @@ namespace PPUSimFast
 	void PPU::Dbg_CRAMWriteByte(size_t addr, uint8_t val)
 	{
 		cram->Dbg_CRAMWriteByte(addr, val);
+		Disarm();
 	}
 
-	uint8_t PPU::Dbg_GetCRAMAddress()
-	{
-		uint8_t addr = 0;
-		for (size_t n = 0; n < 5; n++)
-		{
-			addr |= ToByte(wire.CGA[n]) << n;
-		}
-		return addr;
-	}
+	uint8_t PPU::Dbg_GetCRAMAddress() { return mux == nullptr ? 0 : mux->get_Address(); }
 
 	uint16_t PPU::Dbg_GetPPUAddress()
 	{
@@ -263,6 +258,7 @@ namespace PPUSimFast
 	void PPU::Dbg_RenderAlwaysEnabled(bool enable)
 	{
 		regs->Debug_RenderAlwaysEnabled(enable);
+		Disarm();
 	}
 
 	void PPU::GetDebugInfo_OAMEval(OAMEvalWires& wires)
@@ -282,12 +278,12 @@ namespace PPUSimFast
 			case offsetof(PPU_Registers, TempOAMCounter): return eval->Debug_GetTempCounter();
 			case offsetof(PPU_Registers, OAMBuffer): return oam->Dbg_Get_OAMBuffer();
 			case offsetof(PPU_Registers, ReadBuffer): return vram_ctrl->Debug_GetRB();
-			case offsetof(PPU_Registers, SCC_FH): return Pack3(wire.FH);
-			case offsetof(PPU_Registers, SCC_FV): return Pack3(wire.FV);
-			case offsetof(PPU_Registers, SCC_NTV): return ToByte(wire.NTV);
-			case offsetof(PPU_Registers, SCC_NTH): return ToByte(wire.NTH);
-			case offsetof(PPU_Registers, SCC_TV): return Pack5(wire.TV);
-			case offsetof(PPU_Registers, SCC_TH): return Pack5(wire.TH);
+			case offsetof(PPU_Registers, SCC_FH): return data_reader->sccx->get_FH();
+			case offsetof(PPU_Registers, SCC_FV): return data_reader->sccx->get_FV();
+			case offsetof(PPU_Registers, SCC_NTV): return data_reader->sccx->get_PublishedNTV();
+			case offsetof(PPU_Registers, SCC_NTH): return data_reader->sccx->get_PublishedNTH();
+			case offsetof(PPU_Registers, SCC_TV): return data_reader->sccx->get_TV();
+			case offsetof(PPU_Registers, SCC_TH): return data_reader->sccx->get_TH();
 
 			default:
 				break;
@@ -298,6 +294,8 @@ namespace PPUSimFast
 
 	void PPU::Dbg_WriteRegister(int ofs, uint32_t val)
 	{
+		// Any public mutation leaves the idle class; the next call takes the full path and re-arms.
+		Disarm();
 		switch (ofs)
 		{
 			case offsetof(PPU_Registers, HCounter): h->set(val); break;

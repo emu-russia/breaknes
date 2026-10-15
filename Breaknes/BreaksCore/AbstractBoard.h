@@ -22,9 +22,9 @@ namespace Breaknes
 
 		M6502Core::M6502* core = nullptr;
 #if FAST_APU
-		APUSim::APU* apu = nullptr;
-#else
 		APUSimFast::APU* apu = nullptr;
+#else
+		APUSim::APU* apu = nullptr;
 #endif
 
 		/// <summary>

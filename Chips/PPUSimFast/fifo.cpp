@@ -6,245 +6,149 @@ using namespace BaseLogic;
 
 namespace PPUSimFast
 {
-	FIFO::FIFO(PPU* parent)
-	{
-		ppu = parent;
+	FIFO::FIFO(PPU* parent) : ppu(parent) {}
+	FIFO::~FIFO() {}
 
-		for (size_t n = 0; n < 8; n++)
-		{
-			lane[n] = new FIFOLane(ppu);
-		}
+	static uint8_t ReverseByte(uint8_t value)
+	{
+		value = uint8_t(((value & 0x55) << 1) | ((value >> 1) & 0x55));
+		value = uint8_t(((value & 0x33) << 2) | ((value >> 2) & 0x33));
+		return uint8_t((value << 4) | (value >> 4));
 	}
-
-	FIFO::~FIFO()
+	static uint64_t LaneMask(uint8_t bits)
 	{
-		for (size_t n = 0; n < 8; n++)
-		{
-			delete lane[n];
-		}
+		// Expand each selector bit to its byte, without carries between lanes.
+		uint64_t spread = bits;
+		spread = (spread | (spread << 28)) & UINT64_C(0x0000000f0000000f);
+		spread = (spread | (spread << 14)) & UINT64_C(0x0003000300030003);
+		spread = (spread | (spread << 7)) & UINT64_C(0x0101010101010101);
+		return spread * 255;
 	}
-
-	void FIFO::sim()
+	static uint8_t LowBits(uint64_t value)
 	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState PCLK = ppu->wire.PCLK;
-		TriState Z_HPOS = ppu->fsm.ZHPOS;
+		return uint8_t(((value & UINT64_C(0x0101010101010101)) * UINT64_C(0x0102040810204080)) >> 56);
+	}
+	static uint64_t DecrementBytes(uint64_t value)
+	{
+		// A sentinel high bit prevents subtraction borrowing across byte lanes.
+		return ((value | UINT64_C(0x8080808080808080)) - UINT64_C(0x0101010101010101)) ^
+			(~value & UINT64_C(0x8080808080808080));
+	}
+	static uint8_t ZeroBytes(uint64_t value)
+	{
+		const uint64_t nonzero = ((value & UINT64_C(0x7f7f7f7f7f7f7f7f)) + UINT64_C(0x7f7f7f7f7f7f7f7f)) | value;
+		return LowBits((~nonzero & UINT64_C(0x8080808080808080)) >> 7);
+	}
+	template<int Phase> void FIFO::sim(EdgeContextT<Phase>& c)
+	{
+		TriState n_PCLK = c.n_PCLK;
+		TriState PCLK = c.PCLK;
+		TriState Z_HPOS = c.ZHPOS;
 
 		zh_latch1.set(Z_HPOS, n_PCLK);
 		zh_latch2.set(zh_latch1.nget(), PCLK);
 		zh_latch3.set(zh_latch2.nget(), n_PCLK);
-		ppu->wire.n_ZH = zh_latch3.nget();
+		c.n_ZH = ppu->wire.n_ZH = zh_latch3.nget();
 
-		sim_HInv();
-		BitRev(n_TX);
-		packed_nTX = Pack(n_TX);
-		sim_Lanes();
-		sim_Prio();
+		sim_HInv(c);
+		sim_Lanes(c);
+		sim_Prio(c);
 	}
 
-	void FIFO::sim_HInv()
+	template<int Phase> void FIFO::sim_HInv(const EdgeContextT<Phase>& c)
 	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState n_OBJ_RD_ATTR = ppu->wire.n_OBJ_RD_ATTR;
-		TriState OB6 = ppu->wire.OB[6];
-		TriState PD_FIFO = ppu->wire.PD_FIFO;
-
-		HINV_FF.set(MUX(NOR(n_PCLK, n_OBJ_RD_ATTR), NOT(NOT(HINV_FF.get())), OB6));
-
-		auto HINV = HINV_FF.get();
-
-		for (size_t n = 0; n < 8; n++)
-		{
-			tout_latch[n].set(MUX(HINV, ppu->GetPDBit(n), ppu->GetPDBit(7 - n)), n_PCLK);
-			n_TX[n] = NAND(tout_latch[n].get(), PD_FIFO);
-		}
+		const bool high = c.PCLK == TriState::One;
+		if (high && c.n_OBJ_RD_ATTR == TriState::Zero)
+			HINV_FF.set(static_cast<TriState>((ppu->oam->get_OBByte() >> 6) & 1));
+		if (!high) captured_pd = HINV_FF.get() == TriState::One ? ReverseByte(ppu->PD) : ppu->PD;
+		packed_nTX = c.PD_FIFO == TriState::One ? ReverseByte(uint8_t(~captured_pd)) : 0xff;
 	}
 
-	/// <summary>
-	/// Generate LaneOut outputs for the priority circuit.
-	/// </summary>
-	void FIFO::sim_Lanes()
+	template<int Phase> void FIFO::sim_Lanes(const EdgeContextT<Phase>& c) { sim_PackedLanes(c); }
+
+	template<int Phase> void FIFO::sim_PackedLanes(const EdgeContextT<Phase>& c)
 	{
-		TriState in[3]{};
-		TriState HSel[8];
-
-		in[0] = ppu->wire.H3_Dash2;
-		in[1] = ppu->wire.H4_Dash2;
-		in[2] = ppu->wire.H5_Dash2;
-
-		DMX3(in, HSel);
-
-		// OAM has already normalized its buffer outputs to 0/1. Z from an
-		// unpopulated/decayed cell holds its input FF; it is never put on OB.
-		for (size_t n = 0; n < 8; n++)
+		const bool high = c.PCLK == TriState::One;
+		const uint8_t ob = ppu->oam->get_OBByte();
+		const uint64_t ones = UINT64_C(0x0101010101010101);
+		if (high)
 		{
-			assert(ppu->wire.OB[n] == TriState::Zero || ppu->wire.OB[n] == TriState::One);
-			assert(n_TX[n] == TriState::Zero || n_TX[n] == TriState::One);
-		}
-		const uint8_t packed_OB = Pack(ppu->wire.OB);
-		for (size_t n = 0; n < 8; n++)
-		{
-			lane[n]->sim(HSel[n], packed_OB, packed_nTX, LaneOut[n]);
-		}
-	}
-
-	/// <summary>
-	/// Based on the priorities, select one of the LaneOut values.
-	/// </summary>
-	void FIFO::sim_Prio()
-	{
-		TriState PCLK = ppu->wire.PCLK;
-		TriState CLPO = ppu->wire.CLPO;
-		TriState Z[8]{};
-		TriState in[10]{};
-
-		Z[0] = NOR3(AND(get_nZCOL0(0), get_nZCOL1(0)), CLPO, get_nxEN(0));
-
-		// You can get the `/SPR0HIT` signal immediately
-
-		s0_latch.set(Z[0], PCLK);
-		ppu->wire.n_SPR0HIT = s0_latch.nget();
-
-		in[0] = AND(get_nZCOL0(1), get_nZCOL1(1));
-		in[1] = CLPO;
-		in[2] = get_nxEN(1);
-		in[3] = Z[0];
-		Z[1] = NOR4(in);
-
-		in[0] = AND(get_nZCOL0(2), get_nZCOL1(2));
-		in[1] = CLPO;
-		in[2] = get_nxEN(2);
-		in[3] = Z[0];
-		in[4] = Z[1];
-		Z[2] = NOR5(in);
-
-		in[0] = AND(get_nZCOL0(3), get_nZCOL1(3));
-		in[1] = CLPO;
-		in[2] = get_nxEN(3);
-		in[3] = Z[0];
-		in[4] = Z[1];
-		in[5] = Z[2];
-		Z[3] = NOR6(in);
-
-		in[0] = AND(get_nZCOL0(4), get_nZCOL1(4));
-		in[1] = CLPO;
-		in[2] = get_nxEN(4);
-		in[3] = Z[0];
-		in[4] = Z[1];
-		in[5] = Z[2];
-		in[6] = Z[3];
-		Z[4] = NOR7(in);
-
-		in[0] = AND(get_nZCOL0(5), get_nZCOL1(5));
-		in[1] = CLPO;
-		in[2] = get_nxEN(5);
-		in[3] = Z[0];
-		in[4] = Z[1];
-		in[5] = Z[2];
-		in[6] = Z[3];
-		in[7] = Z[4];
-		Z[5] = NOR8(in);
-
-		in[0] = AND(get_nZCOL0(6), get_nZCOL1(6));
-		in[1] = CLPO;
-		in[2] = get_nxEN(6);
-		in[3] = Z[0];
-		in[4] = Z[1];
-		in[5] = Z[2];
-		in[6] = Z[3];
-		in[7] = Z[4];
-		in[8] = Z[5];
-		Z[6] = NOR9(in);
-
-		in[0] = AND(get_nZCOL0(7), get_nZCOL1(7));
-		in[1] = CLPO;
-		in[2] = get_nxEN(7);
-		in[3] = Z[0];
-		in[4] = Z[1];
-		in[5] = Z[2];
-		in[6] = Z[3];
-		in[7] = Z[4];
-		in[8] = Z[5];
-		in[9] = Z[6];
-		Z[7] = NOR10(in);
-
-		// The multiplexer locomotive is simulated by the ordinary for-loop.
-
-		size_t run = 0;
-
-		for (run = 0; run < 8; run++)
-		{
-			if (Z[run] == TriState::One)
+			const uint8_t attributes = c.n_OBJ_RD_ATTR == TriState::Zero ? selected : 0;
+			for (unsigned n = 0; n < 3; n++)
 			{
-				ppu->wire.n_ZCOL0 = get_nZCOL0(run);
-				ppu->wire.n_ZCOL1 = get_nZCOL1(run);
-				ppu->wire.ZCOL2 = LaneOut[run].Z_COL2;
-				ppu->wire.ZCOL3 = LaneOut[run].Z_COL3;
-				ppu->wire.n_ZPRIO = LaneOut[run].nZ_PRIO;
-
-				break;
+				const unsigned bit = n == 2 ? 5 : n;
+				attr_input[n] = uint8_t((attr_input[n] & ~attributes) | (((ob >> bit) & 1) ? attributes : 0));
 			}
-		}
-
-		// When no Z is active, hidden latches are activated, which are between FIFO and MUX.
-		// `/ZCOL0/1` are forcibly set to `1` (there is a corresponding nor).
-
-		if (run == 8)
-		{
-			ppu->wire.n_ZCOL0 = TriState::One;
-			ppu->wire.n_ZCOL1 = TriState::One;
-			ppu->wire.ZCOL2 = col2_latch.get();
-			ppu->wire.ZCOL3 = col3_latch.get();
-			ppu->wire.n_ZPRIO = prio_latch.get();
+			const uint8_t load = c.n_OBJ_RD_X == TriState::Zero ? selected : 0;
+			const uint64_t load_mask = LaneMask(load);
+			counter_keep = (counter_keep & ~load_mask) | ((ones * ob) & load_mask);
+			counter_prepared = (counter_prepared & load_mask) | (~DecrementBytes(counter_keep) & ~load_mask);
+			const uint8_t carry = ZeroBytes(counter_keep);
+			zero_position = uint8_t(carry | (c.n_ZH == TriState::One ? zero_position : 0));
+			const uint64_t shift_mask = LaneMask(enabled);
+			for (unsigned plane = 0; plane < 2; plane++)
+			{
+				const auto control = plane == 0 ? c.n_OBJ_RD_A : c.n_OBJ_RD_B;
+				const uint64_t plane_load = LaneMask(control == TriState::Zero ? uint8_t(selected & ~enabled) : 0);
+				const uint64_t shifted = ((~shift_output[plane] >> 1) & UINT64_C(0x7f7f7f7f7f7f7f7f)) | UINT64_C(0x8080808080808080);
+				shift_input[plane] = (shift_input[plane] & ~(shift_mask | plane_load)) |
+					(shifted & shift_mask) | ((ones * packed_nTX) & plane_load);
+			}
 		}
 		else
 		{
-			col2_latch.set(ppu->wire.ZCOL2, TriState::One);
-			col3_latch.set(ppu->wire.ZCOL3, TriState::One);
-			prio_latch.set(ppu->wire.n_ZPRIO, TriState::One);
+			const unsigned index = unsigned(c.H3_Dash2) | (unsigned(c.H4_Dash2) << 1) |
+				(unsigned(c.H5_Dash2) << 2);
+			selected = uint8_t(1U << index);
+			for (unsigned n = 0; n < 3; n++) attr_output[n] = uint8_t(~attr_input[n]);
+			const uint64_t stepping = LaneMask(uint8_t(~zero_position));
+			counter_keep = (counter_keep & ~stepping) | (~counter_prepared & stepping);
+			counter_prepared = (counter_prepared & stepping) | (~DecrementBytes(counter_keep) & ~stepping);
+			enabled = c.nVIS == TriState::Zero ? zero_position : 0;
+			shift_output[0] = ~shift_input[0];
+			shift_output[1] = ~shift_input[1];
 		}
 	}
 
-	TriState FIFO::get_nZCOL0(size_t lane)
+	template<int Phase> void FIFO::sim_Prio(EdgeContextT<Phase>& c)
 	{
-		return LaneOut[lane].nZ_COL0;
+		const uint8_t bits0 = LowBits(shift_output[0]), bits1 = LowBits(shift_output[1]);
+		const uint8_t eligible = c.CLPO == TriState::Zero ? uint8_t((bits0 | bits1) & enabled) : 0;
+		s0_latch.set(static_cast<TriState>(eligible & 1), c.PCLK);
+		c.n_SPR0HIT = ppu->wire.n_SPR0HIT = s0_latch.nget();
+		if (eligible)
+		{
+			unsigned first = 0;
+			while ((eligible & (1U << first)) == 0) first++;
+			c.n_ZCOL0 = ppu->wire.n_ZCOL0 = static_cast<TriState>(((bits0 >> first) & 1) ^ 1);
+			c.n_ZCOL1 = ppu->wire.n_ZCOL1 = static_cast<TriState>(((bits1 >> first) & 1) ^ 1);
+			c.ZCOL2 = ppu->wire.ZCOL2 = static_cast<TriState>(((attr_output[0] >> first) & 1) ^ 1);
+			c.ZCOL3 = ppu->wire.ZCOL3 = static_cast<TriState>(((attr_output[1] >> first) & 1) ^ 1);
+			c.n_ZPRIO = ppu->wire.n_ZPRIO = static_cast<TriState>(((attr_output[2] >> first) & 1) ^ 1);
+			col2_latch.set(c.ZCOL2, TriState::One);
+			col3_latch.set(c.ZCOL3, TriState::One);
+			prio_latch.set(c.n_ZPRIO, TriState::One);
+		}
+		else
+		{
+			c.n_ZCOL0 = c.n_ZCOL1 = ppu->wire.n_ZCOL0 = ppu->wire.n_ZCOL1 = TriState::One;
+			c.ZCOL2 = ppu->wire.ZCOL2 = col2_latch.get();
+			c.ZCOL3 = ppu->wire.ZCOL3 = col3_latch.get();
+			c.n_ZPRIO = ppu->wire.n_ZPRIO = prio_latch.get();
+		}
 	}
-
-	TriState FIFO::get_nZCOL1(size_t lane)
+	template<int Phase> void FIFO::sim_SpriteH(EdgeContextT<Phase>& c)
 	{
-		return LaneOut[lane].nZ_COL1;
-	}
-
-	TriState FIFO::get_nxEN(size_t lane)
-	{
-		return LaneOut[lane].n_xEN;
-	}
-
-	void FIFO::sim_SpriteH()
-	{
-		TriState n_PCLK = ppu->wire.n_PCLK;
-		TriState OBJ_READ = ppu->fsm.OBJ_READ;
-		TriState H0_DD = ppu->wire.H0_Dash2;
-		TriState H1_DD = ppu->wire.H1_Dash2;
-		TriState H2_DD = ppu->wire.H2_Dash2;
-
-		TriState in[3]{};
-		TriState dec_out[8]{};
-		in[0] = H0_DD;
-		in[1] = H1_DD;
-		in[2] = H2_DD;
-
-		DMX3(in, dec_out);
-
-		sh2_latch.set(MUX(OBJ_READ, TriState::Zero, dec_out[2]), n_PCLK);
-		sh3_latch.set(MUX(OBJ_READ, TriState::Zero, dec_out[3]), n_PCLK);
-		sh5_latch.set(MUX(OBJ_READ, TriState::Zero, dec_out[5]), n_PCLK);
-		sh7_latch.set(MUX(OBJ_READ, TriState::Zero, dec_out[7]), n_PCLK);
-
-		ppu->wire.n_OBJ_RD_ATTR = sh2_latch.nget();
-		ppu->wire.n_OBJ_RD_X = sh3_latch.nget();
-		ppu->wire.n_OBJ_RD_A = sh5_latch.nget();
-		ppu->wire.n_OBJ_RD_B = sh7_latch.nget();
+		if (c.n_PCLK == TriState::One)
+		{
+			const unsigned index = unsigned(c.H0_Dash2) | (unsigned(c.H1_Dash2) << 1) | (unsigned(c.H2_Dash2) << 2);
+			static constexpr uint8_t read_mask[8]{0,0,1,2,0,4,0,8};
+			sprite_reads = c.OBJ_READ == TriState::One ? read_mask[index] : 0;
+		}
+		c.n_OBJ_RD_ATTR = ppu->wire.n_OBJ_RD_ATTR = static_cast<TriState>((sprite_reads & 1) ^ 1);
+		c.n_OBJ_RD_X = ppu->wire.n_OBJ_RD_X = static_cast<TriState>(((sprite_reads >> 1) & 1) ^ 1);
+		c.n_OBJ_RD_A = ppu->wire.n_OBJ_RD_A = static_cast<TriState>(((sprite_reads >> 2) & 1) ^ 1);
+		c.n_OBJ_RD_B = ppu->wire.n_OBJ_RD_B = static_cast<TriState>(((sprite_reads >> 3) & 1) ^ 1);
 	}
 
 #pragma region "FIFO Lane"
@@ -394,4 +298,11 @@ namespace PPUSimFast
 
 #pragma endregion "FIFO Lane"
 
+	void FIFO::sim_PackedLanes() { sim_PackedLanes(CaptureEdge(*ppu)); }
+	void FIFO::sim_Prio() { EdgeContext c = CaptureEdge(*ppu); sim_Prio(c); }
+
+	template void FIFO::sim<0>(EdgeContextT<0>&);
+	template void FIFO::sim<1>(EdgeContextT<1>&);
+	template void FIFO::sim_SpriteH<0>(EdgeContextT<0>&);
+	template void FIFO::sim_SpriteH<1>(EdgeContextT<1>&);
 }

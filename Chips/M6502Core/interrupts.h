@@ -4,6 +4,8 @@ namespace M6502Core
 {
 	class BRKProcessing
 	{
+		friend M6502;
+		friend RandomLogic;
 		BaseLogic::DLatch brk5_latch{};
 		BaseLogic::DLatch brk6_latch1{};
 		BaseLogic::DLatch brk6_latch2{};
@@ -23,6 +25,12 @@ namespace M6502Core
 		BaseLogic::DLatch zadl_latch[3]{};
 
 		M6502* core = nullptr;
+
+		template<bool Packed, int Phase = 0> void sim_BeforeRandomImpl();
+		template<bool Packed, int Phase = 0> void sim_AfterRandomImpl();
+		// ExactPacked, PHI1 second traversal: the part of sim_BeforeRandom that can differ from the
+		// first traversal (see M6502::sim_Phi1TopSettle).
+		void sim_SettlePhi1BeforeRandom();
 
 	public:
 

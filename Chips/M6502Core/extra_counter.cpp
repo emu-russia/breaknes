@@ -55,6 +55,12 @@ namespace M6502Core
 
 	void ExtraCounter::sim_HLE()
 	{
+		sim_HLEImpl<0>();
+	}
+
+	template<int Phase> void ExtraCounter::sim_HLEImpl()
+	{
+		using P = Phi<Phase>;
 		TriState PHI1 = core->wire.PHI1;
 		TriState T1 = core->disp->getT1();
 		TriState TRES2 = core->disp->getTRES2();
@@ -62,7 +68,7 @@ namespace M6502Core
 
 		// HLE does not use the inverse essence of the shift register latches.
 
-		if (PHI1)
+		if (P::Phi1(PHI1))
 		{
 			if (n_ready)
 			{
@@ -86,4 +92,7 @@ namespace M6502Core
 		core->wire.n_T4 = Tx & 0b0100 ? TriState::Zero : TriState::One;
 		core->wire.n_T5 = Tx & 0b1000 ? TriState::Zero : TriState::One;
 	}
+	template void ExtraCounter::sim_HLEImpl<0>();
+	template void ExtraCounter::sim_HLEImpl<1>();
+	template void ExtraCounter::sim_HLEImpl<2>();
 }

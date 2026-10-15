@@ -15,5 +15,6 @@ namespace M6502Core
 		uint8_t IROut = 0;
 
 		void sim();
+		template<int Phase> void simImpl();
 	};
 }

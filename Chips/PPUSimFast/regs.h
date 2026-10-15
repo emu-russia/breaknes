@@ -22,6 +22,7 @@ namespace PPUSimFast
 		uint8_t previous_decode = 0xff, previous_w56 = 0xff;
 		uint64_t previous_exports = static_cast<uint64_t>(-1);
 		BaseLogic::TriState base_black = BaseLogic::Zero;
+		bool cpu_port_pending = false, config_dirty = true;
 
 		// For PAL-like PPUs
 		BaseLogic::FF BLACK_FF1;
@@ -49,7 +50,15 @@ namespace PPUSimFast
 
 		void sim_RWDecoder();
 		void sim();
-		void sim_CLP();
+		// Idle-call subset of sim(): only the RS/RnW decoders, which every consumer gates with n_DBE.
+		// The pad decode is a function of the pads alone and is skipped when they are unchanged;
+		// the first/second-write decode also depends on SCCX_FF1, which the release call updates
+		// after the decode ran, so the reference flips n_W5_x/n_W6_x one call later: it is always
+		// re-evaluated (its own early return makes the settled case cheap).
+		// Preconditions (checked by the caller): port released and not pending, RC low, configuration clean.
+		void sim_IdleDecode(bool pads_changed) { if (pads_changed) sim_RegularRegOps(); sim_W56RegOps(); }
+		// Produces /CLPB and CLPO into the context (and the wires).
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_CLP(EdgeContextT<Phase>& c);
 
 		void Debug_RenderAlwaysEnabled(bool enable);
 		void Debug_ClippingAlwaysDisabled(bool enable);
@@ -60,5 +69,9 @@ namespace PPUSimFast
 		void Debug_SetCTRL1(uint8_t val);
 
 		BaseLogic::TriState get_nSLAVE();
+
+		// True while a released CPU port or a public configuration change still
+		// owes one evaluation (the "release call"). Read-only; used by the v4 call-class instrumentation.
+		bool IsPortPending() const { return cpu_port_pending || config_dirty; }
 	};
 }

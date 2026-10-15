@@ -74,7 +74,9 @@ namespace PPUSimFast
 		const size_t color_matrix_outputs = 12*3;	// R->G->B
 		BaseLogic::PLA* color_matrix = nullptr;
 
-		uint8_t phase_input = 0, phase_output = 0;
+		uint8_t phase_state = 0;
+		uint8_t get_PhaseInput() const;
+		uint8_t get_PhaseOutput() const;
 		uint16_t phase_lines = 0;
 		uint32_t pal_phase_gate = 0;
 		uint32_t pal_colors[32]{};
@@ -92,26 +94,33 @@ namespace PPUSimFast
 		BaseLogic::TriState PBLACK = BaseLogic::TriState::X;	// Makes colors 14-15 forced "Black".
 		BaseLogic::TriState VidOut_n_PICTURE = BaseLogic::TriState::X;	// Local /PICTURE signal
 
-		void sim_InputLatches();
-		void sim_PhaseShifter(BaseLogic::TriState n_CLK, BaseLogic::TriState CLK, BaseLogic::TriState RES);
+		// The generator body (sim() and sim_Edge()): Phase is the PCLK polarity when it is a
+		// compile-time constant (edge calls), -1 when the inputs carry the live lines.
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_T(const VideoInputsT<Phase>& in, VideoOutSignal& vout);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_InputLatches(const VideoInputsT<Phase>& in);
+		void sim_InputLatches();	// field-driven entry point for the kernel tests
+		void sim_PhaseShifter(BaseLogic::TriState n_CLK, BaseLogic::TriState CLK, BaseLogic::TriState RES);	// n_PCLK from the wire (kernel tests)
+		PPUSIM_FAST_EDGE_INLINE void sim_PhaseShifter(BaseLogic::TriState n_CLK, BaseLogic::TriState CLK, BaseLogic::TriState RES, BaseLogic::TriState n_PCLK);
 		void sim_ChromaDecoder();
 		void sim_ChromaDecoder_PAL();
 		void sim_ChromaDecoder_NTSC();
-		void sim_OutputLatches();
-		void sim_LumaDecoder(BaseLogic::TriState n_LL[4]);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_OutputLatches(const VideoInputsT<Phase>& in);
+		void sim_LumaDecoder(BaseLogic::TriState n_LL0, BaseLogic::TriState n_LL1);
 		void sim_Emphasis(BaseLogic::TriState n_TR, BaseLogic::TriState n_TG, BaseLogic::TriState n_TB);
 		void sim_CompositeDAC(VideoOutSignal& vout);
 		void sim_RGB_DAC(VideoOutSignal& vout);
-		void sim_nPICTURE();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_nPICTURE(const VideoInputsT<Phase>& in);
 		void sim_RAWOutput(VideoOutSignal& vout);
-		void sim_ColorMatrix();
-		void sim_Select12To3();
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_ColorMatrix(const VideoInputsT<Phase>& in);
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_Select12To3(const VideoInputsT<Phase>& in);
 
 		float PhaseSwing(float v, BaseLogic::TriState sel, float level_from, float level_to);
 
 		bool composite = false;
 		bool raw = false;
-		
+		bool mode_dirty = true;
+		uint8_t dac_context = 0;
+
 		bool noise_enable = false;
 		float noise = 0.0f;
 		float GetNoise();
@@ -124,12 +133,42 @@ namespace PPUSimFast
 		void ConvertRAWToRGB_Composite(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
 		void ConvertRAWToRGB_Component(VideoOutSignal& rawIn, VideoOutSignal& rgbOut);
 
+		// v4 lean idle path (track PPU): the settled pixel context folded into masks at arming time,
+		// so an idle call is one phase-table step, a few mask tests and one DAC table load.
+		struct IdleVideo
+		{
+			uint32_t pz_mask = 0;			// tested against the phase lines (NTSC) or the PAL phase gate
+			uint32_t tint_neg = 0;			// phase lines whose Zero enables emphasis (gated by /POUT)
+			uint32_t tint_pos = 0;			// phase lines whose One enables emphasis (PAL /PR, /PG)
+			VideoOutSignal rgb{};			// RGB revisions: the settled output sample
+			uint16_t dac = 0;				// dac_context
+			uint8_t pz_xor = 0, pr_shift = 0, pg_shift = 0, prg_xor = 0;
+			bool pal = false;
+		} idle{};
+
 	public:
 
 		VideoOut(PPU* parent);
 		~VideoOut();
-		
+
 		void sim(VideoOutSignal& vout);
+		// The edge call's generator: sim() with the pixel context re-evaluated (pixel_invoked), the
+		// phase a compile-time constant and the sampled commands/luma taken from the edge context.
+		template<int Phase> PPUSIM_FAST_EDGE_INLINE void sim_Edge(const EdgeContextT<Phase>& c, VideoOutSignal& vout);
+
+		// Idle-call path (v4): the composite generator between pixel edges. Only the phase ring
+		// advances; the chroma/emphasis selection and the DAC sample are recomputed from the
+		// settled pixel context. Preconditions: IdleEligible(), no pixel edge, not the first call
+		// after an edge, RES low.
+		void sim_IdleComposite(VideoOutSignal& vout);
+		// Lean form of the same evaluation from the context captured by ArmIdle() at the end of
+		// the arming call (RGB revisions: the settled sample).
+		void ArmIdle(const VideoOutSignal& vout);
+		void sim_Idle(VideoOutSignal& vout);
+		// Composite noise draws from the process RNG per sample; it stays on the full path so the
+		// idle call is call-free (noise is a diagnostic feature, off in every benchmark).
+		bool IdleEligible() const { return !raw && !mode_dirty && !noise_enable; }
+		bool NoiseEnabled() const { return noise_enable; }
 
 		void GetSignalFeatures(VideoSignalFeatures& features);
 

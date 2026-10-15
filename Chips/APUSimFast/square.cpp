@@ -18,7 +18,7 @@ namespace APUSimFast
 		delete env_unit;
 	}
 
-	void SquareChan::sim(TriState WR0, TriState WR1, TriState WR2, TriState WR3, TriState NOSQ, TriState* SQ_Out)
+	uint32_t SquareChan::sim(TriState WR0, TriState WR1, TriState WR2, TriState WR3, TriState NOSQ)
 	{
 		dir_reg.sim(apu->wire.ACLK1, WR1, apu->GetDBBit(3));
 		DEC = dir_reg.get();
@@ -34,7 +34,7 @@ namespace APUSimFast
 		sim_Duty(WR0, WR3);
 
 		env_unit->sim(Vol, WR0, WR3);
-		sim_Output(NOSQ, SQ_Out);
+		return sim_Output(NOSQ);
 	}
 
 	uint16_t SquareChan::get_Fx() { return DO_SWEEP == TriState::One ? uint16_t(~freq_sum) & 0x7ff : freq_reg; }
@@ -138,7 +138,7 @@ namespace APUSimFast
 		DUTY = duty ? TriState::One : TriState::Zero;
 	}
 
-	void SquareChan::sim_Output(TriState NOSQ, TriState* SQ_Out)
+	uint32_t SquareChan::sim_Output(TriState NOSQ)
 	{
 		TriState ACLK1 = apu->wire.ACLK1;
 		TriState LOCK = apu->wire.LOCK;
@@ -147,10 +147,8 @@ namespace APUSimFast
 		sqo_latch.set(d, ACLK1);
 		TriState sqv = NOR(sqo_latch.get(), LOCK);
 
-		for (size_t n = 0; n < 4; n++)
-		{
-			SQ_Out[n] = NOR(sqv, NOT(Vol[n]));
-		}
+		// SQ_Out[n] = NOR(sqv, NOT(Vol[n]))
+		return (sqv & 1) != 0 ? 0u : PackNibble(Vol);
 	}
 
 	void FreqRegBit::sim(TriState ACLK3, TriState ACLK1, TriState WR, TriState DB_in, TriState ADDOUT, TriState n_sum)

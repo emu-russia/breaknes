@@ -17,19 +17,66 @@ namespace APUSimFast
 
 	void RegsDecoder::sim()
 	{
-		const uint64_t key = uint64_t((apu->CPU_Addr & 0xffe0) == 0x4000) |
-			(uint64_t(apu->Ax & 0x1f) << 1) | (uint64_t(apu->wire.RnW) << 8) |
-			(uint64_t(apu->wire.PHI1) << 16) | (uint64_t(apu->wire.DBG) << 24);
+		// All outside-window inputs produce the same inactive strobes. The CPU
+		// high-address qualifier remains independent of the DMA-muxed low address.
+		const bool inside = (apu->CPU_Addr & 0xffe0) == 0x4000;
+		#ifdef APUSIMFAST_UNCANONICAL_REG_KEY
+		const uint64_t key = uint64_t(inside) | (uint64_t(apu->Ax & 0x1f) << 1) |
+			(uint64_t(apu->wire.RnW) << 8) | (uint64_t(apu->wire.PHI1) << 16) |
+			(uint64_t(apu->wire.DBG) << 24);
+		#else
+		const uint64_t key = inside ? 1u | (uint64_t(apu->Ax & 0x1f) << 1) |
+			(uint64_t(apu->wire.RnW) << 8) | (uint64_t(apu->wire.PHI1) << 16) |
+			(uint64_t(apu->wire.DBG) << 24) : 0;
+		#endif
+		strobes_changed = false;
 		if (!decoded || key != decoded_key || decoded_epoch != apu->mutation_epoch)
 		{
+			#ifdef APUSIMFAST_LEGACY_REG_DECODE
 			sim_Predecode();
 			sim_Decoder();
 			sim_RegOps();
+			strobes_changed = true;
+			#else
+			sim_PackedOps();
+			#endif
 			decoded_key = key;
 			decoded_epoch = apu->mutation_epoch;
 			decoded = true;
 		}
 		sim_DebugLock();
+	}
+
+	void RegsDecoder::sim_PackedOps()
+	{
+		sim_Predecode();
+		const uint32_t select = uint32_t(1) << (apu->Ax & 31);
+		const uint32_t writes = nREGWR == TriState::Zero && (apu->wire.PHI1 & 1) == 0 ? select : 0;
+		const uint32_t reads = nREGRD == TriState::Zero ? select : 0;
+		auto& w = apu->wire;
+		// Every strobe below is a function of these three values (and n_DBGRD of DBG and reads).
+		strobes_changed = !decoded || writes != last_writes || reads != last_reads || w.DBG != last_dbg;
+		last_writes = writes; last_reads = reads; last_dbg = w.DBG;
+		#define WRITE_STROBE(name, bit) w.name = TriState((writes >> bit) & 1u)
+		WRITE_STROBE(W4000, 0); WRITE_STROBE(W4001, 1);
+		WRITE_STROBE(W4002, 2); WRITE_STROBE(W4003, 3);
+		WRITE_STROBE(W4004, 4); WRITE_STROBE(W4005, 5);
+		WRITE_STROBE(W4006, 6); WRITE_STROBE(W4007, 7);
+		WRITE_STROBE(W4008, 8); WRITE_STROBE(W400A, 10);
+		WRITE_STROBE(W400B, 11); WRITE_STROBE(W400C, 12);
+		WRITE_STROBE(W400E, 14); WRITE_STROBE(W400F, 15);
+		WRITE_STROBE(W4010, 16); WRITE_STROBE(W4011, 17);
+		WRITE_STROBE(W4012, 18); WRITE_STROBE(W4013, 19);
+		WRITE_STROBE(W4014, 20); WRITE_STROBE(W4015, 21);
+		WRITE_STROBE(W4016, 22); WRITE_STROBE(W4017, 23);
+		#undef WRITE_STROBE
+		w.W401A = TriState(((writes >> 26) & 1u) & (w.DBG & 1u));
+		w.n_R4015 = TriState(1u ^ ((reads >> 21) & 1u));
+		w.n_R4016 = TriState(1u ^ ((reads >> 22) & 1u));
+		w.n_R4017 = TriState(1u ^ ((reads >> 23) & 1u));
+		w.n_R4018 = TriState(1u ^ (((reads >> 24) & 1u) & (w.DBG & 1u)));
+		w.n_R4019 = TriState(1u ^ (((reads >> 25) & 1u) & (w.DBG & 1u)));
+		w.n_R401A = TriState(1u ^ (((reads >> 26) & 1u) & (w.DBG & 1u)));
 	}
 
 	void RegsDecoder::sim_Predecode()
@@ -61,7 +108,7 @@ namespace APUSimFast
 
 		apu->wire.n_R4018 = NAND(DBG, pla[0]);
 		apu->wire.n_R401A = NAND(DBG, pla[2]);
-		
+
 		apu->wire.n_R4015 = NOT(pla[4]);
 		apu->wire.W4002 = NOR(PHI1, NOT(pla[6]));
 		apu->wire.W4001 = NOR(PHI1, NOT(pla[8]));
@@ -78,7 +125,7 @@ namespace APUSimFast
 
 		apu->wire.n_R4019 = NAND(DBG, pla[1]);
 		apu->wire.W401A = NOR(PHI1, NAND(DBG, pla[3]));
-		
+
 		apu->wire.W4003 = NOR(PHI1, NOT(pla[5]));
 		apu->wire.W4007 = NOR(PHI1, NOT(pla[7]));
 		apu->wire.W4004 = NOR(PHI1, NOT(pla[9]));
@@ -111,17 +158,10 @@ namespace APUSimFast
 			return;
 		}
 
-		for (size_t n = 0; n < 4; n++)
-		{
-			apu->SetDBBit(n, NOT(apu->wire.n_R4018) ? apu->SQA_Out[n] : TriState::Z);
-			apu->SetDBBit(n + 4, NOT(apu->wire.n_R4018) ? apu->SQB_Out[n] : TriState::Z);
-			apu->SetDBBit(n, NOT(apu->wire.n_R4019) ? apu->TRI_Out[n] : TriState::Z);
-			apu->SetDBBit(n + 4, NOT(apu->wire.n_R4019) ? apu->RND_Out[n] : TriState::Z);
-		}
-
-		for (size_t n = 0; n < 7; n++)
-		{
-			apu->SetDBBit(n, NOT(apu->wire.n_R401A) ? apu->DMC_Out[n] : TriState::Z);
-		}
+		// Preserve the original driver order, including simultaneous diagnostics.
+		if (apu->wire.n_R4018 == TriState::Zero) apu->DB = uint8_t(apu->audio_word);
+		if (apu->wire.n_R4019 == TriState::Zero) apu->DB = uint8_t(apu->audio_word >> 8);
+		if (apu->wire.n_R401A == TriState::Zero)
+			apu->DB = uint8_t((apu->DB & 0x80u) | ((apu->audio_word >> 16) & 0x7fu));
 	}
 }
