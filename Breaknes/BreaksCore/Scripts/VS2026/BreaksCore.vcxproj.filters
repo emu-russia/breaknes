@@ -134,6 +134,9 @@
     <ClInclude Include="..\..\..\..\Tools\Breakasm\asmops.h">
       <Filter>Breakasm</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\BoardLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Readme.md" />

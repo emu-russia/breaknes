@@ -82,7 +82,11 @@ namespace Breaknes
 
 	void Board::AddPPU(PPUSim::Revision rev)
 	{
+#if FAST_PPU
+		PPUSimFast::PPU* p = new PPUSimFast::PPU(rev);
+#else
 		PPUSim::PPU* p = new PPUSim::PPU(rev);
+#endif
 		ppus.push_back(p);
 
 		if (ppu == nullptr)

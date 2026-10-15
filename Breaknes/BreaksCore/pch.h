@@ -23,9 +23,14 @@
 
 // Big chips
 
+#define FAST_APU 1
+#define FAST_PPU 1
+
 #include "../../Chips/M6502Core/core.h"
 #include "../../Chips/APUSim/apu.h"
+#include "../../Chips/APUSimFast/apu.h"
 #include "../../Chips/PPUSim/ppu.h"
+#include "../../Chips/PPUSimFast/ppu.h"
 #include "../../Chips/MMC1/MMC1.h"
 
 // Board logic

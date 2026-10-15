@@ -9,7 +9,11 @@ namespace Breaknes
 	APUPlayerBoard::APUPlayerBoard(APUSim::Revision apu_rev, std::vector<PPUSim::Revision> ppu_revs, CartPcb::ConnectorType p1) : Board(apu_rev, ppu_revs, p1)
 	{
 		core = new M6502Core::FakeM6502("APU", MappedAPUBase, MappedAPUMask);
+#if FAST_APU
+		apu = new APUSimFast::APU(core, apu_rev);
+#else
 		apu = new APUSim::APU(core, apu_rev);
+#endif
 		wram = new BaseBoard::SRAM("WRAM", wram_bits);
 
 		for (int i = 0; i < wram->Dbg_GetSize(); i++)

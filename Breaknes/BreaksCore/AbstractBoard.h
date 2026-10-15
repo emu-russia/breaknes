@@ -21,7 +21,11 @@ namespace Breaknes
 		// These basic chips are on all variations of motherboards, so we make them available to all inherited classes.
 
 		M6502Core::M6502* core = nullptr;
+#if FAST_APU
 		APUSim::APU* apu = nullptr;
+#else
+		APUSimFast::APU* apu = nullptr;
+#endif
 
 		/// <summary>
 		/// All PPUs of the motherboard. The primary PPU (the one that is wired into
@@ -29,8 +33,13 @@ namespace Breaknes
 		/// Additional PPUs are simulated in parallel with the same inputs and buses,
 		/// which allows comparing video output of different PPU revisions side by side.
 		/// </summary>
+#if FAST_PPU
+		std::vector<PPUSimFast::PPU*> ppus;
+		PPUSimFast::PPU* ppu = nullptr;
+#else
 		std::vector<PPUSim::PPU*> ppus;
 		PPUSim::PPU* ppu = nullptr;
+#endif
 
 		const uint16_t MappedAPUBase = 0x4000;
 		const uint16_t MappedAPUMask = 0x1f;

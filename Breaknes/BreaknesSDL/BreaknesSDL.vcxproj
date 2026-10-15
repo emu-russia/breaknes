@@ -83,6 +83,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/d2:-SSAOptimizer- %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -104,6 +105,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/d2:-SSAOptimizer- %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -119,6 +121,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/d2:-SSAOptimizer- %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,9 +143,16 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/d2:-SSAOptimizer- %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Chips\APUSimFast\Scripts\VS2026\APUSimFast.vcxproj">
+      <Project>{3ca2e390-9f26-43d8-816b-e2bc3a84a739}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Chips\PPUSimFast\Scripts\VS2026\PPUSimFast.vcxproj">
+      <Project>{d9f61bf2-623d-49f4-95e0-e2289a3ee509}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\IO\Scripts\VS2026\IO.vcxproj">
       <Project>{ac032844-ae3a-4224-b6ce-451c5dbe80b9}</Project>
     </ProjectReference>

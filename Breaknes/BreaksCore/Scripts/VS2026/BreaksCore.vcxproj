@@ -73,6 +73,9 @@
     <ProjectReference Include="..\..\..\..\CartPcb\Scripts\VS2026\CartPcb.vcxproj">
       <Project>{34001d61-9c16-4229-b5fc-9bf33c247001}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Chips\APUSimFast\Scripts\VS2026\APUSimFast.vcxproj">
+      <Project>{3ca2e390-9f26-43d8-816b-e2bc3a84a739}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Chips\M6502Core\Scripts\VS2026\M6502Core.vcxproj">
       <Project>{75210c0a-a812-4246-a179-b50d8a25a121}</Project>
     </ProjectReference>
@@ -81,6 +84,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Chips\MMC1\Scripts\VS2026\MMC1.vcxproj">
       <Project>{7c38b2ca-4e0e-4d2c-8ada-25d08dec7b34}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Chips\PPUSimFast\Scripts\VS2026\PPUSimFast.vcxproj">
+      <Project>{d9f61bf2-623d-49f4-95e0-e2289a3ee509}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Chips\PPUSim\Scripts\VS2026\PPUSim.vcxproj">
       <Project>{ebd9b3eb-3c04-43ed-b454-e9442b21f5a0}</Project>

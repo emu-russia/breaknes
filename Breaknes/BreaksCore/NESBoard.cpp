@@ -10,7 +10,11 @@ namespace Breaknes
 	{
 		// Big chips. The PPUs (including the primary one) are created by the base class.
 		core = new M6502Core::M6502(true, true);
+#if FAST_APU
+		apu = new APUSimFast::APU(core, apu_rev);
+#else
 		apu = new APUSim::APU(core, apu_rev);
+#endif
 
 		// Memory
 		wram = new BaseBoard::SRAM("WRAM", wram_bits);
